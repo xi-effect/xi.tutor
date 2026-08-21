@@ -19,11 +19,14 @@ import type { UseFormSetError } from 'react-hook-form';
 import { LinkTanstack, Logo } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  getInviteAuthSearch,
   getInviteTrackingId,
   getOrCreateActivationFlowId,
   getPendingInviteCode,
+  persistPendingInviteCode,
   shouldTrackInviteLoginClicked,
   shouldTrackInvitePageViewed,
+  shouldTrackInviteSignupClicked,
   trackOnce,
   trackProductEvent,
   useGetUrlWithParams,
@@ -37,7 +40,7 @@ export const SignInPage = () => {
   const { t } = useTranslation('signin');
 
   const formSchema = useFormSchema();
-  const { onSigninForm, isPending } = useSigninForm();
+  const { onSigninForm, isPending, inviteUserNotFound } = useSigninForm();
   const getUrlWithParams = useGetUrlWithParams();
 
   const search = useSearch({ strict: false }) as { redirect?: string };
@@ -60,11 +63,12 @@ export const SignInPage = () => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const changePasswordShow = () => setIsPasswordShow((prev) => !prev);
 
-  // Unauth invite → /signin: фиксируем page_viewed + login_clicked один раз на вкладку.
-  // Outcome входа — auth_signin_*; login_clicked здесь = вход в login-ветку invite-flow.
+  // Fallback: прямой заход на /signin из invite-ссылки (старые закладки).
+  // Основной page_viewed / login_clicked уходит со страницы /invite.
   useEffect(() => {
     if (!inviteCode) return;
 
+    persistPendingInviteCode(inviteCode);
     const activationFlowId = getOrCreateActivationFlowId();
 
     void getInviteTrackingId(inviteCode).then((invite_tracking_id) => {
@@ -97,6 +101,9 @@ export const SignInPage = () => {
 
   const handleSignupLinkClick = () => {
     if (!isInviteRedirect) return;
+    persistPendingInviteCode(inviteCode);
+
+    if (inviteCode && !shouldTrackInviteSignupClicked(inviteCode)) return;
 
     void (async () => {
       const invite_tracking_id = inviteCode ? await getInviteTrackingId(inviteCode) : undefined;
@@ -109,6 +116,11 @@ export const SignInPage = () => {
       });
     })();
   };
+
+  const signupSearch = inviteCode ? getInviteAuthSearch(inviteCode) : undefined;
+  const signupHref = signupSearch
+    ? `/signup?redirect=${encodeURIComponent(signupSearch.redirect)}&invite=${encodeURIComponent(signupSearch.invite)}`
+    : getUrlWithParams('/signup');
 
   return (
     <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
@@ -125,6 +137,27 @@ export const SignInPage = () => {
             {isInviteRedirect && (
               <div className="text-text-link bg-status-info-background rounded-2xl p-4 text-center text-sm whitespace-pre-line">
                 {t('invite_message')}
+              </div>
+            )}
+
+            {inviteUserNotFound && (
+              <div className="border-border-default rounded-2xl border p-4 text-center">
+                <p className="text-text-primary font-medium">{t('invite_user_not_found.title')}</p>
+                <p className="text-text-secondary mt-1 text-sm">
+                  {t('invite_user_not_found.hint')}
+                </p>
+                <div className="mt-3">
+                  <LinkTanstack
+                    size="l"
+                    theme="brand"
+                    variant="hover"
+                    to={signupHref}
+                    data-umami-event="auth-signup-link"
+                    onClick={handleSignupLinkClick}
+                  >
+                    {t('invite_user_not_found.cta')}
+                  </LinkTanstack>
+                </div>
               </div>
             )}
 
@@ -188,7 +221,7 @@ export const SignInPage = () => {
                   size="l"
                   theme="brand"
                   variant="hover"
-                  to={getUrlWithParams('/signup')}
+                  to={signupHref}
                   data-umami-event="auth-signup-link"
                   onClick={handleSignupLinkClick}
                 >

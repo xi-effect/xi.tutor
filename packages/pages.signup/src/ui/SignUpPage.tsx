@@ -31,8 +31,10 @@ import {
   getPendingInviteCode,
   inferSignupEntryPoint,
   mapSignupValidationErrors,
+  persistPendingInviteCode,
   trackOnce,
   trackProductEvent,
+  useGetUrlWithParams,
 } from 'common.utils';
 
 const successInputClassName =
@@ -51,6 +53,7 @@ export const SignUpPage = () => {
 
   const formSchema = useFormSchema();
   const { onSignupForm, isPending } = useSignupForm();
+  const getUrlWithParams = useGetUrlWithParams();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -80,6 +83,10 @@ export const SignUpPage = () => {
   const entryPoint = inferSignupEntryPoint(search);
   const hasInvite =
     Boolean(search.invite) || entryPoint === 'invite' || Boolean(getPendingInviteCode(search));
+
+  useEffect(() => {
+    persistPendingInviteCode(search.invite || getPendingInviteCode(search));
+  }, [search.invite, search.redirect]);
 
   useEffect(() => {
     const activationFlowId = getOrCreateActivationFlowId();
@@ -356,7 +363,7 @@ export const SignUpPage = () => {
                   size="l"
                   theme="brand"
                   variant="hover"
-                  to="/signin"
+                  to={getUrlWithParams('/signin')}
                   data-umami-event="auth-signin-link"
                 >
                   {t('sign_in')}

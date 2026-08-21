@@ -58,8 +58,9 @@ export const XiGeoComponent: React.FC<XiGeoComponentT> = ({ shape }) => {
   const geometry = editor.getShapeGeometry(shape);
   const pathData = geometry.getSvgPathData(false);
   const fillColor = getFillColor(colors, fill, color);
-  const strokeWidth = getSizeInPixels(size);
-  const strokeColor = getColorValue(colors, borderColor, 'fill');
+  const hasBorder = borderColor !== 'none';
+  const strokeWidth = hasBorder ? getSizeInPixels(size) : 0;
+  const strokeColor = hasBorder ? getColorValue(colors, borderColor, 'fill') : 'none';
   const textColor = getColorValue(colors, labelColor, 'solid');
 
   // Устанавливаем текст в фигуру;

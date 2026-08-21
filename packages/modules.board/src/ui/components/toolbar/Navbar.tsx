@@ -72,10 +72,6 @@ export const Navbar = track(
     const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
     const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
 
-    const stickerPopupItems = navBarElements.find(
-      (item) => item.action === 'sticker',
-    )?.menuPopupContent;
-
     const closeToolbarPanel = useCallback(() => {
       if (activePopup && activePopup !== 'pen') resetToDefaults();
       setActivePopup(null);
@@ -279,7 +275,6 @@ export const Navbar = track(
             >
               <ToolbarOptionsPanel
                 activePopup={activePopup}
-                stickerPopupItems={stickerPopupItems}
                 recentEmojis={recentEmojis}
                 stickers={stickers}
                 onEmojiSelect={(emoji) => {

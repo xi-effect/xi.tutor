@@ -283,17 +283,15 @@
 
 ### Приглашение (ученик)
 
-| Событие                        | Статус                  | Когда                             |
-| ------------------------------ | ----------------------- | --------------------------------- |
-| `student_invite_opened`        | новый                   | Ученик открыл `/invite/$inviteId` |
-| `student_invite_accept_submit` | новый                   | Перед API принятия                |
-| `invite_accepted_success`      | существующий (расширен) | Приглашение принято               |
-| `student_invite_accept_failed` | новый                   | Ошибка принятия                   |
+| Событие                        | Статус                  | Когда                                                                                                                                                                                                                                     |
+| ------------------------------ | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `student_invite_opened`        | новый                   | Ученик открыл `/invite/$inviteId`                                                                                                                                                                                                         |
+| `student_invite_accept_submit` | новый                   | Перед API принятия                                                                                                                                                                                                                        |
+| `invite_accepted_success`      | существующий (расширен) | Accept + tutorship + classroom созданы в одной транзакции; `id` кабинета есть в ответе. Финальная точка funnel до кабинета. Отдельное `classroom_created_from_invite` не отправляется.                                                    |
+| `student_invite_accept_failed` | новый                   | Ошибка принятия. `reason`: `invite_not_found` \| `already_connected` \| `self_invite` \| `authentication_required` \| `network_error` \| `server_error` \| `unknown`. Без `invite_expired` и `already_accepted`, без raw backend message. |
 
 ```json
 {
-  "invite_id": "code-from-url",
-  "tutor_id": "42",
   "attempt_id": "uuid",
   "student_authenticated": true,
   "invite_flow_version": 2,
@@ -302,17 +300,17 @@
 }
 ```
 
-Не передавать имя ученика, email, текст приглашения, полную ссылку.
+Не передавать имя ученика, email, текст приглашения, полную ссылку, raw token, classroom ID, tutor/user ID.
 
 **Источник:** `packages/pages.invites`
 
 #### Новая форма приглашения v2 (ученик) — `invite_flow_version: 2`
 
-| Событие                         | Когда                                                                   |
-| ------------------------------- | ----------------------------------------------------------------------- |
-| `student_invite_page_viewed`    | Страница `/invite/$inviteId` отрендерена, до ответа preview-запроса     |
-| `student_invite_signup_clicked` | Клик «Зарегистрироваться» на `SignInPage` при переходе по инвайт-ссылке |
-| `student_invite_login_clicked`  | Сабмит формы входа на `SignInPage` при переходе по инвайт-ссылке        |
+| Событие                         | Когда                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `student_invite_page_viewed`    | Страница `/invite/$inviteId` отрендерена (в том числе неавторизованный landing)                        |
+| `student_invite_signup_clicked` | Клик primary CTA «Зарегистрироваться…» на `/invite` или ссылки регистрации в invite-flow               |
+| `student_invite_login_clicked`  | Клик secondary «Уже есть аккаунт? Войти» на `/invite` (fallback — открытие `/signin` из invite-ссылки) |
 
 ```json
 {
@@ -322,7 +320,7 @@
 }
 ```
 
-`student_invite_signup_clicked` / `student_invite_login_clicked` фиксируются не на самой странице приглашения, а на `packages/pages.signin/src/ui/SignInPage.tsx` (там уже есть флаг `isInviteRedirect`) — root-guard (`apps/xi.web/src/pages/__root.tsx`) редиректит неавторизованных на `/signin` раньше, чем рендерится страница приглашения, поэтому реальная точка выбора «зарегистрироваться / войти» находится там. У этих двух событий нет надёжного `invite_tracking_id` (страница входа не хранит код приглашения в query) — поле не передаётся.
+`student_invite_signup_clicked` / `student_invite_login_clicked` отправляются по клику на `/invite/$inviteId` (registration-first). Fallback на `SignInPage` остаётся для прямого захода `/signin?redirect=/invite/...` и дедуплицируется через sessionStorage. `invite_tracking_id` считается из `invite.pending_code` / `search.invite` / `redirect`.
 
 **Источник:** `packages/pages.invites`, `packages/pages.signin/src/ui/SignInPage.tsx`
 

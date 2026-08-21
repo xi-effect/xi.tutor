@@ -101,53 +101,6 @@ export const navBarElements: NavbarElementT[] = [
       return t('navbar.sticker');
     },
     icon: <Sticker className={boardToolbarIconCompactClass} />,
-    menuPopupContent: [
-      {
-        icon: <Sticker className="fill-gray-60" />,
-        action: 'set-style',
-        color: 'grey',
-      },
-      {
-        icon: <Sticker className="fill-brand-100" />,
-        action: 'set-style',
-        color: 'blue',
-      },
-      {
-        icon: <Sticker className="fill-red-100" />,
-        action: 'set-style',
-        color: 'red',
-      },
-      {
-        icon: <Sticker className="fill-green-100" />,
-        action: 'set-style',
-        color: 'green',
-      },
-      {
-        icon: <Sticker className="fill-orange-100" />,
-        action: 'set-style',
-        color: 'light-red',
-      },
-      {
-        icon: <Sticker className="fill-yellow-100" />,
-        action: 'set-style',
-        color: 'yellow',
-      },
-      {
-        icon: <Sticker className="fill-violet-100" />,
-        action: 'set-style',
-        color: 'violet',
-      },
-      {
-        icon: <Sticker className="fill-pink-100" />,
-        action: 'set-style',
-        color: 'light-violet',
-      },
-      {
-        icon: <Sticker className="fill-cyan-100" />,
-        action: 'set-style',
-        color: 'light-blue',
-      },
-    ],
   },
   {
     action: 'emoji',

@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Outlet, createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router';
 import { Suspense, useEffect } from 'react';
 import { useCurrentUser } from 'common.services';
 import { onboardingStageToPath } from 'pages.welcome';
@@ -16,12 +16,16 @@ function LayoutComponent() {
 const ProtectedLayout = () => {
   const { data: user, isLoading } = useCurrentUser();
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const isInviteRoute = pathname.startsWith('/invite/');
 
   useEffect(() => {
     void applyUserLanguage(user?.language);
   }, [user?.language]);
 
   useEffect(() => {
+    if (isInviteRoute) return;
+
     const stage = user?.onboarding_stage;
     if (
       stage &&
@@ -31,7 +35,15 @@ const ProtectedLayout = () => {
     ) {
       navigate({ to: onboardingStageToPath[stage as OnboardingStageT] });
     }
-  }, [navigate, user?.onboarding_stage]);
+  }, [isInviteRoute, navigate, user?.onboarding_stage]);
+
+  if (isInviteRoute) {
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <LayoutComponent />
+      </Suspense>
+    );
+  }
 
   if (!user || isLoading) {
     return <LoadingScreen />;

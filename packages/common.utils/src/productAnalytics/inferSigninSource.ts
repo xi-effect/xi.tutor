@@ -3,6 +3,38 @@ import { createInviteTrackingId } from './inviteTracking';
 
 export const INVITE_PENDING_CODE_KEY = 'invite.pending_code';
 
+/** Сохраняет код приглашения до успешного accept. Не логирует и не отдаёт в Umami. */
+export function persistPendingInviteCode(code?: string | null): void {
+  const normalized = code?.trim();
+  if (!normalized || typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(INVITE_PENDING_CODE_KEY, normalized);
+  } catch {
+    // ignore
+  }
+}
+
+/** Очищает временный invite-context после успешного принятия. */
+export function clearPendingInviteCode(): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.removeItem(INVITE_PENDING_CODE_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+/** Search-параметры signup/signin, чтобы не потерять приглашение при refresh. */
+export function getInviteAuthSearch(inviteId: string): { redirect: string; invite: string } {
+  const code = inviteId.trim();
+  return {
+    redirect: `/invite/${code}`,
+    invite: code,
+  };
+}
+
 /**
  * Достаёт код приглашения из уже существующего контекста:
  * `invite.pending_code` (root-guard) или `redirect` с `/invite/{code}`.
@@ -59,6 +91,7 @@ export function inferSigninSource(search?: {
 
 const INVITE_PAGE_VIEWED_PREFIX = 'pa_invite_page_viewed:';
 const INVITE_LOGIN_CLICKED_PREFIX = 'pa_invite_login_clicked:';
+const INVITE_SIGNUP_CLICKED_PREFIX = 'pa_invite_signup_clicked:';
 
 function hasSessionFlag(key: string): boolean {
   if (typeof window === 'undefined') return false;
@@ -89,6 +122,14 @@ export function shouldTrackInvitePageViewed(inviteCode: string): boolean {
 /** Дедуп student_invite_login_clicked на вкладку. */
 export function shouldTrackInviteLoginClicked(inviteCode: string): boolean {
   const key = `${INVITE_LOGIN_CLICKED_PREFIX}${inviteCode}`;
+  if (hasSessionFlag(key)) return false;
+  setSessionFlag(key);
+  return true;
+}
+
+/** Дедуп student_invite_signup_clicked на вкладку. */
+export function shouldTrackInviteSignupClicked(inviteCode: string): boolean {
+  const key = `${INVITE_SIGNUP_CLICKED_PREFIX}${inviteCode}`;
   if (hasSessionFlag(key)) return false;
   setSessionFlag(key);
   return true;

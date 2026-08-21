@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAddInvitation, useDeleteInvitation, useInvitationsList } from 'common.services';
 import { InvitationDataT } from 'common.types';
-import { type InviteAnalyticsSource } from 'common.utils';
+import { mapInviteError, type InviteAnalyticsSource } from 'common.utils';
 import { selectCurrentInvite } from './selectCurrentInvite';
 
 type CreateInviteOptions = {
@@ -16,6 +16,7 @@ type UseCurrentInviteResult = {
   refetch: () => void;
   isCreating: boolean;
   isCreateError: boolean;
+  isCreateLimitReached: boolean;
   isRefreshing: boolean;
   createInvite: (options?: CreateInviteOptions) => void;
   retryCreate: () => void;
@@ -44,6 +45,7 @@ export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInvit
     mutate: addInvitationMutate,
     isPending: isCreating,
     isError: isCreateError,
+    error: createError,
   } = useAddInvitation();
   const { mutate: deleteInvitationMutate, isPending: isDeleting } = useDeleteInvitation();
 
@@ -69,6 +71,8 @@ export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInvit
   );
 
   const autoCreateAttemptedRef = useRef(false);
+  const limitRefetchAttemptedRef = useRef(false);
+  const isCreateLimitReached = isCreateError && mapInviteError(createError) === 'limit_reached';
 
   useEffect(() => {
     if (isLoading || isListError) return;
@@ -78,7 +82,19 @@ export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInvit
     createInvite();
   }, [isLoading, isListError, currentInvite, createInvite]);
 
-  const retryCreate = useCallback(() => createInvite(), [createInvite]);
+  useEffect(() => {
+    if (!isCreateLimitReached || currentInvite || limitRefetchAttemptedRef.current) return;
+    limitRefetchAttemptedRef.current = true;
+    refetch();
+  }, [isCreateLimitReached, currentInvite, refetch]);
+
+  const retryCreate = useCallback(() => {
+    if (isCreateLimitReached) {
+      refetch();
+      return;
+    }
+    createInvite();
+  }, [isCreateLimitReached, refetch, createInvite]);
 
   const refreshCurrentInvite = useCallback(
     (options?: CreateInviteOptions) => {
@@ -104,6 +120,7 @@ export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInvit
     refetch,
     isCreating,
     isCreateError,
+    isCreateLimitReached,
     isRefreshing: isDeleting || isCreating,
     createInvite,
     retryCreate,

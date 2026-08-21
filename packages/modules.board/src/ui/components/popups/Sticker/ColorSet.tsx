@@ -1,20 +1,27 @@
+import { Sticker } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
+import { useEditor } from '@ibodr/draw';
 import { useDrawStyles } from '../../../../hooks';
 import { useDrawStore } from '../../../../store';
-import { PopupItemT } from '../../../../utils/navBarElements';
+import { BOARD_COLORS } from '../../../../utils/boardColors';
 
-export const ColorSet = ({
-  popupItems,
-  className,
-}: {
-  popupItems?: PopupItemT[];
-  className?: string;
-}) => {
+const stickerColors = [
+  ...BOARD_COLORS.filter((color) => color.name === 'grey'),
+  ...BOARD_COLORS.filter((color) => color.name !== 'black' && color.name !== 'grey'),
+];
+
+export const ColorSet = ({ className }: { className?: string }) => {
+  const editor = useEditor();
   const { setStickerColor, stickerColor } = useDrawStore();
-
   const { setColor } = useDrawStyles();
 
   const handleColorClick = (colorName: string) => {
+    // После постановки стикера draw уходит в select.editing_shape —
+    // без возврата на note следующий клик по канвасу ничего не создаёт.
+    if (editor.getEditingShapeId()) {
+      editor.setEditingShape(null);
+    }
+    editor.setCurrentTool('note');
     setColor(colorName);
     setStickerColor(colorName);
   };
@@ -26,19 +33,20 @@ export const ColorSet = ({
         className,
       )}
     >
-      {popupItems?.map((item) => {
-        const isActive = item.color === stickerColor;
+      {stickerColors.map(({ name, fillClass }) => {
+        const isActive = name === stickerColor;
         return (
           <div
-            key={item.color}
+            key={name}
             className={`flex rounded-lg p-1 ${isActive ? 'border-border-focus border' : 'border border-transparent'}`}
           >
             <button
               type="button"
               className="bg-transparent text-left"
-              onClick={() => handleColorClick(item.color)}
+              onClick={() => handleColorClick(name)}
+              aria-label={name}
             >
-              {item.icon}
+              <Sticker className={fillClass} />
             </button>
           </div>
         );

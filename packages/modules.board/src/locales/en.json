@@ -188,7 +188,8 @@
     "noFill": "No fill",
     "semiTransparent": "Semi-transparent",
     "solid": "Solid",
-    "borderColor": "Border color"
+    "borderColor": "Border color",
+    "noBorder": "No border"
   },
   "axes": {
     "settings": "Axis settings",

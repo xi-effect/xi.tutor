@@ -11,7 +11,7 @@ import {
   ModalCloseButton,
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
-import { Copy } from '@xipkg/icons';
+import { Copy, Check } from '@xipkg/icons';
 import { Skeleton } from 'common.ui';
 import { toast } from 'sonner';
 import { env } from 'common.env';
@@ -65,12 +65,14 @@ export const ModalInvitationV2 = ({
     refetch,
     isCreating,
     isCreateError,
+    isCreateLimitReached,
     isRefreshing,
     retryCreate,
     refreshCurrentInvite,
   } = useCurrentInvite(analyticsSource);
 
   const [confirmingRefresh, setConfirmingRefresh] = useState(false);
+  const [copiedKind, setCopiedKind] = useState<'message' | 'link' | null>(null);
 
   // Модалка смонтирована постоянно (см. использование через children/trigger),
   // поэтому явный refetch на переход open:false -> true подхватывает ссылку,
@@ -87,6 +89,7 @@ export const ModalInvitationV2 = ({
   useEffect(() => {
     if (!open) {
       viewedForOpenRef.current = false;
+      setCopiedKind(null);
       return;
     }
     if (viewedForOpenRef.current) return;
@@ -117,6 +120,7 @@ export const ModalInvitationV2 = ({
     }
 
     toast.success(t('inviteModalV2.toast.messageCopied'));
+    setCopiedKind('message');
     const invite_tracking_id = await getInviteTrackingId(currentInvite.code);
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_MESSAGE_COPIED, {
       invite_flow_version: 2,
@@ -137,6 +141,7 @@ export const ModalInvitationV2 = ({
     }
 
     toast.success(t('inviteModalV2.toast.linkCopied'));
+    setCopiedKind('link');
     const invite_tracking_id = await getInviteTrackingId(currentInvite.code);
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LINK_COPIED, {
       invite_id: String(currentInvite.id),
@@ -208,9 +213,20 @@ export const ModalInvitationV2 = ({
             </div>
           ) : showCreateError ? (
             <div className="flex flex-col items-center gap-3 py-6 text-center">
-              <p className="text-text-primary">{t('inviteModalV2.errors.createError')}</p>
+              <p className="text-text-primary">
+                {isCreateLimitReached
+                  ? t('inviteModalV2.errors.limitReached')
+                  : t('inviteModalV2.errors.createError')}
+              </p>
+              {isCreateLimitReached ? (
+                <p className="text-text-secondary text-sm">
+                  {t('inviteModalV2.errors.limitReachedHint')}
+                </p>
+              ) : null}
               <Button variant="secondary" onClick={() => retryCreate()}>
-                {t('inviteModalV2.errors.retry')}
+                {isCreateLimitReached
+                  ? t('inviteModalV2.errors.showExisting')
+                  : t('inviteModalV2.errors.retry')}
               </Button>
             </div>
           ) : showSkeleton ? (
@@ -219,6 +235,13 @@ export const ModalInvitationV2 = ({
             </div>
           ) : (
             <>
+              {currentInvite?.usage_count === 0 ? (
+                <p className="text-text-secondary px-1 text-sm">{t('inviteModalV2.pendingHint')}</p>
+              ) : currentInvite ? (
+                <p className="text-text-secondary px-1 text-sm">
+                  {t('inviteModalV2.reusableHint')}
+                </p>
+              ) : null}
               <div className="border-border-default flex items-start gap-2 rounded-lg border p-3">
                 <p className="dark:text-text-primary min-w-0 flex-1 text-sm whitespace-pre-line">
                   {message}
@@ -232,7 +255,7 @@ export const ModalInvitationV2 = ({
                   disabled={!hasContent}
                 >
                   <Copy size="sm" className="fill-action-primary-text size-4" />
-                  {t('inviteModalV2.actions.copy')}
+                  {t('inviteModalV2.actions.copyMessage')}
                 </Button>
               </div>
 
@@ -250,16 +273,30 @@ export const ModalInvitationV2 = ({
                 </span>
                 <Button
                   type="button"
-                  variant="primary"
+                  variant="ghost"
                   size="s"
                   className="shrink-0 gap-1.5"
                   onClick={handleCopyLink}
                   disabled={!hasContent}
                 >
-                  <Copy size="sm" className="fill-action-primary-text size-4" />
-                  {t('inviteModalV2.actions.copy')}
+                  <Copy size="sm" className="fill-icon-primary size-4" />
+                  {t('inviteModalV2.actions.copyLink')}
                 </Button>
               </div>
+
+              {copiedKind ? (
+                <div className="flex items-start gap-2 px-1">
+                  <Check className="fill-status-success-text mt-0.5 size-4 shrink-0" />
+                  <div>
+                    <p className="text-text-primary text-sm font-medium">
+                      {copiedKind === 'message'
+                        ? t('inviteModalV2.copied.message')
+                        : t('inviteModalV2.copied.link')}
+                    </p>
+                    <p className="text-text-secondary text-sm">{t('inviteModalV2.copied.hint')}</p>
+                  </div>
+                </div>
+              ) : null}
             </>
           )}
         </ModalBody>

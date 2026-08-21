@@ -8,6 +8,7 @@ import type {
   EmailConfirmationSource,
   HttpStatusGroup,
   InviteAnalyticsSource,
+  InviteAcceptFailureReason,
   InviteFailureReason,
   LessonCreateFailureReason,
   LessonDurationThreshold,
@@ -241,16 +242,12 @@ export type ProductAnalyticsEventMap = {
 
   student_invite_opened: {
     event_version?: number;
-    invite_id: string;
-    tutor_id?: string;
     student_authenticated: boolean;
     invite_flow_version?: number;
     invite_tracking_id?: string;
   };
   student_invite_accept_submit: {
     event_version?: number;
-    invite_id: string;
-    tutor_id?: string;
     attempt_id: string;
     student_authenticated: boolean;
     invite_flow_version?: number;
@@ -258,23 +255,20 @@ export type ProductAnalyticsEventMap = {
   };
   invite_accepted_success: {
     event_version?: number;
-    invite_id?: string;
-    tutor_id?: string;
     attempt_id?: string;
     student_authenticated?: boolean;
     role?: ProductAnalyticsRole;
     invite_kind?: ProductAnalyticsInviteKind;
     invite_flow_version?: number;
     invite_tracking_id?: string;
+    classroom_created?: boolean;
   };
   student_invite_accept_failed: {
     event_version?: number;
-    invite_id: string;
-    tutor_id?: string;
     attempt_id: string;
     student_authenticated: boolean;
-    reason: InviteFailureReason;
-    duration_ms: number;
+    reason: InviteAcceptFailureReason;
+    duration_ms?: number;
     invite_flow_version?: number;
     invite_tracking_id?: string;
   };

@@ -78,6 +78,15 @@ export type EmailConfirmationFailureReason =
 export type InviteFailureReason =
   'limit_reached' | 'invalid_data' | 'network_error' | 'server_error' | 'unknown';
 
+export type InviteAcceptFailureReason =
+  | 'invite_not_found'
+  | 'already_connected'
+  | 'self_invite'
+  | 'authentication_required'
+  | 'network_error'
+  | 'server_error'
+  | 'unknown';
+
 export type LessonCreateFailureReason =
   | 'no_students'
   | 'invalid_time'

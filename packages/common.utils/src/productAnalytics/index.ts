@@ -16,9 +16,13 @@ export { inferSignupEntryPoint } from './inferSignupEntryPoint';
 export { inferEmailConfirmationSource } from './inferEmailConfirmationSource';
 export {
   getPendingInviteCode,
+  persistPendingInviteCode,
+  clearPendingInviteCode,
+  getInviteAuthSearch,
   inferSigninSource,
   shouldTrackInvitePageViewed,
   shouldTrackInviteLoginClicked,
+  shouldTrackInviteSignupClicked,
   getInviteTrackingIdFromContext,
 } from './inferSigninSource';
 export {
@@ -37,6 +41,7 @@ export {
   mapSigninError,
   mapEmailConfirmationError,
   mapInviteError,
+  mapInviteAcceptError,
   mapLessonCreateError,
   mapCallError,
   mapPermissionError,
@@ -81,6 +86,7 @@ export type {
   EmailConfirmationSource,
   ActivationHelpReason,
   InviteFailureReason,
+  InviteAcceptFailureReason,
   LessonCreateFailureReason,
   CallFailureReason,
   PermissionFailureReason,

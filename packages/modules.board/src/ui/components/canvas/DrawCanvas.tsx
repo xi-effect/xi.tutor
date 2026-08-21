@@ -20,6 +20,7 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { hiddenComponents } from '../../../utils/customConfig';
+import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -384,6 +385,7 @@ export const DrawCanvas = ({
         <div className="absolute inset-0">
           <Draw
             colorScheme={theme}
+            themes={BOARD_DRAW_THEMES}
             onMount={(editor) => {
               setEditor(editor);
               editor.updateInstanceState({

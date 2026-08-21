@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getPendingInviteCode, inferSigninSource } from '../inferSigninSource';
+import {
+  clearPendingInviteCode,
+  getInviteAuthSearch,
+  getPendingInviteCode,
+  inferSigninSource,
+  persistPendingInviteCode,
+} from '../inferSigninSource';
 
 describe('getPendingInviteCode', () => {
   afterEach(() => {
@@ -29,6 +35,34 @@ describe('getPendingInviteCode', () => {
       'code-42',
     );
     expect(getPendingInviteCode({ redirect: '/invite/rel-code' })).toBe('rel-code');
+  });
+
+  it('persist/clear пишет и удаляет invite.pending_code', () => {
+    const store: Record<string, string> = {};
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', {
+      setItem: (key: string, value: string) => {
+        store[key] = value;
+      },
+      getItem: (key: string) => store[key] ?? null,
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+    });
+
+    persistPendingInviteCode('  code-1  ');
+    expect(store['invite.pending_code']).toBe('code-1');
+    clearPendingInviteCode();
+    expect(store['invite.pending_code']).toBeUndefined();
+  });
+});
+
+describe('getInviteAuthSearch', () => {
+  it('собирает redirect и invite без домена', () => {
+    expect(getInviteAuthSearch(' abc ')).toEqual({
+      redirect: '/invite/abc',
+      invite: 'abc',
+    });
   });
 });
 

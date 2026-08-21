@@ -1,4 +1,3 @@
-import { PopupItemT } from '../../../../utils/navBarElements';
 import { ColorSet } from './ColorSet';
 import { ToolPopup } from '../../shared';
 
@@ -6,16 +5,11 @@ type StylePopupContentT = {
   children: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  popupItems?: PopupItemT[];
 };
 
-export const StickerPopup = ({ children, open, onOpenChange, popupItems }: StylePopupContentT) => {
+export const StickerPopup = ({ children, open, onOpenChange }: StylePopupContentT) => {
   return (
-    <ToolPopup
-      open={open}
-      onOpenChange={onOpenChange}
-      content={<ColorSet popupItems={popupItems} />}
-    >
+    <ToolPopup open={open} onOpenChange={onOpenChange} content={<ColorSet />}>
       {children}
     </ToolPopup>
   );

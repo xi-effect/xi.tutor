@@ -1,6 +1,7 @@
 import { createRootRouteWithContext, HeadContent, Outlet, redirect } from '@tanstack/react-router';
 // import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { AuthContextT } from 'common.auth';
+import { persistPendingInviteCode } from 'common.utils';
 
 interface MyRouterContext {
   auth: AuthContextT;
@@ -57,20 +58,19 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     // ],
   }),
   beforeLoad: ({ context, location }) => {
-    if (
-      !context.auth.isAuthenticated &&
-      !location.pathname.includes('/signin') &&
-      !location.pathname.includes('/signup') &&
-      !location.pathname.includes('/reset-password')
-    ) {
-      if (location.pathname.startsWith('/invite/') && typeof window !== 'undefined') {
-        const segments = location.pathname.split('/');
-        const inviteId = segments[segments.length - 1];
-        if (inviteId) {
-          localStorage.setItem('invite.pending_code', inviteId);
-        }
-      }
+    const isPublicAuthPath =
+      location.pathname.includes('/signin') ||
+      location.pathname.includes('/signup') ||
+      location.pathname.includes('/reset-password') ||
+      location.pathname.startsWith('/invite/');
 
+    if (location.pathname.startsWith('/invite/') && typeof window !== 'undefined') {
+      const segments = location.pathname.split('/');
+      const inviteId = segments[segments.length - 1];
+      persistPendingInviteCode(inviteId);
+    }
+
+    if (!context.auth.isAuthenticated && !isPublicAuthPath) {
       throw redirect({
         to: '/signin',
         search: {

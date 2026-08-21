@@ -1,6 +1,7 @@
 import type {
   CallFailureReason,
   EmailConfirmationFailureReason,
+  InviteAcceptFailureReason,
   InviteFailureReason,
   LessonCreateFailureReason,
   PermissionFailureReason,
@@ -183,10 +184,55 @@ export function mapInviteError(error: unknown): InviteFailureReason {
   const status = asErrorLike(error).response?.status;
   const detail = getDetailString(error).toLowerCase();
 
-  if (status === 429 || detail.includes('limit')) return 'limit_reached';
+  if (status === 429 || detail.includes('limit') || detail.includes('quantity exceeded')) {
+    return 'limit_reached';
+  }
   if (status === 400 || status === 422) return 'invalid_data';
   if (status && status >= 500) return 'server_error';
   if (!status) return 'network_error';
+  return 'unknown';
+}
+
+/**
+ * Маппинг ошибок принятия приглашения в стабильные enum без raw backend message.
+ * Контракт classroom-service:
+ * - 404 `Invitation not found`
+ * - 409 `Already joined` — пара tutor↔student уже связана (не факт принятия именно этого invite)
+ * - 409 `Target is the source` — self-invite
+ * Срока действия у приглашений нет.
+ */
+export function mapInviteAcceptError(error: unknown): InviteAcceptFailureReason {
+  const err = asErrorLike(error);
+  const status = err.response?.status;
+  const detail = getDetailString(error).toLowerCase();
+  const message = (err.message ?? '').toLowerCase();
+
+  if (
+    err.code === 'ECONNABORTED' ||
+    err.code === 'ERR_NETWORK' ||
+    err.message === 'Network Error'
+  ) {
+    return 'network_error';
+  }
+  if (!status) return 'network_error';
+  if (status === 401) return 'authentication_required';
+  if (status === 404) return 'invite_not_found';
+  if (status === 409) {
+    if (detail.includes('target is the source') || message.includes('target is the source')) {
+      return 'self_invite';
+    }
+    if (
+      detail.includes('already joined') ||
+      detail.includes('connect') ||
+      detail.includes('enrolled') ||
+      detail.includes('already a student')
+    ) {
+      return 'already_connected';
+    }
+    return 'already_connected';
+  }
+  if (detail.includes('not found')) return 'invite_not_found';
+  if (status >= 500) return 'server_error';
   return 'unknown';
 }
 

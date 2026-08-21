@@ -1,4 +1,4 @@
-import { Logo, NotFoundPage, isNotFoundHttpError } from 'common.ui';
+import { Logo } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { SupportPageShell } from 'modules.navigation';
@@ -6,28 +6,31 @@ import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteTrackingId,
+  persistPendingInviteCode,
   shouldTrackInvitePageViewed,
   trackOnce,
   trackProductEvent,
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { Invite } from './Invite';
+import { InviteLandingUnauth } from './InviteLandingUnauth';
 import { ErrorInvite } from './ErrorInvite';
 import { useInvitePreview } from '../services';
 
 export const InvitesPage = () => {
   const { t } = useTranslation('invites');
   const { inviteId } = useParams({ strict: false }) as { inviteId: string };
-  const { data, error, isLoading } = useInvitePreview(inviteId);
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+  const isAuthenticated = Boolean(user?.id);
+  const authPending = isUserLoading && !isAuthenticated;
+  const { data, error, isLoading } = useInvitePreview(inviteId, {
+    disabled: authPending || !isAuthenticated,
+  });
 
   useEffect(() => {
-    localStorage.removeItem('invite.pending_code');
-  }, []);
+    persistPendingInviteCode(inviteId);
+  }, [inviteId]);
 
-  // Открытие страницы, не дожидаясь ответа preview-запроса (в отличие от
-  // student_invite_opened ниже) — часть новой воронки v2, см. ТЗ п.11.
-  // Для unauth invite → signin page_viewed уже мог уйти на SignInPage — дедуп по session.
   useEffect(() => {
     if (!inviteId) return;
     if (!shouldTrackInvitePageViewed(inviteId)) return;
@@ -43,43 +46,52 @@ export const InvitesPage = () => {
   }, [inviteId]);
 
   useEffect(() => {
-    if (!data || !inviteId) return;
+    if (!inviteId) return;
+    if (authPending) return;
+    if (isAuthenticated && !data) return;
 
     trackOnce(`student_invite_opened:${inviteId}`, () => {
       void getInviteTrackingId(inviteId).then((invite_tracking_id) => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_OPENED, {
-          invite_id: inviteId,
-          tutor_id: String(data.tutor.user_id),
-          student_authenticated: Boolean(user?.id),
+          student_authenticated: isAuthenticated,
           invite_flow_version: 2,
           invite_tracking_id,
         });
       });
     });
-  }, [data, inviteId, user?.id]);
+  }, [authPending, data, inviteId, isAuthenticated]);
 
-  if (isLoading) {
-    return (
-      <SupportPageShell>
-        <section className="relative flex flex-1 flex-col items-center justify-center py-24">
-          <div className="absolute top-24">
-            <Logo />
-          </div>
-          <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
-            <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
-          </div>
-        </section>
-      </SupportPageShell>
-    );
-  }
+  const content = (() => {
+    if (authPending) {
+      return (
+        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
+          <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
+        </div>
+      );
+    }
 
-  if (error && isNotFoundHttpError(error)) {
-    return <NotFoundPage />;
-  }
+    if (!isAuthenticated) {
+      return <InviteLandingUnauth inviteId={inviteId} />;
+    }
 
-  if (!error && !data) {
-    return <NotFoundPage />;
-  }
+    if (isLoading) {
+      return (
+        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
+          <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
+        </div>
+      );
+    }
+
+    if (error) {
+      return <ErrorInvite error={error} />;
+    }
+
+    if (!data) {
+      return <ErrorInvite variant="not_found" />;
+    }
+
+    return <Invite invite={data} />;
+  })();
 
   return (
     <SupportPageShell>
@@ -87,7 +99,7 @@ export const InvitesPage = () => {
         <div className="absolute top-24">
           <Logo />
         </div>
-        {error ? <ErrorInvite error={error} /> : data ? <Invite invite={data} /> : <NotFoundPage />}
+        {content}
       </section>
     </SupportPageShell>
   );
