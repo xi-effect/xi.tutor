@@ -3,6 +3,7 @@ import { MATH_FIGURE_KINDS } from './math-figure/utils/kinds';
 
 export const BorderColorStyle = StyleProp.defineEnum('xi:borderColor', {
   values: [
+    'none',
     'black',
     'white',
     'blue',

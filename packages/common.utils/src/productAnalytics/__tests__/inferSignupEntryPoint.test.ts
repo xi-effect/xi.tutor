@@ -27,7 +27,7 @@ describe('inferSignupEntryPoint', () => {
     expect(inferSignupEntryPoint({ redirect: '/signin' })).toBe('login');
   });
 
-  it('читает invite.pending_code из localStorage', () => {
+  it('не читает invite.pending_code из localStorage как точку входа', () => {
     vi.stubGlobal('window', {
       location: { origin: 'https://app.sovlium.ru' },
     });
@@ -37,7 +37,7 @@ describe('inferSignupEntryPoint', () => {
       getItem: (key: string) => (key === 'invite.pending_code' ? 'code-1' : null),
     });
 
-    expect(inferSignupEntryPoint()).toBe('invite');
+    expect(inferSignupEntryPoint()).toBe('direct');
   });
 
   it('читает previousPath из sessionStorage', () => {

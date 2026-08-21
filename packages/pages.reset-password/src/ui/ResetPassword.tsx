@@ -6,7 +6,7 @@ import { Input } from '@xipkg/input';
 import { Link } from '@xipkg/link';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 
-import { LinkTanstack, Logo } from 'common.ui';
+import { AUTH_FLOW_LOGO_SIZE, LinkTanstack, Logo } from 'common.ui';
 import { useSyncAutofillOnSubmit } from 'common.utils';
 
 import { usePasswordReset } from '../hooks';
@@ -23,7 +23,7 @@ export const ResetPassword = () => {
     <Form<FormDataEmail> {...form}>
       <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
         <div className="self-center">
-          <Logo height={22} width={180} />
+          <Logo width={AUTH_FLOW_LOGO_SIZE.width} height={AUTH_FLOW_LOGO_SIZE.height} />
         </div>
 
         <h1 className="text-text-primary flex justify-center text-2xl font-semibold">

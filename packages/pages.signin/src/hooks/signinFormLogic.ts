@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import type { UseFormSetError } from 'react-hook-form';
-import type { trackUmamiSession } from 'common.utils';
+import type { SigninFailureReason, trackUmamiSession } from 'common.utils';
 import type { FormData } from '../model/formSchema';
 
 type Translate = (key: string) => string;
@@ -40,7 +40,11 @@ export function resolveSigninRedirect(
 }
 
 /** Ветвление ошибок входа: setError на поле + toast. */
-export function handleSigninError(error: unknown, ui: SigninErrorUi): void {
+export function handleSigninError(
+  error: unknown,
+  ui: SigninErrorUi,
+  options?: { isInviteFlow?: boolean },
+): SigninFailureReason {
   const { t, setError, toast } = ui;
 
   if (error instanceof AxiosError) {
@@ -51,28 +55,31 @@ export function handleSigninError(error: unknown, ui: SigninErrorUi): void {
       if (detail === 'User not found') {
         const message = t('errors.not_found_account');
         setError('email', { message });
-        toast(message);
-        return;
+        if (!options?.isInviteFlow) {
+          toast(message);
+        }
+        return 'user_not_found';
       }
 
       if (detail === 'Wrong password') {
         const message = t('errors.not_found_password');
         setError('password', { message });
         toast(message);
-        return;
+        return 'invalid_credentials';
       }
 
       toast(t('errors.error_signin'));
-      return;
+      return 'invalid_credentials';
     }
 
     if (status === 422) {
       toast(t('errors.validation_error'));
-      return;
+      return 'unknown';
     }
   }
 
   toast(t('errors.error_signin'));
+  return error instanceof AxiosError && !error.response ? 'network_error' : 'unknown';
 }
 
 type TrackUmamiSession = typeof trackUmamiSession;

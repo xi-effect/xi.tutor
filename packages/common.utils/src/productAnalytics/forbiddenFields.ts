@@ -28,4 +28,7 @@ export const FORBIDDEN_ANALYTICS_FIELDS = new Set([
   'board_content',
   'chat_content',
   'user_id',
+  'tutor_id',
+  'classroom_id',
+  'student_id',
 ]);

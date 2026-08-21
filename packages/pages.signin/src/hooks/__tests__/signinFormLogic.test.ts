@@ -44,6 +44,24 @@ describe('handleSigninError', () => {
     expect(toast).toHaveBeenCalledWith('errors.not_found_account');
   });
 
+  it('в invite-flow не показывает toast для User not found', () => {
+    const setError = vi.fn();
+    const toast = vi.fn();
+    const t = (key: string) => key;
+
+    const reason = handleSigninError(
+      axiosError(401, 'User not found'),
+      { t, setError, toast },
+      {
+        isInviteFlow: true,
+      },
+    );
+
+    expect(reason).toBe('user_not_found');
+    expect(setError).toHaveBeenCalledWith('email', { message: 'errors.not_found_account' });
+    expect(toast).not.toHaveBeenCalled();
+  });
+
   it('ставит ошибку на password при Wrong password', () => {
     const setError = vi.fn();
     const toast = vi.fn();

@@ -6,7 +6,7 @@ export type TShareShape = {
 };
 
 export type XiGeoShapeProps = DrGeoShapeProps & {
-  borderColor: TColor;
+  borderColor: TColor | 'none';
   text: string;
 };
 
@@ -29,7 +29,7 @@ export type TXiGeoShapeProps = {
   growY: number;
   url: string;
   scale: number;
-  borderColor: TColor;
+  borderColor: TColor | 'none';
   text: string;
 };
 

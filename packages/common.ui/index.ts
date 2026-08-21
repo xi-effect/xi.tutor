@@ -20,6 +20,8 @@ export { EmptySchedule } from './src/empty/EmptySchedule';
 export { DateTimeDisplay } from './src/DateTimeDisplay';
 export { LoadingScreen } from './src/LoadingScreen';
 export { Logo } from './src/Logo';
+export { InviteProgressCard } from './src/InviteProgressCard';
+export { AuthFlowShell, AuthStageEnter, AUTH_FLOW_LOGO_SIZE } from './src/AuthFlowShell';
 export { Skeleton } from './src/Skeleton';
 export { LinkTanstack } from './src/LinkTanstack';
 export { ErrorPage } from './src/ErrorPage';

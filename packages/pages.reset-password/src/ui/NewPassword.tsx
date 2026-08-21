@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { LinkTanstack, Logo } from 'common.ui';
+import { AUTH_FLOW_LOGO_SIZE, LinkTanstack, Logo } from 'common.ui';
 import { useSyncAutofillOnSubmit } from 'common.utils';
 
 import { Button } from '@xipkg/button';
@@ -24,7 +24,7 @@ export const NewPassword = ({ token }: { token: string }) => {
     <Form<FormDataPassword> {...form}>
       <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col space-y-4">
         <div className="self-center">
-          <Logo height={22} width={180} />
+          <Logo width={AUTH_FLOW_LOGO_SIZE.width} height={AUTH_FLOW_LOGO_SIZE.height} />
         </div>
 
         <h1 className="text-text-primary self-center text-2xl font-semibold">{t('title')}</h1>

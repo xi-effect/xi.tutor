@@ -3,6 +3,7 @@ import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getOnboardingStepMeta,
+  getInviteFunnelEventProps,
   resolveOnboardingAnalyticsRole,
   trackOnce,
   trackOnboardingStarted,
@@ -42,6 +43,7 @@ export const useOnboardingAnalytics = ({ step }: UseOnboardingAnalyticsOptions) 
         ...stepMeta,
         user_role: userRole,
         onboarding_stage: user?.onboarding_stage,
+        ...getInviteFunnelEventProps(true),
       });
     });
   }, [step, user?.default_layout, user?.onboarding_stage]);

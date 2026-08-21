@@ -188,7 +188,8 @@
     "noFill": "Без заливки",
     "semiTransparent": "Полупрозрачная",
     "solid": "Сплошная",
-    "borderColor": "Цвет обводки"
+    "borderColor": "Цвет обводки",
+    "noBorder": "Без обводки"
   },
   "axes": {
     "settings": "Настройки осей",

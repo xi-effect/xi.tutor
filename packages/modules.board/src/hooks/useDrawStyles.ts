@@ -9,7 +9,7 @@ import {
 import { DEFAULT_PEN_COLOR, DEFAULT_PEN_OPACITY, DEFAULT_PEN_THICKNESS } from '../config';
 import { BorderColorStyle } from '../shapes/shapeStyles';
 import { useDrawStore } from '../store';
-import { TColor, TFill, ToolType } from '../types';
+import { TFill, ToolType } from '../types';
 
 /**
  * В @ibodr/draw 0.2+ `STROKE_SIZES` — множители к `theme.strokeWidth` (s = 1),
@@ -132,7 +132,7 @@ export const useDrawStyles = () => {
   );
 
   const setSelectedShapesBorderColor = useCallback(
-    (colorName: TColor) => {
+    (colorName: string) => {
       if (!editor) return;
 
       editor.setStyleForSelectedShapes(

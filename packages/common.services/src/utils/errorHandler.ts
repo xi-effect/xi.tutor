@@ -59,6 +59,8 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
   },
   addInvitation: {
     'Invitation quantity exceeded': 'Превышено количество приглашений',
+    'Quantity exceeded':
+      'Достигнут лимит ссылок. Используйте уже созданную — она подходит для нескольких учеников.',
   },
   deleteInvitation: {
     'Validation Error': 'Ошибка валидации',
@@ -89,6 +91,8 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Validation Error': 'Ошибка валидации',
     'Invitation not found': 'Приглашение не найдено',
     'Invitation access denied': 'Доступ к приглашению запрещен',
+    'Already joined': 'Вы уже приняли это приглашение',
+    'Target is the source': 'Репетитор не может принять собственное приглашение',
   },
   classroom: {
     'Validation Error': 'Ошибка валидации',

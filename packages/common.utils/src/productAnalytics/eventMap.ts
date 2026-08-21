@@ -8,7 +8,10 @@ import type {
   EmailConfirmationSource,
   HttpStatusGroup,
   InviteAnalyticsSource,
+  InviteAcceptFailureReason,
   InviteFailureReason,
+  InviteFunnelStep,
+  InviteFunnelTrack,
   LessonCreateFailureReason,
   LessonDurationThreshold,
   LessonFinishReason,
@@ -44,6 +47,19 @@ type EventName = (typeof PRODUCT_ANALYTICS_EVENTS)[keyof typeof PRODUCT_ANALYTIC
 type InviteFlowV2Props = BaseProps & {
   invite_flow_version: 2;
   invite_tracking_id?: string;
+  has_invite?: boolean;
+  invite_progress_track?: InviteFunnelTrack;
+  invite_progress_step?: InviteFunnelStep;
+  invite_progress_current?: number;
+  invite_progress_total?: number;
+};
+
+type InviteFunnelProps = {
+  has_invite?: boolean;
+  invite_progress_track?: InviteFunnelTrack;
+  invite_progress_step?: InviteFunnelStep;
+  invite_progress_current?: number;
+  invite_progress_total?: number;
 };
 
 export type ProductAnalyticsEventMap = {
@@ -51,65 +67,73 @@ export type ProductAnalyticsEventMap = {
     entry_point: SignupEntryPoint;
     has_invite?: boolean;
     invite_tracking_id?: string;
+    invite_progress_track?: InviteFunnelTrack;
+    invite_progress_step?: InviteFunnelStep;
+    invite_progress_current?: number;
+    invite_progress_total?: number;
   };
-  auth_signup_submit: BaseProps & {
-    attempt_id: string;
-    entry_point: string;
-    attempt_number?: number;
-    has_invite?: boolean;
-    invite_tracking_id?: string;
-  };
-  auth_signup_validation_failed: BaseProps & {
-    failed_fields: SignupValidationFailedField[];
-    /** @deprecated используйте failed_fields */
-    reason?: SignupValidationFailureReason;
-    /** @deprecated используйте failed_fields */
-    field?: 'name' | 'email' | 'password' | 'terms' | 'multiple';
-    entry_point?: string;
-    has_invite?: boolean;
-    invite_tracking_id?: string;
-  };
-  auth_signup_succeeded: BaseProps & {
-    attempt_id: string;
-    entry_point: string;
-    duration_ms: number;
-    confirmation_required: boolean;
-    attempt_number?: number;
-    has_invite?: boolean;
-    invite_tracking_id?: string;
-  };
-  auth_signup_failed: BaseProps & {
-    attempt_id: string;
-    reason: SignupFailureReason;
-    duration_ms: number;
-    http_status_group: HttpStatusGroup;
-    entry_point?: string;
-    attempt_number?: number;
-    has_invite?: boolean;
-    invite_tracking_id?: string;
-  };
-  auth_signin_submit: BaseProps & {
-    source: SigninAnalyticsSource;
-    invite_tracking_id?: string;
-  };
-  auth_signin_failed: BaseProps & {
-    reason: SigninFailureReason;
-    source: SigninAnalyticsSource;
-    invite_tracking_id?: string;
-  };
-  auth_signin_succeeded: BaseProps & {
-    source: SigninAnalyticsSource;
-    invite_tracking_id?: string;
-  };
+  auth_signup_submit: BaseProps &
+    InviteFunnelProps & {
+      attempt_id: string;
+      entry_point: string;
+      attempt_number?: number;
+      invite_tracking_id?: string;
+    };
+  auth_signup_validation_failed: BaseProps &
+    InviteFunnelProps & {
+      failed_fields: SignupValidationFailedField[];
+      /** @deprecated используйте failed_fields */
+      reason?: SignupValidationFailureReason;
+      /** @deprecated используйте failed_fields */
+      field?: 'name' | 'email' | 'password' | 'terms' | 'multiple';
+      entry_point?: string;
+      invite_tracking_id?: string;
+    };
+  auth_signup_succeeded: BaseProps &
+    InviteFunnelProps & {
+      attempt_id: string;
+      entry_point: string;
+      duration_ms: number;
+      confirmation_required: boolean;
+      attempt_number?: number;
+      invite_tracking_id?: string;
+    };
+  auth_signup_failed: BaseProps &
+    InviteFunnelProps & {
+      attempt_id: string;
+      reason: SignupFailureReason;
+      duration_ms: number;
+      http_status_group: HttpStatusGroup;
+      entry_point?: string;
+      attempt_number?: number;
+      invite_tracking_id?: string;
+    };
+  auth_signin_submit: BaseProps &
+    InviteFunnelProps & {
+      source: SigninAnalyticsSource;
+      invite_tracking_id?: string;
+    };
+  auth_signin_failed: BaseProps &
+    InviteFunnelProps & {
+      reason: SigninFailureReason;
+      source: SigninAnalyticsSource;
+      invite_tracking_id?: string;
+    };
+  auth_signin_succeeded: BaseProps &
+    InviteFunnelProps & {
+      source: SigninAnalyticsSource;
+      invite_tracking_id?: string;
+    };
   auth_first_authenticated_session: BaseProps & {
     user_role: 'tutor' | 'student';
     source: 'signup' | 'login' | 'invite';
   };
 
-  email_confirmation_viewed: BaseProps & {
-    source?: EmailConfirmationSource;
-    onboarding_stage?: string;
-  };
+  email_confirmation_viewed: BaseProps &
+    InviteFunnelProps & {
+      source?: EmailConfirmationSource;
+      onboarding_stage?: string;
+    };
   email_confirmation_resend_submit: BaseProps & {
     attempt_id: string;
     attempt_number?: number;
@@ -153,18 +177,20 @@ export type ProductAnalyticsEventMap = {
   onboarding_started: BaseProps & {
     user_role: 'tutor' | 'student' | 'unknown';
   };
-  onboarding_step_viewed: BaseProps & {
-    step: OnboardingStepName | string;
-    step_index: number;
-    total_steps: number;
-    user_role: 'tutor' | 'student' | 'unknown';
-  };
-  onboarding_step_completed: BaseProps & {
-    step: OnboardingStepName | string;
-    step_index: number;
-    total_steps: number;
-    user_role: 'tutor' | 'student' | 'unknown';
-  };
+  onboarding_step_viewed: BaseProps &
+    InviteFunnelProps & {
+      step: OnboardingStepName | string;
+      step_index: number;
+      total_steps: number;
+      user_role: 'tutor' | 'student' | 'unknown';
+    };
+  onboarding_step_completed: BaseProps &
+    InviteFunnelProps & {
+      step: OnboardingStepName | string;
+      step_index: number;
+      total_steps: number;
+      user_role: 'tutor' | 'student' | 'unknown';
+    };
   onboarding_step_skipped: BaseProps & {
     step: OnboardingStepName | string;
     step_index: number;
@@ -241,46 +267,61 @@ export type ProductAnalyticsEventMap = {
 
   student_invite_opened: {
     event_version?: number;
-    invite_id: string;
-    tutor_id?: string;
     student_authenticated: boolean;
     invite_flow_version?: number;
     invite_tracking_id?: string;
+    has_invite?: boolean;
+    invite_progress_track?: InviteFunnelTrack;
+    invite_progress_step?: InviteFunnelStep;
+    invite_progress_current?: number;
+    invite_progress_total?: number;
   };
   student_invite_accept_submit: {
     event_version?: number;
-    invite_id: string;
-    tutor_id?: string;
     attempt_id: string;
     student_authenticated: boolean;
     invite_flow_version?: number;
     invite_tracking_id?: string;
+    has_invite?: boolean;
+    invite_progress_track?: InviteFunnelTrack;
+    invite_progress_step?: InviteFunnelStep;
+    invite_progress_current?: number;
+    invite_progress_total?: number;
   };
   invite_accepted_success: {
     event_version?: number;
-    invite_id?: string;
-    tutor_id?: string;
     attempt_id?: string;
     student_authenticated?: boolean;
     role?: ProductAnalyticsRole;
     invite_kind?: ProductAnalyticsInviteKind;
     invite_flow_version?: number;
     invite_tracking_id?: string;
+    classroom_created?: boolean;
+    has_invite?: boolean;
+    invite_progress_track?: InviteFunnelTrack;
+    invite_progress_step?: InviteFunnelStep;
+    invite_progress_current?: number;
+    invite_progress_total?: number;
   };
   student_invite_accept_failed: {
     event_version?: number;
-    invite_id: string;
-    tutor_id?: string;
     attempt_id: string;
     student_authenticated: boolean;
-    reason: InviteFailureReason;
-    duration_ms: number;
+    reason: InviteAcceptFailureReason;
+    duration_ms?: number;
     invite_flow_version?: number;
     invite_tracking_id?: string;
+    has_invite?: boolean;
+    invite_progress_track?: InviteFunnelTrack;
+    invite_progress_step?: InviteFunnelStep;
+    invite_progress_current?: number;
+    invite_progress_total?: number;
   };
 
   // Новая форма приглашения (страница ученика) — invite_flow_version: 2, см. ТЗ п.11
-  student_invite_page_viewed: InviteFlowV2Props;
+  student_invite_page_viewed: InviteFlowV2Props & {
+    student_authenticated?: boolean;
+  };
   student_invite_signup_clicked: InviteFlowV2Props & {
     source: InviteAnalyticsSource | 'invite';
   };
