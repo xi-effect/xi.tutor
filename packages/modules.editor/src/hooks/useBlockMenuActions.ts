@@ -65,7 +65,7 @@ export const useBlockMenuActions = (
   const insertImage = (src: string, alt?: string) => {
     if (!editor || !editor.isEditable) return;
 
-    const activeBlock = getCurrentBlock(editor);
+    const activeBlock = getCurrentBlock(editor, getActiveBlock?.());
 
     if (!activeBlock?.node) return;
 

@@ -1,12 +1,15 @@
 import { create } from 'zustand';
 
+export type EditorModalT =
+  'uploadImage' | 'uploadAudio' | 'uploadPdf' | 'uploadPresentation' | null;
+
 type useInterfaceStoreT = {
   activeCellControls: string | null;
   isAddNewNode: string | null;
   setActiveCellControls: (newValue: string | null) => void;
   setIsAddNewNode: (newValue: string | null) => void;
-  activeModal: 'uploadImage' | null;
-  openModal: (modal: 'uploadImage') => void;
+  activeModal: EditorModalT;
+  openModal: (modal: Exclude<EditorModalT, null>) => void;
   closeModal: () => void;
 };
 

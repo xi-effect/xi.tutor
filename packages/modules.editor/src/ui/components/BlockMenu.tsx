@@ -13,6 +13,9 @@ import {
   Text,
   Trash,
   Image,
+  Music,
+  File,
+  Presentation,
   ArrowUp,
   ArrowBottom,
   Code,
@@ -119,6 +122,21 @@ export const BlockMenu = ({
         <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
           <span>{t('blockMenu.image')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadAudio')}>
+          <Music size="sm" className="size-6" />
+          <span>{t('blockMenu.audio')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadPdf')}>
+          <File size="sm" className="size-6" />
+          <span>{t('blockMenu.pdf')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={menuItemClass}
+          onSelect={() => openModal('uploadPresentation')}
+        >
+          <Presentation size="sm" className="size-6" />
+          <span>{t('blockMenu.presentation')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
           <Code size="sm" className="size-6" />

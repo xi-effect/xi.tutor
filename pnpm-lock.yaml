@@ -3736,21 +3736,33 @@ importers:
       '@xipkg/file':
         specifier: ^4.0.0
         version: 4.0.0(react@19.2.8)
+      '@xipkg/fileuploader':
+        specifier: 5.1.0
+        version: 5.1.0(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.3
         version: 3.1.3(react@19.2.8)
       '@xipkg/input':
         specifier: 2.3.0
         version: 2.3.0(react@19.2.8)
+      '@xipkg/modal':
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/popover':
         specifier: ^4.0.0
         version: 4.0.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
         specifier: ^2.3.0
         version: 2.3.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/slider':
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/tabs':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/textarea':
+        specifier: 1.3.0
+        version: 1.3.0(react@19.2.8)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.8)
@@ -3769,6 +3781,9 @@ importers:
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
+      file-type:
+        specifier: ^19.0.0
+        version: 19.6.0
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -3778,6 +3793,12 @@ importers:
       nanoid:
         specifier: 5.1.5
         version: 5.1.5
+      pdfjs-dist:
+        specifier: ^4.10.38
+        version: 4.10.38
+      pptxviewjs:
+        specifier: 1.1.9
+        version: 1.1.9(chart.js@4.5.1)(jszip@3.10.1)
       prismjs:
         specifier: ^1.30.0
         version: 1.30.0

@@ -4,38 +4,25 @@ type AudioWaveformProps = {
   waveform: number[];
   progress: number;
   canControl: boolean;
-  isInteractive: boolean;
   onSeek: (e: React.PointerEvent<SVGSVGElement>) => void;
 };
 
-export function AudioWaveform({
-  waveform,
-  progress,
-  canControl,
-  isInteractive,
-  onSeek,
-}: AudioWaveformProps) {
+export function AudioWaveform({ waveform, progress, canControl, onSeek }: AudioWaveformProps) {
   return (
     <svg
-      style={{
-        pointerEvents: isInteractive ? 'auto' : 'none',
-        cursor: isInteractive && canControl ? 'pointer' : 'default',
-      }}
+      style={{ cursor: canControl ? 'pointer' : 'default', pointerEvents: 'all' }}
       data-audio-control=""
       className="w-full"
       height={WAVEFORM_HEIGHT}
       preserveAspectRatio="none"
-      onPointerDown={
-        isInteractive
-          ? (e) => {
-              e.preventDefault();
-              stopEvent(e);
-              onSeek(e);
-            }
-          : undefined
-      }
+      onPointerDown={(e) => {
+        e.preventDefault();
+        stopEvent(e);
+        if (!canControl) return;
+        onSeek(e);
+      }}
     >
-      <rect width="100%" height="100%" fill="transparent" pointerEvents="all" />
+      <rect width="100%" height="100%" fill="transparent" />
       {waveform.map((amp, i) => {
         const count = waveform.length;
         const barW = 100 / count;
