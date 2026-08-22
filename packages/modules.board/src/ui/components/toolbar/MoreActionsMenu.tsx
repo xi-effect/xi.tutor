@@ -17,6 +17,7 @@ import {
   boardMenuItemClass,
   boardMenuSubTriggerClass,
   boardMenuSurfaceClass,
+  boardSelectionToolbarButtonClass,
 } from '../../boardTheme';
 import { useCurrentUser } from 'common.services';
 import { useCopyBoardDeepLink } from '../../../hooks';
@@ -27,7 +28,13 @@ import { PNG_EXPORT_PIXEL_RATIO } from '../../../utils/shapeSvgExport';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useOcrProcessingStore } from '../../../ocr';
 import { BoardDrawer, boardDrawerRowClass, useBoardIsMobile } from '../shared';
+import {
+  RecognizePrintedTextMobileLanguageList,
+  RecognizePrintedTextMobileRootRow,
+  RecognizePrintedTextSubmenu,
+} from './RecognizeTextMenu';
 
 const altKey = isMac ? '⌥' : 'Alt';
 
@@ -55,7 +62,7 @@ export const MoreActionsMenu = () => {
   const { t } = useTranslation('board');
   const isMobile = useBoardIsMobile();
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState<'root' | 'download' | 'reorder'>('root');
+  const [view, setView] = useState<'root' | 'download' | 'reorder' | 'ocr'>('root');
   const editor = useEditor();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -71,6 +78,14 @@ export const MoreActionsMenu = () => {
     selectedShapes.length === 1 && selectedShapes[0].type === 'audio'
       ? (selectedShapes[0] as AudioShape)
       : null;
+
+  const selectedImageId =
+    selectedShapes.length === 1 && selectedShapes[0].type === 'image' && !selectedShapes[0].isLocked
+      ? selectedShapes[0].id
+      : null;
+  const isOcrProcessing = useOcrProcessingStore((state) =>
+    selectedImageId ? state.isProcessing(selectedImageId) : false,
+  );
 
   const copyDeepLink = useCopyBoardDeepLink({ shapeIds: selectedIds.map(String) });
 
@@ -144,10 +159,10 @@ export const MoreActionsMenu = () => {
     <Button
       variant="none"
       size="s"
-      className="hover:bg-status-info-background p-1"
+      className={boardSelectionToolbarButtonClass}
       onClick={isMobile ? () => setOpen(true) : undefined}
     >
-      <MenuDots className={`rotate-90 ${boardIconClass}`} />
+      <MenuDots className={`size-5 rotate-90 ${boardIconClass}`} />
     </Button>
   );
 
@@ -157,7 +172,9 @@ export const MoreActionsMenu = () => {
         ? t('toolbar.downloadAs')
         : view === 'reorder'
           ? t('toolbar.reorder')
-          : t('navbar.more');
+          : view === 'ocr'
+            ? t('ocr.recognize')
+            : t('navbar.more');
 
     return (
       <>
@@ -206,6 +223,12 @@ export const MoreActionsMenu = () => {
                 </span>
                 <ArrowRight className="fill-icon-secondary size-4 shrink-0" />
               </button>
+              {selectedImageId && (
+                <RecognizePrintedTextMobileRootRow
+                  isProcessing={isOcrProcessing}
+                  onOpen={() => setView('ocr')}
+                />
+              )}
               {hasTutorItems && isTutor && selectedPdf && (
                 <button
                   type="button"
@@ -351,6 +374,12 @@ export const MoreActionsMenu = () => {
               </button>
             </div>
           )}
+          {view === 'ocr' && selectedImageId && (
+            <RecognizePrintedTextMobileLanguageList
+              shapeId={selectedImageId}
+              onRun={() => setOpen(false)}
+            />
+          )}
         </BoardDrawer>
       </>
     );
@@ -359,8 +388,8 @@ export const MoreActionsMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="none" size="s" className="hover:bg-status-info-background p-1">
-          <MenuDots className={`rotate-90 ${boardIconClass}`} />
+        <Button variant="none" size="s" className={boardSelectionToolbarButtonClass}>
+          <MenuDots className={`size-5 rotate-90 ${boardIconClass}`} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -442,6 +471,7 @@ export const MoreActionsMenu = () => {
             />
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        {selectedImageId && <RecognizePrintedTextSubmenu shapeId={selectedImageId} />}
 
         {hasTutorItems && (
           <>

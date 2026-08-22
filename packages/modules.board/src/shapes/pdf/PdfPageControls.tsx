@@ -14,6 +14,7 @@ type PdfPageControlsProps = {
   disabled: boolean;
   onPageChange: (page: number) => void;
   onExtractPage?: () => void;
+  recognizeControl?: React.ReactNode;
   pagesVisible?: number;
   onPagesVisibleChange?: (n: number) => void;
 };
@@ -25,6 +26,7 @@ export const PdfPageControls = ({
   disabled,
   onPageChange,
   onExtractPage,
+  recognizeControl,
   pagesVisible = 1,
   onPagesVisibleChange,
 }: PdfPageControlsProps) => {
@@ -116,6 +118,7 @@ export const PdfPageControls = ({
           </SelectContent>
         </Select>
       )}
+      {recognizeControl}
       {onExtractPage && (
         <Button
           variant="none"

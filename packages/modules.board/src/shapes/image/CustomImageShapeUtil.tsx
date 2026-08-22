@@ -20,6 +20,7 @@ import {
 } from '../../utils/shapeSvgExport';
 import { isDisplayableAssetUrl } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { useOcrProcessingStore } from '../../ocr';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
   override component(shape: DrImageShape) {
@@ -229,6 +230,19 @@ function ImagePlaceholderIcon() {
   );
 }
 
+function ImageOcrOverlay({ shapeId }: { shapeId: DrImageShape['id'] }) {
+  const isProcessing = useOcrProcessingStore((state) => state.isProcessing(shapeId));
+  if (!isProcessing) return null;
+
+  return (
+    <div className="bg-background-surface/70 pointer-events-none absolute inset-0 z-1 flex items-center justify-center">
+      <span className="text-text-primary text-xs select-none">
+        {i18n.t('ocr.processing', { ns: 'board' })}
+      </span>
+    </div>
+  );
+}
+
 const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrImageShape }) {
   const editor = useEditor();
 
@@ -407,6 +421,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
           width: shape.props.w,
           height: shape.props.h,
           borderRadius: shape.props.crop?.isCircle ? '50%' : undefined,
+          position: 'relative',
         }}
       >
         <div className="dr-image-container" style={containerStyle}>
@@ -444,6 +459,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
             </div>
           )}
         </div>
+        <ImageOcrOverlay shapeId={shape.id} />
         {'url' in shape.props && shape.props.url && (
           <a
             className="bg-background-surface/85 text-text-primary pointer-events-auto absolute top-1 right-1 z-1 flex size-[22px] items-center justify-center rounded text-xs no-underline opacity-0 transition-opacity hover:opacity-100"

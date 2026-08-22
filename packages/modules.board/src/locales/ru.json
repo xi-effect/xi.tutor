@@ -181,6 +181,22 @@
     "axisColor": "Цвет осей",
     "style": "Стиль"
   },
+  "ocr": {
+    "recognize": "Распознать печатный текст",
+    "processing": "Распознаём текст…",
+    "selected": "выбран",
+    "languages": {
+      "auto": "Авто",
+      "ru": "Русский",
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "ja": "日本語",
+      "zh": "中文"
+    }
+  },
   "zoom": {
     "clickHint": "Клик — 100%. Двойной клик — показать все элементы"
   },
@@ -262,6 +278,7 @@
     "pagesShort": "{{count}} стр.",
     "show": "Показывать",
     "extractPage": "Извлечь страницу как изображение",
+    "recognizePrintedText": "Распознать печатный текст на текущей странице",
     "renderError": "Не удалось отобразить PDF",
     "loading": "Загрузка..."
   },
@@ -303,6 +320,9 @@
     "exportError": "Ошибка при экспорте доски",
     "selectionExportSuccess": "Выделение успешно экспортировано!",
     "selectionExportError": "Ошибка при экспорте выделения",
+    "ocrNoText": "Не удалось распознать текст",
+    "ocrImageLoadError": "Не удалось получить изображение для распознавания",
+    "ocrFailed": "Не удалось распознать текст",
     "noUnlockedElements": "Нет незаблокированных элементов",
     "lockedCount": "Заблокировано элементов: {{count}}",
     "noLockedElements": "Нет заблокированных элементов",

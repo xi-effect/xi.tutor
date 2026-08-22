@@ -181,6 +181,22 @@
     "axisColor": "Axis color",
     "style": "Style"
   },
+  "ocr": {
+    "recognize": "Recognize printed text",
+    "processing": "Recognizing text…",
+    "selected": "selected",
+    "languages": {
+      "auto": "Auto",
+      "ru": "Русский",
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "ja": "日本語",
+      "zh": "中文"
+    }
+  },
   "zoom": {
     "clickHint": "Click — 100%. Double-click — show all elements"
   },
@@ -262,6 +278,7 @@
     "pagesShort": "{{count}} p.",
     "show": "Show",
     "extractPage": "Extract page as image",
+    "recognizePrintedText": "Recognize printed text on the current page",
     "renderError": "Failed to display PDF",
     "loading": "Loading..."
   },
@@ -303,6 +320,9 @@
     "exportError": "Failed to export the board",
     "selectionExportSuccess": "Selection exported successfully!",
     "selectionExportError": "Failed to export the selection",
+    "ocrNoText": "Could not recognize text",
+    "ocrImageLoadError": "Could not load the image for recognition",
+    "ocrFailed": "Could not recognize text",
     "noUnlockedElements": "No unlocked elements",
     "lockedCount": "Locked elements: {{count}}",
     "noLockedElements": "No locked elements",
