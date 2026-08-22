@@ -94,7 +94,8 @@
     "arrows": "Arrows",
     "lines": "Lines",
     "notes": "Notes",
-    "media": "Media"
+    "media": "Media",
+    "activities": "Activities"
   },
   "navbar": {
     "select": "Select",
@@ -108,6 +109,7 @@
     "sticker": "Sticker",
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
+    "activities": "Activities",
     "more": "More"
   },
   "timer": {
@@ -411,5 +413,51 @@
     "editInputAria": "whiteboard name",
     "emptyName": "Untitled",
     "editInputError": "Name cannot be empty"
+  },
+  "activity": {
+    "edit": "Edit",
+    "play": "Practice",
+    "check": "Check",
+    "reset": "Reset",
+    "reveal": "Show answer",
+    "gapInput": "Gap: type",
+    "gapChoice": "Gap: choose",
+    "gapDrag": "Gap: drag",
+    "choices": "Choices, separated by |",
+    "wordBank": "Word bank, separated by |",
+    "dragMode": "Drag instead of connecting",
+    "addPair": "Add pair",
+    "category": "Category",
+    "addCategory": "Add category",
+    "card": "Card",
+    "addCard": "Add card",
+    "dropHere": "Drop here",
+    "orderingHint": "Top-to-bottom order is the correct one.",
+    "imageUrl": "Image URL",
+    "imagePlaceholder": "Click the area to place a hotspot",
+    "label": "Label",
+    "distractor": "Extra label",
+    "addDistractor": "Add extra label",
+    "multipleAnswers": "Multiple correct answers",
+    "randomize": "Shuffle options",
+    "option": "Option",
+    "addOption": "Add option",
+    "columns": "Columns",
+    "tile": "Tile",
+    "addTile": "Add tile",
+    "noRepeat": "No repeats",
+    "draw": "Next",
+    "reshuffle": "Reshuffle",
+    "drawPrompt": "Press Next",
+    "kinds": {
+      "gap-text": "Gap text",
+      "matching": "Matching",
+      "sorting": "Sorting",
+      "ordering": "Ordering",
+      "label-image": "Label image",
+      "multiple-choice": "Multiple choice",
+      "mystery-tiles": "Mystery tiles",
+      "random-card": "Random card"
+    }
   }
 }

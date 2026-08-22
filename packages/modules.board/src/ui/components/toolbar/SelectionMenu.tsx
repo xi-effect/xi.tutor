@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { track, useEditor } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
-import { Trash, Copy, Locked, Unlocked } from '@xipkg/icons';
+import { Trash, Copy, Locked, Unlocked, Edit } from '@xipkg/icons';
 import { boardSelectionToolbarButtonClass, boardSelectionToolbarIconClass } from '../../boardTheme';
 import { MoreActionsMenu } from './MoreActionsMenu';
 import { ColorPicker } from './ColorPicker';
@@ -11,6 +11,7 @@ import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
 import { MathFigureSettingsPicker } from '../../../shapes/math-figure';
 import { TextEditorToolbar } from '../../../shapes/text';
+import { useActivityEditStore } from '../../../activities';
 import { useTranslation } from 'react-i18next';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
@@ -29,6 +30,14 @@ export const SelectionMenu = track(function SelectionMenu() {
   const isCoordinateAxes =
     selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';
   const isMathFigure = selectedShapes.length === 1 && selectedShapes[0].type === 'math-figure';
+  const selectedActivityId =
+    selectedShapes.length === 1 && selectedShapes[0].type === 'activity'
+      ? selectedShapes[0].id
+      : null;
+  const isActivityEditing = useActivityEditStore((state) =>
+    selectedActivityId ? Boolean(state.editingIds[selectedActivityId]) : false,
+  );
+  const toggleActivityEditing = useActivityEditStore((state) => state.toggleEditing);
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -128,6 +137,17 @@ export const SelectionMenu = track(function SelectionMenu() {
           {isGeo && <BorderPicker />}
           {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
           {isMathFigure && <MathFigureSettingsPicker />}
+          {selectedActivityId && (
+            <Button
+              variant="none"
+              size="s"
+              className={boardSelectionToolbarButtonClass}
+              onClick={() => toggleActivityEditing(selectedActivityId)}
+              title={isActivityEditing ? t('activity.play') : t('activity.edit')}
+            >
+              <Edit className={boardSelectionToolbarIconClass} />
+            </Button>
+          )}
           <ColorPicker />
           {isRichText && <TextEditorToolbar editor={editor} />}
           <MoreActionsMenu />

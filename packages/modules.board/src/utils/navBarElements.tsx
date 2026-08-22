@@ -11,6 +11,7 @@ import {
   TText,
   Emotions,
   FilePlus,
+  Activity,
 } from '@xipkg/icons';
 import i18n from 'i18next';
 import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/boardTheme';
@@ -115,5 +116,12 @@ export const navBarElements: NavbarElementT[] = [
       return t('navbar.uploadFile');
     },
     icon: <FilePlus className={boardToolbarIconClass} />,
+  },
+  {
+    action: 'activity',
+    get title() {
+      return t('navbar.activities');
+    },
+    icon: <Activity className={boardToolbarIconClass} />,
   },
 ];

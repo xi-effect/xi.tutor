@@ -6,6 +6,7 @@ import { OpacitySizeMenu } from '../popups/Pen/OpacitySizeMenu';
 import { ShapeSet } from '../popups/Shapes/ShapeSet';
 import { ColorSet } from '../popups/Sticker/ColorSet';
 import { ArrowSet } from '../popups/Arrows/ArrowSet';
+import { ActivityPicker } from '../../../activities';
 import { BoardDrawer, useBoardIsMobile } from '../shared';
 
 type ToolbarSticker = {
@@ -54,6 +55,7 @@ export const ToolbarOptionsPanel = ({
     sticker: t('navbar.sticker'),
     arrow: t('navbar.arrow'),
     emoji: t('navbar.emoji'),
+    activity: t('navbar.activities'),
   };
 
   const content = (
@@ -68,6 +70,9 @@ export const ToolbarOptionsPanel = ({
         <ColorSet className={isMobile ? drawerPanelClass : undefined} />
       )}
       {activePopup === 'arrow' && <ArrowSet className={isMobile ? drawerPanelClass : undefined} />}
+      {activePopup === 'activity' && (
+        <ActivityPicker className={isMobile ? drawerPanelClass : undefined} onClose={onClose} />
+      )}
       {activePopup === 'emoji' && (
         <EmojiPickerPopup
           recentEmojis={recentEmojis}

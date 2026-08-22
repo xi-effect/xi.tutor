@@ -41,6 +41,7 @@ const toolPopupIdByAction: Record<string, string> = {
   sticker: 'sticker',
   arrow: 'arrow',
   emoji: 'emoji',
+  activity: 'activity',
 };
 
 export const Navbar = track(
@@ -191,7 +192,8 @@ export const Navbar = track(
     const currentTool = getCurrentTool();
 
     const renderToolbarItem = (item: NavbarElementT) => {
-      const isActive = item.action === currentTool;
+      const isActive =
+        item.action === 'activity' ? activePopup === 'activity' : item.action === currentTool;
 
       if (
         item.action === 'select' ||
