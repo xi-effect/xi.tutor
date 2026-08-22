@@ -11,7 +11,23 @@ export {
   StudentsQueryKey,
 } from './src/tutor';
 export { studentApiConfig, StudentQueryKey } from './src/student';
-export { filesApiConfig, FilesQueryKey, getFileUrl } from './src/files';
+export {
+  filesApiConfig,
+  FilesQueryKey,
+  getFileUrl,
+  type FileKind,
+  type FileResponse,
+  type UploadFileBody,
+  type UploadUncategorizedFileBody,
+  type UploadImageFileBody,
+  type UploadDocumentFileBody,
+  type UploadAudioFileBody,
+  type UploadPresentationFileBody,
+  type UploadFileResponse,
+  type FileMetaResponse,
+  type ContentTokenHeaders,
+  type ReadFileHeaders,
+} from './src/files';
 export { onboardingApiConfig } from './src/onboarding';
 export { getClassroomDisplayName } from './src/getClassroomDisplayName';
 export type { ClassroomDisplayNameSource } from './src/getClassroomDisplayName';

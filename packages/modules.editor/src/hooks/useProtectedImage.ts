@@ -45,7 +45,7 @@ export const useProtectedImage = (src: string, storageToken: string) => {
         const response = await axiosInst.get(srcUrl, {
           responseType: 'blob',
           headers: {
-            'x-storage-token': storageToken,
+            'x-content-token': storageToken,
           },
         });
 

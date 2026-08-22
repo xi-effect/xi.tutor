@@ -17,7 +17,7 @@ async function fulfillJson(route: Route, status: number, body: unknown) {
     headers: {
       'Access-Control-Allow-Origin': 'http://localhost:5173',
       'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Allow-Headers': 'content-type,x-storage-token',
+      'Access-Control-Allow-Headers': 'content-type,x-content-token',
       'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
     },
     body: JSON.stringify(body),
@@ -30,7 +30,7 @@ async function fulfillCorsPreflight(route: Route) {
     headers: {
       'Access-Control-Allow-Origin': 'http://localhost:5173',
       'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Allow-Headers': 'content-type,x-storage-token',
+      'Access-Control-Allow-Headers': 'content-type,x-content-token',
       'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
     },
   });
