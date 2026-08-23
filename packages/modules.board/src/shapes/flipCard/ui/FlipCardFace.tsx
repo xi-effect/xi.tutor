@@ -52,6 +52,11 @@ export const FlipCardFace = ({
   const bgClass = isFront ? 'bg-orange-20 ring-orange-40 ring' : 'bg-gray-0 ring-orange-20 ring-2';
   const labelStyle = { width: cardWidth, height: textAreaHeight };
 
+  const canUseRichTextLabel = isThisFaceActive || !isEditing;
+  const showRichTextLabel = !isEmpty && canUseRichTextLabel;
+  const showPlainFallback = !isEmpty && !canUseRichTextLabel;
+  const showEmptyCaret = isEmpty && isEditing && isThisFaceActive;
+
   return (
     <div
       className="absolute inset-0"
@@ -82,7 +87,7 @@ export const FlipCardFace = ({
           className="relative flex w-full shrink-0 items-center justify-center overflow-hidden"
           style={{ height: textAreaHeight }}
         >
-          {isEmpty && isEditing && isThisFaceActive && (
+          {showEmptyCaret && (
             <EmptyLabelCaret
               fontFamily="draw_draw, sans-serif"
               fontSize={LABEL_FONT_SIZE * cardScale}
@@ -95,7 +100,8 @@ export const FlipCardFace = ({
               onActivate={onStartEditing}
             />
           )}
-          {(!isEmpty || (isEditing && isThisFaceActive)) && (
+
+          {(showRichTextLabel || (isEditing && isThisFaceActive)) && (
             <RichTextLabel
               shapeId={shapeId}
               type="flip-card"
@@ -113,6 +119,28 @@ export const FlipCardFace = ({
               showTextOutline={false}
               style={labelStyle}
             />
+          )}
+
+          {showPlainFallback && (
+            <div
+              className="overflow-hidden"
+              style={{
+                width: cardWidth,
+                height: textAreaHeight,
+                fontSize: fitFontSize,
+                lineHeight: LABEL_LINE_HEIGHT,
+                padding: LABEL_PADDING,
+                textAlign: 'center',
+                whiteSpace: 'pre-wrap',
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word',
+                fontFamily: 'draw_draw, sans-serif',
+                color: 'black',
+                boxSizing: 'border-box',
+              }}
+            >
+              {plainText}
+            </div>
           )}
         </div>
       </div>
