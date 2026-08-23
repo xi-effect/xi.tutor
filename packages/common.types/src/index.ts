@@ -23,10 +23,15 @@ export type {
   NotificationSearchRequest,
 } from './notifications';
 export type {
+  MaterialId,
+  YDocContentKind,
   MaterialT,
+  PersonalMaterialResponse,
+  ClassroomMaterialResponse,
   UpdateMaterialDataT,
   ClassroomMaterialsT,
   AccessModeT,
+  ContentYDocItem,
   StorageItemT,
   MaterialActionsMenuPropsT,
   MaterialPropsT,

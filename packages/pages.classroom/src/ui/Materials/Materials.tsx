@@ -53,12 +53,12 @@ export const Materials = () => {
 
   const tutorList = useGetClassroomMaterialsList({
     classroomId: classroomId || '',
-    content_type: contentType,
+    content_kind: contentType,
     disabled: !classroomId || !roleReady || !isTutor,
   });
   const studentList = useGetClassroomMaterialsListStudent({
     classroomId: classroomId || '',
-    content_type: contentType,
+    content_kind: contentType,
     disabled: !classroomId || !roleReady || isTutor,
   });
 

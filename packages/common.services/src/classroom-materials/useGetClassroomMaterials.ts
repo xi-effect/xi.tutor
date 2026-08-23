@@ -1,26 +1,27 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
+import { YDocContentKind } from 'common.types';
 
 interface ClassroomMaterialsSearchParams {
   classroomId: string;
-  content_type?: string | null;
+  content_kind?: YDocContentKind | null;
   limit?: number;
   cursor?: {
-    created_at: string;
+    updated_at: string;
   };
 }
 
 interface ClassroomMaterialsResponse {
   data: Array<{
     id: string;
-    content_kind: 'note' | 'board';
+    content_kind: YDocContentKind;
     name: string;
-    createdAt: string;
+    updated_at: string;
   }>;
   pagination: {
     has_more: boolean;
     next_cursor?: {
-      created_at: string;
+      updated_at: string;
     };
   };
 }
@@ -29,7 +30,7 @@ export const useGetClassroomMaterials = (
   params: ClassroomMaterialsSearchParams,
   disabled?: boolean,
 ) => {
-  const { classroomId, content_type = null, limit = 50, cursor } = params;
+  const { classroomId, content_kind = null, limit = 50, cursor } = params;
 
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
@@ -45,17 +46,15 @@ export const useGetClassroomMaterials = (
     data: {
       cursor,
       limit,
-      filters: {
-        content_type,
-      },
+      filters: content_kind ? { content_kind } : {},
     },
     disabled: disabled || !classroomId,
     queryKey: [
       ClassroomMaterialsQueryKey.ClassroomMaterials,
       classroomId,
-      content_type || 'all',
+      content_kind || 'all',
       limit,
-      cursor?.created_at || 'initial',
+      cursor?.updated_at || 'initial',
     ],
   });
 

@@ -7,7 +7,7 @@ export const useNavigateToMaterial = () => {
 
   const getFilteredSearch = () => (search.call ? { call: search.call } : {});
 
-  const navigateToMaterial = (id: number, contentKind: string) => {
+  const navigateToMaterial = (id: string, contentKind: string) => {
     const filteredSearch = getFilteredSearch();
 
     if (classroomId) {
@@ -17,9 +17,7 @@ export const useNavigateToMaterial = () => {
           : '/classrooms/$classroomId/notes/$noteId';
 
       const params =
-        contentKind === 'board'
-          ? { classroomId, boardId: id.toString() }
-          : { classroomId, noteId: id.toString() };
+        contentKind === 'board' ? { classroomId, boardId: id } : { classroomId, noteId: id };
 
       navigate({
         to: route,

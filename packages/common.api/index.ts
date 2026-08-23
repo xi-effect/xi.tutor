@@ -33,6 +33,7 @@ export { getClassroomDisplayName } from './src/getClassroomDisplayName';
 export type { ClassroomDisplayNameSource } from './src/getClassroomDisplayName';
 export type {
   MaterialsKindT,
+  YDocContentKind,
   OnboardingStageT,
   OnboardingTransitionModeT,
   ClassroomStatusT,

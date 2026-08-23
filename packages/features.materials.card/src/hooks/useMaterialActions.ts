@@ -7,7 +7,7 @@ import {
 import { AccessModeT, UpdateMaterialDataT } from 'common.types';
 
 export const useMaterialActions = (
-  id: number,
+  id: string,
   contentKind: string,
   name: string,
   classroomId?: string,
@@ -20,7 +20,7 @@ export const useMaterialActions = (
   const handleDelete = (options?: { onSuccess?: () => void }) => {
     deleteMaterials.mutate(
       {
-        id: id.toString(),
+        id,
         content_kind: contentKind as 'note' | 'board',
         name,
       },
@@ -34,7 +34,7 @@ export const useMaterialActions = (
     deleteClassroomMaterials.mutate(
       {
         classroomId,
-        id: id.toString(),
+        id,
         content_kind: contentKind as 'note' | 'board',
         name,
       },
@@ -47,7 +47,7 @@ export const useMaterialActions = (
 
     updateClassroomMaterial.mutate({
       classroomId,
-      id: id.toString(),
+      id,
       data: {
         student_access_mode: newAccessMode,
       },
@@ -55,7 +55,7 @@ export const useMaterialActions = (
   };
 
   const handleUpdateName = (
-    type: 'tutor' | 'classroom',
+    type: 'personal' | 'classroom',
     newName: UpdateMaterialDataT['name'],
     onNameUpdated: () => void,
   ) => {
@@ -69,7 +69,7 @@ export const useMaterialActions = (
       updateClassroomMaterial.mutate(
         {
           classroomId,
-          id: id.toString(),
+          id,
           data: { name: newName },
         },
         { onSuccess },
@@ -79,7 +79,7 @@ export const useMaterialActions = (
 
     updateMaterial.mutate(
       {
-        id: id.toString(),
+        id,
         data: { name: newName },
       },
       { onSuccess },

@@ -37,7 +37,7 @@ const getClassroomTitle = (classroom: ClassroomT) =>
   classroom.name_override?.trim() || classroom.name;
 
 type MaterialsDuplicateProps = {
-  materialId: number;
+  materialId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -159,7 +159,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
   const [studentAccessMode, setStudentAccessMode] = useState<AccessModeT>('read_write');
 
   const { data: material, isLoading: isMaterialLoading } = useGetMaterial({
-    id: materialId.toString(),
+    id: materialId,
     disabled: !open || !materialId,
   });
 

@@ -1,20 +1,16 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
-import { ClassroomMaterialsT } from 'common.types';
+import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 
 interface ClassroomMaterialsListParams {
   classroomId: string;
-  content_type?: string | null;
+  content_kind?: YDocContentKind | null;
   disabled?: boolean;
 }
 
-/**
- * Упрощенный хук для получения первых 50 материалов кабинета
- * Автоматически устанавливает limit=50 и не требует передачи cursor
- */
 export const useGetClassroomMaterialsListStudent = ({
   classroomId,
-  content_type = null,
+  content_kind = null,
   disabled = false,
 }: ClassroomMaterialsListParams) => {
   const { data, isError, isLoading, ...rest } = useFetching({
@@ -31,15 +27,13 @@ export const useGetClassroomMaterialsListStudent = ({
     },
     data: {
       limit: 50,
-      filters: {
-        content_type,
-      },
+      filters: content_kind ? { content_kind } : {},
     },
     disabled: disabled || !classroomId,
     queryKey: [
       ClassroomMaterialsQueryKey.ClassroomMaterialsStudent,
       classroomId,
-      content_type || 'all',
+      content_kind || 'all',
       'list',
     ],
   });

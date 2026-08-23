@@ -1,5 +1,5 @@
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
-import { StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { useFetching } from 'common.config';
 
 export const useGetStorageItem = ({ id, disabled }: { id: string; disabled?: boolean }) => {
@@ -16,7 +16,7 @@ export const useGetStorageItem = ({ id, disabled }: { id: string; disabled?: boo
   });
 
   return {
-    data: data as StorageItemT,
+    data: data as ContentYDocItem,
     isError,
     isLoading,
     ...rest,

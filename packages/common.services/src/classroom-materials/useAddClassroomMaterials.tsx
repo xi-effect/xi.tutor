@@ -7,7 +7,7 @@ import i18n from 'i18next';
 interface ClassroomMaterialsResponseT {
   data: ClassroomMaterialsDataT & {
     id: string;
-    createdAt: string;
+    updated_at: string;
   };
 }
 

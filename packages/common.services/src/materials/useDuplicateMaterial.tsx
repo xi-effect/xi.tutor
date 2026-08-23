@@ -1,15 +1,15 @@
-import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
+import { ClassroomMaterialsQueryKey, materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
-import { AccessModeT } from 'common.types';
+import { AccessModeT, MaterialId } from 'common.types';
 import i18n from 'i18next';
 
 interface DuplicateMaterialParams {
   classroomId: string;
   name: string;
   student_access_mode: AccessModeT;
-  source_id: number;
+  source_id: MaterialId;
 }
 
 interface DuplicateMaterialResponse {
@@ -17,7 +17,7 @@ interface DuplicateMaterialResponse {
     id: string;
     name: string;
     content_kind: 'note' | 'board';
-    createdAt: string;
+    updated_at: string;
   };
 }
 
@@ -56,10 +56,12 @@ export const useDuplicateMaterial = () => {
         throw err;
       }
     },
-    onMutate: async () => {
-      // Отменяем все queries для материалов кабинета
+    onMutate: async (params) => {
       await queryClient.cancelQueries({
         queryKey: [MaterialsQueryKey.Materials],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, params.classroomId],
       });
 
       return { previousQueries: [] };
@@ -67,11 +69,13 @@ export const useDuplicateMaterial = () => {
     onError: (err) => {
       handleError(err, 'materials');
     },
-    onSuccess: (response) => {
+    onSuccess: (response, params) => {
       if (response.data) {
-        // Инвалидируем queries для материалов
         queryClient.invalidateQueries({
           queryKey: [MaterialsQueryKey.Materials],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, params.classroomId],
         });
       }
 

@@ -53,7 +53,7 @@ export const Note = () => {
   });
 
   if (isLoading) return <LoadingScreen />;
-  if (isError || !storageItem?.ydoc_id || !storageItem?.storage_token) {
+  if (isError || !storageItem?.ydoc_id || !storageItem?.content_token) {
     return <NotFoundPage withLogo={false} />;
   }
 

@@ -1,18 +1,18 @@
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
-import { ClassroomMaterialsT } from 'common.types';
+import { PersonalMaterialResponse, YDocContentKind } from 'common.types';
 
 interface MaterialsListParams {
-  content_type?: string | null;
+  content_kind?: YDocContentKind | null;
   disabled?: boolean;
 }
 
 /**
- * Упрощенный хук для получения первых 50 материалов кабинета
- * Автоматически устанавливает limit=50 и не требует передачи cursor
+ * Первая страница personal materials.
+ * list/search ручки нет в приложенном OpenAPI — запрос идёт на аналогичный searches path.
  */
 export const useGetMaterialsList = ({
-  content_type = null,
+  content_kind = null,
   disabled = false,
 }: MaterialsListParams) => {
   const { data, isError, isLoading, ...rest } = useFetching({
@@ -25,16 +25,14 @@ export const useGetMaterialsList = ({
     },
     data: {
       limit: 50,
-      filters: {
-        content_type,
-      },
+      filters: content_kind ? { content_kind } : {},
     },
     disabled: disabled,
-    queryKey: [MaterialsQueryKey.Materials, content_type || 'all', 'list'],
+    queryKey: [MaterialsQueryKey.Materials, content_kind || 'all', 'list'],
   });
 
   return {
-    data: data as ClassroomMaterialsT[],
+    data: data as PersonalMaterialResponse[],
     isError,
     isLoading,
     ...rest,
