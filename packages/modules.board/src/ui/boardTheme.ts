@@ -37,6 +37,13 @@ export const boardMenuSubTriggerClass = cn(
  */
 export const boardIconClass = 'text-text-primary! [&_path]:fill-current!';
 
+/** Кнопки плавающей панели выделения */
+export const boardSelectionToolbarButtonClass =
+  'hover:bg-status-info-background data-[state=open]:bg-status-info-background h-8 w-8 shrink-0 rounded-lg p-0';
+
+/** Иконки плавающей панели выделения */
+export const boardSelectionToolbarIconClass = 'size-5 shrink-0';
+
 /** Единый размер иконок в нижнем тулбаре доски */
 export const boardToolbarIconClass = cn(boardIconClass, 'size-7! shrink-0 sm:size-6!');
 

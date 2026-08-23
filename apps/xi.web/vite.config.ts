@@ -11,6 +11,7 @@ import {
   callsLocalDevConfig,
   readCallsDepsMode,
 } from './vite.calls-local.ts';
+import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +25,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
 
   const config = {
     plugins: [
+      paddleOcrCjsInteropPlugin(),
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
@@ -61,6 +63,13 @@ export default defineConfig(({ mode }: ConfigEnv) => {
           skipWaiting: true,
           clientsClaim: true,
           globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
+          globIgnores: [
+            '**/*paddleocr*',
+            '**/*opencv*',
+            '**/*onnxruntime*',
+            '**/*ort-wasm*',
+            '**/*worker-entry*',
+          ],
           maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/deployments\/.*/],
@@ -108,6 +117,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         'react-i18next',
         ...(useCallsLink ? CALLS_RUNTIME_DEPS : []),
       ],
+      exclude: ['@paddleocr/paddleocr-js'],
     },
     server: {
       hmr: {

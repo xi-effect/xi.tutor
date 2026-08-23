@@ -6,10 +6,18 @@ import type { RenderTask } from 'pdfjs-dist';
 import { useYjsContext } from '../../providers/YjsContext';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { insertImage } from '../../features/pickAndInsertImage';
+import {
+  canvasToOcrBlob,
+  OcrImageLoadError,
+  recognizeBoardPdfPageText,
+  useOcrProcessingStore,
+  type OcrLanguage,
+} from '../../ocr';
 import { pdfDocCache } from './pdfDocCache';
 import { PdfPageControls } from './PdfPageControls';
 import type { PdfShape } from './PdfShape';
 import { PDF_PAGES_VISIBLE_MAX, PDF_PAGES_VISIBLE_MIN } from './PdfShape';
+import { RecognizePrintedTextControl } from '../../ui/components/toolbar/RecognizeTextMenu';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 
@@ -294,6 +302,23 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     editor,
   ]);
 
+  const isOcrProcessing = useOcrProcessingStore((state) => state.isProcessing(shape.id));
+
+  const getCurrentPageBlob = useCallback(async () => {
+    const canvas = canvasRefs.current[0];
+    if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
+      throw new OcrImageLoadError('Current PDF page is not rendered');
+    }
+    return canvasToOcrBlob(canvas);
+  }, []);
+
+  const handleRecognizePrintedText = useCallback(
+    (language: OcrLanguage) => {
+      void recognizeBoardPdfPageText(editor, shape.id, getCurrentPageBlob, language);
+    },
+    [editor, getCurrentPageBlob, shape.id],
+  );
+
   const handlePagesVisibleChange = useCallback(
     (n: number) => {
       editor.updateShape<PdfShape>({
@@ -359,6 +384,11 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
             {t('pdf.loading')}
           </div>
         )}
+        {isOcrProcessing && (
+          <div className="bg-background-surface/70 pointer-events-none absolute inset-0 z-6 flex items-center justify-center">
+            <span className="text-text-primary text-xs select-none">{t('ocr.processing')}</span>
+          </div>
+        )}
         {Array.from({ length: pagesVisible }, (_, i) => {
           const pageNum = displayPage + i;
           const inRange = pageNum <= totalPages;
@@ -387,6 +417,15 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         disabled={!canFlip}
         onPageChange={handlePageChange}
         onExtractPage={!isReadonly && !loading ? handleExtractPage : undefined}
+        recognizeControl={
+          !isReadonly && !loading ? (
+            <RecognizePrintedTextControl
+              processingId={shape.id}
+              onRecognize={handleRecognizePrintedText}
+              title={t('pdf.recognizePrintedText')}
+            />
+          ) : undefined
+        }
         pagesVisible={pagesVisible}
         onPagesVisibleChange={!isReadonly ? handlePagesVisibleChange : undefined}
       />

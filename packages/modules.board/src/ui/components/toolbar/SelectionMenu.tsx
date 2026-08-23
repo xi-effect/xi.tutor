@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { track, useEditor } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Locked, Unlocked } from '@xipkg/icons';
+import { boardSelectionToolbarButtonClass, boardSelectionToolbarIconClass } from '../../boardTheme';
 import { MoreActionsMenu } from './MoreActionsMenu';
 import { ColorPicker } from './ColorPicker';
 import { useYjsContext } from '../../../providers/YjsProvider';
@@ -66,7 +67,7 @@ export const SelectionMenu = track(function SelectionMenu() {
 
   return (
     <div
-      className="border-border-default bg-background-surface pointer-events-auto absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
+      className="border-border-default bg-background-surface pointer-events-auto absolute z-30 flex items-center gap-0.5 rounded-xl border p-1 shadow-md"
       style={{
         left: centerX,
         top: topY,
@@ -83,13 +84,13 @@ export const SelectionMenu = track(function SelectionMenu() {
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
             title={t('toolbar.unlock', { modKey })}
           >
-            <Unlocked />
+            <Unlocked className={boardSelectionToolbarIconClass} />
           </Button>
           <MoreActionsMenu />
         </>
@@ -98,31 +99,31 @@ export const SelectionMenu = track(function SelectionMenu() {
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={handleDuplicate}
             title={t('toolbar.duplicate')}
           >
-            <Copy />
+            <Copy className={boardSelectionToolbarIconClass} />
           </Button>
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={handleDelete}
             title={t('toolbar.delete')}
           >
-            <Trash />
+            <Trash className={boardSelectionToolbarIconClass} />
           </Button>
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
             title={t('toolbar.lock', { modKey })}
           >
-            <Locked />
+            <Locked className={boardSelectionToolbarIconClass} />
           </Button>
           {isGeo && <BorderPicker />}
           {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
