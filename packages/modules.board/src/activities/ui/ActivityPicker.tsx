@@ -1,43 +1,105 @@
+import { useEffect, useRef, useState } from 'react';
 import { useEditor } from '@ibodr/draw';
+import { Button } from '@xipkg/button';
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+} from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
+import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { ACTIVITY_KINDS, type ActivityKind } from '../model/kinds';
 import { insertActivity } from '../shape/insertActivity';
+import { ACTIVITY_KIND_ICONS } from './activityKindIcons';
+import { ActivityMotionItem, ActivityMotionList } from './activityUiMotion';
 
-const rowClass = cn(
-  'bg-transparent hover:bg-background-page text-text-primary flex w-full items-center rounded-lg px-2 py-1.5 text-left text-sm font-medium transition-colors',
-);
+const PORTAL_Z = 9999;
 
 export function ActivityPicker({
-  className,
-  onClose,
+  open,
+  onOpenChange,
 }: {
-  className?: string;
-  onClose?: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
   const { t } = useTranslation('board');
   const editor = useEditor();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [portalReady, setPortalReady] = useState(false);
+
+  useEffect(() => {
+    const el = document.createElement('div');
+    el.style.position = 'relative';
+    el.style.zIndex = String(PORTAL_Z);
+    document.body.appendChild(el);
+    containerRef.current = el;
+    setPortalReady(true);
+    return () => {
+      document.body.removeChild(el);
+      containerRef.current = null;
+    };
+  }, []);
+
+  const addKind = (kind: ActivityKind) => {
+    insertActivity(editor, kind);
+    onOpenChange(false);
+  };
+
+  if (!portalReady) return null;
 
   return (
-    <div
-      className={cn(
-        'border-border-default bg-background-surface flex w-70 max-w-[calc(100vw-3rem)] flex-col gap-0.5 rounded-xl border p-1 shadow-none',
-        className,
-      )}
-    >
-      {ACTIVITY_KINDS.map((kind: ActivityKind) => (
-        <button
-          key={kind}
-          type="button"
-          className={rowClass}
-          onClick={() => {
-            insertActivity(editor, kind);
-            onClose?.();
-          }}
-        >
-          {t(`activity.kinds.${kind}`)}
-        </button>
-      ))}
-    </div>
+    <Modal open={open} onOpenChange={onOpenChange}>
+      <ModalContent
+        className="max-w-4xl"
+        portalProps={{ container: containerRef.current ?? undefined }}
+        aria-describedby={undefined}
+      >
+        <ModalHeader>
+          <ModalCloseButton />
+          <ModalTitle className={modalTitleClass}>{t('activity.picker.title')}</ModalTitle>
+        </ModalHeader>
+        <ModalBody className="max-h-[min(72dvh,40rem)] overflow-y-auto">
+          <ActivityMotionList className="grid gap-3 sm:grid-cols-2">
+            {ACTIVITY_KINDS.map((kind) => {
+              const Icon = ACTIVITY_KIND_ICONS[kind];
+              return (
+                <ActivityMotionItem key={kind}>
+                  <Button
+                    type="button"
+                    variant="none"
+                    className={cn(
+                      'border-border-default hover:bg-status-info-background h-auto w-full items-start justify-start gap-3 rounded-xl border p-3 text-left whitespace-normal',
+                    )}
+                    onClick={() => addKind(kind)}
+                  >
+                    <span className="bg-background-subtle text-icon-primary flex size-12 shrink-0 items-center justify-center rounded-lg">
+                      <Icon className="size-7" />
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                      <span className="text-text-primary text-sm font-medium">
+                        {t(`activity.kinds.${kind}`)}
+                      </span>
+                      <span className="text-text-secondary text-xs leading-snug">
+                        {t(`activity.catalog.${kind}.description`)}
+                      </span>
+                      <span className="text-text-secondary text-xs leading-snug">
+                        <span className="text-text-primary font-medium">
+                          {t('activity.picker.mechanics')}:{' '}
+                        </span>
+                        {t(`activity.catalog.${kind}.mechanics`)}
+                      </span>
+                    </span>
+                  </Button>
+                </ActivityMotionItem>
+              );
+            })}
+          </ActivityMotionList>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 }

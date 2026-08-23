@@ -1,9 +1,15 @@
 import { Button } from '@xipkg/button';
+import { ArrowBottom, ArrowUp } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
 import type { ActivityAttempt, CheckStatus, OrderingDefinition } from '../../model/types';
-import { activityCardClass, activityFieldClass } from '../activityUi';
+import { activityCardClass, activityStatusBorderClass } from '../activityUi';
+import { ActivityInputField } from '../activityFields';
+import { ActivityImage, ActivityImageField } from '../ActivityImage';
 import { itemStatus } from '../../primitives/itemStatus';
+import { cn } from '@xipkg/utils';
+import { motion } from 'motion/react';
+import { ActivityMotionList, activityItemTransition } from '../activityUiMotion';
 
 type Props = {
   definition: OrderingDefinition;
@@ -13,6 +19,7 @@ type Props = {
   mode: 'edit' | 'play';
   onDefinition: (definition: OrderingDefinition) => void;
   onAttempt: (attempt: ActivityAttempt) => void;
+  interactLocked?: boolean;
 };
 
 export function OrderingActivity({
@@ -23,28 +30,40 @@ export function OrderingActivity({
   mode,
   onDefinition,
   onAttempt,
+  interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
-  const locked = checkStatus === 'revealed';
+  const locked = checkStatus === 'revealed' || interactLocked;
   const order = attempt.order.length ? attempt.order : definition.items.map((item) => item.id);
   const itemsById = new Map(definition.items.map((item) => [item.id, item]));
 
   if (mode === 'edit') {
     return (
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex flex-col gap-2 p-3">
         <p className="text-text-secondary text-xs">{t('activity.orderingHint')}</p>
         {definition.items.map((item, index) => (
-          <div key={item.id} className="flex gap-1">
-            <span className="text-text-secondary w-4 text-xs">{index + 1}</span>
-            <input
-              data-board-control=""
-              className={activityFieldClass}
-              value={item.text}
-              onChange={(event) =>
+          <div key={item.id} className="flex flex-col gap-1">
+            <div className="flex gap-1">
+              <span className="text-text-secondary w-4 text-xs">{index + 1}</span>
+              <ActivityInputField
+                value={item.text}
+                onChange={(event) =>
+                  onDefinition({
+                    ...definition,
+                    items: definition.items.map((entry) =>
+                      entry.id === item.id ? { ...entry, text: event.target.value } : entry,
+                    ),
+                  })
+                }
+              />
+            </div>
+            <ActivityImageField
+              value={item.imageSrc}
+              onChange={(imageSrc) =>
                 onDefinition({
                   ...definition,
                   items: definition.items.map((entry) =>
-                    entry.id === item.id ? { ...entry, text: event.target.value } : entry,
+                    entry.id === item.id ? { ...entry, imageSrc } : entry,
                   ),
                 })
               }
@@ -52,9 +71,9 @@ export function OrderingActivity({
           </div>
         ))}
         <Button
-          variant="none"
+          variant="default"
           size="s"
-          className="h-6 self-start px-2 text-xs"
+          className="h-7 self-start px-3 text-xs"
           data-board-control=""
           onClick={() =>
             onDefinition({
@@ -80,36 +99,54 @@ export function OrderingActivity({
   };
 
   return (
-    <div className="flex flex-col gap-1 p-2">
+    <ActivityMotionList className="flex flex-col gap-1 p-3">
       {order.map((id, index) => {
         const item = itemsById.get(id);
         if (!item) return null;
         return (
-          <div
+          <motion.div
             key={id}
-            className={`${activityCardClass} flex items-center gap-2 ${itemStatus(checkStatus, byItem, id) === 'correct' ? 'ring-2 ring-green-600/70' : ''} ${itemStatus(checkStatus, byItem, id) === 'wrong' ? 'ring-2 ring-red-600/70' : ''}`}
+            layout
+            variants={{
+              hidden: { opacity: 0, y: 10, scale: 0.96 },
+              show: { opacity: 1, y: 0, scale: 1 },
+            }}
+            transition={activityItemTransition}
+            whileHover={locked ? undefined : { scale: 1.01 }}
+            className={cn(
+              activityCardClass,
+              'flex items-center gap-2',
+              activityStatusBorderClass[itemStatus(checkStatus, byItem, id)],
+            )}
           >
             <span className="text-text-secondary w-4 text-xs">{index + 1}</span>
+            <ActivityImage src={item.imageSrc} className="size-8 shrink-0 rounded object-cover" />
             <span className="min-w-0 flex-1">{item.text}</span>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="s"
+              className="size-7 p-0"
               data-board-control=""
               disabled={locked}
               onClick={() => move(index, -1)}
             >
-              ↑
-            </button>
-            <button
+              <ArrowUp size="sm" className="fill-icon-secondary size-4" />
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="s"
+              className="size-7 p-0"
               data-board-control=""
               disabled={locked}
               onClick={() => move(index, 1)}
             >
-              ↓
-            </button>
-          </div>
+              <ArrowBottom size="sm" className="fill-icon-secondary size-4" />
+            </Button>
+          </motion.div>
         );
       })}
-    </div>
+    </ActivityMotionList>
   );
 }

@@ -81,7 +81,7 @@ export type MysteryTilesDefinition = {
   tiles: MysteryTile[];
 };
 
-export type RandomCardItem = { id: string; text: string };
+export type RandomCardItem = { id: string; text: string; imageSrc?: string; color?: string };
 
 export type RandomCardDefinition = {
   kind: 'random-card';

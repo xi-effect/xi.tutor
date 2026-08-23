@@ -23,6 +23,17 @@ import { useCurrentUser } from 'common.services';
 import { useCopyBoardDeepLink } from '../../../hooks';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
+import {
+  ActivityActionMenuItems,
+  getActivityKindSettings,
+  getActivityMenuActions,
+  runActivityMenuAction,
+  selectedActivityShapes,
+  studentAccessItems,
+  STUDENT_ACCESS_LABEL_KEYS,
+  toggleStudentAccess,
+  useActivityEditStore,
+} from '../../../activities';
 import { isMac } from '../../../utils';
 import { PNG_EXPORT_PIXEL_RATIO } from '../../../utils/shapeSvgExport';
 import { useTranslation } from 'react-i18next';
@@ -78,6 +89,21 @@ export const MoreActionsMenu = () => {
     selectedShapes.length === 1 && selectedShapes[0].type === 'audio'
       ? (selectedShapes[0] as AudioShape)
       : null;
+
+  const selectedActivities = selectedActivityShapes(selectedShapes);
+  const editingIds = useActivityEditStore((state) => state.editingIds);
+  const allActivitiesEditing =
+    selectedActivities.length > 0 &&
+    selectedActivities.every((shape) => Boolean(editingIds[shape.id]));
+  const activityActions = getActivityMenuActions({
+    t: (key) => t(key),
+    shapes: selectedActivities,
+    canEdit: isTutor,
+    isTutor,
+    allEditing: allActivitiesEditing,
+  });
+  const activityKindSettings = isTutor ? getActivityKindSettings(selectedActivities) : [];
+  const activityAccessItems = isTutor ? studentAccessItems(selectedActivities) : [];
 
   const selectedImageId =
     selectedShapes.length === 1 && selectedShapes[0].type === 'image' && !selectedShapes[0].isLocked
@@ -229,6 +255,50 @@ export const MoreActionsMenu = () => {
                   onOpen={() => setView('ocr')}
                 />
               )}
+              {selectedActivities.length > 1 && (
+                <p className="text-text-secondary px-1 text-xs leading-snug">
+                  {t('activity.batchHint', { count: selectedActivities.length })}
+                </p>
+              )}
+              {activityActions.map((action) => (
+                <button
+                  key={action.id}
+                  type="button"
+                  className={boardDrawerRowClass}
+                  onClick={() => {
+                    runActivityMenuAction(editor, selectedActivities, action.id);
+                    setOpen(false);
+                  }}
+                >
+                  <span className="text-text-primary text-sm font-medium">{action.label}</span>
+                </button>
+              ))}
+              {activityKindSettings.map((setting) => (
+                <button
+                  key={setting.id}
+                  type="button"
+                  className={boardDrawerRowClass}
+                  onClick={() => setting.apply(editor, selectedActivities)}
+                >
+                  <span className="text-text-primary text-sm font-medium">
+                    {setting.checked ? '✓ ' : ''}
+                    {t(setting.labelKey)}
+                  </span>
+                </button>
+              ))}
+              {activityAccessItems.map((item) => (
+                <button
+                  key={item.key}
+                  type="button"
+                  className={boardDrawerRowClass}
+                  onClick={() => toggleStudentAccess(editor, selectedActivities, item.key)}
+                >
+                  <span className="text-text-primary text-sm font-medium">
+                    {item.checked ? '✓ ' : ''}
+                    {t(STUDENT_ACCESS_LABEL_KEYS[item.key])}
+                  </span>
+                </button>
+              ))}
               {hasTutorItems && isTutor && selectedPdf && (
                 <button
                   type="button"
@@ -472,6 +542,17 @@ export const MoreActionsMenu = () => {
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         {selectedImageId && <RecognizePrintedTextSubmenu shapeId={selectedImageId} />}
+
+        {selectedActivities.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <ActivityActionMenuItems
+              shapes={selectedActivities}
+              canEdit={isTutor}
+              isTutor={isTutor}
+            />
+          </>
+        )}
 
         {hasTutorItems && (
           <>

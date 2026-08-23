@@ -10,6 +10,8 @@ type ColorDotProps = {
 export const ColorDot = ({ colorClass, colorCss, isSelected, onClick }: ColorDotProps) => (
   <button
     type="button"
+    data-board-control=""
+    onPointerDown={(event) => event.stopPropagation()}
     onClick={onClick}
     className={cn(
       'h-6 w-6 shrink-0 cursor-pointer rounded-full transition-all',

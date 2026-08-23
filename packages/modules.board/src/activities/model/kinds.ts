@@ -18,14 +18,14 @@ export function isActivityKind(value: unknown): value is ActivityKind {
 }
 
 export const ACTIVITY_DEFAULT_SIZE: Record<ActivityKind, { w: number; h: number }> = {
-  'gap-text': { w: 560, h: 340 },
-  matching: { w: 560, h: 380 },
-  sorting: { w: 580, h: 400 },
-  ordering: { w: 420, h: 380 },
-  'label-image': { w: 560, h: 440 },
-  'multiple-choice': { w: 460, h: 340 },
-  'mystery-tiles': { w: 420, h: 400 },
-  'random-card': { w: 380, h: 280 },
+  'gap-text': { w: 560, h: 360 },
+  matching: { w: 580, h: 400 },
+  sorting: { w: 600, h: 420 },
+  ordering: { w: 480, h: 400 },
+  'label-image': { w: 580, h: 460 },
+  'multiple-choice': { w: 480, h: 360 },
+  'mystery-tiles': { w: 480, h: 420 },
+  'random-card': { w: 420, h: 320 },
 };
 
-export const ACTIVITY_MIN_SIZE = { w: 280, h: 200 };
+export const ACTIVITY_MIN_SIZE = { w: 280, h: 56 };

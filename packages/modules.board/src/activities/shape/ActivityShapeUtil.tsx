@@ -40,7 +40,7 @@ export class ActivityShapeUtil extends BaseBoxShapeUtil<ActivityShape> {
   }
 
   override toSvg(shape: ActivityShape) {
-    const title = shape.props.kind;
+    const title = (shape.props.title ?? '').trim() || shape.props.kind;
     return (
       <svg width={shape.props.w} height={shape.props.h} xmlns="http://www.w3.org/2000/svg">
         <rect

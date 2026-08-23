@@ -9,8 +9,12 @@ import type {
   MatchingItem,
 } from '../../model/types';
 import { DraggableToken, DropZone } from '../primitives';
-import { activityFieldClass } from '../activityUi';
+import { ActivityInputField } from '../activityFields';
+import { ActivityImage, ActivityImageField } from '../ActivityImage';
 import { itemStatus } from '../../primitives/itemStatus';
+import { activityCardClass, activitySelectedClass, activityStatusBorderClass } from '../activityUi';
+import { cn } from '@xipkg/utils';
+import { ActivityMotionItem, ActivityMotionList } from '../activityUiMotion';
 
 type Props = {
   definition: MatchingDefinition;
@@ -20,6 +24,7 @@ type Props = {
   mode: 'edit' | 'play';
   onDefinition: (definition: MatchingDefinition) => void;
   onAttempt: (attempt: ActivityAttempt) => void;
+  interactLocked?: boolean;
 };
 
 function MediaFields({
@@ -31,18 +36,13 @@ function MediaFields({
 }) {
   return (
     <div className="flex flex-1 flex-col gap-1">
-      <input
-        data-board-control=""
-        className={activityFieldClass}
+      <ActivityInputField
         value={item.text}
         onChange={(event) => onChange({ ...item, text: event.target.value })}
       />
-      <input
-        data-board-control=""
-        className={activityFieldClass}
-        placeholder="https://"
-        value={item.imageSrc ?? ''}
-        onChange={(event) => onChange({ ...item, imageSrc: event.target.value })}
+      <ActivityImageField
+        value={item.imageSrc}
+        onChange={(imageSrc) => onChange({ ...item, imageSrc })}
       />
     </div>
   );
@@ -56,25 +56,15 @@ export function MatchingActivity({
   mode,
   onDefinition,
   onAttempt,
+  interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
   const [fromId, setFromId] = useState<string | null>(null);
-  const locked = checkStatus === 'revealed';
+  const locked = checkStatus === 'revealed' || interactLocked;
 
   if (mode === 'edit') {
     return (
-      <div className="flex flex-col gap-2 p-2">
-        <label className="text-text-secondary flex items-center gap-2 text-xs">
-          <input
-            data-board-control=""
-            type="checkbox"
-            checked={definition.mode === 'drag'}
-            onChange={(event) =>
-              onDefinition({ ...definition, mode: event.target.checked ? 'drag' : 'connect' })
-            }
-          />
-          {t('activity.dragMode')}
-        </label>
+      <div className="flex flex-col gap-2 p-3">
         <div className="grid grid-cols-2 gap-2">
           <div className="flex flex-col gap-2">
             {definition.left.map((item, index) => (
@@ -94,9 +84,9 @@ export function MatchingActivity({
               />
             ))}
             <Button
-              variant="none"
+              variant="default"
               size="s"
-              className="h-6 px-2 text-xs"
+              className="h-7 self-start px-3 text-xs"
               data-board-control=""
               onClick={() => {
                 const left = { id: createActivityId(), text: '' };
@@ -138,17 +128,15 @@ export function MatchingActivity({
   const usedRight = new Set(Object.values(attempt.placements).filter(Boolean));
 
   const renderItem = (item: MatchingItem) => (
-    <div className="flex items-center gap-2">
-      {item.imageSrc ? (
-        <img src={item.imageSrc} alt="" className="h-10 w-10 rounded object-cover" />
-      ) : null}
-      <span>{item.text}</span>
-    </div>
+    <span className="flex min-w-0 items-center gap-2">
+      <ActivityImage src={item.imageSrc} className="size-8 shrink-0 rounded object-cover" />
+      <span className="min-w-0 wrap-break-word">{item.text}</span>
+    </span>
   );
 
   if (definition.mode === 'drag') {
     return (
-      <div className="grid grid-cols-2 gap-3 p-2">
+      <ActivityMotionList className="grid grid-cols-2 items-start gap-3 p-3">
         <div className="flex flex-col gap-2">
           {definition.left.map((item) => {
             const placedId = attempt.placements[item.id];
@@ -162,7 +150,12 @@ export function MatchingActivity({
                   disabled={locked}
                   child={
                     placed ? (
-                      <DraggableToken id={placed.id} label={placed.text} disabled={locked} />
+                      <DraggableToken
+                        id={placed.id}
+                        label={placed.text}
+                        imageSrc={placed.imageSrc}
+                        disabled={locked}
+                      />
                     ) : undefined
                   }
                   onDropToken={(zoneId, tokenId) => {
@@ -183,59 +176,83 @@ export function MatchingActivity({
             .map((id) => rightById.get(id))
             .filter((entry): entry is MatchingItem => entry != null && !usedRight.has(entry.id))
             .map((item) => (
-              <DraggableToken key={item.id} id={item.id} label={item.text} disabled={locked} />
+              <DraggableToken
+                key={item.id}
+                id={item.id}
+                label={item.text}
+                imageSrc={item.imageSrc}
+                disabled={locked}
+              />
             ))}
         </div>
-      </div>
+      </ActivityMotionList>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 p-2">
+    <ActivityMotionList className="grid grid-cols-2 items-start gap-3 p-3">
       <div className="flex flex-col gap-2">
-        {definition.left.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            data-board-control=""
-            disabled={locked}
-            onClick={() => setFromId(item.id)}
-            className={`border-border-default rounded-lg border px-2 py-1.5 text-left text-sm ${fromId === item.id ? 'ring-brand-80 ring-2' : ''} ${itemStatus(checkStatus, byItem, item.id) === 'correct' ? 'ring-2 ring-green-600/70' : ''} ${itemStatus(checkStatus, byItem, item.id) === 'wrong' ? 'ring-2 ring-red-600/70' : ''}`}
-          >
-            {renderItem(item)}
-            {attempt.connections[item.id] ? (
-              <span className="text-text-secondary mt-1 block text-xs">
-                {rightById.get(attempt.connections[item.id] ?? '')?.text}
-              </span>
-            ) : null}
-          </button>
-        ))}
+        {definition.left.map((item) => {
+          const connected = rightById.get(attempt.connections[item.id] ?? '');
+          const status = itemStatus(checkStatus, byItem, item.id);
+          return (
+            <ActivityMotionItem key={item.id}>
+              <Button
+                type="button"
+                variant="none"
+                size="s"
+                data-board-control=""
+                disabled={locked}
+                onClick={() => setFromId(item.id)}
+                className={cn(
+                  activityCardClass,
+                  'h-auto w-full flex-col items-stretch justify-start gap-1 px-2 py-1.5 text-left',
+                  fromId === item.id && activitySelectedClass,
+                  activityStatusBorderClass[status],
+                )}
+              >
+                {renderItem(item)}
+                {connected ? (
+                  <span className="text-text-secondary border-border-default w-full border-t pt-1 text-xs">
+                    {connected.text}
+                  </span>
+                ) : null}
+              </Button>
+            </ActivityMotionItem>
+          );
+        })}
       </div>
       <div className="flex flex-col gap-2">
         {rightOrder.map((id) => {
           const item = rightById.get(id);
           if (!item) return null;
           return (
-            <button
-              key={item.id}
-              type="button"
-              data-board-control=""
-              disabled={locked || !fromId}
-              onClick={() => {
-                if (!fromId) return;
-                onAttempt({
-                  ...attempt,
-                  connections: { ...attempt.connections, [fromId]: item.id },
-                });
-                setFromId(null);
-              }}
-              className="border-border-default rounded-lg border px-2 py-1.5 text-left text-sm"
-            >
-              {renderItem(item)}
-            </button>
+            <ActivityMotionItem key={item.id}>
+              <Button
+                type="button"
+                variant="none"
+                size="s"
+                data-board-control=""
+                disabled={locked || !fromId}
+                onClick={() => {
+                  if (!fromId) return;
+                  onAttempt({
+                    ...attempt,
+                    connections: { ...attempt.connections, [fromId]: item.id },
+                  });
+                  setFromId(null);
+                }}
+                className={cn(
+                  activityCardClass,
+                  'h-auto w-full items-center justify-start px-2 py-1.5 text-left',
+                )}
+              >
+                {renderItem(item)}
+              </Button>
+            </ActivityMotionItem>
           );
         })}
       </div>
-    </div>
+    </ActivityMotionList>
   );
 }

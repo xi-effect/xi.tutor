@@ -417,12 +417,26 @@
   "activity": {
     "edit": "Edit",
     "play": "Practice",
+    "modeEdit": "Editing",
+    "modePlay": "Practice",
+    "renameAria": "Activity name",
+    "renamePlaceholder": "Enter a name",
+    "renameEmpty": "Name cannot be empty",
     "check": "Check",
     "reset": "Reset",
     "reveal": "Show answer",
-    "gapInput": "Gap: type",
-    "gapChoice": "Gap: choose",
-    "gapDrag": "Gap: drag",
+    "studentSection": "Students can",
+    "studentInteract": "Answer",
+    "studentCheck": "Check answers",
+    "studentReset": "Reset attempt",
+    "studentReveal": "See the answer",
+    "batchHint": "Actions will apply to all selected activities ({{count}})",
+    "gapHint": "Select a word in the text, then choose a gap type",
+    "gapInput": "Type",
+    "gapChoice": "Choose",
+    "gapDrag": "Drag",
+    "gapN": "Gap {{n}}",
+    "gapAnswers": "Correct answers, separated by |",
     "choices": "Choices, separated by |",
     "wordBank": "Word bank, separated by |",
     "dragMode": "Drag instead of connecting",
@@ -431,10 +445,17 @@
     "addCategory": "Add category",
     "card": "Card",
     "addCard": "Add card",
+    "removeCard": "Remove card",
+    "cardColor": "Card color",
+    "cardColorNone": "No color",
     "dropHere": "Drop here",
     "orderingHint": "Top-to-bottom order is the correct one.",
-    "imageUrl": "Image URL",
-    "imagePlaceholder": "Click the area to place a hotspot",
+    "uploadImage": "Upload image",
+    "changeImage": "Replace",
+    "removeImage": "Remove",
+    "imageUploading": "Uploading…",
+    "imagePlaceholder": "Upload an image, then click to place a hotspot",
+    "imagePlaceholderPlay": "The image will appear here",
     "label": "Label",
     "distractor": "Extra label",
     "addDistractor": "Add extra label",
@@ -449,6 +470,46 @@
     "draw": "Next",
     "reshuffle": "Reshuffle",
     "drawPrompt": "Press Next",
+    "picker": {
+      "title": "Activities",
+      "mechanics": "How it works",
+      "add": "Add to board",
+      "cancel": "Cancel"
+    },
+    "catalog": {
+      "gap-text": {
+        "description": "A text with blanks: students restore words and phrases right in the sentence.",
+        "mechanics": "Three ways to answer: type, pick from a list, or drag words from a bank into the gaps. You can check and reveal the answers."
+      },
+      "matching": {
+        "description": "Two columns to match by meaning, translation, or image.",
+        "mechanics": "Connect pairs by clicking or drag cards into place. Extra items on the right can work as distractors."
+      },
+      "sorting": {
+        "description": "Cards to sort into categories — topics, parts of speech, or any traits you set.",
+        "mechanics": "Drag a card into the right column. Checking highlights cards that landed in the wrong category."
+      },
+      "ordering": {
+        "description": "Items to put in the correct sequence: steps, timeline, or ranking.",
+        "mechanics": "Move items with the arrows. Top to bottom is the correct order."
+      },
+      "label-image": {
+        "description": "Labels to place on the right spots of an image: a diagram, map, or photo.",
+        "mechanics": "Drag labels onto the hotspots. You can add extra labels as distractors."
+      },
+      "multiple-choice": {
+        "description": "A question with answer options — a short quiz on the board.",
+        "mechanics": "One or several correct answers. Options can be shuffled so each student sees a different order."
+      },
+      "mystery-tiles": {
+        "description": "Hidden tiles that open one by one — useful for revealing a topic step by step.",
+        "mechanics": "Tap a tile to show text or an image. There is no score: this is a reveal format, not a test."
+      },
+      "random-card": {
+        "description": "A random card from a deck: a question, role, or warm-up prompt.",
+        "mechanics": "Next draws a card. You can block repeats until the deck is empty, then reshuffle."
+      }
+    },
     "kinds": {
       "gap-text": "Gap text",
       "matching": "Matching",

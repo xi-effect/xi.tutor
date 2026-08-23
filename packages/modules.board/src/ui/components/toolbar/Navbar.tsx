@@ -8,6 +8,7 @@ import { UndoRedo } from './UndoRedo';
 import { NavbarMobileSwiper } from './NavbarMobileSwiper';
 import { ToolbarOptionsPanel } from './ToolbarOptionsPanel';
 import { useCloseToolbarPanel } from './useCloseToolbarPanel';
+import { ActivityPicker } from '../../../activities';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
@@ -41,7 +42,6 @@ const toolPopupIdByAction: Record<string, string> = {
   sticker: 'sticker',
   arrow: 'arrow',
   emoji: 'emoji',
-  activity: 'activity',
 };
 
 export const Navbar = track(
@@ -68,6 +68,7 @@ export const Navbar = track(
     } = useDrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
+    const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
     const editor = useEditor();
     const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
     const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
@@ -110,6 +111,16 @@ export const Navbar = track(
     const handleSelectTool = (toolName: string) => {
       editor.selectNone();
       setPlacingComment(false);
+
+      if (toolName === 'activity') {
+        if (activePopup && activePopup !== 'pen') resetToDefaults();
+        setActivePopup(null);
+        setActivityPickerOpen((open) => !open);
+        editor.setCurrentTool('select');
+        return;
+      }
+
+      setActivityPickerOpen(false);
 
       const popupId = toolPopupIdByAction[toolName] ?? null;
 
@@ -193,7 +204,7 @@ export const Navbar = track(
 
     const renderToolbarItem = (item: NavbarElementT) => {
       const isActive =
-        item.action === 'activity' ? activePopup === 'activity' : item.action === currentTool;
+        item.action === 'activity' ? activityPickerOpen : item.action === currentTool;
 
       if (
         item.action === 'select' ||
@@ -254,56 +265,59 @@ export const Navbar = track(
     })();
 
     return (
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className={cn(
-            'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
-            boardChromeZClass,
-          )}
-        >
-          <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
-            <div
-              className={cn(
-                boardPanelClass,
-                'absolute -left-[115px] hidden p-1 sm:flex',
-                boardChromeZClass,
-              )}
-            >
-              <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
-            </div>
-            <div
-              data-board-toolbar-ui
-              className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
-            >
-              <ToolbarOptionsPanel
-                activePopup={activePopup}
-                recentEmojis={recentEmojis}
-                stickers={stickers}
-                onEmojiSelect={(emoji) => {
-                  editor.setStyleForNextShapes(EmojiStyle, emoji);
-                  addRecentEmoji(emoji);
-                }}
-                onEmojiStickerSelect={(sticker) => {
-                  editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
-                  editor.setCurrentTool('emoji-sticker');
-                  setActivePopup(null);
-                }}
-                onClose={closeToolbarPanel}
-              />
-              <div className="hidden items-center gap-1 p-1 sm:flex">
-                {toolbarSlides.map(({ key, node }) => (
-                  <div key={key} className="shrink-0">
-                    {node}
-                  </div>
-                ))}
+      <>
+        <ActivityPicker open={activityPickerOpen} onOpenChange={setActivityPickerOpen} />
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className={cn(
+              'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
+              boardChromeZClass,
+            )}
+          >
+            <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
+              <div
+                className={cn(
+                  boardPanelClass,
+                  'absolute -left-[115px] hidden p-1 sm:flex',
+                  boardChromeZClass,
+                )}
+              >
+                <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
               </div>
-              <div className="p-1 sm:hidden">
-                <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+              <div
+                data-board-toolbar-ui
+                className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
+              >
+                <ToolbarOptionsPanel
+                  activePopup={activePopup}
+                  recentEmojis={recentEmojis}
+                  stickers={stickers}
+                  onEmojiSelect={(emoji) => {
+                    editor.setStyleForNextShapes(EmojiStyle, emoji);
+                    addRecentEmoji(emoji);
+                  }}
+                  onEmojiStickerSelect={(sticker) => {
+                    editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+                    editor.setCurrentTool('emoji-sticker');
+                    setActivePopup(null);
+                  }}
+                  onClose={closeToolbarPanel}
+                />
+                <div className="hidden items-center gap-1 p-1 sm:flex">
+                  {toolbarSlides.map(({ key, node }) => (
+                    <div key={key} className="shrink-0">
+                      {node}
+                    </div>
+                  ))}
+                </div>
+                <div className="p-1 sm:hidden">
+                  <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   },
 );

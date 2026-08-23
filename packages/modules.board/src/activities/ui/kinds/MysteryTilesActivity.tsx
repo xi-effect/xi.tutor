@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
 import type { ActivityAttempt, CheckStatus, MysteryTilesDefinition } from '../../model/types';
 import { HiddenContent } from '../primitives';
-import { activityFieldClass } from '../activityUi';
+import { ActivityInputField } from '../activityFields';
+import { ActivityImage, ActivityImageField } from '../ActivityImage';
+import { ActivityMotionItem, ActivityMotionList } from '../activityUiMotion';
 
 type Props = {
   definition: MysteryTilesDefinition;
@@ -12,6 +14,7 @@ type Props = {
   mode: 'edit' | 'play';
   onDefinition: (definition: MysteryTilesDefinition) => void;
   onAttempt: (attempt: ActivityAttempt) => void;
+  interactLocked?: boolean;
 };
 
 export function MysteryTilesActivity({
@@ -20,21 +23,21 @@ export function MysteryTilesActivity({
   mode,
   onDefinition,
   onAttempt,
+  interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
   const columns = Math.max(1, definition.columns);
 
   if (mode === 'edit') {
     return (
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex flex-col gap-2 p-3">
         <label className="text-text-secondary flex items-center gap-2 text-xs">
           {t('activity.columns')}
-          <input
-            data-board-control=""
+          <ActivityInputField
             type="number"
             min={1}
             max={6}
-            className={`${activityFieldClass} w-16`}
+            className="w-16"
             value={definition.columns}
             onChange={(event) =>
               onDefinition({ ...definition, columns: Math.max(1, Number(event.target.value) || 1) })
@@ -42,25 +45,35 @@ export function MysteryTilesActivity({
           />
         </label>
         {definition.tiles.map((tile) => (
-          <input
-            key={tile.id}
-            data-board-control=""
-            className={activityFieldClass}
-            value={tile.text}
-            onChange={(event) =>
-              onDefinition({
-                ...definition,
-                tiles: definition.tiles.map((entry) =>
-                  entry.id === tile.id ? { ...entry, text: event.target.value } : entry,
-                ),
-              })
-            }
-          />
+          <div key={tile.id} className="flex flex-col gap-1">
+            <ActivityInputField
+              value={tile.text}
+              onChange={(event) =>
+                onDefinition({
+                  ...definition,
+                  tiles: definition.tiles.map((entry) =>
+                    entry.id === tile.id ? { ...entry, text: event.target.value } : entry,
+                  ),
+                })
+              }
+            />
+            <ActivityImageField
+              value={tile.imageSrc}
+              onChange={(imageSrc) =>
+                onDefinition({
+                  ...definition,
+                  tiles: definition.tiles.map((entry) =>
+                    entry.id === tile.id ? { ...entry, imageSrc } : entry,
+                  ),
+                })
+              }
+            />
+          </div>
         ))}
         <Button
-          variant="none"
+          variant="default"
           size="s"
-          className="h-6 self-start px-2 text-xs"
+          className="h-7 self-start px-3 text-xs"
           data-board-control=""
           onClick={() =>
             onDefinition({
@@ -76,25 +89,30 @@ export function MysteryTilesActivity({
   }
 
   return (
-    <div
-      className="grid gap-2 p-2"
+    <ActivityMotionList
+      className="grid h-full gap-2 p-3"
       style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
     >
       {definition.tiles.map((tile) => (
-        <HiddenContent
-          key={tile.id}
-          revealed={Boolean(attempt.revealed[tile.id])}
-          onReveal={() =>
-            onAttempt({ ...attempt, revealed: { ...attempt.revealed, [tile.id]: true } })
-          }
-        >
-          {tile.imageSrc ? (
-            <img src={tile.imageSrc} alt="" className="max-h-24 object-contain" />
-          ) : (
-            tile.text
-          )}
-        </HiddenContent>
+        <ActivityMotionItem key={tile.id} hover={false}>
+          <HiddenContent
+            revealed={Boolean(attempt.revealed[tile.id])}
+            disabled={interactLocked}
+            onReveal={() =>
+              onAttempt({ ...attempt, revealed: { ...attempt.revealed, [tile.id]: true } })
+            }
+          >
+            {tile.imageSrc ? (
+              <span className="flex flex-col items-center gap-1">
+                <ActivityImage src={tile.imageSrc} className="max-h-24 object-contain" />
+                {tile.text ? <span>{tile.text}</span> : null}
+              </span>
+            ) : (
+              tile.text
+            )}
+          </HiddenContent>
+        </ActivityMotionItem>
       ))}
-    </div>
+    </ActivityMotionList>
   );
 }

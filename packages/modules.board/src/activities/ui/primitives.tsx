@@ -1,52 +1,78 @@
 import { cn } from '@xipkg/utils';
-import type { ReactNode } from 'react';
+import { Button } from '@xipkg/button';
+import { useEditor } from '@ibodr/draw';
+import { motion } from 'motion/react';
+import { useEffect, type ReactNode, type SyntheticEvent } from 'react';
 import type { ItemStatus } from '../model/types';
-import { ACTIVITY_TOKEN_MIME, useTokenDnd } from './TokenDnd';
-import { activityCardClass, activityFieldClass } from './activityUi';
+import { useTokenDnd } from './TokenDnd';
+import { activityCardClass, activitySelectedClass, activityStatusBorderClass } from './activityUi';
+import { ActivityInputField, ActivitySelectField } from './activityFields';
+import { ActivityImage } from './ActivityImage';
+import { activityHover, activityItemTransition, activityItemVariants } from './activityUiMotion';
 
-const statusClass: Record<ItemStatus, string> = {
-  idle: '',
-  correct: 'ring-2 ring-green-600/70',
-  wrong: 'ring-2 ring-red-600/70',
-};
+const statusClass = activityStatusBorderClass;
+
+function useStopBoardGesture() {
+  const editor = useEditor();
+  return (event: SyntheticEvent) => {
+    editor.markEventAsHandled(event);
+    event.stopPropagation();
+  };
+}
 
 export function DraggableToken({
   id,
   label,
+  imageSrc,
   disabled,
   status = 'idle',
 }: {
   id: string;
   label: string;
+  imageSrc?: string;
   disabled?: boolean;
   status?: ItemStatus;
 }) {
-  const { pickedId, pick } = useTokenDnd();
+  const stopBoardGesture = useStopBoardGesture();
+  const { pickedId, draggedId, beginDrag } = useTokenDnd();
   const picked = pickedId === id;
+  const dragging = draggedId === id;
 
   return (
-    <button
-      type="button"
-      data-board-control=""
-      draggable={!disabled}
-      disabled={disabled}
-      onDragStart={(event) => {
-        event.dataTransfer.setData(ACTIVITY_TOKEN_MIME, id);
-        event.dataTransfer.effectAllowed = 'move';
-      }}
-      onClick={() => {
-        if (!disabled) pick(id);
-      }}
-      className={cn(
-        activityCardClass,
-        'cursor-grab px-2 py-1 active:cursor-grabbing',
-        picked && 'ring-brand-80 ring-2',
-        statusClass[status],
-        disabled && 'cursor-default opacity-70',
-      )}
+    <motion.div
+      layout={!dragging}
+      variants={activityItemVariants}
+      initial="hidden"
+      animate="show"
+      transition={activityItemTransition}
+      whileHover={disabled || dragging ? undefined : activityHover}
+      className="inline-flex"
     >
-      {label}
-    </button>
+      <Button
+        type="button"
+        variant="none"
+        size="s"
+        data-board-control=""
+        data-activity-token={id}
+        disabled={disabled}
+        onPointerDown={(event) => {
+          stopBoardGesture(event);
+          if (disabled || event.button !== 0) return;
+          beginDrag(id, event.clientX, event.clientY);
+        }}
+        className={cn(
+          activityCardClass,
+          'flex h-auto cursor-grab items-center gap-2 px-2 py-1 active:cursor-grabbing',
+          picked && activitySelectedClass,
+          dragging && 'opacity-50',
+          statusClass[status],
+          disabled && 'cursor-default opacity-70',
+        )}
+      >
+        <ActivityImage src={imageSrc} className="size-8 shrink-0 rounded object-cover" />
+        {label}
+      </Button>
+    </motion.div>
   );
 }
 
@@ -65,36 +91,36 @@ export function DropZone({
   disabled?: boolean;
   onDropToken: (zoneId: string, tokenId: string) => void;
 }) {
-  const { pickedId, pick } = useTokenDnd();
+  const stopBoardGesture = useStopBoardGesture();
+  const { pickedId, pick, registerDrop } = useTokenDnd();
 
-  const receive = (tokenId: string) => {
-    if (disabled) return;
-    onDropToken(zoneId, tokenId);
-    pick(null);
-  };
+  useEffect(() => {
+    return registerDrop(zoneId, (tokenId) => {
+      if (disabled) return;
+      onDropToken(zoneId, tokenId);
+      pick(null);
+    });
+  }, [disabled, onDropToken, pick, registerDrop, zoneId]);
 
   return (
-    <div
+    <motion.div
       data-board-control=""
-      onDragOver={(event) => {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-      }}
-      onDrop={(event) => {
-        event.preventDefault();
-        const tokenId = event.dataTransfer.getData(ACTIVITY_TOKEN_MIME);
-        if (tokenId) receive(tokenId);
-      }}
+      data-activity-drop-zone={zoneId}
+      onPointerDown={stopBoardGesture}
       onClick={() => {
-        if (pickedId) receive(pickedId);
+        if (disabled || !pickedId) return;
+        onDropToken(zoneId, pickedId);
+        pick(null);
       }}
+      whileHover={disabled ? undefined : { scale: 1.02 }}
+      transition={activityItemTransition}
       className={cn(
         'border-border-default bg-background-surface flex min-h-9 min-w-16 items-center justify-center rounded-lg border border-dashed px-2 py-1 text-sm',
         statusClass[status],
       )}
     >
       {child ?? <span className="text-text-secondary">{label ?? '—'}</span>}
-    </div>
+    </motion.div>
   );
 }
 
@@ -111,21 +137,32 @@ export function Selectable({
   onToggle: () => void;
   children: React.ReactNode;
 }) {
+  const stopBoardGesture = useStopBoardGesture();
   return (
-    <button
-      type="button"
-      data-board-control=""
-      disabled={disabled}
-      onClick={onToggle}
-      className={cn(
-        activityCardClass,
-        'flex w-full items-center gap-2 text-left',
-        selected && 'bg-status-info-background',
-        statusClass[status],
-      )}
+    <motion.div
+      variants={activityItemVariants}
+      transition={activityItemTransition}
+      whileHover={disabled ? undefined : activityHover}
+      whileTap={disabled ? undefined : { scale: 0.98 }}
     >
-      {children}
-    </button>
+      <Button
+        type="button"
+        variant="none"
+        size="s"
+        data-board-control=""
+        disabled={disabled}
+        onPointerDown={stopBoardGesture}
+        onClick={onToggle}
+        className={cn(
+          activityCardClass,
+          'flex h-auto w-full items-center justify-start gap-2 text-left',
+          selected && 'bg-status-info-background',
+          statusClass[status],
+        )}
+      >
+        {children}
+      </Button>
+    </motion.div>
   );
 }
 
@@ -143,13 +180,12 @@ export function ActivityInput({
   onChange: (value: string) => void;
 }) {
   return (
-    <input
-      data-board-control=""
+    <ActivityInputField
       value={value}
       disabled={disabled}
       placeholder={placeholder}
       onChange={(event) => onChange(event.target.value)}
-      className={cn(activityFieldClass, 'max-w-40 min-w-20', statusClass[status])}
+      className={cn('inline-flex max-w-40 min-w-20', statusClass[status])}
     />
   );
 }
@@ -168,20 +204,13 @@ export function Choice({
   onChange: (value: string) => void;
 }) {
   return (
-    <select
-      data-board-control=""
+    <ActivitySelectField
       value={value}
       disabled={disabled}
-      onChange={(event) => onChange(event.target.value)}
-      className={cn(activityFieldClass, 'max-w-48 min-w-24', statusClass[status])}
-    >
-      <option value="">—</option>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
+      onValueChange={onChange}
+      className={cn('inline-flex max-w-48 min-w-24', statusClass[status])}
+      options={options.map((option) => ({ value: option, label: option }))}
+    />
   );
 }
 
@@ -196,18 +225,45 @@ export function HiddenContent({
   onReveal: () => void;
   children: React.ReactNode;
 }) {
+  const stopBoardGesture = useStopBoardGesture();
+  const faceStyle = {
+    backfaceVisibility: 'hidden' as const,
+    WebkitBackfaceVisibility: 'hidden' as const,
+  };
+
   return (
-    <button
-      type="button"
-      data-board-control=""
-      disabled={disabled || revealed}
-      onClick={onReveal}
-      className={cn(
-        'border-border-default flex min-h-20 items-center justify-center rounded-xl border p-2 text-sm',
-        revealed ? 'bg-background-page' : 'bg-background-subtle text-text-secondary',
-      )}
-    >
-      {revealed ? children : '● ● ●'}
-    </button>
+    <div className="w-full" style={{ perspective: 900 }}>
+      <motion.div
+        className="grid min-h-20 w-full"
+        animate={{ rotateY: revealed ? 180 : 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        <Button
+          type="button"
+          variant="none"
+          size="s"
+          data-board-control=""
+          disabled={disabled || revealed}
+          onPointerDown={stopBoardGesture}
+          onClick={onReveal}
+          className={cn(
+            'border-border-default col-start-1 row-start-1 flex h-auto min-h-20 items-center justify-center rounded-xl border p-2 text-sm',
+            'bg-background-subtle text-text-secondary',
+          )}
+          style={faceStyle}
+        >
+          ● ● ●
+        </Button>
+        <div
+          className={cn(
+            'border-border-default bg-background-page col-start-1 row-start-1 flex min-h-20 items-center justify-center rounded-xl border p-2 text-sm',
+          )}
+          style={{ ...faceStyle, transform: 'rotateY(180deg)' }}
+        >
+          {children}
+        </div>
+      </motion.div>
+    </div>
   );
 }

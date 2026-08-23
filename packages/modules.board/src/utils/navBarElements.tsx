@@ -11,9 +11,9 @@ import {
   TText,
   Emotions,
   FilePlus,
-  Activity,
 } from '@xipkg/icons';
 import i18n from 'i18next';
+import { Activity } from '../ui/icons/Activity';
 import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/boardTheme';
 
 export type NavbarElementT = {

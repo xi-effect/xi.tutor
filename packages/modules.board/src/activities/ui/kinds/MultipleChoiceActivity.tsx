@@ -1,9 +1,12 @@
 import { Button } from '@xipkg/button';
+import { Checkbox } from '@xipkg/checkbox';
+import { Radio, RadioItem } from '@xipkg/radio';
 import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
 import type { ActivityAttempt, CheckStatus, MultipleChoiceDefinition } from '../../model/types';
 import { Selectable } from '../primitives';
-import { activityFieldClass } from '../activityUi';
+import { ActivityInputField, ActivityTextareaField } from '../activityFields';
+import { ActivityMotionList } from '../activityUiMotion';
 
 type Props = {
   definition: MultipleChoiceDefinition;
@@ -13,6 +16,7 @@ type Props = {
   mode: 'edit' | 'play';
   onDefinition: (definition: MultipleChoiceDefinition) => void;
   onAttempt: (attempt: ActivityAttempt) => void;
+  interactLocked?: boolean;
 };
 
 export function MultipleChoiceActivity({
@@ -23,9 +27,10 @@ export function MultipleChoiceActivity({
   mode,
   onDefinition,
   onAttempt,
+  interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
-  const locked = checkStatus === 'revealed';
+  const locked = checkStatus === 'revealed' || interactLocked;
   const optionIds = attempt.optionOrder.length
     ? attempt.optionOrder
     : definition.options.map((option) => option.id);
@@ -33,70 +38,79 @@ export function MultipleChoiceActivity({
 
   if (mode === 'edit') {
     return (
-      <div className="flex flex-col gap-2 p-2">
-        <textarea
-          data-board-control=""
-          className={`${activityFieldClass} min-h-16 resize-y`}
+      <div className="flex flex-col gap-2 p-3">
+        <ActivityTextareaField
           value={definition.question}
           onChange={(event) => onDefinition({ ...definition, question: event.target.value })}
         />
-        <label className="text-text-secondary flex items-center gap-2 text-xs">
-          <input
+        {definition.multiple ? (
+          definition.options.map((option) => (
+            <div key={option.id} className="flex items-center gap-1">
+              <Checkbox
+                size="s"
+                data-board-control=""
+                checked={option.correct}
+                onCheckedChange={() =>
+                  onDefinition({
+                    ...definition,
+                    options: definition.options.map((entry) =>
+                      entry.id === option.id ? { ...entry, correct: !entry.correct } : entry,
+                    ),
+                  })
+                }
+                onPointerDown={(event) => event.stopPropagation()}
+              />
+              <ActivityInputField
+                value={option.text}
+                onChange={(event) =>
+                  onDefinition({
+                    ...definition,
+                    options: definition.options.map((entry) =>
+                      entry.id === option.id ? { ...entry, text: event.target.value } : entry,
+                    ),
+                  })
+                }
+              />
+            </div>
+          ))
+        ) : (
+          <Radio
+            value={definition.options.find((option) => option.correct)?.id ?? ''}
+            onValueChange={(id) =>
+              onDefinition({
+                ...definition,
+                options: definition.options.map((entry) => ({
+                  ...entry,
+                  correct: entry.id === id,
+                })),
+              })
+            }
+            className="flex flex-col gap-2"
             data-board-control=""
-            type="checkbox"
-            checked={definition.multiple}
-            onChange={(event) => onDefinition({ ...definition, multiple: event.target.checked })}
-          />
-          {t('activity.multipleAnswers')}
-        </label>
-        <label className="text-text-secondary flex items-center gap-2 text-xs">
-          <input
-            data-board-control=""
-            type="checkbox"
-            checked={definition.randomize}
-            onChange={(event) => onDefinition({ ...definition, randomize: event.target.checked })}
-          />
-          {t('activity.randomize')}
-        </label>
-        {definition.options.map((option) => (
-          <div key={option.id} className="flex items-center gap-1">
-            <input
-              data-board-control=""
-              type={definition.multiple ? 'checkbox' : 'radio'}
-              name={`correct-${definition.question}`}
-              checked={option.correct}
-              onChange={() =>
-                onDefinition({
-                  ...definition,
-                  options: definition.options.map((entry) =>
-                    definition.multiple
-                      ? entry.id === option.id
-                        ? { ...entry, correct: !entry.correct }
-                        : entry
-                      : { ...entry, correct: entry.id === option.id },
-                  ),
-                })
-              }
-            />
-            <input
-              data-board-control=""
-              className={activityFieldClass}
-              value={option.text}
-              onChange={(event) =>
-                onDefinition({
-                  ...definition,
-                  options: definition.options.map((entry) =>
-                    entry.id === option.id ? { ...entry, text: event.target.value } : entry,
-                  ),
-                })
-              }
-            />
-          </div>
-        ))}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
+            {definition.options.map((option) => (
+              <div key={option.id} className="flex items-center gap-1">
+                <RadioItem value={option.id} />
+                <ActivityInputField
+                  value={option.text}
+                  onChange={(event) =>
+                    onDefinition({
+                      ...definition,
+                      options: definition.options.map((entry) =>
+                        entry.id === option.id ? { ...entry, text: event.target.value } : entry,
+                      ),
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </Radio>
+        )}
         <Button
-          variant="none"
+          variant="default"
           size="s"
-          className="h-6 self-start px-2 text-xs"
+          className="h-7 self-start px-3 text-xs"
           data-board-control=""
           onClick={() =>
             onDefinition({
@@ -115,7 +129,7 @@ export function MultipleChoiceActivity({
   }
 
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <ActivityMotionList className="flex flex-col gap-2 p-3">
       <p className="text-text-primary text-sm font-medium">{definition.question}</p>
       {optionIds.map((id) => {
         const option = optionsById.get(id);
@@ -156,6 +170,6 @@ export function MultipleChoiceActivity({
           </Selectable>
         );
       })}
-    </div>
+    </ActivityMotionList>
   );
 }

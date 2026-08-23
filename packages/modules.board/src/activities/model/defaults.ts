@@ -23,10 +23,10 @@ export function getDefaultDefinition(kind: ActivityKind): ActivityDefinition {
             id: gapId,
             answers: ['cat'],
             input: 'input',
-            choices: ['cat', 'dog', 'bird'],
+            choices: [],
           },
         ],
-        bank: ['house'],
+        bank: [],
       };
     }
     case 'matching': {

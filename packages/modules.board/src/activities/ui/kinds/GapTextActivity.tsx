@@ -10,8 +10,13 @@ import type {
 } from '../../model/types';
 import { parseGapSourceText } from '../../primitives/text';
 import { ActivityInput, Choice, DraggableToken, DropZone } from '../primitives';
-import { activityFieldClass } from '../activityUi';
+import {
+  ActivityDraftInputField,
+  ActivitySelectField,
+  ActivityTextareaField,
+} from '../activityFields';
 import { itemStatus } from '../../primitives/itemStatus';
+import { ActivityMotionList } from '../activityUiMotion';
 
 type Props = {
   definition: GapTextDefinition;
@@ -21,6 +26,7 @@ type Props = {
   mode: 'edit' | 'play';
   onDefinition: (definition: GapTextDefinition) => void;
   onAttempt: (attempt: ActivityAttempt) => void;
+  interactLocked?: boolean;
 };
 
 export function GapTextActivity({
@@ -31,10 +37,11 @@ export function GapTextActivity({
   mode,
   onDefinition,
   onAttempt,
+  interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
   const areaRef = useRef<HTMLTextAreaElement>(null);
-  const locked = checkStatus === 'revealed';
+  const locked = checkStatus === 'revealed' || interactLocked;
 
   const createGap = (input: GapInputMode) => {
     const area = areaRef.current;
@@ -60,59 +67,91 @@ export function GapTextActivity({
   };
 
   if (mode === 'edit') {
+    const hasDragGaps = definition.gaps.some((gap) => gap.input === 'drag');
+
     return (
-      <div className="flex flex-col gap-2 p-2">
-        <textarea
+      <div className="flex flex-col gap-3 p-3">
+        <ActivityTextareaField
           ref={areaRef}
-          data-board-control=""
-          className={`${activityFieldClass} min-h-24 resize-y`}
+          className="min-h-24"
           value={definition.sourceText}
           onChange={(event) => onDefinition({ ...definition, sourceText: event.target.value })}
         />
+        <p className="text-text-secondary text-xs">{t('activity.gapHint')}</p>
         <div className="flex flex-wrap gap-1">
           <Button
-            variant="none"
+            variant="default"
             size="s"
-            className="h-6 px-2 text-xs"
+            className="h-7 px-3 text-xs"
             data-board-control=""
             onClick={() => createGap('input')}
           >
             {t('activity.gapInput')}
           </Button>
           <Button
-            variant="none"
+            variant="secondary"
             size="s"
-            className="h-6 px-2 text-xs"
+            className="h-7 px-3 text-xs"
             data-board-control=""
             onClick={() => createGap('choice')}
           >
             {t('activity.gapChoice')}
           </Button>
           <Button
-            variant="none"
+            variant="secondary"
             size="s"
-            className="h-6 px-2 text-xs"
+            className="h-7 px-3 text-xs"
             data-board-control=""
             onClick={() => createGap('drag')}
           >
             {t('activity.gapDrag')}
           </Button>
         </div>
-        {definition.gaps.map((gap) => (
-          <div key={gap.id} className="flex flex-wrap items-center gap-1">
-            <span className="text-text-secondary text-xs">{gap.id}</span>
-            <input
-              data-board-control=""
-              className={activityFieldClass}
+        {definition.gaps.map((gap, index) => (
+          <div key={gap.id} className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-text-secondary shrink-0 text-xs">
+                {t('activity.gapN', { n: index + 1 })}
+              </span>
+              <ActivitySelectField
+                value={gap.input}
+                className="w-auto min-w-32"
+                options={[
+                  { value: 'input', label: t('activity.gapInput') },
+                  { value: 'choice', label: t('activity.gapChoice') },
+                  { value: 'drag', label: t('activity.gapDrag') },
+                ]}
+                onValueChange={(input) => {
+                  if (input !== 'input' && input !== 'choice' && input !== 'drag') return;
+                  onDefinition({
+                    ...definition,
+                    gaps: definition.gaps.map((item) =>
+                      item.id === gap.id
+                        ? {
+                            ...item,
+                            input,
+                            choices:
+                              input === 'choice' && item.choices.length === 0
+                                ? item.answers
+                                : item.choices,
+                          }
+                        : item,
+                    ),
+                  });
+                }}
+              />
+            </div>
+            <ActivityDraftInputField
+              placeholder={t('activity.gapAnswers')}
               value={gap.answers.join(' | ')}
-              onChange={(event) =>
+              onCommit={(text) =>
                 onDefinition({
                   ...definition,
                   gaps: definition.gaps.map((item) =>
                     item.id === gap.id
                       ? {
                           ...item,
-                          answers: event.target.value
+                          answers: text
                             .split('|')
                             .map((part) => part.trim())
                             .filter(Boolean),
@@ -123,19 +162,17 @@ export function GapTextActivity({
               }
             />
             {gap.input === 'choice' && (
-              <input
-                data-board-control=""
-                className={activityFieldClass}
+              <ActivityDraftInputField
                 placeholder={t('activity.choices')}
                 value={gap.choices.join(' | ')}
-                onChange={(event) =>
+                onCommit={(text) =>
                   onDefinition({
                     ...definition,
                     gaps: definition.gaps.map((item) =>
                       item.id === gap.id
                         ? {
                             ...item,
-                            choices: event.target.value
+                            choices: text
                               .split('|')
                               .map((part) => part.trim())
                               .filter(Boolean),
@@ -148,21 +185,21 @@ export function GapTextActivity({
             )}
           </div>
         ))}
-        <input
-          data-board-control=""
-          className={activityFieldClass}
-          placeholder={t('activity.wordBank')}
-          value={definition.bank.join(' | ')}
-          onChange={(event) =>
-            onDefinition({
-              ...definition,
-              bank: event.target.value
-                .split('|')
-                .map((part) => part.trim())
-                .filter(Boolean),
-            })
-          }
-        />
+        {hasDragGaps && (
+          <ActivityDraftInputField
+            placeholder={t('activity.wordBank')}
+            value={definition.bank.join(' | ')}
+            onCommit={(text) =>
+              onDefinition({
+                ...definition,
+                bank: text
+                  .split('|')
+                  .map((part) => part.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
+        )}
       </div>
     );
   }
@@ -170,16 +207,19 @@ export function GapTextActivity({
   const segments = parseGapSourceText(definition.sourceText);
   const gapById = new Map(definition.gaps.map((gap) => [gap.id, gap]));
   const placedTokenIds = new Set(Object.values(attempt.placements).filter(Boolean));
-  const dragTokens = [
-    ...definition.gaps
-      .filter((gap) => gap.input === 'drag')
-      .map((gap) => ({ id: gap.id, label: gap.answers[0] ?? gap.id })),
-    ...definition.bank.map((word, index) => ({ id: `bank-${index}`, label: word })),
-  ].filter((token) => !placedTokenIds.has(token.id));
+  const hasDragGaps = definition.gaps.some((gap) => gap.input === 'drag');
+  const dragTokens = hasDragGaps
+    ? [
+        ...definition.gaps
+          .filter((gap) => gap.input === 'drag')
+          .map((gap) => ({ id: gap.id, label: gap.answers[0] ?? gap.id })),
+        ...definition.bank.map((word, index) => ({ id: `bank-${index}`, label: word })),
+      ].filter((token) => !placedTokenIds.has(token.id))
+    : [];
 
   return (
-    <div className="flex flex-col gap-3 p-2">
-      <p className="text-text-primary text-sm leading-7">
+    <ActivityMotionList className="flex flex-col gap-3 p-3">
+      <div className="text-text-primary text-sm leading-7">
         {segments.map((segment, index) => {
           if (segment.type === 'text') {
             return <span key={`t-${index}`}>{segment.text}</span>;
@@ -248,7 +288,7 @@ export function GapTextActivity({
             />
           );
         })}
-      </p>
+      </div>
       {dragTokens.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {dragTokens.map((token) => (
@@ -256,6 +296,6 @@ export function GapTextActivity({
           ))}
         </div>
       )}
-    </div>
+    </ActivityMotionList>
   );
 }

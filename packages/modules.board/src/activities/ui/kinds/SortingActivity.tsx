@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
 import type { ActivityAttempt, CheckStatus, SortingDefinition } from '../../model/types';
 import { DraggableToken, DropZone } from '../primitives';
-import { activityFieldClass } from '../activityUi';
+import { ActivityInputField, ActivitySelectField } from '../activityFields';
+import { ActivityImageField } from '../ActivityImage';
 import { itemStatus } from '../../primitives/itemStatus';
+import { ActivityMotionList } from '../activityUiMotion';
 
 type Props = {
   definition: SortingDefinition;
@@ -14,6 +16,7 @@ type Props = {
   mode: 'edit' | 'play';
   onDefinition: (definition: SortingDefinition) => void;
   onAttempt: (attempt: ActivityAttempt) => void;
+  interactLocked?: boolean;
 };
 
 export function SortingActivity({
@@ -24,18 +27,17 @@ export function SortingActivity({
   mode,
   onDefinition,
   onAttempt,
+  interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
-  const locked = checkStatus === 'revealed';
+  const locked = checkStatus === 'revealed' || interactLocked;
 
   if (mode === 'edit') {
     return (
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex flex-col gap-2 p-3">
         {definition.categories.map((category) => (
-          <input
+          <ActivityInputField
             key={category.id}
-            data-board-control=""
-            className={activityFieldClass}
             value={category.title}
             onChange={(event) =>
               onDefinition({
@@ -48,9 +50,9 @@ export function SortingActivity({
           />
         ))}
         <Button
-          variant="none"
+          variant="default"
           size="s"
-          className="h-6 self-start px-2 text-xs"
+          className="h-7 self-start px-3 text-xs"
           data-board-control=""
           onClick={() =>
             onDefinition({
@@ -65,45 +67,52 @@ export function SortingActivity({
           {t('activity.addCategory')}
         </Button>
         {definition.items.map((item) => (
-          <div key={item.id} className="flex gap-1">
-            <input
-              data-board-control=""
-              className={activityFieldClass}
-              value={item.text}
-              onChange={(event) =>
+          <div key={item.id} className="flex flex-col gap-1">
+            <div className="flex gap-1">
+              <ActivityInputField
+                value={item.text}
+                onChange={(event) =>
+                  onDefinition({
+                    ...definition,
+                    items: definition.items.map((entry) =>
+                      entry.id === item.id ? { ...entry, text: event.target.value } : entry,
+                    ),
+                  })
+                }
+              />
+              <ActivitySelectField
+                value={item.categoryId}
+                options={definition.categories.map((category) => ({
+                  value: category.id,
+                  label: category.title,
+                }))}
+                onValueChange={(categoryId) =>
+                  onDefinition({
+                    ...definition,
+                    items: definition.items.map((entry) =>
+                      entry.id === item.id ? { ...entry, categoryId } : entry,
+                    ),
+                  })
+                }
+              />
+            </div>
+            <ActivityImageField
+              value={item.imageSrc}
+              onChange={(imageSrc) =>
                 onDefinition({
                   ...definition,
                   items: definition.items.map((entry) =>
-                    entry.id === item.id ? { ...entry, text: event.target.value } : entry,
+                    entry.id === item.id ? { ...entry, imageSrc } : entry,
                   ),
                 })
               }
             />
-            <select
-              data-board-control=""
-              className={activityFieldClass}
-              value={item.categoryId}
-              onChange={(event) =>
-                onDefinition({
-                  ...definition,
-                  items: definition.items.map((entry) =>
-                    entry.id === item.id ? { ...entry, categoryId: event.target.value } : entry,
-                  ),
-                })
-              }
-            >
-              {definition.categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.title}
-                </option>
-              ))}
-            </select>
           </div>
         ))}
         <Button
-          variant="none"
+          variant="default"
           size="s"
-          className="h-6 self-start px-2 text-xs"
+          className="h-7 self-start px-3 text-xs"
           data-board-control=""
           onClick={() =>
             onDefinition({
@@ -131,12 +140,20 @@ export function SortingActivity({
   const itemsById = new Map(definition.items.map((item) => [item.id, item]));
 
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <ActivityMotionList className="flex flex-col gap-2 p-3">
       <div className="flex flex-wrap gap-1">
         {bankIds.map((id) => {
           const item = itemsById.get(id);
           if (!item) return null;
-          return <DraggableToken key={id} id={id} label={item.text} disabled={locked} />;
+          return (
+            <DraggableToken
+              key={id}
+              id={id}
+              label={item.text}
+              imageSrc={item.imageSrc}
+              disabled={locked}
+            />
+          );
         })}
       </div>
       <div className="grid grid-cols-2 gap-2">
@@ -162,6 +179,7 @@ export function SortingActivity({
                     key={item.id}
                     id={item.id}
                     label={item.text}
+                    imageSrc={item.imageSrc}
                     disabled={locked}
                     status={itemStatus(checkStatus, byItem, item.id)}
                   />
@@ -170,6 +188,6 @@ export function SortingActivity({
           </div>
         ))}
       </div>
-    </div>
+    </ActivityMotionList>
   );
 }

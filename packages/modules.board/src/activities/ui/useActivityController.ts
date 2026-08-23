@@ -3,7 +3,7 @@ import { useEditor } from '@ibodr/draw';
 import type { ActivityShape } from '../shape/ActivityShape';
 import type { ActivityAttempt, ActivityDefinition, CheckStatus } from '../model/types';
 import { evaluateActivity } from '../primitives/evaluate';
-import { resetAttempt, revealAttempt } from '../primitives/reset';
+import { checkActivity, resetActivity, revealActivity } from '../shape/activityCommands';
 
 export function useActivityController(shape: ActivityShape) {
   const editor = useEditor();
@@ -33,23 +33,9 @@ export function useActivityController(shape: ActivityShape) {
     [patch],
   );
 
-  const check = useCallback(() => {
-    editor.markHistoryStoppingPoint('activity-check');
-    patch({ checkStatus: 'checked' });
-  }, [editor, patch]);
-
-  const reset = useCallback(() => {
-    editor.markHistoryStoppingPoint('activity-reset');
-    patch({ attempt: resetAttempt(shape.props.definition), checkStatus: 'idle' });
-  }, [editor, patch, shape.props.definition]);
-
-  const reveal = useCallback(() => {
-    editor.markHistoryStoppingPoint('activity-reveal');
-    patch({
-      attempt: revealAttempt(shape.props.definition, shape.props.attempt),
-      checkStatus: 'revealed',
-    });
-  }, [editor, patch, shape.props.attempt, shape.props.definition]);
+  const check = useCallback(() => checkActivity(editor, shape), [editor, shape]);
+  const reset = useCallback(() => resetActivity(editor, shape), [editor, shape]);
+  const reveal = useCallback(() => revealActivity(editor, shape), [editor, shape]);
 
   const score = evaluateActivity(shape.props.definition, shape.props.attempt);
 
