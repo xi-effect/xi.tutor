@@ -12,8 +12,7 @@ import { LoadingScreen, NotFoundPage } from 'common.ui';
 const NoteContent = () => {
   const { isSynced, hasSyncError } = useYjsContext();
 
-  if (hasSyncError) return <NotFoundPage withLogo={false} />;
-  if (!isSynced) return <LoadingScreen />;
+  if (!isSynced && !hasSyncError) return <LoadingScreen />;
 
   return (
     <div className="bg-background-page flex h-full min-h-[calc(100dvh)] flex-col overflow-auto px-5 pt-3.5 pb-5">
@@ -29,7 +28,7 @@ const NoteContent = () => {
 
 export const Note = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const getStorageItem = classroomId
@@ -50,9 +49,10 @@ export const Note = () => {
   } = getStorageItem({
     classroomId: classroomId || '',
     id: materialIdValue,
+    disabled: Boolean(classroomId) && isUserLoading,
   });
 
-  if (isLoading) return <LoadingScreen />;
+  if (isUserLoading || isLoading) return <LoadingScreen />;
   if (isError || !storageItem?.ydoc_id || !storageItem?.content_token) {
     return <NotFoundPage withLogo={false} />;
   }

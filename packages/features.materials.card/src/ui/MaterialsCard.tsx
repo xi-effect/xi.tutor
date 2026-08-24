@@ -22,7 +22,6 @@ export const MaterialsCard = ({
   name,
   content_kind,
   student_access_mode,
-  access_kind,
   classroom_id,
   onDuplicate,
   hasIcon = false,
@@ -33,8 +32,7 @@ export const MaterialsCard = ({
   const { t } = useTranslation('materialsCard');
   const { classroomId: routeClassroomId } = useParams({ strict: false });
 
-  const materialClassroomId =
-    access_kind === 'classroom' && classroom_id != null ? String(classroom_id) : undefined;
+  const materialClassroomId = classroom_id != null ? String(classroom_id) : undefined;
   const classroomId = routeClassroomId ?? materialClassroomId;
   const isClassroom = !!classroomId;
 

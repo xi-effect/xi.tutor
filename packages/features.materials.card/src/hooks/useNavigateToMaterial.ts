@@ -10,31 +10,26 @@ export const useNavigateToMaterial = () => {
   const navigateToMaterial = (id: string, contentKind: string, materialClassroomId?: string) => {
     const filteredSearch = getFilteredSearch();
     const targetClassroomId = classroomId ?? materialClassroomId;
+    const isBoard = contentKind === 'board';
 
     if (targetClassroomId) {
-      const route =
-        contentKind === 'board'
-          ? '/classrooms/$classroomId/boards/$boardId'
-          : '/classrooms/$classroomId/notes/$noteId';
-
-      const params =
-        contentKind === 'board'
-          ? { classroomId: targetClassroomId, boardId: id }
-          : { classroomId: targetClassroomId, noteId: id };
-
       navigate({
-        to: route,
-        params,
+        to: isBoard
+          ? '/classrooms/$classroomId/boards/$boardId'
+          : '/classrooms/$classroomId/notes/$noteId',
+        params: isBoard
+          ? { classroomId: targetClassroomId, boardId: id }
+          : { classroomId: targetClassroomId, noteId: id },
         search: filteredSearch,
       });
-    } else {
-      navigate({
-        to: `/materials/${id}/${contentKind}`,
-        search: () => ({
-          ...filteredSearch,
-        }),
-      });
+      return;
     }
+
+    navigate({
+      to: isBoard ? '/materials/$materialId/board' : '/materials/$materialId/note',
+      params: { materialId: id },
+      search: filteredSearch,
+    });
   };
 
   return { navigateToMaterial };
