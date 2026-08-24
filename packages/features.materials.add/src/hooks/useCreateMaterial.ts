@@ -12,8 +12,7 @@ export const useCreateMaterial = () => {
       {
         onSuccess: (response) => {
           navigate({
-            to:
-              kind === 'board' ? '/materials/$materialId/board' : '/materials/$materialId/note',
+            to: kind === 'board' ? '/materials/$materialId/board' : '/materials/$materialId/note',
             params: { materialId: response.data.id },
           });
         },
