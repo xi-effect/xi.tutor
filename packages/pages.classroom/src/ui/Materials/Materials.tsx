@@ -129,7 +129,7 @@ export const Materials = () => {
                     key={material.id}
                     {...material}
                     layout="gallery"
-                    className="h-40 w-full"
+                    className="h-44 w-full"
                   />
                 ))}
               </div>

@@ -13,13 +13,19 @@ import { MaterialScopeFilterT } from '../../types';
 type MaterialsProps = {
   parentRef: RefObject<HTMLDivElement | null>;
   scopeFilter: MaterialScopeFilterT;
+  classroomId: number | null;
 };
 
-export const Materials = ({ parentRef, scopeFilter }: MaterialsProps) => {
+export const Materials = ({ parentRef, scopeFilter, classroomId }: MaterialsProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
 
-  const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'board', scopeFilter);
+  const { items, isError, isLoading } = useInfiniteQuery(
+    parentRef,
+    'board',
+    scopeFilter,
+    classroomId,
+  );
   const { openModal } = useMaterialsDuplicate();
 
   const notFoundItems = !items.length && !isLoading && !isError;
@@ -36,7 +42,9 @@ export const Materials = ({ parentRef, scopeFilter }: MaterialsProps) => {
           scopeFilter === 'all'
             ? t('empty.boardsAllDescription')
             : scopeFilter === 'classroom'
-              ? t('empty.boardsClassroomDescription')
+              ? classroomId != null
+                ? t('empty.boardsClassroomOneDescription')
+                : t('empty.boardsClassroomDescription')
               : t('empty.boardsDescription')
         }
       />
@@ -47,7 +55,7 @@ export const Materials = ({ parentRef, scopeFilter }: MaterialsProps) => {
     <GridVirtualizer
       parentRef={parentRef}
       items={items}
-      defaultRowHeight={160}
+      defaultRowHeight={176}
       minItemWidth={300}
       gap={20}
       maxColumns={4}

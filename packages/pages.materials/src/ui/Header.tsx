@@ -8,16 +8,26 @@ import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { MaterialScopeFilterT } from '../types';
+import { MaterialsClassroomFilter } from './MaterialsClassroomFilter';
 import { MaterialsScopeFilter } from './MaterialsScopeFilter';
 
 interface HeaderProps {
   activeTab: 'notes' | 'boards';
   onTabChange: (tabId: string) => void;
   scopeFilter: MaterialScopeFilterT;
+  classroomId: number | null;
   onScopeChange: (scope: MaterialScopeFilterT) => void;
+  onClassroomChange: (classroomId: number | null) => void;
 }
 
-export const Header = ({ activeTab, onTabChange, scopeFilter, onScopeChange }: HeaderProps) => {
+export const Header = ({
+  activeTab,
+  onTabChange,
+  scopeFilter,
+  classroomId,
+  onScopeChange,
+  onClassroomChange,
+}: HeaderProps) => {
   const { t } = useTranslation('materials');
 
   const tabs = useMemo(
@@ -51,8 +61,11 @@ export const Header = ({ activeTab, onTabChange, scopeFilter, onScopeChange }: H
         </div>
       </div>
 
-      <div className="flex w-full shrink-0 items-start">
+      <div className="flex w-full shrink-0 flex-wrap items-start gap-2">
         <MaterialsScopeFilter value={scopeFilter} onChange={onScopeChange} />
+        {scopeFilter === 'classroom' ? (
+          <MaterialsClassroomFilter value={classroomId} onChange={onClassroomChange} />
+        ) : null}
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-import { accessModeStyles, formatToShortDate, formatUpdatedLabel } from '../utils';
+import { accessModeStyles, formatUpdatedLabel } from '../utils';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
 import { MaterialActionsMenu } from './MaterialActionsMenu';
 import { useMaterialActions, useNavigateToMaterial } from '../hooks';
 import { cardIcon } from './CardIcon';
 import { AccessModeT, MaterialPropsT } from 'common.types';
-import { useCurrentUser } from 'common.services';
+import { useCurrentUser, useGetClassroom } from 'common.services';
 import { ConfirmDialog, cardMenuPositionClass } from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,14 @@ export const MaterialsCard = ({
   const materialClassroomId = classroom_id != null ? String(classroom_id) : undefined;
   const classroomId = routeClassroomId ?? materialClassroomId;
   const isClassroom = !!classroomId;
+  const showClassroomName = classroom_id != null && !routeClassroomId;
+
+  const { data: classroom } = useGetClassroom(classroom_id ?? 0, !showClassroomName);
+  const classroomName = classroom
+    ? classroom.kind === 'individual'
+      ? classroom.name_override?.trim() || classroom.name?.trim() || ''
+      : classroom.name?.trim() || classroom.title?.trim() || ''
+    : '';
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -77,6 +85,14 @@ export const MaterialsCard = ({
     }
     handleDelete({ onSuccess: () => setDeleteConfirmOpen(false) });
   };
+
+  const updatedLabel = isLoading ? '...' : updated_at ? formatUpdatedLabel(updated_at) : '';
+  const classroomNameLine = (sizeClass = 'text-sm leading-5') =>
+    classroomName ? (
+      <p className={cn('text-text-secondary w-full truncate font-normal', sizeClass)}>
+        {classroomName}
+      </p>
+    ) : null;
 
   const deleteTitle = isClassroom
     ? t('deleteConfirm.fromClassroomTitle')
@@ -151,10 +167,9 @@ export const MaterialsCard = ({
               {name}
             </p>
             <span className="text-text-secondary text-sm leading-5 font-normal">
-              {t('changed', {
-                date: isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : '',
-              })}
+              {t('changed', { date: updatedLabel })}
             </span>
+            {classroomNameLine()}
           </div>
           {menu && (
             <div className="bg-background-surface flex size-8 shrink-0 items-center justify-center rounded-lg">
@@ -169,20 +184,18 @@ export const MaterialsCard = ({
   }
 
   if (layout === 'gallery') {
-    const updatedLabel = isLoading ? '...' : updated_at ? formatUpdatedLabel(updated_at) : '';
-
     return (
       <>
         <div
           onClick={handleCardClick}
           className={cn(
-            'group bg-background-surface relative flex h-40 w-full shrink-0 cursor-pointer flex-col justify-between gap-5 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+            'group bg-background-surface relative flex h-44 min-h-44 w-full shrink-0 cursor-pointer flex-col rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
             className,
           )}
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
         >
-          <div className="flex w-full items-center gap-2 pr-8">
+          <div className="flex w-full shrink-0 items-center gap-2 pr-8">
             <div className="bg-status-info-background [&>svg]:fill-icon-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
               {cardIcon[content_kind]}
             </div>
@@ -202,13 +215,15 @@ export const MaterialsCard = ({
 
           {isTutor && <div className={cardMenuPositionClass}>{menu}</div>}
 
-          <div className="flex w-full flex-col items-start gap-1 overflow-hidden">
-            <p className="text-text-primary line-clamp-2 w-full text-base leading-5 font-medium">
-              {name}
-            </p>
-            <p className="text-text-secondary w-full text-sm leading-5 font-normal">
+          <p className="text-text-primary mt-4 line-clamp-2 w-full shrink-0 text-base leading-5 font-medium">
+            {name}
+          </p>
+
+          <div className="mt-auto flex w-full min-w-0 flex-col items-start gap-0.5 overflow-hidden pt-2">
+            <p className="text-text-secondary w-full truncate text-xs leading-4 font-normal">
               {t('updatedGallery', { date: updatedLabel })}
             </p>
+            {classroomNameLine('text-xs leading-4')}
           </div>
         </div>
         {editModal}
@@ -246,9 +261,8 @@ export const MaterialsCard = ({
             <p className="truncate">{name}</p>
           </div>
           <div className="text-s-base text-text-secondary mt-2 font-normal">
-            {t('updated', {
-              date: isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : '',
-            })}
+            <p className="truncate">{t('updated', { date: updatedLabel })}</p>
+            {classroomNameLine()}
           </div>
         </div>
       </div>

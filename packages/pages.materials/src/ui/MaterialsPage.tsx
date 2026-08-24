@@ -22,28 +22,51 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
   return tab === 'notes' || tab === 'boards' ? tab : 'boards';
 };
 
+const getClassroomIdFromUrl = (): number | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const classroom = new URLSearchParams(window.location.search).get('classroom');
+  const classroomId = classroom ? Number(classroom) : NaN;
+  return Number.isInteger(classroomId) && classroomId > 0 ? classroomId : null;
+};
+
 const getScopeFromUrl = (): MaterialScopeFilterT => {
   if (typeof window === 'undefined') {
     return 'personal';
   }
 
   const scope = new URLSearchParams(window.location.search).get('scope');
-  return scope === 'all' || scope === 'classroom' ? scope : 'personal';
+  if (scope === 'all' || scope === 'classroom' || scope === 'personal') {
+    return scope;
+  }
+
+  return getClassroomIdFromUrl() != null ? 'classroom' : 'personal';
 };
 
-const replaceSearchParam = (key: string, value: string) => {
+const replaceSearchParams = (updates: Record<string, string | null>) => {
   if (typeof window === 'undefined') {
     return;
   }
 
   const url = new URL(window.location.href);
-  url.searchParams.set(key, value);
+  Object.entries(updates).forEach(([key, value]) => {
+    if (value == null) {
+      url.searchParams.delete(key);
+    } else {
+      url.searchParams.set(key, value);
+    }
+  });
   window.history.replaceState({}, '', url);
 };
 
 const MaterialsPageContent = () => {
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
   const [scopeFilter, setScopeFilter] = useState<MaterialScopeFilterT>(() => getScopeFromUrl());
+  const [classroomId, setClassroomId] = useState<number | null>(() =>
+    getScopeFromUrl() === 'classroom' ? getClassroomIdFromUrl() : null,
+  );
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -53,8 +76,10 @@ const MaterialsPageContent = () => {
 
   useEffect(() => {
     const syncFromUrl = () => {
+      const nextScope = getScopeFromUrl();
       setActiveTab(getTabFromUrl());
-      setScopeFilter(getScopeFromUrl());
+      setScopeFilter(nextScope);
+      setClassroomId(nextScope === 'classroom' ? getClassroomIdFromUrl() : null);
     };
 
     window.addEventListener('popstate', syncFromUrl);
@@ -68,13 +93,24 @@ const MaterialsPageContent = () => {
       return;
     }
 
-    replaceSearchParam('tab', tabId);
+    replaceSearchParams({ tab: tabId });
     setActiveTab(tabId);
   };
 
   const handleScopeChange = (scope: MaterialScopeFilterT) => {
-    replaceSearchParam('scope', scope);
+    replaceSearchParams({
+      scope,
+      classroom: null,
+    });
     setScopeFilter(scope);
+    setClassroomId(null);
+  };
+
+  const handleClassroomChange = (nextClassroomId: number | null) => {
+    replaceSearchParams({
+      classroom: nextClassroomId != null ? String(nextClassroomId) : null,
+    });
+    setClassroomId(nextClassroomId);
   };
 
   if (!isTutor) {
@@ -94,7 +130,9 @@ const MaterialsPageContent = () => {
             activeTab={activeTab}
             onTabChange={handleTabChange}
             scopeFilter={scopeFilter}
+            classroomId={classroomId}
             onScopeChange={handleScopeChange}
+            onClassroomChange={handleClassroomChange}
           />
         </div>
 
@@ -105,7 +143,12 @@ const MaterialsPageContent = () => {
             !isMobile && 'flex-1',
           )}
         >
-          <TabsComponent activeTab={activeTab} scopeFilter={scopeFilter} parentRef={parentRef} />
+          <TabsComponent
+            activeTab={activeTab}
+            scopeFilter={scopeFilter}
+            classroomId={classroomId}
+            parentRef={parentRef}
+          />
         </div>
       </div>
 

@@ -15,6 +15,7 @@ export const useInfiniteQuery = (
   parentRef: RefObject<HTMLDivElement | null>,
   kind: MaterialsKindT,
   scopeFilter: MaterialScopeFilterT = 'personal',
+  classroomId: number | null = null,
 ) => {
   const filters = buildAnyMaterialFilters({
     content_kind: kind,
@@ -22,7 +23,10 @@ export const useInfiniteQuery = (
       scopeFilter === 'personal'
         ? PERSONAL_MATERIAL_SCOPE
         : scopeFilter === 'classroom'
-          ? { access_kind: 'classroom', classroom_ids: null }
+          ? {
+              access_kind: 'classroom',
+              classroom_ids: classroomId != null ? [classroomId] : null,
+            }
           : null,
   });
 

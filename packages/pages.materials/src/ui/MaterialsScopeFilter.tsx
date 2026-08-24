@@ -4,6 +4,7 @@ import { ChevronSmallBottom } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { MaterialScopeFilterT } from '../types';
+import { MaterialsFilterOption } from './MaterialsFilterOption';
 
 type MaterialsScopeFilterProps = {
   value: MaterialScopeFilterT;
@@ -50,42 +51,17 @@ export const MaterialsScopeFilter = ({ value, onChange }: MaterialsScopeFilterPr
           className="border-border-default !bg-background-surface w-max min-w-[220px] rounded-2xl border p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.08)]"
         >
           <div className="flex w-full flex-col items-stretch gap-4 bg-transparent">
-            {SCOPE_OPTIONS.map((scope) => {
-              const selected = value === scope;
-
-              return (
-                <div
-                  key={scope}
-                  role="menuitemradio"
-                  aria-checked={selected}
-                  tabIndex={0}
-                  className="text-s-base text-text-primary flex w-full cursor-pointer items-center gap-3 bg-transparent text-left font-medium outline-none"
-                  onClick={() => handleSelect(scope)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault();
-                      handleSelect(scope);
-                    }
-                  }}
-                  data-umami-event="materials-scope-filter-option"
-                  data-umami-event-scope={scope}
-                >
-                  <span
-                    className={cn(
-                      'flex size-5 shrink-0 items-center justify-center rounded-full border bg-transparent',
-                      selected
-                        ? 'border-border-focus bg-action-primary-background-default'
-                        : 'border-border-control',
-                    )}
-                  >
-                    {selected ? (
-                      <span className="bg-background-surface size-2 rounded-full" />
-                    ) : null}
-                  </span>
-                  {t(`scope.option.${scope}`)}
-                </div>
-              );
-            })}
+            {SCOPE_OPTIONS.map((scope) => (
+              <MaterialsFilterOption
+                key={scope}
+                selected={value === scope}
+                onSelect={() => handleSelect(scope)}
+                umamiEvent="materials-scope-filter-option"
+                umamiScope={scope}
+              >
+                {t(`scope.option.${scope}`)}
+              </MaterialsFilterOption>
+            ))}
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
