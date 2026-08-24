@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from '@tanstack/react-router';
+import { useParams, useRouterState } from '@tanstack/react-router';
 import { accessModeStyles, formatUpdatedLabel } from '../utils';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
@@ -31,11 +31,13 @@ export const MaterialsCard = ({
 }: MaterialsCardProps) => {
   const { t } = useTranslation('materialsCard');
   const { classroomId: routeClassroomId } = useParams({ strict: false });
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const isClassroomRoute = /^\/classrooms\/[^/]+/.test(pathname);
 
   const materialClassroomId = classroom_id != null ? String(classroom_id) : undefined;
   const classroomId = routeClassroomId ?? materialClassroomId;
   const isClassroom = !!classroomId;
-  const showClassroomName = classroom_id != null && !routeClassroomId;
+  const showClassroomName = classroom_id != null && !isClassroomRoute;
 
   const { data: classroom } = useGetClassroom(classroom_id ?? 0, !showClassroomName);
   const classroomName = classroom
@@ -88,7 +90,7 @@ export const MaterialsCard = ({
 
   const updatedLabel = isLoading ? '...' : updated_at ? formatUpdatedLabel(updated_at) : '';
   const classroomNameLine = (sizeClass = 'text-sm leading-5') =>
-    classroomName ? (
+    showClassroomName && classroomName ? (
       <p className={cn('text-text-secondary w-full truncate font-normal', sizeClass)}>
         {classroomName}
       </p>

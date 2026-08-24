@@ -15,16 +15,16 @@ interface HeaderProps {
   activeTab: 'notes' | 'boards';
   onTabChange: (tabId: string) => void;
   scopeFilter: MaterialScopeFilterT;
-  classroomId: number | null;
+  classroomIds: number[];
   onScopeChange: (scope: MaterialScopeFilterT) => void;
-  onClassroomChange: (classroomId: number | null) => void;
+  onClassroomChange: (classroomIds: number[]) => void;
 }
 
 export const Header = ({
   activeTab,
   onTabChange,
   scopeFilter,
-  classroomId,
+  classroomIds,
   onScopeChange,
   onClassroomChange,
 }: HeaderProps) => {
@@ -64,7 +64,7 @@ export const Header = ({
       <div className="flex w-full shrink-0 flex-wrap items-start gap-2">
         <MaterialsScopeFilter value={scopeFilter} onChange={onScopeChange} />
         {scopeFilter === 'classroom' ? (
-          <MaterialsClassroomFilter value={classroomId} onChange={onClassroomChange} />
+          <MaterialsClassroomFilter value={classroomIds} onChange={onClassroomChange} />
         ) : null}
       </div>
     </div>

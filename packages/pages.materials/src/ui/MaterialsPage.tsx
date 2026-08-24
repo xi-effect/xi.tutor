@@ -22,14 +22,22 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
   return tab === 'notes' || tab === 'boards' ? tab : 'boards';
 };
 
-const getClassroomIdFromUrl = (): number | null => {
+const getClassroomIdsFromUrl = (): number[] => {
   if (typeof window === 'undefined') {
-    return null;
+    return [];
   }
 
   const classroom = new URLSearchParams(window.location.search).get('classroom');
-  const classroomId = classroom ? Number(classroom) : NaN;
-  return Number.isInteger(classroomId) && classroomId > 0 ? classroomId : null;
+  if (!classroom) {
+    return [];
+  }
+
+  const ids = classroom
+    .split(',')
+    .map((part) => Number(part.trim()))
+    .filter((id) => Number.isInteger(id) && id > 0);
+
+  return [...new Set(ids)].sort((a, b) => a - b);
 };
 
 const getScopeFromUrl = (): MaterialScopeFilterT => {
@@ -42,7 +50,7 @@ const getScopeFromUrl = (): MaterialScopeFilterT => {
     return scope;
   }
 
-  return getClassroomIdFromUrl() != null ? 'classroom' : 'personal';
+  return getClassroomIdsFromUrl().length > 0 ? 'classroom' : 'personal';
 };
 
 const replaceSearchParams = (updates: Record<string, string | null>) => {
@@ -64,8 +72,8 @@ const replaceSearchParams = (updates: Record<string, string | null>) => {
 const MaterialsPageContent = () => {
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
   const [scopeFilter, setScopeFilter] = useState<MaterialScopeFilterT>(() => getScopeFromUrl());
-  const [classroomId, setClassroomId] = useState<number | null>(() =>
-    getScopeFromUrl() === 'classroom' ? getClassroomIdFromUrl() : null,
+  const [classroomIds, setClassroomIds] = useState<number[]>(() =>
+    getScopeFromUrl() === 'classroom' ? getClassroomIdsFromUrl() : [],
   );
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
@@ -79,7 +87,7 @@ const MaterialsPageContent = () => {
       const nextScope = getScopeFromUrl();
       setActiveTab(getTabFromUrl());
       setScopeFilter(nextScope);
-      setClassroomId(nextScope === 'classroom' ? getClassroomIdFromUrl() : null);
+      setClassroomIds(nextScope === 'classroom' ? getClassroomIdsFromUrl() : []);
     };
 
     window.addEventListener('popstate', syncFromUrl);
@@ -103,14 +111,14 @@ const MaterialsPageContent = () => {
       classroom: null,
     });
     setScopeFilter(scope);
-    setClassroomId(null);
+    setClassroomIds([]);
   };
 
-  const handleClassroomChange = (nextClassroomId: number | null) => {
+  const handleClassroomChange = (nextClassroomIds: number[]) => {
     replaceSearchParams({
-      classroom: nextClassroomId != null ? String(nextClassroomId) : null,
+      classroom: nextClassroomIds.length > 0 ? nextClassroomIds.join(',') : null,
     });
-    setClassroomId(nextClassroomId);
+    setClassroomIds(nextClassroomIds);
   };
 
   if (!isTutor) {
@@ -130,7 +138,7 @@ const MaterialsPageContent = () => {
             activeTab={activeTab}
             onTabChange={handleTabChange}
             scopeFilter={scopeFilter}
-            classroomId={classroomId}
+            classroomIds={classroomIds}
             onScopeChange={handleScopeChange}
             onClassroomChange={handleClassroomChange}
           />
@@ -146,7 +154,7 @@ const MaterialsPageContent = () => {
           <TabsComponent
             activeTab={activeTab}
             scopeFilter={scopeFilter}
-            classroomId={classroomId}
+            classroomIds={classroomIds}
             parentRef={parentRef}
           />
         </div>

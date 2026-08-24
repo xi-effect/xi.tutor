@@ -13,10 +13,10 @@ import { MaterialScopeFilterT } from '../../types';
 type MaterialsProps = {
   parentRef: RefObject<HTMLDivElement | null>;
   scopeFilter: MaterialScopeFilterT;
-  classroomId: number | null;
+  classroomIds: number[];
 };
 
-export const Materials = ({ parentRef, scopeFilter, classroomId }: MaterialsProps) => {
+export const Materials = ({ parentRef, scopeFilter, classroomIds }: MaterialsProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -24,7 +24,7 @@ export const Materials = ({ parentRef, scopeFilter, classroomId }: MaterialsProp
     parentRef,
     'board',
     scopeFilter,
-    classroomId,
+    classroomIds,
   );
   const { openModal } = useMaterialsDuplicate();
 
@@ -42,9 +42,11 @@ export const Materials = ({ parentRef, scopeFilter, classroomId }: MaterialsProp
           scopeFilter === 'all'
             ? t('empty.boardsAllDescription')
             : scopeFilter === 'classroom'
-              ? classroomId != null
-                ? t('empty.boardsClassroomOneDescription')
-                : t('empty.boardsClassroomDescription')
+              ? classroomIds.length === 0
+                ? t('empty.boardsClassroomDescription')
+                : classroomIds.length === 1
+                  ? t('empty.boardsClassroomOneDescription')
+                  : t('empty.boardsClassroomSomeDescription')
               : t('empty.boardsDescription')
         }
       />
