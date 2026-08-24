@@ -16,7 +16,7 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/note/
   head: () => ({
     meta: [
       {
-        title: 'sovlium | Доска',
+        title: 'sovlium | Заметка',
       },
     ],
   }),
