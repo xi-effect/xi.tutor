@@ -15,11 +15,7 @@ enum MaterialsQueryKey {
 
 const materialsApiConfig = {
   [MaterialsQueryKey.Materials]: {
-    getUrl: () => {
-      // Нет в приложенном OpenAPI: аналог searches для personal-materials не специфицирован.
-      // Библиотека personal materials без list/search не работает — см. отчёт по миграции.
-      return `${CONTENT_SERVICE_URL}/roles/tutor/personal-materials/searches/`;
-    },
+    getUrl: () => `${CONTENT_SERVICE_URL}/roles/tutor/materials/searches/`,
     method: HttpMethod.POST,
   },
 

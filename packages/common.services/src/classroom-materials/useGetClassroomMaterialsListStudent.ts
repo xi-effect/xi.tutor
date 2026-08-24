@@ -27,7 +27,9 @@ export const useGetClassroomMaterialsListStudent = ({
     },
     data: {
       limit: 50,
-      filters: content_kind ? { content_kind } : {},
+      filters: {
+        content_kind: content_kind ?? null,
+      },
     },
     disabled: disabled || !classroomId,
     queryKey: [

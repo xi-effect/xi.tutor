@@ -15,7 +15,7 @@ interface ClassroomMaterialsResponse {
   data: Array<{
     id: string;
     content_kind: YDocContentKind;
-    name: string;
+    name?: string;
     updated_at: string;
   }>;
   pagination: {
@@ -46,7 +46,9 @@ export const useGetClassroomMaterials = (
     data: {
       cursor,
       limit,
-      filters: content_kind ? { content_kind } : {},
+      filters: {
+        content_kind: content_kind ?? null,
+      },
     },
     disabled: disabled || !classroomId,
     queryKey: [

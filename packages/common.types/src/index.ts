@@ -28,14 +28,26 @@ export type {
   MaterialT,
   PersonalMaterialResponse,
   ClassroomMaterialResponse,
+  MaterialCursor,
+  PersonalMaterialScope,
+  ClassroomMaterialScope,
+  MaterialScope,
+  AnyMaterialFilters,
+  AnyMaterialSearchRequest,
+  ClassroomMaterialFilters,
+  ClassroomMaterialSearchRequest,
   UpdateMaterialDataT,
   ClassroomMaterialsT,
   AccessModeT,
   ContentYDocItem,
-  StorageItemT,
   MaterialActionsMenuPropsT,
   MaterialPropsT,
   ModalEditMaterialNamePropsT,
+} from './materials';
+export {
+  serializeMaterialScope,
+  PERSONAL_MATERIAL_SCOPE,
+  buildAnyMaterialFilters,
 } from './materials';
 export type {
   TemplateT,

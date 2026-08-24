@@ -9,7 +9,7 @@ import { AccessModeT, UpdateMaterialDataT } from 'common.types';
 export const useMaterialActions = (
   id: string,
   contentKind: string,
-  name: string,
+  name?: string,
   classroomId?: string,
 ) => {
   const { deleteMaterials } = useDeleteMaterials();

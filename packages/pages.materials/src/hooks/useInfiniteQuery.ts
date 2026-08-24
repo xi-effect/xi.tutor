@@ -5,14 +5,24 @@ import { MaterialsKindT } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import React from 'react';
+import {
+  buildAnyMaterialFilters,
+  PERSONAL_MATERIAL_SCOPE,
+  serializeMaterialScope,
+} from 'common.services';
 
 export const useInfiniteQuery = (
   parentRef: RefObject<HTMLDivElement | null>,
   kind: MaterialsKindT,
 ) => {
+  const filters = buildAnyMaterialFilters({
+    content_kind: kind,
+    scope: PERSONAL_MATERIAL_SCOPE,
+  });
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
-      queryKey: [MaterialsQueryKey.Materials, kind],
+      queryKey: [MaterialsQueryKey.Materials, kind, serializeMaterialScope(filters.scope)],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
         const url = materialsApiConfig[MaterialsQueryKey.Materials].getUrl();
@@ -30,9 +40,7 @@ export const useInfiniteQuery = (
                   updated_at: pageParam,
                 }
               : null,
-            filters: {
-              content_kind: kind,
-            },
+            filters,
           },
         });
 
@@ -40,13 +48,13 @@ export const useInfiniteQuery = (
       },
       initialPageParam: undefined as string | undefined,
       getNextPageParam: (lastPage) => {
-        const data = Array.isArray(lastPage) ? lastPage : lastPage?.data || lastPage?.results;
+        const pageData = Array.isArray(lastPage) ? lastPage : lastPage?.data || lastPage?.results;
 
-        if (!data || !Array.isArray(data) || data.length === 0) {
+        if (!pageData || !Array.isArray(pageData) || pageData.length === 0) {
           return undefined;
         }
 
-        const lastItem = data[data.length - 1];
+        const lastItem = pageData[pageData.length - 1];
         if (!lastItem || !lastItem.updated_at) {
           return undefined;
         }
@@ -90,7 +98,14 @@ export const useInfiniteQuery = (
       return page?.data || page?.results || [];
     });
 
-    return flattened;
+    const seen = new Set<string>();
+    return flattened.filter((item: MaterialPropsT) => {
+      if (!item?.id || seen.has(item.id)) {
+        return false;
+      }
+      seen.add(item.id);
+      return true;
+    });
   }, [data?.pages]);
 
   return {

@@ -7,15 +7,15 @@ import {
   useGetClassroomStorageItemStudent,
   useGetStorageItem,
 } from 'common.services';
-import { ContentYDocItem, StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 
 type TEditorWithData = {
-  storageItem: ContentYDocItem | StorageItemT;
+  storageItem: ContentYDocItem;
 };
 
 type TEditor = {
-  storageItem?: ContentYDocItem | StorageItemT;
+  storageItem?: ContentYDocItem;
 };
 
 const EditorWithoutData = () => {

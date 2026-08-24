@@ -190,11 +190,11 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
   };
 
   const handleConfirm = () => {
-    if (selectedClassroomId && material) {
+    if (selectedClassroomId) {
       duplicateMaterial.mutate(
         {
           classroomId: selectedClassroomId.toString(),
-          name: material.name,
+          ...(material?.name ? { name: material.name } : {}),
           student_access_mode: studentAccessMode,
           source_id: materialId,
         },

@@ -11,6 +11,6 @@ export type MaterialPropsT = {
   content_kind: 'note' | 'board';
   id: string;
   last_opened_at?: string;
-  name: string;
+  name?: string;
   updated_at: string;
 };

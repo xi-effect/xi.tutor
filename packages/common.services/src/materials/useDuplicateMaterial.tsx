@@ -7,15 +7,15 @@ import i18n from 'i18next';
 
 interface DuplicateMaterialParams {
   classroomId: string;
-  name: string;
-  student_access_mode: AccessModeT;
+  name?: string;
+  student_access_mode?: AccessModeT;
   source_id: MaterialId;
 }
 
 interface DuplicateMaterialResponse {
   data: {
     id: string;
-    name: string;
+    name?: string;
     content_kind: 'note' | 'board';
     updated_at: string;
   };
@@ -41,9 +41,11 @@ export const useDuplicateMaterial = () => {
           method: materialsApiConfig[MaterialsQueryKey.MaterialDuplicates].method,
           url: materialsApiConfig[MaterialsQueryKey.MaterialDuplicates].getUrl(params.classroomId),
           data: {
-            name: params.name,
-            student_access_mode: params.student_access_mode,
             source_id: params.source_id,
+            ...(params.name ? { name: params.name } : {}),
+            ...(params.student_access_mode
+              ? { student_access_mode: params.student_access_mode }
+              : {}),
           },
           headers: {
             'Content-Type': 'application/json',

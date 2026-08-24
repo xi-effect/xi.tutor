@@ -16,7 +16,7 @@ interface MutationContext {
 }
 
 type MaterialItemT = {
-  name: string;
+  name?: string;
   content_kind: string;
 };
 
@@ -52,7 +52,7 @@ export const useAddMaterials = () => {
           queryKey: [MaterialsQueryKey.Materials],
         });
 
-        const existingMaterials: Array<{ name: string }> = [];
+        const existingMaterials: Array<{ name?: string }> = [];
         queries.forEach(([queryKey, data]) => {
           if (data) {
             const keyType = queryKey[1];

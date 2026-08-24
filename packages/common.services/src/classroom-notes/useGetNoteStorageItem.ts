@@ -1,5 +1,5 @@
 import { classroomNotesApiConfig, ClassroomNotesQueryKey } from 'common.api';
-import { StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { getAxiosInstance } from 'common.config';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -26,7 +26,7 @@ export const useGetNoteStorageItem = ({
             'Content-Type': 'application/json',
           },
         });
-        return response.data as StorageItemT;
+        return response.data as ContentYDocItem;
       } catch (error: unknown) {
         if (error instanceof AxiosError && error.response?.status === 404) {
           return null;

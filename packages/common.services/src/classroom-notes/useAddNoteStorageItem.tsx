@@ -1,14 +1,12 @@
 import { classroomNotesApiConfig, ClassroomNotesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MaterialT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { handleError } from 'common.services';
+import { AxiosError } from 'axios';
 
 interface NoteStorageItemResponseT {
-  data: MaterialT & {
-    id: string;
-    createdAt: string;
-  };
+  data: ContentYDocItem;
 }
 
 interface MutationContext {
@@ -46,14 +44,19 @@ export const useAddNoteStorageItem = () => {
       }
     },
     onMutate: async (noteData) => {
-      // Отменяем все queries для заметок кабинета
       await queryClient.cancelQueries({
         queryKey: [ClassroomNotesQueryKey.GetNoteStorageItem, noteData.classroomId],
       });
 
       return { previousQueries: [] };
     },
-    onError: (err) => {
+    onError: (err, variables) => {
+      if (err instanceof AxiosError && err.response?.status === 409) {
+        queryClient.invalidateQueries({
+          queryKey: [ClassroomNotesQueryKey.GetNoteStorageItem, variables.classroomId],
+        });
+        return;
+      }
       handleError(err, 'materials');
     },
     onSuccess: (_response, variables) => {
