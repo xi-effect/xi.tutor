@@ -7,17 +7,20 @@ export const useNavigateToMaterial = () => {
 
   const getFilteredSearch = () => (search.call ? { call: search.call } : {});
 
-  const navigateToMaterial = (id: string, contentKind: string) => {
+  const navigateToMaterial = (id: string, contentKind: string, materialClassroomId?: string) => {
     const filteredSearch = getFilteredSearch();
+    const targetClassroomId = classroomId ?? materialClassroomId;
 
-    if (classroomId) {
+    if (targetClassroomId) {
       const route =
         contentKind === 'board'
           ? '/classrooms/$classroomId/boards/$boardId'
           : '/classrooms/$classroomId/notes/$noteId';
 
       const params =
-        contentKind === 'board' ? { classroomId, boardId: id } : { classroomId, noteId: id };
+        contentKind === 'board'
+          ? { classroomId: targetClassroomId, boardId: id }
+          : { classroomId: targetClassroomId, noteId: id };
 
       navigate({
         to: route,

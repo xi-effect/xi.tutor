@@ -1,6 +1,6 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
 import { RefObject } from 'react';
-import { MaterialPropsT } from '../types';
+import { MaterialPropsT, MaterialScopeFilterT } from '../types';
 import { MaterialsKindT } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
@@ -14,10 +14,16 @@ import {
 export const useInfiniteQuery = (
   parentRef: RefObject<HTMLDivElement | null>,
   kind: MaterialsKindT,
+  scopeFilter: MaterialScopeFilterT = 'personal',
 ) => {
   const filters = buildAnyMaterialFilters({
     content_kind: kind,
-    scope: PERSONAL_MATERIAL_SCOPE,
+    scope:
+      scopeFilter === 'personal'
+        ? PERSONAL_MATERIAL_SCOPE
+        : scopeFilter === 'classroom'
+          ? { access_kind: 'classroom', classroom_ids: null }
+          : null,
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =

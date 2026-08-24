@@ -4,11 +4,22 @@
     "boards": "Доски",
     "notes": "Заметки"
   },
+  "scope": {
+    "option": {
+      "personal": "Личные",
+      "classroom": "В кабинетах",
+      "all": "Все"
+    }
+  },
   "empty": {
     "boardsTitle": "Пока нет досок",
     "boardsDescription": "Создайте доску — она появится в этом списке.",
+    "boardsClassroomDescription": "Доски из кабинетов появятся в этом списке.",
+    "boardsAllDescription": "Личные и кабинетные доски появятся в этом списке.",
     "notesTitle": "Пока нет заметок",
     "notesDescription": "Создайте заметку — она появится в этом списке.",
+    "notesClassroomDescription": "Заметки из кабинетов появятся в этом списке.",
+    "notesAllDescription": "Личные и кабинетные заметки появятся в этом списке.",
     "filesTitle": "Пока нет файлов",
     "filesDescription": "Загруженные файлы появятся в этом списке.",
     "helpLink": "Подробнее о работе с материалами"

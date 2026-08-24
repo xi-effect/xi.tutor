@@ -22,6 +22,8 @@ export const MaterialsCard = ({
   name,
   content_kind,
   student_access_mode,
+  access_kind,
+  classroom_id,
   onDuplicate,
   hasIcon = false,
   isLoading,
@@ -29,8 +31,11 @@ export const MaterialsCard = ({
   layout = 'default',
 }: MaterialsCardProps) => {
   const { t } = useTranslation('materialsCard');
-  const { classroomId } = useParams({ strict: false });
+  const { classroomId: routeClassroomId } = useParams({ strict: false });
 
+  const materialClassroomId =
+    access_kind === 'classroom' && classroom_id != null ? String(classroom_id) : undefined;
+  const classroomId = routeClassroomId ?? materialClassroomId;
   const isClassroom = !!classroomId;
 
   const { data: user } = useCurrentUser();
@@ -51,7 +56,7 @@ export const MaterialsCard = ({
 
   const handleCardClick = () => {
     if (modalOpen || deleteConfirmOpen) return;
-    navigateToMaterial(id, content_kind);
+    navigateToMaterial(id, content_kind, classroomId);
   };
 
   const handleDuplicate = () => {

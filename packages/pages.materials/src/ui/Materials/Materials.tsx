@@ -8,15 +8,18 @@ import { useMaterialsDuplicate } from '../../provider';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
 
+import { MaterialScopeFilterT } from '../../types';
+
 type MaterialsProps = {
   parentRef: RefObject<HTMLDivElement | null>;
+  scopeFilter: MaterialScopeFilterT;
 };
 
-export const Materials = ({ parentRef }: MaterialsProps) => {
+export const Materials = ({ parentRef, scopeFilter }: MaterialsProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
 
-  const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'board');
+  const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'board', scopeFilter);
   const { openModal } = useMaterialsDuplicate();
 
   const notFoundItems = !items.length && !isLoading && !isError;
@@ -29,7 +32,13 @@ export const Materials = ({ parentRef }: MaterialsProps) => {
     return (
       <MaterialsTabEmptyState
         title={t('empty.boardsTitle')}
-        description={t('empty.boardsDescription')}
+        description={
+          scopeFilter === 'all'
+            ? t('empty.boardsAllDescription')
+            : scopeFilter === 'classroom'
+              ? t('empty.boardsClassroomDescription')
+              : t('empty.boardsDescription')
+        }
       />
     );
   }

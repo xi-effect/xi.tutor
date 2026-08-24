@@ -8,15 +8,18 @@ import { useMaterialsDuplicate } from '../../provider';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
 
+import { MaterialScopeFilterT } from '../../types';
+
 type NotesProps = {
   parentRef: RefObject<HTMLDivElement | null>;
+  scopeFilter: MaterialScopeFilterT;
 };
 
-export const Notes = ({ parentRef }: NotesProps) => {
+export const Notes = ({ parentRef, scopeFilter }: NotesProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
 
-  const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'note');
+  const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'note', scopeFilter);
   const { openModal } = useMaterialsDuplicate();
 
   const notFoundItems = !items.length && !isLoading && !isError;
@@ -29,7 +32,13 @@ export const Notes = ({ parentRef }: NotesProps) => {
     return (
       <MaterialsTabEmptyState
         title={t('empty.notesTitle')}
-        description={t('empty.notesDescription')}
+        description={
+          scopeFilter === 'all'
+            ? t('empty.notesAllDescription')
+            : scopeFilter === 'classroom'
+              ? t('empty.notesClassroomDescription')
+              : t('empty.notesDescription')
+        }
       />
     );
   }

@@ -4,11 +4,22 @@
     "boards": "Boards",
     "notes": "Notes"
   },
+  "scope": {
+    "option": {
+      "personal": "Personal",
+      "classroom": "In classrooms",
+      "all": "All"
+    }
+  },
   "empty": {
     "boardsTitle": "No boards yet",
     "boardsDescription": "Create a board — it will appear in this list.",
+    "boardsClassroomDescription": "Classroom boards will appear in this list.",
+    "boardsAllDescription": "Personal and classroom boards will appear in this list.",
     "notesTitle": "No notes yet",
     "notesDescription": "Create a note — it will appear in this list.",
+    "notesClassroomDescription": "Classroom notes will appear in this list.",
+    "notesAllDescription": "Personal and classroom notes will appear in this list.",
     "filesTitle": "No files yet",
     "filesDescription": "Uploaded files will appear in this list.",
     "helpLink": "Learn more about working with materials"
