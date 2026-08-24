@@ -8,6 +8,7 @@ type FlipCardFaceProps = {
   shapeId: DrShapeId;
   side: 'front' | 'back';
   isFlipped: boolean;
+  backgroundColor: string;
   cardWidth: number;
   cardHeight: number;
   cardScale: number;
@@ -31,6 +32,7 @@ export const FlipCardFace = ({
   side,
   isFlipped,
   cardWidth,
+  backgroundColor,
   cardScale,
   hasImage,
   resolvedImageSrc,
@@ -49,7 +51,6 @@ export const FlipCardFace = ({
   const isFront = side === 'front';
   const isThisFaceActive = isFront === !isFlipped;
   const isEmpty = plainText.trim() === '';
-  const bgClass = isFront ? 'bg-orange-20 ring-orange-40 ring' : 'bg-gray-0 ring-orange-20 ring-2';
   const labelStyle = { width: cardWidth, height: textAreaHeight };
 
   const canUseRichTextLabel = isThisFaceActive || !isEditing;
@@ -69,7 +70,10 @@ export const FlipCardFace = ({
       onPointerDown={onFacePointerDown}
       onPointerUp={onFacePointerUp}
     >
-      <div className={`${bgClass} flex h-full w-full flex-col overflow-hidden rounded-xl`}>
+      <div
+        className="ring-gray-30 dark:ring-gray-0 flex h-full w-full flex-col overflow-hidden rounded-xl ring-1"
+        style={{ backgroundColor }}
+      >
         {hasImage && (
           <div className="w-full shrink-0 overflow-hidden" style={{ height: imageAreaHeight }}>
             {resolvedImageSrc && (

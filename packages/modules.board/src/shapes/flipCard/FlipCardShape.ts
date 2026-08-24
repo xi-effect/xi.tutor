@@ -1,5 +1,4 @@
 import {
-  DefaultColorStyle,
   DefaultSizeStyle,
   T,
   DrBaseShape,
@@ -8,6 +7,7 @@ import {
   richTextValidator,
   idValidator,
 } from '@ibodr/draw';
+import { FlipCardFrontColorStyle, FlipCardBackColorStyle } from '../shapeStyles';
 
 const assetIdValidator = idValidator<DrAssetId>('asset');
 
@@ -20,7 +20,8 @@ export type FlipCardShapeProps = {
   frontImageAssetId: DrAssetId | null;
   backImageAssetId: DrAssetId | null;
   isFlipped: boolean;
-  color: typeof DefaultColorStyle.defaultValue;
+  frontColor: typeof FlipCardFrontColorStyle.defaultValue;
+  backColor: typeof FlipCardBackColorStyle.defaultValue;
   size: typeof DefaultSizeStyle.defaultValue;
 };
 
@@ -33,7 +34,8 @@ export const flipCardShapeProps = {
   frontImageAssetId: assetIdValidator.nullable(),
   backImageAssetId: assetIdValidator.nullable(),
   isFlipped: T.boolean,
-  color: DefaultColorStyle,
+  frontColor: FlipCardFrontColorStyle,
+  backColor: FlipCardBackColorStyle,
   size: DefaultSizeStyle,
 };
 

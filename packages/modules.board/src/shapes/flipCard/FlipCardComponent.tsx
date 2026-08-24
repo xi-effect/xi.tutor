@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useEditor, useValue } from '@ibodr/draw';
+import { getColorValue, useEditor, useValue } from '@ibodr/draw';
 import { startLabelEditing } from '../labels/startLabelEditing';
 import type { FlipCardShape } from './FlipCardShape';
 import {
@@ -34,9 +34,18 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
     isFlipped,
     frontImageAssetId,
     backImageAssetId,
+    frontColor,
+    backColor,
   } = shape.props;
 
   const { token } = useYjsContext();
+
+  const theme = useValue('theme', () => editor.getCurrentTheme(), [editor]);
+  const colorMode = useValue('colorMode', () => editor.getColorMode(), [editor]);
+  const colors = theme.colors[colorMode];
+
+  const frontBackgroundColor = getColorValue(colors, frontColor, 'solid');
+  const backBackgroundColor = getColorValue(colors, backColor, 'solid');
 
   const frontResolvedSrc = useResolvedAssetSrc(editor, frontImageAssetId, token);
   const backResolvedSrc = useResolvedAssetSrc(editor, backImageAssetId, token);
@@ -135,6 +144,7 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
           onStartEditing={startEditing}
           onFacePointerDown={handleFacePointerDown}
           onFacePointerUp={handleFacePointerUp}
+          backgroundColor={frontBackgroundColor}
         />
         <FlipCardFace
           shapeId={id}
@@ -156,6 +166,7 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
           onStartEditing={startEditing}
           onFacePointerDown={handleFacePointerDown}
           onFacePointerUp={handleFacePointerUp}
+          backgroundColor={backBackgroundColor}
         />
       </div>
 

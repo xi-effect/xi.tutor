@@ -6,10 +6,13 @@ import { navBarElements } from '../../../utils/navBarElements';
 import { useDrawStyles } from '../../../hooks/useDrawStyles';
 import { ColorDot } from '../canvas';
 import { FillTypePicker } from '../../../shapes/geo';
+
 import { useDrawStore } from '../../../store';
 import { Picker } from '../popups';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
+import { FlipCardShape } from '../../../shapes/flipCard/FlipCardShape';
+import { FlipCardFrontColorStyle } from '../../../shapes/shapeStyles';
 
 const stickerColorMap: Record<string, string> = {
   grey: 'bg-gray-60',
@@ -41,6 +44,7 @@ const supportedShapeTypes = new Set([
   'note',
   'frame',
   'coordinate-axes',
+  'flip-card',
 ]);
 const drawShapeTypes = new Set(['draw']);
 
@@ -59,6 +63,15 @@ export const ColorPicker = track(() => {
     [selectedShapes],
   );
 
+  const flipCardShape = useMemo(
+    () =>
+      selectedShapes.length === 1 && selectedShapes[0].type === 'flip-card'
+        ? (selectedShapes[0] as FlipCardShape)
+        : null,
+    [selectedShapes],
+  );
+  const isFlipCard = !!flipCardShape;
+
   const isGeo = useMemo(
     () => selectedShapes.some((shape) => shape.type === 'xi-geo'),
     [selectedShapes],
@@ -74,9 +87,17 @@ export const ColorPicker = track(() => {
     [selectedShapes],
   );
 
-  const availableColors = useMemo(() => (isSticker ? stickerColors : colorOptions), [isSticker]);
+  const availableColors = useMemo(
+    () => (isSticker || isFlipCard ? stickerColors : colorOptions),
+    [isSticker, isFlipCard],
+  );
 
   const currentColor = useMemo((): string => {
+    if (flipCardShape) {
+      return flipCardShape.props.isFlipped
+        ? flipCardShape.props.backColor
+        : flipCardShape.props.frontColor;
+    }
     if (selectedShapes.length === 0) return isSticker ? 'grey' : 'black';
     try {
       const shapeProps = (selectedShapes[0] as { props?: { color?: string } }).props;
@@ -87,7 +108,7 @@ export const ColorPicker = track(() => {
       console.warn('Error getting shape color:', error);
     }
     return isSticker ? 'grey' : 'black';
-  }, [selectedShapes, isSticker, availableColors]);
+  }, [selectedShapes, isSticker, availableColors, flipCardShape]);
 
   const currentThickness = useMemo((): string => {
     if (selectedShapes.length === 0) return 'm';
@@ -113,10 +134,19 @@ export const ColorPicker = track(() => {
 
   const handleColorClick = useCallback(
     (colorName: string) => {
+      if (flipCardShape) {
+        const propKey = flipCardShape.props.isFlipped ? 'backColor' : 'frontColor';
+        editor.updateShape<FlipCardShape>({
+          id: flipCardShape.id,
+          type: 'flip-card',
+          props: { [propKey]: colorName as typeof FlipCardFrontColorStyle.defaultValue },
+        });
+        return;
+      }
       setSelectedShapesColor(colorName);
       if (isGeo) setGeoColor(colorName);
     },
-    [setSelectedShapesColor, setGeoColor, isGeo],
+    [flipCardShape, setSelectedShapesColor, isGeo, setGeoColor, editor],
   );
 
   const handleSize = useCallback(

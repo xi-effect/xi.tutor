@@ -46,3 +46,25 @@ export const PlotColorStyle = StyleProp.defineEnum('xi:plotColor', {
 export const EmojiStickerStyle = StyleProp.define<string>('xi:emojiSticker', {
   defaultValue: '',
 });
+
+const FLIP_CARD_COLOR_VALUES = [
+  'grey',
+  'blue',
+  'red',
+  'green',
+  'light-red',
+  'yellow',
+  'violet',
+  'light-violet',
+  'light-blue',
+] as const;
+
+export const FlipCardFrontColorStyle = StyleProp.defineEnum('xi:flipCardFrontColor', {
+  values: FLIP_CARD_COLOR_VALUES,
+  defaultValue: 'yellow',
+});
+
+export const FlipCardBackColorStyle = StyleProp.defineEnum('xi:flipCardBackColor', {
+  values: FLIP_CARD_COLOR_VALUES,
+  defaultValue: 'grey',
+});

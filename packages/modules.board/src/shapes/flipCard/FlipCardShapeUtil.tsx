@@ -11,6 +11,7 @@ import {
   FLIP_CARD_MIN_WIDTH,
 } from './consts';
 import { createElement } from 'react';
+import { FlipCardBackColorStyle, FlipCardFrontColorStyle } from '../shapeStyles';
 
 export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
   static override type = 'flip-card' as const;
@@ -26,7 +27,8 @@ export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
       frontImageAssetId: null,
       backImageAssetId: null,
       isFlipped: false,
-      color: 'black',
+      frontColor: FlipCardFrontColorStyle.defaultValue,
+      backColor: FlipCardBackColorStyle.defaultValue,
       size: 'm',
     };
   }

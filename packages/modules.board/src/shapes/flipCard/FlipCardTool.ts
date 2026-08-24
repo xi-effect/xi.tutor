@@ -1,6 +1,7 @@
-import { createShapeId, DefaultColorStyle, DefaultSizeStyle, StateNode } from '@ibodr/draw';
+import { createShapeId, DefaultSizeStyle, StateNode } from '@ibodr/draw';
 import { BASE_CARD_HEIGHT, BASE_CARD_WIDTH, EMPTY_RICH_TEXT } from './consts';
 import { startLabelEditing } from '../labels/startLabelEditing';
+import { FlipCardBackColorStyle, FlipCardFrontColorStyle } from '../shapeStyles';
 
 export class FlipCardTool extends StateNode {
   static override id = 'flip-card';
@@ -11,7 +12,6 @@ export class FlipCardTool extends StateNode {
 
   override onPointerDown() {
     const { x, y } = this.editor.inputs.currentPagePoint;
-    const color = this.editor.getStyleForNextShape(DefaultColorStyle);
     const size = this.editor.getStyleForNextShape(DefaultSizeStyle);
     const id = createShapeId();
 
@@ -27,7 +27,8 @@ export class FlipCardTool extends StateNode {
         frontRichText: EMPTY_RICH_TEXT,
         backRichText: EMPTY_RICH_TEXT,
         isFlipped: false,
-        color,
+        frontColor: FlipCardFrontColorStyle.defaultValue,
+        backColor: FlipCardBackColorStyle.defaultValue,
         size,
       },
     });
