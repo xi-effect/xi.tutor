@@ -1,4 +1,9 @@
 export { useFullScreen } from './src/useFullScreen';
+export {
+  switchKeyboardLayout,
+  getSearchQueryVariants,
+  matchesSearchQuery,
+} from './src/keyboardLayout';
 export { useKeyPress } from './src/useKeyPress';
 export { useGetUrlWithParams } from './src/useGetUrlWithParams';
 export { useMedia } from './src/useMedia';
