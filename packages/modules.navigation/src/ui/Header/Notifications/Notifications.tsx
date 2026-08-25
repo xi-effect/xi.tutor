@@ -4,8 +4,10 @@ import { useMediaQuery } from '@xipkg/utils';
 import {
   formatNotificationCount,
   registerNotificationNavigator,
+  registerNotificationSoundPlayer,
   useNotificationsContext,
 } from 'common.services';
+import { playSoundEffect, unlockSoundEffect } from 'common.ui';
 import type { CustomNotificationModalPayload } from 'common.services';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { NotificationsList } from './NotificationsList';
@@ -46,6 +48,16 @@ export const Notifications = () => {
     registerNotificationNavigator((options) => navigateToNotification(navigate, options));
     return () => registerNotificationNavigator(null);
   }, [navigate]);
+
+  useEffect(() => {
+    const unregisterSound = registerNotificationSoundPlayer(() => playSoundEffect('notification'));
+    const unlock = () => unlockSoundEffect('notification');
+    window.addEventListener('pointerdown', unlock, { once: true });
+    return () => {
+      unregisterSound();
+      window.removeEventListener('pointerdown', unlock);
+    };
+  }, []);
 
   const handleToSettings = () => {
     navigate({ to: location.pathname, search: { profile: 'notifications' } });

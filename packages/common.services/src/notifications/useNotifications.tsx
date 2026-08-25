@@ -14,6 +14,7 @@ import {
   getNotificationInvalidationKeys,
 } from './notificationUtils';
 import { navigateFromNotification } from './notificationNavigation';
+import { playIncomingNotificationSound } from './notificationSound';
 import { shouldUseSystemNotifications, showSystemNotification } from './webNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
@@ -100,14 +101,20 @@ export const useNotifications = () => {
       const notification = transformNotification(data);
 
       // Добавляем новое уведомление в начало списка socket-уведомлений (чтобы оно появилось вверху)
+      let isNewNotification = false;
       setSocketNotifications((prev) => {
         // Проверяем, нет ли уже такого уведомления (по id)
         if (prev.some((n) => n.id === notification.id)) {
           return prev;
         }
+        isNewNotification = true;
         // Добавляем новое уведомление в начало массива, чтобы оно отображалось вверху
         return [notification, ...prev];
       });
+
+      if (isNewNotification) {
+        playIncomingNotificationSound();
+      }
 
       // Ревалидируем кеш связанных данных на основе конфига уведомления
       const invalidationKeys = getNotificationInvalidationKeys(notification);
