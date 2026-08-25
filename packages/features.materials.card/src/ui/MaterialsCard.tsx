@@ -8,7 +8,7 @@ import { useMaterialActions, useNavigateToMaterial } from '../hooks';
 import { cardIcon } from './CardIcon';
 import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser } from 'common.services';
-import { ConfirmDialog } from 'common.ui';
+import { ConfirmDialog, cardMenuPositionClass } from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
 
@@ -173,33 +173,33 @@ export const MaterialsCard = ({
         <div
           onClick={handleCardClick}
           className={cn(
-            'group bg-background-surface flex h-40 w-full shrink-0 cursor-pointer flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+            'group bg-background-surface relative flex h-40 w-full shrink-0 cursor-pointer flex-col justify-between gap-5 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
             className,
           )}
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
         >
-          <div className="flex w-full items-start justify-between">
+          <div className="flex w-full items-center gap-2 pr-8">
             <div className="bg-status-info-background [&>svg]:fill-icon-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
               {cardIcon[content_kind]}
             </div>
 
-            {isTutor && <div className="flex size-8 items-center justify-center">{menu}</div>}
-          </div>
-
-          <div className="flex w-full flex-col items-start gap-1 overflow-hidden">
             {student_access_mode && (
               <Badge
                 variant="default"
                 className={cn(
-                  'text-s-base px-2 py-1 font-medium',
+                  'text-s-base min-w-0 truncate px-2 py-1 font-medium',
                   accessModeStyles[student_access_mode],
                 )}
               >
                 {t(`accessMode.${student_access_mode}`)}
               </Badge>
             )}
+          </div>
 
+          {isTutor && <div className={cardMenuPositionClass}>{menu}</div>}
+
+          <div className="flex w-full flex-col items-start gap-1 overflow-hidden">
             <p className="text-text-primary line-clamp-2 w-full text-base leading-5 font-medium">
               {name}
             </p>
@@ -250,9 +250,7 @@ export const MaterialsCard = ({
         </div>
       </div>
 
-      {isTutor && (
-        <div className="flex h-6 w-6 items-center justify-center rounded-full">{menu}</div>
-      )}
+      {isTutor && <div className="flex size-8 items-center justify-center">{menu}</div>}
 
       {editModal}
       {deleteConfirmModal}

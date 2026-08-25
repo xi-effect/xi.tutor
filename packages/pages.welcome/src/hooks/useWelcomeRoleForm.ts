@@ -7,6 +7,7 @@ import {
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
 } from 'common.utils';
+import { runWelcomeRoleBack, runWelcomeRoleForward } from './welcomeRoleSubmitLogic';
 
 export const useWelcomeRoleForm = () => {
   const navigate = useNavigate();
@@ -28,35 +29,35 @@ export const useWelcomeRoleForm = () => {
   const onForwards = async (role: RoleT) => {
     const userRole = resolveOnboardingAnalyticsRole(role);
 
-    try {
-      await updateProfile.mutateAsync({ default_layout: role });
-    } catch (error) {
-      trackOnboardingStepFailed('role_selection', userRole, error, user?.onboarding_stage);
-      return;
-    }
-
-    try {
-      await transitionStageForward.mutateAsync();
-      trackOnboardingStepCompleted('role_selection', userRole, user?.onboarding_stage);
-      navigate({
-        to: '/welcome/socials',
-        search: { ...search },
-      });
-    } catch (error) {
-      trackOnboardingStepFailed('role_selection', userRole, error, user?.onboarding_stage);
-    }
+    await runWelcomeRoleForward({
+      role,
+      userRole,
+      onboardingStage: user?.onboarding_stage ?? undefined,
+      updateProfile: (payload) => updateProfile.mutateAsync(payload),
+      transitionForward: () => transitionStageForward.mutateAsync(),
+      trackFailed: trackOnboardingStepFailed,
+      trackCompleted: trackOnboardingStepCompleted,
+      navigateToSocials: (nextSearch) => {
+        navigate({ to: '/welcome/socials', search: nextSearch });
+      },
+      search,
+    });
   };
 
   const onBackwards = async () => {
     const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
 
-    try {
-      await transitionStageBack.mutateAsync();
-      trackOnboardingStepBack('role_selection', 'profile', userRole, user?.onboarding_stage);
-      navigate({ to: '/welcome/user', search: { ...search } });
-    } catch (error) {
-      trackOnboardingStepFailed('role_selection', userRole, error, user?.onboarding_stage);
-    }
+    await runWelcomeRoleBack({
+      userRole,
+      onboardingStage: user?.onboarding_stage ?? undefined,
+      transitionBack: () => transitionStageBack.mutateAsync(),
+      trackBack: trackOnboardingStepBack,
+      trackFailed: trackOnboardingStepFailed,
+      navigateToUser: (nextSearch) => {
+        navigate({ to: '/welcome/user', search: nextSearch });
+      },
+      search,
+    });
   };
 
   const isLoading =

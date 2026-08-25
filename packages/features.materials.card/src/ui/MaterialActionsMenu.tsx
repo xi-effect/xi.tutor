@@ -13,6 +13,7 @@ import {
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
+import { cardMenuButtonClass, cardMenuIconClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 
 /** text-xs-base нельзя вместе с text-gray-* — twMerge снимает цвет текста */
@@ -73,12 +74,12 @@ export const MaterialActionsMenu = ({
       <DropdownMenuTrigger asChild>
         <Button
           onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
-          className="group-hover:bg-background-surface h-8 min-h-8 w-8 min-w-8 rounded-sm"
+          className={cardMenuButtonClass}
           variant="none"
           size="icon"
           data-umami-event="material-actions-menu-open"
         >
-          <MoreVert className="fill-icon-primary h-4 w-4" />
+          <MoreVert className={cardMenuIconClass} />
         </Button>
       </DropdownMenuTrigger>
 

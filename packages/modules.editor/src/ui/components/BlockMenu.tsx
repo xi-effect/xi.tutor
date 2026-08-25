@@ -5,7 +5,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom, Code } from '@xipkg/icons';
+import {
+  Copy,
+  H1,
+  H2,
+  H3,
+  Text,
+  Trash,
+  Image,
+  Music,
+  File,
+  Presentation,
+  ArrowUp,
+  ArrowBottom,
+  Code,
+  Ul,
+  Ol,
+  Task,
+} from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions } from '../../hooks';
@@ -87,9 +104,39 @@ export const BlockMenu = ({
           <span>{t('blockMenu.heading3')}</span>
         </DropdownMenuItem>
 
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('bulletList')}>
+          <Ul size="sm" className="size-6" />
+          <span>{t('blockMenu.bulletList')}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('orderedList')}>
+          <Ol size="sm" className="size-6" />
+          <span>{t('blockMenu.orderedList')}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('taskList')}>
+          <Task size="sm" className="size-6" />
+          <span>{t('blockMenu.taskList')}</span>
+        </DropdownMenuItem>
+
         <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
           <span>{t('blockMenu.image')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadAudio')}>
+          <Music size="sm" className="size-6" />
+          <span>{t('blockMenu.audio')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadPdf')}>
+          <File size="sm" className="size-6" />
+          <span>{t('blockMenu.pdf')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={menuItemClass}
+          onSelect={() => openModal('uploadPresentation')}
+        >
+          <Presentation size="sm" className="size-6" />
+          <span>{t('blockMenu.presentation')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
           <Code size="sm" className="size-6" />

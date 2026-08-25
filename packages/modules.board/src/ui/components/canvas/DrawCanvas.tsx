@@ -10,7 +10,9 @@ import {
   useDrawClipboard,
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
+  useBoardControlPointer,
   useProductBoardAnalytics,
+  useMiroPasteNotice,
   useBoardDeepLinkFocus,
   useBoardBackgroundSync,
 } from '../../../hooks';
@@ -18,6 +20,7 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { hiddenComponents } from '../../../utils/customConfig';
+import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -32,12 +35,15 @@ import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
-import { isShapeErasable, isEditableTarget } from '../../../utils';
+import { MathFigureTool } from '../../../shapes/math-figure';
+import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
+import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { useRetryFileQueue } from 'common.services';
 import { useSearch } from '@tanstack/react-router';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { useTranslation } from 'react-i18next';
+import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 
 export const DrawCanvas = ({
   token,
@@ -63,6 +69,7 @@ export const DrawCanvas = ({
   } = useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
+  const didResetDrawScaleRef = useRef(false);
   const search = useSearch({ strict: false }) as BoardDeepLinkSearch;
   const hasDeepLink = hasBoardDeepLinkSearch(search);
 
@@ -71,21 +78,27 @@ export const DrawCanvas = ({
     awareness: provider.awareness ?? null,
     enabled: status === 'synced-remote',
   });
+  useMiroPasteNotice({
+    editor,
+    enabled: isBoardStoreReady(status) && !isReadonly,
+  });
 
   const drawComponents = useMemo(
     () => ({
       ...hiddenComponents,
       InFrontOfTheCanvas: CanvasOverlays,
       CollaboratorCursor,
+      RichTextToolbar: TextEditorToolbarWithContext,
     }),
     [],
   );
 
   useLockedShapeSelection(editor);
+  useBoardControlPointer(editor);
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
-  useBoardDeepLinkFocus({ editor, ready: status === 'synced-remote' });
+  useBoardDeepLinkFocus({ editor, ready: isBoardStoreReady(status) });
   useBoardBackgroundSync(editor);
   const { addToQueue } = useRetryFileQueue();
 
@@ -218,7 +231,7 @@ export const DrawCanvas = ({
   // Восстановление камеры пользователя при открытии доски (один раз после синка).
   // При переходе по deep link камера выставляется в useBoardDeepLinkFocus.
   useEffect(() => {
-    if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current || hasDeepLink)
+    if (!editor || !isBoardStoreReady(status) || appliedInitialCameraRef.current || hasDeepLink)
       return;
     const saved = getUserCamera();
     if (saved) {
@@ -352,21 +365,45 @@ export const DrawCanvas = ({
     editor.user.updateUserPreferences({ colorScheme: theme });
   }, [editor, theme]);
 
+  useEffect(() => {
+    if (!editor || !isBoardStoreReady(status) || didResetDrawScaleRef.current) return;
+    didResetDrawScaleRef.current = true;
+    resetInflatedDrawScale(editor);
+  }, [editor, status]);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
-    <div id="whiteboard-container" className="flex h-full w-full flex-col">
+    <div
+      id="whiteboard-container"
+      data-testid="board-canvas"
+      className="flex h-full w-full flex-col"
+    >
       {/* z-0: stacking context — внутренние z-index draw/UI не выше @xipkg/modal (z-50) */}
       <div className="relative z-0 flex-1 overflow-hidden">
         {followingPresenceId && <FollowBanner />}
         <div className="absolute inset-0">
           <Draw
             colorScheme={theme}
+            themes={BOARD_DRAW_THEMES}
             onMount={(editor) => {
               setEditor(editor);
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,
+              });
+              // Иначе при зуме < 100% карандаш масштабируется как 1/zoom и
+              // даже XS становится очень толстым («невозможно писать»).
+              editor.user.updateUserPreferences({ isDynamicSizeMode: false });
+              resetInflatedDrawScale(editor);
+              editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
+                if (shape.type === 'draw' && shape.props.scale !== 1) {
+                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                }
+                if (shape.type === 'highlight' && shape.props.scale !== 1) {
+                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                }
+                return shape;
               });
 
               const inputMode = useDrawStore.getState().inputMode;
@@ -392,7 +429,7 @@ export const DrawCanvas = ({
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 for (const file of files) {
                   try {
-                    insertAsset(editor, file, token, addToQueue);
+                    await insertAsset(editor, file, token, addToQueue);
                   } catch (error) {
                     console.error('Ошибка при загрузке файла:', error);
                   }
@@ -444,9 +481,8 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, MathFigureTool, EmojiStickerTool]}
             shapeUtils={boardCustomShapeUtils}
-            hideUi
             components={drawComponents}
             collaboratorCursorLayout={{
               badgeOffset: { x: 2, y: 4 },

@@ -13,6 +13,7 @@ import {
   FilePlus,
 } from '@xipkg/icons';
 import i18n from 'i18next';
+import { Activity } from '../ui/icons/Activity';
 import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/boardTheme';
 
 export type NavbarElementT = {
@@ -101,53 +102,6 @@ export const navBarElements: NavbarElementT[] = [
       return t('navbar.sticker');
     },
     icon: <Sticker className={boardToolbarIconCompactClass} />,
-    menuPopupContent: [
-      {
-        icon: <Sticker className="fill-gray-60" />,
-        action: 'set-style',
-        color: 'grey',
-      },
-      {
-        icon: <Sticker className="fill-brand-100" />,
-        action: 'set-style',
-        color: 'blue',
-      },
-      {
-        icon: <Sticker className="fill-red-100" />,
-        action: 'set-style',
-        color: 'red',
-      },
-      {
-        icon: <Sticker className="fill-green-100" />,
-        action: 'set-style',
-        color: 'green',
-      },
-      {
-        icon: <Sticker className="fill-orange-100" />,
-        action: 'set-style',
-        color: 'light-red',
-      },
-      {
-        icon: <Sticker className="fill-yellow-100" />,
-        action: 'set-style',
-        color: 'yellow',
-      },
-      {
-        icon: <Sticker className="fill-violet-100" />,
-        action: 'set-style',
-        color: 'violet',
-      },
-      {
-        icon: <Sticker className="fill-pink-100" />,
-        action: 'set-style',
-        color: 'light-violet',
-      },
-      {
-        icon: <Sticker className="fill-cyan-100" />,
-        action: 'set-style',
-        color: 'light-blue',
-      },
-    ],
   },
   {
     action: 'emoji',
@@ -162,5 +116,12 @@ export const navBarElements: NavbarElementT[] = [
       return t('navbar.uploadFile');
     },
     icon: <FilePlus className={boardToolbarIconClass} />,
+  },
+  {
+    action: 'activity',
+    get title() {
+      return t('navbar.activities');
+    },
+    icon: <Activity className={boardToolbarIconClass} />,
   },
 ];

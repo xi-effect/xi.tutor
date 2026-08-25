@@ -1,5 +1,7 @@
 import { Button } from '@xipkg/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
+import { boardSelectionToolbarButtonClass } from '../../../boardTheme';
+import { BoardDrawer, useBoardIsMobile } from '../../shared';
 
 type TPicker = {
   open: boolean;
@@ -16,18 +18,34 @@ export const Picker: React.FC<TPicker> = ({
   popoverChild,
   triggerTitle,
 }) => {
+  const isMobile = useBoardIsMobile();
+
+  const trigger = (
+    <Button
+      variant="none"
+      size="s"
+      className={boardSelectionToolbarButtonClass}
+      title={triggerTitle}
+      onClick={isMobile ? () => setOpen(true) : undefined}
+    >
+      {triggerChild}
+    </Button>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {trigger}
+        <BoardDrawer open={open} onOpenChange={setOpen} title={triggerTitle}>
+          <div className="px-1 py-2">{popoverChild}</div>
+        </BoardDrawer>
+      </>
+    );
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="none"
-          size="s"
-          className="hover:bg-status-info-background p-1"
-          title={triggerTitle}
-        >
-          {triggerChild}
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
       <PopoverContent
         side="top"
         align="center"

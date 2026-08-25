@@ -247,7 +247,7 @@ export const useLessonInfoModal = ({
               />
             ) : undefined
           }
-          onReschedule={() => onReschedule?.(resolvedEvent)}
+          onReschedule={onReschedule != null ? () => onReschedule(resolvedEvent) : undefined}
           changeLesson={
             isTutor && resolvedEvent != null
               ? {

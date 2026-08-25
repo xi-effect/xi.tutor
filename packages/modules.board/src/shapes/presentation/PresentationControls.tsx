@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { Button } from '@xipkg/button';
-import { ArrowLeft, ArrowRight } from '@xipkg/icons';
+import { ArrowLeft, ArrowRight, Image } from '@xipkg/icons';
 import { CONTROLS_HEIGHT } from './consts';
+import { useTranslation } from 'react-i18next';
 
 type PdfPageControlsProps = {
   fileName: string;
@@ -11,6 +12,7 @@ type PdfPageControlsProps = {
   onPageChange: (page: number) => void;
   pagesVisible?: number;
   onPagesVisibleChange?: (n: number) => void;
+  onExtractPage?: () => void;
 };
 
 export const PresentationControls = ({
@@ -19,7 +21,10 @@ export const PresentationControls = ({
   totalPages,
   disabled,
   onPageChange,
+  onExtractPage,
 }: PdfPageControlsProps) => {
+  const { t } = useTranslation('board');
+
   const goPrev = useCallback(
     (e: React.PointerEvent) => {
       e.stopPropagation();
@@ -39,6 +44,7 @@ export const PresentationControls = ({
   return (
     <div
       className="bg-background-surface border-border-default pointer-events-auto flex shrink-0 items-center gap-2 rounded-b-xl border-t px-3 py-1.5 select-none"
+      data-board-control=""
       style={{ height: CONTROLS_HEIGHT }}
       onPointerDown={(e) => e.stopPropagation()}
     >
@@ -72,6 +78,20 @@ export const PresentationControls = ({
             <ArrowRight className="h-4 w-4" />
           </Button>
         </>
+      )}
+      {onExtractPage && (
+        <Button
+          variant="none"
+          size="s"
+          className="hover:bg-status-info-background h-6 w-6 shrink-0 rounded-lg p-0"
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            onExtractPage();
+          }}
+          title={t('pdf.extractPage')}
+        >
+          <Image className="h-4 w-4" />
+        </Button>
       )}
     </div>
   );

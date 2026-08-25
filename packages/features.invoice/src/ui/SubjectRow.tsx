@@ -1,5 +1,5 @@
 import { Button } from '@xipkg/button';
-import { FormControl, FormField, FormItem, useFormContext } from '@xipkg/form';
+import { FormControl, FormField, FormItem, FormMessage, useFormContext } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { useTranslation } from 'react-i18next';
@@ -27,11 +27,12 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         control={control}
         name={`items.${index}.name`}
         defaultValue={0}
-        render={({ field: formField }) => (
+        render={({ field: formField, fieldState }) => (
           <FormItem>
             <FormControl>
               <Input
                 {...formField}
+                error={!!fieldState.error}
                 placeholder={t('placeholders.name')}
                 variant="s"
                 onChange={(e) => {
@@ -39,6 +40,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
                 }}
               />
             </FormControl>
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -47,11 +49,12 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         control={control}
         name={`items.${index}.price`}
         defaultValue={0}
-        render={({ field: formField }) => (
+        render={({ field: formField, fieldState }) => (
           <FormItem>
             <FormControl>
               <Input
                 {...formField}
+                error={!!fieldState.error}
                 type="number"
                 placeholder={t('placeholders.price')}
                 min={0}
@@ -80,6 +83,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
                 }}
               />
             </FormControl>
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -90,11 +94,12 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         control={control}
         name={`items.${index}.quantity`}
         defaultValue={0}
-        render={({ field: formField }) => (
+        render={({ field: formField, fieldState }) => (
           <FormItem>
             <FormControl>
               <Input
                 {...formField}
+                error={!!fieldState.error}
                 type="number"
                 placeholder={t('placeholders.quantity')}
                 min={1}
@@ -105,6 +110,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
                 }}
               />
             </FormControl>
+            <FormMessage />
           </FormItem>
         )}
       />

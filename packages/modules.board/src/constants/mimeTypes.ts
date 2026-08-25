@@ -14,6 +14,7 @@ export const ALLOWED_IMAGE_MIME_TYPES = new Set([
 /**
  * Допустимые MIME-типы для аудио (whitelist).
  * Должно совпадать с AUDIO_ACCEPT в pickAndInsertAudio.
+ * Бэкенд: POST .../file-kinds/audio/files/
  */
 export const ALLOWED_AUDIO_MIME_TYPES = new Set([
   'audio/mpeg',
@@ -51,3 +52,79 @@ export const ALL_ALLOWED_TYPES = [
   ...ALLOWED_FILE_MIME_TYPES,
   ...ALLOWED_AUDIO_MIME_TYPES,
 ];
+
+/**
+ * Расширения для input.accept. На Android/Huawei MIME-only accept часто
+ * открывает Галерею и скрывает PDF/документы — расширения это чинят.
+ */
+export const FILE_INPUT_EXTENSIONS = [
+  '.pdf',
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.webp',
+  '.bmp',
+  '.tif',
+  '.tiff',
+  '.ico',
+  '.avif',
+  '.mp3',
+  '.ogg',
+  '.wav',
+  '.m4a',
+  '.doc',
+  '.docx',
+  '.xls',
+  '.xlsx',
+  '.ppt',
+  '.pptx',
+  '.txt',
+  '.csv',
+  '.mp4',
+  '.webm',
+  '.mov',
+  '.avi',
+  '.odp',
+  '.ods',
+  '.odt',
+];
+
+export const FILE_INPUT_ACCEPT = [...FILE_INPUT_EXTENSIONS, ...ALL_ALLOWED_TYPES].join(',');
+
+export const IMAGE_INPUT_EXTENSIONS = [
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.webp',
+  '.bmp',
+  '.tif',
+  '.tiff',
+  '.ico',
+  '.avif',
+];
+
+export const IMAGE_INPUT_ACCEPT = [...IMAGE_INPUT_EXTENSIONS, ...ALLOWED_IMAGE_MIME_TYPES].join(
+  ',',
+);
+
+const PDF_MIME_TYPES = new Set(['application/pdf', 'application/x-pdf']);
+
+export function isPdfMime(type: string | undefined): boolean {
+  return PDF_MIME_TYPES.has((type || '').toLowerCase());
+}
+
+export function getFileExtension(name: string): string | null {
+  if (!name) return null;
+  const dot = name.lastIndexOf('.');
+  if (dot <= 0 || dot === name.length - 1) return null;
+  return name.slice(dot + 1).toLowerCase();
+}
+
+/** Android/Huawei/Harmony: MIME-фильтр пикера часто сводит выбор к Галерее. */
+export function getBoardFileInputAccept(): string {
+  if (typeof navigator === 'undefined') return FILE_INPUT_ACCEPT;
+  if (/Android|HarmonyOS|Huawei|HUAWEI/i.test(navigator.userAgent)) return '*/*';
+  return FILE_INPUT_ACCEPT;
+}

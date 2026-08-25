@@ -2,16 +2,20 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PPTXViewer } from 'pptxviewjs';
 
-import { useYjsContext } from '../../providers/YjsProvider';
+import { useYjsContext } from '../../providers/YjsContext';
 import { loadPptxViewer } from '../../utils/loadPptxViewer';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 
 import type { PresentationShape } from './PresentationShape';
 import { PresentationControls } from './PresentationControls';
+import { insertImage } from '../../features/pickAndInsertImage';
+import { useEditor } from '@ibodr/draw';
 
 export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
   const { token } = useYjsContext();
   const { t } = useTranslation('board');
+
+  const editor = useEditor();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -143,6 +147,37 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
     setCurrentSlide(page);
   };
 
+  const handleExtractPage = useCallback(async () => {
+    if (isLoading || !token) return;
+
+    const bounds = editor.getShapePageBounds(shape.id);
+    if (!bounds) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas || canvas.width === 0 || canvas.height === 0) return;
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(resolve, 'image/png');
+    });
+    if (!blob) return;
+
+    const baseName = shape.props.fileName?.replace(/\.pptx?$/i, '') || 'presentation';
+    const file = new File([blob], `${baseName}_slide${currentSlide}.png`, {
+      type: 'image/png',
+    });
+
+    const imageH = bounds.h;
+    const imageW = (canvas.width / canvas.height) * imageH;
+    const gap = 24;
+
+    await insertImage(editor, file, token, {
+      x: bounds.maxX + gap,
+      y: bounds.y,
+      w: imageW,
+      h: imageH,
+    });
+  }, [isLoading, token, shape.id, shape.props.fileName, currentSlide, editor]);
+
   if (error) {
     return <div className="flex h-full items-center justify-center">{String(error)}</div>;
   }
@@ -172,6 +207,7 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
           totalPages={totalSlides}
           disabled={isLoading}
           onPageChange={handlePageChange}
+          onExtractPage={handleExtractPage}
         />
       )}
     </div>

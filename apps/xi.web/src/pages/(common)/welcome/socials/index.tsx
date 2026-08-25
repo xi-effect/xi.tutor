@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { WelcomeSocialsPage } from 'pages.welcome';
 
-export const Socials = () => {
+const Socials = () => {
   return <WelcomeSocialsPage />;
 };
 

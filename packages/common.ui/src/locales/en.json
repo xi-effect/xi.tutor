@@ -1,4 +1,9 @@
 {
+  "inviteProgress": {
+    "remaining_one": "{{count}} step left to accept the tutor’s invitation",
+    "remaining_other": "{{count}} steps left to accept the tutor’s invitation",
+    "hint": "All steps take just a few minutes"
+  },
   "onboarding": {
     "welcome": "Welcome to\u00A0sovlium!",
     "tutorDescription": "In 2 minutes we'll show how to create a classroom, invite a student, and schedule the first lesson",
@@ -13,6 +18,8 @@
     "progress": "{{current}} of {{total}}"
   },
   "errorPage": {
+    "notFoundTitle": "Page not\u00A0found",
+    "notFoundText": "The address is\u00A0incorrect or\u00A0the page has been deleted",
     "ifErrorRepeats": "If the error persists — write",
     "aboutIt": "to us about it",
     "in": "in",
@@ -26,5 +33,20 @@
     "offline": "No connection",
     "reconnecting": "Checking connection...",
     "connected": "Connected"
+  },
+  "educationStatus": {
+    "tutor": {
+      "active": "Studying",
+      "paused": "On pause",
+      "locked": "Locked",
+      "finished": "Completed"
+    },
+    "student": {
+      "active": "Studying",
+      "paused": "On pause",
+      "locked": "Locked",
+      "finished": "Completed"
+    },
+    "unknown": "Unknown"
   }
 }

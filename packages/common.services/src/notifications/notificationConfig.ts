@@ -3,8 +3,10 @@ import {
   CallsQueryKey,
   ClassroomsQueryKey,
   EnrollmentsQueryKey,
+  InvitationsQueryKey,
   PaymentsQueryKey,
   StudentQueryKey,
+  StudentsQueryKey,
 } from 'common.api';
 import { env } from 'common.env';
 import { schedulerQueryKeys } from '../scheduler';
@@ -318,7 +320,11 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
       const classroomId = payload.classroom_id;
       return classroomId ? `/classrooms/${classroomId}?role=tutor` : null;
     },
-    invalidationKeys: [ClassroomsQueryKey.GetClassrooms],
+    invalidationKeys: [
+      ClassroomsQueryKey.GetClassrooms,
+      StudentsQueryKey.AllStudents,
+      InvitationsQueryKey.AllInvitations,
+    ],
   },
 
   group_invitation_accepted_v1: {

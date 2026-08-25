@@ -1,4 +1,5 @@
 {
+  "title": "Home",
   "common": {
     "loading": "Loading...",
     "add": "Add"
@@ -41,7 +42,7 @@
   "classrooms": {
     "title": "Classrooms",
     "addStudent": "Student",
-    "addGroup": "Study group",
+    "addGroup": "Group",
     "toClassrooms": "To classrooms",
     "emptyNotFound": "Nothing found",
     "emptyInvite": "Invite students — individually or to a group",
@@ -50,7 +51,17 @@
     "emptyDescription": "You can create a classroom for group or individual lessons",
     "inviteStudent": "Invite a student",
     "studentEmptyDescription": "Your tutor should send you an invitation link",
-    "openClassroom": "Open classroom"
+    "openClassroom": "Open classroom",
+    "menuAria": "Classroom actions",
+    "rename": "Rename",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "deleteConfirm": {
+      "title": "Delete classroom?",
+      "description": "Classroom «{{name}}» will be deleted permanently",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
   },
   "payments": {
     "title": "Payments",

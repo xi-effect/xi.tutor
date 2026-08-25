@@ -8,14 +8,16 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.3.0",
     "@xipkg/calendar": "2.4.0",
     "@xipkg/datepicker": "2.4.0",
-    "@xipkg/icons": "3.1.0",
+    "@xipkg/icons": "3.1.5",
     "@xipkg/inputmask": "2.3.0",
     "@xipkg/scrollarea": "2.3.0",
     "@xipkg/select": "2.3.0",
@@ -53,7 +55,8 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.22.0"
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "react": "19"

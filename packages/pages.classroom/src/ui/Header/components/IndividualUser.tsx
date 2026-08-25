@@ -1,25 +1,54 @@
 import { UserProfile } from '@xipkg/userprofile';
 import { useCurrentUser, useUserByRole } from 'common.services';
+import { EditableClassroomName } from './EditableClassroomName';
 
-export const IndividualUser = ({ userId }: { userId: number }) => {
-  const { data: currentUser } = useCurrentUser();
+export const IndividualUser = ({
+  userId,
+  classroomId,
+  nameOverride,
+  classroomName,
+  studentName,
+  canEdit,
+}: {
+  userId: number;
+  classroomId: number;
+  nameOverride?: string | null;
+  classroomName?: string | null;
+  studentName?: string | null;
+  canEdit: boolean;
+}) => {
+  const { data: currentUser, isLoading: isCurrentUserLoading } = useCurrentUser();
   const isTutor = currentUser?.default_layout === 'tutor';
-  // Используем useUserByRole с userId напрямую
   const userRole = isTutor ? 'student' : 'tutor';
-  const { data: user } = useUserByRole(userRole, userId);
+  const { data: user, isLoading } = useUserByRole(
+    userRole,
+    userId,
+    isCurrentUserLoading || !currentUser || !userId,
+  );
+  const profileName = user?.display_name ?? user?.username;
+  const title =
+    (isTutor && nameOverride?.trim()) ||
+    profileName?.trim() ||
+    classroomName?.trim() ||
+    studentName?.trim() ||
+    '';
 
   return (
-    <div className="flex w-full max-w-[min(100%,300px)] min-w-0 flex-row items-center gap-2 sm:w-fit sm:max-w-[300px]">
+    <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
       <UserProfile
         className="shrink-0"
-        text={user?.display_name ?? user?.username}
+        text={title || undefined}
         userId={userId}
         size="l"
         withOutText
+        loading={isLoading && !title}
       />
-      <div className="text-xl-base text-text-primary min-w-0 truncate font-semibold">
-        {user?.display_name ?? user?.username}
-      </div>
+      <EditableClassroomName
+        classroomId={classroomId}
+        kind="individual"
+        name={title}
+        canEdit={canEdit}
+      />
     </div>
   );
 };

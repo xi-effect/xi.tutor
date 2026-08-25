@@ -2,6 +2,7 @@
 
 import {
   HocuspocusProvider,
+  HocuspocusProviderWebsocket,
   WebSocketStatus,
   type onAuthenticatedParameters,
   type onAuthenticationFailedParameters,
@@ -19,7 +20,6 @@ import {
   defaultUserPreferences,
   getUserPreferences,
   InstancePresenceRecordType,
-  loadSnapshot,
   react,
   SerializedSchema,
   setUserPreferences,
@@ -34,18 +34,18 @@ import {
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { boardAssetUtils } from '../assets/boardAssetUtils';
-import { myAssetStore } from '../features/imageStore';
+import { createAssetTokenHolder, myAssetStore } from '../features/imageStore';
 import { boardStoreShapeUtils } from '../shapes/boardShapeUtils';
 import { commentCustomRecords } from '../comments/commentRecords';
+import { putCachedBoardDoc } from '../utils/boardDocCache';
+import { hydrateBoardStoreFromYjs } from '../utils/hydrateBoardStoreFromYjs';
+import {
+  deleteYjsRecordFully,
+  isDocumentRecord,
+  normalizeRecordForYjsPersistence,
+} from '../utils/yjsStoreRecords';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
-import { normalizeStoredFileSrc } from '../utils/storedFileSrc';
-import {
-  nextBoardSchemaVersion,
-  prepareLegacyYjsStoreSnapshot,
-  repairMigratedBoardStore,
-} from '../utils/migrateLegacyTldrawSnapshot';
-import { ensureYjsStorePopulated } from '../utils/parseYjsBoardDoc';
 import type { BoardBackgroundColorId } from '../config';
 import { parseBoardBackgroundFromYMap, type BoardBackgroundState } from '../utils/boardBackground';
 import type { DrBoardBackgroundType } from '@ibodr/draw';
@@ -61,6 +61,9 @@ type UseYjsStoreArgs = Partial<{
   initialYjsUpdate?: Uint8Array;
   /** Только локальный просмотр дампа: без WebSocket (DEV) */
   localYjsPreview?: boolean;
+  /** Идентификатор доски в UI — ключ клиентского кэша */
+  cacheBoardId?: string;
+  cacheUserId?: string;
 }>;
 
 type ConnectionStatus = 'online' | 'offline';
@@ -125,29 +128,8 @@ type DrStoreChanges = {
   removed: Record<string, DrRecord>;
 };
 
-/** YKeyValue.delete снимает только первое вхождение ключа — чистим все дубликаты. */
-function deleteYjsRecordFully(yStore: YKeyValue<DrRecord>, id: string) {
-  let guard = 0;
-  while (yStore.has(id) && guard++ < 32) yStore.delete(id);
-}
-
 const FLUSH_MS = 50;
-
-/** В Yjs должны попадать только document-записи — session/instance ломают локальное выделение. */
-function isDocumentRecord(store: DrStore, record: DrRecord): boolean {
-  return store.scopedTypes.document.has(record.typeName);
-}
-
-/** Нормализует props.src перед записью в Yjs — контракт в utils/storedFileSrc.ts */
-function normalizeRecordForYjsPersistence(record: DrRecord): DrRecord {
-  const props = (record as { props?: { src?: unknown } }).props;
-  if (!props?.src || typeof props.src !== 'string') return record;
-
-  const normalizedSrc = normalizeStoredFileSrc(props.src);
-  if (normalizedSrc === props.src) return record;
-
-  return { ...record, props: { ...props, src: normalizedSrc } } as DrRecord;
-}
+const CACHE_PERSIST_MS = 2_000;
 
 /**
  * Throttle для awareness/presence (курсоры / presence).
@@ -180,13 +162,14 @@ type SharedEntry = {
   boardBackgroundMap: Y.Map<string>;
   /** Документ из Yjs уже загружен в store — повторный loadSnapshot сбрасывает выделение. */
   yjsDocumentHydrated: boolean;
+  storageToken: string;
   releaseTimer: number | null;
 };
 
 const shared = new Map<ProviderKey, SharedEntry>();
 
-function makeKey(hostUrl: string, ydocId: string, storageToken: string) {
-  return `${hostUrl}__${ydocId}__${storageToken}`;
+function makeKey(hostUrl: string, ydocId: string) {
+  return `${hostUrl}__${ydocId}`;
 }
 
 function getOrCreateShared(
@@ -195,11 +178,12 @@ function getOrCreateShared(
   storageToken: string,
   initialYjsUpdate?: Uint8Array,
 ): SharedEntry {
-  const key = makeKey(hostUrl, ydocId, storageToken);
+  const key = makeKey(hostUrl, ydocId);
   const existing = shared.get(key);
 
   if (existing) {
     existing.refs += 1;
+    if (storageToken) existing.storageToken = storageToken;
 
     if (existing.releaseTimer != null) {
       clearTimeout(existing.releaseTimer);
@@ -226,19 +210,10 @@ function getOrCreateShared(
   const commentReadsMap = yDoc.getMap<number>('commentReads');
   const boardBackgroundMap = yDoc.getMap<string>('boardBackground');
 
-  const provider = new HocuspocusProvider({
-    url: hostUrl,
-    name: ydocId,
-    document: yDoc,
-    token: storageToken,
-    forceSyncInterval: 20_000,
-    // attach() / detach() управляем снаружи (в хуке + refCount)
-  });
-
   const entry: SharedEntry = {
     key,
     refs: 1,
-    provider,
+    provider: null as unknown as HocuspocusProvider,
     yDoc,
     yStore,
     meta,
@@ -249,12 +224,31 @@ function getOrCreateShared(
     commentReadsMap,
     boardBackgroundMap,
     yjsDocumentHydrated: false,
+    storageToken,
     releaseTimer: null,
   };
+
+  const websocketProvider = new HocuspocusProviderWebsocket({
+    url: hostUrl,
+    autoConnect: false,
+  });
+
+  entry.provider = new HocuspocusProvider({
+    name: ydocId,
+    document: yDoc,
+    token: () => entry.storageToken,
+    forceSyncInterval: 20_000,
+    websocketProvider,
+  });
 
   shared.set(key, entry);
 
   return entry;
+}
+
+function connectSharedProvider(provider: HocuspocusProvider) {
+  provider.attach();
+  void provider.configuration.websocketProvider.connect();
 }
 
 function releaseShared(entry: SharedEntry) {
@@ -280,6 +274,12 @@ function releaseShared(entry: SharedEntry) {
       // ignore
     }
 
+    try {
+      entry.provider.configuration.websocketProvider.destroy();
+    } catch {
+      // ignore
+    }
+
     shared.delete(entry.key);
   }, 250);
 }
@@ -295,20 +295,23 @@ export function useYjsStore({
   token,
   initialYjsUpdate,
   localYjsPreview = false,
+  cacheBoardId,
+  cacheUserId,
 }: UseYjsStoreArgs): ExtendedStoreStatus {
   const { data: currentUser } = useCurrentUser();
   const currentUserRef = useRef(currentUser);
   currentUserRef.current = currentUser;
 
+  const tokenHolderRef = useRef(createAssetTokenHolder(token ?? ''));
+  if (token) tokenHolderRef.current.set(token);
+
   /** DrStore должен быть ОДИН и всегда один и тот же */
   const [store] = useState(() => {
-    const assetStore = token ? myAssetStore(token) : undefined;
-
     return createDrStore({
       shapeUtils: [...boardStoreShapeUtils, ...shapeUtils],
       assetUtils: [...boardAssetUtils],
       records: commentCustomRecords,
-      ...(assetStore ? { assets: assetStore } : {}),
+      assets: myAssetStore(tokenHolderRef.current),
     });
   });
 
@@ -334,7 +337,9 @@ export function useYjsStore({
 
   const sharedEntry = useMemo(() => {
     return getOrCreateShared(hostUrl, ydocId, storageToken, initialYjsUpdate);
-  }, [hostUrl, ydocId, storageToken, initialYjsUpdate]);
+    // storageToken не в зависимостях: ключ shared entry — host+ydocId, токен подставляем в эффекте.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hostUrl, ydocId, initialYjsUpdate]);
 
   const {
     provider,
@@ -349,17 +354,31 @@ export function useYjsStore({
     boardBackgroundMap,
   } = sharedEntry;
 
-  // useLayoutEffect: при ремаунте (PiP и т.д.) обновляем статус до отрисовки, чтобы не мигал LoadingScreen.
   useLayoutEffect(() => {
-    // Не сбрасываем в loading, если провайдер уже синхронизирован (ремаунт/PiP/смена фокуса).
-    if (!provider.synced) {
+    if (storageToken) sharedEntry.storageToken = storageToken;
+
+    const hasLocalYjsData = Boolean(initialYjsUpdate?.length) || yStore.yarray.length > 0;
+
+    // Не сбрасываем в loading, если провайдер уже синхронизирован (ремаунт/PiP)
+    // или уже показали содержимое из клиентского кэша.
+    if (provider.synced) {
+      // статус выставит handleSynced ниже
+    } else if (sharedEntry.yjsDocumentHydrated || hasLocalYjsData) {
+      setStoreWithStatus((prev) => ({
+        ...prev,
+        status: 'synced-local',
+        store,
+        connectionStatus: 'offline',
+      }));
+    } else {
       setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
     }
 
     // ВАЖНО: attach тут, а detach — ТОЛЬКО в releaseShared (когда refs = 0).
     // Иначе при 2 потребителях или StrictMode будет "чужой" cleanup ронять сокет.
-    if (!localYjsPreview) {
-      provider.attach();
+    // Без token не коннектимся — иначе Hocuspocus получит пустой auth.
+    if (!localYjsPreview && sharedEntry.storageToken) {
+      connectSharedProvider(provider);
     }
 
     const unsubs: Array<() => void> = [];
@@ -479,8 +498,8 @@ export function useYjsStore({
       if (syncListenersBound) {
         setStoreWithStatus((prev) => ({
           ...prev,
-          status: 'synced-remote',
-          connectionStatus: 'online',
+          status: provider.synced || localYjsPreview ? 'synced-remote' : 'synced-local',
+          connectionStatus: provider.synced ? 'online' : 'offline',
         }));
         return;
       }
@@ -767,96 +786,17 @@ export function useYjsStore({
 
       /** 5) initial seed / migrate (один раз на комнату — повторный loadSnapshot сбрасывает выделение) */
       if (!sharedEntry.yjsDocumentHydrated) {
+        const result = hydrateBoardStoreFromYjs({
+          store,
+          yDoc,
+          yStore,
+          meta,
+          ydocId,
+          seedIfEmpty: true,
+        });
+
+        if (result === 'migration-error') return;
         sharedEntry.yjsDocumentHydrated = true;
-
-        // При дублировании доски бэкенд копирует бинарный Y.Doc, но данные внутри хранятся
-        // в массиве `tl_${sourceYdocId}`. Клиент обращается к `tl_${newYdocId}` — он пуст.
-        // Ищем данные в любом другом `tl_*` массиве и копируем в текущий.
-        ensureYjsStorePopulated(yDoc, ydocId, yStore);
-
-        if (yStore.yarray.length) {
-          const ourSchema = store.schema.serialize();
-          const theirSchema = meta.get('schema') as SerializedSchema | undefined;
-          const metaSchemaVersion = meta.get('schemaVersion');
-
-          if (!theirSchema) {
-            throw new Error('No schema found in the yjs doc');
-          }
-
-          const allYjsRecords = yStore.yarray.toJSON().map(({ val }) => val) as DrRecord[];
-          const legacySessionRecords = allYjsRecords.filter((r) => !isDocumentRecord(store, r));
-
-          if (legacySessionRecords.length > 0) {
-            yDoc.transact(() => {
-              for (const r of legacySessionRecords) deleteYjsRecordFully(yStore, r.id);
-            }, 'init-cleanup-session');
-          }
-
-          const records = allYjsRecords.filter((r) => isDocumentRecord(store, r));
-          const storeSnapshot = Object.fromEntries(records.map((r) => [r.id, r]));
-
-          const prepared = prepareLegacyYjsStoreSnapshot({
-            schema: theirSchema,
-            store: storeSnapshot,
-            metaSchemaVersion,
-          });
-
-          if (prepared.wasLegacy) {
-            console.info(
-              '[modules.board] Migrating legacy tldraw Yjs room to draw schema (com.tldraw.* → com.draw.*)',
-            );
-          }
-
-          const migrationResult = store.schema.migrateStoreSnapshot({
-            schema: prepared.schema,
-            store: prepared.store,
-          });
-
-          if (migrationResult.type === 'error') {
-            console.warn('Schema updated, refresh.');
-            return;
-          }
-
-          let migratedStore = migrationResult.value as Record<string, DrRecord>;
-
-          migratedStore = repairMigratedBoardStore(migratedStore);
-
-          // Контракт персиста props.src — только storage file id (utils/storedFileSrc.ts).
-          // Записи из Yjs могут быть frozen — не мутируем in-place, клонируем.
-          migratedStore = Object.fromEntries(
-            Object.entries(migratedStore).map(([id, record]) => [
-              id,
-              normalizeRecordForYjsPersistence(record),
-            ]),
-          ) as Record<string, DrRecord>;
-
-          yDoc.transact(() => {
-            for (const r of records) {
-              if (!migratedStore[r.id]) deleteYjsRecordFully(yStore, r.id);
-            }
-
-            for (const r of Object.values(migratedStore) as DrRecord[]) {
-              if (isDocumentRecord(store, r)) yStore.set(r.id, r);
-            }
-
-            meta.set('schema', ourSchema);
-            meta.set(
-              'schemaVersion',
-              nextBoardSchemaVersion(metaSchemaVersion, prepared.wasLegacy),
-            );
-          }, 'init');
-
-          loadSnapshot(store, { store: migratedStore, schema: ourSchema });
-        } else {
-          const docSnapshot = store.getStoreSnapshot();
-          yDoc.transact(() => {
-            for (const rec of Object.values(docSnapshot.store) as DrRecord[]) {
-              yStore.set(rec.id, rec);
-            }
-            meta.set('schema', docSnapshot.schema);
-            meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
-          }, 'init');
-        }
       }
 
       /** 6) undo manager */
@@ -887,30 +827,96 @@ export function useYjsStore({
 
       setStoreWithStatus({
         store,
-        status: 'synced-remote',
-        connectionStatus: 'online',
+        status: provider.synced || localYjsPreview ? 'synced-remote' : 'synced-local',
+        connectionStatus: provider.synced ? 'online' : 'offline',
+      });
+
+      persistBoardDoc();
+    };
+
+    const persistBoardDoc = () => {
+      if (localYjsPreview || !cacheUserId || !cacheBoardId || !ydocId) return;
+      if (!sharedEntry.yjsDocumentHydrated) return;
+
+      const schemaVersion = String(meta.get('schemaVersion') ?? '');
+      if (schemaVersion !== BOARD_SCHEMA_VERSION) return;
+
+      const update = Y.encodeStateAsUpdate(yDoc);
+      if (!update.length) return;
+
+      void putCachedBoardDoc({
+        userId: cacheUserId,
+        boardId: cacheBoardId,
+        ydocId,
+        yjsUpdate: update,
+        schemaVersion,
       });
     };
+
+    let persistTimer: number | null = null;
+    const schedulePersist = () => {
+      if (persistTimer != null) return;
+      persistTimer = window.setTimeout(() => {
+        persistTimer = null;
+        persistBoardDoc();
+      }, CACHE_PERSIST_MS);
+    };
+
+    const flushPersist = () => {
+      if (persistTimer != null) {
+        window.clearTimeout(persistTimer);
+        persistTimer = null;
+      }
+      persistBoardDoc();
+    };
+
+    const onYDocUpdate = () => schedulePersist();
+    yDoc.on('update', onYDocUpdate);
+    unsubs.push(() => yDoc.off('update', onYDocUpdate));
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') flushPersist();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('pagehide', flushPersist);
+    unsubs.push(() => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('pagehide', flushPersist);
+      flushPersist();
+    });
 
     provider.on('synced', handleSynced as any);
     unsubs.push(() => provider.off('synced', handleSynced as any));
 
+    const hydrateFromCache = () => {
+      if (sharedEntry.yjsDocumentHydrated) return true;
+      if (!hasLocalYjsData) return false;
+
+      try {
+        const result = hydrateBoardStoreFromYjs({
+          store,
+          yDoc,
+          yStore,
+          meta,
+          ydocId,
+          seedIfEmpty: false,
+        });
+        if (result !== 'hydrated') return false;
+        sharedEntry.yjsDocumentHydrated = true;
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     // Локальный дамп Y.Doc из БД — гидрация без Hocuspocus.
     if (localYjsPreview) {
-      setStoreWithStatus((prev) => ({
-        ...prev,
-        status: 'synced-remote',
-        connectionStatus: 'offline',
-      }));
       handleSynced({ state: true });
     } else if (provider.synced) {
       // При ремаунте (PiP / смена фокуса) провайдер может быть уже синхронизирован.
-      // Событие 'synced' вызывается только один раз, поэтому вручную запускаем инициализацию.
-      setStoreWithStatus((prev) => ({
-        ...prev,
-        status: 'synced-remote',
-        connectionStatus: 'online',
-      }));
+      handleSynced({ state: true });
+    } else if (hydrateFromCache()) {
+      // Кэш: показываем канвас сразу и вешаем слушатели до attach, чтобы не потерять remote updates.
       handleSynced({ state: true });
     }
 
@@ -932,7 +938,28 @@ export function useYjsStore({
       // detach/destroy делаем только когда refs упадет в 0 (releaseShared).
       releaseShared(sharedEntry);
     };
-  }, [provider, yDoc, yStore, meta, readonlyMap, store, sharedEntry, localYjsPreview, ydocId]);
+    // storageToken подставляем в отдельном эффекте — иначе весь sync-слой пересоздаётся.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    provider,
+    yDoc,
+    yStore,
+    meta,
+    readonlyMap,
+    store,
+    sharedEntry,
+    localYjsPreview,
+    ydocId,
+    cacheBoardId,
+    cacheUserId,
+    initialYjsUpdate,
+  ]);
+
+  useLayoutEffect(() => {
+    if (!storageToken || localYjsPreview) return;
+    sharedEntry.storageToken = storageToken;
+    connectSharedProvider(provider);
+  }, [storageToken, sharedEntry, provider, localYjsPreview]);
 
   function undo() {
     const um = undoManagerRef.current;

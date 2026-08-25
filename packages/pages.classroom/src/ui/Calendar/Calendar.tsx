@@ -19,7 +19,7 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { useTranslation } from 'react-i18next';
-import { useClassroomSchedule } from './ClassroomScheduleContext';
+import { useClassroomSchedule } from './useClassroomSchedule';
 import { CalendarScheduleKanban } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
 
@@ -152,7 +152,7 @@ export const Calendar = () => {
   };
 
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
-    onReschedule: handleLessonReschedule,
+    onReschedule: isTutor ? handleLessonReschedule : undefined,
     onSaveLesson: isTutor ? handleLessonSave : undefined,
   });
 
@@ -222,7 +222,7 @@ export const Calendar = () => {
           <ScheduleMobileView
             key={numericClassroomId}
             onAddLessonClick={onAddLessonClick}
-            onLessonReschedule={handleLessonReschedule}
+            onLessonReschedule={isTutor ? handleLessonReschedule : undefined}
             onSaveLesson={isTutor ? handleLessonSave : undefined}
             hideLessonCardClassroomAndSubject
             mobileScheduleAnchorTs={mobileScheduleAnchorTs}
@@ -231,12 +231,12 @@ export const Calendar = () => {
       ) : (
         <div className="flex h-full min-h-0 min-w-0 flex-col">
           <CalendarScheduleKanban
-            onLessonReschedule={handleLessonReschedule}
+            onLessonReschedule={isTutor ? handleLessonReschedule : undefined}
             onSaveLesson={isTutor ? handleLessonSave : undefined}
           />
         </div>
       )}
-      {moveEvent != null ? (
+      {isTutor && moveEvent != null ? (
         <MovingLessonModal
           key={moveEvent.id}
           open

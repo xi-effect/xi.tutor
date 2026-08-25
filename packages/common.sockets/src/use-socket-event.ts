@@ -20,7 +20,6 @@ export function useSocketEvent<T = any>(
     console.log(`🎧 Подписка на событие ${event}:`, { isConnected, socketId: socket?.id });
 
     if (!socket) {
-      console.log(`⚠️ Не удалось подписаться на ${event}: сокет не доступен`);
       return;
     }
 

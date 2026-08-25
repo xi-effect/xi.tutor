@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from 'react';
-import { Editor, react, DrAssetId, DrShapeId } from '@ibodr/draw';
+import { Editor, react, DrAssetId, DrShapeId, decodeMiroClipboardHtml } from '@ibodr/draw';
 import { deserializeDrawContent, readClipboardHtml, serializeDrawContent } from '../utils';
 import {
   preparePastedContent,
@@ -215,6 +215,23 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
 
       const content = deserializeDrawContent(html);
       if (!content) {
+        // Miro clipboard (miro-data-v1 in text/html). Our capture-phase paste
+        // handler replaces @ibodr/draw's native clipboard path, so Miro must be
+        // handled here explicitly.
+        const miro = html ? decodeMiroClipboardHtml(html) : null;
+        if (miro) {
+          try {
+            await editor!.putExternalContent({
+              type: 'miro',
+              content: miro,
+              point: editor!.inputs.currentPagePoint,
+            });
+          } catch (error) {
+            console.error('Failed to paste Miro content:', error);
+          }
+          return;
+        }
+
         // Не наш внутренний формат — если это простой текст (в т.ч. скопированный
         // из другого приложения), создаём текстовый элемент на доске.
         const text = event.clipboardData?.getData('text/plain') || '';

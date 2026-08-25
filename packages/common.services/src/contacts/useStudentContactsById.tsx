@@ -10,7 +10,7 @@ export const useStudentContactsById = (studentId: string | number, disabled?: bo
         'Content-Type': 'application/json',
       },
     },
-    disabled,
+    disabled: disabled || !studentId,
     queryKey: [ContactsQueryKey.GetStudentContactById, studentId],
   });
 

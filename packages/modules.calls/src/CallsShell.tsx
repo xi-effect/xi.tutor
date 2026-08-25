@@ -17,10 +17,14 @@ import { useCallsDeps } from './useCallsDeps';
 import { ProductCallAnalyticsTracker } from './productAnalytics/ProductCallAnalyticsTracker';
 import { BoardCallStorageWarmup } from './boardWarmup/BoardCallStorageWarmup';
 import { NativeShareOverlayBridge } from './useNativeShareOverlay';
+import { installMediaPermissionRequestAnalytics } from './productAnalytics/installMediaPermissionRequestAnalytics';
 
 import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
 import '@xipkg/calls-ui/grid.css';
+
+// До монтирования PreJoin: перехват getUserMedia (событие — только при реальном промпте).
+installMediaPermissionRequestAnalytics();
 
 type CallsShellPropsT = {
   children: ReactNode;

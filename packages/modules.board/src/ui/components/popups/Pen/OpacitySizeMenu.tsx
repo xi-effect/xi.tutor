@@ -1,16 +1,12 @@
 import { Slider } from '@xipkg/slider';
 import { useDrawStore } from '../../../../store/useDrawStore';
 import { useDrawStyles } from '../../../../hooks/useDrawStyles';
-import { colorOptions } from '../../../../utils/customConfig';
+import { BOARD_COLORS, getBoardColorOption } from '../../../../utils/boardColors';
 import { cn } from '@xipkg/utils';
 import type { PenPreset, PenThickness } from '../../../../store/useDrawStore';
 import { ColorDot } from '../../canvas';
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
-
-const colorClassMap: Record<string, string> = Object.fromEntries(
-  colorOptions.map(({ name, class: cls }) => [name, cls]),
-);
 
 const thicknessSizeMap: Record<string, number> = {
   xs: 8,
@@ -28,6 +24,7 @@ type PresetButtonProps = {
 
 const PresetButton = ({ preset, isActive, onClick }: PresetButtonProps) => {
   const dotSize = thicknessSizeMap[preset.thickness] ?? 16;
+  const colorOption = getBoardColorOption(preset.color);
 
   return (
     <button
@@ -42,18 +39,19 @@ const PresetButton = ({ preset, isActive, onClick }: PresetButtonProps) => {
       aria-label="Preset"
     >
       <span
-        className={cn('block rounded-full', colorClassMap[preset.color] || 'bg-gray-100')}
+        className={cn('block rounded-full', !colorOption?.cssVar && 'bg-gray-100')}
         style={{
           width: dotSize,
           height: dotSize,
           opacity: preset.opacity / 100,
+          backgroundColor: colorOption?.cssVar,
         }}
       />
     </button>
   );
 };
 
-export const OpacitySizeMenu = () => {
+export const OpacitySizeMenu = ({ className }: { className?: string }) => {
   const {
     pencilColor,
     pencilThickness,
@@ -96,7 +94,12 @@ export const OpacitySizeMenu = () => {
   const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
 
   return (
-    <div className="border-border-default bg-background-surface w-full rounded-xl border shadow-none">
+    <div
+      className={cn(
+        'border-border-default bg-background-surface w-full rounded-xl border shadow-none',
+        className,
+      )}
+    >
       <div className="flex w-full flex-col items-stretch gap-3 p-3 sm:flex-row sm:items-center">
         {/* Пресеты */}
         <div className="flex shrink-0 items-center gap-1.5">
@@ -122,7 +125,6 @@ export const OpacitySizeMenu = () => {
                 min={1}
                 max={5}
                 step={1}
-                minStepsBetweenThumbs={1}
               />
             </div>
             <span className="text-text-primary w-5 shrink-0 text-xs">
@@ -147,10 +149,11 @@ export const OpacitySizeMenu = () => {
 
         {/* Цвета */}
         <div className="flex flex-wrap items-center gap-1.5">
-          {colorOptions.map(({ name, class: colorClass }) => (
+          {BOARD_COLORS.map(({ name, class: colorClass, cssVar }) => (
             <ColorDot
               key={name}
               colorClass={colorClass}
+              colorCss={cssVar}
               isSelected={pencilColor === name}
               onClick={() => handleColorClick(name)}
             />

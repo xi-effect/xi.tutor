@@ -14,6 +14,7 @@ import {
   getNotificationInvalidationKeys,
 } from './notificationUtils';
 import { navigateFromNotification } from './notificationNavigation';
+import { playIncomingNotificationSound } from './notificationSound';
 import { shouldUseSystemNotifications, showSystemNotification } from './webNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
@@ -24,13 +25,12 @@ export const useNotifications = () => {
   const [shouldLoadNotifications, setShouldLoadNotifications] = useState(false);
   const queryClient = useQueryClient();
 
-  // Проверяем, авторизован ли пользователь
-  const { data: currentUser, isError: isUserError } = useCurrentUser();
-  const isAuthenticated = !!currentUser && !isUserError;
-
   // Проверяем, находимся ли мы на страницах внутри (app)
   // Используем window.location.pathname, так как NotificationsProvider находится вне RouterProvider
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const isAuthPage = ['/signin', '/signup', '/reset-password'].some((route) =>
+    pathname.startsWith(route),
+  );
   const isInApp = ![
     '/signin',
     '/signup',
@@ -39,6 +39,9 @@ export const useNotifications = () => {
     '/invite',
     '/confirm-email',
   ].some((route) => pathname.startsWith(route));
+
+  const { data: currentUser, isError: isUserError } = useCurrentUser(isAuthPage);
+  const isAuthenticated = !!currentUser && !isUserError;
 
   // API хуки - загружаем список уведомлений только когда shouldLoadNotifications = true
   // Счетчик непрочитанных загружается всегда при авторизации
@@ -98,14 +101,20 @@ export const useNotifications = () => {
       const notification = transformNotification(data);
 
       // Добавляем новое уведомление в начало списка socket-уведомлений (чтобы оно появилось вверху)
+      let isNewNotification = false;
       setSocketNotifications((prev) => {
         // Проверяем, нет ли уже такого уведомления (по id)
         if (prev.some((n) => n.id === notification.id)) {
           return prev;
         }
+        isNewNotification = true;
         // Добавляем новое уведомление в начало массива, чтобы оно отображалось вверху
         return [notification, ...prev];
       });
+
+      if (isNewNotification) {
+        playIncomingNotificationSound();
+      }
 
       // Ревалидируем кеш связанных данных на основе конфига уведомления
       const invalidationKeys = getNotificationInvalidationKeys(notification);

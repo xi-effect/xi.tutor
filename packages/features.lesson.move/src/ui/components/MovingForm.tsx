@@ -11,8 +11,7 @@ import {
   useFormState,
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
-import { useMaskInput } from '@xipkg/inputmask';
-import { ArrowRight, Clock } from '@xipkg/icons';
+import { ArrowRight } from '@xipkg/icons';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +23,9 @@ import {
   type MovingRepetitionResolution,
 } from '../../hooks';
 import type { FormData } from '../../model';
-import { formatDurationBetween, getShortDateString } from '../../utils/utils';
+import { formatDurationBetween, getShortDateString, resolveSyncedEndTime } from '../../utils/utils';
 import { InputDate } from './InputDate';
+import { TimeInput } from './TimeInput';
 
 export type MovingFormProps = PropsWithChildren<{
   onClose: () => void;
@@ -117,9 +117,6 @@ export const MovingForm: FC<MovingFormProps> = ({
       form.setValue('endTime', initialEndTime);
     }
   }, [initialStartTime, initialEndTime, form]);
-
-  const maskRefStartTime = useMaskInput('time');
-  const maskRefEndTime = useMaskInput('time');
 
   const startTime = form.watch('startTime');
   const endTime = form.watch('endTime');
@@ -275,13 +272,18 @@ export const MovingForm: FC<MovingFormProps> = ({
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Input
-                      {...field}
-                      ref={maskRefStartTime}
+                    <TimeInput
+                      name={field.name}
+                      value={field.value}
+                      onBlur={field.onBlur}
                       placeholder={t('form.startPlaceholder')}
-                      className="border-border-default rounded-lg border"
-                      after={<Clock className="fill-icon-brand h-4 w-4" />}
-                      variant="s"
+                      onChange={(nextStart) => {
+                        field.onChange(nextStart);
+                        const nextEnd = resolveSyncedEndTime(nextStart, form.getValues('endTime'));
+                        if (nextEnd) {
+                          form.setValue('endTime', nextEnd, { shouldValidate: true });
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -294,13 +296,13 @@ export const MovingForm: FC<MovingFormProps> = ({
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Input
-                      {...field}
-                      ref={maskRefEndTime}
+                    <TimeInput
+                      name={field.name}
+                      value={field.value}
+                      onBlur={field.onBlur}
+                      onChange={field.onChange}
                       placeholder={t('form.endPlaceholder')}
-                      className="border-border-default rounded-lg border"
-                      after={<Clock className="fill-icon-brand h-4 w-4" />}
-                      variant="s"
+                      minTime={startTime}
                     />
                   </FormControl>
                   <FormMessage />

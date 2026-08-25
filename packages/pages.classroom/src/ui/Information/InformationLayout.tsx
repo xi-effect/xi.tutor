@@ -11,8 +11,8 @@ export const InformationLayout = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 p-4 md:flex-row">
-        <div className="order-2 flex h-full w-full flex-1 justify-center md:order-1">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2 md:flex-row">
+        <div className="order-2 h-full w-full min-w-0 flex-1 md:order-1">
           <div className="bg-background-canvas h-64 w-full animate-pulse rounded" />
         </div>
         <div className="order-1 w-full md:order-2 md:w-[300px]">

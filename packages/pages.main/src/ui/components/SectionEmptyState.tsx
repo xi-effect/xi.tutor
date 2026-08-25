@@ -12,12 +12,6 @@ type SectionEmptyStateProps = {
   minHeightClass?: string;
 };
 
-/** Макс. высота 150px — чтобы блок не раздувался; якорь — низ справа в `SectionEmptyState` */
-const illustrationSvgClass =
-  'block min-h-0 min-w-0 h-auto w-auto max-h-[150px] max-w-full shrink object-contain object-bottom object-right sm:max-w-[min(100%,280px)]';
-
-export const sectionEmptyStateIllustrationClass = illustrationSvgClass;
-
 export const SectionEmptyState: FC<SectionEmptyStateProps> = ({
   title,
   description,
@@ -26,53 +20,56 @@ export const SectionEmptyState: FC<SectionEmptyStateProps> = ({
   className,
   minHeightClass = 'min-h-[200px]',
 }) => (
-  <div
-    className={cn(
-      'border-border-default bg-background-surface dark:border-border-strong mb-3 flex w-full rounded-xl border border-dashed',
-      minHeightClass,
-      illustration ? 'flex-col overflow-hidden' : 'flex-col items-center justify-center gap-5',
-      className,
-    )}
-  >
-    {illustration ? (
-      <div className="flex min-h-0 w-full flex-1 flex-col gap-6 sm:flex-row sm:items-stretch sm:gap-6 lg:gap-8">
-        {/* flex-1: забирает всё свободное место; колонка картинки — узкая по факту макс. ширины иллюстрации, а не ~40% строки */}
-        <div className="flex min-w-0 flex-1 flex-col justify-center gap-5 px-4 py-5 sm:px-6 sm:py-6">
-          <div className="flex min-w-0 flex-col gap-2 text-left">
+  <div className="px-2 pb-4">
+    <div
+      className={cn(
+        'bg-background-surface flex w-full rounded-2xl shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
+        minHeightClass,
+        illustration ? 'flex-col' : 'flex-col items-center justify-center gap-5',
+        className,
+      )}
+    >
+      {illustration ? (
+        <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-2xl sm:flex-row sm:items-stretch sm:gap-6 lg:gap-8">
+          <div className="flex min-w-0 flex-1 flex-col justify-center gap-5 px-4 py-5 sm:px-6 sm:py-6">
+            <div className="flex min-w-0 flex-col gap-2 text-left">
+              <p className="text-m-base text-text-primary font-semibold">{title}</p>
+              {description ? (
+                <p className="text-s-base text-text-secondary dark:text-text-muted min-w-0">
+                  {description}
+                </p>
+              ) : null}
+            </div>
+            {actions ? (
+              <div className="flex min-w-0 flex-row flex-wrap items-center gap-2 sm:flex-nowrap">
+                {actions}
+              </div>
+            ) : null}
+          </div>
+          <div
+            className="relative flex min-h-[100px] w-full items-end justify-end overflow-hidden sm:h-auto sm:min-h-0 sm:w-[min(200px,36%)] sm:max-w-[200px] sm:flex-none sm:self-stretch"
+            aria-hidden
+          >
+            <div className="max-h-[150px] max-w-full [&>svg]:block [&>svg]:h-auto [&>svg]:max-h-[150px] [&>svg]:w-auto [&>svg]:max-w-full">
+              {illustration}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col items-center gap-2 text-center">
             <p className="text-m-base text-text-primary font-semibold">{title}</p>
             {description ? (
-              <p className="text-s-base text-text-secondary dark:text-text-muted min-w-0">
-                {description}
-              </p>
+              <p className="text-s-base text-text-secondary dark:text-text-muted">{description}</p>
             ) : null}
           </div>
           {actions ? (
-            <div className="flex min-w-0 flex-row flex-wrap items-center gap-2 sm:flex-nowrap">
+            <div className="flex flex-row flex-wrap items-center justify-center gap-2">
               {actions}
             </div>
           ) : null}
-        </div>
-        <div
-          className="relative h-full min-h-[100px] w-full overflow-hidden sm:h-full sm:min-h-0 sm:w-[min(200px,36%)] sm:max-w-[200px] sm:flex-none sm:shrink-0 sm:self-stretch"
-          aria-hidden
-        >
-          <div className="absolute right-0 bottom-0 max-h-[150px] max-w-full [&>svg]:block [&>svg]:h-auto [&>svg]:max-h-[150px] [&>svg]:w-auto [&>svg]:max-w-full">
-            {illustration}
-          </div>
-        </div>
-      </div>
-    ) : (
-      <>
-        <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-m-base text-text-primary font-semibold">{title}</p>
-          {description ? (
-            <p className="text-s-base text-text-secondary dark:text-text-muted">{description}</p>
-          ) : null}
-        </div>
-        {actions ? (
-          <div className="flex flex-row flex-wrap items-center justify-center gap-2">{actions}</div>
-        ) : null}
-      </>
-    )}
+        </>
+      )}
+    </div>
   </div>
 );

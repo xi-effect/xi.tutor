@@ -1,3 +1,4 @@
+export * from './EditableClassroomName';
 export * from './EditableDescription';
 export * from './IndividualUser';
 export * from './HeaderTutor';

@@ -39,6 +39,7 @@
   "roleChanged": "You are now a {{role}}",
   "wiki": "Knowledge base",
   "menu": "Menu",
+  "close": "Close",
   "supportModal": {
     "title": "Contact us",
     "description": "Choose a convenient way to reach us — we're always happy to help!",

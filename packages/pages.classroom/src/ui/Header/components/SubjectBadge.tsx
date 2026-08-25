@@ -12,13 +12,7 @@ export const SubjectBadge = ({ subject_id }: SubjectBadgePropsT) => {
   const { data: subject } = useSubjectsById(subject_id);
 
   return (
-    <Badge
-      size="m"
-      className={cn(
-        categoryBadgeClass,
-        'max-w-full min-w-0 max-sm:flex max-sm:w-full max-sm:items-center max-sm:justify-center',
-      )}
-    >
+    <Badge size="m" className={cn(categoryBadgeClass, 'max-w-[180px] min-w-0 shrink-0')}>
       <span className="max-w-full min-w-0 truncate text-center">{subject?.name}</span>
     </Badge>
   );

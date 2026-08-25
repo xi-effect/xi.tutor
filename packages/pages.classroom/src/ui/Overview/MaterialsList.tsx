@@ -6,67 +6,78 @@ import {
 } from 'common.services';
 import { ClassroomMaterialsT } from 'common.types';
 import { MaterialsCard } from 'features.materials.card';
+import { EmptyMaterials } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { MaterialsListSkeleton } from './MaterialsListSkeleton';
+import { SectionEmptyState } from '../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
+import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
 
 export const MaterialsList = () => {
   const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const roleReady = !isUserLoading && user != null;
 
-  const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
-
-  // Получаем все материалы кабинета (и доски, и заметки)
-  const {
-    data: materials,
-    isLoading,
-    isError,
-  } = getList({
+  const tutorList = useGetClassroomMaterialsList({
     classroomId: classroomId || '',
-    content_type: null, // null означает все типы материалов
-    disabled: !classroomId,
+    content_type: null,
+    disabled: !classroomId || !roleReady || !isTutor,
   });
+  const studentList = useGetClassroomMaterialsListStudent({
+    classroomId: classroomId || '',
+    content_type: null,
+    disabled: !classroomId || !roleReady || isTutor,
+  });
+
+  const { data: materials, isError } = isTutor ? tutorList : studentList;
+  const isLoading = !roleReady || (isTutor ? tutorList.isLoading : studentList.isLoading);
 
   if (isLoading) {
     return (
-      <div className="flex flex-row gap-8 pb-4">
+      <WidgetCardsCarousel>
         {Array.from({ length: 3 }).map((_, i) => (
-          <MaterialsListSkeleton key={i} className="h-33.5 w-[350px] min-w-[350px] 2xl:w-[430px]" />
+          <div key={i} className={widgetCardSlotClass}>
+            <MaterialsListSkeleton />
+          </div>
         ))}
-      </div>
+      </WidgetCardsCarousel>
     );
   }
 
   if (isError) {
     return (
       <div className="flex h-24 w-full items-center justify-center">
-        <p className="text-text-muted">{t('materials.loadError')}</p>
+        <p className="text-text-secondary">{t('materials.loadError')}</p>
       </div>
     );
   }
 
-  // Если нет данных или пустой массив
   if (!materials || materials.length === 0) {
     return (
-      <div className="flex h-24 w-full items-center justify-center">
-        <p className="text-text-muted">{t('materials.noMaterials')}</p>
-      </div>
+      <SectionEmptyState
+        title={t('materials.noMaterials')}
+        description={t('materials.emptyDescription')}
+        minHeightClass="min-h-[160px]"
+        illustration={<EmptyMaterials className={sectionEmptyStateIllustrationClass} />}
+      />
     );
   }
 
   return (
-    <div className="flex flex-row gap-8 pb-4">
+    <WidgetCardsCarousel>
       {materials.map((material: ClassroomMaterialsT) => (
-        <MaterialsCard
-          key={material.id}
-          {...material}
-          isLoading={isLoading}
-          hasIcon
-          className="w-full max-w-[430px] min-w-[300px]"
-        />
+        <div key={material.id} className={widgetCardSlotClass}>
+          <MaterialsCard
+            {...material}
+            isLoading={isLoading}
+            layout="gallery"
+            className="h-full w-full"
+          />
+        </div>
       ))}
-    </div>
+    </WidgetCardsCarousel>
   );
 };

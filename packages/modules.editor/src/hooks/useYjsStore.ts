@@ -12,6 +12,7 @@ import {
   HocuspocusProvider,
   type onAuthenticatedParameters,
   type onAuthenticationFailedParameters,
+  type onSyncedParameters,
 } from '@hocuspocus/provider';
 import { generateUserColor } from '../utils/userColor';
 import { useCollaborators } from './useCollaborators';
@@ -31,8 +32,11 @@ export type UseCollaborativeTiptapReturn = {
   canUndo: boolean;
   canRedo: boolean;
   isReadOnly: boolean;
+  isSynced: boolean;
+  hasSyncError: boolean;
   storageToken: string;
   storageItem: StorageItemT;
+  audioSyncMap: Y.Map<number>;
 };
 
 export function useYjsStore({
@@ -63,13 +67,17 @@ export function useYjsStore({
     return { provider, ydoc };
   });
 
+  const audioSyncMap = ydoc.getMap<number>('audioSync');
+
   const { awareness } = provider;
   const { setCollaboratorsIfChanged, reset } = useCollaborators();
 
   /* ==========================================================
-   * 2. Readonly state
+   * 2. Readonly / sync state
    * ========================================================== */
   const [serverReadonly, setServerReadonly] = useState(false);
+  const [isSynced, setIsSynced] = useState(() => Boolean(provider.synced));
+  const [hasSyncError, setHasSyncError] = useState(false);
 
   /* ==========================================================
    * 3. User data для курсоров и awareness — из текущего пользователя
@@ -112,6 +120,7 @@ export function useYjsStore({
 
     // Auth events
     const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
+      setHasSyncError(true);
       if (reason === 'permission-denied') {
         toast(i18n.t('status.accessError', { ns: 'editor' }));
         console.error('hocuspocus: permission-denied');
@@ -122,13 +131,23 @@ export function useYjsStore({
       setServerReadonly(scope === 'readonly');
     };
 
+    const handleSynced = ({ state }: onSyncedParameters) => {
+      if (state) setIsSynced(true);
+    };
+
     provider.on('authenticationFailed', handleAuthFailed as any);
     provider.on('authenticated', handleAuthenticated as any);
+    provider.on('synced', handleSynced as any);
+
+    if (provider.synced) {
+      setIsSynced(true);
+    }
 
     return () => {
       window.clearTimeout(connectTimeoutId);
       provider.off('authenticationFailed', handleAuthFailed as any);
       provider.off('authenticated', handleAuthenticated as any);
+      provider.off('synced', handleSynced as any);
 
       // Только disconnect — provider принадлежит useState и будет
       // переиспользован при StrictMode-ремаунте.
@@ -207,9 +226,24 @@ export function useYjsStore({
       canUndo,
       canRedo,
       isReadOnly,
+      isSynced,
+      hasSyncError,
       storageToken,
       storageItem,
+      audioSyncMap,
     }),
-    [editor, undo, redo, canUndo, canRedo, isReadOnly, storageToken, storageItem],
+    [
+      editor,
+      undo,
+      redo,
+      canUndo,
+      canRedo,
+      isReadOnly,
+      isSynced,
+      hasSyncError,
+      storageToken,
+      storageItem,
+      audioSyncMap,
+    ],
   );
 }

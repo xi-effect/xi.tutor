@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-import { SignInPage } from 'pages.signin';
+import { resolveSigninRedirect, SignInPage } from 'pages.signin';
 
 // @ts-ignore
 export const Route = createFileRoute('/(auth)/_layout/signin/')({
@@ -12,10 +12,19 @@ export const Route = createFileRoute('/(auth)/_layout/signin/')({
       },
     ],
   }),
+  beforeLoad: ({ context, search }) => {
+    if (!context.auth.isAuthenticated) return;
+
+    throw redirect({
+      replace: true,
+      to: resolveSigninRedirect(
+        typeof search === 'object' && search && 'redirect' in search
+          ? String((search as { redirect?: string }).redirect ?? '')
+          : undefined,
+      ),
+    });
+  },
   component: SignIn,
-  // beforeLoad: ({ context }) => {
-  //   console.log('SignInRoute', context, location);
-  // },
 });
 
 function SignIn() {

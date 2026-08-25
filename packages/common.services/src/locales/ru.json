@@ -1,0 +1,13 @@
+{
+  "toast": {
+    "materials": {
+      "created": "{{name}} создана",
+      "deleted": "{{name}} удален",
+      "deletedFallback": "Материал удален",
+      "updated": "Материал обновлен",
+      "classroomUpdated": "Материал кабинета обновлен",
+      "classroomDeleted": "{{name}} удалена",
+      "duplicated": "Дубль создан"
+    }
+  }
+}

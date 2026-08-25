@@ -6,13 +6,19 @@ import {
   useGetClassroom,
 } from 'common.services';
 import { InvoiceCard } from 'features.invoice.card';
+import { EmptyPayments } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { PaymentsListSkeleton } from './PaymentsListSkeleton';
+import { SectionEmptyState } from '../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
+import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
+import { galleryInvoiceCardClass } from '../galleryShadowClass';
 
 export const PaymentsList = () => {
   const { t } = useTranslation('classroom');
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const roleReady = !isUserLoading && user != null;
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
@@ -20,46 +26,53 @@ export const PaymentsList = () => {
   const { data: studentPayments, isLoading: isLoadingStudent } = useGetClassroomStudentPaymentsList(
     {
       classroomId,
-      disabled: isTutor,
+      disabled: !roleReady || isTutor,
     },
   );
   const { data: tutorPayments, isLoading: isLoadingTutor } = useGetClassroomTutorPaymentsList({
     classroomId,
-    disabled: !isTutor,
+    disabled: !roleReady || !isTutor,
   });
 
   const payments = isTutor ? tutorPayments : studentPayments;
-  const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
+  const isLoading = !roleReady || (isTutor ? isLoadingTutor : isLoadingStudent);
 
   if (isLoading) {
     return (
-      <div className="flex flex-row gap-8 pb-4">
+      <WidgetCardsCarousel>
         {Array.from({ length: 3 }).map((_, i) => (
-          <PaymentsListSkeleton key={i} className="h-46.5 w-[350px] min-w-[350px]" />
+          <div key={i} className={widgetCardSlotClass}>
+            <PaymentsListSkeleton />
+          </div>
         ))}
-      </div>
+      </WidgetCardsCarousel>
     );
   }
 
   if (!payments || payments.length === 0) {
     return (
-      <div className="flex h-[148px] w-full flex-row items-center justify-center gap-8">
-        <p className="text-m-base text-text-secondary">{t('overview.paymentsEmpty')}</p>
-      </div>
+      <SectionEmptyState
+        title={t('overview.paymentsEmpty')}
+        description={t('overview.paymentsEmptyDescription')}
+        minHeightClass="min-h-[160px]"
+        illustration={<EmptyPayments className={sectionEmptyStateIllustrationClass} />}
+      />
     );
   }
 
   return (
-    <div className="flex flex-row gap-8 pb-4">
+    <WidgetCardsCarousel>
       {payments.map((payment) => (
-        <InvoiceCard
-          className="w-full max-w-[430px] min-w-[300px]"
-          key={payment.id}
-          payment={payment}
-          currentUserRole={isTutor ? 'tutor' : 'student'}
-          type={classroom?.kind === 'group' && isTutor ? 'full' : 'short'}
-        />
+        <div key={payment.id} className={widgetCardSlotClass}>
+          <InvoiceCard
+            className={galleryInvoiceCardClass}
+            payment={payment}
+            currentUserRole={isTutor ? 'tutor' : 'student'}
+            type={classroom?.kind === 'group' && isTutor ? 'full' : 'short'}
+            withoutPaymentType
+          />
+        </div>
       ))}
-    </div>
+    </WidgetCardsCarousel>
   );
 };

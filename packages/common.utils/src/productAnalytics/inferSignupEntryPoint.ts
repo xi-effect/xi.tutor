@@ -1,7 +1,7 @@
 import type { SignupEntryPoint } from './types';
 
 /**
- * Определяет точку входа на регистрацию по referrer / query / sessionStorage.
+ * Определяет точку входа на регистрацию по query / sessionStorage / referrer.
  */
 export function inferSignupEntryPoint(search?: {
   invite?: string;
@@ -11,6 +11,10 @@ export function inferSignupEntryPoint(search?: {
   if (typeof window === 'undefined') return 'unknown';
 
   if (search?.invite || search?.from === 'invite') return 'invite';
+
+  // invite → login → signup: redirect сохраняется через getUrlWithParams
+  if (search?.redirect?.includes('/invite')) return 'invite';
+
   if (search?.from === 'login' || search?.redirect?.includes('signin')) return 'login';
 
   try {

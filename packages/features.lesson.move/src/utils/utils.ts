@@ -46,6 +46,85 @@ export const addDurationToTime = (startTime: string, duration: string): string =
   return minutesToTime(startMin + durationMin);
 };
 
+export const TIME_MINUTE_STEPS = [0, 15, 30, 45] as const;
+
+const COMPLETE_TIME_RE = /^([01]?\d|2[0-3]):[0-5]\d$/;
+
+export const parseTimeParts = (time: string): { hours: number; minutes: number } | null => {
+  if (!COMPLETE_TIME_RE.test(time)) return null;
+  const [hours, minutes] = time.split(':').map(Number);
+  return { hours, minutes };
+};
+
+export const formatTimeParts = (hours: number, minutes: number): string =>
+  `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+const validSlotMinutesAfter = (minTime: string, maxDurationMinutes: number): number[] => {
+  const startM = timeToMinutes(minTime);
+  const slots: number[] = [];
+  for (let offset = 15; offset <= maxDurationMinutes; offset += 15) {
+    slots.push((startM + offset) % MINUTES_PER_DAY);
+  }
+  return slots;
+};
+
+/** Часы для дропдауна. Для конца занятия — по порядку от времени начала, с учётом лимита длительности. */
+export const getTimePickerHours = (
+  minTime?: string,
+  maxDurationMinutes: number = MAX_LESSON_DURATION_MINUTES,
+): number[] => {
+  if (!minTime || !parseTimeParts(minTime)) {
+    return Array.from({ length: 24 }, (_, i) => i);
+  }
+
+  const hours: number[] = [];
+  const seen = new Set<number>();
+  for (const total of validSlotMinutesAfter(minTime, maxDurationMinutes)) {
+    const hour = Math.floor(total / 60);
+    if (!seen.has(hour)) {
+      seen.add(hour);
+      hours.push(hour);
+    }
+  }
+  return hours;
+};
+
+/** Минуты 00/15/30/45, допустимые для выбранного часа относительно времени начала. */
+export const getTimePickerMinutes = (
+  hour: number,
+  minTime?: string,
+  maxDurationMinutes: number = MAX_LESSON_DURATION_MINUTES,
+): number[] => {
+  const steps = [...TIME_MINUTE_STEPS];
+  if (!minTime || !parseTimeParts(minTime)) return steps;
+
+  const startM = timeToMinutes(minTime);
+  return steps.filter((minutes) => {
+    const candidate = hour * 60 + minutes;
+    let duration = candidate - startM;
+    if (duration <= 0) duration += MINUTES_PER_DAY;
+    return duration > 0 && duration <= maxDurationMinutes;
+  });
+};
+
+/**
+ * Если конец пустой или становится невалидным относительно начала — вернуть start + 1 час.
+ * Иначе undefined (значение конца менять не нужно).
+ */
+export const resolveSyncedEndTime = (startTime: string, endTime: string): string | undefined => {
+  if (!parseTimeParts(startTime)) return undefined;
+  if (!parseTimeParts(endTime)) {
+    return addDurationToTime(startTime, '1:00');
+  }
+
+  const duration = durationBetweenMinutes(startTime, endTime);
+  if (duration === 0 || duration > MAX_LESSON_DURATION_MINUTES) {
+    return addDurationToTime(startTime, '1:00');
+  }
+
+  return undefined;
+};
+
 /** Длительность между двумя временами в формате макета: «1 час 20 минут». Пустая строка, если посчитать нельзя. */
 export const formatDurationBetween = (startTime: string, endTime: string, t: TFunction): string => {
   if (!/^\d{1,2}:\d{2}$/.test(startTime) || !/^\d{1,2}:\d{2}$/.test(endTime)) {

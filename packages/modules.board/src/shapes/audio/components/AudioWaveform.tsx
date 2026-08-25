@@ -18,7 +18,7 @@ export function AudioWaveform({
   return (
     <svg
       style={{
-        pointerEvents: isInteractive ? 'all' : 'none',
+        pointerEvents: isInteractive ? 'auto' : 'none',
         cursor: isInteractive && canControl ? 'pointer' : 'default',
       }}
       data-audio-control=""
@@ -28,12 +28,14 @@ export function AudioWaveform({
       onPointerDown={
         isInteractive
           ? (e) => {
+              e.preventDefault();
               stopEvent(e);
               onSeek(e);
             }
           : undefined
       }
     >
+      <rect width="100%" height="100%" fill="transparent" pointerEvents="all" />
       {waveform.map((amp, i) => {
         const count = waveform.length;
         const barW = 100 / count;

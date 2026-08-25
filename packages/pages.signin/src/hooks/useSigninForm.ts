@@ -1,17 +1,25 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { AxiosError } from 'axios';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 
-import { useSignin, useCurrentUser } from 'common.services';
+import { useSignin } from 'common.services';
 import { useAuth } from 'common.auth';
-import { trackUmamiSession } from 'common.utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getActivationFlowId,
+  getInviteTrackingIdFromContext,
+  getOrCreateActivationFlowId,
+  getInviteFunnelEventProps,
+  inferSigninSource,
+  mapSigninError,
+  trackProductEvent,
+  trackUmamiSession,
+} from 'common.utils';
 
 import { FormData } from '../model/formSchema';
 import { UseFormSetError } from 'react-hook-form';
-
-type ErrorDetail = 'User not found' | 'Wrong password' | string;
+import { completeSigninSuccess, handleSigninError } from './signinFormLogic';
 
 type SignInResponse = {
   status: number;
@@ -22,12 +30,12 @@ export const useSigninForm = () => {
   const { t } = useTranslation('signin');
 
   const [isPending, setIsPending] = useState(false);
+  const [inviteUserNotFound, setInviteUserNotFound] = useState(false);
   const { signin } = useSignin();
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { refetch: refetchUser } = useCurrentUser();
 
-  const search = useSearch({ strict: false }) as { redirect?: string };
+  const search = useSearch({ strict: false }) as { redirect?: string; invite?: string };
 
   const onSigninForm = async (data: FormData, setError: UseFormSetError<FormData>) => {
     if (isPending) {
@@ -35,9 +43,30 @@ export const useSigninForm = () => {
     }
 
     const { email, password } = data;
+    const source = inferSigninSource(search);
+    const isInviteFlow = source === 'invite';
+    const activationFlowId =
+      source === 'invite' ? getOrCreateActivationFlowId() : getActivationFlowId();
 
+    let invite_tracking_id: string | undefined;
+    try {
+      invite_tracking_id = await getInviteTrackingIdFromContext(search);
+    } catch {
+      invite_tracking_id = undefined;
+    }
+
+    const funnel = getInviteFunnelEventProps(false);
+
+    setInviteUserNotFound(false);
     setIsPending(true);
     try {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNIN_SUBMIT, {
+        source,
+        invite_tracking_id,
+        activation_flow_id: activationFlowId,
+        ...funnel,
+      });
+
       const response: SignInResponse = await signin(email, password);
 
       // Успешный вход
@@ -45,51 +74,38 @@ export const useSigninForm = () => {
         // Здесь можно обработать тему
       }
 
-      await login();
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNIN_SUCCEEDED, {
+        source,
+        invite_tracking_id,
+        activation_flow_id: activationFlowId,
+        ...funnel,
+      });
 
-      // Идентифицируем пользователя в Umami до навигации, чтобы properties записались
-      // в текущую сессию (страница логина), а не в «новую» после перехода
-      const result = await refetchUser();
-      if (result.data) {
-        await trackUmamiSession(result.data, 'signin');
-      }
-
-      navigate({ to: search.redirect || '/' });
+      await completeSigninSuccess({
+        login,
+        trackUmamiSession,
+        navigate,
+        redirect: search.redirect,
+      });
     } catch (error) {
-      if (error instanceof AxiosError) {
-        const status = error.response?.status;
-        const detail: ErrorDetail = error.response?.data?.detail;
-
-        if (status === 401) {
-          if (detail === 'User not found') {
-            const message = t('errors.not_found_account');
-            setError('email', { message });
-            toast(message);
-            return;
-          }
-
-          if (detail === 'Wrong password') {
-            const message = t('errors.not_found_password');
-            setError('password', { message });
-            toast(message);
-            return;
-          }
-
-          toast(t('errors.error_signin'));
-          return;
-        }
-
-        if (status === 422) {
-          toast(t('errors.validation_error'));
-          return;
-        }
+      try {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNIN_FAILED, {
+          reason: mapSigninError(error),
+          source,
+          invite_tracking_id,
+          activation_flow_id: activationFlowId,
+          ...funnel,
+        });
+      } catch {
+        // Аналитика не должна ломать авторизацию
       }
 
-      toast(t('errors.error_signin'));
+      const reason = handleSigninError(error, { t, setError, toast }, { isInviteFlow });
+      setInviteUserNotFound(isInviteFlow && reason === 'user_not_found');
     } finally {
       setIsPending(false);
     }
   };
 
-  return { onSigninForm, isPending };
+  return { onSigninForm, isPending, inviteUserNotFound };
 };

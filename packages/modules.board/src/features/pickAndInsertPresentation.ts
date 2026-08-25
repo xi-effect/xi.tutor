@@ -2,27 +2,39 @@ import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
-
 import { PresentationShape } from '../shapes/presentation';
+
+import i18n from 'i18next';
 
 const MAX_PRESENTATION_SIZE_BYTES = 5 * 1024 * 1024;
 const MAX_PRESENTATION_SHAPES = 20;
 
-const DEFAULT_WIDTH = 800;
+const DEFAULT_WIDTH = 720;
 
 export async function insertPresentation(editor: Editor, file: File, token: string) {
   if (!file.name.toLowerCase().endsWith('.pptx')) {
-    toast.error('Неподдерживаемый формат', {
-      description: 'Выберите файл PPTX',
+    toast.error(i18n.t('toast.unsupportedFormat', { ns: 'board' }), {
+      description: i18n.t('toast.presentationFormatDesc', { ns: 'board' }),
+      duration: 5000,
     });
 
     return;
   }
 
   if (file.size > MAX_PRESENTATION_SIZE_BYTES) {
-    toast.error('Файл слишком большой', {
-      description: 'Размер презентации не должен превышать 5 MiB',
-    });
+    toast.error(
+      i18n.t('toast.presentationSizeDesc', {
+        ns: 'board',
+        size: (file.size / (1024 * 1024)).toFixed(2),
+      }),
+      {
+        description: i18n.t('toast.presentationLimitDesc', {
+          ns: 'board',
+          max: MAX_PRESENTATION_SHAPES,
+        }),
+        duration: 5000,
+      },
+    );
 
     return;
   }
@@ -32,8 +44,12 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
     .filter((shape) => shape.type === 'presentation').length;
 
   if (count >= MAX_PRESENTATION_SHAPES) {
-    toast.error('Лимит презентаций', {
-      description: `На доске может быть не более ${MAX_PRESENTATION_SHAPES} презентаций`,
+    toast.error(i18n.t('toast.presentationLimitTitle', { ns: 'board' }), {
+      description: i18n.t('toast.presentationLimitDesc', {
+        ns: 'board',
+        max: MAX_PRESENTATION_SHAPES,
+      }),
+      duration: 5000,
     });
 
     return;
@@ -80,7 +96,7 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
   } catch (err) {
     console.error('[insertPresentation] upload failed', err);
 
-    toast.error('Ошибка загрузки презентации');
+    toast.error(i18n.t('toast.presentationUploadFailed', { ns: 'board' }));
 
     editor.deleteShapes([shapeId]);
   }

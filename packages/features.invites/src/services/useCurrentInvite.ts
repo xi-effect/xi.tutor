@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useAddInvitation, useInvitationsList } from 'common.services';
+import { useAddInvitation, useDeleteInvitation, useInvitationsList } from 'common.services';
 import { InvitationDataT } from 'common.types';
-import { type InviteAnalyticsSource } from 'common.utils';
+import { mapInviteError, type InviteAnalyticsSource } from 'common.utils';
 import { selectCurrentInvite } from './selectCurrentInvite';
-
-/** Максимум индивидуальных приглашений на репетитора (сохраняем текущее ограничение). */
-export const MAX_INVITES = 10;
 
 type CreateInviteOptions = {
   onSuccess?: (invite: InvitationDataT) => void;
@@ -19,14 +16,16 @@ type UseCurrentInviteResult = {
   refetch: () => void;
   isCreating: boolean;
   isCreateError: boolean;
-  isAtLimit: boolean;
+  isCreateLimitReached: boolean;
+  isRefreshing: boolean;
   createInvite: (options?: CreateInviteOptions) => void;
   retryCreate: () => void;
+  refreshCurrentInvite: (options?: CreateInviteOptions) => void;
 };
 
 /**
- * Оркестрирует выбор актуального приглашения и его автосоздание, если
- * неиспользованного приглашения нет.
+ * Оркестрирует выбор актуального приглашения (последнее созданное) и
+ * автосоздание, только если приглашений ещё нет.
  *
  * Защита от повторного создания:
  * - `autoCreateAttemptedRef` не сбрасывается за время жизни хука — гарантирует
@@ -35,7 +34,10 @@ type UseCurrentInviteResult = {
  * - при ошибке создания повторная попытка — только вручную через `retryCreate`,
  *   без автоматического retry (см. ТЗ, раздел 9 «Ошибка создания»);
  * - создание никогда не запускается из render-функции — только из mutation
- *   внутри `useEffect`/явных обработчиков.
+ *   внутри `useEffect`/явных обработчиков;
+ * - перед обновлением ссылки текущая удаляется, `autoCreateAttemptedRef`
+ *   заранее ставится в true, чтобы эффект не создал вторую ссылку, пока список
+ *   на мгновение пуст.
  */
 export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInviteResult => {
   const { data, isLoading, isError: isListError, refetch } = useInvitationsList();
@@ -43,11 +45,12 @@ export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInvit
     mutate: addInvitationMutate,
     isPending: isCreating,
     isError: isCreateError,
+    error: createError,
   } = useAddInvitation();
+  const { mutate: deleteInvitationMutate, isPending: isDeleting } = useDeleteInvitation();
 
   const invites = useMemo(() => data ?? [], [data]);
   const currentInvite = useMemo(() => selectCurrentInvite(invites), [invites]);
-  const isAtLimit = invites.length >= MAX_INVITES;
 
   const createInvite = useCallback(
     (options?: CreateInviteOptions) => {
@@ -68,17 +71,46 @@ export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInvit
   );
 
   const autoCreateAttemptedRef = useRef(false);
+  const limitRefetchAttemptedRef = useRef(false);
+  const isCreateLimitReached = isCreateError && mapInviteError(createError) === 'limit_reached';
 
   useEffect(() => {
     if (isLoading || isListError) return;
     if (currentInvite) return;
-    if (isAtLimit) return;
     if (autoCreateAttemptedRef.current) return;
     autoCreateAttemptedRef.current = true;
     createInvite();
-  }, [isLoading, isListError, currentInvite, isAtLimit, createInvite]);
+  }, [isLoading, isListError, currentInvite, createInvite]);
 
-  const retryCreate = useCallback(() => createInvite(), [createInvite]);
+  useEffect(() => {
+    if (!isCreateLimitReached || currentInvite || limitRefetchAttemptedRef.current) return;
+    limitRefetchAttemptedRef.current = true;
+    refetch();
+  }, [isCreateLimitReached, currentInvite, refetch]);
+
+  const retryCreate = useCallback(() => {
+    if (isCreateLimitReached) {
+      refetch();
+      return;
+    }
+    createInvite();
+  }, [isCreateLimitReached, refetch, createInvite]);
+
+  const refreshCurrentInvite = useCallback(
+    (options?: CreateInviteOptions) => {
+      if (!currentInvite) return;
+      autoCreateAttemptedRef.current = true;
+      deleteInvitationMutate(currentInvite.id, {
+        onSuccess: () => {
+          createInvite(options);
+        },
+        onError: () => {
+          autoCreateAttemptedRef.current = false;
+        },
+      });
+    },
+    [currentInvite, deleteInvitationMutate, createInvite],
+  );
 
   return {
     invites,
@@ -88,8 +120,10 @@ export const useCurrentInvite = (source: InviteAnalyticsSource): UseCurrentInvit
     refetch,
     isCreating,
     isCreateError,
-    isAtLimit,
+    isCreateLimitReached,
+    isRefreshing: isDeleting || isCreating,
     createInvite,
     retryCreate,
+    refreshCurrentInvite,
   };
 };

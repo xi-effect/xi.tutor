@@ -11,7 +11,7 @@
   "actions": {
     "selectAction": "Choose an action",
     "addStudent": "Add student",
-    "addStudentDescription": "Add a student to the study group",
+    "addStudentDescription": "Add a student to the group",
     "inviteToGroup": "Invite to group",
     "inviteToGroupDescription": "Send a group invite link",
     "createInvoice": "Create invoice",
@@ -44,8 +44,11 @@
     "boards": "Boards",
     "notes": "Notes",
     "noBoards": "No study boards",
+    "noBoardsDescription": "Add an interactive board for lessons",
     "noNotes": "No notes",
+    "noNotesDescription": "Add a note to make lessons easier",
     "noMaterials": "No materials",
+    "emptyDescription": "Add interactive boards and notes to make lessons easier",
     "loadError": "Failed to load materials",
     "noteCollaborative": "Note: Collaborative",
     "noteTutorOnly": "Note: Tutor only",
@@ -61,8 +64,10 @@
     "upcomingLessons": "Upcoming lessons",
     "noLessonsTitle": "No lessons in the next 7 days",
     "noLessonsDescription": "When lessons appear in the classroom schedule, they will show up here",
-    "paymentsEmpty": "Nothing here yet",
+    "paymentsEmpty": "No payments",
+    "paymentsEmptyDescription": "Invoices will appear here after they are issued",
     "addStudentTitle": "Add a student to the group",
+    "studentsEmptyDescription": "Add students to the group",
     "studentDeleted": "Student removed from the group",
     "studentDeleteError": "Failed to remove student",
     "studentsLoadError": "Failed to load students list"
@@ -77,7 +82,10 @@
     "loadFailed": "Load error"
   },
   "header": {
-    "noDescription": "No description"
+    "noDescription": "No description",
+    "editNamePlaceholder": "Enter a name",
+    "editNameAria": "Classroom name",
+    "editNameError": "Name cannot be empty"
   },
   "descriptionModal": {
     "title": "Edit description",

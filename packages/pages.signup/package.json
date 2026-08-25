@@ -9,14 +9,16 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@xipkg/button": "4.3.0",
     "@xipkg/checkbox": "5.1.0",
     "@xipkg/form": "4.3.0",
-    "@xipkg/icons": "3.1.0",
+    "@xipkg/icons": "3.1.5",
     "@xipkg/input": "2.3.0",
     "@xipkg/link": "2.1.0",
     "@xipkg/utils": "1.8.0",
@@ -44,7 +46,8 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.22.0"
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "@hookform/resolvers": "^5.2.2",

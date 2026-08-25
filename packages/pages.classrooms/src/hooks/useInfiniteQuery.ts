@@ -1,5 +1,10 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
-import { classroomsApiConfig, ClassroomsQueryKey, ClassroomT } from 'common.api';
+import {
+  classroomsApiConfig,
+  ClassroomsQueryKey,
+  ClassroomT,
+  getClassroomDisplayName,
+} from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import React from 'react';
 import { ClassroomPropsT } from '../types';
@@ -7,7 +12,7 @@ import { ClassroomPropsT } from '../types';
 // Адаптер для преобразования ClassroomT в ClassroomPropsT
 const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
   id: classroom.id,
-  name: classroom.name,
+  name: getClassroomDisplayName(classroom),
   status: classroom.status,
   kind: classroom.kind,
   description: classroom.description || undefined,

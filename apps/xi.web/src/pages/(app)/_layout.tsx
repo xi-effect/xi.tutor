@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Outlet, createFileRoute, useNavigate, useRouter, useSearch } from '@tanstack/react-router';
-import { LoadingScreen } from 'common.ui';
+import { applyUserLanguage, LoadingScreen } from 'common.ui';
 import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
@@ -90,6 +90,10 @@ const ProtectedLayout = () => {
   });
 
   useEffect(() => {
+    void applyUserLanguage(user?.language);
+  }, [user?.language]);
+
+  useEffect(() => {
     const stage = user?.onboarding_stage;
 
     if (
@@ -138,6 +142,8 @@ const ProtectedLayout = () => {
         },
       },
     );
+    // Один раз на mount: role из URL — намеренно без deps, иначе повторные mutate
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Обработка параметра read_notification_id из URL

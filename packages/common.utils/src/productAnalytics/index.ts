@@ -15,6 +15,26 @@ export { inferProductAnalyticsSourceFromPathname } from './inferSource';
 export { inferSignupEntryPoint } from './inferSignupEntryPoint';
 export { inferEmailConfirmationSource } from './inferEmailConfirmationSource';
 export {
+  getPendingInviteCode,
+  getInviteCodeFromSearch,
+  persistPendingInviteCode,
+  clearPendingInviteCode,
+  getInviteAuthSearch,
+  inferSigninSource,
+  shouldTrackInvitePageViewed,
+  shouldTrackInviteLoginClicked,
+  shouldTrackInviteSignupClicked,
+  getInviteTrackingIdFromContext,
+} from './inferSigninSource';
+export {
+  persistInviteProgressTrack,
+  clearInviteProgressTrack,
+  getInviteProgress,
+  getInviteFunnelMeta,
+  getInviteFunnelEventProps,
+} from './inviteProgress';
+export type { InviteFunnelMeta } from './inviteProgress';
+export {
   getOrCreateActivationFlowId,
   getActivationFlowId,
   resetActivationFlowId,
@@ -27,8 +47,10 @@ export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
   mapSignupError,
   mapSignupValidationErrors,
+  mapSigninError,
   mapEmailConfirmationError,
   mapInviteError,
+  mapInviteAcceptError,
   mapLessonCreateError,
   mapCallError,
   mapPermissionError,
@@ -44,6 +66,7 @@ export {
   resolveOnboardingAnalyticsRole,
   markOnboardingStartedAt,
   getOnboardingDurationMs,
+  trackOnboardingStarted,
   trackOnboardingStepCompleted,
   trackOnboardingStepSkipped,
   trackOnboardingStepFailed,
@@ -64,11 +87,17 @@ export type {
   ProductAnalyticsBoardTrigger,
   SignupEntryPoint,
   SignupFailureReason,
+  SignupValidationFailedField,
   SignupValidationFailureReason,
+  SigninAnalyticsSource,
+  InviteFunnelTrack,
+  InviteFunnelStep,
+  SigninFailureReason,
   EmailConfirmationFailureReason,
   EmailConfirmationSource,
   ActivationHelpReason,
   InviteFailureReason,
+  InviteAcceptFailureReason,
   LessonCreateFailureReason,
   CallFailureReason,
   PermissionFailureReason,

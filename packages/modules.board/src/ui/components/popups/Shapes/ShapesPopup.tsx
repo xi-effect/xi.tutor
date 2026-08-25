@@ -11,7 +11,11 @@ export const ShapesPopup = ({
   onOpenChange: (open: boolean) => void;
 }) => {
   return (
-    <ToolPopup open={open} onOpenChange={onOpenChange} content={<ShapeSet />}>
+    <ToolPopup
+      open={open}
+      onOpenChange={onOpenChange}
+      content={<ShapeSet onClose={() => onOpenChange(false)} />}
+    >
       {children}
     </ToolPopup>
   );

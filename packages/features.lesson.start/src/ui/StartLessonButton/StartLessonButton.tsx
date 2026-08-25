@@ -101,10 +101,34 @@ export const StartLessonButton = ({
     return () => observer.disconnect();
   }, [hasBeenVisible]);
 
-  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
-    useGetParticipantsByStudent(classroomId.toString(), isTutor || !hasBeenVisible);
-  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
-    useGetParticipantsByTutor(classroomId.toString(), !isTutor || !hasBeenVisible);
+  const {
+    isConferenceNotActive: isConferenceNotActiveStudent,
+    isLoading: isLoadingStudent,
+    isFetched: isFetchedStudent,
+  } = useGetParticipantsByStudent(classroomId.toString(), isTutor || !hasBeenVisible);
+  const {
+    isConferenceNotActive: isConferenceNotActiveTutor,
+    isLoading: isLoadingTutor,
+    isFetched: isFetchedTutor,
+  } = useGetParticipantsByTutor(classroomId.toString(), !isTutor || !hasBeenVisible);
+  const isParticipantsLoading = isTutor
+    ? isLoadingTutor && !isFetchedTutor
+    : isLoadingStudent && !isFetchedStudent;
+
+  const tutorNotActiveRef = useRef(isConferenceNotActiveTutor);
+  const studentNotActiveRef = useRef(isConferenceNotActiveStudent);
+  if (isFetchedTutor && !isLoadingTutor) {
+    tutorNotActiveRef.current = isConferenceNotActiveTutor;
+  }
+  if (isFetchedStudent && !isLoadingStudent) {
+    studentNotActiveRef.current = isConferenceNotActiveStudent;
+  }
+  const isTutorConferenceNotActive = isLoadingTutor
+    ? tutorNotActiveRef.current
+    : isConferenceNotActiveTutor;
+  const isStudentConferenceNotActive = isLoadingStudent
+    ? studentNotActiveRef.current
+    : isConferenceNotActiveStudent;
 
   const { call } = search;
   const updateStore = useCallStore((state) => state.updateStore);
@@ -165,7 +189,7 @@ export const StartLessonButton = ({
   }, [scheduledEndsAt]);
 
   const isTooLateForTutorToStart =
-    scheduledMode && isTutor && pastLessonGracePeriod && isConferenceNotActiveTutor;
+    scheduledMode && isTutor && pastLessonGracePeriod && isTutorConferenceNotActive;
   const isTimeRestricted =
     scheduledMode &&
     isTutor &&
@@ -199,15 +223,7 @@ export const StartLessonButton = ({
     window.location.href = `/classrooms/${classroomId}?goto=call`;
   };
 
-  if (isLoadingStudent || isLoadingTutor) {
-    return (
-      <div ref={cardRef} className={cn('w-full', className)}>
-        <Button size={size} className="h-[32px] w-full" disabled loading />
-      </div>
-    );
-  }
-
-  const isDisabledStudent = !isTutor && isConferenceNotActiveStudent;
+  const isDisabledStudent = !isTutor && isStudentConferenceNotActive;
   // Ограничения по слоту не должны блокировать возврат в уже идущий звонок
   const scheduleLocksTutor =
     !isCallActive &&
@@ -215,7 +231,7 @@ export const StartLessonButton = ({
   const isDisabled = scheduleLocksTutor || isDisabledStudent;
 
   const label =
-    isTutor && isConferenceNotActiveTutor
+    isTutor && isTutorConferenceNotActive
       ? t('start')
       : isCallActive
         ? t('returnToConference')
@@ -232,7 +248,8 @@ export const StartLessonButton = ({
         className,
       )}
       onClick={isCallActive ? handleBackToRoom : handleStartLesson}
-      disabled={isDisabled}
+      disabled={isDisabled || isParticipantsLoading}
+      loading={isParticipantsLoading}
       data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
       data-umami-event-classroom-id={classroomId}
     >

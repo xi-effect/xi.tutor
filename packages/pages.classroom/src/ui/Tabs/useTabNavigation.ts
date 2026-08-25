@@ -4,14 +4,14 @@ import { useMedia } from 'common.utils';
 import { SearchParams } from '../../types/router';
 
 interface UseTabNavigationOptions {
-  /** Нормализовать tabs 'notes' и 'boards' в 'materials' (нужно для репетитора) */
+  /** Нормализовать tabs 'notes' и 'boards' в 'materials' (подвкладки материалов) */
   normalizeMaterialTabs?: boolean;
 }
 
 export const useTabNavigation = ({
   normalizeMaterialTabs = false,
 }: UseTabNavigationOptions = {}) => {
-  const isMobile = useMedia('(max-width: 720px)');
+  const isMobile = useMedia('(max-width: 960px)');
   const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
 

@@ -1,6 +1,6 @@
 import { createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
-import { ErrorPage } from 'common.ui';
+import { NotFoundPage } from 'common.ui';
 
 // Create a new router instance
 export const router = createRouter({
@@ -10,15 +10,7 @@ export const router = createRouter({
   context: {
     auth: undefined!, // This will be set after we wrap the app in an AuthProvider
   },
-  defaultNotFoundComponent: () => {
-    return (
-      <ErrorPage
-        title="Страница не найдена"
-        errorCode={404}
-        text="В адресе есть ошибка или страница удалена"
-      />
-    );
-  },
+  defaultNotFoundComponent: () => <NotFoundPage />,
 });
 
 // Register the router instance for type safety

@@ -1,5 +1,5 @@
 import { useCurrentUser } from 'common.services';
-import { useYjsContext } from '../../providers/YjsProvider';
+import { useYjsContext } from '../../providers/YjsContext';
 import { useAudioLoad } from './hooks/useAudioLoad';
 import { useAudioPlayback } from './hooks/useAudioPlayback';
 import { useAudioTimecodes } from './hooks/useAudioTimecodes';
@@ -75,6 +75,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   return (
     <div
       className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
+      data-board-interactive-card=""
       style={{ pointerEvents: 'none', width: shape.props.w, height: cardHeight }}
     >
       <div className="flex h-[80px] shrink-0 items-center gap-3 px-3">

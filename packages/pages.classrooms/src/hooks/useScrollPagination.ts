@@ -2,6 +2,7 @@ import { RefObject, useEffect, useRef } from 'react';
 
 type UseScrollPaginationParams = {
   sentinelRef: RefObject<HTMLDivElement | null>;
+  rootRef?: RefObject<HTMLDivElement | null>;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
@@ -10,6 +11,7 @@ type UseScrollPaginationParams = {
 
 export const useScrollPagination = ({
   sentinelRef,
+  rootRef,
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
@@ -38,10 +40,10 @@ export const useScrollPagination = ({
           fetchNextPageRef.current();
         }
       },
-      { root: null, rootMargin: '120px', threshold: 0 },
+      { root: rootRef?.current ?? null, rootMargin: '120px', threshold: 0 },
     );
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [sentinelRef, hasNextPage, itemsCount]);
+  }, [sentinelRef, rootRef, hasNextPage, itemsCount]);
 };

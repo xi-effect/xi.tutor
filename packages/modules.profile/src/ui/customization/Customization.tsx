@@ -12,9 +12,10 @@ import {
 import { Toggle } from '@xipkg/toggle';
 import { useTheme, type ThemeItemT, type ThemeT } from 'common.theme';
 import { useSupportModalStore } from 'common.ui';
-import { setAppLanguage, normalizeAppLanguage, type AppLanguage } from 'common.ui/language';
+import { type AppLanguage } from 'common.ui/language';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useProfileLanguage } from '../../hooks';
 
 const SCHEDULE_VIEW_MODE_KEY = 'xi_schedule_view_mode';
 const SCHEDULE_VIEW_MODE_CHANGE_EVENT = 'xi:schedule-view-mode-change';
@@ -42,13 +43,13 @@ const ThemeOptionLabel = ({ item, label }: { item: ThemeItemT; label: string }) 
 );
 
 export const Customization = () => {
-  const { t, i18n } = useTranslation('profile');
+  const { t } = useTranslation('profile');
   const isMobile = useMediaQuery('(max-width: 719px)');
 
   const { theme, setTheme, themes } = useTheme();
+  const { language, setLanguage } = useProfileLanguage();
   const openSupportModal = useSupportModalStore((state) => state.open);
   const selectedTheme = themes.find((item) => item.value === theme);
-  const language = normalizeAppLanguage(i18n.language);
   const themeLabel = (value: ThemeT) =>
     value === 'dark' ? t('customization.themeDark') : t('customization.themeLight');
 
@@ -125,7 +126,7 @@ export const Customization = () => {
             <Select
               value={language}
               onValueChange={(value: AppLanguage) => {
-                void setAppLanguage(value);
+                void setLanguage(value);
               }}
             >
               <SelectTrigger className="dark:text-text-primary ml-0 w-[250px] sm:ml-auto">

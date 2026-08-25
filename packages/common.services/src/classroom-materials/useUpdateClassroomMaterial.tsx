@@ -4,6 +4,7 @@ import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UpdateMaterialDataT } from 'common.types';
 import { handleError, showSuccess } from 'common.services';
+import i18n from 'i18next';
 
 interface UpdateClassroomMaterialParams {
   classroomId: string;
@@ -67,7 +68,10 @@ export const useUpdateClassroomMaterial = () => {
         queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, classroomId],
       });
 
-      showSuccess('materials', 'Материал кабинета обновлен');
+      showSuccess(
+        'materials',
+        i18n.t('toast.materials.classroomUpdated', { ns: 'commonServices' }),
+      );
     },
   });
 

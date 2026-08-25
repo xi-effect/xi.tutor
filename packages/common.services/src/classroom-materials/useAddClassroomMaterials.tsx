@@ -2,6 +2,7 @@ import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess, findNextAvailableName } from 'common.services';
+import i18n from 'i18next';
 
 interface ClassroomMaterialsResponseT {
   data: ClassroomMaterialsDataT & {
@@ -127,7 +128,10 @@ export const useAddClassroomMaterials = () => {
         });
       }
 
-      showSuccess('materials', `${response.data.name} создана`);
+      showSuccess(
+        'materials',
+        i18n.t('toast.materials.created', { ns: 'commonServices', name: response.data.name }),
+      );
     },
   });
 

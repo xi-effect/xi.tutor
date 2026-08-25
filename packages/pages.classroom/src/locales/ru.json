@@ -11,7 +11,7 @@
   "actions": {
     "selectAction": "Выберите действие",
     "addStudent": "Добавить ученика",
-    "addStudentDescription": "Добавьте ученика в учебную группу",
+    "addStudentDescription": "Добавьте ученика в группу",
     "inviteToGroup": "Пригласить в группу",
     "inviteToGroupDescription": "Отправьте ссылку-приглашение в группу",
     "createInvoice": "Создать счёт на оплату",
@@ -44,8 +44,11 @@
     "boards": "Доски",
     "notes": "Заметки",
     "noBoards": "Нет учебных досок",
+    "noBoardsDescription": "Добавьте интерактивную доску для уроков",
     "noNotes": "Нет заметок",
+    "noNotesDescription": "Добавьте заметку, чтобы проводить уроки было удобнее",
     "noMaterials": "Нет материалов",
+    "emptyDescription": "Добавляйте интерактивные доски и заметки, чтобы проводить уроки было удобнее",
     "loadError": "Ошибка загрузки материалов",
     "noteCollaborative": "Заметка: Совместная работа",
     "noteTutorOnly": "Заметка: Только репетитор",
@@ -61,8 +64,10 @@
     "upcomingLessons": "Ближайшие занятия",
     "noLessonsTitle": "В ближайшие 7 дней занятий нет",
     "noLessonsDescription": "Когда уроки появятся в расписании кабинета, они отобразятся здесь",
-    "paymentsEmpty": "Здесь пока пусто",
+    "paymentsEmpty": "Нет платежей",
+    "paymentsEmptyDescription": "Счета появятся здесь после выставления",
     "addStudentTitle": "Добавьте ученика в группу",
+    "studentsEmptyDescription": "Добавьте учеников в группу",
     "studentDeleted": "Студент удален из группы",
     "studentDeleteError": "Не удалось удалить студента",
     "studentsLoadError": "Не удалось загрузить список учеников"
@@ -77,7 +82,10 @@
     "loadFailed": "Ошибка загрузки"
   },
   "header": {
-    "noDescription": "Описание не указано"
+    "noDescription": "Описание не указано",
+    "editNamePlaceholder": "Введите название",
+    "editNameAria": "Название кабинета",
+    "editNameError": "Название не может быть пустым"
   },
   "descriptionModal": {
     "title": "Редактировать описание",

@@ -1,11 +1,14 @@
 import { useCurrentUser } from 'common.services';
-import { HeaderTutor, HeaderStudent } from './components';
+import { HeaderTutor, HeaderStudent, Skeleton } from './components';
 
 export const Header = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  // Условно рендерим нужный компонент в зависимости от роли
+  if (isLoading || !user) {
+    return <Skeleton />;
+  }
+
   if (isTutor) {
     return <HeaderTutor />;
   }

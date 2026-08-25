@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
@@ -16,9 +16,21 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from '@tanstack/react-router';
 import type { UseFormSetError } from 'react-hook-form';
 
-import { LinkTanstack, Logo } from 'common.ui';
+import { AuthFlowShell, LinkTanstack } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  getInviteAuthSearch,
+  getInviteCodeFromSearch,
+  getInviteFunnelEventProps,
+  getInviteTrackingId,
+  getOrCreateActivationFlowId,
+  persistPendingInviteCode,
+  persistInviteProgressTrack,
+  clearPendingInviteCode,
+  shouldTrackInviteLoginClicked,
+  shouldTrackInvitePageViewed,
+  shouldTrackInviteSignupClicked,
+  trackOnce,
   trackProductEvent,
   useGetUrlWithParams,
   useSyncAutofillOnSubmit,
@@ -31,11 +43,12 @@ export const SignInPage = () => {
   const { t } = useTranslation('signin');
 
   const formSchema = useFormSchema();
-  const { onSigninForm, isPending } = useSigninForm();
+  const { onSigninForm, isPending, inviteUserNotFound } = useSigninForm();
   const getUrlWithParams = useGetUrlWithParams();
 
-  const search = useSearch({ strict: false }) as { redirect?: string };
-  const isInviteRedirect = search.redirect?.includes('/invite');
+  const search = useSearch({ strict: false }) as { redirect?: string; invite?: string };
+  const inviteCode = getInviteCodeFromSearch(search);
+  const isInviteRedirect = Boolean(inviteCode);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -53,127 +66,181 @@ export const SignInPage = () => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const changePasswordShow = () => setIsPasswordShow((prev) => !prev);
 
-  const onSubmit = (data: FormData) => {
-    if (isInviteRedirect) {
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LOGIN_CLICKED, {
-        invite_flow_version: 2,
-        source: 'unknown',
-      });
+  // Fallback: прямой заход на /signin из invite-ссылки (старые закладки).
+  // Основной page_viewed / login_clicked уходит со страницы /invite.
+  useEffect(() => {
+    if (!inviteCode) {
+      clearPendingInviteCode();
+      return;
     }
+
+    persistPendingInviteCode(inviteCode);
+    persistInviteProgressTrack('signin');
+    const activationFlowId = getOrCreateActivationFlowId();
+
+    void getInviteTrackingId(inviteCode).then((invite_tracking_id) => {
+      if (shouldTrackInvitePageViewed(inviteCode)) {
+        trackOnce(`student_invite_page_viewed:${inviteCode}`, () => {
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_PAGE_VIEWED, {
+            invite_flow_version: 2,
+            invite_tracking_id,
+            activation_flow_id: activationFlowId,
+            student_authenticated: false,
+            ...getInviteFunnelEventProps(false),
+          });
+        });
+      }
+
+      if (shouldTrackInviteLoginClicked(inviteCode)) {
+        trackOnce(`student_invite_login_clicked:${inviteCode}`, () => {
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LOGIN_CLICKED, {
+            invite_flow_version: 2,
+            invite_tracking_id,
+            source: 'invite',
+            activation_flow_id: activationFlowId,
+            ...getInviteFunnelEventProps(false),
+          });
+        });
+      }
+    });
+  }, [inviteCode]);
+
+  const onSubmit = (data: FormData) => {
     onSigninForm(data, form.setError as UseFormSetError<FormData>);
   };
 
   const handleSignupLinkClick = () => {
     if (!isInviteRedirect) return;
-    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_SIGNUP_CLICKED, {
-      invite_flow_version: 2,
-      source: 'unknown',
-    });
+    persistPendingInviteCode(inviteCode);
+    persistInviteProgressTrack('signup');
+
+    if (inviteCode && !shouldTrackInviteSignupClicked(inviteCode)) return;
+
+    void (async () => {
+      const invite_tracking_id = inviteCode ? await getInviteTrackingId(inviteCode) : undefined;
+
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_SIGNUP_CLICKED, {
+        invite_flow_version: 2,
+        invite_tracking_id,
+        source: 'invite',
+        activation_flow_id: getOrCreateActivationFlowId(),
+        ...getInviteFunnelEventProps(false),
+      });
+    })();
   };
 
+  const signupSearch = inviteCode ? getInviteAuthSearch(inviteCode) : undefined;
+  const signupHref = signupSearch
+    ? `/signup?redirect=${encodeURIComponent(signupSearch.redirect)}&invite=${encodeURIComponent(signupSearch.invite)}`
+    : getUrlWithParams('/signup');
+
   return (
-    <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
-      <div className="xs:border xs:border-border-default xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
-        <Form {...form}>
-          <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
-            <div className="self-center">
-              <Logo height={22} width={180} />
-            </div>
-            <h1 className="text-text-primary flex justify-center text-2xl font-semibold">
-              {t('sign_in')}
-            </h1>
-
-            {isInviteRedirect && (
-              <div className="text-text-link bg-status-info-background rounded-2xl p-4 text-center text-sm whitespace-pre-line">
-                {t('invite_message')}
-              </div>
-            )}
-
-            <FormField
-              control={control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="pt-4">
-                  <FormLabel>{t('email')}</FormLabel>
-                  <FormControl>
-                    <Input error={!!errors?.email} autoComplete="on" type="email" {...field} />
-                  </FormControl>
-                  <FormMessage className="pt-0" />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('password')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      error={!!errors?.password}
-                      autoComplete="on"
-                      type={isPasswordShow ? 'text' : 'password'}
-                      afterClassName="cursor-pointer"
-                      after={
-                        isPasswordShow ? (
-                          <Eyeoff className="fill-icon-secondary" />
-                        ) : (
-                          <Eyeon className="fill-icon-secondary" />
-                        )
-                      }
-                      afterProps={{
-                        onClick: changePasswordShow,
-                      }}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="pt-0" />
-                </FormItem>
-              )}
-            />
-
-            <LinkTanstack
-              size="l"
-              variant="always"
-              to="/reset-password"
-              data-umami-event="auth-forgot-password-link"
-            >
-              {t('forgot_password')}
-            </LinkTanstack>
-
-            <div className="mt-auto flex w-full items-end justify-between">
-              <div className="flex h-[48px] items-center">
+    <AuthFlowShell title={t('sign_in')} isAuthenticated={false}>
+      <Form {...form}>
+        <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
+          {inviteUserNotFound && (
+            <div className="border-border-default rounded-2xl border p-4 text-center">
+              <p className="text-text-primary font-medium">{t('invite_user_not_found.title')}</p>
+              <p className="text-text-secondary mt-1 text-sm">{t('invite_user_not_found.hint')}</p>
+              <div className="mt-3">
                 <LinkTanstack
-                  id="to-signup-link"
                   size="l"
                   theme="brand"
                   variant="hover"
-                  to={getUrlWithParams('/signup')}
+                  to={signupHref}
                   data-umami-event="auth-signup-link"
                   onClick={handleSignupLinkClick}
                 >
-                  {t('register')}
+                  {t('invite_user_not_found.cta')}
                 </LinkTanstack>
               </div>
-
-              {isPending ? (
-                <Button type="submit" loading className="w-24" />
-              ) : (
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className="w-24"
-                  disabled={isPending}
-                  data-umami-event="auth-signin-button"
-                >
-                  {t('sign_in_button')}
-                </Button>
-              )}
             </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+          )}
+
+          <FormField
+            control={control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('email')}</FormLabel>
+                <FormControl>
+                  <Input error={!!errors?.email} autoComplete="on" type="email" {...field} />
+                </FormControl>
+                <FormMessage className="pt-0" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('password')}</FormLabel>
+                <FormControl>
+                  <Input
+                    error={!!errors?.password}
+                    autoComplete="on"
+                    type={isPasswordShow ? 'text' : 'password'}
+                    afterClassName="cursor-pointer"
+                    after={
+                      isPasswordShow ? (
+                        <Eyeoff className="fill-icon-secondary" />
+                      ) : (
+                        <Eyeon className="fill-icon-secondary" />
+                      )
+                    }
+                    afterProps={{
+                      onClick: changePasswordShow,
+                    }}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className="pt-0" />
+              </FormItem>
+            )}
+          />
+
+          <LinkTanstack
+            size="l"
+            variant="always"
+            to="/reset-password"
+            data-umami-event="auth-forgot-password-link"
+          >
+            {t('forgot_password')}
+          </LinkTanstack>
+
+          <div className="mt-auto flex w-full items-end justify-between">
+            <div className="flex h-[48px] items-center">
+              <LinkTanstack
+                id="to-signup-link"
+                size="l"
+                theme="brand"
+                variant="hover"
+                to={signupHref}
+                data-umami-event="auth-signup-link"
+                onClick={handleSignupLinkClick}
+              >
+                {t('register')}
+              </LinkTanstack>
+            </div>
+
+            {isPending ? (
+              <Button type="submit" loading className="w-24" />
+            ) : (
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-24"
+                disabled={isPending}
+                data-umami-event="auth-signin-button"
+              >
+                {t('sign_in_button')}
+              </Button>
+            )}
+          </div>
+        </form>
+      </Form>
+    </AuthFlowShell>
   );
 };

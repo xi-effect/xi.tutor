@@ -1,19 +1,18 @@
 import { useMemo } from 'react';
 import { Tabs } from '@xipkg/tabs';
-import { SwitcherAnimate } from '@xipkg/switcher-animate';
-import { switcherTabClass } from 'common.ui';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 
-import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext';
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
 import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
-import { ClassroomMobileTabSwitcher } from './ClassroomMobileTabSwitcher';
+import { ClassroomTabsBar } from './ClassroomTabsBar';
 
 export const TabsStudent = () => {
   const { t } = useTranslation('classroom');
-  const { isMobile, currentTab, handleTabChange } = useTabNavigation();
+  const { isMobile, currentTab, handleTabChange } = useTabNavigation({
+    normalizeMaterialTabs: true,
+  });
 
   const tabs = useMemo(
     () => [
@@ -26,43 +25,32 @@ export const TabsStudent = () => {
   );
 
   return (
-    <ClassroomScheduleProvider>
-      <div className="flex h-[calc(100vh-80px)] min-h-0 min-w-0 flex-col">
-        <Tabs.Root
-          className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 pt-2"
-          value={currentTab}
-          onValueChange={handleTabChange}
-        >
-          <div className="bg-background-surface mx-5 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2 sm:mx-10">
-            {isMobile ? (
-              <ClassroomMobileTabSwitcher
-                tabs={tabs}
-                activeTab={currentTab}
-                onChange={handleTabChange}
-              />
-            ) : (
-              <>
-                <SwitcherAnimate
-                  tabs={tabs}
-                  activeTab={currentTab}
-                  onChange={handleTabChange}
-                  className="bg-background-surface flex flex-row gap-0"
-                  tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
-                />
-                {currentTab === 'schedule' && (
-                  <div className="ml-auto flex shrink-0 items-center gap-2">
-                    <CalendarScheduleToolbar />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <Tabs.Root
+        className="flex min-h-0 min-w-0 flex-1 flex-col"
+        value={currentTab}
+        onValueChange={handleTabChange}
+      >
+        <ClassroomTabsBar
+          tabs={tabs}
+          currentTab={currentTab}
+          onChange={handleTabChange}
+          isMobile={isMobile}
+          extra={!isMobile && currentTab === 'schedule' ? <CalendarScheduleToolbar /> : undefined}
+        />
 
-          <div className="bg-background-surface mb-5 ml-5 flex min-h-0 min-w-0 flex-1 flex-col rounded-l-2xl pt-0 pb-16 pl-5 sm:mb-10 sm:ml-10 sm:pb-10 sm:pl-10">
-            <SharedTabsContent />
-          </div>
-        </Tabs.Root>
-      </div>
-    </ClassroomScheduleProvider>
+        <div
+          className={cn(
+            'mt-4 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
+            currentTab === 'overview' || currentTab === 'payments' || currentTab === 'materials'
+              ? 'pr-0 pb-0'
+              : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
+            isMobile && 'pb-16',
+          )}
+        >
+          <SharedTabsContent />
+        </div>
+      </Tabs.Root>
+    </div>
   );
 };

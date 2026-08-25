@@ -2,15 +2,19 @@ import { useCallback } from 'react';
 import { track, useEditor } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Locked, Unlocked } from '@xipkg/icons';
+import { boardSelectionToolbarButtonClass, boardSelectionToolbarIconClass } from '../../boardTheme';
 import { MoreActionsMenu } from './MoreActionsMenu';
 import { ColorPicker } from './ColorPicker';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
+import { MathFigureSettingsPicker } from '../../../shapes/math-figure';
+import { TextEditorToolbar } from '../../../shapes/text';
 import { useTranslation } from 'react-i18next';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
+const shapesWithRichTextSet = new Set(['note', 'text', 'arrow', 'xi-geo']);
 
 export const SelectionMenu = track(function SelectionMenu() {
   const { t } = useTranslation('board');
@@ -21,8 +25,10 @@ export const SelectionMenu = track(function SelectionMenu() {
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
   const isFrame = selectedShapes.length === 1 && selectedShapes[0].type === 'frame';
   const isGeo = selectedShapes.some((shape) => shape.type === 'xi-geo');
+  const isRichText = selectedShapes.some((shape) => shapesWithRichTextSet.has(shape.type));
   const isCoordinateAxes =
     selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';
+  const isMathFigure = selectedShapes.length === 1 && selectedShapes[0].type === 'math-figure';
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -61,7 +67,7 @@ export const SelectionMenu = track(function SelectionMenu() {
 
   return (
     <div
-      className="border-border-default bg-background-surface pointer-events-auto absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
+      className="border-border-default bg-background-surface pointer-events-auto absolute z-30 flex items-center gap-0.5 rounded-xl border p-1 shadow-md"
       style={{
         left: centerX,
         top: topY,
@@ -78,13 +84,13 @@ export const SelectionMenu = track(function SelectionMenu() {
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
             title={t('toolbar.unlock', { modKey })}
           >
-            <Unlocked />
+            <Unlocked className={boardSelectionToolbarIconClass} />
           </Button>
           <MoreActionsMenu />
         </>
@@ -93,35 +99,37 @@ export const SelectionMenu = track(function SelectionMenu() {
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={handleDuplicate}
             title={t('toolbar.duplicate')}
           >
-            <Copy />
+            <Copy className={boardSelectionToolbarIconClass} />
           </Button>
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={handleDelete}
             title={t('toolbar.delete')}
           >
-            <Trash />
+            <Trash className={boardSelectionToolbarIconClass} />
           </Button>
           <Button
             variant="none"
             size="s"
-            className="hover:bg-status-info-background p-1"
+            className={boardSelectionToolbarButtonClass}
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
             title={t('toolbar.lock', { modKey })}
           >
-            <Locked />
+            <Locked className={boardSelectionToolbarIconClass} />
           </Button>
           {isGeo && <BorderPicker />}
           {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
+          {isMathFigure && <MathFigureSettingsPicker />}
           <ColorPicker />
+          {isRichText && <TextEditorToolbar editor={editor} />}
           <MoreActionsMenu />
         </>
       )}

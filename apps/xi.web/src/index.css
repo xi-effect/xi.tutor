@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
@@ -149,6 +149,14 @@ html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  background-color: var(--xi-background-page);
+  color: var(--xi-text-primary);
+}
+
+body,
+#root {
+  background-color: var(--xi-background-page);
+  color: var(--xi-text-primary);
 }
 
 /* Стили для скроллбара */
@@ -193,4 +201,50 @@ html {
 
 [data-theme='dark'] * {
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/*
+ * Sonner вставляет свой CSS в head после наших файлов и с той же специфичностью
+ * задаёт --normal-bg: #fff. Вешаемся на html[data-theme], чтобы выиграть каскад
+ * и не зависеть от data-sonner-theme.
+ */
+html[data-theme='light'] [data-sonner-toaster],
+html[data-theme='dark'] [data-sonner-toaster] {
+  --normal-bg: var(--xi-background-surface);
+  --normal-bg-hover: var(--xi-background-subtle);
+  --normal-border: var(--xi-border-default);
+  --normal-border-hover: var(--xi-border-control);
+  --normal-text: var(--xi-text-primary);
+
+  --success-bg: var(--xi-status-success-background);
+  --success-border: var(--xi-status-success-accent);
+  --success-text: var(--xi-status-success-text);
+
+  --info-bg: var(--xi-status-info-background);
+  --info-border: var(--xi-status-info-accent);
+  --info-text: var(--xi-status-info-text);
+
+  --warning-bg: var(--xi-status-warning-background);
+  --warning-border: var(--xi-status-warning-accent);
+  --warning-text: var(--xi-status-warning-text);
+
+  --error-bg: var(--xi-status-error-background);
+  --error-border: var(--xi-status-error-accent);
+  --error-text: var(--xi-status-error-text);
+}
+
+html[data-theme='light'] [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-description],
+html[data-theme='dark'] [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-description] {
+  color: var(--xi-text-secondary);
+}
+
+html[data-theme='dark'] [data-sonner-toaster] [data-sonner-toast] [data-close-button] {
+  background: var(--normal-bg);
+  border-color: var(--normal-border);
+  color: var(--normal-text);
+}
+
+html[data-theme='dark'] [data-sonner-toaster] [data-sonner-toast] [data-close-button]:hover {
+  background: var(--normal-bg-hover);
+  border-color: var(--normal-border-hover);
 }

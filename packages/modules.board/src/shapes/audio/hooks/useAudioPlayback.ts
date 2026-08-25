@@ -1,17 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useEditor } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
-import { useYjsContext } from '../../../providers/YjsProvider';
+import {
+  getBoardAudioOutputDeviceId,
+  useBoardAudioOutputDeviceId,
+} from '../../../audioOutput/boardAudioOutput';
+import { useYjsContext } from '../../../providers/YjsContext';
 import type { AudioShape } from '../AudioShape';
+import { setAudioOutputSink } from '../utils/setAudioOutputSink';
 
 export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
   const editor = useEditor();
   const { data: user } = useCurrentUser();
   const { audioSyncMap } = useYjsContext();
   const isTutor = user?.default_layout === 'tutor';
+  const audioOutputDeviceId = useBoardAudioOutputDeviceId();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number>(0);
+  const applySyncRef = useRef<() => void>(() => {});
   const latestRef = useRef({
     syncPlayback: shape.props.syncPlayback,
     isTutor,
@@ -37,6 +44,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
 
     const audio = new Audio(blobUrl);
     audioRef.current = audio;
+    setAudioOutputSink(audio, getBoardAudioOutputDeviceId());
 
     const onMeta = () => {
       if (cancelled) return;
@@ -50,6 +58,8 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
             props: { duration: dur },
           });
         }
+        // Sync-событие могло прийти до loadedmetadata — повторяем, иначе ученик «зависнет».
+        applySyncRef.current();
       }
     };
 
@@ -81,6 +91,13 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
     };
   }, [blobUrl, shape.id, shape.props.duration, audioSyncMap, editor]);
 
+  // Keep output device in sync if the user changes speakers during playback.
+  useEffect(() => {
+    if (audioRef.current) {
+      setAudioOutputSink(audioRef.current, audioOutputDeviceId);
+    }
+  }, [audioOutputDeviceId]);
+
   // Sync volume to audio element
   useEffect(() => {
     if (audioRef.current) {
@@ -90,7 +107,10 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
 
   // Sync mode: observe audioSyncMap for non-controlling clients
   useEffect(() => {
-    if (!syncPlayback || !audioSyncMap) return;
+    if (!syncPlayback || !audioSyncMap) {
+      applySyncRef.current = () => {};
+      return;
+    }
 
     const applySync = () => {
       const audio = audioRef.current;
@@ -128,9 +148,13 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       }
     };
 
+    applySyncRef.current = applySync;
     applySync();
     audioSyncMap.observe(applySync);
-    return () => audioSyncMap.unobserve(applySync);
+    return () => {
+      audioSyncMap.unobserve(applySync);
+      applySyncRef.current = () => {};
+    };
   }, [syncPlayback, audioSyncMap, shape.id, blobUrl]);
 
   // Progress animation loop
@@ -165,8 +189,10 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
         }, 'audio-sync');
       }
     } else {
-      audio.play().catch(() => {});
       setLocalIsPlaying(true);
+      audio.play().catch(() => {
+        setLocalIsPlaying(false);
+      });
 
       if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {

@@ -9,7 +9,7 @@
     },
     "group": {
       "label": "Create a group",
-      "description": "Create a study group and invite students"
+      "description": "Create a group and invite students"
     },
     "board": {
       "label": "Interactive board",
@@ -44,9 +44,9 @@
   },
   "inviteModalV2": {
     "title": "Invite a student",
-    "description": "Copy the ready-made message or the link and send it to the student.",
+    "description": "Copy the message or the link and send it to the student. The same link can be used more than once.",
     "message": {
-      "template": "Join sovlium — the platform for online lessons!\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
+      "template": "Join sovlium — the platform for online lessons!\n\nThis is where lessons, the shared board and learning materials live. Using it is free for students.\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
     },
     "or": "or",
     "actions": {
@@ -64,15 +64,16 @@
     "toast": {
       "messageCopied": "Message copied",
       "linkCopied": "Link copied",
+      "sendHint": "Send it to the student in a messenger",
       "copyFailed": "Couldn't copy automatically. Select the text and copy it manually."
     },
     "errors": {
       "listError": "Couldn't load the invitation",
       "createError": "Couldn't create a link. Please try again.",
+      "limitReached": "Invitation link limit reached",
+      "limitReachedHint": "You don't need a new link. Use the existing one — it works for several students.",
+      "showExisting": "Show existing link",
       "retry": "Retry"
-    },
-    "limit": {
-      "reached": "Invitation limit reached (10). Contact support to get a new link."
     }
   }
 }

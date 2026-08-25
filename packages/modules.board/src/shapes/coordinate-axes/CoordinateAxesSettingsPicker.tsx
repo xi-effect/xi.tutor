@@ -4,9 +4,9 @@ import { Input } from '@xipkg/input';
 import { Slider } from '@xipkg/slider';
 import { Checkbox } from '@xipkg/checkbox';
 import { Picker, ColorDot } from '../../ui/components';
-import { colorOptions } from '../../utils/customConfig';
+import { BOARD_COLORS } from '../../utils/boardColors';
 import type { CoordinateAxesShape } from './CoordinateAxesShape';
-import type { TColor } from '../../types';
+import { PlotColorStyle } from '../shapeStyles';
 import { commitEquationForShape } from './utils/commitEquationForShape';
 import { useTranslation } from 'react-i18next';
 
@@ -179,12 +179,15 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
           <div className="flex flex-col gap-2">
             <span className="text-text-primary text-sm font-medium">{t('axes.functionColor')}</span>
             <div className="flex flex-wrap items-center gap-1.5">
-              {colorOptions.map(({ name, class: colorClass }) => (
+              {BOARD_COLORS.map(({ name, class: colorClass, cssVar }) => (
                 <ColorDot
                   key={name}
                   colorClass={colorClass}
+                  colorCss={cssVar}
                   isSelected={shape.props.plotColor === name}
-                  onClick={() => updateProps({ plotColor: name as TColor })}
+                  onClick={() =>
+                    updateProps({ plotColor: name as typeof PlotColorStyle.defaultValue })
+                  }
                 />
               ))}
             </div>

@@ -30,7 +30,11 @@
     "zoomReset": "Reset zoom",
     "zoomFit": "Zoom to fit"
   },
+  "menu": {
+    "back": "Back"
+  },
   "settings": {
+    "menuTitle": "Board settings",
     "resumeBoard": "Resume board editing",
     "pauseBoard": "Pause board editing",
     "hideComments": "Hide comments",
@@ -90,7 +94,8 @@
     "arrows": "Arrows",
     "lines": "Lines",
     "notes": "Notes",
-    "media": "Media"
+    "media": "Media",
+    "activities": "Activities"
   },
   "navbar": {
     "select": "Select",
@@ -104,7 +109,8 @@
     "sticker": "Sticker",
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
-    "coordinateAxes": "Coordinate axes"
+    "activities": "Activities",
+    "more": "More"
   },
   "timer": {
     "pause": "Pause",
@@ -177,6 +183,22 @@
     "axisColor": "Axis color",
     "style": "Style"
   },
+  "ocr": {
+    "recognize": "Recognize printed text",
+    "processing": "Recognizing text…",
+    "selected": "selected",
+    "languages": {
+      "auto": "Auto",
+      "ru": "Русский",
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "ja": "日本語",
+      "zh": "中文"
+    }
+  },
   "zoom": {
     "clickHint": "Click — 100%. Double-click — show all elements"
   },
@@ -184,7 +206,8 @@
     "noFill": "No fill",
     "semiTransparent": "Semi-transparent",
     "solid": "Solid",
-    "borderColor": "Border color"
+    "borderColor": "Border color",
+    "noBorder": "No border"
   },
   "axes": {
     "settings": "Axis settings",
@@ -194,15 +217,76 @@
     "divisionsY": "Divisions on Y",
     "labels": "Labels"
   },
+  "mathFigure": {
+    "settings": "Figure settings",
+    "hiddenEdges": "Hidden edges",
+    "labels": "Labels",
+    "height": "Height",
+    "median": "Median",
+    "bisector": "Bisector",
+    "chemShort": "Chem"
+  },
+  "shapesPopup": {
+    "tabs": {
+      "flat": "Flat",
+      "solid": "Solids",
+      "templates": "Templates"
+    },
+    "subjects": {
+      "math": "Math",
+      "physics": "Physics",
+      "chemistry": "Chemistry"
+    },
+    "kinds": {
+      "cube": "Cube",
+      "pyramid": "Pyramid",
+      "cylinder": "Cylinder",
+      "cone": "Cone",
+      "numberLine": "Number line",
+      "triangle": "Triangle",
+      "rightTriangle": "Right triangle",
+      "isoscelesTriangle": "Isosceles triangle",
+      "rectangle": "Rectangle",
+      "circle": "Circle",
+      "ionicBond": "Ionic bond",
+      "covalentBond": "Covalent bond",
+      "polarBond": "Polar bond",
+      "hydrogenBond": "Hydrogen bond",
+      "water": "Water H₂O",
+      "carbonDioxide": "CO₂",
+      "methane": "Methane CH₄",
+      "benzene": "Benzene"
+    },
+    "geo": {
+      "rectangle": "Rectangle",
+      "ellipse": "Ellipse",
+      "oval": "Oval",
+      "triangle": "Triangle",
+      "diamond": "Diamond",
+      "rhombus": "Parallelogram",
+      "rhombus2": "Parallelogram 2",
+      "trapezoid": "Trapezoid",
+      "pentagon": "Pentagon",
+      "hexagon": "Hexagon",
+      "octagon": "Octagon",
+      "star": "Star"
+    },
+    "templates": {
+      "axes": "Coordinate axes",
+      "vector": "Vector"
+    }
+  },
   "pdf": {
     "pagesShort": "{{count}} p.",
     "show": "Show",
     "extractPage": "Extract page as image",
+    "recognizePrintedText": "Recognize printed text on the current page",
     "renderError": "Failed to display PDF",
     "loading": "Loading..."
   },
   "presentation": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "extractPage": "Extract slide as image"
   },
   "audio": {
     "label": "Audio",
@@ -238,6 +322,9 @@
     "exportError": "Failed to export the board",
     "selectionExportSuccess": "Selection exported successfully!",
     "selectionExportError": "Failed to export the selection",
+    "ocrNoText": "Could not recognize text",
+    "ocrImageLoadError": "Could not load the image for recognition",
+    "ocrFailed": "Could not recognize text",
     "noUnlockedElements": "No unlocked elements",
     "lockedCount": "Locked elements: {{count}}",
     "noLockedElements": "No locked elements",
@@ -250,6 +337,11 @@
     "importSuccess": "Imported records: {{count}}",
     "importInvalidJson": "Invalid JSON format",
     "importError": "Import error",
+    "miroPasteTitle": "Pasted from Miro",
+    "miroPasteBeta": "beta",
+    "miroPasteDesc": "Imported elements: {{count}}. Some objects and styles may differ from the original.",
+    "miroPasteImagesNote": "Images from Miro need to be copied separately (Copy as image button).",
+    "miroPasteDontShowAgain": "Don't show again",
     "unsupportedFormat": "Unsupported format",
     "unsupportedFileFormat": "Unsupported file format",
     "fileCannotUpload": "File “{{name}}” cannot be uploaded to the board.",
@@ -272,6 +364,12 @@
     "pdfLimitDesc": "The board can have at most {{max}} PDF objects.",
     "pdfUploadFailed": "Failed to upload PDF",
     "pdfUploadError": "PDF upload error",
+    "presentationFormatDesc": "Choose a presentation file (PPT, PPTX).",
+    "presentationSizeDesc": "Presentation size must not exceed 5 MiB (currently {{size}} MiB).",
+    "presentationLimitTitle": "Presentation limit",
+    "presentationLimitDesc": "The board can have at most {{max}} presentations.",
+    "presentationUploadFailed": "Failed to upload presentation",
+    "presentationUploadError": "Presentation upload error",
     "audioFormatDesc": "Choose an audio file (MP3, OGG, WAV, AAC, FLAC, etc.).",
     "audioInvalidFormat": "Invalid file format",
     "audioInvalidFormatDesc": "File contents do not match the declared audio type.",
@@ -285,8 +383,8 @@
     "imageSideDesc": "Image size must not exceed {{max}}×{{max}}px (currently {{width}}×{{height}}px).",
     "imageUnsupportedFormat": "Unsupported image format ({{type}}). Allowed: JPEG, PNG, WebP, GIF, TIFF, BMP, ICO, AVIF, JPX.",
     "imageDecodeFailed": "Failed to decode image: {{name}}",
-    "imageReadFailed": "Failed to read the image. Possible reasons: a corrupted file, an unsupported format in this browser, or a paste from the clipboard (try inserting the image via the “Image” button).",
-    "imageOpenError": "Error opening image",
+    "imageReadFailed": "This device could not read the file. Save the image as JPEG or PNG and upload it again.",
+    "imageOpenError": "Couldn’t open the image",
     "imageUploadError": "Image upload error",
     "unknownError": "Unknown error"
   },
@@ -309,5 +407,137 @@
   "provider": {
     "ydocLoadFailed": "Failed to load Y.Doc: {{status}} {{statusText}}",
     "localYdocRequired": "Set VITE_BOARD_LOCAL_YDOC_ID or a board-{uuid} filename in the dump URL"
+  },
+  "header": {
+    "editInputPlaceholder": "Enter board name",
+    "editInputAria": "whiteboard name",
+    "emptyName": "Untitled",
+    "editInputError": "Name cannot be empty"
+  },
+  "activity": {
+    "edit": "Edit",
+    "play": "Practice",
+    "modeEdit": "Editing",
+    "modePlay": "Practice",
+    "renameAria": "Activity name",
+    "renamePlaceholder": "Enter a name",
+    "renameEmpty": "Name cannot be empty",
+    "check": "Check",
+    "reset": "Reset",
+    "reveal": "Show answer",
+    "studentSection": "Students can",
+    "studentInteract": "Answer",
+    "studentCheck": "Check answers",
+    "studentReset": "Reset attempt",
+    "studentReveal": "See the answer",
+    "batchHint": "Actions will apply to all selected activities ({{count}})",
+    "gapHint": "Select a word in the text, then click “Make a blank”",
+    "gapHintShort": "select a word first",
+    "makeGap": "Make a blank",
+    "removeGap": "Remove blank",
+    "gapInput": "Type",
+    "gapChoice": "Choose",
+    "gapDrag": "Drag",
+    "gapChoiceHint": "Mark the correct option",
+    "gapN": "Gap {{n}}",
+    "gapAnswers": "Correct answers, separated by |",
+    "gapAnswersLabel": "Correct answers",
+    "gapAnswerPlaceholder": "Correct answer",
+    "gapSynonymPlaceholder": "Another accepted answer · Enter",
+    "addAnswer": "Add",
+    "choices": "Choices, separated by |",
+    "choicesLabel": "Answer choices",
+    "choicePlaceholder": "Add a choice",
+    "wordBank": "Word bank, separated by |",
+    "wordBankLabel": "Extra words for dragging",
+    "wordBankPlaceholder": "Add a word · Enter",
+    "dragMode": "Drag instead of connecting",
+    "addPair": "Add pair",
+    "addLeft": "Add on the left",
+    "addRight": "Add on the right",
+    "removeItem": "Remove",
+    "matchingEditHint": "Draw lines for the correct pairs. An item on the left can connect to several on the right.",
+    "category": "Category",
+    "addCategory": "Add category",
+    "card": "Card",
+    "addCard": "Add card",
+    "removeCard": "Remove card",
+    "cardColor": "Card color",
+    "cardColorNone": "No color",
+    "dropHere": "Drop here",
+    "pickMatch": "Pick a match on the right",
+    "connectFrom": "Drag a line to a point on the right",
+    "connectTo": "Connect here",
+    "orderingHint": "Top-to-bottom order is the correct one.",
+    "uploadImage": "Upload image",
+    "changeImage": "Replace",
+    "removeImage": "Remove",
+    "imageUploading": "Uploading…",
+    "imagePlaceholder": "Upload an image, then click to place a hotspot",
+    "imagePlaceholderPlay": "The image will appear here",
+    "label": "Label",
+    "distractor": "Extra label",
+    "addDistractor": "Add extra label",
+    "multipleAnswers": "Multiple correct answers",
+    "randomize": "Shuffle options",
+    "option": "Option",
+    "addOption": "Add option",
+    "columns": "Columns",
+    "tile": "Tile",
+    "addTile": "Add tile",
+    "noRepeat": "No repeats",
+    "draw": "Next",
+    "reshuffle": "Reshuffle",
+    "drawPrompt": "Press Next",
+    "picker": {
+      "title": "Activities",
+      "beta": "beta",
+      "add": "Add to board",
+      "cancel": "Cancel"
+    },
+    "catalog": {
+      "gap-text": {
+        "description": "A text with blanks: students restore words and phrases right in the sentence.",
+        "mechanics": "Select a word and turn it into a blank. Each blank can be typed, chosen from a list, or filled by dragging. You can accept several answers and add extra words to the bank."
+      },
+      "matching": {
+        "description": "Two columns to match by meaning, translation, or image.",
+        "mechanics": "Connect pairs with lines — an item on the left can link to several on the right. You can switch to dragging cards instead of lines. Cards can have images, and extra items on the right work as distractors."
+      },
+      "sorting": {
+        "description": "Cards to sort into categories — topics, parts of speech, or any traits you set.",
+        "mechanics": "Drag a card into a column. Cards can include images. Checking highlights cards that landed in the wrong category."
+      },
+      "ordering": {
+        "description": "Items to put in the correct sequence: steps, timeline, or ranking.",
+        "mechanics": "Move items with the up and down arrows. You can add an image to each item. Top to bottom is the correct order."
+      },
+      "label-image": {
+        "description": "Labels to place on the right spots of a diagram, map, or photo.",
+        "mechanics": "Upload an image and click to place hotspots. Students drag labels onto the points. Extra labels make the task harder."
+      },
+      "multiple-choice": {
+        "description": "A question with answer options — a short quiz on the board.",
+        "mechanics": "One or several correct answers. Options can be shuffled so each student sees a different order."
+      },
+      "mystery-tiles": {
+        "description": "Hidden tiles that open one by one — useful for revealing a topic step by step.",
+        "mechanics": "Tap a tile to show text or an image. You can set how many columns to use. This is a reveal format, not a test: there is no score."
+      },
+      "random-card": {
+        "description": "A random card from a deck: a question, role, or warm-up prompt.",
+        "mechanics": "Next draws a card. Cards can have an image and a color. You can block repeats until the deck is empty, then reshuffle."
+      }
+    },
+    "kinds": {
+      "gap-text": "Gap text",
+      "matching": "Matching",
+      "sorting": "Sorting",
+      "ordering": "Ordering",
+      "label-image": "Label image",
+      "multiple-choice": "Multiple choice",
+      "mystery-tiles": "Mystery tiles",
+      "random-card": "Random card"
+    }
   }
 }

@@ -70,10 +70,7 @@ export const callsLocalDevConfig = (appDir: string): UserConfig => {
     },
     optimizeDeps: {
       exclude: [...CALLS_PACKAGES],
-      entries: [
-        path.join(appDir, 'index.html'),
-        path.resolve(appDir, '../../packages/modules.calls/index.ts'),
-      ],
+      entries: ['index.html', '../../packages/modules.calls/index.ts'],
     },
     server: {
       fs: {

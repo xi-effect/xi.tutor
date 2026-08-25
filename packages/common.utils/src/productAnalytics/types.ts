@@ -57,8 +57,30 @@ export type SignupFailureReason =
   | 'server_error'
   | 'unknown';
 
+export type SigninFailureReason =
+  'user_not_found' | 'invalid_credentials' | 'network_error' | 'server_error' | 'unknown';
+
+export type SigninAnalyticsSource = 'invite' | 'signin' | 'unknown';
+
+/** Трек UI-воронки ученика по individual invite. */
+export type InviteFunnelTrack = 'signup' | 'signin' | 'already_auth';
+
+/** Шаг UI-воронки. `accept_direct` — авторизованный ученик сразу на принятии, без signup/signin. */
+export type InviteFunnelStep =
+  | 'invite_open'
+  | 'auth'
+  | 'email'
+  | 'welcome_user'
+  | 'welcome_role'
+  | 'welcome_socials'
+  | 'accept'
+  | 'accept_direct';
+
 export type SignupValidationFailureReason =
   'required_field' | 'invalid_email' | 'weak_password' | 'terms_not_accepted' | 'multiple_fields';
+
+/** Безопасные enum-имена полей для auth_signup_validation_failed (без PII). */
+export type SignupValidationFailedField = 'username' | 'email' | 'password' | 'terms';
 
 export type ActivationHelpReason = 'need_help' | 'stuck_on_step' | 'contact_support' | 'unknown';
 
@@ -69,6 +91,15 @@ export type EmailConfirmationFailureReason =
 
 export type InviteFailureReason =
   'limit_reached' | 'invalid_data' | 'network_error' | 'server_error' | 'unknown';
+
+export type InviteAcceptFailureReason =
+  | 'invite_not_found'
+  | 'already_connected'
+  | 'self_invite'
+  | 'authentication_required'
+  | 'network_error'
+  | 'server_error'
+  | 'unknown';
 
 export type LessonCreateFailureReason =
   | 'no_students'
@@ -112,7 +143,11 @@ export type ProductAnalyticsDurationBucket = '5-15' | '15-30' | '30-45' | '45+';
 
 export type ProductAnalyticsBoardTrigger = 'duration' | 'objects' | 'collaboration';
 
-export type UmamiEventPayload = Record<string, string | number | boolean | null | undefined>;
+export type UmamiPrimitive = string | number | boolean;
+export type UmamiEventPayload = Record<
+  string,
+  UmamiPrimitive | UmamiPrimitive[] | null | undefined
+>;
 
 export type CommonActivationProperties = {
   event_version?: number;

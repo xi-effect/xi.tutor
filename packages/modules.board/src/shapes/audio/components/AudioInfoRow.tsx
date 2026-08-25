@@ -42,13 +42,13 @@ export function AudioInfoRow({
             type="button"
             variant="none"
             className="hover:text-text-primary text-text-muted flex h-5 min-w-5 items-center justify-center p-0"
-            style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
+            style={{ pointerEvents: isInteractive ? 'auto' : 'none' }}
             data-audio-control=""
-            onPointerDown={isInteractive ? stopEvent : undefined}
-            onClick={
+            onPointerDown={
               isInteractive
                 ? (e) => {
-                    e.stopPropagation();
+                    stopEvent(e);
+                    if (e.button !== 0) return;
                     onAddTimecode();
                   }
                 : undefined
@@ -67,7 +67,7 @@ export function AudioInfoRow({
       <div className="flex items-center gap-1.5">
         <div
           className="group flex items-center gap-1.5"
-          style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
+          style={{ pointerEvents: isInteractive ? 'auto' : 'none' }}
           data-audio-control=""
           onPointerDown={isInteractive ? stopEvent : undefined}
           onPointerMove={isInteractive ? stopEvent : undefined}
@@ -89,7 +89,11 @@ export function AudioInfoRow({
             variant="none"
             size="s"
             className="text-text-secondary hover:text-text-primary flex h-5 min-w-5 shrink-0 items-center justify-center p-0"
-            onClick={onToggleMute}
+            onPointerDown={(e) => {
+              stopEvent(e);
+              if (e.button !== 0) return;
+              onToggleMute();
+            }}
           >
             <SoundTwo
               className="h-3.5 w-3.5"

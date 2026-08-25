@@ -2,12 +2,11 @@ import { useMemo } from 'react';
 import { useEditor } from '@ibodr/draw';
 import type { XiGeoShape } from './type';
 import {
-  borderColorOptions,
-  colorOptions,
   DEFAULT_BG_COLOR,
   DEFAULT_BORDER_COLOR,
-  TColorOption,
-} from '../../utils/customConfig';
+  getBoardColorOption,
+  type TColorOption,
+} from '../../utils/boardColors';
 
 export const useXiGeoStyles = () => {
   const editor = useEditor();
@@ -17,40 +16,37 @@ export const useXiGeoStyles = () => {
     return shape?.type === 'xi-geo' ? (shape as XiGeoShape).props : undefined;
   }, [selectedShapes]);
 
-  const bgCurrentColorClass = useMemo((): string => {
-    try {
-      if (shapeProps?.color) {
-        const colorOption = colorOptions.find((opt) => opt.name === shapeProps.color);
+  const bgColorOption = useMemo(
+    () => (shapeProps?.color ? getBoardColorOption(shapeProps.color) : undefined),
+    [shapeProps],
+  );
 
-        if (colorOption) return colorOption.class;
-      }
-    } catch (error) {
-      console.warn('Error getting shape color:', error);
-    }
+  const bgCurrentColorClass = bgColorOption?.class ?? DEFAULT_BG_COLOR;
+  const bgCurrentColorCss = bgColorOption?.cssVar;
 
-    return DEFAULT_BG_COLOR;
-  }, [shapeProps]);
+  const isBorderNone = shapeProps?.borderColor === 'none';
 
   const currentBorderColorOption = useMemo((): TColorOption | undefined => {
-    if (shapeProps?.borderColor)
-      return borderColorOptions.find((opt) => opt.name === shapeProps.borderColor);
+    if (!shapeProps?.borderColor || shapeProps.borderColor === 'none') return undefined;
+    return getBoardColorOption(shapeProps.borderColor);
   }, [shapeProps]);
 
-  const borderCurrentColorClass = useMemo((): string => {
-    if (shapeProps?.borderColor && currentBorderColorOption) return currentBorderColorOption.class;
-
-    return DEFAULT_BORDER_COLOR;
-  }, [currentBorderColorOption, shapeProps]);
+  const borderCurrentColorClass = currentBorderColorOption?.class ?? DEFAULT_BORDER_COLOR;
+  const borderCurrentColorCss = currentBorderColorOption
+    ? getBoardColorOption(currentBorderColorOption.name)?.cssVar
+    : undefined;
 
   const currentBorderThickness = shapeProps?.size || 'm';
-
   const currentFillType = shapeProps?.fill || 'semi';
 
   return {
     bgCurrentColorClass,
+    bgCurrentColorCss,
     currentBorderColorOption,
     borderCurrentColorClass,
+    borderCurrentColorCss,
     currentBorderThickness,
     currentFillType,
+    isBorderNone,
   };
 };
