@@ -14,6 +14,7 @@ export const PdfNode = Node.create({
       src: { default: '' },
       fileName: { default: '' },
       totalPages: { default: 1 },
+      annotations: { default: {} }, // Record<pageNumber, StrokeT[]>
     };
   },
 

@@ -12,12 +12,13 @@ import {
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
 import { PdfViewer } from './PdfViewer';
 import { optimizeImage } from '../../utils/optimizeImage';
+import { StrokeT } from '../../types';
 
 function isResolvedSrc(src: string) {
   return src.startsWith('blob:') || src.startsWith('http') || src.startsWith('data:');
 }
 
-export const PdfNodeView = ({ node, getPos }: NodeViewProps) => {
+export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
   const { t } = useTranslation('editor');
   const { editor, storageToken, isReadOnly } = useYjsContext();
   const getActiveBlock = useNodeActiveBlock(editor, getPos, 'pdf');
@@ -47,6 +48,13 @@ export const PdfNodeView = ({ node, getPos }: NodeViewProps) => {
     [insertImage, node.attrs.fileName, storageToken, uploadImage],
   );
 
+  const annotations: Record<number, StrokeT[]> = node.attrs.annotations ?? {};
+
+  const handleAnnotationsChange = useCallback(
+    (next: Record<number, StrokeT[]>) => updateAttributes({ annotations: next }),
+    [updateAttributes],
+  );
+
   return (
     <NodeViewWrapper className="group relative my-3" contentEditable={false}>
       <div className="bg-background-page border-border-default h-[520px] overflow-hidden rounded-xl border shadow-md">
@@ -61,6 +69,8 @@ export const PdfNodeView = ({ node, getPos }: NodeViewProps) => {
             totalPages={node.attrs.totalPages || 1}
             isReadOnly={isReadOnly}
             onExtractPage={handleExtract}
+            annotations={annotations}
+            onAnnotationsChange={handleAnnotationsChange}
           />
         )}
       </div>

@@ -7,15 +7,17 @@ import {
   DropdownMenuSeparator,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
-import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
+import { ArrowBottom, ArrowUp, Copy, Download, Edit, MoreVert, Trash } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useCallback } from 'react';
-import { ActiveBlockT } from '../../types';
+import { useCallback, useState } from 'react';
+import { ActiveBlockT, DrawToolT, StrokeT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
+import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
+import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
 
-export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
+export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
   const { t } = useTranslation('editor');
   const src = node.attrs.src;
 
@@ -60,22 +62,66 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
 
   const imageSrc = useProtectedImage(src, storageToken);
 
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [tool, setTool] = useState<DrawToolT>({ mode: 'draw', color: '#1A1A1A', size: 0.006 });
+
+  const annotations: StrokeT[] = node.attrs.annotations ?? [];
+
+  const handleChangeStrokes = useCallback(
+    (next: StrokeT[]) => updateAttributes({ annotations: next }),
+    [updateAttributes],
+  );
+
   return (
     <NodeViewWrapper className="group relative flex justify-center" contentEditable={false}>
-      <img
-        src={imageSrc}
-        alt={node.attrs.alt || ''}
-        className={cn(
-          'max-h-[600px] rounded-lg object-contain',
-          selected && 'outline-border-focus outline-2 outline-offset-1',
+      <div className="relative inline-block">
+        <img
+          src={imageSrc}
+          alt={node.attrs.alt || ''}
+          className={cn(
+            'max-h-[600px] rounded-lg object-contain',
+            selected && 'outline-border-focus outline-2 outline-offset-1',
+          )}
+          draggable={false}
+        />
+
+        <DrawingOverlay
+          className="absolute inset-0"
+          strokes={annotations}
+          onChangeStrokes={handleChangeStrokes}
+          tool={tool}
+          active={isDrawing && !isReadOnly}
+        />
+
+        {isDrawing && (
+          <DrawingToolbar
+            tool={tool}
+            onToolChange={setTool}
+            onUndo={() => handleChangeStrokes(annotations.slice(0, -1))}
+            onClear={() => handleChangeStrokes([])}
+            onClose={() => setIsDrawing(false)}
+            canUndo={annotations.length > 0}
+          />
         )}
-        draggable={false}
-      />
+      </div>
+
       <div
         className={cn(
-          'absolute top-2 right-2 flex opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100',
+          'absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity',
+          'group-hover:pointer-events-auto group-hover:opacity-100',
+          isDrawing && 'pointer-events-auto opacity-100',
         )}
       >
+        {!isReadOnly && (
+          <Button
+            size="s"
+            variant={isDrawing ? 'default' : 'none'}
+            className="rounded-lg px-2"
+            onClick={() => setIsDrawing((v) => !v)}
+          >
+            <Edit size="sm" className="size-6" />
+          </Button>
+        )}
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button size="s" variant="none" className="rounded-lg px-2">
