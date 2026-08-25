@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useEditor } from '@ibodr/draw';
+import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import {
   Modal,
@@ -10,7 +11,6 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
-import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { ACTIVITY_KINDS, type ActivityKind } from '../model/kinds';
 import { insertActivity } from '../shape/insertActivity';
@@ -18,6 +18,10 @@ import { ACTIVITY_KIND_ICONS } from './activityKindIcons';
 import { ActivityMotionItem, ActivityMotionList } from './activityUiMotion';
 
 const PORTAL_Z = 9999;
+
+/** Same beta chip as theme options in modules.profile customization. */
+const betaBadgeClassName =
+  'bg-action-primary-background-default text-action-primary-text inline-flex h-4 shrink-0 items-center rounded-full px-1.5 py-0 text-[8px] leading-none font-semibold uppercase';
 
 export function ActivityPicker({
   open,
@@ -60,7 +64,12 @@ export function ActivityPicker({
       >
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className={modalTitleClass}>{t('activity.picker.title')}</ModalTitle>
+          <div className="flex max-w-[calc(100%-48px)] items-center gap-2">
+            <ModalTitle className="text-text-primary">{t('activity.picker.title')}</ModalTitle>
+            <Badge variant="default" className={betaBadgeClassName}>
+              {t('activity.picker.beta')}
+            </Badge>
+          </div>
         </ModalHeader>
         <ModalBody className="max-h-[min(72dvh,40rem)] overflow-y-auto">
           <ActivityMotionList className="grid gap-3 sm:grid-cols-2">
@@ -80,16 +89,13 @@ export function ActivityPicker({
                       <Icon className="size-7" />
                     </span>
                     <span className="flex min-w-0 flex-1 flex-col gap-1">
-                      <span className="text-text-primary text-sm font-medium">
+                      <span className="text-text-primary text-lg leading-snug font-semibold">
                         {t(`activity.kinds.${kind}`)}
                       </span>
-                      <span className="text-text-secondary text-xs leading-snug">
+                      <span className="text-text-secondary text-base leading-snug">
                         {t(`activity.catalog.${kind}.description`)}
                       </span>
-                      <span className="text-text-secondary text-xs leading-snug">
-                        <span className="text-text-primary font-medium">
-                          {t('activity.picker.mechanics')}:{' '}
-                        </span>
+                      <span className="text-text-muted text-sm leading-snug">
                         {t(`activity.catalog.${kind}.mechanics`)}
                       </span>
                     </span>

@@ -131,7 +131,7 @@ export function OrderingActivity({
               disabled={locked}
               onClick={() => move(index, -1)}
             >
-              <ArrowUp size="sm" className="size-4 fill-current" />
+              <ArrowUp size="sm" className="size-4 text-inherit" />
             </Button>
             <Button
               type="button"
@@ -142,7 +142,7 @@ export function OrderingActivity({
               disabled={locked}
               onClick={() => move(index, 1)}
             >
-              <ArrowBottom size="sm" className="size-4 fill-current" />
+              <ArrowBottom size="sm" className="size-4 text-inherit" />
             </Button>
           </motion.div>
         );

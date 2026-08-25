@@ -60,12 +60,7 @@ export function ActivityComponent({ shape }: { shape: ActivityShape }) {
             definition={definition}
           />
         </div>
-        <div
-          className="min-h-0 min-w-0 flex-1 overflow-visible"
-          data-board-control=""
-          style={{ pointerEvents: 'auto' }}
-          onPointerDown={(event) => event.stopPropagation()}
-        >
+        <div className="min-h-0 min-w-0 flex-1 overflow-visible">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={`${definition.kind}-${mode}`}
