@@ -1,20 +1,23 @@
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
-import { DropdownMenuItem } from '@xipkg/dropdown';
-
-import { Edit } from '@xipkg/icons';
-import { useTranslation } from 'react-i18next';
-import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
+import {
+  useBlockMenuActions,
+  useDrawingToggle,
+  useDrawingTool,
+  useProtectedImage,
+  useYjsContext,
+} from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useCallback, useState } from 'react';
-import { ActiveBlockT, DrawToolT, StrokeT } from '../../types';
+import { useCallback } from 'react';
+import { ActiveBlockT, StrokeT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
 import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
 import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
+import { DrawMenuItem } from '../../ui/components/drawing/DrawMenuItem';
 
 export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
-  const { t } = useTranslation('editor');
   const src = node.attrs.src;
+  const { isDrawing, close, toggle } = useDrawingToggle();
 
   const { editor, storageToken, isReadOnly } = useYjsContext();
 
@@ -54,9 +57,6 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
 
   const imageSrc = useProtectedImage(src, storageToken);
 
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [tool, setTool] = useState<DrawToolT>({ mode: 'draw', color: '#1A1A1A', size: 0.006 });
-
   const annotations: StrokeT[] = node.attrs.annotations ?? [];
 
   const handleChangeStrokes = useCallback(
@@ -64,15 +64,7 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
     [updateAttributes],
   );
 
-  const EditButton = (
-    <DropdownMenuItem
-      className={cn('hover:bg-background-page h-7 gap-2 rounded p-1')}
-      onClick={() => setIsDrawing((state) => !state)}
-    >
-      <Edit size="sm" className="size-6" />
-      {t('media.draw')}
-    </DropdownMenuItem>
-  );
+  const { tool, canUndo, clear, undo, setTool } = useDrawingTool(annotations, handleChangeStrokes);
 
   return (
     <NodeViewWrapper className="group relative flex justify-center" contentEditable={false}>
@@ -99,10 +91,10 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
           <DrawingToolbar
             tool={tool}
             onToolChange={setTool}
-            onUndo={() => handleChangeStrokes(annotations.slice(0, -1))}
-            onClear={() => handleChangeStrokes([])}
-            onClose={() => setIsDrawing(false)}
-            canUndo={annotations.length > 0}
+            onUndo={undo}
+            onClear={clear}
+            onClose={close}
+            canUndo={canUndo}
           />
         )}
       </div>
@@ -119,7 +111,7 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
           getActiveBlock={getActiveBlock}
           isReadOnly={isReadOnly}
           onDownload={() => downloadImage(imageSrc)}
-          extraItems={EditButton}
+          extraItems={<DrawMenuItem onSelect={toggle} />}
         />
       </div>
     </NodeViewWrapper>

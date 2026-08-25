@@ -1,10 +1,11 @@
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import { downloadFileRequest, useUploadImage } from 'common.services';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   useBlockMenuActions,
+  useDrawingToggle,
   useNodeActiveBlock,
   useProtectedImage,
   useYjsContext,
@@ -13,9 +14,7 @@ import { MediaBlockMenu } from '../media/MediaBlockMenu';
 import { PdfViewer } from './PdfViewer';
 import { optimizeImage } from '../../utils/optimizeImage';
 import { StrokeT } from '../../types';
-import { Edit } from '@xipkg/icons';
-import { cn } from '@xipkg/utils';
-import { DropdownMenuItem } from '@xipkg/dropdown';
+import { DrawMenuItem } from '../../ui/components/drawing/DrawMenuItem';
 
 function isResolvedSrc(src: string) {
   return src.startsWith('blob:') || src.startsWith('http') || src.startsWith('data:');
@@ -28,6 +27,7 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
   const { insertImage } = useBlockMenuActions(editor, getActiveBlock);
   const { mutateAsync: uploadImage } = useUploadImage();
   const blobUrl = useProtectedImage(node.attrs.src, storageToken);
+  const { isDrawing, toggle, close } = useDrawingToggle();
 
   const handleDownload = () => {
     if (!node.attrs.src || !storageToken) return;
@@ -57,18 +57,6 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
     (next: Record<number, StrokeT[]>) => updateAttributes({ annotations: next }),
     [updateAttributes],
   );
-  const [isDrawing, setIsDrawing] = useState(false);
-  const closeDrawingBar = () => setIsDrawing(false);
-
-  const EditButton = (
-    <DropdownMenuItem
-      className={cn('hover:bg-background-page h-7 gap-2 rounded p-1')}
-      onClick={() => setIsDrawing((state) => !state)}
-    >
-      <Edit size="sm" className="size-6" />
-      {t('media.draw')}
-    </DropdownMenuItem>
-  );
 
   return (
     <NodeViewWrapper className="group relative my-3" contentEditable={false}>
@@ -87,16 +75,17 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
             annotations={annotations}
             onAnnotationsChange={handleAnnotationsChange}
             isDrawingBarOpen={isDrawing}
-            closeDrawingBar={closeDrawingBar}
+            closeDrawingBar={close}
           />
         )}
       </div>
+
       <MediaBlockMenu
         editor={editor}
         getActiveBlock={getActiveBlock}
         isReadOnly={isReadOnly}
         onDownload={handleDownload}
-        extraItems={EditButton}
+        extraItems={<DrawMenuItem onSelect={toggle} />}
       />
     </NodeViewWrapper>
   );

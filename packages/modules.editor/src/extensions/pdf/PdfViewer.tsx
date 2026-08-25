@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import type { RenderTask } from 'pdfjs-dist';
 import { pdfDocCache } from '../../utils/pdfDocCache';
 import { PageControls } from '../media/PageControls';
-import { DrawToolT, StrokeT } from '../../types';
+import { StrokeT } from '../../types';
 import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
 import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
+import { useDrawingTool } from '../../hooks';
 
 const PDF_RENDER_QUALITY_SCALE = 2;
 
@@ -28,8 +29,8 @@ export const PdfViewer = ({
   annotations,
   onAnnotationsChange,
   isDrawingBarOpen,
-  isReadOnly,
   closeDrawingBar,
+  isReadOnly,
   onExtractPage,
 }: PdfViewerProps) => {
   const { t } = useTranslation('editor');
@@ -42,9 +43,18 @@ export const PdfViewer = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
-
   const [canvasCssSize, setCanvasCssSize] = useState({ w: 0, h: 0 });
-  const [tool, setTool] = useState<DrawToolT>({ mode: 'draw', color: '#1A1A1A', size: 0.006 });
+
+  const currentStrokes = annotations[page] ?? [];
+  const handlePageStrokesChange = useCallback(
+    (next: StrokeT[]) => onAnnotationsChange({ ...annotations, [page]: next }),
+    [annotations, page, onAnnotationsChange],
+  );
+
+  const { tool, canUndo, clear, undo, setTool } = useDrawingTool(
+    currentStrokes,
+    handlePageStrokesChange,
+  );
 
   useEffect(() => {
     const el = containerRef.current;
@@ -172,15 +182,10 @@ export const PdfViewer = ({
           <DrawingToolbar
             tool={tool}
             onToolChange={setTool}
-            onUndo={() =>
-              onAnnotationsChange({
-                ...annotations,
-                [page]: (annotations[page] ?? []).slice(0, -1),
-              })
-            }
-            onClear={() => onAnnotationsChange({ ...annotations, [page]: [] })}
+            onUndo={undo}
+            onClear={clear}
             onClose={closeDrawingBar}
-            canUndo={(annotations[page] ?? []).length > 0}
+            canUndo={canUndo}
           />
         )}
       </div>
