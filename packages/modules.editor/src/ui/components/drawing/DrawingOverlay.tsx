@@ -5,11 +5,11 @@ type DrawingOverlayPropsT = {
   strokes: StrokeT[];
   onChangeStrokes: (strokes: StrokeT[]) => void;
   tool: DrawToolT;
-  active: boolean;
+  isActive: boolean;
   className?: string;
 };
 
-function makeId() {
+function generateId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
@@ -17,7 +17,7 @@ export const DrawingOverlay = ({
   strokes,
   onChangeStrokes,
   tool,
-  active,
+  isActive,
   className,
 }: DrawingOverlayPropsT) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,12 +53,12 @@ export const DrawingOverlay = ({
     ctx.globalCompositeOperation = 'source-over';
   }, [strokes]);
 
-  // ресайз — тот же паттерн, что уже используется в PdfViewer
   useEffect(() => {
     const el = containerRef.current;
     const canvas = canvasRef.current;
     if (!el || !canvas) return;
 
+    let raf = 0;
     const update = () => {
       const w = el.clientWidth;
       const h = el.clientHeight;
@@ -74,10 +74,17 @@ export const DrawingOverlay = ({
       redraw();
     };
 
-    update();
-    const ro = new ResizeObserver(update);
+    raf = requestAnimationFrame(update);
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    });
     ro.observe(el);
-    return () => ro.disconnect();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, [redraw]);
 
   useEffect(() => {
@@ -96,13 +103,13 @@ export const DrawingOverlay = ({
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
-      if (!active) return;
+      if (!isActive) return;
       const point = getPoint(e);
       if (!point) return;
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
 
       liveStrokeRef.current = {
-        id: makeId(),
+        id: generateId(),
         color: tool.color,
         size: tool.mode === 'erase' ? tool.size * 2.5 : tool.size,
         mode: tool.mode,
@@ -110,18 +117,18 @@ export const DrawingOverlay = ({
       };
       redraw();
     },
-    [active, tool, getPoint, redraw],
+    [isActive, tool, getPoint, redraw],
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!active || !liveStrokeRef.current) return;
+      if (!isActive || !liveStrokeRef.current) return;
       const point = getPoint(e);
       if (!point) return;
       liveStrokeRef.current.points.push(point);
       redraw();
     },
-    [active, getPoint, redraw],
+    [isActive, getPoint, redraw],
   );
 
   const handlePointerUp = useCallback(() => {
@@ -140,8 +147,8 @@ export const DrawingOverlay = ({
         ref={canvasRef}
         className="absolute inset-0 h-full w-full touch-none"
         style={{
-          pointerEvents: active ? 'auto' : 'none',
-          cursor: active ? 'crosshair' : 'default',
+          pointerEvents: isActive ? 'auto' : 'none',
+          cursor: isActive ? 'crosshair' : 'default',
         }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}

@@ -24,37 +24,36 @@ export const DrawingToolbar = ({
   canUndo,
 }: DrawingToolbarPropsT) => {
   return (
-    <div className="bg-background-surface border-border-default absolute top-2 left-2 z-10 flex items-center gap-1 rounded-lg border p-1 shadow-md">
+    <div className="bg-background-surface border-border-default absolute top-2 left-2 z-10 flex items-center gap-1 rounded-lg border p-1 px-2 shadow-md">
       {COLORS.map((color) => (
-        <button
+        <Button
           key={color}
-          type="button"
+          onClick={() => onToolChange({ ...tool, color, mode: 'draw' })}
           className={cn(
-            'size-5 rounded-full border border-black/10',
-            tool.mode === 'draw' && tool.color === color && 'ring-2 ring-offset-1',
+            'size-5 rounded-full border border-black/10 px-1',
+            tool.mode === 'draw' &&
+              tool.color === color &&
+              'ring-border-selected ring-2 ring-offset-1',
           )}
           style={{ backgroundColor: color }}
-          onClick={() => onToolChange({ ...tool, color, mode: 'draw' })}
-        />
+        ></Button>
       ))}
 
       <div className="bg-border-default mx-1 h-4 w-px" />
 
       {SIZES.map((size) => (
-        <button
-          key={size}
-          type="button"
-          className={cn(
-            'flex size-6 items-center justify-center rounded',
-            tool.size === size && tool.mode === 'draw' && 'bg-background-page',
-          )}
+        <Button
+          variant={tool.size === size && tool.mode === 'draw' ? 'default' : 'none'}
+          size="s"
+          className={cn('flex size-6 items-center justify-center rounded px-1')}
           onClick={() => onToolChange({ ...tool, size, mode: 'draw' })}
+          key={size}
         >
           <span
             className="bg-icon-primary rounded-full"
             style={{ width: 4 + SIZES.indexOf(size) * 3, height: 4 + SIZES.indexOf(size) * 3 }}
           />
-        </button>
+        </Button>
       ))}
 
       <div className="bg-border-default mx-1 h-4 w-px" />
@@ -62,27 +61,21 @@ export const DrawingToolbar = ({
       <Button
         variant={tool.mode === 'erase' ? 'default' : 'none'}
         size="s"
-        className="rounded px-1.5"
+        className="rounded px-1"
         onClick={() => onToolChange({ ...tool, mode: 'erase' })}
       >
         <Eraser size="sm" className="size-5" />
       </Button>
 
-      <Button
-        variant="none"
-        size="s"
-        className="rounded px-1.5"
-        disabled={!canUndo}
-        onClick={onUndo}
-      >
+      <Button variant="none" size="s" className="rounded px-1" disabled={!canUndo} onClick={onUndo}>
         <Undo size="sm" className="size-5" />
       </Button>
 
-      <Button variant="none" size="s" className="rounded px-1.5" onClick={onClear}>
+      <Button variant="none" size="s" className="rounded px-1" onClick={onClear}>
         <Trash size="sm" className="size-5" />
       </Button>
 
-      <Button variant="none" size="s" className="rounded px-1.5" onClick={onClose}>
+      <Button variant="none" size="s" className="rounded px-1" onClick={onClose}>
         <Close size="sm" className="size-5" />
       </Button>
     </div>

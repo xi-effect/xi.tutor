@@ -1,13 +1,7 @@
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@xipkg/dropdown';
-import { Button } from '@xipkg/button';
-import { ArrowBottom, ArrowUp, Copy, Download, Edit, MoreVert, Trash } from '@xipkg/icons';
+import { DropdownMenuItem } from '@xipkg/dropdown';
+
+import { Edit } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
@@ -16,6 +10,7 @@ import { ActiveBlockT, DrawToolT, StrokeT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
 import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
 import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
+import { MediaBlockMenu } from '../media/MediaBlockMenu';
 
 export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
   const { t } = useTranslation('editor');
@@ -52,10 +47,7 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
       return;
     }
   }, [editor, getPos, src]);
-  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(
-    editor,
-    getActiveBlock,
-  );
+  const { downloadImage } = useBlockMenuActions(editor, getActiveBlock);
 
   const selected =
     editor?.state.selection instanceof NodeSelection && editor.state.selection.from === getPos();
@@ -70,6 +62,16 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
   const handleChangeStrokes = useCallback(
     (next: StrokeT[]) => updateAttributes({ annotations: next }),
     [updateAttributes],
+  );
+
+  const EditButton = (
+    <DropdownMenuItem
+      className={cn('hover:bg-background-page h-7 gap-2 rounded p-1')}
+      onClick={() => setIsDrawing((state) => !state)}
+    >
+      <Edit size="sm" className="size-6" />
+      {t('media.draw')}
+    </DropdownMenuItem>
   );
 
   return (
@@ -90,7 +92,7 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
           strokes={annotations}
           onChangeStrokes={handleChangeStrokes}
           tool={tool}
-          active={isDrawing && !isReadOnly}
+          isActive={isDrawing && !isReadOnly}
         />
 
         {isDrawing && (
@@ -112,84 +114,13 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
           isDrawing && 'pointer-events-auto opacity-100',
         )}
       >
-        {!isReadOnly && (
-          <Button
-            size="s"
-            variant={isDrawing ? 'default' : 'none'}
-            className="rounded-lg px-2"
-            onClick={() => setIsDrawing((v) => !v)}
-          >
-            <Edit size="sm" className="size-6" />
-          </Button>
-        )}
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button size="s" variant="none" className="rounded-lg px-2">
-              <MoreVert size="sm" className="size-6" />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent
-            side="bottom"
-            align="end"
-            className="flex w-[200px] flex-col space-y-1 p-2"
-          >
-            <DropdownMenuItem
-              className="hover:bg-background-page h-7 gap-2 rounded p-1"
-              onSelect={() => downloadImage(imageSrc)}
-            >
-              <Download size="sm" className="size-6" />
-              <span className="text-sm">{t('image.download')}</span>
-            </DropdownMenuItem>
-
-            {/* Остальные действия доступны только если редактор не в readonly режиме */}
-            {!isReadOnly && (
-              <>
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    moveUp();
-                  }}
-                >
-                  <ArrowUp size="sm" className="size-6" />
-                  <span className="text-sm">{t('image.moveUp')}</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    moveDown();
-                  }}
-                >
-                  <ArrowBottom size="sm" className="size-6" />
-                  <span className="text-sm">{t('image.moveDown')}</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
-                  onSelect={duplicate}
-                >
-                  <Copy size="sm" className="size-6" />
-                  <span className="text-sm">{t('image.duplicate')}</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
-                  onSelect={remove}
-                >
-                  <Trash size="sm" className="size-6" />
-                  <span className="text-sm">{t('image.delete')}</span>
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <MediaBlockMenu
+          editor={editor}
+          getActiveBlock={getActiveBlock}
+          isReadOnly={isReadOnly}
+          onDownload={() => downloadImage(imageSrc)}
+          extraItems={EditButton}
+        />
       </div>
     </NodeViewWrapper>
   );

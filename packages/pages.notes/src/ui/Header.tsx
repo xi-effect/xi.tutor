@@ -77,7 +77,7 @@ export const Header = () => {
             variant="none"
             onClick={handleBack}
             type="button"
-            className="absolute top-0 left-0 h-10 w-10 p-2"
+            className="absolute left-0 h-10 w-10 p-2"
           >
             <ArrowLeft size="s" className="fill-icon-primary size-6" />
           </Button>

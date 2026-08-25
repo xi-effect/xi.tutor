@@ -3,7 +3,7 @@ export type StrokePointT = { x: number; y: number }; // относительно
 export type StrokeT = {
   id: string;
   color: string;
-  size: number; // относительная толщина (доля от ширины канваса)
+  size: number;
   mode: 'draw' | 'erase';
   points: StrokePointT[];
 };

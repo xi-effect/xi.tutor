@@ -6,9 +6,6 @@ import { PageControls } from '../media/PageControls';
 import { DrawToolT, StrokeT } from '../../types';
 import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
 import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
-import { Button } from '@xipkg/button';
-import { Edit } from '@xipkg/icons';
-import { cn } from '@xipkg/utils';
 
 const PDF_RENDER_QUALITY_SCALE = 2;
 
@@ -16,20 +13,24 @@ type PdfViewerProps = {
   blobUrl: string;
   fileName: string;
   totalPages: number;
-  isReadOnly?: boolean;
-  onExtractPage?: (blob: Blob, page: number) => void;
   annotations: Record<number, StrokeT[]>;
   onAnnotationsChange: (next: Record<number, StrokeT[]>) => void;
+  isDrawingBarOpen: boolean;
+  closeDrawingBar: () => void;
+  isReadOnly?: boolean;
+  onExtractPage?: (blob: Blob, page: number) => void;
 };
 
 export const PdfViewer = ({
   blobUrl,
   fileName,
   totalPages: initialTotalPages,
-  isReadOnly,
-  onExtractPage,
   annotations,
   onAnnotationsChange,
+  isDrawingBarOpen,
+  isReadOnly,
+  closeDrawingBar,
+  onExtractPage,
 }: PdfViewerProps) => {
   const { t } = useTranslation('editor');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,6 @@ export const PdfViewer = ({
   const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
 
   const [canvasCssSize, setCanvasCssSize] = useState({ w: 0, h: 0 });
-  const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState<DrawToolT>({ mode: 'draw', color: '#1A1A1A', size: 0.006 });
 
   useEffect(() => {
@@ -165,24 +165,10 @@ export const PdfViewer = ({
             strokes={annotations[page] ?? []}
             onChangeStrokes={(next) => onAnnotationsChange({ ...annotations, [page]: next })}
             tool={tool}
-            active={isDrawing && !isReadOnly && !loading}
+            isActive={isDrawingBarOpen && !isReadOnly && !loading}
           />
         </div>
-        {!isReadOnly && !loading && (
-          <Button
-            size="s"
-            variant={isDrawing ? 'default' : 'none'}
-            className={cn(
-              'bg-background-surface border-border-default absolute top-2 right-2 z-10 rounded-lg border px-2',
-              'opacity-0 transition-opacity group-hover:opacity-100',
-              isDrawing && 'opacity-100',
-            )}
-            onClick={() => setIsDrawing((v) => !v)}
-          >
-            <Edit size="sm" className="size-5" />
-          </Button>
-        )}
-        {isDrawing && (
+        {isDrawingBarOpen && (
           <DrawingToolbar
             tool={tool}
             onToolChange={setTool}
@@ -193,7 +179,7 @@ export const PdfViewer = ({
               })
             }
             onClear={() => onAnnotationsChange({ ...annotations, [page]: [] })}
-            onClose={() => setIsDrawing(false)}
+            onClose={closeDrawingBar}
             canUndo={(annotations[page] ?? []).length > 0}
           />
         )}
@@ -206,9 +192,6 @@ export const PdfViewer = ({
         onPageChange={setPage}
         onExtractPage={!isReadOnly && !loading ? handleExtract : undefined}
         extractTitle={t('pdf.extractPage')}
-        // TODO
-        // добавить кнопку toggle рисования рядом, если PageControls допускает доп. слот,
-        // либо отдельную кнопку-карандаш вынести туда же где extract
       />
     </div>
   );
