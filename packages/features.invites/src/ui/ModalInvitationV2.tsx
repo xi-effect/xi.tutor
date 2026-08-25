@@ -13,6 +13,7 @@ import {
 import { Button } from '@xipkg/button';
 import { Copy } from '@xipkg/icons';
 import { Skeleton } from 'common.ui';
+import { writeText } from 'common.platform';
 import { toast } from 'sonner';
 import { env } from 'common.env';
 import {
@@ -111,7 +112,7 @@ export const ModalInvitationV2 = ({
     if (!currentInvite || !message) return;
 
     try {
-      await navigator.clipboard.writeText(message);
+      await writeText(message);
     } catch {
       toast.error(t('inviteModalV2.toast.copyFailed'));
       return;
@@ -133,7 +134,7 @@ export const ModalInvitationV2 = ({
     if (!currentInvite || !inviteUrl) return;
 
     try {
-      await navigator.clipboard.writeText(inviteUrl);
+      await writeText(inviteUrl);
     } catch {
       toast.error(t('inviteModalV2.toast.copyFailed'));
       return;

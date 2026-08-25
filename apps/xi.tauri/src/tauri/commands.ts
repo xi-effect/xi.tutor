@@ -9,14 +9,10 @@
  */
 
 import { invoke } from '@tauri-apps/api/core';
+import { getAppInfo as getPlatformAppInfo, type AppInfo as PlatformAppInfo } from 'common.platform';
 import { detectPlatform } from '../platform';
 
-export interface AppInfo {
-  name: string;
-  version: string;
-  platform: 'windows' | 'macos' | 'linux' | 'ios' | 'android' | 'unknown';
-  isDebug: boolean;
-}
+export type AppInfo = PlatformAppInfo;
 
 export interface HttpProbeResult {
   ok: boolean;
@@ -28,15 +24,7 @@ export interface HttpProbeResult {
 /** Returns metadata about the running native shell. Web fallback returns a
  *  best-effort stub so that calling code doesn't have to branch. */
 export async function getAppInfo(): Promise<AppInfo> {
-  if (detectPlatform() === 'web') {
-    return {
-      name: 'Sovlium (web preview)',
-      version: '0.0.0',
-      platform: 'unknown',
-      isDebug: import.meta.env.DEV,
-    };
-  }
-  return invoke<AppInfo>('app_info');
+  return getPlatformAppInfo();
 }
 
 /** Asks the Rust side to log a diagnostic message. Used as a thin smoke test

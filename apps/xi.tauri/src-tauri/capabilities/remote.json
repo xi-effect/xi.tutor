@@ -25,12 +25,27 @@
     "core:window:allow-show",
     "core:window:allow-hide",
     "core:window:allow-start-dragging",
+    "core:window:allow-set-focus",
     "dialog:default",
     "notification:default",
     "os:default",
     "log:default",
     "deep-link:default",
     "updater:default",
-    "process:default"
+    "process:default",
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-html",
+    "opener:default",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        { "url": "https://*" },
+        { "url": "http://*" },
+        { "url": "mailto:*" },
+        { "url": "tg:*" },
+        { "url": "telegram:*" }
+      ]
+    }
   ]
 }

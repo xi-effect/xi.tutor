@@ -200,8 +200,8 @@ export const Notifications = () => {
                   <Button
                     size="s"
                     variant="ghost"
-                    onClick={() => {
-                      const ok = showTestSystemNotification();
+                    onClick={async () => {
+                      const ok = await showTestSystemNotification();
                       if (!ok) {
                         toast.error(t('notifications.testFailed'));
                       }

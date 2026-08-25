@@ -5,18 +5,14 @@
  * `src-tauri/capabilities/*.json`. The frontend cannot widen those bounds at
  * runtime — but it can (and should) request OS-level permissions for plugins
  * such as `notification` before using them.
+ *
+ * Remote UI uses the same helpers via `common.platform`.
  */
 
-import { detectPlatform } from '../platform';
+import { isNativeShell, requestNotificationPermission } from 'common.platform';
 
 export async function ensureNotificationPermission(): Promise<boolean> {
-  if (detectPlatform() === 'web') return false;
-  // Lazy import keeps the plugin out of the web fallback bundle.
-  const plugin = await import('@tauri-apps/plugin-notification');
-  let granted = await plugin.isPermissionGranted();
-  if (!granted) {
-    const status = await plugin.requestPermission();
-    granted = status === 'granted';
-  }
-  return granted;
+  if (!isNativeShell()) return false;
+  const status = await requestNotificationPermission();
+  return status === 'granted';
 }

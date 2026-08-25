@@ -146,3 +146,41 @@ pub async fn http_probe(
         },
     }
 }
+
+/// Shows a native save dialog and writes the (base64) payload. Returns `false`
+/// if the user cancelled. Used because `<a download>` is unreliable in WKWebView
+/// and WebView2.
+#[tauri::command]
+pub async fn save_file(
+    app: tauri::AppHandle,
+    default_name: String,
+    contents_base64: String,
+) -> Result<bool, String> {
+    use base64::Engine;
+    use tauri_plugin_dialog::DialogExt;
+
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(contents_base64.as_bytes())
+        .map_err(|err| format!("invalid file payload: {err}"))?;
+
+    let (tx, rx) = std::sync::mpsc::sync_channel(1);
+    app.dialog()
+        .file()
+        .set_file_name(&default_name)
+        .save_file(move |file| {
+            let _ = tx.send(file);
+        });
+
+    let file = tauri::async_runtime::spawn_blocking(move || rx.recv())
+        .await
+        .map_err(|err| err.to_string())?
+        .map_err(|err| err.to_string())?;
+
+    let Some(file_path) = file else {
+        return Ok(false);
+    };
+
+    let path = file_path.into_path().map_err(|err| err.to_string())?;
+    std::fs::write(&path, bytes).map_err(|err| format!("failed to write file: {err}"))?;
+    Ok(true)
+}

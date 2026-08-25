@@ -47,9 +47,16 @@ apps/xi.tauri/
         ├── lib.rs          — Builder, плагины, single-instance, generate_handler!
         ├── navigation.rs   — allowlist top-level navigations (*.sovlium.ru)
         ├── share_overlay.rs — Zoom-like always-on-top share control bar
-        ├── commands/mod.rs — app_info, log_message, http_probe
+        ├── commands/mod.rs — app_info, log_message, http_probe, save_file
+        ├── media.rs        — OS-level camera/mic/screen permission (macOS TCC)
         └── setup/mod.rs    — placeholder под deep-links, tray и т.п.
 ```
+
+WebAPI, которые в WebView работают иначе, чем в Chrome (уведомления, скачивание,
+буфер обмена, внешние ссылки, камера/микрофон/экран, оверлей шаринга), живут в
+`packages/common.platform`. Production remote UI — это `https://app.sovlium.ru`
+внутри WebView, поэтому адаптеры должны поставляться вместе с `xi.web`, а не
+только в `apps/xi.tauri/src`.
 
 ### Принципы
 
@@ -63,9 +70,11 @@ apps/xi.tauri/
   health-check и `native-compat.json`. Origin same-site с `api.sovlium.ru` —
   session cookie и Socket.IO работают как в браузере. Локальный `frontendDist`
   остаётся для `tauri:dev` и для `VITE_TAURI_REMOTE_MODE=false`.
-- **Платформенный слой явный.** Любая логика, специфичная для desktop или
-  mobile, проходит через `src/platform/*`. Никаких `if (window.__TAURI__)` по
-  коду — только через `detectPlatform()` / `getPlatform()`.
+- **Платформенный слой явный.** Логика оболочки (updater, splash, navigation)
+  проходит через `src/platform/*`. WebAPI (clipboard, notifications, files,
+  media, openUrl, calls overlay) — через `common.platform`, который смотрит на
+  `__SOVLIUM_NATIVE__` / `__TAURI_INTERNALS__`. Никаких разрозненных
+  `if (window.__TAURI__)` в бизнес-коде.
 - **PWA отключён.** В Tauri service worker’ы не нужны и мешают updater’у.
 - **Capabilities-first.** Все плагины с side-effect’ами требуют явного гранта в
   `capabilities/*.json`. Добавление новой возможности — отдельный коммит.
@@ -164,13 +173,18 @@ WKWebView на `tauri://localhost` не сохраняет third-party cookie `D
 После пересборки macOS может один раз спросить доступ. Если диалога нет —
 проверьте **Системные настройки → Конфиденциальность → Камера / Микрофон** для Sovlium.
 
+Перед `getUserMedia` / `getDisplayMedia` `common.platform` вызывает Rust-команды
+`media_permission_*`: на macOS это TCC (`AVCaptureDevice` + `CGRequestScreenCaptureAccess`),
+на Windows WebView2 показывает свой диалог при самом capture.
+
 ### Оверлей демонстрации экрана (Zoom-like)
 
 При старте screen share в desktop-shell показывается always-on-top панель
 (`share-overlay.html`): «Демонстрация экрана», **В звонок**, **Остановить**.
 
-- Capture по-прежнему через LiveKit / `getDisplayMedia`.
-- Мост: `modules.calls` → `NativeShareOverlayBridge` → IPC `share_overlay_*`.
+- Capture по-прежнему через LiveKit / `getDisplayMedia` (перед вызовом
+  `common.platform` запрашивает Screen Recording на macOS через TCC).
+- Мост: `modules.calls` → `common.platform` (`showShareOverlay`) → IPC `share_overlay_*`.
 - Stop с панели эмитит `share-overlay-stop` → `setScreenShareEnabled(false)`.
 - Нужен `NSScreenCaptureUsageDescription` в `Info.plist` (Screen Recording).
 
@@ -274,7 +288,8 @@ updater’а — обновления идут через App Store / Play Store
 ## Что не делать
 
 - Не импортировать что-либо из `apps/xi.tauri/src/tauri/*` в `xi.web`. Этот
-  код существует только в контексте native shell’а.
+  код существует только в контексте native shell’а. Общие адаптеры WebAPI
+  живут в `packages/common.platform`.
 - Не дублировать `pages.*`/`modules.*` в `apps/xi.tauri/src/`. Если нужна
   страница, специфичная только для нативной оболочки (например, экран
   «обновляемся…») — её можно добавить рядом с `App.tsx`, но не в `web/pages/`.

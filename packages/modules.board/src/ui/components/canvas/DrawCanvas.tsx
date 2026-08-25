@@ -1,4 +1,5 @@
 import { LoadingScreen } from 'common.ui';
+import { saveBlob } from 'common.platform';
 import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
@@ -465,12 +466,7 @@ export const DrawCanvas = ({
                 const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
                   type: 'application/json',
                 });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `board-snapshot-${Date.now()}.json`;
-                link.click();
-                URL.revokeObjectURL(url);
+                void saveBlob(blob, { fileName: `board-snapshot-${Date.now()}.json` });
                 return snapshot;
               };
               win.showBoardImportOption = () => {

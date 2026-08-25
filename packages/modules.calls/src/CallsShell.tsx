@@ -18,12 +18,14 @@ import { ProductCallAnalyticsTracker } from './productAnalytics/ProductCallAnaly
 import { BoardCallStorageWarmup } from './boardWarmup/BoardCallStorageWarmup';
 import { NativeShareOverlayBridge } from './useNativeShareOverlay';
 import { installMediaPermissionRequestAnalytics } from './productAnalytics/installMediaPermissionRequestAnalytics';
+import { installDesktopWebApiBridges } from 'common.platform';
 
 import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
 import '@xipkg/calls-ui/grid.css';
 
-// До монтирования PreJoin: перехват getUserMedia (событие — только при реальном промпте).
+// Native OS permission preflight, then analytics around getUserMedia.
+installDesktopWebApiBridges();
 installMediaPermissionRequestAnalytics();
 
 type CallsShellPropsT = {

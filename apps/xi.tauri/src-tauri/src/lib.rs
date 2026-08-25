@@ -5,6 +5,7 @@
 //! crate as a dynamic library and calls `run()` from generated glue code.
 
 mod commands;
+mod media;
 mod navigation;
 mod setup;
 mod share_overlay;
@@ -23,6 +24,8 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_deep_link::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_opener::init())
         // Restrict top-level navigations to *.sovlium.ru (+ local schemes).
         .plugin(navigation::init())
         // Mark WebView as native + disable Yandex Metrika inside the shell.
@@ -53,6 +56,9 @@ pub fn run() {
             commands::app_info,
             commands::log_message,
             commands::http_probe,
+            commands::save_file,
+            media::media_permission_status,
+            media::media_permission_request,
             share_overlay::share_overlay_show,
             share_overlay::share_overlay_hide,
             share_overlay::share_overlay_focus_main,

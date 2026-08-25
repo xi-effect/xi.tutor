@@ -18,6 +18,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
+cc = "1"
 
 [dependencies]
 tauri = { version = "2", features = ["protocol-asset"] }
@@ -27,6 +28,7 @@ log = "0.4"
 # Used by the remote-shell splash to health-check / fetch native-compat.json
 # without depending on WebView CORS (local origin → *.sovlium.ru).
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+base64 = "0.22"
 
 # Cross-platform plugins.
 tauri-plugin-log = "2"
@@ -34,6 +36,8 @@ tauri-plugin-os = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-deep-link = "2"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-opener = "2"
 
 # Desktop-only plugins. Mobile platforms either ship store-managed updates
 # (updater) or have no concept equivalent to `relaunch` from the user's side

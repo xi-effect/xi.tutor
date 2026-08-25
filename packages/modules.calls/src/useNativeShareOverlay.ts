@@ -1,49 +1,40 @@
 /**
  * Syncs LiveKit local screen-share state with the Tauri always-on-top overlay.
  *
- * No-op outside the native desktop shell (`__SOVLIUM_NATIVE__` /
- * `__TAURI_INTERNALS__`). Safe to mount in the browser web app.
+ * No-op outside the native desktop shell. Safe to mount in the browser web app.
  */
 
 import { useEffect, useRef } from 'react';
 import { useLocalParticipant } from '@livekit/components-react';
-
-const STOP_EVENT = 'share-overlay-stop';
-
-function isNativeDesktopShell(): boolean {
-  if (typeof window === 'undefined') return false;
-  const w = window as unknown as Record<string, unknown>;
-  return Boolean(w.__SOVLIUM_NATIVE__ || w.__TAURI_INTERNALS__);
-}
-
-async function invokeShareOverlay(
-  command: 'share_overlay_show' | 'share_overlay_hide',
-): Promise<void> {
-  const { invoke } = await import('@tauri-apps/api/core');
-  await invoke(command);
-}
+import {
+  hideShareOverlay,
+  isDesktopNative,
+  onShareOverlayStop,
+  showShareOverlay,
+} from 'common.platform';
 
 export function useNativeShareOverlay(): void {
   const { isScreenShareEnabled, localParticipant } = useLocalParticipant();
   const visibleRef = useRef(false);
 
   useEffect(() => {
-    if (!isNativeDesktopShell()) return;
+    if (!isDesktopNative()) return;
 
     let cancelled = false;
     let unlisten: (() => void) | undefined;
 
     void (async () => {
       try {
-        const { listen } = await import('@tauri-apps/api/event');
-        if (cancelled) return;
-        unlisten = await listen(STOP_EVENT, () => {
+        unlisten = await onShareOverlayStop(() => {
           void localParticipant.setScreenShareEnabled(false).catch((err) => {
             console.error('[modules.calls] failed to stop screen share from overlay', err);
           });
         });
       } catch (err) {
         console.warn('[modules.calls] share overlay listen unavailable', err);
+      }
+      if (cancelled) {
+        unlisten?.();
       }
     })();
 
@@ -54,17 +45,17 @@ export function useNativeShareOverlay(): void {
   }, [localParticipant]);
 
   useEffect(() => {
-    if (!isNativeDesktopShell()) return;
+    if (!isDesktopNative()) return;
 
     let cancelled = false;
 
     void (async () => {
       try {
         if (isScreenShareEnabled) {
-          await invokeShareOverlay('share_overlay_show');
+          await showShareOverlay();
           if (!cancelled) visibleRef.current = true;
         } else if (visibleRef.current) {
-          await invokeShareOverlay('share_overlay_hide');
+          await hideShareOverlay();
           if (!cancelled) visibleRef.current = false;
         }
       } catch (err) {
@@ -77,11 +68,10 @@ export function useNativeShareOverlay(): void {
     };
   }, [isScreenShareEnabled]);
 
-  // Hide overlay if the call shell unmounts while still sharing.
   useEffect(() => {
     return () => {
-      if (!isNativeDesktopShell() || !visibleRef.current) return;
-      void invokeShareOverlay('share_overlay_hide').catch(() => {
+      if (!isDesktopNative() || !visibleRef.current) return;
+      void hideShareOverlay().catch(() => {
         // ignore teardown errors
       });
     };
