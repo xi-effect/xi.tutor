@@ -55,3 +55,4 @@ export {
   SOUND_DEFAULTS,
   type SoundKey,
 } from './src/store/useSoundEffectsStore';
+export { playSoundEffect, unlockSoundEffect } from './src/sounds/playSoundEffect';

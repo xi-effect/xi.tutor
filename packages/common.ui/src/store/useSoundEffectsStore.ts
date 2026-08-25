@@ -2,7 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type SoundKey =
-  'chatMessage' | 'handRaise' | 'userJoin' | 'userLeft' | 'boardTimerEnd' | 'boardTimerWarn';
+  | 'chatMessage'
+  | 'handRaise'
+  | 'userJoin'
+  | 'userLeft'
+  | 'boardTimerEnd'
+  | 'boardTimerWarn'
+  | 'notification';
 
 interface SoundEffectsState {
   chatMessageVolume: number;
@@ -11,6 +17,7 @@ interface SoundEffectsState {
   userLeftVolume: number;
   boardTimerEndVolume: number;
   boardTimerWarnVolume: number;
+  notificationVolume: number;
 
   setSoundVolume: (key: SoundKey, volume: number) => void;
   getEffectiveVolume: (key: SoundKey) => number;
@@ -23,6 +30,7 @@ const DEFAULTS: Record<SoundKey, number> = {
   userLeft: 0.25,
   boardTimerEnd: 1,
   boardTimerWarn: 1,
+  notification: 0.25,
 };
 
 const VOLUME_KEY_MAP: Record<SoundKey, keyof SoundEffectsState> = {
@@ -32,6 +40,7 @@ const VOLUME_KEY_MAP: Record<SoundKey, keyof SoundEffectsState> = {
   userLeft: 'userLeftVolume',
   boardTimerEnd: 'boardTimerEndVolume',
   boardTimerWarn: 'boardTimerWarnVolume',
+  notification: 'notificationVolume',
 };
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
@@ -45,6 +54,7 @@ export const useSoundEffectsStore = create<SoundEffectsState>()(
       userLeftVolume: DEFAULTS.userLeft,
       boardTimerEndVolume: DEFAULTS.boardTimerEnd,
       boardTimerWarnVolume: DEFAULTS.boardTimerWarn,
+      notificationVolume: DEFAULTS.notification,
 
       setSoundVolume: (key, volume) => {
         const min = key === 'boardTimerEnd' ? 0.2 : 0;
@@ -67,6 +77,7 @@ export const useSoundEffectsStore = create<SoundEffectsState>()(
         userLeftVolume: state.userLeftVolume,
         boardTimerEndVolume: state.boardTimerEndVolume,
         boardTimerWarnVolume: state.boardTimerWarnVolume,
+        notificationVolume: state.notificationVolume,
       }),
     },
   ),

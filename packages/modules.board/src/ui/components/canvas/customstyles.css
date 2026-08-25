@@ -11,6 +11,7 @@
 [data-board-control],
 [data-audio-control] {
   touch-action: manipulation;
+  pointer-events: auto;
 }
 
 @media (pointer: coarse) {

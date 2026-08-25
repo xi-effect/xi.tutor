@@ -92,6 +92,23 @@ export const FILE_INPUT_EXTENSIONS = [
 
 export const FILE_INPUT_ACCEPT = [...FILE_INPUT_EXTENSIONS, ...ALL_ALLOWED_TYPES].join(',');
 
+export const IMAGE_INPUT_EXTENSIONS = [
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.webp',
+  '.bmp',
+  '.tif',
+  '.tiff',
+  '.ico',
+  '.avif',
+];
+
+export const IMAGE_INPUT_ACCEPT = [...IMAGE_INPUT_EXTENSIONS, ...ALLOWED_IMAGE_MIME_TYPES].join(
+  ',',
+);
+
 const PDF_MIME_TYPES = new Set(['application/pdf', 'application/x-pdf']);
 
 export const PPTX_MIME =

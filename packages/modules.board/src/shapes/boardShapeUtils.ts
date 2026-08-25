@@ -13,6 +13,7 @@ import { EmojiStickerShapeUtil } from './emojiSticker';
 import { TextShapeUtil } from './text';
 import { ArrowShapeUtil } from './arrow';
 import { PresentationShapeUtil } from './presentation';
+import { ActivityShapeUtil } from '../activities';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
@@ -30,6 +31,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   MathFigureShapeUtil,
   TextShapeUtil,
   ArrowShapeUtil,
+  ActivityShapeUtil,
 ];
 
 function mergeShapeUtilsByType(

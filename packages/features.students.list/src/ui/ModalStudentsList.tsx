@@ -19,6 +19,7 @@ import { ConfirmDialog } from 'common.ui';
 import { useDeleteStudent } from '../services';
 import { useStudentsList } from 'common.services';
 import { TutorStudentSchemaMarshal } from 'common.types';
+import { matchesSearchQuery } from 'common.utils';
 
 type ModalStudentsListProps = {
   children: ReactNode;
@@ -60,8 +61,8 @@ export const ModalStudentsList = ({ children, onInviteStudent }: ModalStudentsLi
   const filteredStudents =
     students?.filter(
       (student: TutorStudentSchemaMarshal) =>
-        student.user.display_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        student.user.username.toLowerCase().includes(searchQuery.toLowerCase()),
+        matchesSearchQuery(student.user.display_name, searchQuery) ||
+        matchesSearchQuery(student.user.username, searchQuery),
     ) || [];
 
   const handleInviteStudent = () => {
@@ -121,7 +122,7 @@ export const ModalStudentsList = ({ children, onInviteStudent }: ModalStudentsLi
                         onClick={handleInviteStudent}
                         data-umami-event="students-list-invite"
                       >
-                        <UserPlus className="fill-action-primary-text size-4 shrink-0" />
+                        <UserPlus className="fill-action-primary-text text-text-on-accent size-4 shrink-0" />
                         {t('inviteStudent')}
                       </Button>
                     )}
