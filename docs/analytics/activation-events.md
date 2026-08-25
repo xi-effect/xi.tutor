@@ -373,6 +373,7 @@
 | `lesson_joined`            | существующий            | Ученик вошёл                               |
 | `media_permission_granted` | новый                   | Камера/мик включены                        |
 | `media_permission_denied`  | новый                   | `MediaDevicesError`                        |
+| `media_permission_requested` | новый                 | Первый `getUserMedia` в сессии, если Permissions API = `prompt` (или API недоступен); не на каждый preview/unmute |
 | `call_connect_attempted`   | новый                   | `connectionState === connecting`           |
 | `call_connected`           | существующий (расширен) | Успешное подключение                       |
 | `call_connection_failed`   | существующий (расширен) | Ошибка токена / permissions / др.          |
@@ -480,7 +481,7 @@
 | `onboarding_step_skipped` / `failed` / `back`                                                              | реализовано                                                                                                                            |
 | `activation_help_opened` / `activation_support_contacted`                                                  | реализовано на auth/support                                                                                                            |
 | `activation_tutorial_started` / `completed`                                                                | реализовано в OnboardingPopup                                                                                                          |
-| `media_device_unavailable` / `media_permission_help_opened` / `media_permission_requested`                 | константы есть                                                                                                                         |
+| `media_device_unavailable` / `media_permission_help_opened`                                                | константы есть                                                                                                                         |
 | `lesson_opened`                                                                                            | константа есть, точка вызова не подключена                                                                                             |
 | `student_invite_shared`                                                                                    | константа есть, не используется (в v2 кнопки «Отправить»/Web Share нет — единственное действие с сообщением — «Скопировать сообщение») |
 | Форма приглашений v2 (`student_invite_modal_viewed` и др., см. [`invite-flow-v2.md`](./invite-flow-v2.md)) | реализовано                                                                                                                            |
