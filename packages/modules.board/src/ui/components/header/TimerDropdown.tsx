@@ -3,9 +3,7 @@ import { Close, Minus, Plus, Redo } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 import {
-  type Dispatch,
   type MouseEvent as ReactMouseEvent,
-  type SetStateAction,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -93,14 +91,9 @@ const PlayPauseIcon = ({ isPlaying }: { isPlaying: boolean }) => {
   );
 };
 
-type TimerDropdownProps = {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
+export const TimerDropdown = () => {
   const { t } = useTranslation('board');
-  const { snapshot, updateTimer } = useBoardTimer();
+  const { snapshot, updateTimer, isVisible: open, setVisible: setOpen } = useBoardTimer();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
