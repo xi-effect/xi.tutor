@@ -94,7 +94,8 @@
     "arrows": "Arrows",
     "lines": "Lines",
     "notes": "Notes",
-    "media": "Media"
+    "media": "Media",
+    "activities": "Activities"
   },
   "navbar": {
     "select": "Select",
@@ -108,6 +109,7 @@
     "sticker": "Sticker",
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
+    "activities": "Activities",
     "more": "More"
   },
   "timer": {
@@ -411,5 +413,131 @@
     "editInputAria": "whiteboard name",
     "emptyName": "Untitled",
     "editInputError": "Name cannot be empty"
+  },
+  "activity": {
+    "edit": "Edit",
+    "play": "Practice",
+    "modeEdit": "Editing",
+    "modePlay": "Practice",
+    "renameAria": "Activity name",
+    "renamePlaceholder": "Enter a name",
+    "renameEmpty": "Name cannot be empty",
+    "check": "Check",
+    "reset": "Reset",
+    "reveal": "Show answer",
+    "studentSection": "Students can",
+    "studentInteract": "Answer",
+    "studentCheck": "Check answers",
+    "studentReset": "Reset attempt",
+    "studentReveal": "See the answer",
+    "batchHint": "Actions will apply to all selected activities ({{count}})",
+    "gapHint": "Select a word in the text, then click “Make a blank”",
+    "gapHintShort": "select a word first",
+    "makeGap": "Make a blank",
+    "removeGap": "Remove blank",
+    "gapInput": "Type",
+    "gapChoice": "Choose",
+    "gapDrag": "Drag",
+    "gapChoiceHint": "Mark the correct option",
+    "gapN": "Gap {{n}}",
+    "gapAnswers": "Correct answers, separated by |",
+    "gapAnswersLabel": "Correct answers",
+    "gapAnswerPlaceholder": "Correct answer",
+    "gapSynonymPlaceholder": "Another accepted answer · Enter",
+    "addAnswer": "Add",
+    "choices": "Choices, separated by |",
+    "choicesLabel": "Answer choices",
+    "choicePlaceholder": "Add a choice",
+    "wordBank": "Word bank, separated by |",
+    "wordBankLabel": "Extra words for dragging",
+    "wordBankPlaceholder": "Add a word · Enter",
+    "dragMode": "Drag instead of connecting",
+    "addPair": "Add pair",
+    "addLeft": "Add on the left",
+    "addRight": "Add on the right",
+    "removeItem": "Remove",
+    "matchingEditHint": "Draw lines for the correct pairs. An item on the left can connect to several on the right.",
+    "category": "Category",
+    "addCategory": "Add category",
+    "card": "Card",
+    "addCard": "Add card",
+    "removeCard": "Remove card",
+    "cardColor": "Card color",
+    "cardColorNone": "No color",
+    "dropHere": "Drop here",
+    "pickMatch": "Pick a match on the right",
+    "connectFrom": "Drag a line to a point on the right",
+    "connectTo": "Connect here",
+    "orderingHint": "Top-to-bottom order is the correct one.",
+    "uploadImage": "Upload image",
+    "changeImage": "Replace",
+    "removeImage": "Remove",
+    "imageUploading": "Uploading…",
+    "imagePlaceholder": "Upload an image, then click to place a hotspot",
+    "imagePlaceholderPlay": "The image will appear here",
+    "label": "Label",
+    "distractor": "Extra label",
+    "addDistractor": "Add extra label",
+    "multipleAnswers": "Multiple correct answers",
+    "randomize": "Shuffle options",
+    "option": "Option",
+    "addOption": "Add option",
+    "columns": "Columns",
+    "tile": "Tile",
+    "addTile": "Add tile",
+    "noRepeat": "No repeats",
+    "draw": "Next",
+    "reshuffle": "Reshuffle",
+    "drawPrompt": "Press Next",
+    "picker": {
+      "title": "Activities",
+      "beta": "beta",
+      "add": "Add to board",
+      "cancel": "Cancel"
+    },
+    "catalog": {
+      "gap-text": {
+        "description": "A text with blanks: students restore words and phrases right in the sentence.",
+        "mechanics": "Select a word and turn it into a blank. Each blank can be typed, chosen from a list, or filled by dragging. You can accept several answers and add extra words to the bank."
+      },
+      "matching": {
+        "description": "Two columns to match by meaning, translation, or image.",
+        "mechanics": "Connect pairs with lines — an item on the left can link to several on the right. You can switch to dragging cards instead of lines. Cards can have images, and extra items on the right work as distractors."
+      },
+      "sorting": {
+        "description": "Cards to sort into categories — topics, parts of speech, or any traits you set.",
+        "mechanics": "Drag a card into a column. Cards can include images. Checking highlights cards that landed in the wrong category."
+      },
+      "ordering": {
+        "description": "Items to put in the correct sequence: steps, timeline, or ranking.",
+        "mechanics": "Move items with the up and down arrows. You can add an image to each item. Top to bottom is the correct order."
+      },
+      "label-image": {
+        "description": "Labels to place on the right spots of a diagram, map, or photo.",
+        "mechanics": "Upload an image and click to place hotspots. Students drag labels onto the points. Extra labels make the task harder."
+      },
+      "multiple-choice": {
+        "description": "A question with answer options — a short quiz on the board.",
+        "mechanics": "One or several correct answers. Options can be shuffled so each student sees a different order."
+      },
+      "mystery-tiles": {
+        "description": "Hidden tiles that open one by one — useful for revealing a topic step by step.",
+        "mechanics": "Tap a tile to show text or an image. You can set how many columns to use. This is a reveal format, not a test: there is no score."
+      },
+      "random-card": {
+        "description": "A random card from a deck: a question, role, or warm-up prompt.",
+        "mechanics": "Next draws a card. Cards can have an image and a color. You can block repeats until the deck is empty, then reshuffle."
+      }
+    },
+    "kinds": {
+      "gap-text": "Gap text",
+      "matching": "Matching",
+      "sorting": "Sorting",
+      "ordering": "Ordering",
+      "label-image": "Label image",
+      "multiple-choice": "Multiple choice",
+      "mystery-tiles": "Mystery tiles",
+      "random-card": "Random card"
+    }
   }
 }
