@@ -29,11 +29,7 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
   React.useEffect(() => {
     if (!editor?.isDestroyed && !initialFixDone.current) {
       initialFixDone.current = true;
-      setTimeout(() => {
-        if (!editor.isDestroyed) {
-          editor.view.dispatch(editor.state.tr);
-        }
-      }, 0);
+      editor.view.dispatch(editor.state.tr);
     }
   }, [editor]);
 

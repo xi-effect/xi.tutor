@@ -24,7 +24,7 @@ export const DrawingToolbar = ({
   canUndo,
 }: DrawingToolbarPropsT) => {
   return (
-    <div className="bg-background-surface border-border-default absolute top-2 left-2 z-100 flex items-center gap-1 rounded-lg border p-1 px-2 shadow-md">
+    <div className="bg-background-surface border-border-default absolute top-2 left-2 z-10 flex items-center gap-1 rounded-lg border p-1 px-2 shadow-md">
       {COLORS.map((color) => (
         <Button
           key={color}
