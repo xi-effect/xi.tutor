@@ -92,6 +92,7 @@ export function LabelImageActivity({
           ) : (
             <DropZone
               zoneId={hotspot.id}
+              label={t('activity.dropHere')}
               status={itemStatus(checkStatus, byItem, hotspot.id)}
               disabled={locked}
               child={

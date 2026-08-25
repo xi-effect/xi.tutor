@@ -163,6 +163,7 @@ export function SortingActivity({
             <DropZone
               zoneId={category.id}
               label={t('activity.dropHere')}
+              className="min-h-24 w-full"
               disabled={locked}
               onDropToken={(_zoneId, tokenId) =>
                 onAttempt({

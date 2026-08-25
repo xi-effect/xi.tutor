@@ -19,7 +19,7 @@ export function isActivityKind(value: unknown): value is ActivityKind {
 
 export const ACTIVITY_DEFAULT_SIZE: Record<ActivityKind, { w: number; h: number }> = {
   'gap-text': { w: 560, h: 360 },
-  matching: { w: 580, h: 400 },
+  matching: { w: 720, h: 400 },
   sorting: { w: 600, h: 420 },
   ordering: { w: 480, h: 400 },
   'label-image': { w: 580, h: 460 },

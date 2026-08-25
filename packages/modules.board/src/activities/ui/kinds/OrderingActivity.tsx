@@ -124,25 +124,25 @@ export function OrderingActivity({
             <span className="min-w-0 flex-1">{item.text}</span>
             <Button
               type="button"
-              variant="ghost"
+              variant="secondary"
               size="s"
               className="size-7 p-0"
               data-board-control=""
               disabled={locked}
               onClick={() => move(index, -1)}
             >
-              <ArrowUp size="sm" className="fill-icon-secondary size-4" />
+              <ArrowUp size="sm" className="size-4 fill-current" />
             </Button>
             <Button
               type="button"
-              variant="ghost"
+              variant="secondary"
               size="s"
               className="size-7 p-0"
               data-board-control=""
               disabled={locked}
               onClick={() => move(index, 1)}
             >
-              <ArrowBottom size="sm" className="fill-icon-secondary size-4" />
+              <ArrowBottom size="sm" className="size-4 fill-current" />
             </Button>
           </motion.div>
         );

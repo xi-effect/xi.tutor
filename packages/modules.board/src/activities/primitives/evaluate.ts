@@ -1,3 +1,4 @@
+import { matchingTargets, sameIdSet } from '../model/matching';
 import type { ActivityAttempt, ActivityDefinition, ValidationResult } from '../model/types';
 import { answersMatch } from './text';
 
@@ -28,10 +29,13 @@ export function evaluateActivity(
     case 'matching': {
       const byItem: Record<string, boolean> = {};
       for (const left of definition.left) {
-        const expected = definition.pairs[left.id];
-        const actual =
-          definition.mode === 'drag' ? attempt.placements[left.id] : attempt.connections[left.id];
-        byItem[left.id] = Boolean(expected) && actual === expected;
+        const expected = matchingTargets(definition.pairs[left.id]);
+        if (expected.length === 0) continue;
+        if (definition.mode === 'drag') {
+          byItem[left.id] = attempt.placements[left.id] === expected[0];
+        } else {
+          byItem[left.id] = sameIdSet(expected, matchingTargets(attempt.connections[left.id]));
+        }
       }
       return result(byItem);
     }

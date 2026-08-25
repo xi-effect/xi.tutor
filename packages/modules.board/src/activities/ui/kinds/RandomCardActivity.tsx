@@ -284,7 +284,7 @@ export function RandomCardActivity({
       <div className="flex items-center gap-2">
         <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
           <Button
-            variant="default"
+            variant="primary"
             size="s"
             className="h-7 px-3 text-xs"
             data-board-control=""

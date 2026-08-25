@@ -3,7 +3,14 @@ import { Textarea, type TextareaProps } from '@xipkg/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import {
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from 'react';
 import { boardMenuSurfaceClass } from '../../ui/boardTheme';
 
 function useStopBoardKeys() {
@@ -50,33 +57,33 @@ export function ActivityInputField({
   );
 }
 
-export function ActivityTextareaField({
-  onPointerDown,
-  onKeyDown,
-  className,
-  variant = 's',
-  ...props
-}: TextareaProps) {
-  const stop = useStopBoardKeys();
+export const ActivityTextareaField = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  function ActivityTextareaField(
+    { onPointerDown, onKeyDown, className, variant = 's', ...props },
+    ref,
+  ) {
+    const stop = useStopBoardKeys();
 
-  return (
-    <Textarea
-      variant={variant}
-      hideCounter
-      data-board-control=""
-      className={cn('min-h-16 w-full min-w-0 resize-y', className)}
-      {...props}
-      onPointerDown={(event) => {
-        stop.onPointerDown(event);
-        onPointerDown?.(event);
-      }}
-      onKeyDown={(event) => {
-        stop.onKey(event);
-        onKeyDown?.(event);
-      }}
-    />
-  );
-}
+    return (
+      <Textarea
+        ref={ref}
+        variant={variant}
+        hideCounter
+        data-board-control=""
+        className={cn('min-h-16 w-full min-w-0 resize-y', className)}
+        {...props}
+        onPointerDown={(event) => {
+          stop.onPointerDown(event);
+          onPointerDown?.(event);
+        }}
+        onKeyDown={(event) => {
+          stop.onKey(event);
+          onKeyDown?.(event);
+        }}
+      />
+    );
+  },
+);
 
 export function ActivityDraftInputField({
   value,

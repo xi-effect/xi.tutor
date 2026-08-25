@@ -30,7 +30,7 @@ export type MatchingDefinition = {
   mode: 'connect' | 'drag';
   left: MatchingItem[];
   right: MatchingItem[];
-  pairs: Record<string, string>;
+  pairs: Record<string, string | string[]>;
 };
 
 export type SortingCategory = { id: string; title: string };
@@ -103,7 +103,7 @@ export type ActivityAttempt = {
   values: Record<string, string>;
   selected: Record<string, boolean>;
   placements: Record<string, string | null>;
-  connections: Record<string, string | null>;
+  connections: Record<string, string | string[] | null>;
   order: string[];
   optionOrder: string[];
   bankOrder: string[];

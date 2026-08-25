@@ -52,6 +52,19 @@ describe('evaluateActivity', () => {
     expect(scored.total).toBe(2);
   });
 
+  it('принимает несколько связей у одного элемента matching', () => {
+    const definition = getDefaultDefinition('matching');
+    if (definition.kind !== 'matching') throw new Error('kind');
+    const leftId = definition.left[0]!.id;
+    const extra = definition.right[1]!.id;
+    definition.pairs[leftId] = [definition.right[0]!.id, extra];
+    const attempt = createEmptyAttempt(definition, 1);
+    attempt.connections[leftId] = [definition.right[0]!.id, extra];
+    expect(evaluateActivity(definition, attempt).byItem[leftId]).toBe(true);
+    attempt.connections[leftId] = [definition.right[0]!.id];
+    expect(evaluateActivity(definition, attempt).byItem[leftId]).toBe(false);
+  });
+
   it('проверяет категории и порядок', () => {
     const sorting = getDefaultDefinition('sorting');
     if (sorting.kind !== 'sorting') throw new Error('kind');

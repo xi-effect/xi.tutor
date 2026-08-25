@@ -1,3 +1,4 @@
+import { matchingPairs } from '../model/matching';
 import { createEmptyAttempt } from '../model/defaults';
 import type { ActivityAttempt, ActivityDefinition } from '../model/types';
 
@@ -29,10 +30,14 @@ export function revealAttempt(
         else next.values[gap.id] = answer;
       }
       break;
-    case 'matching':
-      next.connections = { ...definition.pairs };
-      next.placements = { ...definition.pairs };
+    case 'matching': {
+      const pairs = matchingPairs(definition);
+      next.connections = pairs;
+      next.placements = Object.fromEntries(
+        Object.entries(pairs).map(([leftId, rightIds]) => [leftId, rightIds[0] ?? null]),
+      );
       break;
+    }
     case 'sorting':
       for (const item of definition.items) {
         next.placements[item.id] = item.categoryId;

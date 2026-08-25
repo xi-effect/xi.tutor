@@ -61,7 +61,7 @@ export function ActivityComponent({ shape }: { shape: ActivityShape }) {
           />
         </div>
         <div
-          className="min-h-0 min-w-0 flex-1"
+          className="min-h-0 min-w-0 flex-1 overflow-visible"
           data-board-control=""
           style={{ pointerEvents: 'auto' }}
           onPointerDown={(event) => event.stopPropagation()}

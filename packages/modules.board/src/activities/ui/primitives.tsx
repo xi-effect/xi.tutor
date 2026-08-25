@@ -5,7 +5,13 @@ import { motion } from 'motion/react';
 import { useEffect, type ReactNode, type SyntheticEvent } from 'react';
 import type { ItemStatus } from '../model/types';
 import { useTokenDnd } from './TokenDnd';
-import { activityCardClass, activitySelectedClass, activityStatusBorderClass } from './activityUi';
+import {
+  activityCardClass,
+  activityControlClass,
+  activityDropZoneClass,
+  activitySelectedClass,
+  activityStatusBorderClass,
+} from './activityUi';
 import { ActivityInputField, ActivitySelectField } from './activityFields';
 import { ActivityImage } from './ActivityImage';
 import { activityHover, activityItemTransition, activityItemVariants } from './activityUiMotion';
@@ -62,7 +68,8 @@ export function DraggableToken({
         }}
         className={cn(
           activityCardClass,
-          'flex h-auto cursor-grab items-center gap-2 px-2 py-1 active:cursor-grabbing',
+          activityControlClass,
+          'hover:border-brand-80 flex h-auto cursor-grab items-center gap-2 px-3 py-2 active:cursor-grabbing',
           picked && activitySelectedClass,
           dragging && 'opacity-50',
           statusClass[status],
@@ -82,6 +89,7 @@ export function DropZone({
   child,
   status = 'idle',
   disabled,
+  className,
   onDropToken,
 }: {
   zoneId: string;
@@ -89,6 +97,7 @@ export function DropZone({
   child?: ReactNode;
   status?: ItemStatus;
   disabled?: boolean;
+  className?: string;
   onDropToken: (zoneId: string, tokenId: string) => void;
 }) {
   const stopBoardGesture = useStopBoardGesture();
@@ -114,12 +123,9 @@ export function DropZone({
       }}
       whileHover={disabled ? undefined : { scale: 1.02 }}
       transition={activityItemTransition}
-      className={cn(
-        'border-border-default bg-background-surface flex min-h-9 min-w-16 items-center justify-center rounded-lg border border-dashed px-2 py-1 text-sm',
-        statusClass[status],
-      )}
+      className={cn(activityDropZoneClass, statusClass[status], className)}
     >
-      {child ?? <span className="text-text-secondary">{label ?? '—'}</span>}
+      {child ?? <span>{label ?? '—'}</span>}
     </motion.div>
   );
 }
@@ -155,8 +161,9 @@ export function Selectable({
         onClick={onToggle}
         className={cn(
           activityCardClass,
-          'flex h-auto w-full items-center justify-start gap-2 text-left',
-          selected && 'bg-status-info-background',
+          activityControlClass,
+          'hover:border-brand-80 flex h-auto min-h-11 w-full items-center justify-start gap-2 text-left',
+          selected && activitySelectedClass,
           statusClass[status],
         )}
       >
@@ -248,8 +255,9 @@ export function HiddenContent({
           onPointerDown={stopBoardGesture}
           onClick={onReveal}
           className={cn(
-            'border-border-default col-start-1 row-start-1 flex h-auto min-h-20 items-center justify-center rounded-xl border p-2 text-sm',
-            'bg-background-subtle text-text-secondary',
+            activityControlClass,
+            'border-brand-80 col-start-1 row-start-1 flex h-auto min-h-20 items-center justify-center rounded-xl border-2 p-2 text-sm font-medium',
+            'bg-status-info-background text-brand-80 hover:bg-status-info-background/80 focus:bg-status-info-background',
           )}
           style={faceStyle}
         >
