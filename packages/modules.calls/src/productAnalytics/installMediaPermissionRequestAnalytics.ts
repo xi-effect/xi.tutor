@@ -10,13 +10,17 @@ const resolveMediaSource = (): 'prejoin' | 'lesson' => {
   return state.inLessonMediaContext ? 'lesson' : 'prejoin';
 };
 
-const queryMediaPermission = async (name: 'camera' | 'microphone'): Promise<MediaPermissionState> => {
+const queryMediaPermission = async (
+  name: 'camera' | 'microphone',
+): Promise<MediaPermissionState> => {
   if (typeof navigator === 'undefined' || !navigator.permissions?.query) {
     return 'unknown';
   }
 
   try {
-    const status = await navigator.permissions.query({ name } as PermissionDescriptor);
+    const status = await navigator.permissions.query({
+      name,
+    } as unknown as PermissionDescriptor);
     return status.state;
   } catch {
     return 'unknown';
@@ -36,8 +40,12 @@ const shouldTrackPermissionRequest = async (
   videoRequested: boolean,
 ): Promise<boolean> => {
   const [microphoneState, cameraState] = await Promise.all([
-    audioRequested ? queryMediaPermission('microphone') : Promise.resolve<MediaPermissionState>('granted'),
-    videoRequested ? queryMediaPermission('camera') : Promise.resolve<MediaPermissionState>('granted'),
+    audioRequested
+      ? queryMediaPermission('microphone')
+      : Promise.resolve<MediaPermissionState>('granted'),
+    videoRequested
+      ? queryMediaPermission('camera')
+      : Promise.resolve<MediaPermissionState>('granted'),
   ]);
 
   return (

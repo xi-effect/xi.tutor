@@ -366,17 +366,17 @@
 
 ### Запуск занятия и ВКС
 
-| Событие                    | Статус                  | Когда                                      |
-| -------------------------- | ----------------------- | ------------------------------------------ |
-| `prejoin_viewed`           | новый                   | Есть токен, ещё не `connected`             |
-| `lesson_started`           | существующий            | Репетитор инициировал старт (после токена) |
-| `lesson_joined`            | существующий            | Ученик вошёл                               |
-| `media_permission_granted` | новый                   | Камера/мик включены                        |
-| `media_permission_denied`  | новый                   | `MediaDevicesError`                        |
-| `media_permission_requested` | новый                 | Первый `getUserMedia` в сессии, если Permissions API = `prompt` (или API недоступен); не на каждый preview/unmute |
-| `call_connect_attempted`   | новый                   | `connectionState === connecting`           |
-| `call_connected`           | существующий (расширен) | Успешное подключение                       |
-| `call_connection_failed`   | существующий (расширен) | Ошибка токена / permissions / др.          |
+| Событие                      | Статус                  | Когда                                                                                                             |
+| ---------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `prejoin_viewed`             | новый                   | Есть токен, ещё не `connected`                                                                                    |
+| `lesson_started`             | существующий            | Репетитор инициировал старт (после токена)                                                                        |
+| `lesson_joined`              | существующий            | Ученик вошёл                                                                                                      |
+| `media_permission_granted`   | новый                   | Камера/мик включены                                                                                               |
+| `media_permission_denied`    | новый                   | `MediaDevicesError`                                                                                               |
+| `media_permission_requested` | новый                   | Первый `getUserMedia` в сессии, если Permissions API = `prompt` (или API недоступен); не на каждый preview/unmute |
+| `call_connect_attempted`     | новый                   | `connectionState === connecting`                                                                                  |
+| `call_connected`             | существующий (расширен) | Успешное подключение                                                                                              |
+| `call_connection_failed`     | существующий (расширен) | Ошибка токена / permissions / др.                                                                                 |
 
 Общий `attempt_id` на одну попытку подключения. Reconnect → новый `attempt_id`, тот же `lesson_id` (сейчас = `classroom_id`).
 
