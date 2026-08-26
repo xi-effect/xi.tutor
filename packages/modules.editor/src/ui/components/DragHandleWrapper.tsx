@@ -66,12 +66,12 @@ export const DragHandleWrapper = ({
 }: DragHandleWrapperPropsT) => {
   const { t } = useTranslation('editor');
   const activeBlockRef = useRef<{ pos: number; id: string | null } | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const setGlobalBlockMenuOpen = useInterfaceStore((s) => s.setBlockMenuOpen);
 
-  const setMenuOpenCB = useCallback(
+  const setMenuOpen = useCallback(
     (open: boolean) => {
-      setMenuOpen(open);
+      setIsOpen(open);
       setGlobalBlockMenuOpen(open);
     },
     [setGlobalBlockMenuOpen],
@@ -169,15 +169,15 @@ export const DragHandleWrapper = ({
         <BlockMenu
           editor={editor}
           isReadOnly={isReadOnly}
-          open={menuOpen}
-          setOpen={setMenuOpenCB}
+          open={isOpen}
+          setOpen={setMenuOpen}
           getActiveBlock={getActiveBlock}
         >
           <Button
             className="hover:bg-background-page active:bg-background-page group h-5 w-5 rounded p-0"
             variant="none"
           >
-            {menuOpen ? (
+            {isOpen ? (
               <Close size="sm" className="fill-icon-primary size-6" />
             ) : (
               <Plus size="sm" className="fill-icon-primary size-6" />
