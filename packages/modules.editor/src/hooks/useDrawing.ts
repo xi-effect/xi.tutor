@@ -4,7 +4,8 @@ import { useInterfaceStore } from '../store/interfaceStore';
 
 export function useDrawingToggle(initial = false) {
   const [isDrawing, setIsDrawing] = useState(initial);
-  const isBlockMenuOpen = useInterfaceStore((s) => s.activeModal !== null);
+  const isModalOpen = useInterfaceStore((s) => s.activeModal !== null);
+  const isBlockMenuOpen = useInterfaceStore((s) => s.isBlockMenuOpen);
 
   const toggle = useCallback(() => setIsDrawing((v) => !v), []);
   const close = useCallback(() => setIsDrawing(false), []);
@@ -12,6 +13,10 @@ export function useDrawingToggle(initial = false) {
   useEffect(() => {
     if (isBlockMenuOpen) setIsDrawing(false);
   }, [isBlockMenuOpen]);
+
+  useEffect(() => {
+    if (isModalOpen) setIsDrawing(false);
+  }, [isModalOpen]);
 
   return { isDrawing, toggle, close };
 }

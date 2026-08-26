@@ -11,6 +11,8 @@ type useInterfaceStoreT = {
   activeModal: EditorModalT;
   openModal: (modal: Exclude<EditorModalT, null>) => void;
   closeModal: () => void;
+  isBlockMenuOpen: boolean;
+  setBlockMenuOpen: (open: boolean) => void;
 };
 
 export const useInterfaceStore = create<useInterfaceStoreT>()((set) => ({
@@ -21,4 +23,6 @@ export const useInterfaceStore = create<useInterfaceStoreT>()((set) => ({
   activeModal: null,
   openModal: (modal) => set({ activeModal: modal }),
   closeModal: () => set({ activeModal: null }),
+  isBlockMenuOpen: false,
+  setBlockMenuOpen: (open) => set({ isBlockMenuOpen: open }),
 }));

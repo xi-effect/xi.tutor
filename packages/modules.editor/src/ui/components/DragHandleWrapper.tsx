@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { BlockMenu } from './BlockMenu';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActiveBlockT } from '../../types';
+import { useInterfaceStore } from '../../store/interfaceStore';
 
 function getEditorContentBox(editorDom: HTMLElement) {
   const rect = editorDom.getBoundingClientRect();
@@ -66,6 +67,15 @@ export const DragHandleWrapper = ({
   const { t } = useTranslation('editor');
   const activeBlockRef = useRef<{ pos: number; id: string | null } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const setGlobalBlockMenuOpen = useInterfaceStore((s) => s.setBlockMenuOpen);
+
+  const setMenuOpenCB = useCallback(
+    (open: boolean) => {
+      setMenuOpen(open);
+      setGlobalBlockMenuOpen(open);
+    },
+    [setGlobalBlockMenuOpen],
+  );
 
   const handleNodeChange = useCallback((data: ActiveBlockT) => {
     if (!data?.node || data?.pos === null) return;
@@ -160,7 +170,7 @@ export const DragHandleWrapper = ({
           editor={editor}
           isReadOnly={isReadOnly}
           open={menuOpen}
-          setOpen={setMenuOpen}
+          setOpen={setMenuOpenCB}
           getActiveBlock={getActiveBlock}
         >
           <Button

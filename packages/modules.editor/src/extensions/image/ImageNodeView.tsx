@@ -22,7 +22,6 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
   const { isDrawing, toggle, close } = useDrawingToggle();
 
   const getActiveBlock = useNodeActiveBlock(editor, getPos, 'image');
-
   const { downloadImage } = useBlockMenuActions(editor, getActiveBlock);
 
   const selected =
