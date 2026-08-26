@@ -6,7 +6,7 @@ import { PageControls } from '../media/PageControls';
 import { StrokeT } from '../../types';
 import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
 import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
-import { useDrawingTool } from '../../hooks';
+import { useDrawingLayer } from '../../hooks';
 
 const PDF_RENDER_QUALITY_SCALE = 2;
 
@@ -51,10 +51,7 @@ export const PdfViewer = ({
     [annotations, page, onAnnotationsChange],
   );
 
-  const { tool, canUndo, clear, undo, setTool } = useDrawingTool(
-    currentStrokes,
-    handlePageStrokesChange,
-  );
+  const { overlayProps, toolbarProps } = useDrawingLayer(currentStrokes, handlePageStrokesChange);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -172,22 +169,11 @@ export const PdfViewer = ({
           <canvas ref={canvasRef} className="block" style={{ opacity: loading ? 0.3 : 1 }} />
           <DrawingOverlay
             className="absolute inset-0"
-            strokes={annotations[page] ?? []}
-            onChangeStrokes={(next) => onAnnotationsChange({ ...annotations, [page]: next })}
-            tool={tool}
+            {...overlayProps}
             isActive={isDrawingBarOpen && !isReadOnly && !loading}
           />
         </div>
-        {isDrawingBarOpen && (
-          <DrawingToolbar
-            tool={tool}
-            onToolChange={setTool}
-            onUndo={undo}
-            onClear={clear}
-            onClose={closeDrawingBar}
-            canUndo={canUndo}
-          />
-        )}
+        {isDrawingBarOpen && <DrawingToolbar {...toolbarProps} onClose={closeDrawingBar} />}
       </div>
       <PageControls
         fileName={fileName}

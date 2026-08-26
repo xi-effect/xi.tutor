@@ -3,9 +3,11 @@ import { Edit } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 
-type DrawMenuItemPropsT = { onSelect: () => void };
+type DrawMenuItemProps = {
+  onSelect: () => void;
+};
 
-export const DrawMenuItem = ({ onSelect }: DrawMenuItemPropsT) => {
+export const DrawMenuItem = ({ onSelect }: DrawMenuItemProps) => {
   const { t } = useTranslation('editor');
 
   return (

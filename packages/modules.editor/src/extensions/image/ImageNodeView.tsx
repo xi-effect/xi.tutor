@@ -2,13 +2,14 @@ import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import {
   useBlockMenuActions,
   useDrawingToggle,
-  useDrawingTool,
+  useDrawingLayer,
+  useNodeAttribute,
   useProtectedImage,
   useYjsContext,
+  useNodeActiveBlock,
 } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useCallback } from 'react';
-import { ActiveBlockT, StrokeT } from '../../types';
+import { StrokeT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
 import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
 import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
@@ -17,39 +18,11 @@ import { DrawMenuItem } from '../../ui/components/drawing/DrawMenuItem';
 
 export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
   const src = node.attrs.src;
-  const { isDrawing, close, toggle } = useDrawingToggle();
-
   const { editor, storageToken, isReadOnly } = useYjsContext();
+  const { isDrawing, toggle, close } = useDrawingToggle();
 
-  const getActiveBlock = useCallback((): ActiveBlockT | undefined => {
-    if (typeof getPos !== 'function' || !editor) return;
-    try {
-      const pos = getPos();
-      if (pos == null || pos < 0) return;
-      // Верифицируем что нода на этой позиции — действительно image
-      const { doc } = editor.state;
-      if (pos >= doc.content.size) return;
-      const $pos = doc.resolve(pos);
-      const nodeAtPos = $pos.nodeAfter;
+  const getActiveBlock = useNodeActiveBlock(editor, getPos, 'image');
 
-      if (nodeAtPos?.type.name === 'image' && nodeAtPos.attrs.src === src) {
-        return { editor, node: nodeAtPos, pos };
-      }
-
-      let found: ActiveBlockT | undefined;
-      doc.descendants((n, p) => {
-        if (found) return false;
-        if (n.type.name === 'image' && n.attrs.src === src) {
-          found = { editor, node: n, pos: p };
-          return false;
-        }
-        return true;
-      });
-      return found;
-    } catch {
-      return;
-    }
-  }, [editor, getPos, src]);
   const { downloadImage } = useBlockMenuActions(editor, getActiveBlock);
 
   const selected =
@@ -57,14 +30,14 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
 
   const imageSrc = useProtectedImage(src, storageToken);
 
-  const annotations: StrokeT[] = node.attrs.annotations ?? [];
-
-  const handleChangeStrokes = useCallback(
-    (next: StrokeT[]) => updateAttributes({ annotations: next }),
-    [updateAttributes],
+  const [annotations, setAnnotations] = useNodeAttribute<StrokeT[]>(
+    updateAttributes,
+    'annotations',
+    node.attrs.annotations,
+    [],
   );
 
-  const { tool, canUndo, clear, undo, setTool } = useDrawingTool(annotations, handleChangeStrokes);
+  const { overlayProps, toolbarProps } = useDrawingLayer(annotations, setAnnotations);
 
   return (
     <NodeViewWrapper className="group relative flex justify-center" contentEditable={false}>
@@ -81,22 +54,11 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
 
         <DrawingOverlay
           className="absolute inset-0"
-          strokes={annotations}
-          onChangeStrokes={handleChangeStrokes}
-          tool={tool}
+          {...overlayProps}
           isActive={isDrawing && !isReadOnly}
         />
 
-        {isDrawing && (
-          <DrawingToolbar
-            tool={tool}
-            onToolChange={setTool}
-            onUndo={undo}
-            onClear={clear}
-            onClose={close}
-            canUndo={canUndo}
-          />
-        )}
+        {isDrawing && <DrawingToolbar {...toolbarProps} onClose={close} />}
       </div>
 
       <div

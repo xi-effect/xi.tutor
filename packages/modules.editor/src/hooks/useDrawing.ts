@@ -1,11 +1,17 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DrawToolT, StrokeT } from '../types';
+import { useInterfaceStore } from '../store/interfaceStore';
 
 export function useDrawingToggle(initial = false) {
   const [isDrawing, setIsDrawing] = useState(initial);
+  const isBlockMenuOpen = useInterfaceStore((s) => s.activeModal !== null);
 
   const toggle = useCallback(() => setIsDrawing((v) => !v), []);
   const close = useCallback(() => setIsDrawing(false), []);
+
+  useEffect(() => {
+    if (isBlockMenuOpen) setIsDrawing(false);
+  }, [isBlockMenuOpen]);
 
   return { isDrawing, toggle, close };
 }

@@ -7,6 +7,7 @@ import {
   useBlockMenuActions,
   useDrawingToggle,
   useNodeActiveBlock,
+  useNodeAttribute,
   useProtectedImage,
   useYjsContext,
 } from '../../hooks';
@@ -51,11 +52,11 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
     [insertImage, node.attrs.fileName, storageToken, uploadImage],
   );
 
-  const annotations: Record<number, StrokeT[]> = node.attrs.annotations ?? {};
-
-  const handleAnnotationsChange = useCallback(
-    (next: Record<number, StrokeT[]>) => updateAttributes({ annotations: next }),
-    [updateAttributes],
+  const [annotations, setAnnotations] = useNodeAttribute<Record<number, StrokeT[]>>(
+    updateAttributes,
+    'annotations',
+    node.attrs.annotations,
+    {},
   );
 
   return (
@@ -73,7 +74,7 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
             isReadOnly={isReadOnly}
             onExtractPage={handleExtract}
             annotations={annotations}
-            onAnnotationsChange={handleAnnotationsChange}
+            onAnnotationsChange={setAnnotations}
             isDrawingBarOpen={isDrawing}
             closeDrawingBar={close}
           />
