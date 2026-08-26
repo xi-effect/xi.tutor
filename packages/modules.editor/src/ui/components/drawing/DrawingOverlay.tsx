@@ -104,6 +104,7 @@ export const DrawingOverlay = ({
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
       if (!isActive) return;
+      e.stopPropagation();
       const point = getPoint(e);
       if (!point) return;
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
