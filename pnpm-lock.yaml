@@ -1058,9 +1058,6 @@ importers:
       react-i18next:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react-image-file-resizer:
-        specifier: 0.4.8
-        version: 0.4.8
       sonner:
         specifier: ^2.0.7
         version: 2.0.8(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1116,6 +1113,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@types/node@20.19.43)(vite@8.2.1(@types/node@20.19.43)(jiti@2.7.0)(terser@5.50.0))
 
   packages/features.charts:
     dependencies:
@@ -11438,9 +11438,6 @@ packages:
       react-native:
         optional: true
 
-  react-image-file-resizer@0.4.8:
-    resolution: {integrity: sha512-Ue7CfKnSlsfJ//SKzxNMz8avDgDSpWQDOnTKOp/GNRFJv4dO9L5YGHNEnj40peWkXXAK2OK0eRIoXhOYpUzUTQ==}
-
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -18311,8 +18308,6 @@ snapshots:
       react: 19.2.8
     optionalDependencies:
       react-dom: 19.2.8(react@19.2.8)
-
-  react-image-file-resizer@0.4.8: {}
 
   react-is@16.13.1: {}
 
