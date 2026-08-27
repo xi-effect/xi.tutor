@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useYjsStore } from '../hooks/useYjsStore';
 import { YjsContext } from './YjsContext';
-import { StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 import { DEMO_STORAGE_TOKEN, DEMO_YDOC_ID } from '../utils/yjsConstants';
 import { ydocIdFromBoardDumpFilename } from '../utils/parseYjsBoardDoc';
@@ -11,7 +11,7 @@ export { useYjsContext } from './YjsContext';
 
 type YjsProviderProps = {
   children: ReactNode;
-  storageItem?: StorageItemT;
+  storageItem?: ContentYDocItem;
   /** Если true — используются тестовые значения ydocId и storageToken */
   isDemo?: boolean;
   cachedYdocId?: string;
@@ -97,7 +97,7 @@ export const YjsProvider = ({
   }, [useLocalDump, localDumpUrl, localDumpYdocIdEnv, storageItem?.ydoc_id]);
 
   // Извлекаем примитивные значения для мемоизации
-  const storageToken = isDemo ? DEMO_STORAGE_TOKEN : storageItem?.storage_token || '';
+  const storageToken = isDemo ? DEMO_STORAGE_TOKEN : storageItem?.content_token || '';
   const ydocId =
     localDump?.ydocId ?? (isDemo ? DEMO_YDOC_ID : storageItem?.ydoc_id || cachedYdocId || '');
   const cacheUpdate =

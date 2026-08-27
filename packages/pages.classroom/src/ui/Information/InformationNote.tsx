@@ -1,12 +1,12 @@
 import { Button } from '@xipkg/button';
 import { ClassroomT } from 'common.api';
 import { useAddNoteStorageItem } from 'common.services';
-import { StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { Editor } from 'modules.editor';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const InformationNoteContent = ({ note }: { note: StorageItemT }) => {
+const InformationNoteContent = ({ note }: { note: ContentYDocItem }) => {
   return (
     <div className="w-full min-w-0 pl-12 [&_.xi-editor]:px-0 [&_.xi-editor]:py-2">
       <Editor storageItem={note} />
@@ -44,7 +44,7 @@ const InformationNoteCreate = ({ classroom }: { classroom: ClassroomT }) => {
 
 type InformationNoteProps = {
   classroom: ClassroomT;
-  note?: StorageItemT;
+  note?: ContentYDocItem;
 };
 
 export const InformationNote = ({ classroom, note }: InformationNoteProps) => {

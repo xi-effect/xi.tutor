@@ -9,9 +9,11 @@ import {
   uploadAudioRequest,
   uploadDocumentRequest,
   uploadFileRequest,
+  uploadPresentationRequest,
 } from 'common.services';
 import { resolveAssetUrl, getCachedBlobUrl } from './resolveAssetUrl';
 import { getRegisteredTokens } from './tokenRegistry';
+import { isPresentationFile } from '../constants/mimeTypes';
 
 /**
  * Описание одной "единицы работы" для фоновой докачки. Снимок props/meta
@@ -26,8 +28,8 @@ export interface PasteUploadTask {
   meta: Record<string, any> | undefined;
   /** true — поддерживается uploadImageRequest (asset.type=image/video). */
   canBeImage: boolean;
-  /** Эндпоинт storage-service для shape'ов audio/pdf. */
-  uploadKind?: 'audio' | 'document';
+  /** Эндпоинт content-service для shape'ов audio/pdf/presentation. */
+  uploadKind?: 'audio' | 'document' | 'presentation';
 }
 
 /**
@@ -76,7 +78,7 @@ export function preparePastedContent(
   }
 
   for (const shape of contentAny.shapes ?? []) {
-    if (shape.type !== 'audio' && shape.type !== 'pdf') continue;
+    if (shape.type !== 'audio' && shape.type !== 'pdf' && shape.type !== 'presentation') continue;
 
     if (isSameBoard && shape.meta?.originalSrc) {
       (shape.props as any).src = shape.meta.originalSrc;
@@ -89,7 +91,12 @@ export function preparePastedContent(
       props: { ...shape.props },
       meta: shape.meta,
       canBeImage: false,
-      uploadKind: shape.type === 'audio' ? 'audio' : 'document',
+      uploadKind:
+        shape.type === 'audio'
+          ? 'audio'
+          : shape.type === 'presentation'
+            ? 'presentation'
+            : 'document',
     });
   }
 
@@ -266,11 +273,14 @@ async function doResolveAndUpload(
   }
 
   // 1. data:/blob: URLs (e.g. from clipboard prefetch) or external http sources.
-  //    Our storage URLs always require `x-storage-token` header so plain fetch()
+  //    Our file URLs always require `x-content-token` header so plain fetch()
   //    against them is a guaranteed 403 — skip those.
   if (!blob) {
     const isInlineUrl = src.startsWith('data:') || src.startsWith('blob:');
-    const isExternalHttp = src.startsWith('http') && !src.includes('/storage-service/');
+    const isExternalHttp =
+      src.startsWith('http') &&
+      !src.includes('/storage-service/') &&
+      !src.includes('/content-service/');
     if (isInlineUrl || isExternalHttp) {
       try {
         blob = await fetchBlob(src);
@@ -346,7 +356,7 @@ async function uploadPastedFile({
   token: string;
   canBeImage: boolean;
   mimeType: string;
-  uploadKind?: 'audio' | 'document';
+  uploadKind?: 'audio' | 'document' | 'presentation';
 }): Promise<string> {
   if (canBeImage && mimeType.startsWith('image/')) {
     return uploadImageRequest({ file, token });
@@ -356,6 +366,9 @@ async function uploadPastedFile({
   }
   if (uploadKind === 'document' || mimeType === 'application/pdf') {
     return uploadDocumentRequest({ file, token });
+  }
+  if (uploadKind === 'presentation' || isPresentationFile(file)) {
+    return uploadPresentationRequest({ file, token });
   }
   return uploadFileRequest({ file, token });
 }

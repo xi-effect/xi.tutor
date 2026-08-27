@@ -1,5 +1,5 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
-import { StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { useFetching } from 'common.config';
 
 export const useGetClassroomStorageItemStudent = ({
@@ -29,7 +29,7 @@ export const useGetClassroomStorageItemStudent = ({
   });
 
   return {
-    data: data as StorageItemT,
+    data: data as ContentYDocItem,
     isError,
     isLoading,
     ...rest,

@@ -20,5 +20,14 @@ export * from './files';
 export * from './contacts';
 export * from './paymentsTemplates';
 export * from './classroom-payments';
-export { filesApiConfig, FilesQueryKey } from 'common.api';
+export {
+  filesApiConfig,
+  FilesQueryKey,
+  type FileKind,
+  type FileResponse,
+  type FileMetaResponse,
+  type UploadFileResponse,
+  type ContentTokenHeaders,
+  type ReadFileHeaders,
+} from 'common.api';
 export * from './scheduler';
