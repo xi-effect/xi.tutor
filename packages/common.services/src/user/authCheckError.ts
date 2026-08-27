@@ -7,7 +7,8 @@ const TRANSIENT_NETWORK_CODES = new Set([
   'ECONNRESET',
 ]);
 
-const MAX_TRANSIENT_RETRIES = 8;
+/** Первая попытка + 3 ретрая покрывают обрыв на 1–2 с, дальше не держим спиннер. */
+const MAX_TRANSIENT_RETRIES = 3;
 
 type ErrorLike = {
   code?: string;
@@ -25,6 +26,8 @@ export const getHttpStatus = (error: unknown): number | undefined => {
   const err = asErrorLike(error);
   if (typeof err.response?.status === 'number') return err.response.status;
   if (typeof err.status === 'number') return err.status;
+  const fromMessage = err.message?.match(/status code (\d+)/i);
+  if (fromMessage) return Number(fromMessage[1]);
   return undefined;
 };
 

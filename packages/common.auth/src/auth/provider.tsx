@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const {
     data: user,
     isSuccess,
-    isError,
     error,
+    failureReason,
     isFetching,
     failureCount,
     refetch,
@@ -41,26 +41,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     throw new Error('No QueryClient set, use QueryClientProvider to set one');
   }
 
+  const authError = error ?? failureReason;
+
   const resolvedAuth = resolveAuthState({
     isAuthenticated,
     isSuccess,
     user,
-    isError,
     isFetching,
-    error,
+    error: authError,
   });
 
   useSessionRestoreNetworkToast({
     isSessionUnresolved: resolvedAuth === null,
     failureCount,
-    error,
+    error: authError,
   });
 
   React.useEffect(() => {
-    if (!isError || !isAuthFailureError(error)) return;
-    hasEverBeenUnauthenticated.current = true;
+    if (resolvedAuth !== false) return;
+    if (isAuthFailureError(authError)) {
+      hasEverBeenUnauthenticated.current = true;
+    }
     setIsAuthenticated(false);
-  }, [isError, error]);
+  }, [resolvedAuth, authError]);
 
   React.useEffect(() => {
     if (!isSuccess || !user || hasTrackedSessionInit) return;

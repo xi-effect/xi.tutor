@@ -18,6 +18,12 @@ describe('getHttpStatus', () => {
     expect(getHttpStatus({ status: 403 })).toBe(403);
   });
 
+  it('читает status из сообщения axios', () => {
+    expect(
+      getHttpStatus({ code: 'ERR_BAD_REQUEST', message: 'Request failed with status code 401' }),
+    ).toBe(401);
+  });
+
   it('возвращает undefined без HTTP-ответа', () => {
     expect(getHttpStatus({ code: 'ERR_NETWORK' })).toBeUndefined();
     expect(getHttpStatus(undefined)).toBeUndefined();
@@ -28,6 +34,12 @@ describe('isAuthFailureError', () => {
   it('считает 401 и 403 потерей сессии', () => {
     expect(isAuthFailureError(httpError(401))).toBe(true);
     expect(isAuthFailureError(httpError(403))).toBe(true);
+    expect(
+      isAuthFailureError({
+        code: 'ERR_BAD_REQUEST',
+        message: 'Request failed with status code 401',
+      }),
+    ).toBe(true);
   });
 
   it('не считает сетевые и серверные ошибки потерей сессии', () => {
@@ -53,6 +65,12 @@ describe('shouldRetryCurrentUserQuery', () => {
   it('не ретраит 401/403', () => {
     expect(shouldRetryCurrentUserQuery(0, httpError(401))).toBe(false);
     expect(shouldRetryCurrentUserQuery(0, httpError(403))).toBe(false);
+    expect(
+      shouldRetryCurrentUserQuery(0, {
+        code: 'ERR_BAD_REQUEST',
+        message: 'Request failed with status code 401',
+      }),
+    ).toBe(false);
   });
 
   it('не ретраит прочие 4xx', () => {
@@ -65,13 +83,13 @@ describe('shouldRetryCurrentUserQuery', () => {
 
   it('ретраит сетевые ошибки до лимита', () => {
     expect(shouldRetryCurrentUserQuery(0, { code: 'ERR_NETWORK' })).toBe(true);
-    expect(shouldRetryCurrentUserQuery(7, { code: 'ECONNABORTED' })).toBe(true);
-    expect(shouldRetryCurrentUserQuery(8, { code: 'ERR_NETWORK' })).toBe(false);
+    expect(shouldRetryCurrentUserQuery(2, { code: 'ECONNABORTED' })).toBe(true);
+    expect(shouldRetryCurrentUserQuery(3, { code: 'ERR_NETWORK' })).toBe(false);
   });
 
   it('ретраит 5xx до лимита', () => {
     expect(shouldRetryCurrentUserQuery(0, httpError(500))).toBe(true);
-    expect(shouldRetryCurrentUserQuery(8, httpError(502))).toBe(false);
+    expect(shouldRetryCurrentUserQuery(3, httpError(502))).toBe(false);
   });
 });
 
