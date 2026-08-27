@@ -142,7 +142,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
           {classroom.kind === 'group' && (
             <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
-              {displayName?.[0].toUpperCase() ?? ''}
+              {displayName?.[0]?.toUpperCase() ?? ''}
             </div>
           )}
 
