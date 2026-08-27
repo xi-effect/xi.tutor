@@ -18,6 +18,21 @@ describe('parseNotificationUrl', () => {
     });
   });
 
+  it('сохраняет role из ссылки уведомления', () => {
+    expect(parseNotificationUrl('/classrooms/7?role=student&goto=call')).toEqual({
+      to: '/classrooms/$classroomId',
+      params: { classroomId: '7' },
+      search: { role: 'student', goto: 'call' },
+    });
+  });
+
+  it('сохраняет role на /payments', () => {
+    expect(parseNotificationUrl('/payments?role=tutor&tab=invoices')).toEqual({
+      to: '/payments',
+      search: { role: 'tutor', tab: 'invoices' },
+    });
+  });
+
   it('парсит /payments', () => {
     expect(parseNotificationUrl('/payments')).toEqual({
       to: '/payments',

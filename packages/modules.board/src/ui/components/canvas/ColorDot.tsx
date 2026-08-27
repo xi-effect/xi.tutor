@@ -14,7 +14,7 @@ export const ColorDot = ({ colorClass, colorCss, isSelected, onClick }: ColorDot
     onPointerDown={(event) => event.stopPropagation()}
     onClick={onClick}
     className={cn(
-      'h-6 w-6 shrink-0 cursor-pointer rounded-full transition-all',
+      'border-border-default h-6 w-6 shrink-0 cursor-pointer rounded-full border transition-all',
       !colorCss && colorClass,
       isSelected ? 'ring-border-strong ring-2 ring-offset-1' : 'hover:scale-110',
     )}

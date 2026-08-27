@@ -37,6 +37,8 @@ declare module '@tanstack/react-router' {
     event_instance_id?: string;
     repetition_mode_id?: string;
     instance_index?: string;
+    /** Повторный переход на ту же доску из звонка */
+    board_nav?: string;
     /** Deep link доски: id фигуры (или несколько через запятую) */
     shape?: string;
     /** Deep link доски: id треда комментария */

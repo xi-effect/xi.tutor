@@ -11,10 +11,14 @@ const paramsSchema = z.object({
   callId: z.string(),
 });
 
-const searchSchema = z.object({
-  carouselType: z.enum(['horizontal', 'vertical']).optional(),
-  call: z.string().optional(),
-});
+const searchSchema = z
+  .object({
+    carouselType: z.enum(['horizontal', 'vertical']).optional(),
+    call: z.string().optional(),
+    role: z.enum(['tutor', 'student']).optional(),
+    read_notification_id: z.string().optional(),
+  })
+  .passthrough();
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/call/$callId')({
