@@ -51,6 +51,7 @@
     "features.classroom.rename": "workspace:*",
     "features.avatar.editor": "workspace:*",
     "i18next": "24.2.2",
+    "motion": "^13.1.1",
     "dayjs": "1.11.13",
     "modules.board": "workspace:*",
     "modules.calls": "workspace:*",

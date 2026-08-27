@@ -14,6 +14,7 @@ import { Skeleton } from 'common.ui';
 import { useMaterialActions } from 'features.materials.card';
 import { useFocusModeStore } from 'common.ui';
 import { useEffect, useRef, useState } from 'react';
+import { useBoardTimer } from '../../../hooks/useBoardTimer';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { stopEvent } from '../../../shapes/audio/constants';
 import { CommentsFeedButton } from '../../../comments';
@@ -31,7 +32,7 @@ import { useTranslation } from 'react-i18next';
 import { useBoardIsMobile } from '../shared';
 
 export const Header = () => {
-  const [openTimer, setOpenTimer] = useState(false);
+  const { isVisible: openTimer, setVisible: setOpenTimer } = useBoardTimer();
   const isMobile = useBoardIsMobile();
   const { focusMode, setFocusMode, toggleFocusMode } = useFocusModeStore();
   const { t } = useTranslation('board');
@@ -261,7 +262,7 @@ export const Header = () => {
         </div>
         <div className="flex w-[172px] flex-col-reverse items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
-            <TimerDropdown open={openTimer} setOpen={setOpenTimer} />
+            <TimerDropdown />
           </div>
           <div
             className={`${boardPanelClass} pointer-events-auto flex items-center justify-center gap-2 p-1 pl-2`}
@@ -280,7 +281,7 @@ export const Header = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 unlockBoardTimerAudio();
-                setOpenTimer((prev) => !prev);
+                setOpenTimer(!openTimer);
               }}
             >
               <AlarmClock size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />

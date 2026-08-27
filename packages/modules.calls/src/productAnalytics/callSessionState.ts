@@ -19,6 +19,8 @@ export type CallSessionAnalyticsState = {
   prejoinViewedSent: boolean;
   mediaPermissionGrantedSent: boolean;
   mediaPermissionDeniedSent: boolean;
+  /** Уже отправили или решили не слать media_permission_requested в этой сессии */
+  mediaPermissionRequestedSent: boolean;
   /** Комната уже была connected в текущей сессии звонка → source=lesson */
   inLessonMediaContext: boolean;
   lessonId: string | null;
@@ -42,6 +44,7 @@ export const createCallSessionAnalyticsState = (): CallSessionAnalyticsState => 
   prejoinViewedSent: false,
   mediaPermissionGrantedSent: false,
   mediaPermissionDeniedSent: false,
+  mediaPermissionRequestedSent: false,
   inLessonMediaContext: false,
   lessonId: null,
 });

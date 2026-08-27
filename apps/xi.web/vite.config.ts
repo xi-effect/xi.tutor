@@ -115,6 +115,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         'sonner',
         'i18next',
         'react-i18next',
+        'motion',
+        'motion/react',
         ...(useCallsLink ? CALLS_RUNTIME_DEPS : []),
       ],
       exclude: ['@paddleocr/paddleocr-js'],
