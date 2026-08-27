@@ -1,14 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
+import { currentUserRetryDelay, shouldRetryCurrentUserQuery } from './authCheckError';
 
 const currentUserQueryOptions = {
   queryKey: [UserQueryKey.Home],
-  retry: false,
+  retry: shouldRetryCurrentUserQuery,
+  retryDelay: currentUserRetryDelay,
   retryOnMount: false,
   refetchOnMount: false,
-  refetchOnReconnect: false,
-} as const;
+  refetchOnReconnect: true,
+};
 
 export const useCurrentUser = (disabled?: boolean) => {
   const { data, isError, isLoading, ...rest } = useQuery({

@@ -108,17 +108,19 @@ const RouterWithAuthContext = () => {
 
 export const RouterWithAuth = () => {
   return (
-    <AuthProvider>
-      <AuthSocketBridge>
-        <ThemeProvider>
-          <NetworkProvider>
-            <NotificationsProvider>
-              <RouterWithAuthContext />
-              <AppToaster />
-            </NotificationsProvider>
-          </NetworkProvider>
-        </ThemeProvider>
-      </AuthSocketBridge>
-    </AuthProvider>
+    <>
+      <AuthProvider>
+        <AuthSocketBridge>
+          <ThemeProvider>
+            <NetworkProvider>
+              <NotificationsProvider>
+                <RouterWithAuthContext />
+              </NotificationsProvider>
+            </NetworkProvider>
+          </ThemeProvider>
+        </AuthSocketBridge>
+      </AuthProvider>
+      <AppToaster />
+    </>
   );
 };

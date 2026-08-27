@@ -1,7 +1,15 @@
 import * as React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LoadingScreen } from 'common.ui';
-import { useSignup, useSignout, useNetworkAuthIntegration, useCurrentUser } from 'common.services';
+import {
+  useSignup,
+  useSignout,
+  useNetworkAuthIntegration,
+  useCurrentUser,
+  isAuthFailureError,
+  resolveAuthState,
+  useSessionRestoreNetworkToast,
+} from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getProductAnalyticsRole,
@@ -11,16 +19,6 @@ import {
 } from 'common.utils';
 import { AuthContext } from './context';
 import { SignupData } from 'common.types';
-
-const getHttpStatus = (error: unknown): number | undefined => {
-  if (!error || typeof error !== 'object') return undefined;
-  const err = error as { response?: { status?: number }; status?: number };
-  if (typeof err.response?.status === 'number') return err.response.status;
-  if (typeof err.status === 'number') return err.status;
-  return undefined;
-};
-
-const isAuthFailureStatus = (status: number | undefined) => status === 401 || status === 403;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
@@ -35,6 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isError,
     error,
     isFetching,
+    failureCount,
     refetch,
   } = useCurrentUser(isAuthenticated === false);
 
@@ -42,26 +41,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     throw new Error('No QueryClient set, use QueryClientProvider to set one');
   }
 
-  const httpStatus = getHttpStatus(error);
-  const isUnauthorized = isError && isAuthFailureStatus(httpStatus);
+  const resolvedAuth = resolveAuthState({
+    isAuthenticated,
+    isSuccess,
+    user,
+    isError,
+    isFetching,
+    error,
+  });
 
-  const resolvedAuth: boolean | null = (() => {
-    if (isAuthenticated === false) return false;
-    if (isSuccess && user) return true;
-    // После login() refetch ещё идёт: isError может быть от прошлого 401 — не откатываем.
-    if (isError && !isFetching) return false;
-    if (isAuthenticated === true) return true;
-    return isAuthenticated;
-  })();
+  useSessionRestoreNetworkToast({
+    isSessionUnresolved: resolvedAuth === null,
+    failureCount,
+    error,
+  });
 
   React.useEffect(() => {
-    if (isUnauthorized) {
-      hasEverBeenUnauthenticated.current = true;
-      setIsAuthenticated(false);
-    } else if (isError) {
-      setIsAuthenticated(false);
-    }
-  }, [isError, isUnauthorized]);
+    if (!isError || !isAuthFailureError(error)) return;
+    hasEverBeenUnauthenticated.current = true;
+    setIsAuthenticated(false);
+  }, [isError, error]);
 
   React.useEffect(() => {
     if (!isSuccess || !user || hasTrackedSessionInit) return;
