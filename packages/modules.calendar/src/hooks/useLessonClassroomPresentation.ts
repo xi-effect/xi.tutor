@@ -5,6 +5,7 @@ import {
   useGetClassroomStudent,
   useSubjectsById,
 } from 'common.services';
+import { resolveClassroomNameForProfile } from '../utils/resolveClassroomNameForProfile';
 
 const getAvatarUserId = (
   classroom: ClassroomTutorResponseSchema | undefined,
@@ -62,19 +63,20 @@ export const useLessonClassroomPresentation = ({
   if (!enabled) {
     return {
       subjectName: undefined,
-      classroomName: fallbackClassroomName,
+      classroomName: resolveClassroomNameForProfile(fallbackClassroomName),
       avatarUserId: fallbackAvatarUserId,
       isLoading: false,
     };
   }
 
   const rawSubjectName = classroom?.subject?.name?.trim() || subjectData?.name?.trim() || undefined;
+  const rawClassroomName = isTutor
+    ? getClassroomDisplayName(classroom ?? { name: fallbackClassroomName })
+    : (classroom?.name ?? fallbackClassroomName);
 
   return {
     subjectName: rawSubjectName || undefined,
-    classroomName: isTutor
-      ? getClassroomDisplayName(classroom ?? { name: fallbackClassroomName })
-      : (classroom?.name ?? fallbackClassroomName),
+    classroomName: resolveClassroomNameForProfile(rawClassroomName),
     avatarUserId: getAvatarUserId(classroom, isTutor, fallbackAvatarUserId),
     isLoading: isUserLoading || classroomQuery.isLoading,
   };

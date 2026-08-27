@@ -33,6 +33,22 @@ describe('createFormSchema', () => {
     }
   });
 
+  it('отклоняет title из одних пробелов', () => {
+    const result = schema.safeParse({ ...validBase, title: ' ' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some((i) => i.path.join('.') === 'title')).toBe(true);
+    }
+  });
+
+  it('обрезает пробелы вокруг title', () => {
+    const result = schema.safeParse({ ...validBase, title: '  Алгебра  ' });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.title).toBe('Алгебра');
+    }
+  });
+
   it('требует startTime и endTime', () => {
     const result = schema.safeParse({ ...validBase, startTime: '', endTime: '' });
     expect(result.success).toBe(false);
