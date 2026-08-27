@@ -59,7 +59,7 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
     throw new Error('boardId or materialId must be provided');
   }
 
-  const storageUsable = Boolean(storageItem?.ydoc_id && storageItem?.storage_token);
+  const storageUsable = Boolean(storageItem?.ydoc_id && storageItem?.content_token);
   const cachedDoc =
     cachedBoard.doc && (!storageItem?.ydoc_id || storageItem.ydoc_id === cachedBoard.doc.ydocId)
       ? cachedBoard.doc
@@ -74,7 +74,7 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
 
     if (!storageUsable && !canShowFromCache) {
       if (isLoading) return <LoadingScreen />;
-      if (isError || !storageItem?.ydoc_id || !storageItem?.storage_token) {
+      if (isError || !storageItem?.ydoc_id || !storageItem?.content_token) {
         return <NotFoundPage withLogo={false} />;
       }
     }
@@ -82,7 +82,7 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
 
   const canvasToken = isOfflineDemo
     ? DEMO_STORAGE_TOKEN
-    : (localYdocStorageToken ?? storageItem?.storage_token ?? '');
+    : (localYdocStorageToken ?? storageItem?.content_token ?? '');
 
   return (
     <YjsProvider

@@ -53,12 +53,12 @@ export const Materials = () => {
 
   const tutorList = useGetClassroomMaterialsList({
     classroomId: classroomId || '',
-    content_type: contentType,
+    content_kind: contentType,
     disabled: !classroomId || !roleReady || !isTutor,
   });
   const studentList = useGetClassroomMaterialsListStudent({
     classroomId: classroomId || '',
-    content_type: contentType,
+    content_kind: contentType,
     disabled: !classroomId || !roleReady || isTutor,
   });
 
@@ -129,7 +129,7 @@ export const Materials = () => {
                     key={material.id}
                     {...material}
                     layout="gallery"
-                    className="h-40 w-full"
+                    className="h-44 w-full"
                   />
                 ))}
               </div>

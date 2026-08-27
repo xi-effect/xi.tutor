@@ -20,6 +20,7 @@
     "@xipkg/dropdown": "3.1.0",
     "@xipkg/file": "4.0.0",
     "@xipkg/icons": "3.1.5",
+    "@xipkg/popover": "^4.0.0",
     "@xipkg/switcher-animate": "1.1.0",
     "@xipkg/tabs": "^2.2.0",
     "@xipkg/userprofile": "4.2.0",

@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 
 import {
   uploadFileRequest,
+  uploadPresentationRequest,
   deleteFileFromDB,
   getFileFromDB,
   getAllFileKeys,
@@ -71,7 +72,10 @@ export const useRetryFileQueue = () => {
           continue;
         }
 
-        const fileId = await uploadFileRequest({
+        const upload = fileObject.file.name.toLowerCase().endsWith('.pptx')
+          ? uploadPresentationRequest
+          : uploadFileRequest;
+        const fileId = await upload({
           file: fileObject.file,
           token: fileObject.token,
         });

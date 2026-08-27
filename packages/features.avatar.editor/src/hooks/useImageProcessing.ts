@@ -1,10 +1,10 @@
 import { toast } from 'sonner';
-import Resizer from 'react-image-file-resizer';
 import { useTranslation } from 'react-i18next';
-import { getCroppedImg } from '../utils';
+import { blobToDataUrl, getCroppedImg, resizeImageFile } from '../utils';
 import { CropArea } from './useCrop';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
+import { runProcessCroppedImage } from './processCroppedImage';
 
 type ImageProcessingProps = {
   withLoadingToServer?: boolean;
@@ -23,59 +23,36 @@ export const useImageProcessing = ({
   const { t } = useTranslation('avatarEditor');
 
   // Бэкенд PUT .../users/current/avatar/ принимает любые форматы и сам делает 128×128 и webp
-  const resizeFile = (file: File, type: 'blob' | 'base64') =>
-    new Promise((resolve) => {
-      Resizer.imageFileResizer(
-        file,
-        256,
-        256,
-        'PNG',
-        100,
-        0,
-        (uri) => {
-          resolve(uri);
-        },
-        type,
-      );
-    });
-
-  const processCroppedImage = async (file: File, croppedAreaPixels: CropArea | null) => {
-    try {
-      if (!croppedAreaPixels) return null;
-
-      const croppedImage = (await getCroppedImg(file, croppedAreaPixels)) as Blob;
-      const f = new File([croppedImage], 'avatar.png', { type: 'image/png' });
-      const resizedImage = (await resizeFile(f, 'blob')) as Blob;
-      const resizedImageBase = (await resizeFile(f, 'base64')) as string;
-
-      const form = new FormData();
-      form.append('avatar', resizedImage, 'avatar.png');
-
-      if (!withLoadingToServer && onBase64Return) {
-        return onBase64Return(resizedImageBase, form);
-      }
-
-      const axiosInstance = await getAxiosInstance();
-      const response = await axiosInstance({
-        method: 'PUT',
-        url: `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
-        data: form,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 204) {
+  const processCroppedImage = async (file: string, croppedAreaPixels: CropArea | null) =>
+    runProcessCroppedImage({
+      file,
+      croppedAreaPixels,
+      withLoadingToServer,
+      onOpenChange,
+      setDate,
+      onBase64Return,
+      getCroppedImg,
+      resizeFile: (imageFile) => resizeImageFile(imageFile),
+      blobToDataUrl,
+      uploadAvatar: async (form) => {
+        const axiosInstance = await getAxiosInstance();
+        return axiosInstance({
+          method: 'PUT',
+          url: `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
+          data: form,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      },
+      onSuccess: () => {
         toast(t('toastSuccess'));
-        onOpenChange(false);
-        if (setDate) setDate(new Date());
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    return null;
-  };
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error(t('toastError'));
+      },
+    });
 
   return {
     processCroppedImage,

@@ -1,7 +1,13 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
 import { Modal, ModalBody, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
+
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
 
 export type ConfirmDialogProps = {
   open: boolean;
@@ -26,9 +32,23 @@ export const ConfirmDialog = ({
   isPending = false,
   confirmVariant = 'error',
 }: ConfirmDialogProps) => {
+  useEffect(() => cleanupBodyScrollLock, []);
+
+  const handleConfirm = () => {
+    onOpenChange(false);
+    cleanupBodyScrollLock();
+    onConfirm();
+  };
+
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="bg-background-surface w-full max-w-[480px] rounded-3xl shadow-[0px_24px_32px_0px_rgba(16,16,16,0.08),0px_16px_16px_0px_rgba(16,16,16,0.08)]">
+      <ModalContent
+        className="bg-background-surface w-full max-w-[480px] rounded-3xl shadow-[0px_24px_32px_0px_rgba(16,16,16,0.08),0px_16px_16px_0px_rgba(16,16,16,0.08)]"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          cleanupBodyScrollLock();
+        }}
+      >
         <ModalBody className="flex flex-col gap-6 p-6">
           <div className="flex items-center justify-between gap-4 overflow-hidden">
             <ModalTitle className="font-playfair text-text-primary m-0 flex-1 text-2xl leading-normal font-medium">
@@ -41,11 +61,11 @@ export const ConfirmDialog = ({
               disabled={isPending}
               aria-label="Close"
             >
-              <Close className="fill-gray-60 group-hover:fill-gray-80 size-6 transition-colors" />
+              <Close className="fill-icon-secondary group-hover:fill-icon-primary size-6 transition-colors" />
             </button>
           </div>
 
-          <ModalDescription className="text-m-base text-text-primary m-0 line-clamp-3 leading-5">
+          <ModalDescription className="text-m-base text-text-secondary m-0 line-clamp-3 leading-5">
             {description}
           </ModalDescription>
 
@@ -54,7 +74,7 @@ export const ConfirmDialog = ({
               type="button"
               variant="none"
               size="m"
-              className="bg-gray-5 text-text-secondary hover:bg-gray-10 hover:text-text-secondary focus:bg-gray-10 focus:text-text-secondary active:bg-gray-10 active:text-text-secondary h-auto rounded-xl px-5 py-2.5 font-medium"
+              className="bg-background-page text-text-secondary hover:bg-background-subtle hover:text-text-secondary focus:bg-background-subtle focus:text-text-secondary active:bg-background-subtle active:text-text-secondary h-auto rounded-xl px-5 py-2.5 font-medium"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >
@@ -65,7 +85,7 @@ export const ConfirmDialog = ({
               variant={confirmVariant}
               size="m"
               className="h-auto rounded-xl px-5 py-2.5 font-medium"
-              onClick={onConfirm}
+              onClick={handleConfirm}
               disabled={isPending}
             >
               {confirmLabel}

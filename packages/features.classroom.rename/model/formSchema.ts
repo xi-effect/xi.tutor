@@ -8,7 +8,11 @@ export const useFormSchema = () => {
   return useMemo(
     () =>
       z.object({
-        name: z.string().nonempty(t('validation.nameRequired')).max(100, t('validation.nameMax')),
+        name: z
+          .string()
+          .trim()
+          .min(1, t('validation.nameRequired'))
+          .max(100, t('validation.nameMax')),
       }),
     [t],
   );

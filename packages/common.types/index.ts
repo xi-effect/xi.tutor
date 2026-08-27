@@ -24,14 +24,31 @@ export type {
   NotificationSearchRequest,
 } from './src/notifications';
 export type {
+  MaterialId,
+  YDocContentKind,
   MaterialT,
+  PersonalMaterialResponse,
+  ClassroomMaterialResponse,
+  MaterialCursor,
+  PersonalMaterialScope,
+  ClassroomMaterialScope,
+  MaterialScope,
+  AnyMaterialFilters,
+  AnyMaterialSearchRequest,
+  ClassroomMaterialFilters,
+  ClassroomMaterialSearchRequest,
   UpdateMaterialDataT,
   ClassroomMaterialsT,
   AccessModeT,
-  StorageItemT,
+  ContentYDocItem,
   MaterialActionsMenuPropsT,
   MaterialPropsT,
   ModalEditMaterialNamePropsT,
+} from './src/materials';
+export {
+  serializeMaterialScope,
+  PERSONAL_MATERIAL_SCOPE,
+  buildAnyMaterialFilters,
 } from './src/materials';
 export type {
   TemplateT,

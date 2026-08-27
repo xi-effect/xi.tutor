@@ -85,7 +85,11 @@ export const Header = () => {
             {isLoading ? (
               <Skeleton variant="text" className="h-6 w-full" />
             ) : (
-              <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
+              <EditableTitle
+                title={material.name ?? ''}
+                materialId={materialIdValue}
+                isTutor={isTutor}
+              />
             )}
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center">

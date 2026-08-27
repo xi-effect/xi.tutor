@@ -7,7 +7,7 @@ import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
 import { toast } from 'sonner';
 import { useCurrentUser } from 'common.services';
-import { StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import {
   HocuspocusProvider,
   type onAuthenticatedParameters,
@@ -22,7 +22,7 @@ type UseYjsStoreArgs = {
   hostUrl: string;
   ydocId: string;
   storageToken: string;
-  storageItem: StorageItemT;
+  storageItem: ContentYDocItem;
 };
 
 export type UseCollaborativeTiptapReturn = {
@@ -35,7 +35,7 @@ export type UseCollaborativeTiptapReturn = {
   isSynced: boolean;
   hasSyncError: boolean;
   storageToken: string;
-  storageItem: StorageItemT;
+  storageItem: ContentYDocItem;
   audioSyncMap: Y.Map<number>;
 };
 

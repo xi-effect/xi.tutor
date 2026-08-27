@@ -14,6 +14,7 @@
     "test:e2e": "pnpm --filter xi.web test:e2e",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format-check": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "check": "pnpm run format && pnpm run lint && pnpm run test && pnpm run build",
     "prepare": "husky",
     "calls:deps:npm": "node packages/modules.calls/scripts/switch-calls-deps.mjs npm && pnpm install",
     "calls:deps:link": "node packages/modules.calls/scripts/switch-calls-deps.mjs link && pnpm install"

@@ -7,7 +7,7 @@ const STORAGE_KEY = 'xi-draw-board-tokens';
 const MAX_TOKENS = 5;
 
 /**
- * Stores a board's x-storage-token in localStorage so that other boards
+ * Stores a board's content token in localStorage so that other boards
  * (including in other tabs) can use it to download files that belong to
  * that board. Most-recently-used token is first.
  */
@@ -25,7 +25,7 @@ export function registerToken(token: string): void {
 
 /**
  * Removes a token from the registry. Called when the server confirms
- * the token is dead ("Invalid storage token" / 403) so we stop trying it
+ * the token is dead ("Invalid content token" / 403) so we stop trying it
  * for any subsequent assets.
  */
 export function unregisterToken(token: string): void {

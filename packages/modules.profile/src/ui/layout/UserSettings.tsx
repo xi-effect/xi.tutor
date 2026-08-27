@@ -41,6 +41,14 @@ export const UserSettings = ({
     });
   }, [navigate, pathname, profileType]);
 
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.pointerEvents = '';
+      document.body.removeAttribute('data-scroll-locked');
+    };
+  }, []);
+
   const handleClose = useCallback(() => {
     setShowContent(false);
     navigate({

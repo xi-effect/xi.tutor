@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 type MaterialsDuplicateContextType = {
-  materialId: number | null;
+  materialId: string | null;
   open: boolean;
-  openModal: (materialId: number) => void;
+  openModal: (materialId: string) => void;
   closeModal: () => void;
 };
 
@@ -12,10 +12,10 @@ const MaterialsDuplicateContext = createContext<MaterialsDuplicateContextType | 
 );
 
 export const MaterialsDuplicateProvider = ({ children }: { children: ReactNode }) => {
-  const [materialId, setMaterialId] = useState<number | null>(null);
+  const [materialId, setMaterialId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
-  const openModal = (id: number) => {
+  const openModal = (id: string) => {
     setMaterialId(id);
     setOpen(true);
   };

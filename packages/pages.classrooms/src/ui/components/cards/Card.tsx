@@ -134,7 +134,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
             )}
             {kind === 'group' && (
               <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
-                {name?.[0].toUpperCase() ?? ''}
+                {name?.[0]?.toUpperCase() ?? ''}
               </div>
             )}
             <Tooltip delayDuration={2000}>

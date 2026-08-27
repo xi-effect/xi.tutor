@@ -17,7 +17,7 @@ async function fulfillJson(route: Route, status: number, body: unknown) {
     headers: {
       'Access-Control-Allow-Origin': 'http://localhost:5173',
       'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Allow-Headers': 'content-type,x-storage-token',
+      'Access-Control-Allow-Headers': 'content-type,x-content-token',
       'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
     },
     body: JSON.stringify(body),
@@ -30,19 +30,18 @@ async function fulfillCorsPreflight(route: Route) {
     headers: {
       'Access-Control-Allow-Origin': 'http://localhost:5173',
       'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Allow-Headers': 'content-type,x-storage-token',
+      'Access-Control-Allow-Headers': 'content-type,x-content-token',
       'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
     },
   });
 }
 
 const mockMaterial = {
-  id: 9001,
+  id: 'e2e-board',
   name: E2E_BOARD.name,
   content_kind: 'board',
-  created_at: '2026-01-01T00:00:00Z',
   updated_at: '2026-01-01T00:00:00Z',
-  kind: 'classroom',
+  access_kind: 'classroom',
 };
 
 export async function mockBoardSession(page: Page) {
@@ -76,10 +75,8 @@ export async function mockBoardSession(page: Page) {
 
     if (url.includes('/materials/') && url.includes('/storage-item/')) {
       await fulfillJson(route, 200, {
-        access_group_id: 'e2e-group',
-        storage_token: 'e2e-token',
-        kind: 'board',
         ydoc_id: 'e2e-ydoc',
+        content_token: 'e2e-token',
       });
       return;
     }

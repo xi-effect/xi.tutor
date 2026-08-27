@@ -1,4 +1,4 @@
-import { filesApiConfig, FilesQueryKey } from 'common.api';
+import { filesApiConfig, FilesQueryKey, type FileResponse } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { assertValidFileName } from './validateFileName';
 
@@ -18,10 +18,11 @@ export async function uploadAudioRequest({ file, token }: UploadAudioVars): Prom
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data',
-      ...(token ? { 'x-storage-token': token } : {}),
+      ...(token ? { 'x-content-token': token } : {}),
     },
   });
 
   if (response.status !== 201) throw new Error(`Audio upload failed: ${response.status}`);
-  return response.data.id as string;
+  const data = response.data as FileResponse;
+  return data.id;
 }

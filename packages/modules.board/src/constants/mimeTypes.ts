@@ -111,8 +111,15 @@ export const IMAGE_INPUT_ACCEPT = [...IMAGE_INPUT_EXTENSIONS, ...ALLOWED_IMAGE_M
 
 const PDF_MIME_TYPES = new Set(['application/pdf', 'application/x-pdf']);
 
+export const PPTX_MIME =
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+
 export function isPdfMime(type: string | undefined): boolean {
   return PDF_MIME_TYPES.has((type || '').toLowerCase());
+}
+
+export function isPresentationFile(file: { name: string; type: string }): boolean {
+  return file.name.toLowerCase().endsWith('.pptx') || file.type.toLowerCase() === PPTX_MIME;
 }
 
 export function getFileExtension(name: string): string | null {

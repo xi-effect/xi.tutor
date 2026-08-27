@@ -1,5 +1,5 @@
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
-import { MaterialT } from 'common.types';
+import { PersonalMaterialResponse } from 'common.types';
 import { useFetching } from 'common.config';
 
 export const useGetMaterial = ({ id, disabled }: { id: string; disabled?: boolean }) => {
@@ -16,7 +16,7 @@ export const useGetMaterial = ({ id, disabled }: { id: string; disabled?: boolea
   });
 
   return {
-    data: data as MaterialT,
+    data: data as PersonalMaterialResponse,
     isError,
     isLoading,
     ...rest,

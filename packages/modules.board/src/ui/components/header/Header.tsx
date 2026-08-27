@@ -123,7 +123,7 @@ export const Header = () => {
       return;
     }
 
-    handleUpdateName(classroomId ? 'classroom' : 'tutor', trimmedValue, () => {
+    handleUpdateName(classroomId ? 'classroom' : 'personal', trimmedValue, () => {
       setIsEditMode(false);
     });
   };
