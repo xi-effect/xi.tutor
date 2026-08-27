@@ -1,6 +1,8 @@
 #import <AVFoundation/AVFoundation.h>
-#import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
+#if TARGET_OS_OSX
+#import <CoreGraphics/CoreGraphics.h>
+#endif
 
 enum {
   SOVLIUM_MEDIA_CAMERA = 0,
@@ -10,7 +12,8 @@ enum {
 enum {
   SOVLIUM_PERM_GRANTED = 0,
   SOVLIUM_PERM_DENIED = 1,
-  SOVLIUM_PERM_PROMPT = 2
+  SOVLIUM_PERM_PROMPT = 2,
+  SOVLIUM_PERM_UNSUPPORTED = 3
 };
 
 static AVMediaType sovlium_media_type(int kind) {
@@ -54,10 +57,15 @@ int sovlium_media_permission_request(int kind) {
 }
 
 int sovlium_screen_permission_status(void) {
+#if TARGET_OS_OSX
   return CGPreflightScreenCaptureAccess() ? SOVLIUM_PERM_GRANTED : SOVLIUM_PERM_PROMPT;
+#else
+  return SOVLIUM_PERM_UNSUPPORTED;
+#endif
 }
 
 int sovlium_screen_permission_request(void) {
+#if TARGET_OS_OSX
   __block BOOL granted = NO;
   if ([NSThread isMainThread]) {
     granted = CGRequestScreenCaptureAccess();
@@ -67,4 +75,7 @@ int sovlium_screen_permission_request(void) {
     });
   }
   return granted ? SOVLIUM_PERM_GRANTED : SOVLIUM_PERM_DENIED;
+#else
+  return SOVLIUM_PERM_UNSUPPORTED;
+#endif
 }

@@ -35,10 +35,14 @@
           }
         } catch (e) {}
 
+        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__TAURI_INTERNALS__);
+        var injected = document.documentElement.getAttribute('data-theme');
         var preference =
           chosen && (stored === 'light' || stored === 'dark')
             ? stored
-            : 'light';
+            : isNative && (injected === 'light' || injected === 'dark')
+              ? injected
+              : 'light';
 
         document.documentElement.setAttribute('data-theme', preference);
         document.documentElement.setAttribute('data-theme-preference', preference);

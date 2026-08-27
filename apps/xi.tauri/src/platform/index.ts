@@ -29,11 +29,16 @@ export function detectPlatform(): PlatformKind {
 
   if (!isTauri) return 'web';
 
-  // Use UA to disambiguate desktop vs mobile inside Tauri. WKWebView and
-  // Android WebView both surface a recognisable UA, while desktop WebViews
-  // (WebView2 / WebKitGTK) do not include mobile markers.
+  const os = (window as unknown as { __SOVLIUM_NATIVE_OS__?: string }).__SOVLIUM_NATIVE_OS__;
+  if (os === 'ios' || os === 'android') return 'mobile';
+  if (os === 'macos' || os === 'windows' || os === 'linux') return 'desktop';
+
+  // Fallback when the init script has not run yet. iPadOS 13+ may spoof Macintosh.
   const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
-  if (/iPhone|iPad|iPod|Android/i.test(ua)) return 'mobile';
+  const touches = typeof navigator !== 'undefined' ? navigator.maxTouchPoints : 0;
+  if (/iPhone|iPad|iPod|Android/i.test(ua) || (/Macintosh/i.test(ua) && touches > 1)) {
+    return 'mobile';
+  }
   return 'desktop';
 }
 

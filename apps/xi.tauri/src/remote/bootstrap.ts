@@ -1,3 +1,4 @@
+import { hydrateShellTheme } from 'common.platform';
 import { tauriShellEnv } from '../env';
 import { getAppInfo } from '../tauri/commands';
 import { checkAndApplyUpdate } from '../tauri/updater';
@@ -53,7 +54,7 @@ function failureFromUnreachable(
   return {
     kind: 'unreachable',
     message:
-      'Не удалось открыть интерфейс Sovlium. Сервис временно недоступен или сеть блокирует доступ.',
+      'Не удалось открыть интерфейс sovlium. Сервис временно недоступен или сеть блокирует доступ.',
     detail,
   };
 }
@@ -98,10 +99,10 @@ export async function bootstrapRemoteShell(): Promise<void> {
     void bootstrapRemoteShell();
   };
 
-  showLoadingSplash('Подключаемся к Sovlium…');
+  await hydrateShellTheme();
+  showLoadingSplash('Подключаемся к sovlium…');
 
   try {
-    // Prefetch DNS/TLS while we also check the shell updater.
     const candidates = uniqueUrls([tauriShellEnv.remoteUrl, tauriShellEnv.remoteFallbackUrl]);
 
     if (candidates.length === 0) {
@@ -126,7 +127,16 @@ export async function bootstrapRemoteShell(): Promise<void> {
     updateLoadingStatus('Проверяем доступность сервиса…');
     const health = await pickHealthyRemoteUrl(candidates, tauriShellEnv.remoteTimeoutMs);
     if ('failures' in health) {
-      renderFailure(failureFromUnreachable(health.failures), retry);
+      renderFailure(
+        failureFromUnreachable(
+          health.failures.map((f) => ({
+            url: f.url,
+            error: f.error,
+            status: f.status,
+          })),
+        ),
+        retry,
+      );
       return;
     }
 
@@ -138,11 +148,10 @@ export async function bootstrapRemoteShell(): Promise<void> {
       const info = await getAppInfo();
       shellVersion = info.version || shellVersion;
     } catch {
-      // best-effort; treat as 0.0.0 if invoke fails
+      // best-effort
     }
 
     const compatFetch = await fetchCompatManifest(remoteUrl, tauriShellEnv.remoteTimeoutMs);
-    // Soft-fail on network errors for compat: health already passed.
     const outcome = evaluateCompat(shellVersion, compatFetch.manifest);
     if (outcome.status === 'shell-too-old') {
       renderFailure(
@@ -164,7 +173,7 @@ export async function bootstrapRemoteShell(): Promise<void> {
         ? outcome.manifest.remoteUrl
         : remoteUrl) || remoteUrl;
 
-    updateLoadingStatus('Открываем Sovlium…');
+    updateLoadingStatus('Открываем sovlium…');
     window.location.replace(navigateTo.endsWith('/') ? navigateTo : `${navigateTo}/`);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

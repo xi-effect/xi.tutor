@@ -39,8 +39,9 @@ apps/xi.tauri/
     ├── capabilities/
     │   ├── default.json    — базовый ACL (все платформы)
     │   ├── desktop.json    — updater + process (только Windows/macOS/Linux)
-    │   ├── remote.json     — IPC для remote UI на app/desktop.sovlium.ru
-    │   └── mobile.json     — пустой, заготовка под iOS/Android
+    │   ├── remote.json     — IPC для remote UI на app/desktop.sovlium.ru (desktop + mobile)
+    │   ├── mobile.json     — уведомления, clipboard, files, opener на iOS/Android
+    │   └── share-overlay.json / share-annotate.json — desktop overlay windows
     ├── icons/README.md     — как сгенерировать иконки через `pnpm tauri icon`
     └── src/
         ├── main.rs
@@ -48,15 +49,24 @@ apps/xi.tauri/
         ├── navigation.rs   — allowlist top-level navigations (*.sovlium.ru)
         ├── share_overlay.rs — Zoom-like always-on-top share control bar
         ├── commands/mod.rs — app_info, log_message, http_probe, save_file
-        ├── media.rs        — OS-level camera/mic/screen permission (macOS TCC)
+        ├── media.rs        — camera/mic (Apple AVFoundation; Android WebView prompt)
         └── setup/mod.rs    — placeholder под deep-links, tray и т.п.
 ```
 
-WebAPI, которые в WebView работают иначе, чем в Chrome (уведомления, скачивание,
-буфер обмена, внешние ссылки, камера/микрофон/экран, оверлей шаринга), живут в
+WebAPI, которые в WebView работают иначе, чем в Chrome, живут в
 `packages/common.platform`. Production remote UI — это `https://app.sovlium.ru`
-внутри WebView, поэтому адаптеры должны поставляться вместе с `xi.web`, а не
-только в `apps/xi.tauri/src`.
+внутри WebView, поэтому адаптеры едут вместе с `xi.web`. Один вход:
+`installNativeWebApiBridges()`.
+
+| API            | Браузер               | Desktop                    | iOS / Android (в т.ч. планшеты)   |
+| -------------- | --------------------- | -------------------------- | --------------------------------- |
+| Уведомления    | `Notification`        | `plugin-notification`      | то же                             |
+| Скачивание     | `<a download>`        | native Save dialog         | Save dialog, иначе Share sheet    |
+| Буфер обмена   | `navigator.clipboard` | `plugin-clipboard-manager` | то же                             |
+| Внешние ссылки | `window.open`         | `plugin-opener`            | системный браузер / приложение    |
+| Камера / мик   | `getUserMedia`        | TCC / WebView2             | AVFoundation / runtime permission |
+| Шаринг экрана  | `getDisplayMedia`     | + overlay                  | нет в WebView (`unsupported`)     |
+| PiP звонка     | Chrome Document PiP   | native mini-window         | compact UI, без shim              |
 
 ### Принципы
 
@@ -73,7 +83,7 @@ WebAPI, которые в WebView работают иначе, чем в Chrome 
 - **Платформенный слой явный.** Логика оболочки (updater, splash, navigation)
   проходит через `src/platform/*`. WebAPI (clipboard, notifications, files,
   media, openUrl, calls overlay) — через `common.platform`, который смотрит на
-  `__SOVLIUM_NATIVE__` / `__TAURI_INTERNALS__`. Никаких разрозненных
+  `__SOVLIUM_NATIVE__` / `__SOVLIUM_NATIVE_OS__` / `__TAURI_INTERNALS__`. Никаких разрозненных
   `if (window.__TAURI__)` в бизнес-коде.
 - **PWA отключён.** В Tauri service worker’ы не нужны и мешают updater’у.
 - **Capabilities-first.** Все плагины с side-effect’ами требуют явного гранта в
@@ -161,21 +171,33 @@ WKWebView на `tauri://localhost` не сохраняет third-party cookie `D
 Файл совместимости лежит в `apps/xi.web/public/native-compat.json` и должен
 деплоиться вместе с web. Пока `minShellVersion` = `0.0.0` (ворота открыты).
 
-### Камера и микрофон (macOS)
+### Камера и микрофон
 
-Для `getUserMedia` / LiveKit в **production** `.app` нужны:
+Для `getUserMedia` / LiveKit в нативной оболочке:
 
-- `src-tauri/Info.plist` — `NSCameraUsageDescription` / `NSMicrophoneUsageDescription`
-  (иначе TCC не показывает диалог);
-- `src-tauri/Entitlements.plist` — `device.camera` + `device.audio-input`
+**macOS / iOS**
+
+- `src-tauri/Info.plist` (macOS) и `src-tauri/Info.ios.plist` (iOS) —
+  `NSCameraUsageDescription` / `NSMicrophoneUsageDescription`
+  (иначе TCC / iOS privacy не показывает диалог);
+- macOS: `src-tauri/Entitlements.plist` — `device.camera` + `device.audio-input`
   (Hardened Runtime), подключён через `tauri.macos.conf.json` → `bundle.macOS.entitlements`.
+- Демонстрация экрана — только desktop (`NSScreenCaptureUsageDescription`).
+  На iOS / Android `getDisplayMedia` недоступен в WebView (`unsupported`).
 
-После пересборки macOS может один раз спросить доступ. Если диалога нет —
-проверьте **Системные настройки → Конфиденциальность → Камера / Микрофон** для Sovlium.
+**Android** (после `pnpm --filter xi.tauri android:init`) в
+`src-tauri/gen/android/app/src/main/AndroidManifest.xml`:
 
-Перед `getUserMedia` / `getDisplayMedia` `common.platform` вызывает Rust-команды
-`media_permission_*`: на macOS это TCC (`AVCaptureDevice` + `CGRequestScreenCaptureAccess`),
-на Windows WebView2 показывает свой диалог при самом capture.
+```xml
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+```
+
+Перед `getUserMedia` `common.platform` вызывает Rust-команды `media_permission_*`:
+на Apple — AVFoundation (и Screen Recording на macOS), на Android WebView
+показывает системный диалог при самом capture.
 
 ### Оверлей демонстрации экрана (Zoom-like)
 
@@ -188,76 +210,95 @@ WKWebView на `tauri://localhost` не сохраняет third-party cookie `D
 - Stop с панели эмитит `share-overlay-stop` → `setScreenShareEnabled(false)`.
 - Нужен `NSScreenCaptureUsageDescription` в `Info.plist` (Screen Recording).
 
-## Self-updater (Windows / macOS)
+## Self-updater и CI/CD (Windows / macOS)
 
-### pubkey обязателен, артефакты — нет
+Автообновление **только desktop**. iOS / Android — App Store / Play Store.
 
-Плагин `updater` при старте **требует** `plugins.updater.pubkey` в `tauri.conf.json`
-(без него приложение падает с `missing field pubkey`). Публичный ключ уже
-прописан в конфиге.
+Схема: **GitHub Actions собирает** → **статический JSON + бандлы на `releases.sovlium.ru`**.
+GitHub Releases оставляем как страницу скачивания, но **не как CDN updater’а**: у
+приватного репозитория ассеты закрыты, приложение не сможет их скачать без токена.
 
-При этом `bundle.createUpdaterArtifacts` по умолчанию выключен (`false`), поэтому
-`pnpm tauri:build` **не** требует `TAURI_SIGNING_PRIVATE_KEY` — установщик
-собирается, но `.sig` для канала обновлений не создаётся.
+### Что уже в коде
 
-Когда нужно выпускать подписанные обновления: поставьте
-`bundle.createUpdaterArtifacts: true` и задайте `TAURI_SIGNING_PRIVATE_KEY`
-(и при необходимости пароль) в CI или локально.
+- Клиент: splash вызывает `checkAndApplyUpdate` (бюджет 12 с), локальный бандл —
+  отложенная проверка через 4 с.
+- Endpoint: `https://releases.sovlium.ru/desktop/latest.json` (запасной URL с
+  `{{target}}/{{arch}}/{{current_version}}` — тот же `latest.json` через nginx).
+- Подпись: `plugins.updater.pubkey` в `tauri.conf.json`. Приватный ключ только в
+  GitHub Secrets.
+- Релизный workflow: `.github/workflows/xi_tauri_release.yml`.
+- Локальный `pnpm tauri:build` **не** пишет `.sig` (`createUpdaterArtifacts: false`).
+  Подписи включаются в CI через `tauri.updater-artifacts.conf.json`.
 
-### Однократная настройка / ротация ключей
+### Однократная настройка
 
 ```bash
-# Создаёт пару ключей (приватный файл не коммитить)
 pnpm --filter xi.tauri tauri signer generate -w apps/xi.tauri/src-tauri/.keys/sovlium.key
 ```
 
-- Публичный ключ копируется в `src-tauri/tauri.conf.json -> plugins.updater.pubkey`.
-- Приватный ключ кладётся в GitHub Secrets как `TAURI_SIGNING_PRIVATE_KEY`
-  (его пароль — в `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`).
-- **Приватный ключ никогда не должен попадать в репозиторий.** `.gitignore`
-  исключает `.keys/`, `*.key`, `*.pem`.
+1. Публичный ключ — уже в `tauri.conf.json` (при ротации — заменить).
+2. Приватный ключ → секрет `TAURI_SIGNING_PRIVATE_KEY`, пароль →
+   `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.
+3. На сервере: корень статики, например `/var/www/releases.sovlium.ru`.
+4. В GitHub Environment `xi-production` переменная `RELEASES_REMOTE_PATH` =
+   этот корень (rsync кладёт `desktop/`). SSH-секреты те же, что у деплоя `xi.web`.
+5. Nginx (минимум):
 
-### Endpoint
-
-В `tauri.conf.json` указано:
-
-```
-https://releases.sovlium.ru/desktop/{{target}}/{{arch}}/{{current_version}}
-```
-
-Сервер на каждый GET должен вернуть JSON по схеме Tauri:
-
-```json
-{
-  "version": "0.1.1",
-  "notes": "Bug fixes",
-  "pub_date": "2026-05-11T00:00:00Z",
-  "platforms": {
-    "darwin-aarch64": { "signature": "...", "url": "https://.../Sovlium_0.1.1_aarch64.app.tar.gz" },
-    "windows-x86_64": { "signature": "...", "url": "https://.../Sovlium_0.1.1_x64-setup.nsis.zip" }
+```nginx
+server {
+  server_name releases.sovlium.ru;
+  root /var/www/releases.sovlium.ru;
+  location /desktop/ {
+    try_files $uri $uri/ /desktop/latest.json;
+    add_header Access-Control-Allow-Origin *;
+    types { application/json json; }
   }
 }
 ```
 
-Поднять такой endpoint можно тремя путями (любой подходит, выбирайте по
-инфраструктуре):
+CORS `*` нужен, если когда-нибудь будете проверять манифест из браузера; самому
+плагину updater он не обязателен.
 
-1. **GitHub Releases + tauri-action.** Простейший путь: workflow в
-   `.github/workflows/xi_tauri_release.yml` уже публикует артефакты и подписи
-   как relase assets, а Tauri может читать JSON напрямую с GitHub.
-2. **Свой CDN/object storage.** S3/MinIO с CloudFront перед ним; CI после
-   сборки PUT’ает JSON-манифест по предсказуемому пути.
-3. **Cargo crate `cloudflare-workers` или Nginx.** Если уже есть
-   `releases.sovlium.ru` — поднять `try_files` на статический JSON.
+### Как выкатить версию
 
-### UX обновления (как в Discord)
+Версия в git остаётся `0.0.0`. Реальный номер берётся из тега.
 
-- На старте десктоп-shell дожидается 4 секунды, затем `checkAndApplyUpdate({ silent: true })`.
-- При обнаружении новой версии файл скачивается в фоне, прогресс летит через
-  `window` event `sovlium:update-progress`.
-- По окончании скачивания диспатчится `sovlium:update-ready`. UI (внутри
-  `xi.web`) может показать toast «Доступно обновление — перезапустить?» и
-  вызвать `applyPendingRestart()`.
+```bash
+git tag xi.tauri-v0.1.0
+git push origin xi.tauri-v0.1.0
+```
+
+или Actions → **xi.tauri Desktop Release** → tag `xi.tauri-v0.1.0`.
+
+CI: macOS universal + Windows x64 → GitHub Release (draft) → `latest.json` +
+файлы на `releases.sovlium.ru/desktop/`.
+
+Проверка манифеста: `curl -sS https://releases.sovlium.ru/desktop/latest.json`.
+
+### GitHub Free vs свой раннер
+
+|                   | GitHub-hosted                                   | Свой Mac/Windows           |
+| ----------------- | ----------------------------------------------- | -------------------------- |
+| Деньги            | бесплатные минуты (macOS считается ×10)         | железо своё                |
+| Подпись Apple     | сертификат в secrets, notarisation с Mac runner | проще notarize локально    |
+| Когда имеет смысл | редкие релизы                                   | частые сборки / мало минут |
+
+На Free-плане macOS-сборки быстро съедают квоту. Если упрётесь — поставьте
+self-hosted runner с `runs-on: [self-hosted, macOS]` в матрице.
+
+### PR / main
+
+Полный `tauri build` на каждый PR не гоняем. Если меняются `apps/xi.tauri/**`
+или общий frontend, `main.yml` делает `pnpm --filter xi.tauri check-types`.
+
+### UX обновления
+
+- Splash: «Проверяем обновления оболочки…», silent download.
+- События: `sovlium:update-progress`, `sovlium:update-ready` — toast
+  «перезапустить» → `applyPendingRestart()`.
+- Код-сайнинг Apple/Windows **не обязателен** для updater’а (его подписывает
+  minisign-ключ Tauri), но без Developer ID / Authenticode Gatekeeper и SmartScreen
+  будут ругаться на первый установщик.
 
 ## Mobile
 

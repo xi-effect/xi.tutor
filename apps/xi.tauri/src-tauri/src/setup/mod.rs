@@ -5,6 +5,9 @@
 
 use tauri::App;
 
+#[cfg(desktop)]
+mod menu;
+
 pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     // Place for: deep-link registration, custom URI scheme handling, tray icon
     // setup on desktop, window decoration tweaks, theme bridging, etc.
@@ -25,6 +28,22 @@ pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         use tauri::Manager;
         if let Some(window) = app.get_webview_window("main") {
             window.open_devtools();
+        }
+    }
+
+    #[cfg(desktop)]
+    crate::call_pip::install_close_guard(&app.handle());
+
+    #[cfg(desktop)]
+    menu::install(app)?;
+
+    #[cfg(desktop)]
+    {
+        use tauri::Manager;
+        let theme = crate::theme::read_shell_theme(app.handle());
+        let (r, g, b) = theme.page_background();
+        if let Some(window) = app.get_webview_window("main") {
+            let _ = window.set_background_color(Some(tauri::window::Color(r, g, b, 255)));
         }
     }
 

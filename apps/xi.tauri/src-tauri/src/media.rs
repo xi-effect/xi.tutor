@@ -1,8 +1,10 @@
 //! OS-level media permission preflight (camera / microphone / screen).
 //!
-//! macOS uses TCC via AVFoundation + CoreGraphics. Windows / other targets
-//! return `prompt` and let WebView2 / the platform WebView show the system
-//! dialog on the subsequent `getUserMedia` / `getDisplayMedia` call.
+//! - macOS: TCC via AVFoundation + CoreGraphics.
+//! - iOS: AVFoundation for camera / mic. Screen capture is not available to
+//!   WKWebView (`unsupported`).
+//! - Android / Windows / other: `prompt` — the platform WebView shows the
+//!   system dialog on the subsequent `getUserMedia` / `getDisplayMedia` call.
 
 use serde::{Deserialize, Serialize};
 
@@ -20,17 +22,17 @@ pub enum MediaPermissionStatus {
     Granted,
     Denied,
     Prompt,
-    #[allow(dead_code)]
     Unsupported,
 }
 
-#[cfg(target_os = "macos")]
-mod macos {
+#[cfg(any(target_os = "macos", target_os = "ios"))]
+mod apple {
     use super::{MediaKind, MediaPermissionStatus};
 
     const GRANTED: i32 = 0;
     const DENIED: i32 = 1;
     const PROMPT: i32 = 2;
+    const UNSUPPORTED: i32 = 3;
 
     extern "C" {
         fn sovlium_media_permission_status(kind: i32) -> i32;
@@ -44,6 +46,7 @@ mod macos {
             GRANTED => MediaPermissionStatus::Granted,
             DENIED => MediaPermissionStatus::Denied,
             PROMPT => MediaPermissionStatus::Prompt,
+            UNSUPPORTED => MediaPermissionStatus::Unsupported,
             _ => MediaPermissionStatus::Prompt,
         }
     }
@@ -77,11 +80,18 @@ mod macos {
 
 #[tauri::command]
 pub fn media_permission_status(kind: MediaKind) -> MediaPermissionStatus {
-    #[cfg(target_os = "macos")]
+    #[cfg(any(target_os = "macos", target_os = "ios"))]
     {
-        macos::status(kind)
+        apple::status(kind)
     }
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "android")]
+    {
+        match kind {
+            MediaKind::Screen => MediaPermissionStatus::Unsupported,
+            _ => MediaPermissionStatus::Prompt,
+        }
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "android")))]
     {
         let _ = kind;
         MediaPermissionStatus::Prompt
@@ -90,11 +100,18 @@ pub fn media_permission_status(kind: MediaKind) -> MediaPermissionStatus {
 
 #[tauri::command]
 pub fn media_permission_request(kind: MediaKind) -> MediaPermissionStatus {
-    #[cfg(target_os = "macos")]
+    #[cfg(any(target_os = "macos", target_os = "ios"))]
     {
-        macos::request(kind)
+        apple::request(kind)
     }
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "android")]
+    {
+        match kind {
+            MediaKind::Screen => MediaPermissionStatus::Unsupported,
+            _ => MediaPermissionStatus::Prompt,
+        }
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "ios", target_os = "android")))]
     {
         let _ = kind;
         MediaPermissionStatus::Prompt

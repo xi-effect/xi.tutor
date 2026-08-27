@@ -1,4 +1,4 @@
-import { isDesktopNative } from './detect';
+import { isDesktopNative, isMobileNative, isNativeShell } from './detect';
 import { invokeCommand } from './native';
 
 export type MediaPermissionKind = 'camera' | 'microphone' | 'screen';
@@ -28,10 +28,23 @@ async function queryWebPermission(kind: 'camera' | 'microphone'): Promise<MediaP
   }
 }
 
+/** Screen share exists in desktop WebViews; not in iOS/Android WKWebView / WebView. */
+export function isScreenShareSupported(): boolean {
+  if (isMobileNative()) return false;
+  return (
+    typeof navigator !== 'undefined' &&
+    typeof navigator.mediaDevices?.getDisplayMedia === 'function'
+  );
+}
+
 export async function queryMediaPermission(
   kind: MediaPermissionKind,
 ): Promise<MediaPermissionStatus> {
-  if (isDesktopNative()) {
+  if (kind === 'screen' && isMobileNative()) {
+    return 'unsupported';
+  }
+
+  if (isNativeShell()) {
     try {
       const status = await invokeCommand<string>('media_permission_status', { kind });
       return mapNativeStatus(status);
@@ -40,14 +53,18 @@ export async function queryMediaPermission(
     }
   }
 
-  if (kind === 'screen') return 'prompt';
+  if (kind === 'screen') return isScreenShareSupported() ? 'prompt' : 'unsupported';
   return queryWebPermission(kind);
 }
 
 export async function requestMediaPermission(
   kind: MediaPermissionKind,
 ): Promise<MediaPermissionStatus> {
-  if (isDesktopNative()) {
+  if (kind === 'screen' && isMobileNative()) {
+    return 'unsupported';
+  }
+
+  if (isNativeShell()) {
     try {
       const status = await invokeCommand<string>('media_permission_request', { kind });
       return mapNativeStatus(status);
@@ -56,7 +73,7 @@ export async function requestMediaPermission(
     }
   }
 
-  if (kind === 'screen') return 'prompt';
+  if (kind === 'screen') return isScreenShareSupported() ? 'prompt' : 'unsupported';
   return queryWebPermission(kind);
 }
 
@@ -67,10 +84,8 @@ export async function getUserMedia(constraints?: MediaStreamConstraints): Promis
   return navigator.mediaDevices.getUserMedia(constraints);
 }
 
-export async function getDisplayMedia(
-  options?: DisplayMediaStreamOptions,
-): Promise<MediaStream> {
-  if (!navigator.mediaDevices?.getDisplayMedia) {
+export async function getDisplayMedia(options?: DisplayMediaStreamOptions): Promise<MediaStream> {
+  if (!isScreenShareSupported() || !navigator.mediaDevices?.getDisplayMedia) {
     throw new Error('getDisplayMedia is not available');
   }
   return navigator.mediaDevices.getDisplayMedia(options);
@@ -79,12 +94,12 @@ export async function getDisplayMedia(
 let mediaAdaptersInstalled = false;
 
 /**
- * Preflights OS-level camera / mic / screen TCC (macOS) before LiveKit hits
- * `getUserMedia` / `getDisplayMedia`. Idempotent. No-op in the browser.
+ * Preflights OS-level camera / mic (and desktop screen TCC) before LiveKit
+ * hits `getUserMedia` / `getDisplayMedia`. Idempotent. No-op in the browser.
  */
 export function installNativeMediaAdapters(): void {
   if (mediaAdaptersInstalled || typeof navigator === 'undefined') return;
-  if (!isDesktopNative()) return;
+  if (!isNativeShell()) return;
 
   const mediaDevices = navigator.mediaDevices;
   if (!mediaDevices) return;
@@ -104,7 +119,7 @@ export function installNativeMediaAdapters(): void {
     }) as typeof mediaDevices.getUserMedia;
   }
 
-  if (typeof mediaDevices.getDisplayMedia === 'function') {
+  if (isDesktopNative() && typeof mediaDevices.getDisplayMedia === 'function') {
     const original = mediaDevices.getDisplayMedia.bind(mediaDevices);
     mediaDevices.getDisplayMedia = (async (options?: DisplayMediaStreamOptions) => {
       try {

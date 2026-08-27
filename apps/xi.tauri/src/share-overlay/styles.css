@@ -2,9 +2,9 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   height: 100%;
-  padding: 0 12px 0 14px;
+  padding: 0 10px 0 8px;
   border-radius: 14px;
   background: rgba(22, 26, 34, 0.92);
   color: #f4f6fa;
@@ -16,6 +16,13 @@
 .share-bar *::before,
 .share-bar *::after {
   box-sizing: border-box;
+}
+
+.share-bar__grip {
+  width: 10px;
+  align-self: stretch;
+  cursor: grab;
+  flex-shrink: 0;
 }
 
 .share-bar__pulse {
@@ -41,9 +48,9 @@
 }
 
 .share-bar__copy {
-  flex: 1;
   min-width: 0;
   text-align: left;
+  padding-right: 4px;
 }
 
 .share-bar__brand {
@@ -66,10 +73,61 @@
   text-overflow: ellipsis;
 }
 
+.share-bar__divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.share-bar__tools,
+.share-bar__colors,
 .share-bar__actions {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 4px;
   flex-shrink: 0;
+}
+
+.share-bar__icon {
+  appearance: none;
+  border: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: rgba(244, 246, 250, 0.88);
+  cursor: pointer;
+}
+
+.share-bar__icon:hover,
+.share-bar__swatch:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.share-bar__icon.is-active {
+  background: rgba(92, 95, 209, 0.9);
+  color: #fff;
+}
+
+.share-bar__swatch {
+  appearance: none;
+  border: 2px solid transparent;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  padding: 0;
+  background: var(--swatch);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.share-bar__swatch.is-active {
+  border-color: #fff;
 }
 
 .share-bar__btn {

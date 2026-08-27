@@ -11,6 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
+    "common.platform": "workspace:*",
     "common.services": "workspace:*"
   },
   "devDependencies": {

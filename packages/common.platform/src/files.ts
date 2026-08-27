@@ -1,4 +1,4 @@
-import { isDesktopNative } from './detect';
+import { isMobileNative, isNativeShell } from './detect';
 import { invokeCommand } from './native';
 
 export interface SaveBlobOptions {
@@ -29,14 +29,41 @@ function saveBlobViaAnchor(blob: Blob, fileName: string): void {
   URL.revokeObjectURL(url);
 }
 
+async function shareBlob(blob: Blob, fileName: string): Promise<boolean> {
+  if (typeof navigator === 'undefined' || typeof File === 'undefined') return false;
+  const nav = navigator as Navigator & {
+    canShare?: (data: ShareData) => boolean;
+    share?: (data: ShareData) => Promise<void>;
+  };
+  if (typeof nav.share !== 'function') return false;
+
+  const file = new File([blob], fileName, { type: blob.type || 'application/octet-stream' });
+  const data = { files: [file], title: fileName };
+  try {
+    if (typeof nav.canShare === 'function' && !nav.canShare(data)) {
+      return false;
+    }
+    await nav.share(data);
+    return true;
+  } catch (err) {
+    // User cancel is not a failure worth falling through to <a download>.
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      return true;
+    }
+    console.warn('[common.platform] Web Share failed', err);
+    return false;
+  }
+}
+
 /**
- * Saves a Blob to disk. WKWebView / WebView2 often ignore `<a download>`,
- * so the native shell uses a system save dialog.
+ * Saves a Blob to disk. WKWebView / WebView2 / Android WebView often ignore
+ * `<a download>`, so the native shell uses a system save dialog (desktop) or
+ * the share sheet (mobile) first.
  */
 export async function saveBlob(blob: Blob, options: SaveBlobOptions): Promise<boolean> {
   const fileName = options.fileName || 'download';
 
-  if (isDesktopNative()) {
+  if (isNativeShell()) {
     try {
       const contentsBase64 = await blobToBase64(blob);
       const saved = await invokeCommand<boolean>('save_file', {
@@ -47,6 +74,10 @@ export async function saveBlob(blob: Blob, options: SaveBlobOptions): Promise<bo
     } catch (err) {
       console.warn('[common.platform] native save_file failed, falling back', err);
     }
+  }
+
+  if (isMobileNative() && (await shareBlob(blob, fileName))) {
+    return true;
   }
 
   if (typeof document === 'undefined') return false;

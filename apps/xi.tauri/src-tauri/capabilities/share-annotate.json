@@ -1,0 +1,14 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "share-annotate",
+  "description": "Fullscreen transparent drawing canvas for screen-share annotations.",
+  "platforms": ["macOS", "windows", "linux"],
+  "windows": ["share-annotate"],
+  "permissions": [
+    "core:default",
+    "core:event:allow-listen",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "log:default"
+  ]
+}

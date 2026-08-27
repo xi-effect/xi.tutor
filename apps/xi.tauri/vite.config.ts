@@ -86,6 +86,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         input: {
           main: path.resolve(__dirname, 'index.html'),
           'share-overlay': path.resolve(__dirname, 'share-overlay.html'),
+          'share-annotate': path.resolve(__dirname, 'share-annotate.html'),
         },
       },
     },

@@ -1,8 +1,31 @@
 {
   "$schema": "../gen/schemas/mobile-schema.json",
   "identifier": "mobile",
-  "description": "Mobile-only capabilities. Updates are delegated to the App Store / Play Store, so no updater scope is granted here.",
+  "description": "iOS / Android: same WebAPI IPC as the shell (notifications, clipboard, files, opener, media). Store updates, no desktop window chrome.",
   "platforms": ["iOS", "android"],
   "windows": ["main"],
-  "permissions": []
+  "permissions": [
+    "core:default",
+    "core:event:allow-listen",
+    "core:event:allow-emit",
+    "dialog:default",
+    "notification:default",
+    "os:default",
+    "log:default",
+    "deep-link:default",
+    "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-read-text",
+    "clipboard-manager:allow-write-html",
+    "opener:default",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        { "url": "https://*" },
+        { "url": "http://*" },
+        { "url": "mailto:*" },
+        { "url": "tg:*" },
+        { "url": "telegram:*" }
+      ]
+    }
+  ]
 }

@@ -2,7 +2,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "remote-ui",
   "description": "Allow the remote Sovlium UI (*.sovlium.ru) to use the same IPC surface as the local shell after navigation.",
-  "platforms": ["macOS", "windows", "linux"],
+  "platforms": ["macOS", "windows", "linux", "iOS", "android"],
   "windows": ["main"],
   "remote": {
     "urls": [
@@ -26,6 +26,7 @@
     "core:window:allow-hide",
     "core:window:allow-start-dragging",
     "core:window:allow-set-focus",
+    "core:window:allow-is-minimized",
     "dialog:default",
     "notification:default",
     "os:default",

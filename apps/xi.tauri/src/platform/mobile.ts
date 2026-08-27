@@ -10,8 +10,8 @@ const mobile: PlatformModule = {
     windowChrome: false,
   },
   async init() {
-    // Intentionally minimal. Mobile-specific wiring (status bar, safe area,
-    // back-button handling) can be added here as features land.
+    // WebAPI bridges (media, notifications, clipboard, files) live in
+    // `common.platform.installNativeWebApiBridges` and run from xi.web / CallsShell.
   },
 };
 

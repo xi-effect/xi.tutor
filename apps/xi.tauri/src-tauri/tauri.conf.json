@@ -11,6 +11,7 @@
   },
   "app": {
     "withGlobalTauri": false,
+    "macOSPrivateApi": true,
     "windows": [
       {
         "label": "main",
@@ -58,6 +59,7 @@
       "dialog": false,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGNDQyNjQ2Mzc2QTFBNEYKUldSUEdtbzNSaVpFejB1VHBSWTV5RURBWXRTM3hPenlPaEZ1ZVE2MTN0ZEZSQTJSNVQ2ZFdzSkIK",
       "endpoints": [
+        "https://releases.sovlium.ru/desktop/latest.json",
         "https://releases.sovlium.ru/desktop/{{target}}/{{arch}}/{{current_version}}"
       ]
     },

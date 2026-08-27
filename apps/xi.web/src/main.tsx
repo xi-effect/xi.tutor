@@ -3,9 +3,9 @@ import './index.css';
 import { i18nInitPromise } from './config/i18n';
 import { initBugsink } from './config/bugsink';
 import { AppProviders } from './providers';
-import { installDesktopWebApiBridges } from 'common.platform';
+import { installNativeWebApiBridges } from 'common.platform';
 
-installDesktopWebApiBridges();
+installNativeWebApiBridges();
 
 // Инициализируем BUGSINK как можно раньше
 initBugsink();

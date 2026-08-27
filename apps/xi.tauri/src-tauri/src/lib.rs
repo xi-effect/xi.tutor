@@ -4,11 +4,13 @@
 //! that the same code path is reused on iOS and Android, where Tauri loads the
 //! crate as a dynamic library and calls `run()` from generated glue code.
 
+mod call_pip;
 mod commands;
 mod media;
 mod navigation;
 mod setup;
 mod share_overlay;
+mod theme;
 mod webview_policy;
 
 /// The `#[cfg_attr]` attribute exposes `run` to the mobile entry points
@@ -57,12 +59,18 @@ pub fn run() {
             commands::log_message,
             commands::http_probe,
             commands::save_file,
+            theme::get_shell_theme,
+            theme::set_shell_theme,
             media::media_permission_status,
             media::media_permission_request,
             share_overlay::share_overlay_show,
             share_overlay::share_overlay_hide,
             share_overlay::share_overlay_focus_main,
             share_overlay::share_overlay_request_stop,
+            share_overlay::share_annotate_set_click_through,
+            call_pip::call_pip_enter,
+            call_pip::call_pip_leave,
+            call_pip::call_pip_resize,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

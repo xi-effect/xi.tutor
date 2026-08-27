@@ -12,11 +12,49 @@ export interface SplashErrorModel {
 
 const STYLE_ID = 'sovlium-remote-splash-style';
 
+/**
+ * Visual language mirrors `common.ui` LoadingScreen:
+ * - page background / text from design tokens
+ * - spinner: size-6, 3px border, `text-link` color, `animate-spin`
+ * Brand mark + lowercase wordmark sit above the spinner.
+ */
 function ensureStyles(): void {
   if (document.getElementById(STYLE_ID)) return;
   const style = document.createElement('style');
   style.id = STYLE_ID;
   style.textContent = `
+    :root,
+    [data-theme='light'] {
+      --splash-bg: #F7F8FA;
+      --splash-text: #1E2127;
+      --splash-text-secondary: #7D8290;
+      --splash-text-muted: #A8ACB7;
+      --splash-link: #4143A8;
+      --splash-btn-primary-bg: #5C5FD1;
+      --splash-btn-primary-bg-hover: #4143A8;
+      --splash-btn-primary-text: #FFFFFF;
+      --splash-btn-secondary-bg: #F0F1F4;
+      --splash-btn-secondary-bg-hover: #E1E3E8;
+      --splash-btn-secondary-text: #1E2127;
+    }
+    [data-theme='dark'] {
+      --splash-bg: #111318;
+      --splash-text: #FFFFFF;
+      --splash-text-secondary: #A8ACB7;
+      --splash-text-muted: #7D8290;
+      --splash-link: #C7C4F7;
+      --splash-btn-primary-bg: #5C5FD1;
+      --splash-btn-primary-bg-hover: #9292E7;
+      --splash-btn-primary-text: #111318;
+      --splash-btn-secondary-bg: #30343C;
+      --splash-btn-secondary-bg-hover: #1E2127;
+      --splash-btn-secondary-text: #FFFFFF;
+    }
+    html, body, #root {
+      height: 100%;
+      margin: 0;
+      background: var(--splash-bg, #F7F8FA);
+    }
     .sovlium-splash {
       box-sizing: border-box;
       min-height: 100%;
@@ -25,29 +63,32 @@ function ensureStyles(): void {
       align-items: center;
       justify-content: center;
       padding: 32px 24px;
-      font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: #1a1d23;
-      background:
-        radial-gradient(1200px 600px at 50% -10%, #e8eef8 0%, transparent 55%),
-        #f7f8fa;
+      font-family: Inter, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--splash-text);
+      background: var(--splash-bg);
       text-align: center;
       -webkit-user-select: none;
       user-select: none;
     }
     .sovlium-splash * { box-sizing: border-box; }
-    .sovlium-splash__brand {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
+    .sovlium-splash__logo {
+      display: block;
+      width: 168px;
+      height: auto;
       margin: 0 0 28px;
     }
+    .sovlium-splash__logo--dark { display: none; }
+    [data-theme='dark'] .sovlium-splash__logo--light { display: none; }
+    [data-theme='dark'] .sovlium-splash__logo--dark { display: block; }
     .sovlium-splash__spinner {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 3px solid #d7dde8;
-      border-top-color: #3b82f6;
-      animation: sovlium-spin 0.8s linear infinite;
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      border: 3px solid currentColor;
+      border-top-color: transparent;
+      color: var(--splash-link);
+      animation: sovlium-spin 1s linear infinite;
       margin-bottom: 20px;
     }
     @keyframes sovlium-spin { to { transform: rotate(360deg); } }
@@ -56,20 +97,21 @@ function ensureStyles(): void {
       font-size: 18px;
       font-weight: 600;
       letter-spacing: -0.02em;
+      color: var(--splash-text);
     }
     .sovlium-splash__body {
       margin: 0;
       max-width: 420px;
       font-size: 14px;
       line-height: 1.45;
-      color: #5b6575;
+      color: var(--splash-text-secondary);
     }
     .sovlium-splash__detail {
       margin: 12px 0 0;
       max-width: 480px;
       font-size: 12px;
       line-height: 1.4;
-      color: #8a94a6;
+      color: var(--splash-text-muted);
       word-break: break-word;
     }
     .sovlium-splash__actions {
@@ -87,19 +129,44 @@ function ensureStyles(): void {
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
+      font-family: inherit;
     }
     .sovlium-splash__btn--primary {
-      background: #2563eb;
-      color: #fff;
+      background: var(--splash-btn-primary-bg);
+      color: var(--splash-btn-primary-text);
     }
-    .sovlium-splash__btn--primary:hover { background: #1d4ed8; }
+    .sovlium-splash__btn--primary:hover {
+      background: var(--splash-btn-primary-bg-hover);
+    }
     .sovlium-splash__btn--secondary {
-      background: #e8edf5;
-      color: #1a1d23;
+      background: var(--splash-btn-secondary-bg);
+      color: var(--splash-btn-secondary-text);
     }
-    .sovlium-splash__btn--secondary:hover { background: #dbe3f0; }
+    .sovlium-splash__btn--secondary:hover {
+      background: var(--splash-btn-secondary-bg-hover);
+    }
   `;
   document.head.appendChild(style);
+}
+
+function logoMarkup(): string {
+  // Served from xi.web/public (xi.tauri publicDir). Wordmark is already lowercase.
+  return `
+    <img
+      class="sovlium-splash__logo sovlium-splash__logo--light"
+      src="/assets/brand/navigationlogo-default-light.svg"
+      width="168"
+      height="50"
+      alt="sovlium"
+    />
+    <img
+      class="sovlium-splash__logo sovlium-splash__logo--dark"
+      src="/assets/brand/navigationlogo-default-dark.svg"
+      width="168"
+      height="50"
+      alt="sovlium"
+    />
+  `;
 }
 
 function mountRoot(): HTMLElement {
@@ -110,11 +177,11 @@ function mountRoot(): HTMLElement {
   return root;
 }
 
-export function showLoadingSplash(status = 'Подключаемся к Sovlium…'): void {
+export function showLoadingSplash(status = 'Подключаемся к sovlium…'): void {
   const root = mountRoot();
   root.innerHTML = `
     <div class="sovlium-splash" role="status" aria-live="polite">
-      <p class="sovlium-splash__brand">Sovlium</p>
+      ${logoMarkup()}
       <div class="sovlium-splash__spinner" aria-hidden="true"></div>
       <p class="sovlium-splash__title">${escapeHtml(status)}</p>
       <p class="sovlium-splash__body">Проверяем сеть и загружаем интерфейс.</p>
@@ -134,7 +201,7 @@ export function showErrorSplash(model: SplashErrorModel): void {
   shell.setAttribute('role', 'alert');
 
   shell.innerHTML = `
-    <p class="sovlium-splash__brand">Sovlium</p>
+    ${logoMarkup()}
     <p class="sovlium-splash__title"></p>
     <p class="sovlium-splash__body"></p>
     ${model.detail ? '<p class="sovlium-splash__detail"></p>' : ''}

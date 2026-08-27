@@ -17,15 +17,16 @@ import { useCallsDeps } from './useCallsDeps';
 import { ProductCallAnalyticsTracker } from './productAnalytics/ProductCallAnalyticsTracker';
 import { BoardCallStorageWarmup } from './boardWarmup/BoardCallStorageWarmup';
 import { NativeShareOverlayBridge } from './useNativeShareOverlay';
+import { NativeCallPipBridge } from './useNativeCallPip';
 import { installMediaPermissionRequestAnalytics } from './productAnalytics/installMediaPermissionRequestAnalytics';
-import { installDesktopWebApiBridges } from 'common.platform';
+import { installNativeWebApiBridges } from 'common.platform';
 
 import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
 import '@xipkg/calls-ui/grid.css';
 
 // Native OS permission preflight, then analytics around getUserMedia.
-installDesktopWebApiBridges();
+installNativeWebApiBridges();
 installMediaPermissionRequestAnalytics();
 
 type CallsShellPropsT = {
@@ -71,6 +72,7 @@ const CallsShellProviders = ({ children }: CallsShellPropsT) => {
           <ModeSyncProvider>
             <ProductCallAnalyticsTracker />
             <NativeShareOverlayBridge />
+            <NativeCallPipBridge />
             <BoardCallStorageWarmup />
             <CallsShellInit />
             {children}
