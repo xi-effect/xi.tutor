@@ -1,6 +1,6 @@
 import { type ReactNode, useCallback, useRef } from 'react';
 import { Button } from '@xipkg/button';
-import { Conference, HelpCircle, SoundOn, WhiteBoard } from '@xipkg/icons';
+import { Conference, HelpCircle, Notification, SoundOn, WhiteBoard } from '@xipkg/icons';
 import { Slider } from '@xipkg/slider';
 import { Toggle } from '@xipkg/toggle';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
@@ -159,6 +159,7 @@ export const Effects = () => {
   const userLeftVolume = useSoundEffectsStore((s) => s.userLeftVolume);
   const boardTimerEndVolume = useSoundEffectsStore((s) => s.boardTimerEndVolume);
   const boardTimerWarnVolume = useSoundEffectsStore((s) => s.boardTimerWarnVolume);
+  const notificationVolume = useSoundEffectsStore((s) => s.notificationVolume);
   const setSoundVolume = useSoundEffectsStore((s) => s.setSoundVolume);
 
   return (
@@ -198,6 +199,19 @@ export const Effects = () => {
             hint={t('effects.userLeftHint')}
             soundKey="userLeft"
             volume={userLeftVolume}
+            onVolumeChange={setSoundVolume}
+          />
+        </Category>
+
+        <Category
+          icon={<Notification className="fill-icon-brand h-5 w-5" />}
+          title={t('effects.platform')}
+        >
+          <SoundItem
+            label={t('effects.notification')}
+            hint={t('effects.notificationHint')}
+            soundKey="notification"
+            volume={notificationVolume}
             onVolumeChange={setSoundVolume}
           />
         </Category>

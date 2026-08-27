@@ -6,6 +6,11 @@
   "register": "Register",
   "sign_in_button": "Sign In",
   "invite_message": "You have been invited by a tutor. To continue, please sign in or register",
+  "invite_user_not_found": {
+    "title": "No account was found with these details.",
+    "hint": "You are probably not registered in sovlium yet.",
+    "cta": "Sign up"
+  },
   "errors": {
     "not_found_account": "Account not found",
     "not_found_password": "Wrong password",

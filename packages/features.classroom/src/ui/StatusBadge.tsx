@@ -1,8 +1,9 @@
 import { Badge } from '@xipkg/badge';
 import { cn } from '@xipkg/utils';
-import { educationStatusBadgeClasses } from 'common.ui';
-import { educationUtils, StatusEducationT, TypeEducationT } from 'common.entities';
+import { educationStatusBadgeClasses, getEducationStatusLabel } from 'common.ui';
+import { StatusEducationT, TypeEducationT } from 'common.entities';
 import { useCurrentUser } from 'common.services';
+import { useTranslation } from 'react-i18next';
 
 type StatusBadgePropsT = {
   status: StatusEducationT;
@@ -15,9 +16,10 @@ type StatusBadgePropsT = {
 const baseClassName = 'rounded-lg border-none px-2 py-1 font-medium text-s-base shrink-0';
 
 export const StatusBadge = ({ status, deleted, className, textClassName }: StatusBadgePropsT) => {
+  const { t } = useTranslation('commonUi');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const statusText = educationUtils.getStatusTextByRole(status, isTutor);
+  const statusText = getEducationStatusLabel(status, isTutor, t);
 
   const statusClassName = deleted
     ? educationStatusBadgeClasses.finished

@@ -22,7 +22,7 @@ import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
 import '@xipkg/calls-ui/grid.css';
 
-// До монтирования PreJoin: перехват getUserMedia для media_permission_requested.
+// До монтирования PreJoin: перехват getUserMedia (событие — только при реальном промпте).
 installMediaPermissionRequestAnalytics();
 
 type CallsShellPropsT = {

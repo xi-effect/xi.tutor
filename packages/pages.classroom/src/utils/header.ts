@@ -1,11 +1,14 @@
-import { educationUtils } from 'common.entities';
+import { getEducationStatusLabel } from 'common.ui';
+import i18n from 'i18next';
+
+const translateEducationStatus = (key: string) => String(i18n.t(key, { ns: 'commonUi' }));
 
 export const getStatusText = (status: string) => {
-  return educationUtils.getStatusTextFromString(status);
+  return getEducationStatusLabel(status, false, translateEducationStatus);
 };
 
 export const getStatusTextByRole = (status: string, isTutor: boolean) => {
-  return educationUtils.getStatusTextFromStringByRole(status, isTutor);
+  return getEducationStatusLabel(status, isTutor, translateEducationStatus);
 };
 
 export const getStatusVariant = (status: string) => {

@@ -82,7 +82,8 @@ export const DayLessonRow = ({
     fallbackAvatarUserId: lesson.studentId,
     enabled: isInView,
   });
-  const showTutorIconColumn = isTutor && showActions;
+  const showTutorIconColumn =
+    isTutor && showActions && (onReschedule != null || onSaveLesson != null);
   const descriptionText = lesson.description?.trim();
   const handleToggleDescription = () => toggleLessonDescription?.();
 
@@ -183,34 +184,38 @@ export const DayLessonRow = ({
                 onClick={(e) => e.stopPropagation()}
                 onKeyDown={(e) => e.stopPropagation()}
               >
-                <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="none"
-                      size="s"
-                      className="bg-background-surface/80 hover:bg-background-subtle h-[32px] w-[32px] min-w-[32px] p-0"
-                      onClick={() => onReschedule?.(lesson)}
-                      data-umami-event="schedule-lesson-reschedule"
-                    >
-                      <CornerUpRight className="text-text-secondary h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t('reschedule_lesson')}</TooltipContent>
-                </Tooltip>
-                <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="none"
-                      size="s"
-                      className="bg-background-surface/80 hover:bg-background-subtle h-[32px] w-[32px] min-w-[32px] p-0"
-                      onClick={() => setChangeModalOpen(true)}
-                      data-umami-event="schedule-lesson-edit"
-                    >
-                      <Edit05 className="text-text-secondary h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t('edit_lesson')}</TooltipContent>
-                </Tooltip>
+                {onReschedule != null ? (
+                  <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="none"
+                        size="s"
+                        className="bg-background-surface/80 hover:bg-background-subtle h-[32px] w-[32px] min-w-[32px] p-0"
+                        onClick={() => onReschedule(lesson)}
+                        data-umami-event="schedule-lesson-reschedule"
+                      >
+                        <CornerUpRight className="text-text-secondary h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t('reschedule_lesson')}</TooltipContent>
+                  </Tooltip>
+                ) : null}
+                {onSaveLesson != null ? (
+                  <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="none"
+                        size="s"
+                        className="bg-background-surface/80 hover:bg-background-subtle h-[32px] w-[32px] min-w-[32px] p-0"
+                        onClick={() => setChangeModalOpen(true)}
+                        data-umami-event="schedule-lesson-edit"
+                      >
+                        <Edit05 className="text-text-secondary h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t('edit_lesson')}</TooltipContent>
+                  </Tooltip>
+                ) : null}
                 {canCancelLesson ? (
                   <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
                     <TooltipTrigger asChild>

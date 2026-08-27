@@ -16,11 +16,24 @@ export { inferSignupEntryPoint } from './inferSignupEntryPoint';
 export { inferEmailConfirmationSource } from './inferEmailConfirmationSource';
 export {
   getPendingInviteCode,
+  getInviteCodeFromSearch,
+  persistPendingInviteCode,
+  clearPendingInviteCode,
+  getInviteAuthSearch,
   inferSigninSource,
   shouldTrackInvitePageViewed,
   shouldTrackInviteLoginClicked,
+  shouldTrackInviteSignupClicked,
   getInviteTrackingIdFromContext,
 } from './inferSigninSource';
+export {
+  persistInviteProgressTrack,
+  clearInviteProgressTrack,
+  getInviteProgress,
+  getInviteFunnelMeta,
+  getInviteFunnelEventProps,
+} from './inviteProgress';
+export type { InviteFunnelMeta } from './inviteProgress';
 export {
   getOrCreateActivationFlowId,
   getActivationFlowId,
@@ -37,6 +50,7 @@ export {
   mapSigninError,
   mapEmailConfirmationError,
   mapInviteError,
+  mapInviteAcceptError,
   mapLessonCreateError,
   mapCallError,
   mapPermissionError,
@@ -76,11 +90,14 @@ export type {
   SignupValidationFailedField,
   SignupValidationFailureReason,
   SigninAnalyticsSource,
+  InviteFunnelTrack,
+  InviteFunnelStep,
   SigninFailureReason,
   EmailConfirmationFailureReason,
   EmailConfirmationSource,
   ActivationHelpReason,
   InviteFailureReason,
+  InviteAcceptFailureReason,
   LessonCreateFailureReason,
   CallFailureReason,
   PermissionFailureReason,

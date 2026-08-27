@@ -36,6 +36,7 @@ export type UseCollaborativeTiptapReturn = {
   hasSyncError: boolean;
   storageToken: string;
   storageItem: StorageItemT;
+  audioSyncMap: Y.Map<number>;
 };
 
 export function useYjsStore({
@@ -65,6 +66,8 @@ export function useYjsStore({
 
     return { provider, ydoc };
   });
+
+  const audioSyncMap = ydoc.getMap<number>('audioSync');
 
   const { awareness } = provider;
   const { setCollaboratorsIfChanged, reset } = useCollaborators();
@@ -227,6 +230,7 @@ export function useYjsStore({
       hasSyncError,
       storageToken,
       storageItem,
+      audioSyncMap,
     }),
     [
       editor,
@@ -239,6 +243,7 @@ export function useYjsStore({
       hasSyncError,
       storageToken,
       storageItem,
+      audioSyncMap,
     ],
   );
 }

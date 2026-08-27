@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { LoadingScreen } from 'common.ui';
+import { persistPendingInviteCode } from 'common.utils';
 import { InvitesPage as Invite } from 'pages.invites';
 import { Suspense } from 'react';
 import { z } from 'zod';
@@ -15,9 +16,9 @@ export const Route = createFileRoute('/(common)/_layout/invite/$inviteId')({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  // beforeLoad: ({ context, location }) => {
-  //   console.log('Invites', context, location);
-  // },
+  beforeLoad: ({ params }) => {
+    persistPendingInviteCode(params.inviteId);
+  },
 });
 
 function InvitePage() {

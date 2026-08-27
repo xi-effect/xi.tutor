@@ -1,5 +1,6 @@
 import { PRODUCT_ANALYTICS_EVENTS } from './events';
 import { mapOnboardingError } from './mapOnboardingError';
+import { getInviteFunnelEventProps } from './inviteProgress';
 import { getOnboardingStepMeta } from './onboardingSteps';
 import { getProductAnalyticsRole } from './roles';
 import { trackOnce } from './once';
@@ -98,6 +99,7 @@ export function trackOnboardingStepCompleted(
       ...stepMeta,
       user_role: userRole,
       onboarding_stage: onboardingStage,
+      ...getInviteFunnelEventProps(true),
     });
   });
 }

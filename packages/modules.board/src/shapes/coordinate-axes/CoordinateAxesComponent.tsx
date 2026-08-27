@@ -50,7 +50,6 @@ export const CoordinateAxesComponent = ({ shape }: CoordinateAxesComponentProps)
       theme,
       colorMode,
       editor,
-      shape,
     ],
   );
 
@@ -63,7 +62,7 @@ export const CoordinateAxesComponent = ({ shape }: CoordinateAxesComponentProps)
         position: 'relative',
       }}
     >
-      <SVGContainer>
+      <SVGContainer viewBox={`0 0 ${rw} ${rh}`} preserveAspectRatio="none">
         <CoordinateAxesSvgContent {...svgProps} />
       </SVGContainer>
     </HTMLContainer>

@@ -3,7 +3,7 @@ import { Portal as TooltipPortal } from '@radix-ui/react-tooltip';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useTranslation } from 'react-i18next';
-import type { ClassroomT } from 'common.api';
+import { getClassroomDisplayName, type ClassroomT } from 'common.api';
 
 type StudentSelectorProps = {
   value: string;
@@ -46,7 +46,7 @@ export const StudentSelector = ({
             value={classroom.id.toString()}
             className="dark:text-text-primary max-w-full min-w-0 truncate"
           >
-            {classroom.name}
+            {getClassroomDisplayName(classroom)}
           </SelectItem>
         ))}
       </SelectContent>

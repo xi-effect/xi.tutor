@@ -28,7 +28,7 @@
     "typescript": "5.7.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.19"
   },
   "packageManager": "pnpm@10.33.2",
   "workspaces": [
@@ -38,7 +38,8 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
-      "core-js"
+      "core-js",
+      "rolldown"
     ],
     "overrides": {
       "@tiptap/core": "3.30.1",
@@ -46,17 +47,17 @@
       "@tiptap/react": "3.30.1",
       "@tiptap/starter-kit": "3.30.1",
       "@tiptap/extensions": "3.30.1",
-      "@xipkg/calls": "^0.1.24",
-      "@xipkg/calls-chat": "^0.1.24",
-      "@xipkg/calls-compactview": "^0.1.24",
-      "@xipkg/calls-config": "^0.1.24",
-      "@xipkg/calls-hooks": "^0.1.24",
-      "@xipkg/calls-providers": "^0.1.24",
-      "@xipkg/calls-risehand": "^0.1.24",
-      "@xipkg/calls-store": "^0.1.24",
-      "@xipkg/calls-types": "^0.1.24",
-      "@xipkg/calls-ui": "^0.1.24",
-      "@xipkg/calls-utils": "^0.1.24",
+      "@xipkg/calls": "^0.1.31",
+      "@xipkg/calls-chat": "^0.1.31",
+      "@xipkg/calls-compactview": "^0.1.31",
+      "@xipkg/calls-config": "^0.1.31",
+      "@xipkg/calls-hooks": "^0.1.31",
+      "@xipkg/calls-providers": "^0.1.31",
+      "@xipkg/calls-risehand": "^0.1.31",
+      "@xipkg/calls-store": "^0.1.31",
+      "@xipkg/calls-types": "^0.1.31",
+      "@xipkg/calls-ui": "^0.1.31",
+      "@xipkg/calls-utils": "^0.1.31",
       "@xipkg/label": "2.1.0"
     }
   }

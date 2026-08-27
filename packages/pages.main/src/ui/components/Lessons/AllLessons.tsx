@@ -22,6 +22,8 @@ type AllLessonsProps = {
   isLoading?: boolean;
   /** Панель действий (начать, иконки препода) на каждой карточке. По умолчанию true */
   showLessonActions?: boolean;
+  /** Скелетон колонки иконок переноса/редактирования — только для репетитора */
+  showTutorActions?: boolean;
   onReschedule?: (lesson: ScheduleLessonRow) => void;
   onSaveLesson?: (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => void;
   /** Открыть модалку добавления занятия (кнопка в пустом состоянии) */
@@ -31,7 +33,7 @@ type AllLessonsProps = {
 const scheduleEmptyActionButtonClass =
   'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
-const LessonCardSkeleton = () => (
+const LessonCardSkeleton = ({ showTutorActions = true }: { showTutorActions?: boolean }) => (
   <div className="bg-background-surface relative flex min-h-[136px] shrink-0 flex-row gap-4 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
     <div className="flex shrink-0 flex-col gap-2">
       <div className="bg-background-subtle h-7 w-14 animate-pulse rounded" />
@@ -45,11 +47,13 @@ const LessonCardSkeleton = () => (
       </div>
       <div className="bg-background-subtle mt-auto h-8 w-full max-w-[200px] animate-pulse rounded-lg" />
     </div>
-    <div className="flex shrink-0 flex-col gap-1">
-      <div className="bg-background-subtle size-8 animate-pulse rounded-lg" />
-      <div className="bg-background-subtle size-8 animate-pulse rounded-lg" />
-      <div className="bg-background-subtle size-8 animate-pulse rounded-lg" />
-    </div>
+    {showTutorActions ? (
+      <div className="flex shrink-0 flex-col gap-1">
+        <div className="bg-background-subtle size-8 animate-pulse rounded-lg" />
+        <div className="bg-background-subtle size-8 animate-pulse rounded-lg" />
+        <div className="bg-background-subtle size-8 animate-pulse rounded-lg" />
+      </div>
+    ) : null}
   </div>
 );
 
@@ -58,6 +62,7 @@ export const AllLessons = ({
   dayDate,
   isLoading = false,
   showLessonActions = true,
+  showTutorActions = true,
   onReschedule,
   onSaveLesson,
   onAddLesson,
@@ -74,7 +79,7 @@ export const AllLessons = ({
         {isLoading ? (
           <div className={cn('mr-2 flex flex-col gap-3 pr-0', galleryShadowPadClass)}>
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <LessonCardSkeleton key={i} />
+              <LessonCardSkeleton key={i} showTutorActions={showTutorActions} />
             ))}
           </div>
         ) : lessons.length === 0 ? (

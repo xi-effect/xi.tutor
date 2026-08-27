@@ -2,6 +2,7 @@ import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import i18n from 'i18next';
 
 interface DeleteMaterialsParams {
   id: string;
@@ -57,7 +58,12 @@ export const useDeleteMaterials = () => {
         queryKey: [MaterialsQueryKey.Materials],
       });
 
-      showSuccess('materials', `${params.name || 'Материал'} удален`);
+      showSuccess(
+        'materials',
+        params.name
+          ? i18n.t('toast.materials.deleted', { ns: 'commonServices', name: params.name })
+          : i18n.t('toast.materials.deletedFallback', { ns: 'commonServices' }),
+      );
     },
   });
 

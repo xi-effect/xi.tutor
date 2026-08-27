@@ -171,13 +171,14 @@ export const Lessons = () => {
             isLoading={
               FORCE_MAIN_LISTS_LOADING || scheduleQuery.isLoading || scheduleQuery.isFetching
             }
-            onReschedule={handleReschedule}
+            showTutorActions={isTutor}
+            onReschedule={isTutor ? handleReschedule : undefined}
             onSaveLesson={isTutor ? handleSaveLesson : undefined}
             onAddLesson={isTutor ? () => setOpen(true) : undefined}
           />
         </div>
       </div>
-      {moveLesson != null ? (
+      {isTutor && moveLesson != null ? (
         <MovingLessonModal
           open
           onOpenChange={(open) => {

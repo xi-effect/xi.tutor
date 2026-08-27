@@ -1,5 +1,6 @@
 import { Button } from '@xipkg/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
+import { boardSelectionToolbarButtonClass } from '../../../boardTheme';
 import { BoardDrawer, useBoardIsMobile } from '../../shared';
 
 type TPicker = {
@@ -23,7 +24,7 @@ export const Picker: React.FC<TPicker> = ({
     <Button
       variant="none"
       size="s"
-      className="hover:bg-status-info-background p-1"
+      className={boardSelectionToolbarButtonClass}
       title={triggerTitle}
       onClick={isMobile ? () => setOpen(true) : undefined}
     >

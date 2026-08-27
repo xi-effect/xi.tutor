@@ -6,6 +6,10 @@ export {
   buildNotificationHref,
   registerNotificationNavigator,
 } from './notificationNavigation';
+export {
+  registerNotificationSoundPlayer,
+  playIncomingNotificationSound,
+} from './notificationSound';
 export * from './notificationUtils';
 export { useChangeContactsVisibility } from './useChangeContactsVisibility';
 export { useSystemNotificationSettings } from './useSystemNotificationSettings';

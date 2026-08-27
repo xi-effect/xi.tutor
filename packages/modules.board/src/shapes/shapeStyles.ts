@@ -1,7 +1,9 @@
 import { StyleProp, T } from '@ibodr/draw';
+import { MATH_FIGURE_KINDS } from './math-figure/utils/kinds';
 
 export const BorderColorStyle = StyleProp.defineEnum('xi:borderColor', {
   values: [
+    'none',
     'black',
     'white',
     'blue',
@@ -67,4 +69,9 @@ export const FlipCardFrontColorStyle = StyleProp.defineEnum('xi:flipCardFrontCol
 export const FlipCardBackColorStyle = StyleProp.defineEnum('xi:flipCardBackColor', {
   values: FLIP_CARD_COLOR_VALUES,
   defaultValue: 'grey',
+});
+
+export const MathFigureKindStyle = StyleProp.defineEnum('xi:mathFigureKind', {
+  values: [...MATH_FIGURE_KINDS],
+  defaultValue: 'cube',
 });

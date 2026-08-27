@@ -5,6 +5,7 @@ import { Node as PMNode } from '@tiptap/pm/model';
 
 import { getCurrentBlock } from './getCurrentBlock';
 import { ActiveBlockT } from '../types';
+import { MEDIA_NODE_TYPES } from '../const/media';
 
 function getSiblingInfo(parent: PMNode, currentIndex: number, direction: 'up' | 'down') {
   const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
@@ -116,7 +117,7 @@ export function moveBlock(
     const mappedCurrentPos = tr.mapping.map(currentNodePos);
 
     // Устанавливаем selection
-    if (currentNode.type.name === 'image') {
+    if ((MEDIA_NODE_TYPES as readonly string[]).includes(currentNode.type.name)) {
       const newCurrentPos =
         direction === 'up'
           ? currentNodePos - sibling.targetNode.nodeSize

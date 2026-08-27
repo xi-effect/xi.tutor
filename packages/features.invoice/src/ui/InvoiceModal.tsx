@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Button } from '@xipkg/button';
-import { Form, useFieldArray } from '@xipkg/form';
+import { Form, FormField, FormItem, FormMessage, useFieldArray } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import {
   Modal,
@@ -116,26 +116,35 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
             <ClassroomSelector control={control} />
 
-            <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
-              <Button
-                className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
-                variant="primary"
-                size="s"
-                type="button"
-                onClick={() => {
-                  append({
-                    id: generateRandomId(),
-                    name: '',
-                    price: 0,
-                    quantity: 1,
-                  });
-                }}
-              >
-                {isMobile ? t('modal.addRow') : t('modal.addLesson')}
-              </Button>
+            <FormField
+              control={control}
+              name="items"
+              render={() => (
+                <FormItem>
+                  <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
+                    <Button
+                      className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
+                      variant="primary"
+                      size="s"
+                      type="button"
+                      onClick={() => {
+                        append({
+                          id: generateRandomId(),
+                          name: '',
+                          price: 0,
+                          quantity: 1,
+                        });
+                      }}
+                    >
+                      {isMobile ? t('modal.addRow') : t('modal.addLesson')}
+                    </Button>
 
-              <TemplateSelector control={control} />
-            </div>
+                    <TemplateSelector control={control} />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* TODO: подумать над тем, чтобы сделать один компонент */}
             {!isMobile && items.length > 0 && (

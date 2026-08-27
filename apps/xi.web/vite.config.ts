@@ -10,7 +10,8 @@ import {
   CALLS_RUNTIME_DEPS,
   callsLocalDevConfig,
   readCallsDepsMode,
-} from './vite.calls-local';
+} from './vite.calls-local.ts';
+import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +25,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
 
   const config = {
     plugins: [
+      paddleOcrCjsInteropPlugin(),
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
@@ -61,6 +63,13 @@ export default defineConfig(({ mode }: ConfigEnv) => {
           skipWaiting: true,
           clientsClaim: true,
           globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
+          globIgnores: [
+            '**/*paddleocr*',
+            '**/*opencv*',
+            '**/*onnxruntime*',
+            '**/*ort-wasm*',
+            '**/*worker-entry*',
+          ],
           maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/deployments\/.*/],
@@ -87,19 +96,17 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       minify: mode === 'production',
       outDir: 'build',
       sourcemap: mode === 'debug',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-        },
-      },
     },
     optimizeDeps: {
-      esbuildOptions: {
-        target: 'es2020',
-        conditions: useCallsLink
-          ? ['development', 'import', 'module', 'browser', 'default']
-          : importConditions,
+      rolldownOptions: {
+        transform: {
+          target: 'es2020',
+        },
+        resolve: {
+          conditionNames: useCallsLink
+            ? ['development', 'import', 'module', 'browser', 'default']
+            : importConditions,
+        },
       },
       include: [
         'react',
@@ -108,8 +115,11 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         'sonner',
         'i18next',
         'react-i18next',
+        'motion',
+        'motion/react',
         ...(useCallsLink ? CALLS_RUNTIME_DEPS : []),
       ],
+      exclude: ['@paddleocr/paddleocr-js'],
     },
     server: {
       hmr: {

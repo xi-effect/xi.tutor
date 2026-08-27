@@ -13,6 +13,7 @@ import {
   useDrawClipboard,
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
+  useBoardControlPointer,
   useProductBoardAnalytics,
   useMiroPasteNotice,
   useBoardDeepLinkFocus,
@@ -21,14 +22,7 @@ import {
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { hiddenComponents } from '../../../utils/customConfig';
-import { isShapeErasable, isEditableTarget } from '../../../utils';
-import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
-import { insertAsset } from '../../../utils/uploadAsset';
-import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
-import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
-import { boardCustomTools } from '../../../shapes/boardCustomTools';
-import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
-import { useFollowUserStore, useDrawStore } from '../../../store';
+import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -38,6 +32,18 @@ import { DrawZoomPanel } from './DrawZoomPanel';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
 import './customstyles.css';
+import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
+import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
+import { insertAsset } from '../../../utils/uploadAsset';
+import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
+import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
+import { useDrawStore, useFollowUserStore } from '../../../store';
+import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
+import { XiGeoTool } from '../../../shapes/geo';
+import { EmojiTool } from '../../../shapes/emoji';
+import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
+import { MathFigureTool } from '../../../shapes/math-figure';
+import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 
 export const DrawCanvas = ({
   token,
@@ -63,6 +69,7 @@ export const DrawCanvas = ({
   } = useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
+  const didResetDrawScaleRef = useRef(false);
   const search = useSearch({ strict: false }) as BoardDeepLinkSearch;
   const hasDeepLink = hasBoardDeepLinkSearch(search);
 
@@ -87,6 +94,7 @@ export const DrawCanvas = ({
   );
 
   useLockedShapeSelection(editor);
+  useBoardControlPointer(editor);
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
@@ -357,6 +365,12 @@ export const DrawCanvas = ({
     editor.user.updateUserPreferences({ colorScheme: theme });
   }, [editor, theme]);
 
+  useEffect(() => {
+    if (!editor || !isBoardStoreReady(status) || didResetDrawScaleRef.current) return;
+    didResetDrawScaleRef.current = true;
+    resetInflatedDrawScale(editor);
+  }, [editor, status]);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
@@ -371,11 +385,25 @@ export const DrawCanvas = ({
         <div className="absolute inset-0">
           <Draw
             colorScheme={theme}
+            themes={BOARD_DRAW_THEMES}
             onMount={(editor) => {
               setEditor(editor);
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,
+              });
+              // Иначе при зуме < 100% карандаш масштабируется как 1/zoom и
+              // даже XS становится очень толстым («невозможно писать»).
+              editor.user.updateUserPreferences({ isDynamicSizeMode: false });
+              resetInflatedDrawScale(editor);
+              editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
+                if (shape.type === 'draw' && shape.props.scale !== 1) {
+                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                }
+                if (shape.type === 'highlight' && shape.props.scale !== 1) {
+                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                }
+                return shape;
               });
 
               const inputMode = useDrawStore.getState().inputMode;
@@ -453,7 +481,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={boardCustomTools}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, MathFigureTool, EmojiStickerTool]}
             shapeUtils={boardCustomShapeUtils}
             components={drawComponents}
             collaboratorCursorLayout={{

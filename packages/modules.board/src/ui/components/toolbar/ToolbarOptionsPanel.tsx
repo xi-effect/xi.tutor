@@ -1,7 +1,6 @@
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
-import { PopupItemT } from '../../../utils/navBarElements';
 import { boardDropdownZClass } from '../../boardTheme';
 import { OpacitySizeMenu } from '../popups/Pen/OpacitySizeMenu';
 import { ShapeSet } from '../popups/Shapes/ShapeSet';
@@ -17,7 +16,6 @@ type ToolbarSticker = {
 
 type ToolbarOptionsPanelProps = {
   activePopup: string | null;
-  stickerPopupItems?: PopupItemT[];
   recentEmojis: string[];
   stickers: ToolbarSticker[];
   onEmojiSelect: (emoji: string) => void;
@@ -39,7 +37,6 @@ const mobileEmojiPickerClass = cn(
 
 export const ToolbarOptionsPanel = ({
   activePopup,
-  stickerPopupItems,
   recentEmojis,
   stickers,
   onEmojiSelect,
@@ -64,12 +61,11 @@ export const ToolbarOptionsPanel = ({
       {activePopup === 'pen' && (
         <OpacitySizeMenu className={isMobile ? drawerPanelClass : undefined} />
       )}
-      {activePopup === 'shapes' && <ShapeSet className={isMobile ? drawerPanelClass : undefined} />}
+      {activePopup === 'shapes' && (
+        <ShapeSet className={isMobile ? drawerPanelClass : undefined} onClose={onClose} />
+      )}
       {activePopup === 'sticker' && (
-        <ColorSet
-          popupItems={stickerPopupItems}
-          className={isMobile ? drawerPanelClass : undefined}
-        />
+        <ColorSet className={isMobile ? drawerPanelClass : undefined} />
       )}
       {activePopup === 'arrow' && <ArrowSet className={isMobile ? drawerPanelClass : undefined} />}
       {activePopup === 'emoji' && (

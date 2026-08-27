@@ -17,17 +17,35 @@ import {
   boardMenuItemClass,
   boardMenuSubTriggerClass,
   boardMenuSurfaceClass,
+  boardSelectionToolbarButtonClass,
 } from '../../boardTheme';
 import { useCurrentUser } from 'common.services';
 import { useCopyBoardDeepLink } from '../../../hooks';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
+import {
+  ActivityActionMenuItems,
+  getActivityKindSettings,
+  getActivityMenuActions,
+  runActivityMenuAction,
+  selectedActivityShapes,
+  studentAccessItems,
+  STUDENT_ACCESS_LABEL_KEYS,
+  toggleStudentAccess,
+  useActivityEditStore,
+} from '../../../activities';
 import { isMac } from '../../../utils';
 import { PNG_EXPORT_PIXEL_RATIO } from '../../../utils/shapeSvgExport';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useOcrProcessingStore } from '../../../ocr';
 import { BoardDrawer, boardDrawerRowClass, useBoardIsMobile } from '../shared';
+import {
+  RecognizePrintedTextMobileLanguageList,
+  RecognizePrintedTextMobileRootRow,
+  RecognizePrintedTextSubmenu,
+} from './RecognizeTextMenu';
 
 const altKey = isMac ? '⌥' : 'Alt';
 
@@ -55,7 +73,7 @@ export const MoreActionsMenu = () => {
   const { t } = useTranslation('board');
   const isMobile = useBoardIsMobile();
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState<'root' | 'download' | 'reorder'>('root');
+  const [view, setView] = useState<'root' | 'download' | 'reorder' | 'ocr'>('root');
   const editor = useEditor();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -71,6 +89,29 @@ export const MoreActionsMenu = () => {
     selectedShapes.length === 1 && selectedShapes[0].type === 'audio'
       ? (selectedShapes[0] as AudioShape)
       : null;
+
+  const selectedActivities = selectedActivityShapes(selectedShapes);
+  const editingIds = useActivityEditStore((state) => state.editingIds);
+  const allActivitiesEditing =
+    selectedActivities.length > 0 &&
+    selectedActivities.every((shape) => Boolean(editingIds[shape.id]));
+  const activityActions = getActivityMenuActions({
+    t: (key) => t(key),
+    shapes: selectedActivities,
+    canEdit: isTutor,
+    isTutor,
+    allEditing: allActivitiesEditing,
+  });
+  const activityKindSettings = isTutor ? getActivityKindSettings(selectedActivities) : [];
+  const activityAccessItems = isTutor ? studentAccessItems(selectedActivities) : [];
+
+  const selectedImageId =
+    selectedShapes.length === 1 && selectedShapes[0].type === 'image' && !selectedShapes[0].isLocked
+      ? selectedShapes[0].id
+      : null;
+  const isOcrProcessing = useOcrProcessingStore((state) =>
+    selectedImageId ? state.isProcessing(selectedImageId) : false,
+  );
 
   const copyDeepLink = useCopyBoardDeepLink({ shapeIds: selectedIds.map(String) });
 
@@ -144,10 +185,10 @@ export const MoreActionsMenu = () => {
     <Button
       variant="none"
       size="s"
-      className="hover:bg-status-info-background p-1"
+      className={boardSelectionToolbarButtonClass}
       onClick={isMobile ? () => setOpen(true) : undefined}
     >
-      <MenuDots className={`rotate-90 ${boardIconClass}`} />
+      <MenuDots className={`size-5 rotate-90 ${boardIconClass}`} />
     </Button>
   );
 
@@ -157,7 +198,9 @@ export const MoreActionsMenu = () => {
         ? t('toolbar.downloadAs')
         : view === 'reorder'
           ? t('toolbar.reorder')
-          : t('navbar.more');
+          : view === 'ocr'
+            ? t('ocr.recognize')
+            : t('navbar.more');
 
     return (
       <>
@@ -206,6 +249,56 @@ export const MoreActionsMenu = () => {
                 </span>
                 <ArrowRight className="fill-icon-secondary size-4 shrink-0" />
               </button>
+              {selectedImageId && (
+                <RecognizePrintedTextMobileRootRow
+                  isProcessing={isOcrProcessing}
+                  onOpen={() => setView('ocr')}
+                />
+              )}
+              {selectedActivities.length > 1 && (
+                <p className="text-text-secondary px-1 text-xs leading-snug">
+                  {t('activity.batchHint', { count: selectedActivities.length })}
+                </p>
+              )}
+              {activityActions.map((action) => (
+                <button
+                  key={action.id}
+                  type="button"
+                  className={boardDrawerRowClass}
+                  onClick={() => {
+                    runActivityMenuAction(editor, selectedActivities, action.id);
+                    setOpen(false);
+                  }}
+                >
+                  <span className="text-text-primary text-sm font-medium">{action.label}</span>
+                </button>
+              ))}
+              {activityKindSettings.map((setting) => (
+                <button
+                  key={setting.id}
+                  type="button"
+                  className={boardDrawerRowClass}
+                  onClick={() => setting.apply(editor, selectedActivities)}
+                >
+                  <span className="text-text-primary text-sm font-medium">
+                    {setting.checked ? '✓ ' : ''}
+                    {t(setting.labelKey)}
+                  </span>
+                </button>
+              ))}
+              {activityAccessItems.map((item) => (
+                <button
+                  key={item.key}
+                  type="button"
+                  className={boardDrawerRowClass}
+                  onClick={() => toggleStudentAccess(editor, selectedActivities, item.key)}
+                >
+                  <span className="text-text-primary text-sm font-medium">
+                    {item.checked ? '✓ ' : ''}
+                    {t(STUDENT_ACCESS_LABEL_KEYS[item.key])}
+                  </span>
+                </button>
+              ))}
               {hasTutorItems && isTutor && selectedPdf && (
                 <button
                   type="button"
@@ -351,6 +444,12 @@ export const MoreActionsMenu = () => {
               </button>
             </div>
           )}
+          {view === 'ocr' && selectedImageId && (
+            <RecognizePrintedTextMobileLanguageList
+              shapeId={selectedImageId}
+              onRun={() => setOpen(false)}
+            />
+          )}
         </BoardDrawer>
       </>
     );
@@ -359,8 +458,8 @@ export const MoreActionsMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="none" size="s" className="hover:bg-status-info-background p-1">
-          <MenuDots className={`rotate-90 ${boardIconClass}`} />
+        <Button variant="none" size="s" className={boardSelectionToolbarButtonClass}>
+          <MenuDots className={`size-5 rotate-90 ${boardIconClass}`} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -442,6 +541,18 @@ export const MoreActionsMenu = () => {
             />
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        {selectedImageId && <RecognizePrintedTextSubmenu shapeId={selectedImageId} />}
+
+        {selectedActivities.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <ActivityActionMenuItems
+              shapes={selectedActivities}
+              canEdit={isTutor}
+              isTutor={isTutor}
+            />
+          </>
+        )}
 
         {hasTutorItems && (
           <>

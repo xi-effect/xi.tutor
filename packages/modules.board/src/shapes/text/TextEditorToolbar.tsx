@@ -1,7 +1,12 @@
 import { Edit, Ul } from '@xipkg/icons';
 import { Editor, useValue } from '@ibodr/draw';
+import { Button } from '@xipkg/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { NavbarButton } from '../../ui/components/shared';
+import {
+  boardSelectionToolbarButtonClass,
+  boardSelectionToolbarIconClass,
+} from '../../ui/boardTheme';
 import { textFormatterElements } from './textFormatterElements';
 import { LinkNavbarButton } from './LinkNavbarButton';
 import { useActiveStatuses } from './hooks';
@@ -39,7 +44,6 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
       id: shape.id,
       type: shape.type as ShapeTypesWithRichTextT,
       props: {
-        ...shape.props,
         richText: formattedRichTexts[index],
       },
     }));
@@ -68,7 +72,6 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
       id: shape.id,
       type: shape.type as ShapeTypesWithRichTextT,
       props: {
-        ...shape.props,
         richText: formattedRichTexts[index],
       },
     }));
@@ -107,12 +110,14 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <NavbarButton
-          icon={<Edit className="size-6" />}
-          isActive={open}
-          className="data-[state=open]:bg-brand-0"
+        <Button
+          variant="none"
+          size="s"
+          className={boardSelectionToolbarButtonClass}
           title="Форматирование текста"
-        ></NavbarButton>
+        >
+          <Edit className={boardSelectionToolbarIconClass} />
+        </Button>
       </PopoverTrigger>
       <PopoverContent
         side="top"

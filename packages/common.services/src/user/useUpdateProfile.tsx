@@ -83,12 +83,19 @@ export const useUpdateProfile = () => {
         Object.keys(context.profileData).length === 1 &&
         'theme' in context.profileData;
 
+      const isOnlyLanguageChange =
+        context?.profileData &&
+        Object.keys(context.profileData).length === 1 &&
+        'language' in context.profileData;
+
       if (isOnlyRoleChange && context.profileData) {
         const role = context.profileData.default_layout as RoleT;
         const roleText = role === 'tutor' ? 'репетитор' : 'ученик';
         toast.success(`Теперь вы ${roleText}`);
       } else if (isOnlyThemeChange) {
         toast.success('Тема успешно обновлена');
+      } else if (isOnlyLanguageChange) {
+        // Язык уже применён в i18n, отдельный toast не нужен
       } else {
         showSuccess('profile');
       }

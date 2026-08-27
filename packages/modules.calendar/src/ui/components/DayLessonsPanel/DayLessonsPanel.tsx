@@ -193,7 +193,7 @@ export const DayLessonsPanel = ({
               <div className="flex flex-col pr-3">
                 {lessons.map((lesson, index) => (
                   <DayLessonRow
-                    key={lesson.id}
+                    key={`${lesson.id}-${lesson.startAt?.toISOString() ?? lesson.startTime}`}
                     lesson={lesson}
                     lessonDay={selectedDate}
                     showActions={showLessonActions}

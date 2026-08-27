@@ -1,4 +1,4 @@
-import type { ClassroomTutorResponseSchema } from 'common.api';
+import { getClassroomDisplayName, type ClassroomTutorResponseSchema } from 'common.api';
 import {
   useCurrentUser,
   useGetClassroom,
@@ -72,7 +72,9 @@ export const useLessonClassroomPresentation = ({
 
   return {
     subjectName: rawSubjectName || undefined,
-    classroomName: classroom?.name ?? fallbackClassroomName,
+    classroomName: isTutor
+      ? getClassroomDisplayName(classroom ?? { name: fallbackClassroomName })
+      : (classroom?.name ?? fallbackClassroomName),
     avatarUserId: getAvatarUserId(classroom, isTutor, fallbackAvatarUserId),
     isLoading: isUserLoading || classroomQuery.isLoading,
   };

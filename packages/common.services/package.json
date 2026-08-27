@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -20,10 +21,11 @@
     "common.types": "workspace:*",
     "common.config": "workspace:*",
     "common.utils": "workspace:*",
-    "common.sockets": "workspace:*"
+    "common.sockets": "workspace:*",
+    "i18next": "24.2.2"
   },
   "devDependencies": {
-    "vitest": "^3.1.1",
+    "vitest": "^4.1.10",
     "@tanstack/react-query-devtools": "5.73.3",
     "@eslint/js": "^9.19.0",
     "common.typescript": "workspace:*",

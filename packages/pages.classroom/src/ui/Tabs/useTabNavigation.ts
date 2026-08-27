@@ -4,7 +4,7 @@ import { useMedia } from 'common.utils';
 import { SearchParams } from '../../types/router';
 
 interface UseTabNavigationOptions {
-  /** Нормализовать tabs 'notes' и 'boards' в 'materials' (нужно для репетитора) */
+  /** Нормализовать tabs 'notes' и 'boards' в 'materials' (подвкладки материалов) */
   normalizeMaterialTabs?: boolean;
 }
 

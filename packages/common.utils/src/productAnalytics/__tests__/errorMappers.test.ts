@@ -3,6 +3,7 @@ import {
   getHttpStatusGroup,
   mapCallError,
   mapEmailConfirmationError,
+  mapInviteAcceptError,
   mapInviteError,
   mapLessonCreateError,
   mapPermissionError,
@@ -94,8 +95,24 @@ describe('mapEmailConfirmationError', () => {
 describe('mapInviteError', () => {
   it('мапит limit и validation', () => {
     expect(mapInviteError(httpError(429))).toBe('limit_reached');
+    expect(mapInviteError(httpError(409, 'Quantity exceeded'))).toBe('limit_reached');
     expect(mapInviteError(httpError(422))).toBe('invalid_data');
     expect(mapInviteError(httpError(500))).toBe('server_error');
+  });
+});
+
+describe('mapInviteAcceptError', () => {
+  it('мапит статусы принятия без raw message', () => {
+    expect(mapInviteAcceptError(httpError(404, 'Invitation not found'))).toBe('invite_not_found');
+    expect(mapInviteAcceptError(httpError(401))).toBe('authentication_required');
+    expect(mapInviteAcceptError(httpError(409, 'Already joined'))).toBe('already_connected');
+    expect(mapInviteAcceptError(httpError(409))).toBe('already_connected');
+    expect(mapInviteAcceptError(httpError(409, 'Already enrolled'))).toBe('already_connected');
+    expect(mapInviteAcceptError(httpError(409, 'Target is the source'))).toBe('self_invite');
+    expect(mapInviteAcceptError(httpError(500))).toBe('server_error');
+    expect(mapInviteAcceptError({ code: 'ERR_NETWORK', message: 'Network Error' })).toBe(
+      'network_error',
+    );
   });
 });
 

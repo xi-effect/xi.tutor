@@ -16,8 +16,9 @@ import { galleryInvoiceCardClass } from '../galleryShadowClass';
 
 export const PaymentsList = () => {
   const { t } = useTranslation('classroom');
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const roleReady = !isUserLoading && user != null;
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
@@ -25,16 +26,16 @@ export const PaymentsList = () => {
   const { data: studentPayments, isLoading: isLoadingStudent } = useGetClassroomStudentPaymentsList(
     {
       classroomId,
-      disabled: isTutor,
+      disabled: !roleReady || isTutor,
     },
   );
   const { data: tutorPayments, isLoading: isLoadingTutor } = useGetClassroomTutorPaymentsList({
     classroomId,
-    disabled: !isTutor,
+    disabled: !roleReady || !isTutor,
   });
 
   const payments = isTutor ? tutorPayments : studentPayments;
-  const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
+  const isLoading = !roleReady || (isTutor ? isLoadingTutor : isLoadingStudent);
 
   if (isLoading) {
     return (

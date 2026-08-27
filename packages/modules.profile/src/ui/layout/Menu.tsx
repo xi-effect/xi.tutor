@@ -138,9 +138,8 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   const handleExit = async () => {
-    logout();
-    // TODO: переделать, сделать редирект только по 200
-    navigate({ to: '/signin' });
+    await logout();
+    await navigate({ to: '/signin', replace: true });
   };
 
   return (

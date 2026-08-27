@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { uploadFileRequest } from 'common.services';
+import { uploadDocumentRequest } from 'common.services';
 import { fileTypeFromBuffer } from 'file-type';
 import * as pdfjsLib from 'pdfjs-dist';
 import { getFileExtension, isPdfMime } from '../constants/mimeTypes';
@@ -136,7 +136,7 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
   // Upload in background
   (async () => {
     try {
-      const serverUrl = await uploadFileRequest({ file, token });
+      const serverUrl = await uploadDocumentRequest({ file, token });
 
       editor.updateShape<PdfShape>({
         id: shapeId,

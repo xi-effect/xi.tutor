@@ -14,7 +14,7 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.9",
+    "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query": "5.73.3",
     "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.3.0",
@@ -51,6 +51,7 @@
     "features.classroom.rename": "workspace:*",
     "features.avatar.editor": "workspace:*",
     "i18next": "24.2.2",
+    "motion": "^13.1.1",
     "dayjs": "1.11.13",
     "modules.board": "workspace:*",
     "modules.calls": "workspace:*",
@@ -76,11 +77,11 @@
     "react-dom": "^19.0.0",
     "react-i18next": "15.4.1",
     "sonner": "^2.0.7",
-    "tailwindcss": "^4.0.9",
+    "tailwindcss": "^4.3.3",
     "@sentry/browser": "10.23.0"
   },
   "devDependencies": {
-    "vite-plugin-pwa": "1.0.2",
+    "vite-plugin-pwa": "^1.3.0",
     "@eslint/js": "^9.19.0",
     "@tanstack/eslint-plugin-query": "5.66.1",
     "@tanstack/react-query-devtools": "5.73.3",
@@ -88,7 +89,7 @@
     "@tanstack/router-plugin": "^1.166.6",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.0.5",
     "@xipkg/tailwind": "1.0.0",
     "common.eslint": "workspace:*",
     "common.typescript": "workspace:*",
@@ -98,7 +99,7 @@
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.2.0",
+    "vite": "^8.2.1",
     "@playwright/test": "^1.51.0"
   }
 }

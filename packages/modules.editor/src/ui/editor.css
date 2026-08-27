@@ -61,9 +61,21 @@
   line-height: 1.6;
 }
 
-/* Стили для img */
+/* Стили для img и медиа-блоков */
 .xi-editor .node-image {
   display: flex;
+}
+
+.xi-editor .node-audio,
+.xi-editor .node-pdf,
+.xi-editor .node-presentation {
+  display: block;
+}
+
+.xi-editor .ProseMirror .node-audio.ProseMirror-selectednode,
+.xi-editor .ProseMirror .node-pdf.ProseMirror-selectednode,
+.xi-editor .ProseMirror .node-presentation.ProseMirror-selectednode {
+  display: block;
 }
 
 /* Списки: маркер в фиксированной колонке, текст на одной линии с абзацами */

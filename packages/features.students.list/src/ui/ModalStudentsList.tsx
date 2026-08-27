@@ -1,5 +1,5 @@
 import { Button } from '@xipkg/button';
-import { Search, Trash } from '@xipkg/icons';
+import { Search, Trash, UserPlus } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import {
   Modal,
@@ -13,15 +13,22 @@ import {
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'common.ui';
 import { useDeleteStudent } from '../services';
 import { useStudentsList } from 'common.services';
 import { TutorStudentSchemaMarshal } from 'common.types';
+import { matchesSearchQuery } from 'common.utils';
 
-export const ModalStudentsList = ({ children }: { children: React.ReactNode }) => {
+type ModalStudentsListProps = {
+  children: ReactNode;
+  onInviteStudent?: () => void;
+};
+
+export const ModalStudentsList = ({ children, onInviteStudent }: ModalStudentsListProps) => {
   const { t } = useTranslation('studentsList');
+  const [isOpen, setIsOpen] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,13 +61,24 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
   const filteredStudents =
     students?.filter(
       (student: TutorStudentSchemaMarshal) =>
-        student.user.display_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        student.user.username.toLowerCase().includes(searchQuery.toLowerCase()),
+        matchesSearchQuery(student.user.display_name, searchQuery) ||
+        matchesSearchQuery(student.user.username, searchQuery),
     ) || [];
+
+  const handleInviteStudent = () => {
+    setIsOpen(false);
+    onInviteStudent?.();
+  };
 
   return (
     <>
-      <Modal>
+      <Modal
+        open={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+          if (!open) setIsDelete(false);
+        }}
+      >
         <ModalTrigger asChild>{children}</ModalTrigger>
         <ModalContent onClose={() => setIsDelete(false)} aria-describedby={undefined}>
           <ModalHeader>
@@ -91,10 +109,23 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                   </div>
                 )}
                 {!isLoading && !isError && filteredStudents.length === 0 && (
-                  <div className="flex h-20 items-center justify-center">
+                  <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 px-4">
                     <span className="text-text-secondary">
                       {searchQuery ? t('notFound') : t('empty')}
                     </span>
+                    {!searchQuery && onInviteStudent && (
+                      <Button
+                        type="button"
+                        variant="primary"
+                        size="s"
+                        className="gap-1.5"
+                        onClick={handleInviteStudent}
+                        data-umami-event="students-list-invite"
+                      >
+                        <UserPlus className="fill-action-primary-text text-text-on-accent size-4 shrink-0" />
+                        {t('inviteStudent')}
+                      </Button>
+                    )}
                   </div>
                 )}
                 {!isLoading &&

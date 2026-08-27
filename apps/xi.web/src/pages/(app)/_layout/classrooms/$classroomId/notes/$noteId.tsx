@@ -17,7 +17,7 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/not
   head: () => ({
     meta: [
       {
-        title: 'sovlium | Доска',
+        title: 'sovlium | Заметка',
       },
     ],
   }),

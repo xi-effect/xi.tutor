@@ -3,6 +3,7 @@ import type { CoordinateAxesShape } from './CoordinateAxesShape';
 import { buildCoordinateAxesGeometry } from './utils/buildCoordinateAxesGeometry';
 import type { CoordinateAxesGeometry } from './utils/buildCoordinateAxesGeometry';
 import { COORDINATE_AXES_VISUAL } from './utils/visualStyles';
+import { SvgStaticText } from '../labels/SvgStaticText';
 
 function AxisArrowHead({
   x,
@@ -115,54 +116,65 @@ export function CoordinateAxesSvgContent({
       )}
 
       {geometry.plotError && equation.trim() && (
-        <text
+        <SvgStaticText
           x={plot.x + plot.width / 2}
           y={plot.y + plot.height / 2}
-          textAnchor="middle"
-          fill={errorColor}
+          text={geometry.plotError}
           fontSize={12}
-          fontFamily="sans-serif"
-        >
-          {geometry.plotError}
-        </text>
+          fill={errorColor}
+          anchor="middle"
+          dy="0.35em"
+        />
       )}
 
       {showLabels && (
-        <g fontFamily="sans-serif" fill={labelColor}>
+        <g fill={labelColor}>
           {geometry.xLabels.map((label) => (
-            <text
+            <SvgStaticText
               key={`label-x-${label.text}-${label.x}`}
               x={label.x}
               y={label.y + 11}
-              textAnchor="middle"
+              text={label.text}
               fontSize={11}
-            >
-              {label.text}
-            </text>
+              fill={labelColor}
+              anchor="middle"
+            />
           ))}
           {geometry.yLabels.map((label) => (
-            <text
+            <SvgStaticText
               key={`label-y-${label.text}-${label.y}`}
               x={label.x}
               y={label.y}
-              textAnchor="end"
-              dominantBaseline="middle"
+              text={label.text}
               fontSize={11}
-            >
-              {label.text}
-            </text>
+              fill={labelColor}
+              anchor="end"
+              dy="0.35em"
+            />
           ))}
           {geometry.originLabel && (
-            <text x={geometry.originLabel.x} y={geometry.originLabel.y + 11} fontSize={11}>
-              0
-            </text>
+            <SvgStaticText
+              x={geometry.originLabel.x}
+              y={geometry.originLabel.y + 11}
+              text="0"
+              fontSize={11}
+              fill={labelColor}
+            />
           )}
-          <text x={geometry.xName.x} y={geometry.xName.y + 12} fontSize={12} fill={axisColor}>
-            x
-          </text>
-          <text x={geometry.yName.x} y={geometry.yName.y + 12} fontSize={12} fill={axisColor}>
-            y
-          </text>
+          <SvgStaticText
+            x={geometry.xName.x}
+            y={geometry.xName.y + 12}
+            text="x"
+            fontSize={12}
+            fill={axisColor}
+          />
+          <SvgStaticText
+            x={geometry.yName.x}
+            y={geometry.yName.y + 12}
+            text="y"
+            fontSize={12}
+            fill={axisColor}
+          />
         </g>
       )}
     </g>

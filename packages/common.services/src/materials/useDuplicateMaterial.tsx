@@ -3,6 +3,7 @@ import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
 import { AccessModeT } from 'common.types';
+import i18n from 'i18next';
 
 interface DuplicateMaterialParams {
   classroomId: string;
@@ -74,7 +75,7 @@ export const useDuplicateMaterial = () => {
         });
       }
 
-      showSuccess('materials', `${response.data.name} успешно дублирован`);
+      showSuccess('materials', i18n.t('toast.materials.duplicated', { ns: 'commonServices' }));
     },
   });
 

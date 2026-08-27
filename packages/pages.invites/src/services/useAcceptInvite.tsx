@@ -1,25 +1,34 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ClassroomResponseT } from '../types';
-import { useNavigate } from '@tanstack/react-router';
-import { ClassroomsQueryKey, studentApiConfig, StudentQueryKey, UserQueryKey } from 'common.api';
+import {
+  ClassroomsQueryKey,
+  InvitationsQueryKey,
+  NotificationsQueryKey,
+  studentApiConfig,
+  StudentQueryKey,
+  StudentsQueryKey,
+  UserQueryKey,
+} from 'common.api';
 import { getAxiosInstance } from 'common.config';
-import { handleError, useCurrentUser, useUpdateProfile } from 'common.services';
+import { useCurrentUser, useUpdateProfile } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  clearPendingInviteCode,
   createAttemptId,
   getInviteTrackingId,
+  getInviteFunnelEventProps,
   getProductAnalyticsRole,
-  mapInviteError,
+  mapInviteAcceptError,
   measureDurationMs,
   nowMs,
   trackProductEvent,
   type ProductAnalyticsInviteKind,
 } from 'common.utils';
+import { hasConfirmedClassroom } from './invitePageLogic';
 
 type AcceptInviteVariables = {
   code: string;
   invite_kind: ProductAnalyticsInviteKind;
-  tutor_id?: string;
 };
 
 type AcceptInviteContext = {
@@ -29,26 +38,24 @@ type AcceptInviteContext = {
 
 export const useAcceptInvite = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { data: currentUser } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
   return useMutation<ClassroomResponseT, Error, AcceptInviteVariables, AcceptInviteContext>({
     mutationFn: async ({ code }) => {
-      try {
-        const axiosInst = await getAxiosInstance();
-        const response = await axiosInst({
-          method: studentApiConfig[StudentQueryKey.UseInvitation].method,
-          url: studentApiConfig[StudentQueryKey.UseInvitation].getUrl(code),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        return response.data as ClassroomResponseT;
-      } catch (err) {
-        console.error('Ошибка:', err);
-        throw err;
+      const axiosInst = await getAxiosInstance();
+      const response = await axiosInst({
+        method: studentApiConfig[StudentQueryKey.UseInvitation].method,
+        url: studentApiConfig[StudentQueryKey.UseInvitation].getUrl(code),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const classroomData = response.data as ClassroomResponseT;
+      if (!hasConfirmedClassroom(classroomData)) {
+        throw new Error('classroom_not_confirmed');
       }
+      return classroomData;
     },
     onMutate: (variables) => {
       const attemptId = createAttemptId();
@@ -57,19 +64,24 @@ export const useAcceptInvite = () => {
 
       void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_SUBMIT, {
-          invite_id: variables.code,
-          tutor_id: variables.tutor_id,
           attempt_id: attemptId,
           student_authenticated: studentAuthenticated,
           invite_flow_version: 2,
           invite_tracking_id,
+          ...getInviteFunnelEventProps(studentAuthenticated),
         });
       });
 
       return { attemptId, startedAt };
     },
-    onSuccess: (classroomData, variables, context) => {
+    onSuccess: (_classroomData, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
+      queryClient.invalidateQueries({ queryKey: [StudentQueryKey.Classrooms] });
+      queryClient.invalidateQueries({ queryKey: [StudentsQueryKey.AllStudents] });
+      queryClient.invalidateQueries({ queryKey: [StudentQueryKey.Tutors] });
+      queryClient.invalidateQueries({ queryKey: [InvitationsQueryKey.AllInvitations] });
+      queryClient.invalidateQueries({ queryKey: [NotificationsQueryKey.SearchNotifications] });
+      queryClient.invalidateQueries({ queryKey: [NotificationsQueryKey.GetUnreadCount] });
 
       const user = queryClient.getQueryData<typeof currentUser>([UserQueryKey.Home]) || currentUser;
 
@@ -77,52 +89,35 @@ export const useAcceptInvite = () => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.INVITE_ACCEPTED_SUCCESS, {
           role: getProductAnalyticsRole(user?.default_layout),
           invite_kind: variables.invite_kind,
-          invite_id: variables.code,
-          tutor_id: variables.tutor_id,
           attempt_id: context?.attemptId,
           student_authenticated: Boolean(user?.id),
           invite_flow_version: 2,
           invite_tracking_id,
+          classroom_created: true,
+          ...getInviteFunnelEventProps(Boolean(user?.id)),
         });
       });
 
+      clearPendingInviteCode();
+
       if (user?.default_layout === 'tutor') {
-        updateProfile.mutate(
-          { default_layout: 'student' },
-          {
-            onSuccess: () => {
-              navigate({ to: `/classrooms/${classroomData.id}` });
-            },
-            onError: (error) => {
-              console.error('Ошибка при обновлении роли:', error);
-              // Все равно переходим на страницу класса, даже если обновление роли не удалось
-              navigate({ to: `/classrooms/${classroomData.id}` });
-            },
-          },
-        );
-      } else {
-        navigate({ to: `/classrooms/${classroomData.id}` });
+        updateProfile.mutate({ default_layout: 'student' });
       }
     },
     onError: (error, variables, context) => {
-      console.error('Ошибка:', error.message);
+      if (!context) return;
 
-      if (context) {
-        void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
-          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_FAILED, {
-            invite_id: variables.code,
-            tutor_id: variables.tutor_id,
-            attempt_id: context.attemptId,
-            student_authenticated: Boolean(currentUser?.id),
-            reason: mapInviteError(error),
-            duration_ms: measureDurationMs(context.startedAt),
-            invite_flow_version: 2,
-            invite_tracking_id,
-          });
+      void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_FAILED, {
+          attempt_id: context.attemptId,
+          student_authenticated: Boolean(currentUser?.id),
+          reason: mapInviteAcceptError(error),
+          duration_ms: measureDurationMs(context.startedAt),
+          invite_flow_version: 2,
+          invite_tracking_id,
+          ...getInviteFunnelEventProps(Boolean(currentUser?.id)),
         });
-      }
-
-      handleError(error, 'acceptInvite');
+      });
     },
   });
 };

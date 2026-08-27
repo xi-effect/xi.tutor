@@ -8,11 +8,13 @@ import { StickerShapeUtil } from './sticker';
 import { EmojiShapeUtil } from './emoji';
 import { FileShapeUtil } from './file';
 import { CoordinateAxesShapeUtil } from './coordinate-axes';
+import { MathFigureShapeUtil } from './math-figure';
 import { EmojiStickerShapeUtil } from './emojiSticker';
 import { TextShapeUtil } from './text';
 import { ArrowShapeUtil } from './arrow';
 import { PresentationShapeUtil } from './presentation';
 import { FlipCardShapeUtil } from './flipCard';
+import { ActivityShapeUtil } from '../activities';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
@@ -28,8 +30,10 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   FileShapeUtil,
   CoordinateAxesShapeUtil,
   FlipCardShapeUtil,
+  MathFigureShapeUtil,
   TextShapeUtil,
   ArrowShapeUtil,
+  ActivityShapeUtil,
 ];
 
 function mergeShapeUtilsByType(

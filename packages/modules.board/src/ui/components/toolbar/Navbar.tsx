@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@xipkg/dropdown';
-import { MenuDots } from '@xipkg/icons';
 import { track, useEditor } from '@ibodr/draw';
 import { cn } from '@xipkg/utils';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
@@ -15,22 +8,16 @@ import { UndoRedo } from './UndoRedo';
 import { NavbarMobileSwiper } from './NavbarMobileSwiper';
 import { ToolbarOptionsPanel } from './ToolbarOptionsPanel';
 import { useCloseToolbarPanel } from './useCloseToolbarPanel';
+import { ActivityPicker } from '../../../activities';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
-import { BoardDrawer, boardDrawerRowClass, NavbarButton, useBoardIsMobile } from '../shared';
+import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
-import {
-  boardChromeZClass,
-  boardDropdownZClass,
-  boardMenuItemClass,
-  boardPanelClass,
-  boardToolbarIconClass,
-} from '../../boardTheme';
+import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { getBoardFileInputAccept } from '../../../constants/mimeTypes';
 import { stickers } from '../../../config';
-import { useTranslation } from 'react-i18next';
 
 const toolMapping: Record<string, string> = {
   select: 'select',
@@ -48,7 +35,6 @@ const toolMapping: Record<string, string> = {
   'flip-card': 'flip-card',
 };
 
-const MORE_MENU_ACTION = 'more-menu';
 const COMMENT_ACTION = 'comment';
 
 const toolPopupIdByAction: Record<string, string> = {
@@ -73,9 +59,6 @@ export const Navbar = track(
     canRedo: boolean;
     token: string;
   }) => {
-    const { t } = useTranslation('board');
-    const isMobile = useBoardIsMobile();
-    const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
     const {
       pencilColor,
       pencilThickness,
@@ -86,14 +69,11 @@ export const Navbar = track(
     } = useDrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
+    const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
     const editor = useEditor();
     const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
     const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
     const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
-
-    const stickerPopupItems = navBarElements.find(
-      (item) => item.action === 'sticker',
-    )?.menuPopupContent;
 
     const closeToolbarPanel = useCallback(() => {
       if (activePopup && activePopup !== 'pen') resetToDefaults();
@@ -133,6 +113,16 @@ export const Navbar = track(
       editor.selectNone();
       setPlacingComment(false);
 
+      if (toolName === 'activity') {
+        if (activePopup && activePopup !== 'pen') resetToDefaults();
+        setActivePopup(null);
+        setActivityPickerOpen((open) => !open);
+        editor.setCurrentTool('select');
+        return;
+      }
+
+      setActivityPickerOpen(false);
+
       const popupId = toolPopupIdByAction[toolName] ?? null;
 
       if (popupId) {
@@ -162,17 +152,21 @@ export const Navbar = track(
         input.type = 'file';
         input.accept = getBoardFileInputAccept();
         input.multiple = true;
+        input.style.display = 'none';
+        document.body.appendChild(input);
 
         input.onchange = async (e) => {
-          const files = (e.target as HTMLInputElement).files;
-          if (files) {
-            for (const file of files) {
+          const selected = Array.from((e.target as HTMLInputElement).files ?? []);
+          try {
+            for (const file of selected) {
               try {
                 await insertAsset(editor, file, token, addToQueue);
               } catch (error) {
                 console.error('Ошибка при загрузке файла:', error);
               }
             }
+          } finally {
+            input.remove();
           }
         };
 
@@ -202,28 +196,17 @@ export const Navbar = track(
         'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
         'flip-card': 'flip-card',
+        'math-figure': 'geo',
       };
 
       return reverseMapping[currentToolId] || 'select';
     };
 
-    const handleInsertCoordinateAxes = () => {
-      editor.selectNone();
-      editor.setCurrentTool('coordinate-axes');
-      setActivePopup(null);
-      setMoreMenuOpen(false);
-    };
-
-    const handleInsertFlipCard = () => {
-      editor.selectNone();
-      editor.setCurrentTool('flip-card');
-      setActivePopup(null);
-    };
-
     const currentTool = getCurrentTool();
 
     const renderToolbarItem = (item: NavbarElementT) => {
-      const isActive = item.action === currentTool;
+      const isActive =
+        item.action === 'activity' ? activityPickerOpen : item.action === currentTool;
 
       if (
         item.action === 'select' ||
@@ -272,69 +255,6 @@ export const Navbar = track(
         key: COMMENT_ACTION,
         node: <CommentPlaceButton />,
       },
-      {
-        key: MORE_MENU_ACTION,
-        node: isMobile ? (
-          <>
-            <NavbarButton
-              icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
-              title={t('navbar.more')}
-              isActive={moreMenuOpen}
-              data-board-tool="more-menu"
-              onClick={() => setMoreMenuOpen(true)}
-            />
-            <BoardDrawer
-              open={moreMenuOpen}
-              onOpenChange={setMoreMenuOpen}
-              title={t('navbar.more')}
-            >
-              <button
-                type="button"
-                className={boardDrawerRowClass}
-                onClick={handleInsertCoordinateAxes}
-              >
-                <span className="text-text-primary text-sm font-medium">
-                  {t('navbar.coordinateAxes')}
-                </span>
-              </button>
-            </BoardDrawer>
-          </>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <NavbarButton
-                icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
-                title={t('navbar.more')}
-                isActive={false}
-                data-board-tool="more-menu"
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              side="top"
-              align="end"
-              sideOffset={8}
-              className={cn(
-                boardDropdownZClass,
-                'border-border-default bg-background-surface w-[180px] rounded-xl border p-1',
-              )}
-            >
-              <DropdownMenuItem
-                onClick={handleInsertCoordinateAxes}
-                className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
-              >
-                <span>{t('navbar.coordinateAxes')}</span>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={handleInsertFlipCard}
-                className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
-              >
-                <span>{t('navbar.flipCard')}</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
-      },
     ];
 
     const activeSlideIndex = (() => {
@@ -347,57 +267,59 @@ export const Navbar = track(
     })();
 
     return (
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className={cn(
-            'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
-            boardChromeZClass,
-          )}
-        >
-          <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
-            <div
-              className={cn(
-                boardPanelClass,
-                'absolute -left-[115px] hidden p-1 sm:flex',
-                boardChromeZClass,
-              )}
-            >
-              <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
-            </div>
-            <div
-              data-board-toolbar-ui
-              className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
-            >
-              <ToolbarOptionsPanel
-                activePopup={activePopup}
-                stickerPopupItems={stickerPopupItems}
-                recentEmojis={recentEmojis}
-                stickers={stickers}
-                onEmojiSelect={(emoji) => {
-                  editor.setStyleForNextShapes(EmojiStyle, emoji);
-                  addRecentEmoji(emoji);
-                }}
-                onEmojiStickerSelect={(sticker) => {
-                  editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
-                  editor.setCurrentTool('emoji-sticker');
-                  setActivePopup(null);
-                }}
-                onClose={closeToolbarPanel}
-              />
-              <div className="hidden items-center gap-1 p-1 sm:flex">
-                {toolbarSlides.map(({ key, node }) => (
-                  <div key={key} className="shrink-0">
-                    {node}
-                  </div>
-                ))}
+      <>
+        <ActivityPicker open={activityPickerOpen} onOpenChange={setActivityPickerOpen} />
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className={cn(
+              'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
+              boardChromeZClass,
+            )}
+          >
+            <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
+              <div
+                className={cn(
+                  boardPanelClass,
+                  'absolute -left-[115px] hidden p-1 sm:flex',
+                  boardChromeZClass,
+                )}
+              >
+                <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
               </div>
-              <div className="p-1 sm:hidden">
-                <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+              <div
+                data-board-toolbar-ui
+                className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
+              >
+                <ToolbarOptionsPanel
+                  activePopup={activePopup}
+                  recentEmojis={recentEmojis}
+                  stickers={stickers}
+                  onEmojiSelect={(emoji) => {
+                    editor.setStyleForNextShapes(EmojiStyle, emoji);
+                    addRecentEmoji(emoji);
+                  }}
+                  onEmojiStickerSelect={(sticker) => {
+                    editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+                    editor.setCurrentTool('emoji-sticker');
+                    setActivePopup(null);
+                  }}
+                  onClose={closeToolbarPanel}
+                />
+                <div className="hidden items-center gap-1 p-1 sm:flex">
+                  {toolbarSlides.map(({ key, node }) => (
+                    <div key={key} className="shrink-0">
+                      {node}
+                    </div>
+                  ))}
+                </div>
+                <div className="p-1 sm:hidden">
+                  <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   },
 );

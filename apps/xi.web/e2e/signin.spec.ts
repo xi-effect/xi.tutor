@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
+  mockAuthenticatedSession,
   mockHomeAfterAuth,
   mockNoise,
   mockSigninFailure,
@@ -19,6 +20,25 @@ test.describe('Signin', () => {
     await page.goto('/classrooms/1');
     await expect(page).toHaveURL(/\/signin/);
     expect(page.url()).toContain('redirect');
+  });
+
+  test('не показывает форму входа, если сессия уже есть', async ({ page }) => {
+    const user = mockUser({ onboarding_stage: 'completed', default_layout: 'tutor' });
+    await mockAuthenticatedSession(page, user);
+
+    await page.goto('/signin');
+
+    await expect(page).not.toHaveURL(/\/signin/, { timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: 'Вход в аккаунт' })).toHaveCount(0);
+  });
+
+  test('с живой сессией уводит с /signin на redirect', async ({ page }) => {
+    const user = mockUser({ onboarding_stage: 'completed', default_layout: 'tutor' });
+    await mockAuthenticatedSession(page, user);
+
+    await page.goto('/signin?redirect=/classrooms');
+
+    await expect(page).toHaveURL(/\/classrooms/, { timeout: 15_000 });
   });
 
   test('показывает ошибку при неизвестном email', async ({ page }) => {

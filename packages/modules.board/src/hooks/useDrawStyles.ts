@@ -9,10 +9,15 @@ import {
 import { DEFAULT_PEN_COLOR, DEFAULT_PEN_OPACITY, DEFAULT_PEN_THICKNESS } from '../config';
 import { BorderColorStyle } from '../shapes/shapeStyles';
 import { useDrawStore } from '../store';
-import { TColor, TFill, ToolType } from '../types';
+import { TFill, ToolType } from '../types';
 
-const DEFAULT_STROKE_SIZE_S = STROKE_SIZES.s;
-const XS_STROKE_SIZE_S = Math.max(1, Math.round(DEFAULT_STROKE_SIZE_S / 2));
+/**
+ * В @ibodr/draw 0.2+ `STROKE_SIZES` — множители к `theme.strokeWidth` (s = 1),
+ * не абсолютные пиксели. `xs` в DefaultSizeStyle нет, поэтому эмулируем через 's'.
+ * Math.round(s/2) раньше давал 1 при s=2 и ломается при s=1: xs становился равен s.
+ */
+const STROKE_SIZE_S = 1;
+const STROKE_SIZE_XS = 0.35;
 
 export const useDrawStyles = () => {
   const editor = useEditor();
@@ -60,12 +65,12 @@ export const useDrawStyles = () => {
       if (!editor) return;
       try {
         if (size === 'xs') {
-          STROKE_SIZES.s = XS_STROKE_SIZE_S;
+          STROKE_SIZES.s = STROKE_SIZE_XS;
           editor.setStyleForNextShapes(DefaultSizeStyle, 's');
           return;
         }
 
-        STROKE_SIZES.s = DEFAULT_STROKE_SIZE_S;
+        STROKE_SIZES.s = STROKE_SIZE_S;
         editor.setStyleForNextShapes(DefaultSizeStyle, size);
       } catch (error) {
         console.warn('Error setting thickness:', error);
@@ -127,7 +132,7 @@ export const useDrawStyles = () => {
   );
 
   const setSelectedShapesBorderColor = useCallback(
-    (colorName: TColor) => {
+    (colorName: string) => {
       if (!editor) return;
 
       editor.setStyleForSelectedShapes(
@@ -151,12 +156,12 @@ export const useDrawStyles = () => {
     (size: 'xs' | 's' | 'm' | 'l' | 'xl') => {
       if (!editor) return;
       if (size === 'xs') {
-        STROKE_SIZES.s = XS_STROKE_SIZE_S;
+        STROKE_SIZES.s = STROKE_SIZE_XS;
         editor.setStyleForSelectedShapes(DefaultSizeStyle, 's');
         return;
       }
 
-      STROKE_SIZES.s = DEFAULT_STROKE_SIZE_S;
+      STROKE_SIZES.s = STROKE_SIZE_S;
       editor.setStyleForSelectedShapes(DefaultSizeStyle, size);
     },
     [editor],

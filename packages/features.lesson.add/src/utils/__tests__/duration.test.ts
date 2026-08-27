@@ -5,7 +5,10 @@ import {
   addDurationToTime,
   durationBetweenMinutes,
   formatDurationBetween,
+  getTimePickerHours,
+  getTimePickerMinutes,
   minutesToTime,
+  resolveSyncedEndTime,
   timeToMinutes,
 } from '../index';
 
@@ -54,5 +57,42 @@ describe('formatDurationBetween', () => {
   it('возвращает пустую строку для невалидных/нулевых значений', () => {
     expect(formatDurationBetween('bad', '11:00', t)).toBe('');
     expect(formatDurationBetween('10:00', '10:00', t)).toBe('');
+  });
+});
+
+describe('time picker slots', () => {
+  it('для начала отдаёт все часы и минуты с шагом 15', () => {
+    expect(getTimePickerHours()).toEqual(Array.from({ length: 24 }, (_, i) => i));
+    expect(getTimePickerMinutes(10)).toEqual([0, 15, 30, 45]);
+  });
+
+  it('для конца фильтрует слоты относительно начала', () => {
+    expect(getTimePickerHours('19:00')[0]).toBe(19);
+    expect(getTimePickerMinutes(19, '19:00')).toEqual([15, 30, 45]);
+    expect(getTimePickerMinutes(20, '19:00')).toEqual([0, 15, 30, 45]);
+  });
+
+  it('учитывает переход через полночь и лимит 12 часов', () => {
+    const hours = getTimePickerHours('19:00');
+    expect(hours).toContain(23);
+    expect(hours).toContain(0);
+    expect(hours).toContain(7);
+    expect(hours).not.toContain(8);
+    expect(getTimePickerMinutes(7, '19:00')).toEqual([0]);
+  });
+});
+
+describe('resolveSyncedEndTime', () => {
+  it('ставит конец на час позже, если поле пустое', () => {
+    expect(resolveSyncedEndTime('19:00', '')).toBe('20:00');
+  });
+
+  it('не меняет валидный конец', () => {
+    expect(resolveSyncedEndTime('19:00', '21:30')).toBeUndefined();
+  });
+
+  it('сдвигает конец, если длительность 0 или больше 12 часов', () => {
+    expect(resolveSyncedEndTime('19:00', '19:00')).toBe('20:00');
+    expect(resolveSyncedEndTime('08:00', '21:00')).toBe('09:00');
   });
 });

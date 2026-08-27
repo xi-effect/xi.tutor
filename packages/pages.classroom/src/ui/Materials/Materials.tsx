@@ -47,20 +47,26 @@ export const Materials = () => {
     isError: isClassroomError,
   } = useGetClassroom(Number(classroomId));
 
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const roleReady = !isUserLoading && user != null;
 
-  const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
+  const tutorList = useGetClassroomMaterialsList({
+    classroomId: classroomId || '',
+    content_type: contentType,
+    disabled: !classroomId || !roleReady || !isTutor,
+  });
+  const studentList = useGetClassroomMaterialsListStudent({
+    classroomId: classroomId || '',
+    content_type: contentType,
+    disabled: !classroomId || !roleReady || isTutor,
+  });
 
   const {
     data: materials,
     isLoading: isMaterialsLoading,
     isError: isMaterialsError,
-  } = getList({
-    classroomId: classroomId || '',
-    content_type: contentType,
-    disabled: !classroomId,
-  });
+  } = isTutor ? tutorList : studentList;
 
   const handleTypeChange = (tabId: string) => {
     if (tabId !== 'boards' && tabId !== 'notes') return;
@@ -100,7 +106,7 @@ export const Materials = () => {
           <div className={galleryShadowPadClass}>
             {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
               <ErrorState />
-            ) : isClassroomLoading || isMaterialsLoading ? (
+            ) : isClassroomLoading || isMaterialsLoading || !roleReady ? (
               <LoadingState />
             ) : !materials?.length ? (
               <EmptyDataState

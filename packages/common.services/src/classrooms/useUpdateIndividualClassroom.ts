@@ -5,6 +5,7 @@ import { handleError, showSuccess } from 'common.services';
 
 interface UpdateIndividualClassroomData {
   name?: string;
+  name_override?: string | null;
   status?: ClassroomStatusT;
   description?: string;
   subject_id?: number | null;

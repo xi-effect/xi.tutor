@@ -17,9 +17,11 @@ export type UserRoleT = 'tutor' | 'student';
 // Базовые типы для пользователей
 export interface UserProfileSchema {
   id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
+  first_name?: string;
+  last_name?: string;
+  display_name?: string | null;
+  username?: string;
+  email?: string;
   avatar?: string;
 }
 
@@ -59,6 +61,7 @@ export interface IndividualClassroomT extends BaseClassroomT {
   kind: 'individual';
   student_id?: number;
   tutor_id?: number;
+  name_override?: string | null;
 }
 
 export interface GroupClassroomT extends BaseClassroomT {
@@ -83,6 +86,7 @@ export interface IndividualClassroomTutorResponseSchema {
   tutor_id?: number;
   subject_id: number | null;
   name?: string;
+  name_override?: string | null;
 }
 
 export interface GroupClassroomTutorResponseSchema {

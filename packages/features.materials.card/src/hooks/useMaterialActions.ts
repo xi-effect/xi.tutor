@@ -92,5 +92,6 @@ export const useMaterialActions = (
     handleUpdateAccessMode,
     handleUpdateName,
     isDeleting: deleteMaterials.isPending || deleteClassroomMaterials.isPending,
+    isUpdating: updateMaterial.isPending || updateClassroomMaterial.isPending,
   };
 };

@@ -1,0 +1,13 @@
+{
+  "toast": {
+    "materials": {
+      "created": "{{name}} created",
+      "deleted": "{{name}} deleted",
+      "deletedFallback": "Material deleted",
+      "updated": "Material updated",
+      "classroomUpdated": "Classroom material updated",
+      "classroomDeleted": "{{name}} deleted",
+      "duplicated": "Duplicate created"
+    }
+  }
+}

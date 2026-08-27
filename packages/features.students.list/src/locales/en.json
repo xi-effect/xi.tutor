@@ -5,6 +5,7 @@
   "loadError": "Failed to load data",
   "empty": "You don’t have any students yet",
   "notFound": "No students found",
+  "inviteStudent": "Invite a student",
   "deleteTooltip": "Remove student from your space",
   "deleteConfirm": {
     "title": "Remove student?",

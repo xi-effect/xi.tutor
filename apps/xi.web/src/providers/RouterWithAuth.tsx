@@ -1,5 +1,6 @@
-import { useSyncExternalStore, type CSSProperties } from 'react';
+import { useEffect, useRef, useSyncExternalStore, type CSSProperties } from 'react';
 import { RouterProvider } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from 'common.auth';
 import { NetworkProvider, NotificationsProvider } from 'common.services';
 import { ThemeProvider } from 'common.theme';
@@ -78,6 +79,19 @@ const AppToaster = () => {
 
 const RouterWithAuthContext = () => {
   const auth = useAuth();
+  const queryClient = useQueryClient();
+  const wasAuthenticated = useRef(auth.isAuthenticated);
+
+  useEffect(() => {
+    const hadSession = wasAuthenticated.current;
+    wasAuthenticated.current = auth.isAuthenticated;
+
+    if (!hadSession || auth.isAuthenticated) return;
+
+    void router.navigate({ to: '/signin', replace: true }).finally(() => {
+      queryClient.clear();
+    });
+  }, [auth.isAuthenticated, queryClient]);
 
   return <RouterProvider router={router} context={{ auth }} />;
 };

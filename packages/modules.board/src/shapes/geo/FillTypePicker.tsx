@@ -11,7 +11,13 @@ export const FillTypePicker = () => {
   const { t } = useTranslation('board');
   const { setGeoFillType } = useDrawStore();
   const { setSelectedShapesFillType } = useDrawStyles();
-  const { bgCurrentColorClass, borderCurrentColorClass, currentFillType } = useXiGeoStyles();
+  const {
+    bgCurrentColorClass,
+    bgCurrentColorCss,
+    borderCurrentColorClass,
+    borderCurrentColorCss,
+    currentFillType,
+  } = useXiGeoStyles();
 
   const handleFillType = useCallback(
     (fillType: TFill) => {
@@ -34,8 +40,12 @@ export const FillTypePicker = () => {
         title={t('geo.noFill')}
       >
         <div
-          className={cn('h-5 w-5 rounded-full border-2', borderCurrentColorClass)}
+          className={cn(
+            'h-5 w-5 rounded-full border-2',
+            !borderCurrentColorCss && borderCurrentColorClass,
+          )}
           style={{
+            borderColor: borderCurrentColorCss,
             backgroundImage: 'repeating-conic-gradient(rgba(0,0,0,0.3) 0% 25%, transparent 0% 50%)',
             backgroundSize: '10px 10px',
           }}
@@ -52,7 +62,13 @@ export const FillTypePicker = () => {
         onClick={() => handleFillType('semi')}
         title={t('geo.semiTransparent')}
       >
-        <div className={cn('h-5 w-5 rounded-full opacity-25', bgCurrentColorClass)} />
+        <div
+          className={cn(
+            'h-5 w-5 rounded-full opacity-25',
+            !bgCurrentColorCss && bgCurrentColorClass,
+          )}
+          style={bgCurrentColorCss ? { backgroundColor: bgCurrentColorCss } : undefined}
+        />
       </Button>
       <Button
         variant="none"
@@ -64,7 +80,10 @@ export const FillTypePicker = () => {
         onClick={() => handleFillType('solid')}
         title={t('geo.solid')}
       >
-        <div className={cn('h-5 w-5 rounded-full', bgCurrentColorClass)} />
+        <div
+          className={cn('h-5 w-5 rounded-full', !bgCurrentColorCss && bgCurrentColorClass)}
+          style={bgCurrentColorCss ? { backgroundColor: bgCurrentColorCss } : undefined}
+        />
       </Button>
     </div>
   );

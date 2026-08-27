@@ -3,13 +3,14 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 
-import { useSignin, useCurrentUser } from 'common.services';
+import { useSignin } from 'common.services';
 import { useAuth } from 'common.auth';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getActivationFlowId,
   getInviteTrackingIdFromContext,
   getOrCreateActivationFlowId,
+  getInviteFunnelEventProps,
   inferSigninSource,
   mapSigninError,
   trackProductEvent,
@@ -29,12 +30,12 @@ export const useSigninForm = () => {
   const { t } = useTranslation('signin');
 
   const [isPending, setIsPending] = useState(false);
+  const [inviteUserNotFound, setInviteUserNotFound] = useState(false);
   const { signin } = useSignin();
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { refetch: refetchUser } = useCurrentUser();
 
-  const search = useSearch({ strict: false }) as { redirect?: string };
+  const search = useSearch({ strict: false }) as { redirect?: string; invite?: string };
 
   const onSigninForm = async (data: FormData, setError: UseFormSetError<FormData>) => {
     if (isPending) {
@@ -43,6 +44,7 @@ export const useSigninForm = () => {
 
     const { email, password } = data;
     const source = inferSigninSource(search);
+    const isInviteFlow = source === 'invite';
     const activationFlowId =
       source === 'invite' ? getOrCreateActivationFlowId() : getActivationFlowId();
 
@@ -53,12 +55,16 @@ export const useSigninForm = () => {
       invite_tracking_id = undefined;
     }
 
+    const funnel = getInviteFunnelEventProps(false);
+
+    setInviteUserNotFound(false);
     setIsPending(true);
     try {
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNIN_SUBMIT, {
         source,
         invite_tracking_id,
         activation_flow_id: activationFlowId,
+        ...funnel,
       });
 
       const response: SignInResponse = await signin(email, password);
@@ -72,11 +78,11 @@ export const useSigninForm = () => {
         source,
         invite_tracking_id,
         activation_flow_id: activationFlowId,
+        ...funnel,
       });
 
       await completeSigninSuccess({
         login,
-        refetchUser,
         trackUmamiSession,
         navigate,
         redirect: search.redirect,
@@ -88,16 +94,18 @@ export const useSigninForm = () => {
           source,
           invite_tracking_id,
           activation_flow_id: activationFlowId,
+          ...funnel,
         });
       } catch {
         // Аналитика не должна ломать авторизацию
       }
 
-      handleSigninError(error, { t, setError, toast });
+      const reason = handleSigninError(error, { t, setError, toast }, { isInviteFlow });
+      setInviteUserNotFound(isInviteFlow && reason === 'user_not_found');
     } finally {
       setIsPending(false);
     }
   };
 
-  return { onSigninForm, isPending };
+  return { onSigninForm, isPending, inviteUserNotFound };
 };

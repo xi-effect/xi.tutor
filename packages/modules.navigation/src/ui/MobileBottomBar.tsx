@@ -45,9 +45,9 @@ export const MobileBottomBar = () => {
     setOpen(true);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate({ to: '/signin' });
+  const handleLogout = async () => {
+    await logout();
+    await navigate({ to: '/signin', replace: true });
   };
 
   return (
@@ -55,13 +55,15 @@ export const MobileBottomBar = () => {
       <nav className="bg-background-surface fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center px-4">
         <div className="flex w-full items-center gap-0">
           <div className="flex shrink-0 items-center gap-1">
-            <MobileUserMenu
-              userId={user?.id ?? 0}
-              onOpenProfile={handleOpenProfile}
-              onLogout={() => setLogoutConfirmOpen(true)}
-              profileText={t('profile')}
-              logoutText={t('logout')}
-            />
+            {user?.id ? (
+              <MobileUserMenu
+                userId={user.id}
+                onOpenProfile={handleOpenProfile}
+                onLogout={() => setLogoutConfirmOpen(true)}
+                profileText={t('profile')}
+                logoutText={t('logout')}
+              />
+            ) : null}
             <Notifications />
           </div>
 

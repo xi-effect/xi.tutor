@@ -10,7 +10,9 @@ import { ClassroomTabsBar } from './ClassroomTabsBar';
 
 export const TabsStudent = () => {
   const { t } = useTranslation('classroom');
-  const { isMobile, currentTab, handleTabChange } = useTabNavigation();
+  const { isMobile, currentTab, handleTabChange } = useTabNavigation({
+    normalizeMaterialTabs: true,
+  });
 
   const tabs = useMemo(
     () => [

@@ -175,13 +175,15 @@ export const MainPage = () => {
             <>
               <NearestLessonCard
                 lesson={nearestLesson}
-                onReschedule={() => setMoveLessonOpen(true)}
+                onReschedule={isTutor ? () => setMoveLessonOpen(true) : undefined}
               />
-              <MovingLessonModal
-                open={moveLessonOpen}
-                onOpenChange={setMoveLessonOpen}
-                {...movingPropsFromLessonRow(nearestLesson)}
-              />
+              {isTutor ? (
+                <MovingLessonModal
+                  open={moveLessonOpen}
+                  onOpenChange={setMoveLessonOpen}
+                  {...movingPropsFromLessonRow(nearestLesson)}
+                />
+              ) : null}
             </>
           )}
           <div

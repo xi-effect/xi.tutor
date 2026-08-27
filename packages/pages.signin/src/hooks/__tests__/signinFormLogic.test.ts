@@ -19,9 +19,16 @@ const axiosError = (status: number, detail?: string) => {
 };
 
 describe('resolveSigninRedirect', () => {
-  it('берёт redirect или /', () => {
+  it('берёт внутренний redirect или /', () => {
     expect(resolveSigninRedirect('/calendar')).toBe('/calendar');
     expect(resolveSigninRedirect(undefined)).toBe('/');
+  });
+
+  it('разбирает same-origin URL и отбрасывает внешние', () => {
+    const origin = 'https://app.sovlium.ru';
+    expect(resolveSigninRedirect(`${origin}/classrooms/1`, origin)).toBe('/classrooms/1');
+    expect(resolveSigninRedirect('https://evil.example/phish', origin)).toBe('/');
+    expect(resolveSigninRedirect('//evil.example/phish', origin)).toBe('/');
   });
 });
 
@@ -35,6 +42,24 @@ describe('handleSigninError', () => {
 
     expect(setError).toHaveBeenCalledWith('email', { message: 'errors.not_found_account' });
     expect(toast).toHaveBeenCalledWith('errors.not_found_account');
+  });
+
+  it('в invite-flow не показывает toast для User not found', () => {
+    const setError = vi.fn();
+    const toast = vi.fn();
+    const t = (key: string) => key;
+
+    const reason = handleSigninError(
+      axiosError(401, 'User not found'),
+      { t, setError, toast },
+      {
+        isInviteFlow: true,
+      },
+    );
+
+    expect(reason).toBe('user_not_found');
+    expect(setError).toHaveBeenCalledWith('email', { message: 'errors.not_found_account' });
+    expect(toast).not.toHaveBeenCalled();
   });
 
   it('ставит ошибку на password при Wrong password', () => {
@@ -72,14 +97,12 @@ describe('handleSigninError', () => {
 
 describe('completeSigninSuccess', () => {
   it('логинит, трекает umami при наличии user и редиректит', async () => {
-    const login = vi.fn().mockResolvedValue(undefined);
-    const refetchUser = vi.fn().mockResolvedValue({ data: { id: 1 } });
+    const login = vi.fn().mockResolvedValue({ id: 1 });
     const trackUmamiSession = vi.fn().mockResolvedValue(undefined);
     const navigate = vi.fn();
 
     await completeSigninSuccess({
       login,
-      refetchUser,
       trackUmamiSession,
       navigate,
       redirect: '/materials',
@@ -96,7 +119,6 @@ describe('completeSigninSuccess', () => {
 
     await completeSigninSuccess({
       login: vi.fn().mockResolvedValue(undefined),
-      refetchUser: vi.fn().mockResolvedValue({ data: undefined }),
       trackUmamiSession,
       navigate,
     });

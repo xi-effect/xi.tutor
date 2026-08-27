@@ -11,7 +11,8 @@ import {
   getHttpStatusGroup,
   getInviteTrackingIdFromContext,
   getOrCreateActivationFlowId,
-  getPendingInviteCode,
+  getInviteCodeFromSearch,
+  getInviteFunnelEventProps,
   inferSignupEntryPoint,
   mapSignupError,
   measureDurationMs,
@@ -49,8 +50,7 @@ export const useSignupForm = () => {
 
     const activationFlowId = getOrCreateActivationFlowId();
     const entryPoint = inferSignupEntryPoint(search);
-    const hasInvite =
-      Boolean(search.invite) || entryPoint === 'invite' || Boolean(getPendingInviteCode(search));
+    const hasInvite = Boolean(getInviteCodeFromSearch(search));
     const attemptId = createAttemptId();
     const attemptNumber = nextSignupAttemptNumber();
     const startedAt = nowMs();
@@ -64,13 +64,16 @@ export const useSignupForm = () => {
       invite_tracking_id = undefined;
     }
 
+    const funnel = getInviteFunnelEventProps(false);
+
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_SUBMIT, {
       activation_flow_id: activationFlowId,
       attempt_id: attemptId,
       entry_point: entryPoint,
       attempt_number: attemptNumber,
-      has_invite: hasInvite,
       invite_tracking_id,
+      ...funnel,
+      has_invite: hasInvite,
     });
 
     mutate(data, {
@@ -83,8 +86,9 @@ export const useSignupForm = () => {
           duration_ms: measureDurationMs(startedAt),
           confirmation_required: true,
           attempt_number: attemptNumber,
-          has_invite: hasInvite,
           invite_tracking_id,
+          ...funnel,
+          has_invite: hasInvite,
         });
 
         applySignupSuccessSideEffects({
@@ -111,8 +115,9 @@ export const useSignupForm = () => {
           http_status_group: getHttpStatusGroup(err),
           entry_point: entryPoint,
           attempt_number: attemptNumber,
-          has_invite: hasInvite,
           invite_tracking_id,
+          ...funnel,
+          has_invite: hasInvite,
         });
 
         handleSignupError(err, { t, setFormError, toast, setError });

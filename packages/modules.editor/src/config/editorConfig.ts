@@ -10,7 +10,14 @@ import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { UniqueID } from '@tiptap/extension-unique-id';
 import i18n from 'i18next';
 import * as Y from 'yjs';
-import { CustomImage, MoveBlockKeyboard, NormalizeSelection } from '../extensions';
+import {
+  AudioNode,
+  CustomImage,
+  MoveBlockKeyboard,
+  NormalizeSelection,
+  PdfNode,
+  PresentationNode,
+} from '../extensions';
 import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
 import 'highlight.js/styles/base16/atelier-cave-light.min.css';
 import { CustomCodeNode } from '../extensions/code';
@@ -74,6 +81,9 @@ export const getExtensions = (
       codeBlock: false,
     }),
     CustomImage,
+    AudioNode,
+    PdfNode,
+    PresentationNode,
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -93,6 +103,10 @@ export const getExtensions = (
         'heading',
         'blockquote',
         'codeBlock',
+        'image',
+        'audio',
+        'pdf',
+        'presentation',
       ],
     }),
     Placeholder.configure({
