@@ -49,7 +49,7 @@ export const ImageUploadModal = () => {
       const optimizedImage = await optimizeImage(file);
       const uploadedId = await uploadImage({
         file: optimizedImage,
-        token: storageItem.storage_token,
+        token: storageItem.content_token,
       });
       insertImage(uploadedId);
       closeModal();
@@ -64,7 +64,7 @@ export const ImageUploadModal = () => {
   const handleMediaInput = async (files: File[]) => {
     if (!files?.length || !editor || !activeModal || isUploading) return;
     const file = files[0];
-    const token = storageItem.storage_token;
+    const token = storageItem.content_token;
 
     try {
       setIsUploading(true);

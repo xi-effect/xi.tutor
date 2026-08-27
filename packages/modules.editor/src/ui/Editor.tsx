@@ -7,15 +7,15 @@ import {
   useGetClassroomStorageItemStudent,
   useGetStorageItem,
 } from 'common.services';
-import { StorageItemT } from 'common.types';
+import { ContentYDocItem } from 'common.types';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 
 type TEditorWithData = {
-  storageItem: StorageItemT;
+  storageItem: ContentYDocItem;
 };
 
 type TEditor = {
-  storageItem?: StorageItemT;
+  storageItem?: ContentYDocItem;
 };
 
 const EditorWithoutData = () => {
@@ -52,7 +52,7 @@ const EditorWithoutData = () => {
 
   if (isStorageItemLoading) return <LoadingScreen />;
 
-  if (storageItemError || !storageItem?.ydoc_id || !storageItem?.storage_token) {
+  if (storageItemError || !storageItem?.ydoc_id || !storageItem?.content_token) {
     return <NotFoundPage withLogo={false} />;
   }
 

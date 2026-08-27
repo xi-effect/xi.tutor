@@ -1,5 +1,5 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
-import { MaterialT } from 'common.types';
+import { ClassroomMaterialResponse } from 'common.types';
 import { useFetching } from 'common.config';
 
 export const useGetClassroomMaterial = ({
@@ -28,7 +28,7 @@ export const useGetClassroomMaterial = ({
   });
 
   return {
-    data: data as MaterialT,
+    data: data as ClassroomMaterialResponse,
     isError,
     isLoading,
     ...rest,

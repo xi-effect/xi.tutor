@@ -1,20 +1,26 @@
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
-import { ClassroomMaterialsT } from 'common.types';
+import {
+  buildAnyMaterialFilters,
+  MaterialScope,
+  MaterialT,
+  serializeMaterialScope,
+  YDocContentKind,
+} from 'common.types';
 
 interface MaterialsListParams {
-  content_type?: string | null;
+  content_kind?: YDocContentKind | null;
+  scope?: MaterialScope | null;
   disabled?: boolean;
 }
 
-/**
- * Упрощенный хук для получения первых 50 материалов кабинета
- * Автоматически устанавливает limit=50 и не требует передачи cursor
- */
 export const useGetMaterialsList = ({
-  content_type = null,
+  content_kind = null,
+  scope,
   disabled = false,
 }: MaterialsListParams) => {
+  const filters = buildAnyMaterialFilters({ content_kind, scope });
+
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method: materialsApiConfig[MaterialsQueryKey.Materials].method,
@@ -25,16 +31,19 @@ export const useGetMaterialsList = ({
     },
     data: {
       limit: 50,
-      filters: {
-        content_type,
-      },
+      filters,
     },
     disabled: disabled,
-    queryKey: [MaterialsQueryKey.Materials, content_type || 'all', 'list'],
+    queryKey: [
+      MaterialsQueryKey.Materials,
+      content_kind || 'all',
+      serializeMaterialScope(filters.scope),
+      'list',
+    ],
   });
 
   return {
-    data: data as ClassroomMaterialsT[],
+    data: data as MaterialT[],
     isError,
     isLoading,
     ...rest,

@@ -1,4 +1,5 @@
 export type MaterialsKindT = 'note' | 'board';
+export type YDocContentKind = MaterialsKindT;
 
 export type OnboardingStageT =
   | 'email-confirmation'

@@ -16,6 +16,11 @@ describe('normalizeStoredFileSrc', () => {
     );
   });
 
+  it('достаёт id из content-service URL', () => {
+    const id = '11111111-2222-3333-4444-555555555555';
+    expect(normalizeStoredFileSrc(`https://api.sovlium.ru/content-service/files/${id}/`)).toBe(id);
+  });
+
   it('оставляет уже нормализованный UUID', () => {
     expect(normalizeStoredFileSrc('abc-file-id')).toBe('abc-file-id');
   });
@@ -40,6 +45,12 @@ describe('extractFileIdFromUrl', () => {
 
   it('парсит storage-service URL', () => {
     expect(extractFileIdFromUrl('https://cdn.example/storage-service/v2/files/file-42/')).toBe(
+      'file-42',
+    );
+  });
+
+  it('парсит content-service URL', () => {
+    expect(extractFileIdFromUrl('https://cdn.example/content-service/files/file-42/')).toBe(
       'file-42',
     );
   });

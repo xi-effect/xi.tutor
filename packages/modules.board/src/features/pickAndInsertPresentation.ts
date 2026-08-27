@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { uploadFileRequest } from 'common.services';
+import { uploadPresentationRequest } from 'common.services';
 import { PresentationShape } from '../shapes/presentation';
 
 import i18n from 'i18next';
@@ -81,7 +81,7 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
   ]);
 
   try {
-    const serverUrl = await uploadFileRequest({
+    const serverUrl = await uploadPresentationRequest({
       file,
       token,
     });

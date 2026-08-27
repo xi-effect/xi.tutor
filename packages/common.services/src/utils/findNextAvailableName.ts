@@ -1,5 +1,5 @@
 export const findNextAvailableName = (
-  existingMaterials: Array<{ name: string }>,
+  existingMaterials: Array<{ name?: string }>,
   kind: 'note' | 'board',
 ): string => {
   const prefix = kind === 'note' ? 'Новая заметка' : 'Новая доска';
@@ -7,7 +7,7 @@ export const findNextAvailableName = (
 
   const existingNumbers = existingMaterials
     .map((material) => {
-      const match = material.name.match(pattern);
+      const match = material.name?.match(pattern);
       return match ? parseInt(match[1], 10) : 0;
     })
     .filter((num) => num > 0);

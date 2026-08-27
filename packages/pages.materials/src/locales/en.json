@@ -4,11 +4,33 @@
     "boards": "Boards",
     "notes": "Notes"
   },
+  "scope": {
+    "option": {
+      "personal": "Personal",
+      "classroom": "In classrooms",
+      "all": "All"
+    },
+    "classroomChip": "Classrooms: {{value}}",
+    "classroomChipAll": "All",
+    "classroomAll": "All classrooms",
+    "classroomPicked": "{{count}} selected",
+    "classroomLoading": "Loading...",
+    "classroomEmpty": "No classrooms yet",
+    "unnamedClassroom": "Untitled"
+  },
   "empty": {
     "boardsTitle": "No boards yet",
     "boardsDescription": "Create a board — it will appear in this list.",
+    "boardsClassroomDescription": "Classroom boards will appear in this list.",
+    "boardsClassroomOneDescription": "There are no boards in this classroom yet.",
+    "boardsClassroomSomeDescription": "There are no boards in the selected classrooms yet.",
+    "boardsAllDescription": "Personal and classroom boards will appear in this list.",
     "notesTitle": "No notes yet",
     "notesDescription": "Create a note — it will appear in this list.",
+    "notesClassroomDescription": "Classroom notes will appear in this list.",
+    "notesClassroomOneDescription": "There are no notes in this classroom yet.",
+    "notesClassroomSomeDescription": "There are no notes in the selected classrooms yet.",
+    "notesAllDescription": "Personal and classroom notes will appear in this list.",
     "filesTitle": "No files yet",
     "filesDescription": "Uploaded files will appear in this list.",
     "helpLink": "Learn more about working with materials"

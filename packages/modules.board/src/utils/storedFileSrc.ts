@@ -4,7 +4,7 @@
  *
  * В синхронизируемом состоянии доски (Yjs, бэкап, экспорт) поле `props.src` у
  * файловых записей — image asset, audio, pdf, file — хранит ТОЛЬКО id файла
- * из storage-service (UUID), без хоста и без `getFileUrl()`.
+ * из content-service (UUID), без хоста и без `getFileUrl()`.
  *
  * Базовый URL API задаётся окружением (`VITE_SERVER_URL_BACKEND`) и подставляется
  * только в рантайме при отображении — см. `resolveAssetUrl()` → `getFileUrl(id)`.
@@ -28,7 +28,7 @@ import { extractFileIdFromUrl } from './resolveAssetUrl';
 
 /**
  * Приводит `props.src` к формату для персиста: id файла или временный inline.
- * Legacy full URL (`.../storage-service/v2/files/{id}/`) → bare id.
+ * Legacy full URL (`.../content-service/files/{id}/` или `.../storage-service/v2/files/{id}/`) → bare id.
  */
 export function normalizeStoredFileSrc(src: string): string {
   if (!src) return src;
@@ -53,7 +53,8 @@ export function isDisplayableAssetUrl(src: string | null | undefined): boolean {
 export function warnIfPersistingFullStorageUrl(src: string, context: string): void {
   if (!import.meta.env.DEV) return;
   if (!src.startsWith('http://') && !src.startsWith('https://')) return;
-  if (!src.includes('/storage-service/v2/files/')) return;
+  if (!src.includes('/storage-service/v2/files/') && !src.includes('/content-service/files/'))
+    return;
 
   console.warn(
     `[modules.board] ${context}: props.src должен быть id файла, не полный URL. ` +

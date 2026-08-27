@@ -6,7 +6,7 @@ import {
   MAX_FILENAME_LENGTH,
   uploadAudioRequest,
   uploadDocumentRequest,
-  uploadFileRequest,
+  uploadPresentationRequest,
 } from 'common.services';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
@@ -189,7 +189,7 @@ export async function insertPresentationFile(
     return false;
   }
 
-  const src = await uploadFileRequest({ file, token });
+  const src = await uploadPresentationRequest({ file, token });
 
   return insertAtomBlock(
     editor,
