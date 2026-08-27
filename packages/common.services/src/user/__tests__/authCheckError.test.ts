@@ -83,21 +83,20 @@ describe('shouldRetryCurrentUserQuery', () => {
 
   it('ретраит сетевые ошибки до лимита', () => {
     expect(shouldRetryCurrentUserQuery(0, { code: 'ERR_NETWORK' })).toBe(true);
-    expect(shouldRetryCurrentUserQuery(2, { code: 'ECONNABORTED' })).toBe(true);
-    expect(shouldRetryCurrentUserQuery(3, { code: 'ERR_NETWORK' })).toBe(false);
+    expect(shouldRetryCurrentUserQuery(1, { code: 'ECONNABORTED' })).toBe(true);
+    expect(shouldRetryCurrentUserQuery(2, { code: 'ERR_NETWORK' })).toBe(false);
   });
 
   it('ретраит 5xx до лимита', () => {
     expect(shouldRetryCurrentUserQuery(0, httpError(500))).toBe(true);
-    expect(shouldRetryCurrentUserQuery(3, httpError(502))).toBe(false);
+    expect(shouldRetryCurrentUserQuery(2, httpError(502))).toBe(false);
   });
 });
 
 describe('currentUserRetryDelay', () => {
-  it('растёт экспоненциально и ограничен 4 секундами', () => {
-    expect(currentUserRetryDelay(0)).toBe(1000);
-    expect(currentUserRetryDelay(1)).toBe(2000);
-    expect(currentUserRetryDelay(2)).toBe(4000);
-    expect(currentUserRetryDelay(5)).toBe(4000);
+  it('растёт быстро и ограничен 800 мс', () => {
+    expect(currentUserRetryDelay(0)).toBe(400);
+    expect(currentUserRetryDelay(1)).toBe(800);
+    expect(currentUserRetryDelay(2)).toBe(800);
   });
 });

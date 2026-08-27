@@ -1,23 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { isAuthFailureError } from '../user/authCheckError';
 
 export const SESSION_RESTORE_NETWORK_TOAST_ID = 'session-restore-network';
-export const SESSION_RESTORE_NETWORK_TOAST_DELAY_MS = 2000;
+export const SESSION_RESTORE_NETWORK_TOAST_DELAY_MS = 800;
 
 export const shouldNotifySessionRestoreNetwork = ({
   isSessionUnresolved,
   failureCount,
   error,
+  isOnline,
 }: {
   isSessionUnresolved: boolean;
   failureCount: number;
   error: unknown;
-}) => isSessionUnresolved && failureCount > 0 && !isAuthFailureError(error);
+  isOnline: boolean;
+}) => isSessionUnresolved && failureCount > 0 && !isAuthFailureError(error) && isOnline === false;
 
 /**
- * Один спокойный toast, если проверка сессии упирается в сеть.
- * Появляется с задержкой, чтобы короткий обрыв (1–2 с) не вспыхивал всплывашкой.
+ * Toast только при реальном offline (airplane / системный офлайн).
+ * Proxyman и 401 не считаются потерей сети — иначе всплывашка бесит и врёт.
  */
 export const useSessionRestoreNetworkToast = ({
   isSessionUnresolved,
@@ -28,10 +30,26 @@ export const useSessionRestoreNetworkToast = ({
   failureCount: number;
   error: unknown;
 }) => {
+  const [isOnline, setIsOnline] = useState(
+    () => typeof navigator === 'undefined' || navigator.onLine,
+  );
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   const shouldNotify = shouldNotifySessionRestoreNetwork({
     isSessionUnresolved,
     failureCount,
     error,
+    isOnline,
   });
 
   useEffect(() => {
@@ -43,8 +61,8 @@ export const useSessionRestoreNetworkToast = ({
     const timer = window.setTimeout(() => {
       toast.warning('Нет соединения', {
         id: SESSION_RESTORE_NETWORK_TOAST_ID,
-        description: 'Страница откроется, когда появится сеть.',
-        duration: 6000,
+        description: 'Проверьте подключение к сети.',
+        duration: 4000,
       });
     }, SESSION_RESTORE_NETWORK_TOAST_DELAY_MS);
 
