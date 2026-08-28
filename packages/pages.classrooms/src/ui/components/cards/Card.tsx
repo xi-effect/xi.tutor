@@ -64,7 +64,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
 }) => {
   const { t } = useTranslation('classrooms');
   const navigate = useNavigate();
-  const search = useSearch({ strict: false });
+  const search = useSearch({ strict: false }) as { call?: string };
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
 
   const [openEditModal, setOpenEditModal] = useState(false);
