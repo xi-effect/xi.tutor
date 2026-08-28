@@ -112,6 +112,11 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
   },
   files: {
     'Invalid file format': 'Недопустимый тип файла',
+    'File access denied': 'Доступ к файлу запрещён',
+    'File not found': 'Файл не найден',
+    'YDoc not found': 'Документ не найден',
+    'Insufficient content token permissions': 'Недостаточно прав токена доступа к контенту',
+    'Invalid content token': 'Недействительный токен доступа к контенту',
   },
   notifications: {
     'Validation Error': 'Ошибка валидации',

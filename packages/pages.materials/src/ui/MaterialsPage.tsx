@@ -11,15 +11,20 @@ import {
 } from '../provider/MaterialsDuplicateContext';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { MaterialScopeFilterT } from '../types';
+import {
+  MaterialScopeFilterT,
+  MaterialsTabT,
+  DEFAULT_FILES_FILTERS,
+  FilesFiltersT,
+} from '../types';
 
-const getTabFromUrl = (): 'notes' | 'boards' => {
+const getTabFromUrl = (): MaterialsTabT => {
   if (typeof window === 'undefined') {
     return 'boards';
   }
 
   const tab = new URLSearchParams(window.location.search).get('tab');
-  return tab === 'notes' || tab === 'boards' ? tab : 'boards';
+  return tab === 'notes' || tab === 'boards' || tab === 'files' ? tab : 'boards';
 };
 
 const getClassroomIdsFromUrl = (): number[] => {
@@ -70,11 +75,12 @@ const replaceSearchParams = (updates: Record<string, string | null>) => {
 };
 
 const MaterialsPageContent = () => {
-  const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
+  const [activeTab, setActiveTab] = useState<MaterialsTabT>(() => getTabFromUrl());
   const [scopeFilter, setScopeFilter] = useState<MaterialScopeFilterT>(() => getScopeFromUrl());
   const [classroomIds, setClassroomIds] = useState<number[]>(() =>
     getScopeFromUrl() === 'classroom' ? getClassroomIdsFromUrl() : [],
   );
+  const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -97,12 +103,16 @@ const MaterialsPageContent = () => {
   }, []);
 
   const handleTabChange = (tabId: string) => {
-    if (tabId !== 'notes' && tabId !== 'boards') {
+    if (tabId !== 'notes' && tabId !== 'boards' && tabId !== 'files') {
       return;
     }
 
     replaceSearchParams({ tab: tabId });
     setActiveTab(tabId);
+  };
+
+  const handleResetFilesFilters = () => {
+    setFilesFilters(DEFAULT_FILES_FILTERS);
   };
 
   const handleScopeChange = (scope: MaterialScopeFilterT) => {
@@ -141,6 +151,9 @@ const MaterialsPageContent = () => {
             classroomIds={classroomIds}
             onScopeChange={handleScopeChange}
             onClassroomChange={handleClassroomChange}
+            filesFilters={filesFilters}
+            onFilesFiltersChange={setFilesFilters}
+            onResetFilesFilters={handleResetFilesFilters}
           />
         </div>
 
@@ -156,6 +169,8 @@ const MaterialsPageContent = () => {
             scopeFilter={scopeFilter}
             classroomIds={classroomIds}
             parentRef={parentRef}
+            filesFilters={filesFilters}
+            onResetFilesFilters={handleResetFilesFilters}
           />
         </div>
       </div>

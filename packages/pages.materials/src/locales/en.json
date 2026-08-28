@@ -2,7 +2,8 @@
   "title": "Materials",
   "tabs": {
     "boards": "Boards",
-    "notes": "Notes"
+    "notes": "Notes",
+    "files": "Files"
   },
   "scope": {
     "option": {
@@ -17,6 +18,53 @@
     "classroomLoading": "Loading...",
     "classroomEmpty": "No classrooms yet",
     "unnamedClassroom": "Untitled"
+  },
+  "files": {
+    "upload": "Upload files",
+    "uploadSoon": "Library upload will be available soon",
+    "searchPlaceholder": "Search files",
+    "resetAll": "Reset all",
+    "reset": "Reset",
+    "apply": "Apply",
+    "uploader": {
+      "chip": "Uploaded by: {{value}}",
+      "mineShort": "Mine",
+      "mine": "My files",
+      "students": "Students' files",
+      "all": "All files"
+    },
+    "type": {
+      "chip": "File type",
+      "chipCount": "File type · {{count}}",
+      "image": "Image",
+      "document": "Document",
+      "presentation": "Presentation",
+      "audio": "Audio",
+      "uncategorized": "Other"
+    },
+    "tags": {
+      "chip": "Tags",
+      "chipCount": "Tags · {{count}}",
+      "searchPlaceholder": "Find a tag",
+      "empty": "Tags not found",
+      "hint": "Start typing a tag name"
+    },
+    "meta": "Uploaded {{date}} · {{size}}",
+    "today": "today",
+    "filteredEmptyTitle": "Nothing found",
+    "filteredEmptyDescription": "Try changing the search or reset the selected filters",
+    "error": "Could not load files",
+    "menu": {
+      "download": "Download",
+      "delete": "Delete"
+    },
+    "deleteConfirm": {
+      "title": "Delete file?",
+      "description": "The file “{{name}}” will be deleted permanently. Links to it in boards and notes may stop working.",
+      "confirm": "Delete",
+      "deleting": "Deleting...",
+      "cancel": "Cancel"
+    }
   },
   "empty": {
     "boardsTitle": "No boards yet",

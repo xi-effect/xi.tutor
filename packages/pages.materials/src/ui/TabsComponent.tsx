@@ -1,13 +1,16 @@
 import { RefObject } from 'react';
 import { Materials } from './Materials';
 import { Notes } from './Notes';
-import { MaterialScopeFilterT } from '../types';
+import { Files } from './Files';
+import type { FilesFiltersT, MaterialScopeFilterT, MaterialsTabT } from '../types';
 
 type TabsComponentProps = {
-  activeTab: 'notes' | 'boards';
+  activeTab: MaterialsTabT;
   scopeFilter: MaterialScopeFilterT;
   classroomIds: number[];
   parentRef: RefObject<HTMLDivElement | null>;
+  filesFilters: FilesFiltersT;
+  onResetFilesFilters: () => void;
 };
 
 export const TabsComponent = ({
@@ -15,14 +18,20 @@ export const TabsComponent = ({
   scopeFilter,
   classroomIds,
   parentRef,
+  filesFilters,
+  onResetFilesFilters,
 }: TabsComponentProps) => {
-  return (
-    <div>
-      {activeTab === 'boards' ? (
-        <Materials parentRef={parentRef} scopeFilter={scopeFilter} classroomIds={classroomIds} />
-      ) : (
-        <Notes parentRef={parentRef} scopeFilter={scopeFilter} classroomIds={classroomIds} />
-      )}
-    </div>
-  );
+  if (activeTab === 'files') {
+    return (
+      <Files parentRef={parentRef} filters={filesFilters} onResetFilters={onResetFilesFilters} />
+    );
+  }
+
+  if (activeTab === 'boards') {
+    return (
+      <Materials parentRef={parentRef} scopeFilter={scopeFilter} classroomIds={classroomIds} />
+    );
+  }
+
+  return <Notes parentRef={parentRef} scopeFilter={scopeFilter} classroomIds={classroomIds} />;
 };

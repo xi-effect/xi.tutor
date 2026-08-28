@@ -2,7 +2,8 @@
   "title": "Материалы",
   "tabs": {
     "boards": "Доски",
-    "notes": "Заметки"
+    "notes": "Заметки",
+    "files": "Файлы"
   },
   "scope": {
     "option": {
@@ -17,6 +18,53 @@
     "classroomLoading": "Загрузка...",
     "classroomEmpty": "Пока нет кабинетов",
     "unnamedClassroom": "Без названия"
+  },
+  "files": {
+    "upload": "Загрузить файлы",
+    "uploadSoon": "Загрузка файлов в библиотеку скоро появится",
+    "searchPlaceholder": "Поиск по файлам",
+    "resetAll": "Сбросить все",
+    "reset": "Сбросить",
+    "apply": "Применить",
+    "uploader": {
+      "chip": "Кто загрузил: {{value}}",
+      "mineShort": "Мои",
+      "mine": "Мои файлы",
+      "students": "Файлы учеников",
+      "all": "Все файлы"
+    },
+    "type": {
+      "chip": "Тип файла",
+      "chipCount": "Тип файла · {{count}}",
+      "image": "Изображение",
+      "document": "Документ",
+      "presentation": "Презентация",
+      "audio": "Аудио",
+      "uncategorized": "Другое"
+    },
+    "tags": {
+      "chip": "Теги",
+      "chipCount": "Теги · {{count}}",
+      "searchPlaceholder": "Найти тег",
+      "empty": "Теги не найдены",
+      "hint": "Начните вводить название тега"
+    },
+    "meta": "Загружено {{date}} · {{size}}",
+    "today": "сегодня",
+    "filteredEmptyTitle": "Ничего не найдено",
+    "filteredEmptyDescription": "Попробуйте изменить параметры поиска или сбросить выбранные фильтры",
+    "error": "Не удалось загрузить файлы",
+    "menu": {
+      "download": "Скачать",
+      "delete": "Удалить"
+    },
+    "deleteConfirm": {
+      "title": "Удалить файл?",
+      "description": "Файл «{{name}}» будет удалён без возможности восстановления. Ссылки на него в досках и заметках могут перестать работать.",
+      "confirm": "Удалить",
+      "deleting": "Удаление...",
+      "cancel": "Отменить"
+    }
   },
   "empty": {
     "boardsTitle": "Пока нет досок",

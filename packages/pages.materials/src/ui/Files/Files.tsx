@@ -1,55 +1,90 @@
-import { useRef } from 'react';
+import { RefObject, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card } from './Card';
-import { useInfiniteQuery } from '../../hooks';
-import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
+import { useMediaQuery } from '@xipkg/utils';
+import { useCurrentUser, useSearchLibraryFiles } from 'common.services';
+import { FileCard } from './Card';
+import { FilesFilteredEmpty } from './FilesFilteredEmpty';
+import { MaterialsGallerySkeleton } from '../MaterialsGallerySkeleton';
+import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
+import { filterLibraryFiles, hasActiveFilesFilters } from '../../utils';
+import type { FilesFiltersT } from '../../types';
 
-const FilesGridSkeleton = () => (
-  <div className="grid grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
-    {Array.from({ length: 8 }).map((_, i) => (
-      <div
-        key={i}
-        className="border-border-control bg-background-surface flex h-[96px] items-center gap-4 rounded-2xl border px-4"
-      >
-        <div className="bg-background-subtle size-10 shrink-0 animate-pulse rounded-lg" />
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="bg-background-subtle h-4 w-2/3 animate-pulse rounded" />
-          <div className="bg-background-subtle h-3 w-24 animate-pulse rounded" />
-        </div>
-      </div>
-    ))}
-  </div>
-);
+type FilesProps = {
+  parentRef: RefObject<HTMLDivElement | null>;
+  filters: FilesFiltersT;
+  onResetFilters: () => void;
+};
 
-export const Files = () => {
+export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   const { t } = useTranslation('materials');
-  const parentRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery('(max-width: 960px)');
+  const { data: user } = useCurrentUser();
+  const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useSearchLibraryFiles();
 
-  const { items, isLoading, isError } = useInfiniteQuery(parentRef, 'note');
+  const filteredFiles = useMemo(
+    () => filterLibraryFiles(files, filters, user?.id),
+    [files, filters, user?.id],
+  );
 
-  const notFoundItems = !items.length && !isLoading && !isError;
+  const filtersActive = hasActiveFilesFilters(filters);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!parentRef.current || isFetchingNextPage || !hasNextPage) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
+      if (scrollHeight - scrollTop - clientHeight < 120) {
+        fetchNextPage();
+      }
+    };
+
+    const element = parentRef.current;
+    if (!element) return;
+
+    element.addEventListener('scroll', handleScroll);
+    return () => element.removeEventListener('scroll', handleScroll);
+  }, [parentRef, fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  useEffect(() => {
+    if (!filtersActive || isFetchingNextPage || !hasNextPage || filteredFiles.length > 0) {
+      return;
+    }
+    fetchNextPage();
+  }, [fetchNextPage, filteredFiles.length, filtersActive, hasNextPage, isFetchingNextPage]);
+
+  if (isLoading) {
+    return <MaterialsGallerySkeleton />;
+  }
+
+  if (isError) {
+    return <p className="text-s-base text-text-secondary py-10 text-center">{t('files.error')}</p>;
+  }
+
+  if (!files.length) {
+    return (
+      <MaterialsTabEmptyState
+        title={t('empty.filesTitle')}
+        description={t('empty.filesDescription')}
+      />
+    );
+  }
+
+  if (!filteredFiles.length) {
+    return <FilesFilteredEmpty onReset={onResetFilters} />;
+  }
 
   return (
-    <div ref={parentRef} className="h-[calc(100vh-158px)] overflow-auto">
-      {isLoading ? (
-        <FilesGridSkeleton />
-      ) : notFoundItems ? (
-        <MaterialsTabEmptyState
-          title={t('empty.filesTitle')}
-          description={t('empty.filesDescription')}
-        />
-      ) : (
-        <GridVirtualizer
-          parentRef={parentRef}
-          items={items}
-          defaultRowHeight={100}
-          minItemWidth={300}
-          gap={20}
-          maxColumns={4}
-          renderItem={(material) => <Card {...material} />}
-        />
-      )}
-    </div>
+    <GridVirtualizer
+      parentRef={parentRef}
+      items={filteredFiles}
+      defaultRowHeight={176}
+      minItemWidth={300}
+      gap={20}
+      maxColumns={4}
+      isSingleColumn={isMobile}
+      renderItem={(file) => <FileCard file={file} className="w-full" />}
+    />
   );
 };

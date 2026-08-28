@@ -12,11 +12,12 @@ export * from './notifications';
 export { usePWAInstall } from './usePWAInstall';
 export * from './network';
 export * from './calls';
-export * from './subjects';
+export * from './tags';
 export * from './students';
 export * from './enrollments';
 export * from './tutors';
 export * from './files';
+export * from './libraryFiles';
 export * from './contacts';
 export * from './paymentsTemplates';
 export * from './classroom-payments';
@@ -29,5 +30,20 @@ export {
   type UploadFileResponse,
   type ContentTokenHeaders,
   type ReadFileHeaders,
+  libraryFilesApiConfig,
+  LibraryFilesQueryKey,
+  libraryFilesQueryKeys,
+  getLibraryFileUrl,
+  type LibraryFile,
+  type FileCursor,
+  type FileFilters,
+  type FileSearchRequest,
+  type LibraryReadFileHeaders,
+  tagsApiConfig,
+  TagsQueryKey,
+  tagsQueryKeys,
+  TAG_KIND,
+  type TagKind,
+  type TagSchema,
 } from 'common.api';
 export * from './scheduler';

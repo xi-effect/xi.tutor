@@ -4,6 +4,8 @@ export { uploadDocumentRequest } from './uploadDocumentRequest';
 export { uploadPresentationRequest } from './uploadPresentationRequest';
 export { uploadFileRequest } from './uploadFileRequest';
 export { useDownloadFile, downloadFileRequest } from './useDownloadFile';
+export { useAttachFileToYDoc, attachFileToYDocRequest } from './useAttachFileToYDoc';
+export type { AttachFileToYDocVars } from './useAttachFileToYDoc';
 export { useRetryFileQueue, type RetryRequest } from './useRetryFileQueue';
 export {
   saveFileToDB,

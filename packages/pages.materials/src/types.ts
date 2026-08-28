@@ -1,3 +1,5 @@
+import type { FileKind } from 'common.api';
+
 export type MaterialPropsTT = {
   idMaterial: string;
   nameMaterial: string;
@@ -8,6 +10,29 @@ export type MaterialPropsTT = {
 };
 
 export type MaterialScopeFilterT = 'personal' | 'classroom' | 'all';
+
+export type MaterialsTabT = 'notes' | 'boards' | 'files';
+
+export type FilesUploaderFilterT = 'mine' | 'students' | 'all';
+
+export type FilesTagOptionT = {
+  id: number;
+  name: string;
+};
+
+export type FilesFiltersT = {
+  search: string;
+  uploader: FilesUploaderFilterT;
+  kinds: FileKind[];
+  tags: FilesTagOptionT[];
+};
+
+export const DEFAULT_FILES_FILTERS: FilesFiltersT = {
+  search: '',
+  uploader: 'mine',
+  kinds: [],
+  tags: [],
+};
 
 export type MaterialPropsT = {
   content_kind: 'note' | 'board';

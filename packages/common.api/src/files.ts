@@ -45,6 +45,7 @@ enum FilesQueryKey {
   UploadAttachment = 'UploadAttachment',
   GetFile = 'GetFile',
   GetFileMeta = 'GetFileMeta',
+  AttachFileToYDoc = 'AttachFileToYDoc',
 }
 
 const filesApiConfig = {
@@ -75,6 +76,11 @@ const filesApiConfig = {
   [FilesQueryKey.GetFileMeta]: {
     getUrl: (fileId: string) => `${CONTENT_SERVICE_URL}/files/${fileId}/meta/`,
     method: HttpMethod.GET,
+  },
+  [FilesQueryKey.AttachFileToYDoc]: {
+    getUrl: (ydocId: string, fileId: string) =>
+      `${CONTENT_SERVICE_URL}/ydocs/${ydocId}/files/${fileId}/`,
+    method: HttpMethod.PUT,
   },
 };
 
