@@ -13,7 +13,9 @@ import { Button } from '@xipkg/button';
 import { cn } from '@xipkg/utils';
 import { ModalTitle } from '@xipkg/modal';
 import { useTranslation } from 'react-i18next';
+import type { LibraryFile } from 'common.api';
 import { FileActionsMenu } from '../FileActionsMenu';
+import { AssignFileTagsPopover } from '../tags/AssignFileTagsPopover';
 import type { FilePreviewKind } from './getFilePreviewKind';
 
 const kindIcon: Record<FilePreviewKind, typeof File> = {
@@ -25,6 +27,7 @@ const kindIcon: Record<FilePreviewKind, typeof File> = {
 };
 
 type FilePreviewHeaderProps = {
+  file: LibraryFile;
   title: string;
   subtitle: string;
   kind: FilePreviewKind;
@@ -32,13 +35,18 @@ type FilePreviewHeaderProps = {
   showFullscreen: boolean;
   showMore: boolean;
   isDownloading?: boolean;
+  tagsOpen: boolean;
+  onTagsOpenChange: (open: boolean) => void;
   onDownload: () => void;
   onToggleFullscreen: () => void;
   onDelete: () => void;
+  onShare?: () => void;
+  onRename?: () => void;
   onClose: () => void;
 };
 
 export const FilePreviewHeader = ({
+  file,
   title,
   subtitle,
   kind,
@@ -46,9 +54,13 @@ export const FilePreviewHeader = ({
   showFullscreen,
   showMore,
   isDownloading,
+  tagsOpen,
+  onTagsOpenChange,
   onDownload,
   onToggleFullscreen,
   onDelete,
+  onShare,
+  onRename,
   onClose,
 }: FilePreviewHeaderProps) => {
   const { t } = useTranslation('materials');
@@ -56,12 +68,10 @@ export const FilePreviewHeader = ({
 
   const iconButtonClass = cn(
     'flex size-8 items-center justify-center rounded-full p-0 transition-colors',
+    'hover:bg-background-subtle focus:bg-background-subtle active:bg-background-subtle',
     'focus-visible:ring-0 focus-visible:ring-offset-0',
-    isFullscreen
-      ? 'bg-white/10 hover:bg-white/15 focus:bg-white/15 active:bg-white/15'
-      : 'hover:bg-background-subtle focus:bg-background-subtle active:bg-background-subtle',
   );
-  const iconClass = cn('size-4', isFullscreen ? 'fill-white' : 'fill-icon-secondary');
+  const iconClass = 'fill-icon-secondary size-4';
 
   return (
     <div
@@ -75,22 +85,10 @@ export const FilePreviewHeader = ({
           <Icon className="fill-icon-brand size-6" />
         </div>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <ModalTitle
-            className={cn(
-              'm-0 truncate text-xl leading-7 font-medium transition-colors duration-300',
-              isFullscreen ? 'text-white' : 'text-text-primary',
-            )}
-          >
+          <ModalTitle className="text-text-primary m-0 truncate text-xl leading-7 font-medium">
             {title}
           </ModalTitle>
-          <p
-            className={cn(
-              'text-xs leading-4 font-normal transition-colors duration-300',
-              isFullscreen ? 'text-white/70' : 'text-text-secondary',
-            )}
-          >
-            {subtitle}
-          </p>
+          <p className="text-text-secondary text-xs leading-4 font-normal">{subtitle}</p>
         </div>
       </div>
 
@@ -123,18 +121,30 @@ export const FilePreviewHeader = ({
           </Button>
         ) : null}
         {showMore ? (
-          <FileActionsMenu modal onDelete={onDelete} deleteUmami="materials-file-preview-delete">
-            <Button
-              type="button"
-              variant="none"
-              size="s"
-              className={iconButtonClass}
-              aria-label={t('files.preview.more')}
-              data-umami-event="materials-file-preview-menu-open"
+          <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={onTagsOpenChange}>
+            <FileActionsMenu
+              modal
+              onRename={onRename}
+              renameUmami="materials-file-preview-rename"
+              onEditTags={() => onTagsOpenChange(true)}
+              editTagsUmami="materials-file-preview-edit-tags"
+              onShare={onShare}
+              shareUmami="materials-file-preview-share"
+              onDelete={onDelete}
+              deleteUmami="materials-file-preview-delete"
             >
-              <MoreVert className={iconClass} />
-            </Button>
-          </FileActionsMenu>
+              <Button
+                type="button"
+                variant="none"
+                size="s"
+                className={iconButtonClass}
+                aria-label={t('files.preview.more')}
+                data-umami-event="materials-file-preview-menu-open"
+              >
+                <MoreVert className={iconClass} />
+              </Button>
+            </FileActionsMenu>
+          </AssignFileTagsPopover>
         ) : null}
         <Button
           type="button"

@@ -20,6 +20,8 @@ import { deleteLibraryFileRequest } from '../useDeleteLibraryFile';
 import { getLibraryFileMetaRequest } from '../useGetLibraryFileMeta';
 import { getLibraryFileRequest } from '../useGetLibraryFile';
 import { searchLibraryFilesRequest } from '../useSearchLibraryFiles';
+import { renameLibraryFileRequest } from '../useRenameLibraryFile';
+import { shareLibraryFileToClassroomRequest } from '../useShareLibraryFileToClassroom';
 
 const axiosMock = vi.fn();
 
@@ -54,6 +56,9 @@ describe('library files API', () => {
     const fileUrl = libraryFilesApiConfig[LibraryFilesQueryKey.GetLibraryFile].getUrl(
       libraryFile.id,
     );
+    const updateUrl = libraryFilesApiConfig[LibraryFilesQueryKey.UpdateLibraryFile].getUrl(
+      libraryFile.id,
+    );
     const deleteUrl = libraryFilesApiConfig[LibraryFilesQueryKey.DeleteLibraryFile].getUrl(
       libraryFile.id,
     );
@@ -65,7 +70,9 @@ describe('library files API', () => {
     expect(fileUrl).toContain(
       `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/`,
     );
+    expect(updateUrl).toBe(fileUrl);
     expect(deleteUrl).toBe(fileUrl);
+    expect(libraryFilesApiConfig[LibraryFilesQueryKey.UpdateLibraryFile].method).toBe('PATCH');
     expect(fileUrl).not.toMatch(/\/content-service\/files\/[^/]+\/$/);
   });
 
@@ -196,6 +203,52 @@ describe('library files API', () => {
 
     await expect(deleteLibraryFileRequest(libraryFile.id)).resolves.toBeUndefined();
     expect(axiosMock.mock.calls[0][0].method).toBe('DELETE');
+  });
+
+  it('переименовывает файл через PATCH без расширения', async () => {
+    const renamed = { ...libraryFile, name: 'new-notes' };
+    axiosMock.mockResolvedValue({ status: 200, data: renamed });
+
+    await expect(
+      renameLibraryFileRequest({ fileId: libraryFile.id, name: 'new-notes' }),
+    ).resolves.toEqual(renamed);
+
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: 'PATCH',
+        data: { name: 'new-notes' },
+      }),
+    );
+    expect(String(axiosMock.mock.calls[0][0].url)).toContain(
+      `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/`,
+    );
+  });
+
+  it('отправляет файл в кабинет через materials с file_id', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: { id: 'material-1' } });
+
+    await expect(
+      shareLibraryFileToClassroomRequest({
+        fileId: libraryFile.id,
+        classroomId: 42,
+        name: 'notes.pdf',
+      }),
+    ).resolves.toBeUndefined();
+
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: 'POST',
+        data: {
+          content_kind: 'file',
+          file_id: libraryFile.id,
+          name: 'notes.pdf',
+          student_access_mode: 'read_only',
+        },
+      }),
+    );
+    expect(String(axiosMock.mock.calls[0][0].url)).toContain(
+      '/api/protected/content-service/roles/tutor/classrooms/42/materials/',
+    );
   });
 
   it.each([401, 403, 404])('пробрасывает ошибку %s при удалении', async (status) => {

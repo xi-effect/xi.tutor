@@ -9,9 +9,9 @@ import {
 } from 'common.ui';
 import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
-import { toast } from 'sonner';
+import { useMemo, useState } from 'react';
 import { FilesToolbar } from './Files/FilesToolbar';
+import { UploadFilesModal } from './Files/UploadFilesModal';
 import { MaterialsClassroomFilter } from './MaterialsClassroomFilter';
 import { MaterialsScopeFilter } from './MaterialsScopeFilter';
 import type { FilesFiltersT, MaterialScopeFilterT, MaterialsTabT } from '../types';
@@ -40,6 +40,7 @@ export const Header = ({
   onResetFilesFilters,
 }: HeaderProps) => {
   const { t } = useTranslation('materials');
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   const tabs = useMemo(
     () => [
@@ -79,7 +80,7 @@ export const Header = ({
               type="button"
               variant="primary"
               className="text-text-on-accent !h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
-              onClick={() => toast(t('files.uploadSoon'))}
+              onClick={() => setUploadOpen(true)}
               data-umami-event="materials-files-upload"
             >
               <Plus className="fill-text-on-accent size-4 shrink-0" />
@@ -105,6 +106,7 @@ export const Header = ({
           ) : null}
         </div>
       )}
+      <UploadFilesModal open={uploadOpen} onOpenChange={setUploadOpen} />
     </div>
   );
 };

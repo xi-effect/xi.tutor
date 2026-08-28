@@ -1,13 +1,10 @@
 import {
   Modal,
   ModalTitle,
-  ModalHeader,
   ModalContent,
   ModalBody,
   ModalTrigger,
-  ModalCloseButton,
   ModalDescription,
-  ModalFooter,
 } from '@xipkg/modal';
 
 import { Button } from '@xipkg/button';
@@ -23,11 +20,26 @@ import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { env } from 'common.env';
 import { Input } from '@xipkg/input';
-import { MoreVert } from '@xipkg/icons';
+import { MoreVert, Updates } from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { useGroupInvite } from '../services/useGroupInvite';
 import { useGetClassroom } from 'common.services';
 import { useResetGroupInvite } from '../services/useResetGroupInvite';
+import {
+  ModalCloseIcon,
+  cardMenuButtonClass,
+  cardMenuIconClass,
+  cardMenuItemClass,
+  cardMenuSurfaceClass,
+  modalBodyClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalDescriptionClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 
 type ModalGroupInviteProps = {
   children?: React.ReactNode;
@@ -102,15 +114,15 @@ export const ModalGroupInvite = ({
       }}
     >
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent className="max-w-[600px]">
-        <ModalHeader>
-          <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
-            {t('title')}
-          </ModalTitle>
-          <ModalDescription>{t('description')}</ModalDescription>
-        </ModalHeader>
-        <ModalBody className="flex w-full flex-col gap-2 p-6">
+      <ModalContent className={cn(modalContentClass, 'max-w-[600px]')}>
+        <div className={modalBodyClass}>
+          <div className={modalHeaderRowClass}>
+            <ModalTitle className={modalTitleClass}>{t('title')}</ModalTitle>
+            <ModalCloseIcon onClick={handleClose} />
+          </div>
+          <ModalDescription className={modalDescriptionClass}>{t('description')}</ModalDescription>
+        </div>
+        <ModalBody className="flex w-full flex-col gap-2 px-6 pb-2">
           <div className="flex w-full flex-row items-center justify-center gap-2">
             <div className="flex w-full items-center justify-center">
               {isLoading || isResettingInvite ? (
@@ -139,23 +151,26 @@ export const ModalGroupInvite = ({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    className="h-12 w-12"
+                    className={cardMenuButtonClass}
                     variant="none"
                     size="icon"
                     data-umami-event="group-invite-menu-open"
                   >
-                    <MoreVert className="fill-icon-primary h-6 w-6" />
+                    <MoreVert className={cardMenuIconClass} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="bottom"
                   align="end"
-                  className="border-border-default bg-background-surface border p-1"
+                  className={cardMenuSurfaceClass}
+                  onCloseAutoFocus={(event) => event.preventDefault()}
                 >
                   <DropdownMenuItem
+                    className={cardMenuItemClass}
                     onClick={handleResetInvite}
                     data-umami-event="group-invite-reset"
                   >
+                    <Updates />
                     {t('resetLink')}
                   </DropdownMenuItem>
                   {/* <DropdownMenuItem>
@@ -174,15 +189,18 @@ export const ModalGroupInvite = ({
               </div>
             )}
         </ModalBody>
-        <ModalFooter className="flex gap-2">
+        <div className={modalFooterClass}>
           <Button
+            variant="primary"
+            size="m"
+            className={modalConfirmButtonClass}
             onClick={handleCopyLink}
             disabled={!inviteLink}
             data-umami-event="group-invite-copy-link-button"
           >
             {t('copyLink')}
           </Button>
-        </ModalFooter>
+        </div>
       </ModalContent>
     </Modal>
   );

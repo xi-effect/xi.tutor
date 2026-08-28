@@ -9,6 +9,7 @@ import { FilePreviewModal } from './preview';
 import { MaterialsGallerySkeleton } from '../MaterialsGallerySkeleton';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { filterLibraryFiles, hasActiveFilesFilters } from '../../utils';
+import { useLibraryTags } from './tags/useLibraryTags';
 import type { FilesFiltersT } from '../../types';
 
 type FilesProps = {
@@ -21,14 +22,23 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { data: user } = useCurrentUser();
+  const { fileTagIds } = useLibraryTags();
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
   const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSearchLibraryFiles();
 
   const filteredFiles = useMemo(
-    () => filterLibraryFiles(files, filters, user?.id),
-    [files, filters, user?.id],
+    () => filterLibraryFiles(files, filters, user?.id, fileTagIds),
+    [fileTagIds, files, filters, user?.id],
   );
+
+  const currentPreviewFile = useMemo(() => {
+    if (!previewFile) {
+      return null;
+    }
+
+    return files.find((item) => item.id === previewFile.id) ?? previewFile;
+  }, [files, previewFile]);
 
   const filtersActive = hasActiveFilesFilters(filters);
 
@@ -98,7 +108,7 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
         )}
       />
       <FilePreviewModal
-        file={previewFile}
+        file={currentPreviewFile}
         onOpenChange={(open) => {
           if (!open) setPreviewFile(null);
         }}

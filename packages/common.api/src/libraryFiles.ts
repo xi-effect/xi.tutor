@@ -43,6 +43,7 @@ enum LibraryFilesQueryKey {
   SearchLibraryFiles = 'SearchLibraryFiles',
   GetLibraryFile = 'GetLibraryFile',
   GetLibraryFileMeta = 'GetLibraryFileMeta',
+  UpdateLibraryFile = 'UpdateLibraryFile',
   DeleteLibraryFile = 'DeleteLibraryFile',
 }
 
@@ -84,6 +85,10 @@ const libraryFilesApiConfig = {
   [LibraryFilesQueryKey.GetLibraryFileMeta]: {
     getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/meta/`,
     method: HttpMethod.GET,
+  },
+  [LibraryFilesQueryKey.UpdateLibraryFile]: {
+    getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/`,
+    method: HttpMethod.PATCH,
   },
   [LibraryFilesQueryKey.DeleteLibraryFile]: {
     getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/`,

@@ -21,7 +21,25 @@
   },
   "files": {
     "upload": "Upload files",
-    "uploadSoon": "Library upload will be available soon",
+    "uploadModal": {
+      "title": "Upload files",
+      "description": "Add learning materials to your cloud",
+      "progress": "Uploaded {{done}} of {{total}}",
+      "dropTitle": "Drag files here",
+      "dropSubtitle": "or choose them on your device",
+      "select": "Select files",
+      "add": "Add files",
+      "cancel": "Cancel upload",
+      "close": "Close",
+      "done": "Done",
+      "remove": "Remove file",
+      "limitsEmpty": "Up to 10 files: images up to 1 MB, other files up to 5 MB",
+      "limitsCount": "You can upload up to {{max}} files at a time",
+      "limitsSize": "Images up to 1 MB, PDF, audio and other files up to 5 MB",
+      "tooLarge": "The file “{{name}}” is too large",
+      "tooLong": "The name “{{name}}” is longer than 100 characters",
+      "maxFiles": "You can upload at most {{max}} files at a time"
+    },
     "searchPlaceholder": "Search files",
     "resetAll": "Reset all",
     "reset": "Reset",
@@ -47,7 +65,41 @@
       "chipCount": "Tags · {{count}}",
       "searchPlaceholder": "Find a tag",
       "empty": "Tags not found",
+      "none": "No tags yet",
       "hint": "Start typing a tag name"
+    },
+    "tagManage": {
+      "title": "Tag management",
+      "description": "Create and edit tags for materials",
+      "create": "Create tag",
+      "empty": "No tags yet",
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "Tag actions",
+      "close": "Close"
+    },
+    "tagForm": {
+      "createTitle": "Create tag",
+      "editTitle": "Edit tag",
+      "name": "Name",
+      "color": "Color",
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save",
+      "tooLong": "Name cannot be longer than {{max}} characters",
+      "duplicate": "A tag with this name already exists",
+      "close": "Close"
+    },
+    "tagDelete": {
+      "title": "Delete tag “{{name}}”?",
+      "description": "The tag will be removed from all materials. The materials themselves will stay unchanged",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "assignTags": {
+      "title": "Edit tags",
+      "none": "No tags yet",
+      "manage": "Tag management"
     },
     "meta": "Uploaded {{date}} · {{size}}",
     "today": "today",
@@ -55,8 +107,45 @@
     "filteredEmptyDescription": "Try changing the search or reset the selected filters",
     "error": "Could not load files",
     "menu": {
+      "preview": "Preview",
+      "rename": "Rename",
+      "editTags": "Edit tags",
+      "share": "Share",
+      "whereUsed": "Where used",
       "download": "Download",
-      "delete": "Delete"
+      "delete": "Delete",
+      "soon": "Coming soon"
+    },
+    "rename": {
+      "title": "Rename file",
+      "tooLong": "Name cannot be longer than {{max}} characters",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "success": "File renamed",
+      "counter": "{{current}}/{{max}}"
+    },
+    "share": {
+      "title": "Share file",
+      "description": "Choose the classroom to add this file to",
+      "searchPlaceholder": "Search classrooms",
+      "loading": "Loading...",
+      "empty": "No classrooms yet",
+      "emptySearch": "No classrooms found",
+      "kindIndividual": "Individual classroom",
+      "kindGroup": "Group classroom",
+      "kindGroupCount_one": "Group classroom · {{count}} student",
+      "kindGroupCount_few": "Group classroom · {{count}} students",
+      "kindGroupCount_many": "Group classroom · {{count}} students",
+      "kindGroupCount_other": "Group classroom · {{count}} students",
+      "alreadyAdded": "Already added",
+      "alreadyAddedError": "This file is already added to the selected classroom",
+      "archived": "Archived",
+      "cancel": "Cancel",
+      "submit": "Share",
+      "sharing": "Sharing...",
+      "success": "File added to the classroom",
+      "close": "Close"
     },
     "preview": {
       "loading": "Loading preview...",

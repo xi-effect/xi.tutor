@@ -2,13 +2,25 @@ import type { FileKind, LibraryFile } from 'common.api';
 import { matchesSearchQuery } from 'common.utils';
 import type { FilesFiltersT } from '../types';
 
-export const getLibraryFileDisplayName = (file: LibraryFile): string => {
-  const extension = file.extension?.replace(/^\./, '');
-  if (!extension) return file.name;
-  if (file.name.toLowerCase().endsWith(`.${extension.toLowerCase()}`)) {
-    return file.name;
+export const getLibraryFileNameParts = (
+  file: Pick<LibraryFile, 'name' | 'extension'>,
+): { name: string; extension: string } => {
+  const extension = file.extension?.replace(/^\./, '') ?? '';
+  let name = file.name;
+
+  if (extension) {
+    const suffix = `.${extension}`;
+    if (name.toLowerCase().endsWith(suffix.toLowerCase())) {
+      name = name.slice(0, -suffix.length);
+    }
   }
-  return `${file.name}.${extension}`;
+
+  return { name, extension };
+};
+
+export const getLibraryFileDisplayName = (file: LibraryFile): string => {
+  const { name, extension } = getLibraryFileNameParts(file);
+  return extension ? `${name}.${extension}` : name;
 };
 
 export const hasActiveFilesFilters = (filters: FilesFiltersT): boolean =>
@@ -21,8 +33,10 @@ export const filterLibraryFiles = (
   files: LibraryFile[],
   filters: FilesFiltersT,
   currentUserId?: number,
+  fileTagIds: Record<string, string[]> = {},
 ): LibraryFile[] => {
   const search = filters.search.trim();
+  const selectedTagIds = filters.tags.map((tag) => tag.id);
 
   return files.filter((file) => {
     if (search && !matchesSearchQuery(getLibraryFileDisplayName(file), search)) {
@@ -38,6 +52,13 @@ export const filterLibraryFiles = (
         return false;
       }
       if (filters.uploader === 'students' && file.uploader_id === currentUserId) {
+        return false;
+      }
+    }
+
+    if (selectedTagIds.length > 0) {
+      const assigned = fileTagIds[file.id] ?? [];
+      if (!assigned.some((id) => selectedTagIds.includes(id))) {
         return false;
       }
     }

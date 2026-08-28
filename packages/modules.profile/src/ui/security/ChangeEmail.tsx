@@ -1,12 +1,19 @@
 import { Button } from '@xipkg/button';
-import { Close } from '@xipkg/icons';
 import * as M from '@xipkg/modal';
 import React, { useEffect, useState } from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Clock } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
-import { modalTitleClass } from 'common.ui';
+import {
+  ModalCloseIcon,
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { useChangeEmail } from '../../hooks';
 
@@ -77,18 +84,15 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
   return (
     <M.Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
       <M.ModalTrigger asChild>{children}</M.ModalTrigger>
-      <M.ModalContent aria-describedby={undefined}>
+      <M.ModalContent className={modalContentClass} aria-describedby={undefined}>
         {(stage.type === 'form' && (
           <>
-            <M.ModalCloseButton
-              variant="full"
-              className="bg-background-page top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
-            >
-              <Close className="fill-icon-primary h-5 w-5" />
-            </M.ModalCloseButton>
-            <M.ModalHeader>
-              <M.ModalTitle className={modalTitleClass}>{t('changeEmail.title')}</M.ModalTitle>
-            </M.ModalHeader>
+            <div className="flex flex-col gap-6 p-6 pb-0">
+              <div className={modalHeaderRowClass}>
+                <M.ModalTitle className={modalTitleClass}>{t('changeEmail.title')}</M.ModalTitle>
+                <ModalCloseIcon onClick={() => onOpenChange(false)} />
+              </div>
+            </div>
             <Form {...form}>
               <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-3 px-5 pt-5 pb-3">
@@ -136,14 +140,26 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
                     )}
                   />
                 </div>
-                <M.ModalFooter className="flex justify-start gap-4 px-5 py-5">
-                  <Button disabled={timer} className="disabled:cursor-not-allowed" type="submit">
-                    {t('changeEmail.change')}
-                  </Button>
-                  <Button onClick={() => onOpenChange(false)} type="button" variant="ghost">
+                <div className={modalFooterClass}>
+                  <Button
+                    variant="none"
+                    type="button"
+                    size="m"
+                    className={modalCancelButtonClass}
+                    onClick={() => onOpenChange(false)}
+                  >
                     {t('changeEmail.cancel')}
                   </Button>
-                </M.ModalFooter>
+                  <Button
+                    variant="primary"
+                    size="m"
+                    className={modalConfirmButtonClass}
+                    disabled={timer}
+                    type="submit"
+                  >
+                    {t('changeEmail.change')}
+                  </Button>
+                </div>
               </form>
             </Form>
           </>

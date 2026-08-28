@@ -9,6 +9,8 @@ import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
+import { LibraryTagsUiProvider } from './Files/tags/LibraryTagsUiContext';
+import { useLibraryTags } from './Files/tags/useLibraryTags';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import {
@@ -87,6 +89,19 @@ const MaterialsPageContent = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
+  const { tags } = useLibraryTags();
+
+  useEffect(() => {
+    const validIds = new Set(tags.map((tag) => tag.id));
+    setFilesFilters((current) => {
+      const nextTags = current.tags.filter((tag) => validIds.has(tag.id));
+      if (nextTags.length === current.tags.length) {
+        return current;
+      }
+
+      return { ...current, tags: nextTags };
+    });
+  }, [tags]);
 
   useEffect(() => {
     const syncFromUrl = () => {
@@ -195,7 +210,9 @@ const MaterialsPageContent = () => {
 export const MaterialsPage = () => {
   return (
     <MaterialsDuplicateProvider>
-      <MaterialsPageContent />
+      <LibraryTagsUiProvider>
+        <MaterialsPageContent />
+      </LibraryTagsUiProvider>
     </MaterialsDuplicateProvider>
   );
 };

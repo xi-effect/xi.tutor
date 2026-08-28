@@ -3,17 +3,18 @@ import { useForm } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
-import {
-  Modal,
-  ModalTitle,
-  ModalHeader,
-  ModalContent,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-} from '@xipkg/modal';
+import { Modal, ModalTitle, ModalContent } from '@xipkg/modal';
 import { useUpdateIndividualClassroom } from 'common.services';
-import { modalTitleClass } from 'common.ui';
+import {
+  ModalCloseIcon,
+  modalBodyClass,
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -87,49 +88,56 @@ export const EditDescriptionModal = ({
 
   return (
     <Modal open={isOpen} onOpenChange={handleOpenChange}>
-      <ModalContent className="max-w-md" aria-describedby={undefined}>
-        <ModalHeader>
-          <ModalCloseButton />
-          <ModalTitle className={modalTitleClass}>{t('descriptionModal.title')}</ModalTitle>
-        </ModalHeader>
-
+      <ModalContent className={modalContentClass} aria-describedby={undefined}>
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody className="px-4 py-2">
-              <FormField
-                control={control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="description">{t('descriptionModal.label')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="mt-1"
-                        id="description"
-                        placeholder={t('descriptionModal.placeholder')}
-                        disabled={isUpdating}
-                        autoComplete="off"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </ModalBody>
+          <form className={modalBodyClass} onSubmit={handleSubmit(onSubmit)}>
+            <div className={modalHeaderRowClass}>
+              <ModalTitle className={modalTitleClass}>{t('descriptionModal.title')}</ModalTitle>
+              <ModalCloseIcon onClick={onClose} disabled={isUpdating} />
+            </div>
 
-            <ModalFooter className="flex flex-row items-center gap-2">
+            <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="description">{t('descriptionModal.label')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="mt-1"
+                      id="description"
+                      placeholder={t('descriptionModal.placeholder')}
+                      disabled={isUpdating}
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className={modalFooterClass}>
               <Button
-                variant={isUpdating ? 'ghost-spinner' : 'default'}
+                variant="none"
+                size="m"
+                className={modalCancelButtonClass}
+                onClick={onClose}
+                type="button"
+                disabled={isUpdating}
+              >
+                {t('actions.cancel')}
+              </Button>
+              <Button
+                variant={isUpdating ? 'ghost-spinner' : 'primary'}
+                size="m"
+                className={modalConfirmButtonClass}
                 type="submit"
                 disabled={isUpdating}
               >
                 {isUpdating ? t('actions.saving') : t('actions.save')}
               </Button>
-              <Button variant="ghost" onClick={onClose} type="button" disabled={isUpdating}>
-                {t('actions.cancel')}
-              </Button>
-            </ModalFooter>
+            </div>
           </form>
         </Form>
       </ModalContent>

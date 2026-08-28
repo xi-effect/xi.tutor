@@ -1,0 +1,241 @@
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@xipkg/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@xipkg/dropdown';
+import { Edit, MoreVert, Trash } from '@xipkg/icons';
+import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
+import { cn } from '@xipkg/utils';
+import {
+  ConfirmDialog,
+  ModalCloseIcon,
+  cardMenuDeleteItemClass,
+  cardMenuIconClass,
+  cardMenuItemClass,
+  cardMenuSeparatorClass,
+  cardMenuSurfaceClass,
+  modalBodyClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalDescriptionClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
+import type { LibraryTag } from './libraryTagsStore';
+import { TagFormModal } from './TagFormModal';
+import { getTagColor } from './tagColors';
+import { useLibraryTags } from './useLibraryTags';
+
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
+
+type TagManageModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
+  const { t } = useTranslation('materials');
+  const { tags, deleteTag } = useLibraryTags();
+  const [editingTag, setEditingTag] = useState<LibraryTag | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [deletingTag, setDeletingTag] = useState<LibraryTag | null>(null);
+  const formOpen = createOpen || editingTag != null;
+
+  useEffect(() => cleanupBodyScrollLock, []);
+
+  useEffect(() => {
+    if (open) {
+      return;
+    }
+
+    setCreateOpen(false);
+    setEditingTag(null);
+    setDeletingTag(null);
+  }, [open]);
+
+  const handleClose = () => {
+    if (formOpen || deletingTag) {
+      return;
+    }
+
+    onOpenChange(false);
+    cleanupBodyScrollLock();
+  };
+
+  return (
+    <>
+      <Modal
+        open={open}
+        onOpenChange={(next) => {
+          if (!next) {
+            handleClose();
+            return;
+          }
+
+          onOpenChange(next);
+        }}
+      >
+        <ModalContent
+          className={modalContentClass}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            cleanupBodyScrollLock();
+          }}
+          onPointerDownOutside={(event) => {
+            if (formOpen || deletingTag) {
+              event.preventDefault();
+            }
+          }}
+          onInteractOutside={(event) => {
+            const target = event.target as HTMLElement | null;
+            if (
+              formOpen ||
+              deletingTag ||
+              target?.closest('[data-radix-dropdown-menu-content]') ||
+              target?.closest('[role="menu"]')
+            ) {
+              event.preventDefault();
+            }
+          }}
+        >
+          <div className={modalBodyClass}>
+            <div className={`${modalHeaderRowClass} items-start`}>
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <ModalTitle className={modalTitleClass}>{t('files.tagManage.title')}</ModalTitle>
+                <ModalDescription className={modalDescriptionClass}>
+                  {t('files.tagManage.description')}
+                </ModalDescription>
+              </div>
+              <ModalCloseIcon onClick={handleClose} aria-label={t('files.tagManage.close')} />
+            </div>
+
+            <div className="flex max-h-80 min-h-16 flex-col overflow-y-auto">
+              {tags.length === 0 ? (
+                <p className="text-s-base text-text-secondary py-6 text-center">
+                  {t('files.tagManage.empty')}
+                </p>
+              ) : (
+                tags.map((tag) => {
+                  const color = getTagColor(tag.color);
+
+                  return (
+                    <div
+                      key={tag.id}
+                      className="border-border-default flex h-12 shrink-0 items-center gap-3 border-b last:border-b-0"
+                    >
+                      <span className={cn('size-2.5 shrink-0 rounded-full', color.dot)} />
+                      <p className="text-text-primary min-w-0 flex-1 truncate text-base leading-5">
+                        {tag.name}
+                      </p>
+                      <DropdownMenu modal>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="none"
+                            size="icon"
+                            className="hover:bg-background-subtle size-8 rounded-lg p-0"
+                            aria-label={t('files.tagManage.actions')}
+                            data-umami-event="materials-tag-menu-open"
+                          >
+                            <MoreVert className={cardMenuIconClass} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          side="bottom"
+                          align="end"
+                          className={cn(cardMenuSurfaceClass, 'text-text-primary z-100')}
+                          onCloseAutoFocus={(event) => event.preventDefault()}
+                        >
+                          <DropdownMenuItem
+                            className={cardMenuItemClass}
+                            onClick={() => setEditingTag(tag)}
+                            data-umami-event="materials-tag-edit"
+                          >
+                            <Edit />
+                            {t('files.tagManage.edit')}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+                          <DropdownMenuItem
+                            error
+                            className={cardMenuDeleteItemClass}
+                            onClick={() => setDeletingTag(tag)}
+                            data-umami-event="materials-tag-delete"
+                          >
+                            <Trash />
+                            {t('files.tagManage.delete')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <div className={modalFooterClass}>
+              <Button
+                type="button"
+                variant="primary"
+                size="m"
+                className={modalConfirmButtonClass}
+                onClick={() => setCreateOpen(true)}
+                data-umami-event="materials-tag-create-open"
+              >
+                {t('files.tagManage.create')}
+              </Button>
+            </div>
+          </div>
+        </ModalContent>
+      </Modal>
+
+      <TagFormModal
+        open={createOpen}
+        onOpenChange={(next) => {
+          setCreateOpen(next);
+          if (!next) {
+            cleanupBodyScrollLock();
+          }
+        }}
+      />
+
+      <TagFormModal
+        tag={editingTag}
+        open={editingTag != null}
+        onOpenChange={(next) => {
+          if (!next) {
+            setEditingTag(null);
+            cleanupBodyScrollLock();
+          }
+        }}
+      />
+
+      <ConfirmDialog
+        open={deletingTag != null}
+        onOpenChange={(next) => {
+          if (!next) {
+            setDeletingTag(null);
+          }
+        }}
+        title={t('files.tagDelete.title', { name: deletingTag?.name ?? '' })}
+        description={t('files.tagDelete.description')}
+        confirmLabel={t('files.tagDelete.confirm')}
+        cancelLabel={t('files.tagDelete.cancel')}
+        onConfirm={() => {
+          if (deletingTag) {
+            deleteTag(deletingTag.id);
+          }
+        }}
+      />
+    </>
+  );
+};

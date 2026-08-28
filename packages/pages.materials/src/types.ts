@@ -16,7 +16,7 @@ export type MaterialsTabT = 'notes' | 'boards' | 'files';
 export type FilesUploaderFilterT = 'mine' | 'students' | 'all';
 
 export type FilesTagOptionT = {
-  id: number;
+  id: string;
   name: string;
 };
 

@@ -27,8 +27,8 @@ export const ImagePreview = ({
   return (
     <div
       className={cn(
-        'relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden',
-        isFullscreen ? '' : 'bg-background-page rounded-xl p-4',
+        'bg-background-page relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden',
+        !isFullscreen && 'rounded-xl p-4',
       )}
     >
       {!loaded ? (

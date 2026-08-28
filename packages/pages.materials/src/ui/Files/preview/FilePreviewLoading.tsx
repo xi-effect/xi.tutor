@@ -6,7 +6,7 @@ type FilePreviewLoadingProps = {
   className?: string;
 };
 
-export const FilePreviewLoading = ({ isFullscreen, className }: FilePreviewLoadingProps) => {
+export const FilePreviewLoading = ({ className }: FilePreviewLoadingProps) => {
   const { t } = useTranslation('materials');
 
   return (
@@ -16,17 +16,8 @@ export const FilePreviewLoading = ({ isFullscreen, className }: FilePreviewLoadi
         className,
       )}
     >
-      <div
-        className={cn(
-          'size-8 animate-spin rounded-full border-2',
-          isFullscreen
-            ? 'border-white/20 border-t-white'
-            : 'border-border-default border-t-icon-brand',
-        )}
-      />
-      <p className={cn('text-s-base', isFullscreen ? 'text-white/70' : 'text-text-secondary')}>
-        {t('files.preview.loading')}
-      </p>
+      <div className="border-border-default border-t-icon-brand size-8 animate-spin rounded-full border-2" />
+      <p className="text-s-base text-text-secondary">{t('files.preview.loading')}</p>
     </div>
   );
 };

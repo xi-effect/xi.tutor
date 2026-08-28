@@ -1,41 +1,117 @@
 import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
+import { Edit, Eyeon, Flag, Folder, Share, Trash, type IconProps } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
+import {
+  cardMenuDeleteItemClass,
+  cardMenuItemClass,
+  cardMenuSeparatorClass,
+  cardMenuSurfaceClass,
+} from 'common.ui';
 
-const menuSurfaceClass = 'border-border-default bg-background-surface border';
-const menuItemClass =
-  'text-text-primary hover:bg-status-info-background hover:text-text-primary focus:text-text-primary h-8 items-center whitespace-nowrap rounded-lg px-2 py-0 text-sm leading-none';
+type IconComponent = (props: IconProps) => ReactNode;
 
 type FileActionsMenuProps = {
   children: ReactNode;
+  onPreview?: () => void;
+  onRename?: () => void;
+  onEditTags?: () => void;
+  onShare?: () => void;
+  onWhereUsed?: () => void;
   onDelete: () => void;
-  showDownload?: boolean;
-  isDownloading?: boolean;
-  onDownload?: () => void;
   modal?: boolean;
   contentClassName?: string;
-  downloadUmami?: string;
+  previewUmami?: string;
+  renameUmami?: string;
+  editTagsUmami?: string;
+  shareUmami?: string;
+  whereUsedUmami?: string;
   deleteUmami?: string;
 };
 
 export const FileActionsMenu = ({
   children,
+  onPreview,
+  onRename,
+  onEditTags,
+  onShare,
+  onWhereUsed,
   onDelete,
-  showDownload = false,
-  isDownloading,
-  onDownload,
   modal = false,
   contentClassName,
-  downloadUmami = 'materials-file-download',
+  previewUmami = 'materials-file-preview',
+  renameUmami = 'materials-file-rename',
+  editTagsUmami = 'materials-file-edit-tags',
+  shareUmami = 'materials-file-share',
+  whereUsedUmami = 'materials-file-where-used',
   deleteUmami = 'materials-file-delete',
 }: FileActionsMenuProps) => {
   const { t } = useTranslation('materials');
+
+  const handleOrSoon = (action?: () => void) => {
+    if (action) {
+      action();
+      return;
+    }
+
+    toast(t('files.menu.soon'));
+  };
+
+  const items: Array<{
+    key: string;
+    label: string;
+    icon: IconComponent;
+    onSelect?: () => void;
+    umami: string;
+  }> = [
+    ...(onPreview
+      ? [
+          {
+            key: 'preview',
+            label: t('files.menu.preview'),
+            icon: Eyeon,
+            onSelect: onPreview,
+            umami: previewUmami,
+          },
+        ]
+      : []),
+    {
+      key: 'rename',
+      label: t('files.menu.rename'),
+      icon: Edit,
+      onSelect: onRename,
+      umami: renameUmami,
+    },
+    {
+      key: 'tags',
+      label: t('files.menu.editTags'),
+      icon: Flag,
+      onSelect: onEditTags,
+      umami: editTagsUmami,
+    },
+    {
+      key: 'share',
+      label: t('files.menu.share'),
+      icon: Share,
+      onSelect: onShare,
+      umami: shareUmami,
+    },
+    {
+      key: 'whereUsed',
+      label: t('files.menu.whereUsed'),
+      icon: Folder,
+      onSelect: onWhereUsed,
+      umami: whereUsedUmami,
+    },
+  ];
 
   return (
     <DropdownMenu modal={modal}>
@@ -44,27 +120,31 @@ export const FileActionsMenu = ({
         side="bottom"
         align="end"
         className={cn(
-          menuSurfaceClass,
-          'text-text-primary pointer-events-auto z-100 w-56 space-y-1 rounded-lg p-2 font-normal',
+          cardMenuSurfaceClass,
+          'text-text-primary pointer-events-auto z-100',
           contentClassName,
         )}
         onCloseAutoFocus={(event) => event.preventDefault()}
       >
-        {showDownload ? (
+        {items.map(({ key, label, icon: Icon, onSelect, umami }) => (
           <DropdownMenuItem
-            className={menuItemClass}
-            disabled={isDownloading}
-            onClick={onDownload}
-            data-umami-event={downloadUmami}
+            key={key}
+            className={cardMenuItemClass}
+            onClick={() => handleOrSoon(onSelect)}
+            data-umami-event={umami}
           >
-            {t('files.menu.download')}
+            <Icon />
+            {label}
           </DropdownMenuItem>
-        ) : null}
+        ))}
+        <DropdownMenuSeparator className={cardMenuSeparatorClass} />
         <DropdownMenuItem
-          className={cn(menuItemClass, 'w-full')}
+          error
+          className={cardMenuDeleteItemClass}
           onClick={onDelete}
           data-umami-event={deleteUmami}
         >
+          <Trash />
           {t('files.menu.delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>

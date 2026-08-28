@@ -12,13 +12,13 @@ import {
 } from 'common.ui';
 import { useDeleteLibraryFile, type LibraryFile } from 'common.services';
 import type { FileKind } from 'common.api';
-import {
-  downloadLibraryFile,
-  formatFileSize,
-  formatUploadedAt,
-  getLibraryFileDisplayName,
-} from '../../utils';
+import { formatFileSize, formatUploadedAt, getLibraryFileDisplayName } from '../../utils';
 import { FileActionsMenu } from './FileActionsMenu';
+import { RenameFileModal } from './RenameFileModal';
+import { ShareFileModal } from './ShareFileModal';
+import { AssignFileTagsPopover } from './tags/AssignFileTagsPopover';
+import { getTagColor } from './tags/tagColors';
+import { useLibraryTags } from './tags/useLibraryTags';
 
 type FileCardProps = {
   file: LibraryFile;
@@ -37,22 +37,17 @@ const kindIcon: Record<FileKind, typeof File> = {
 export const FileCard = ({ file, className, onPreview }: FileCardProps) => {
   const { t } = useTranslation('materials');
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
   const deleteMutation = useDeleteLibraryFile();
+  const { getTagsForFile } = useLibraryTags();
+  const fileTags = getTagsForFile(file.id);
 
   const displayName = getLibraryFileDisplayName(file);
   const Icon = kindIcon[file.kind] ?? File;
   const uploadedAt = formatUploadedAt(file.created_at, t('files.today'));
   const size = formatFileSize(file.size_bytes, getAppLanguage());
-
-  const handleDownload = async () => {
-    setIsDownloading(true);
-    try {
-      await downloadLibraryFile(file.id, displayName);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   const openPreview = () => {
     onPreview?.(file);
@@ -86,29 +81,51 @@ export const FileCard = ({ file, className, onPreview }: FileCardProps) => {
           onClick={(event) => event.stopPropagation()}
           onKeyDown={(event) => event.stopPropagation()}
         >
-          <FileActionsMenu
-            showDownload
-            isDownloading={isDownloading}
-            onDownload={handleDownload}
-            onDelete={() => setDeleteOpen(true)}
-          >
-            <Button
-              className={cardMenuButtonClass}
-              variant="none"
-              size="icon"
-              data-umami-event="materials-file-menu-open"
+          <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
+            <FileActionsMenu
+              onPreview={openPreview}
+              onRename={() => setRenameOpen(true)}
+              onEditTags={() => setTagsOpen(true)}
+              onShare={() => setShareOpen(true)}
+              onDelete={() => setDeleteOpen(true)}
             >
-              <MoreVert className={cardMenuIconClass} />
-            </Button>
-          </FileActionsMenu>
+              <Button
+                className={cardMenuButtonClass}
+                variant="none"
+                size="icon"
+                data-umami-event="materials-file-menu-open"
+              >
+                <MoreVert className={cardMenuIconClass} />
+              </Button>
+            </FileActionsMenu>
+          </AssignFileTagsPopover>
         </div>
 
         <p
-          className="text-text-primary mt-4 line-clamp-2 w-full max-w-full min-w-0 overflow-hidden text-base leading-5 font-medium break-words"
+          className={cn(
+            'text-text-primary mt-4 w-full max-w-full min-w-0 overflow-hidden text-base leading-5 font-medium break-words',
+            fileTags.length > 0 ? 'line-clamp-1' : 'line-clamp-2',
+          )}
           title={displayName}
         >
           {displayName}
         </p>
+
+        {fileTags.length > 0 ? (
+          <div className="mt-1 flex w-full min-w-0 items-center gap-1 overflow-hidden">
+            {fileTags.slice(0, 2).map((tag) => (
+              <span
+                key={tag.id}
+                className={cn(
+                  'max-w-[50%] truncate rounded-md px-2 py-0.5 text-xs leading-4 font-medium',
+                  getTagColor(tag.color).chip,
+                )}
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        ) : null}
 
         <div className="mt-auto flex w-full min-w-0 flex-col items-start gap-0.5 overflow-hidden pt-2">
           <p className="text-text-secondary w-full truncate text-xs leading-4 font-normal">
@@ -116,6 +133,8 @@ export const FileCard = ({ file, className, onPreview }: FileCardProps) => {
           </p>
         </div>
       </div>
+      <RenameFileModal file={file} open={renameOpen} onOpenChange={setRenameOpen} />
+      <ShareFileModal file={file} open={shareOpen} onOpenChange={setShareOpen} />
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}

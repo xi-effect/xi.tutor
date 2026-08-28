@@ -11,6 +11,9 @@ import { FilePreviewError } from './FilePreviewError';
 import { FilePreviewHeader } from './FilePreviewHeader';
 import { FilePreviewLoading } from './FilePreviewLoading';
 import { FilePreviewUnsupported } from './FilePreviewUnsupported';
+import { ShareFileModal } from '../ShareFileModal';
+import { RenameFileModal } from '../RenameFileModal';
+import { useLibraryTagsManage } from '../tags/libraryTagsUiStore';
 import { formatMediaTime } from './formatMediaTime';
 import { canPreviewFullscreen, getExtensionLabel, getFilePreviewKind } from './getFilePreviewKind';
 import { ImagePreview } from './ImagePreview';
@@ -53,6 +56,10 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
+  const { manageOpen } = useLibraryTagsManage();
   const [renderError, setRenderError] = useState(false);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
   const [audioDuration, setAudioDuration] = useState<number | null>(null);
@@ -63,6 +70,9 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
   useEffect(() => {
     setIsFullscreen(false);
     setDeleteOpen(false);
+    setShareOpen(false);
+    setRenameOpen(false);
+    setTagsOpen(false);
     setImageSize(null);
     setAudioDuration(null);
   }, [file?.id]);
@@ -132,6 +142,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
   };
 
   const stageClass = previewKind === 'audio' ? undefined : PREVIEW_STAGE_CLASS;
+  const overlayOpen = shareOpen || renameOpen || tagsOpen || manageOpen;
 
   return (
     <>
@@ -157,11 +168,11 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
             }
           }}
           onClick={(event) => {
-            if (effectiveFullscreen || isDismissGuarded()) return;
+            if (effectiveFullscreen || isDismissGuarded() || overlayOpen) return;
             if (event.target === event.currentTarget) handleClose();
           }}
           onPointerDownOutside={(event) => {
-            if (isDismissGuarded() || effectiveFullscreen) {
+            if (isDismissGuarded() || effectiveFullscreen || overlayOpen) {
               event.preventDefault();
             }
           }}
@@ -174,7 +185,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
             ) {
               event.preventDefault();
             }
-            if (isDismissGuarded() || effectiveFullscreen) {
+            if (isDismissGuarded() || effectiveFullscreen || overlayOpen) {
               event.preventDefault();
             }
           }}
@@ -205,7 +216,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
               className={cn(
                 'flex flex-col overflow-hidden',
                 effectiveFullscreen
-                  ? 'bg-neutral-950'
+                  ? 'bg-background-page'
                   : cn(
                       'bg-background-surface',
                       previewKind === 'audio' && PREVIEW_AUDIO_FRAME_CLASS,
@@ -214,6 +225,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
               onClick={(event) => event.stopPropagation()}
             >
               <FilePreviewHeader
+                file={file}
                 title={displayName}
                 subtitle={subtitle}
                 kind={previewKind}
@@ -221,9 +233,13 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
                 showFullscreen={showFullscreen}
                 showMore
                 isDownloading={isDownloading}
+                tagsOpen={tagsOpen}
+                onTagsOpenChange={setTagsOpen}
                 onDownload={handleDownload}
                 onToggleFullscreen={() => setIsFullscreen((value) => !value)}
                 onDelete={() => setDeleteOpen(true)}
+                onShare={() => setShareOpen(true)}
+                onRename={() => setRenameOpen(true)}
                 onClose={handleClose}
               />
               <ModalDescription className="sr-only">{subtitle}</ModalDescription>
@@ -285,6 +301,10 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
           ) : null}
         </ModalContent>
       </Modal>
+
+      {file ? <RenameFileModal file={file} open={renameOpen} onOpenChange={setRenameOpen} /> : null}
+
+      {file ? <ShareFileModal file={file} open={shareOpen} onOpenChange={setShareOpen} /> : null}
 
       {file ? (
         <ConfirmDialog

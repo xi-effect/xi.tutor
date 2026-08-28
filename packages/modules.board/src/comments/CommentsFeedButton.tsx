@@ -150,7 +150,7 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
         side="bottom"
         sideOffset={12}
         data-comment-ui
-        className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-80 rounded-xl p-2')}
+        className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-80 rounded-xl border-2 p-2')}
       >
         {feedList}
       </PopoverContent>

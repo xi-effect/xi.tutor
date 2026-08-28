@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { Search } from '@xipkg/icons';
-import { TAG_KIND, useAutocompleteTags } from 'common.services';
-import type { TagSchema } from 'common.api';
+import { cn } from '@xipkg/utils';
+import { matchesSearchQuery } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { MaterialsFilterOption } from '../MaterialsFilterOption';
 import { FilesFilterChip } from './FilesFilterChip';
 import { FilesFilterActions, filesFilterPopoverClass } from './FilesFilterActions';
+import { getTagColor } from './tags/tagColors';
+import { useLibraryTags } from './tags/useLibraryTags';
 import type { FilesTagOptionT } from '../../types';
 
 type FilesTagsFilterProps = {
@@ -14,13 +16,9 @@ type FilesTagsFilterProps = {
   onChange: (tags: FilesTagOptionT[]) => void;
 };
 
-const toTagOption = (tag: TagSchema | FilesTagOptionT): FilesTagOptionT => ({
-  id: tag.id,
-  name: tag.name,
-});
-
 export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
   const { t } = useTranslation('materials');
+  const { tags } = useLibraryTags();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [draft, setDraft] = useState<FilesTagOptionT[]>(value);
@@ -32,27 +30,10 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
     }
   }, [open, value]);
 
-  const { data, isLoading } = useAutocompleteTags(
-    TAG_KIND.Generic,
-    search,
-    10,
-    !open || search.trim().length < 1,
-  );
-
-  const suggestions = useMemo(() => {
-    const list = Array.isArray(data) ? data.map(toTagOption) : [];
-    const byId = new Map(list.map((tag) => [tag.id, tag]));
-    draft.forEach((tag) => {
-      if (!byId.has(tag.id)) {
-        byId.set(tag.id, tag);
-      }
-    });
-    return [...byId.values()];
-  }, [data, draft]);
-
-  const visibleTags = search.trim().length < 1 ? draft : suggestions;
-  const showHint = search.trim().length < 1 && draft.length === 0;
-  const showEmpty = search.trim().length >= 1 && !isLoading && suggestions.length === 0;
+  const visibleTags = useMemo(() => {
+    const query = search.trim();
+    return query ? tags.filter((tag) => matchesSearchQuery(tag.name, query)) : tags;
+  }, [search, tags]);
 
   const toggleTag = (tag: FilesTagOptionT) => {
     setDraft((current) =>
@@ -86,11 +67,9 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
           />
         </div>
         <div className="flex max-h-52 w-full min-w-0 flex-col items-stretch gap-2.5 overflow-y-auto bg-transparent">
-          {showHint ? (
-            <p className="text-s-base text-text-secondary leading-5 whitespace-nowrap">
-              {t('files.tags.hint')}
-            </p>
-          ) : showEmpty ? (
+          {tags.length === 0 ? (
+            <p className="text-s-base text-text-secondary leading-5">{t('files.tags.none')}</p>
+          ) : visibleTags.length === 0 ? (
             <p className="text-s-base text-text-secondary leading-5">{t('files.tags.empty')}</p>
           ) : (
             visibleTags.map((tag) => (
@@ -98,11 +77,16 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
                 key={tag.id}
                 variant="checkbox"
                 selected={draft.some((item) => item.id === tag.id)}
-                onSelect={() => toggleTag(tag)}
+                onSelect={() => toggleTag({ id: tag.id, name: tag.name })}
                 umamiEvent="materials-files-tag-option"
-                umamiScope={String(tag.id)}
+                umamiScope={tag.id}
               >
-                {tag.name}
+                <span className="flex min-w-0 items-center gap-2">
+                  <span
+                    className={cn('size-2.5 shrink-0 rounded-full', getTagColor(tag.color).dot)}
+                  />
+                  <span className="truncate">{tag.name}</span>
+                </span>
               </MaterialsFilterOption>
             ))
           )}

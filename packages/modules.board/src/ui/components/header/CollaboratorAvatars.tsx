@@ -6,7 +6,6 @@ import {
   AvatarGroupCount,
   AvatarImage,
 } from '@xipkg/avatar';
-import { Button } from '@xipkg/button';
 import { Eyeon, Podcast } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
@@ -15,7 +14,11 @@ import type { DrInstancePresence } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
-import { boardDropdownZClass, boardMenuSurfaceClass } from '../../boardTheme';
+import {
+  boardDropdownZClass,
+  boardMenuSurfaceClass,
+  boardPopoverListItemClass,
+} from '../../boardTheme';
 import { useTranslation } from 'react-i18next';
 import { BoardDrawer, boardDrawerRowClass } from '../shared/BoardDrawer';
 import { useBoardIsMobile } from '../shared/useBoardIsMobile';
@@ -170,11 +173,15 @@ export const CollaboratorAvatars = () => {
   const participantsList = (
     <div className="flex flex-col gap-3">
       {isTutor && (
-        <Button
-          variant="ghost"
-          size="s"
+        <button
+          type="button"
           className={cn(
-            isMobile ? boardDrawerRowClass : 'flex w-full items-center justify-start gap-2',
+            isMobile
+              ? boardDrawerRowClass
+              : cn(
+                  boardPopoverListItemClass,
+                  'flex h-8 w-full items-center justify-start gap-2 px-2 text-sm font-medium',
+                ),
             isBroadcasting &&
               'bg-status-info-background text-text-link hover:bg-status-info-background/80',
           )}
@@ -191,7 +198,7 @@ export const CollaboratorAvatars = () => {
           {isBroadcasting
             ? t('collaborators.turnOffPresentation')
             : t('collaborators.presentationMode')}
-        </Button>
+        </button>
       )}
       {!isMobile && (
         <p className="text-text-secondary px-2 py-1 text-xs">
@@ -314,7 +321,12 @@ export const CollaboratorAvatars = () => {
               align="end"
               side="bottom"
               sideOffset={12}
-              className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-64 rounded-xl p-2')}
+              onOpenAutoFocus={(event) => event.preventDefault()}
+              className={cn(
+                boardMenuSurfaceClass,
+                boardDropdownZClass,
+                'w-64 rounded-xl border-2 p-2',
+              )}
             >
               {participantsList}
             </PopoverContent>

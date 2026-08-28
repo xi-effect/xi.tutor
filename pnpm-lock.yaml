@@ -1286,6 +1286,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -1386,6 +1389,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -1498,6 +1504,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
@@ -1816,6 +1825,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
@@ -2119,6 +2131,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -2210,6 +2225,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.8)
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -2850,6 +2868,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)

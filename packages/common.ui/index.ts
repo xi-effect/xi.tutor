@@ -40,14 +40,35 @@ export {
 } from './src/badgeClasses';
 export { getEducationStatusLabel } from './src/getEducationStatusLabel';
 export { ConfirmDialog, type ConfirmDialogProps } from './src/ConfirmDialog';
-export { modalTitleClass } from './src/modalTitleClass';
+export { ModalCloseIcon } from './src/ModalCloseIcon';
+export {
+  modalBodyClass,
+  modalCancelButtonClass,
+  modalCloseButtonClass,
+  modalCloseIconClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalDescriptionClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from './src/modalChrome';
 export { switcherTabClass } from './src/switcherTabClass';
 export {
   pageSwitcherTrackClass,
   pageSwitcherTabClass,
   pageSwitcherIndicatorClass,
 } from './src/pageSwitcherClass';
-export { cardMenuButtonClass, cardMenuIconClass, cardMenuPositionClass } from './src/cardMenuClass';
+export {
+  cardMenuButtonClass,
+  cardMenuDeleteItemClass,
+  cardMenuIconClass,
+  cardMenuItemClass,
+  cardMenuPositionClass,
+  cardMenuSeparatorClass,
+  cardMenuSubTriggerClass,
+  cardMenuSurfaceClass,
+} from './src/cardMenuClass';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
 export { useSupportModalStore } from './src/store/useSupportModalStore';
 export {

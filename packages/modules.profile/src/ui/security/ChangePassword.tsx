@@ -1,11 +1,18 @@
-import { Close } from '@xipkg/icons';
 import * as M from '@xipkg/modal';
 import React from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
-import { modalTitleClass } from 'common.ui';
+import {
+  ModalCloseIcon,
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { useChangePassword } from '../../hooks';
 
@@ -25,18 +32,15 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
   return (
     <M.Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
       <M.ModalTrigger asChild>{children}</M.ModalTrigger>
-      <M.ModalContent aria-describedby={undefined}>
+      <M.ModalContent className={modalContentClass} aria-describedby={undefined}>
         {(stage === 'form' && (
           <>
-            <M.ModalCloseButton
-              variant="full"
-              className="bg-background-page top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
-            >
-              <Close className="fill-icon-primary h-5 w-5" />
-            </M.ModalCloseButton>
-            <M.ModalHeader>
-              <M.ModalTitle className={modalTitleClass}>{t('changePassword.title')}</M.ModalTitle>
-            </M.ModalHeader>
+            <div className="flex flex-col gap-6 p-6 pb-0">
+              <div className={modalHeaderRowClass}>
+                <M.ModalTitle className={modalTitleClass}>{t('changePassword.title')}</M.ModalTitle>
+                <ModalCloseIcon onClick={() => onOpenChange(false)} />
+              </div>
+            </div>
             <Form {...form}>
               <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-3 px-5 pt-5 pb-3">
@@ -128,12 +132,24 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                     )}
                   />
                 </div>
-                <div className="border-border-default flex justify-start gap-4 border-t p-6 px-5 py-5">
-                  <Button type="submit" disabled={isLoading}>
-                    {t('changePassword.change')}
-                  </Button>
-                  <Button onClick={() => onOpenChange(false)} variant="ghost">
+                <div className={modalFooterClass}>
+                  <Button
+                    type="button"
+                    variant="none"
+                    size="m"
+                    className={modalCancelButtonClass}
+                    onClick={() => onOpenChange(false)}
+                  >
                     {t('changePassword.cancel')}
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="m"
+                    className={modalConfirmButtonClass}
+                    disabled={isLoading}
+                  >
+                    {t('changePassword.change')}
                   </Button>
                 </div>
               </form>

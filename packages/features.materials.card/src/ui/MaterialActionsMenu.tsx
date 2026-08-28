@@ -5,34 +5,25 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
-import { MoreVert } from '@xipkg/icons';
+import { Copy, Edit, Eyeon, MoreVert, Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { cardMenuButtonClass, cardMenuIconClass } from 'common.ui';
+import {
+  cardMenuButtonClass,
+  cardMenuDeleteItemClass,
+  cardMenuIconClass,
+  cardMenuItemClass,
+  cardMenuSeparatorClass,
+  cardMenuSubTriggerClass,
+  cardMenuSurfaceClass,
+} from 'common.ui';
 import { useTranslation } from 'react-i18next';
-
-/** text-xs-base нельзя вместе с text-gray-* — twMerge снимает цвет текста */
-const menuSurfaceClass = 'border-border-default bg-background-surface border';
-const menuItemClass =
-  'text-text-primary hover:bg-status-info-background hover:text-text-primary focus:text-text-primary h-8 items-center whitespace-nowrap rounded-lg px-2 py-0 text-sm leading-none';
-
-/**
- * SubTrigger из @xipkg/dropdown сам рисует lucide ChevronRight (stroke).
- * Нельзя наследовать items-start / leading-snug — стрелка уезжает по вертикали.
- * Пиним chevron абсолютом по центру строки.
- */
-const menuSubTriggerClass = cn(
-  'relative flex h-8 items-center rounded-lg px-2 pr-8 text-sm leading-none text-text-primary',
-  'hover:bg-status-info-background hover:text-text-primary focus:bg-status-info-background focus:text-text-primary data-[state=open]:bg-status-info-background data-[state=open]:text-text-link',
-  '[&>svg:last-child]:pointer-events-none [&>svg:last-child]:absolute [&>svg:last-child]:top-1/2 [&>svg:last-child]:right-2',
-  '[&>svg:last-child]:size-4 [&>svg:last-child]:!m-0 [&>svg:last-child]:-translate-y-1/2',
-  '[&>svg:last-child]:!fill-none [&>svg:last-child]:shrink-0 [&>svg:last-child]:stroke-current',
-);
 
 export const MaterialActionsMenu = ({
   isClassroom,
@@ -86,29 +77,25 @@ export const MaterialActionsMenu = ({
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className={cn(
-          menuSurfaceClass,
-          'text-text-primary w-56 space-y-1 rounded-lg p-2 font-normal',
-        )}
+        className={cn(cardMenuSurfaceClass, 'text-text-primary')}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+        onCloseAutoFocus={(event) => event.preventDefault()}
       >
         {isClassroom && isTutor ? (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
-              className={menuSubTriggerClass}
+              className={cardMenuSubTriggerClass}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
               data-umami-event="material-change-access-open"
             >
+              <Eyeon />
               {t('menu.changeAccess')}
             </DropdownMenuSubTrigger>
 
             <DropdownMenuSubContent
               sideOffset={8}
               alignOffset={-4}
-              className={cn(
-                menuSurfaceClass,
-                'text-text-primary space-y-1 rounded-lg p-2 font-normal',
-              )}
+              className={cn(cardMenuSurfaceClass, 'text-text-primary')}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               {options.map(({ value, label }) => (
@@ -118,10 +105,9 @@ export const MaterialActionsMenu = ({
                   onCheckedChange={() => handleChange(value)}
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                   className={cn(
-                    'h-8 cursor-pointer items-center rounded-lg py-0 text-sm leading-none',
-                    studentAccessMode === value
-                      ? 'bg-status-info-background text-text-link'
-                      : 'text-text-primary hover:text-text-primary focus:text-text-primary',
+                    cardMenuItemClass,
+                    'cursor-pointer',
+                    studentAccessMode === value && 'bg-status-info-background text-text-link',
                   )}
                   data-umami-event="material-access-mode-change"
                   data-umami-event-mode={value}
@@ -134,26 +120,31 @@ export const MaterialActionsMenu = ({
           </DropdownMenuSub>
         ) : (
           <DropdownMenuItem
-            className={menuItemClass}
+            className={cardMenuItemClass}
             onClick={handleAction(onDuplicate)}
             data-umami-event="material-duplicate-to-classroom"
           >
+            <Copy />
             {t('menu.duplicateToClassroom')}
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
-          className={cn(menuItemClass, 'w-full')}
+          className={cardMenuItemClass}
           onClick={() => setModalOpen(true)}
           data-umami-event="material-edit"
         >
+          <Edit />
           {t('menu.edit')}
         </DropdownMenuItem>
 
+        <DropdownMenuSeparator className={cardMenuSeparatorClass} />
         <DropdownMenuItem
-          className={cn(menuItemClass, 'w-full')}
+          error
+          className={cardMenuDeleteItemClass}
           onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
           data-umami-event={isClassroom ? 'material-delete-from-classroom' : 'material-delete'}
         >
+          <Trash />
           {t('menu.delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>
