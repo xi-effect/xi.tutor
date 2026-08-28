@@ -7,7 +7,7 @@ import i18n from 'i18next';
 interface ClassroomMaterialsResponseT {
   data: ClassroomMaterialsDataT & {
     id: string;
-    createdAt: string;
+    updated_at: string;
   };
 }
 
@@ -16,7 +16,7 @@ interface MutationContext {
 }
 
 type MaterialItemT = {
-  name: string;
+  name?: string;
   content_kind: string;
 };
 
@@ -53,7 +53,7 @@ export const useAddClassroomMaterials = () => {
           queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, materialsData.classroomId],
         });
 
-        const existingMaterials: Array<{ name: string }> = [];
+        const existingMaterials: Array<{ name?: string }> = [];
         queries.forEach(([queryKey, data]) => {
           if (data) {
             const keyType = queryKey[2];

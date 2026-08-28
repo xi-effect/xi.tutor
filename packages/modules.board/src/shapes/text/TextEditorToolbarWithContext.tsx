@@ -4,6 +4,7 @@ import { DefaultRichTextToolbar, useEditor, useValue, TiptapEditor } from '@ibod
 import { Ul } from '@xipkg/icons';
 import { textFormatterElements } from './textFormatterElements';
 import { NavbarButton } from '../../ui/components/shared';
+import { boardTextToolbarClass } from '../../ui/boardTheme';
 import { LinkNavbarButton } from './LinkNavbarButton';
 import { useToggleFormat } from './hooks';
 import { ActiveFormatesMapT, MarkFormatT } from './types';
@@ -71,7 +72,7 @@ export const TextEditorToolbarWithContext = () => {
 
   return (
     <DefaultRichTextToolbar>
-      <div className="bg-gray-0 flex gap-1 p-1">
+      <div className={boardTextToolbarClass}>
         {textFormatterElements.map((element) => {
           return (
             <NavbarButton

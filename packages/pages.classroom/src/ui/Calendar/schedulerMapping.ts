@@ -177,7 +177,7 @@ export const buildCreateClassroomEventRequest = (
   const durationSeconds = durationBetweenToSeconds(data.startTime, data.endTime);
   const descriptionTrimmed = data.description?.trim() ?? '';
   const event = {
-    name: data.title,
+    name: data.title.trim(),
     description: descriptionTrimmed.length > 0 ? descriptionTrimmed : null,
   };
 

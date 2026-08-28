@@ -88,7 +88,17 @@ const RouterWithAuthContext = () => {
 
     if (!hadSession || auth.isAuthenticated) return;
 
+    // Radix Dialog может оставить pointer-events: none на body, если
+    // модалка размонтируется вместе с защищённым лейаутом, не закрывшись.
+    const unlockBody = () => {
+      document.body.style.overflow = '';
+      document.body.style.pointerEvents = '';
+      document.body.removeAttribute('data-scroll-locked');
+    };
+
+    unlockBody();
     void router.navigate({ to: '/signin', replace: true }).finally(() => {
+      unlockBody();
       queryClient.clear();
     });
   }, [auth.isAuthenticated, queryClient]);
@@ -98,17 +108,19 @@ const RouterWithAuthContext = () => {
 
 export const RouterWithAuth = () => {
   return (
-    <AuthProvider>
-      <AuthSocketBridge>
-        <ThemeProvider>
-          <NetworkProvider>
-            <NotificationsProvider>
-              <RouterWithAuthContext />
-              <AppToaster />
-            </NotificationsProvider>
-          </NetworkProvider>
-        </ThemeProvider>
-      </AuthSocketBridge>
-    </AuthProvider>
+    <>
+      <AuthProvider>
+        <AuthSocketBridge>
+          <ThemeProvider>
+            <NetworkProvider>
+              <NotificationsProvider>
+                <RouterWithAuthContext />
+              </NotificationsProvider>
+            </NetworkProvider>
+          </ThemeProvider>
+        </AuthSocketBridge>
+      </AuthProvider>
+      <AppToaster />
+    </>
   );
 };

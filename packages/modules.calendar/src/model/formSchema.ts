@@ -13,7 +13,7 @@ export const createEventFormSchema = (t: TFunction) => {
   }, t('validation.invalidTime'));
 
   const baseFields = z.object({
-    title: z.string().min(1, t('validation.titleRequired')),
+    title: z.string().trim().min(1, t('validation.titleRequired')),
     type: z.enum(['lesson', 'rest'], {
       error: t('validation.typeRequired'),
     }),

@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { createImage } from './createImage';
+import type { CropArea } from '../hooks/useCrop';
 
 export async function getCroppedImg(
-  imageSrc,
-  pixelCrop,
+  imageSrc: string,
+  pixelCrop: CropArea,
   flip = { horizontal: false, vertical: false },
-) {
+): Promise<Blob | null> {
   const image = await createImage(imageSrc);
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -15,7 +14,6 @@ export async function getCroppedImg(
     return null;
   }
 
-  // set canvas size to match the bounding box
   canvas.width = image.width;
   canvas.height = image.height;
 
@@ -23,7 +21,6 @@ export async function getCroppedImg(
   ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
   ctx.translate(-image.width / 2, -image.height / 2);
 
-  // draw image
   ctx.drawImage(image, 0, 0);
 
   const croppedCanvas = document.createElement('canvas');
@@ -33,11 +30,9 @@ export async function getCroppedImg(
     return null;
   }
 
-  // Set the size of the cropped canvas
   croppedCanvas.width = pixelCrop.width;
   croppedCanvas.height = pixelCrop.height;
 
-  // Draw the cropped image onto the new canvas
   croppedCtx.drawImage(
     canvas,
     pixelCrop.x,

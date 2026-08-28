@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { filesApiConfig, FilesQueryKey } from 'common.api';
+import { filesApiConfig, FilesQueryKey, type FileResponse } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError } from '..';
 import { toast } from 'sonner';
@@ -21,12 +21,13 @@ export async function uploadImageRequest({ file, token }: UploadImageVars): Prom
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data',
-      ...(token ? { 'x-storage-token': token } : {}),
+      ...(token ? { 'x-content-token': token } : {}),
     },
   });
 
   if (response.status !== 201) throw new Error(`Image upload failed: ${response.status}`);
-  return response.data.id as string;
+  const data = response.data as FileResponse;
+  return data.id;
 }
 
 export const useUploadImage = () => {

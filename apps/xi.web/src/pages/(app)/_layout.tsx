@@ -5,7 +5,7 @@ import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
 import { CallsShell, CompactView, useCallStore, useUmamiActivityHeartbeat } from 'modules.calls';
-import { useCurrentUser, useUpdateProfile, useMarkNotificationAsRead } from 'common.services';
+import { useCurrentUser, useSyncRoleFromSearch, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';
 import { RoleT } from 'common.types';
@@ -39,7 +39,12 @@ function LayoutContent() {
     const search = router.state.location.search;
 
     if (pathname.includes('/call')) {
-      updateStore('mode', 'full');
+      const { activeBoardId, activeClassroom, mode } = useCallStore.getState();
+      const hasPendingBoardTransition =
+        mode === 'compact' && Boolean(activeBoardId && activeClassroom);
+      if (!hasPendingBoardTransition) {
+        updateStore('mode', 'full');
+      }
     } else if (search.call) {
       // На любой странице (главная, classrooms, materials и т.д.) с параметром call — compact
       updateStore('mode', 'compact');
@@ -61,10 +66,8 @@ const ProtectedLayout = () => {
   const { data: user, isLoading } = useCurrentUser();
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { role?: RoleT; read_notification_id?: string };
-  const { updateProfile } = useUpdateProfile();
   const processedNotificationIdRef = useRef<string | null>(null);
 
-  // Функция для удаления параметра из URL
   const removeNotificationIdFromUrl = useCallback(() => {
     navigate({
       // @ts-expect-error - TanStack Router search params typing issue
@@ -76,6 +79,18 @@ const ProtectedLayout = () => {
       replace: true,
     });
     processedNotificationIdRef.current = null;
+  }, [navigate]);
+
+  const removeRoleFromUrl = useCallback(() => {
+    navigate({
+      // @ts-expect-error - TanStack Router search params typing issue
+      search: (prev: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { role: _, ...rest } = prev || {};
+        return rest;
+      },
+      replace: true,
+    });
   }, [navigate]);
 
   const { markAsRead } = useMarkNotificationAsRead({
@@ -106,45 +121,7 @@ const ProtectedLayout = () => {
     }
   }, [navigate, user?.onboarding_stage]);
 
-  // Обработка параметра role из URL
-  useEffect(() => {
-    if (!user || !search.role) return;
-
-    const urlRole = search.role;
-    const currentLayout = user.default_layout;
-
-    // Проверяем, является ли role валидным значением
-    if (urlRole !== 'tutor' && urlRole !== 'student') return;
-
-    // Если role совпадает с текущим default_layout, просто удаляем параметр из URL
-    if (urlRole === currentLayout) {
-      const newSearch = { ...search };
-      delete newSearch.role;
-      navigate({
-        search: newSearch as any,
-        replace: true,
-      });
-      return;
-    }
-
-    // Если role отличается от currentLayout, обновляем default_layout
-    updateProfile.mutate(
-      { default_layout: urlRole },
-      {
-        onSuccess: () => {
-          // Удаляем параметр role из URL после успешного обновления
-          const newSearch = { ...search };
-          delete newSearch.role;
-          navigate({
-            search: newSearch as any,
-            replace: true,
-          });
-        },
-      },
-    );
-    // Один раз на mount: role из URL — намеренно без deps, иначе повторные mutate
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useSyncRoleFromSearch(search.role, removeRoleFromUrl);
 
   // Обработка параметра read_notification_id из URL
   useEffect(() => {

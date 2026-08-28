@@ -8,8 +8,13 @@ export type TColorOption = {
 export type BoardColorOption = TColorOption & {
   borderClass: string;
   fillClass: string;
-  /** Canvas fill / stroke (same token as the picker swatch). */
+  /** Canvas fill / stroke in light theme (same token as the picker swatch). */
   cssVar: string;
+  /**
+   * Ink (text, pen, stroke) in dark theme.
+   * Stickers keep `cssVar` for noteFill so their fill does not invert.
+   */
+  cssVarDark?: string;
   semiCssVar: string;
   noteTextCssVar: string;
 };
@@ -25,8 +30,19 @@ export const BOARD_COLORS: BoardColorOption[] = [
     borderClass: 'border-gray-100',
     fillClass: 'fill-gray-100',
     cssVar: 'var(--xi-gray-100)',
+    cssVarDark: 'var(--xi-gray-0)',
     semiCssVar: 'var(--xi-gray-10)',
     noteTextCssVar: 'var(--xi-gray-0)',
+  },
+  {
+    name: 'white',
+    class: 'bg-gray-0',
+    borderClass: 'border-gray-0',
+    fillClass: 'fill-gray-0',
+    cssVar: 'var(--xi-gray-0)',
+    cssVarDark: 'var(--xi-gray-0)',
+    semiCssVar: 'var(--xi-gray-10)',
+    noteTextCssVar: 'var(--xi-gray-100)',
   },
   {
     name: 'blue',

@@ -9,7 +9,9 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.166.6",
@@ -24,7 +26,6 @@
     "i18next": "24.2.2",
     "react-easy-crop": "5.4.1",
     "react-i18next": "15.4.1",
-    "react-image-file-resizer": "0.4.8",
     "sonner": "^2.0.7",
     "zod": "^4.3.6",
     "zustand": "^5.0.3"
@@ -44,7 +45,8 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.22.0"
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "react": "19"

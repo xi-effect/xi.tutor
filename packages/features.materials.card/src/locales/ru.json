@@ -3,8 +3,20 @@
   "updated": "Обновлено: {{date}}",
   "updatedGallery": "Обновлено {{date}}",
   "date": {
-    "today": "сегодня",
-    "yesterday": "вчера"
+    "justNow": "только что",
+    "minutesAgo_one": "минуту назад",
+    "minutesAgo_few": "{{count}} минуты назад",
+    "minutesAgo_many": "{{count}} минут назад",
+    "minutesAgo_other": "{{count}} минут назад",
+    "hoursAgo_one": "час назад",
+    "hoursAgo_few": "{{count}} часа назад",
+    "hoursAgo_many": "{{count}} часов назад",
+    "hoursAgo_other": "{{count}} часов назад",
+    "yesterday": "вчера",
+    "daysAgo_one": "день назад",
+    "daysAgo_few": "{{count}} дня назад",
+    "daysAgo_many": "{{count}} дней назад",
+    "daysAgo_other": "{{count}} дней назад"
   },
   "accessMode": {
     "read_write": "совместная работа",

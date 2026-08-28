@@ -22,7 +22,7 @@ export const UserSettings = ({
   const [showContent, setShowContent] = React.useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const search = useSearch({ strict: false });
+  const search = useSearch({ strict: false }) as { profile?: string };
 
   const profileType = search.profile || '';
 
@@ -40,6 +40,14 @@ export const UserSettings = ({
       search: { profile: 'personalInfo' },
     });
   }, [navigate, pathname, profileType]);
+
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.pointerEvents = '';
+      document.body.removeAttribute('data-scroll-locked');
+    };
+  }, []);
 
   const handleClose = useCallback(() => {
     setShowContent(false);

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const createChangeLessonFormSchema = (t: TFunction) =>
   z.object({
-    title: z.string().min(1, t('validation.titleRequired')),
+    title: z.string().trim().min(1, t('validation.titleRequired')),
     description: z.string().optional(),
   });
 

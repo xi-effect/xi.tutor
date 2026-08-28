@@ -6,6 +6,7 @@ import { NavbarButton } from '../../ui/components/shared';
 import {
   boardSelectionToolbarButtonClass,
   boardSelectionToolbarIconClass,
+  boardTextToolbarClass,
 } from '../../ui/boardTheme';
 import { textFormatterElements } from './textFormatterElements';
 import { LinkNavbarButton } from './LinkNavbarButton';
@@ -123,7 +124,7 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
         side="top"
         align="center"
         sideOffset={8}
-        className="border-gray-10 bg-gray-0 flex w-full gap-1 rounded-xl border p-1 shadow-md"
+        className={`${boardTextToolbarClass} w-full`}
       >
         {textFormatterElements.map((element) => {
           return (

@@ -1,20 +1,38 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
 import { RefObject } from 'react';
-import { MaterialPropsT } from '../types';
+import { MaterialPropsT, MaterialScopeFilterT } from '../types';
 import { MaterialsKindT } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import React from 'react';
+import {
+  buildAnyMaterialFilters,
+  PERSONAL_MATERIAL_SCOPE,
+  serializeMaterialScope,
+} from 'common.services';
 
 export const useInfiniteQuery = (
   parentRef: RefObject<HTMLDivElement | null>,
   kind: MaterialsKindT,
+  scopeFilter: MaterialScopeFilterT = 'personal',
+  classroomIds: number[] = [],
 ) => {
+  const filters = buildAnyMaterialFilters({
+    content_kind: kind,
+    scope:
+      scopeFilter === 'personal'
+        ? PERSONAL_MATERIAL_SCOPE
+        : scopeFilter === 'classroom'
+          ? {
+              access_kind: 'classroom',
+              classroom_ids: classroomIds.length > 0 ? classroomIds : null,
+            }
+          : null,
+  });
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
-      queryKey: [MaterialsQueryKey.Materials, kind],
-      // pageParam - это значение, которое возвращает getNextPageParam из предыдущей страницы
-      // При первой загрузке pageParam = undefined (initialPageParam)
+      queryKey: [MaterialsQueryKey.Materials, kind, serializeMaterialScope(filters.scope)],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
         const url = materialsApiConfig[MaterialsQueryKey.Materials].getUrl();
@@ -29,43 +47,34 @@ export const useInfiniteQuery = (
             limit: 40,
             cursor: pageParam
               ? {
-                  created_at: pageParam,
+                  updated_at: pageParam,
                 }
               : null,
-            filters: {
-              content_type: kind,
-            },
+            filters,
           },
         });
 
         return response.data;
       },
-      // Начальное значение для первой страницы
       initialPageParam: undefined as string | undefined,
-      // Эта функция определяет параметр для следующей страницы
-      // Возвращаемое значение станет pageParam для следующего запроса
       getNextPageParam: (lastPage) => {
-        // Проверяем, если lastPage это объект с массивом данных
-        const data = Array.isArray(lastPage) ? lastPage : lastPage?.data || lastPage?.results;
+        const pageData = Array.isArray(lastPage) ? lastPage : lastPage?.data || lastPage?.results;
 
-        if (!data || !Array.isArray(data) || data.length === 0) {
-          return undefined; // Больше страниц нет
+        if (!pageData || !Array.isArray(pageData) || pageData.length === 0) {
+          return undefined;
         }
 
-        const lastItem = data[data.length - 1];
-        // Используем created_at для консистентности с запросом
-        if (!lastItem || !lastItem.created_at) {
-          return undefined; // Больше страниц нет
+        const lastItem = pageData[pageData.length - 1];
+        if (!lastItem || !lastItem.updated_at) {
+          return undefined;
         }
 
-        // Возвращаем created_at последнего элемента - это будет pageParam для следующего запроса
-        return lastItem.created_at;
+        return lastItem.updated_at;
       },
-      staleTime: 5 * 60 * 1000, // 5 минут
-      gcTime: 10 * 60 * 1000, // 10 минут
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     });
 
-  // Обработчик скролла для автоматической загрузки следующей страницы
   React.useEffect(() => {
     const handleScroll = () => {
       if (!parentRef.current || isFetchingNextPage || !hasNextPage) {
@@ -87,22 +96,26 @@ export const useInfiniteQuery = (
     return () => el.removeEventListener('scroll', handleScroll);
   }, [parentRef, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
-  // Объединяем все страницы в один массив
   const items: MaterialPropsT[] = React.useMemo(() => {
     if (!data?.pages) {
       return [];
     }
 
     const flattened = data.pages.flatMap((page) => {
-      // Если страница это массив, возвращаем как есть
       if (Array.isArray(page)) {
         return page;
       }
-      // Если страница это объект с массивом данных, извлекаем массив
       return page?.data || page?.results || [];
     });
 
-    return flattened;
+    const seen = new Set<string>();
+    return flattened.filter((item: MaterialPropsT) => {
+      if (!item?.id || seen.has(item.id)) {
+        return false;
+      }
+      seen.add(item.id);
+      return true;
+    });
   }, [data?.pages]);
 
   return {

@@ -66,9 +66,13 @@ export const ModalAddGroup = ({
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
     reset,
   } = form;
+
+  const nameValue = watch('name');
+  const canSubmit = Boolean(nameValue?.trim()) && !isPending;
 
   const handleOpenChange = (next: boolean) => {
     if (!next) reset(initialValues);
@@ -90,7 +94,7 @@ export const ModalAddGroup = ({
     createGroup(
       {
         subject_id: data.subject,
-        name: data.name,
+        name: data.name.trim(),
       },
       {
         onSuccess: () => {
@@ -180,7 +184,7 @@ export const ModalAddGroup = ({
                 className="gap-2"
                 type="submit"
                 onClick={handleButtonClick}
-                disabled={isPending}
+                disabled={!canSubmit}
                 data-umami-event="group-create"
               >
                 {isPending ? t('actions.creating') : t('actions.create')}

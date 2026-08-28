@@ -4,5 +4,6 @@
   "zoomIn": "Zoom in",
   "save": "Save",
   "cancel": "Cancel",
-  "toastSuccess": "Avatar uploaded successfully"
+  "toastSuccess": "Avatar uploaded successfully",
+  "toastError": "Could not save profile photo"
 }

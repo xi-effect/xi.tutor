@@ -33,6 +33,7 @@ type HomeController = {
   mode: 'unauthenticated' | 'authenticated';
   user: MockUser;
   getStage?: () => string;
+  remainingNetworkFailures: number;
 };
 
 const homeState = new WeakMap<Page, HomeController>();
@@ -43,6 +44,7 @@ async function ensureHomeMock(page: Page) {
   const state: HomeController = {
     mode: 'unauthenticated',
     user: mockUser(),
+    remainingNetworkFailures: 0,
   };
   homeState.set(page, state);
 
@@ -53,6 +55,12 @@ async function ensureHomeMock(page: Page) {
     }
 
     const current = homeState.get(page);
+    if (current && current.remainingNetworkFailures > 0) {
+      current.remainingNetworkFailures -= 1;
+      await route.abort('internetdisconnected');
+      return;
+    }
+
     if (!current || current.mode === 'unauthenticated') {
       await fulfillJson(route, 401, { detail: 'Not authenticated' });
       return;
@@ -80,7 +88,9 @@ function getHomeState(page: Page): HomeController {
 
 export async function mockUnauthenticatedSession(page: Page) {
   await ensureHomeMock(page);
-  homeState.get(page)!.mode = 'unauthenticated';
+  const state = homeState.get(page)!;
+  state.mode = 'unauthenticated';
+  state.remainingNetworkFailures = 0;
 }
 
 export async function mockAuthenticatedSession(page: Page, user: MockUser = mockUser()) {
@@ -89,6 +99,17 @@ export async function mockAuthenticatedSession(page: Page, user: MockUser = mock
   state.mode = 'authenticated';
   state.user = user;
   state.getStage = undefined;
+  state.remainingNetworkFailures = 0;
+}
+
+/** Сессия валидна, но первые N запросов home падают как обрыв сети. */
+export async function mockAuthenticatedSessionWithNetworkBlip(
+  page: Page,
+  user: MockUser = mockUser(),
+  failCount = 1,
+) {
+  await mockAuthenticatedSession(page, user);
+  homeState.get(page)!.remainingNetworkFailures = failCount;
 }
 
 export async function mockHomeAfterAuth(page: Page, user: MockUser) {
