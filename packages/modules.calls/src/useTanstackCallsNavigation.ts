@@ -47,8 +47,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
         });
       },
       navigateToClassroomBoard: (classroomId, boardId, options) => {
-        const alreadyOnBoard =
-          params.classroomId === classroomId && params.boardId === boardId;
+        const alreadyOnBoard = params.classroomId === classroomId && params.boardId === boardId;
         navigate({
           to: '/classrooms/$classroomId/boards/$boardId',
           params: { classroomId, boardId },

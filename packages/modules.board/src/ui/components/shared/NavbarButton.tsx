@@ -22,9 +22,7 @@ export const NavbarButton = ({
       'pointer-events-auto flex shrink-0 items-center justify-center rounded-lg transition-colors',
       'size-12 sm:size-6 lg:size-8',
       boardIconClass,
-      isActive
-        ? 'bg-status-info-background'
-        : 'bg-transparent hover:bg-status-info-background',
+      isActive ? 'bg-status-info-background' : 'hover:bg-status-info-background bg-transparent',
       className,
     )}
     {...props}

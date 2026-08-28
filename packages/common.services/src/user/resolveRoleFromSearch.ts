@@ -6,9 +6,7 @@ export function parseRoleFromSearch(role: unknown): RoleT | null {
 }
 
 export type RoleFromSearchAction =
-  | { type: 'noop' }
-  | { type: 'clear' }
-  | { type: 'switch'; role: RoleT };
+  { type: 'noop' } | { type: 'clear' } | { type: 'switch'; role: RoleT };
 
 export function resolveRoleFromSearch(input: {
   urlRole: unknown;
