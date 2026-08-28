@@ -39,11 +39,7 @@ import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 import { useDrawStore, useFollowUserStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
-import { XiGeoTool } from '../../../shapes/geo';
-import { EmojiTool } from '../../../shapes/emoji';
-import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
-import { MathFigureTool } from '../../../shapes/math-figure';
-import { EmojiStickerTool } from '../../../shapes/emojiSticker';
+import { boardCustomTools } from '../../../shapes/boardCustomTools';
 
 export const DrawCanvas = ({
   token,
@@ -481,7 +477,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, MathFigureTool, EmojiStickerTool]}
+            tools={boardCustomTools}
             shapeUtils={boardCustomShapeUtils}
             components={drawComponents}
             collaboratorCursorLayout={{

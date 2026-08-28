@@ -88,11 +88,10 @@ export const ColorPicker = track(() => {
 
   const handleColorClick = useCallback(
     (colorName: string) => {
-
       setSelectedShapesColor(colorName);
       if (isGeo) setGeoColor(colorName);
     },
-    [ setSelectedShapesColor, isGeo, setGeoColor],
+    [setSelectedShapesColor, isGeo, setGeoColor],
   );
 
   const handleSize = useCallback(

@@ -1,6 +1,7 @@
 import type { ComponentType, SVGProps } from 'react';
 import { cn } from '@xipkg/utils';
 import type { ActivityKind } from '../model/kinds';
+import { FlipCard } from '@xipkg/icons';
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -121,4 +122,5 @@ export const ACTIVITY_KIND_ICONS: Record<ActivityKind, ComponentType<IconProps>>
   'multiple-choice': ActivityMultipleChoiceIcon,
   'mystery-tiles': ActivityMysteryTilesIcon,
   'random-card': ActivityRandomCardIcon,
+  'flip-card': FlipCard,
 };
