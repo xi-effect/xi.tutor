@@ -43,7 +43,7 @@ export const FilesToolbar = ({ filters, onChange, onReset }: FilesToolbarProps) 
           <Button
             type="button"
             variant="ghost"
-            className="text-s-base text-text-secondary h-auto px-2 py-1 font-medium"
+            className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
             onClick={onReset}
             data-umami-event="materials-files-reset-all"
           >

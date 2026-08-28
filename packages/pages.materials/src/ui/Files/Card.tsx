@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@xipkg/dropdown';
 import { File, Image, MoreVert, Music } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
@@ -16,18 +10,20 @@ import {
   cardMenuPositionClass,
   getAppLanguage,
 } from 'common.ui';
-import {
-  getLibraryFileRequest,
-  handleError,
-  useDeleteLibraryFile,
-  type LibraryFile,
-} from 'common.services';
+import { useDeleteLibraryFile, type LibraryFile } from 'common.services';
 import type { FileKind } from 'common.api';
-import { formatFileSize, formatUploadedAt, getLibraryFileDisplayName } from '../../utils';
+import {
+  downloadLibraryFile,
+  formatFileSize,
+  formatUploadedAt,
+  getLibraryFileDisplayName,
+} from '../../utils';
+import { FileActionsMenu } from './FileActionsMenu';
 
 type FileCardProps = {
   file: LibraryFile;
   className?: string;
+  onPreview?: (file: LibraryFile) => void;
 };
 
 const kindIcon: Record<FileKind, typeof File> = {
@@ -38,13 +34,8 @@ const kindIcon: Record<FileKind, typeof File> = {
   uncategorized: File,
 };
 
-const menuSurfaceClass = 'border-border-default bg-background-surface border';
-const menuItemClass =
-  'text-text-primary hover:bg-status-info-background hover:text-text-primary focus:text-text-primary h-8 items-center whitespace-nowrap rounded-lg px-2 py-0 text-sm leading-none';
-
-export const FileCard = ({ file, className }: FileCardProps) => {
+export const FileCard = ({ file, className, onPreview }: FileCardProps) => {
   const { t } = useTranslation('materials');
-  const [menuOpen, setMenuOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const deleteMutation = useDeleteLibraryFile();
@@ -57,31 +48,32 @@ export const FileCard = ({ file, className }: FileCardProps) => {
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      const result = await getLibraryFileRequest(file.id);
-      if (result.status !== 200 || !result.data) return;
-
-      const url = window.URL.createObjectURL(result.data);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = displayName;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      handleError(error, 'files');
+      await downloadLibraryFile(file.id, displayName);
     } finally {
       setIsDownloading(false);
     }
   };
 
+  const openPreview = () => {
+    onPreview?.(file);
+  };
+
   return (
     <>
       <div
+        role="button"
+        tabIndex={0}
         className={cn(
-          'group bg-background-surface relative flex h-44 min-h-44 w-full min-w-0 shrink-0 flex-col overflow-hidden rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+          'group bg-background-surface relative flex h-44 min-h-44 w-full min-w-0 shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
           className,
         )}
+        onClick={openPreview}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openPreview();
+          }
+        }}
       >
         <div className="flex w-full shrink-0 items-center gap-2 pr-8">
           <div className="bg-status-info-background [&>svg]:fill-icon-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
@@ -89,47 +81,30 @@ export const FileCard = ({ file, className }: FileCardProps) => {
           </div>
         </div>
 
-        <div className={cardMenuPositionClass}>
-          <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen} modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className={cardMenuButtonClass}
-                variant="none"
-                size="icon"
-                data-umami-event="materials-file-menu-open"
-              >
-                <MoreVert className={cardMenuIconClass} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              side="bottom"
-              align="end"
-              className={cn(
-                menuSurfaceClass,
-                'text-text-primary w-56 space-y-1 rounded-lg p-2 font-normal',
-              )}
+        <div
+          className={cardMenuPositionClass}
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
+          <FileActionsMenu
+            showDownload
+            isDownloading={isDownloading}
+            onDownload={handleDownload}
+            onDelete={() => setDeleteOpen(true)}
+          >
+            <Button
+              className={cardMenuButtonClass}
+              variant="none"
+              size="icon"
+              data-umami-event="materials-file-menu-open"
             >
-              <DropdownMenuItem
-                className={menuItemClass}
-                disabled={isDownloading}
-                onClick={handleDownload}
-                data-umami-event="materials-file-download"
-              >
-                {t('files.menu.download')}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(menuItemClass, 'w-full')}
-                onClick={() => setDeleteOpen(true)}
-                data-umami-event="materials-file-delete"
-              >
-                {t('files.menu.delete')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <MoreVert className={cardMenuIconClass} />
+            </Button>
+          </FileActionsMenu>
         </div>
 
         <p
-          className="text-text-primary mt-4 line-clamp-2 w-full min-w-0 max-w-full overflow-hidden text-base leading-5 font-medium break-all"
+          className="text-text-primary mt-4 line-clamp-2 w-full max-w-full min-w-0 overflow-hidden text-base leading-5 font-medium break-words"
           title={displayName}
         >
           {displayName}

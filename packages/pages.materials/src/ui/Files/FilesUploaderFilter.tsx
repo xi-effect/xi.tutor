@@ -21,7 +21,11 @@ export const FilesUploaderFilter = ({ value, onChange }: FilesUploaderFilterProp
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <FilesFilterChip open={open} umamiEvent="materials-files-uploader-filter">
+        <FilesFilterChip
+          open={open}
+          selected={value !== 'mine'}
+          umamiEvent="materials-files-uploader-filter"
+        >
           {t('files.uploader.chip', { value: chipValue })}
         </FilesFilterChip>
       </DropdownMenuTrigger>

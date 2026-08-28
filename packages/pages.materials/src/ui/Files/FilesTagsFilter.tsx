@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button } from '@xipkg/button';
-import { Input } from '@xipkg/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { Search } from '@xipkg/icons';
 import { TAG_KIND, useAutocompleteTags } from 'common.services';
@@ -8,6 +6,7 @@ import type { TagSchema } from 'common.api';
 import { useTranslation } from 'react-i18next';
 import { MaterialsFilterOption } from '../MaterialsFilterOption';
 import { FilesFilterChip } from './FilesFilterChip';
+import { FilesFilterActions, filesFilterPopoverClass } from './FilesFilterActions';
 import type { FilesTagOptionT } from '../../types';
 
 type FilesTagsFilterProps = {
@@ -66,28 +65,33 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <FilesFilterChip open={open} umamiEvent="materials-files-tags-filter">
+        <FilesFilterChip
+          open={open}
+          selected={value.length > 0}
+          umamiEvent="materials-files-tags-filter"
+        >
           {value.length > 0
             ? t('files.tags.chipCount', { count: value.length })
             : t('files.tags.chip')}
         </FilesFilterChip>
       </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        sideOffset={8}
-        className="border-border-default bg-background-surface w-60 rounded-2xl border p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.08)]"
-      >
-        <Input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder={t('files.tags.searchPlaceholder')}
-          before={<Search className="fill-icon-secondary size-4" />}
-        />
-        <div className="mt-4 flex max-h-52 w-full flex-col items-stretch gap-2.5 overflow-y-auto bg-transparent">
+      <PopoverContent align="start" sideOffset={8} className={filesFilterPopoverClass}>
+        <div className="border-border-control flex h-9 w-full items-center gap-1 rounded-lg border px-2">
+          <Search className="fill-icon-secondary size-4 shrink-0" />
+          <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder={t('files.tags.searchPlaceholder')}
+            className="text-s-base text-text-primary placeholder:text-text-secondary min-w-0 flex-1 bg-transparent leading-5 outline-none"
+          />
+        </div>
+        <div className="flex max-h-52 w-full min-w-0 flex-col items-stretch gap-2.5 overflow-y-auto bg-transparent">
           {showHint ? (
-            <p className="text-s-base text-text-secondary py-1">{t('files.tags.hint')}</p>
+            <p className="text-s-base text-text-secondary leading-5 whitespace-nowrap">
+              {t('files.tags.hint')}
+            </p>
           ) : showEmpty ? (
-            <p className="text-s-base text-text-secondary py-1">{t('files.tags.empty')}</p>
+            <p className="text-s-base text-text-secondary leading-5">{t('files.tags.empty')}</p>
           ) : (
             visibleTags.map((tag) => (
               <MaterialsFilterOption
@@ -103,29 +107,16 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
             ))
           )}
         </div>
-        <div className="border-border-default mt-4 flex items-center justify-between border-t pt-3">
-          <Button
-            type="button"
-            variant="ghost"
-            className="text-s-base text-text-secondary h-auto px-3 py-2 font-medium"
-            onClick={() => setDraft([])}
-            data-umami-event="materials-files-tags-reset"
-          >
-            {t('files.reset')}
-          </Button>
-          <Button
-            type="button"
-            variant="primary"
-            className="text-s-base h-auto rounded-lg px-4 py-2 font-medium"
-            onClick={() => {
-              onChange(draft);
-              setOpen(false);
-            }}
-            data-umami-event="materials-files-tags-apply"
-          >
-            {t('files.apply')}
-          </Button>
-        </div>
+        <FilesFilterActions
+          canReset={draft.length > 0}
+          onReset={() => setDraft([])}
+          onApply={() => {
+            onChange(draft);
+            setOpen(false);
+          }}
+          resetUmami="materials-files-tags-reset"
+          applyUmami="materials-files-tags-apply"
+        />
       </PopoverContent>
     </Popover>
   );

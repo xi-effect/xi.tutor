@@ -1,10 +1,11 @@
-import { RefObject, useEffect, useMemo } from 'react';
+import { RefObject, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
-import { useCurrentUser, useSearchLibraryFiles } from 'common.services';
+import { useCurrentUser, useSearchLibraryFiles, type LibraryFile } from 'common.services';
 import { FileCard } from './Card';
 import { FilesFilteredEmpty } from './FilesFilteredEmpty';
+import { FilePreviewModal } from './preview';
 import { MaterialsGallerySkeleton } from '../MaterialsGallerySkeleton';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { filterLibraryFiles, hasActiveFilesFilters } from '../../utils';
@@ -20,6 +21,7 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { data: user } = useCurrentUser();
+  const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
   const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSearchLibraryFiles();
 
@@ -76,15 +78,31 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   }
 
   return (
-    <GridVirtualizer
-      parentRef={parentRef}
-      items={filteredFiles}
-      defaultRowHeight={176}
-      minItemWidth={300}
-      gap={20}
-      maxColumns={4}
-      isSingleColumn={isMobile}
-      renderItem={(file) => <FileCard file={file} className="w-full" />}
-    />
+    <>
+      <GridVirtualizer
+        parentRef={parentRef}
+        items={filteredFiles}
+        defaultRowHeight={176}
+        minItemWidth={300}
+        gap={20}
+        maxColumns={4}
+        isSingleColumn={isMobile}
+        renderItem={(file) => (
+          <FileCard
+            file={file}
+            className="w-full"
+            onPreview={(nextFile) => {
+              window.setTimeout(() => setPreviewFile(nextFile), 0);
+            }}
+          />
+        )}
+      />
+      <FilePreviewModal
+        file={previewFile}
+        onOpenChange={(open) => {
+          if (!open) setPreviewFile(null);
+        }}
+      />
+    </>
   );
 };

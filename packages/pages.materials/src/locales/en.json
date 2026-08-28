@@ -58,6 +58,26 @@
       "download": "Download",
       "delete": "Delete"
     },
+    "preview": {
+      "loading": "Loading preview...",
+      "errorTitle": "Could not open the file",
+      "errorDescription": "An error occurred while loading the preview. Try again or download the file",
+      "unsupportedTitle": "Preview is not available",
+      "unsupportedDescription": "This file type cannot be previewed in Sovlium. Download the file to open it on your device",
+      "retry": "Retry",
+      "downloadFile": "Download file",
+      "fullscreen": "Full screen",
+      "exitFullscreen": "Exit full screen",
+      "more": "More",
+      "close": "Close",
+      "page": "Page {{current}} of {{total}}",
+      "prevPage": "Previous page",
+      "nextPage": "Next page",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "zoomReset": "Reset zoom",
+      "zoomLevel": "{{value}}%"
+    },
     "deleteConfirm": {
       "title": "Delete file?",
       "description": "The file “{{name}}” will be deleted permanently. Links to it in boards and notes may stop working.",
