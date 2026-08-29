@@ -106,6 +106,11 @@ pub fn document_theme_script(theme: ShellTheme) -> String {
     format!(
         r#"(function () {{
   try {{
+    // The share surfaces are transparent click-through overlays. Painting the
+    // page background here would turn them into opaque sheets covering the
+    // screen the tutor is demonstrating.
+    var path = (window.location && window.location.pathname) || '';
+    if (path.indexOf('share-annotate') !== -1 || path.indexOf('share-overlay') !== -1) return;
     var t = '{name}';
     var r = document.documentElement;
     r.classList.remove('light', 'dark', 'system');

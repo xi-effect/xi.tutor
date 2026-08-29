@@ -31,6 +31,13 @@ function ensureStyles(): void {
     html[data-native-call-pip] #root {
       overflow: hidden;
     }
+    /* The native window is transparent while floating, so the page must stop
+       painting its own opaque background or the rounded corners stay square.
+       Beats the inline background the theme bridge writes on <html>. */
+    html[data-native-call-pip],
+    html[data-native-call-pip] body {
+      background: transparent !important;
+    }
     #${HOST_ID} {
       position: fixed;
       inset: 0;
@@ -40,21 +47,44 @@ function ensureStyles(): void {
       background: var(--color-background-page, var(--xi-gray-0, #111318));
       color: inherit;
       overflow: hidden;
+      /* Matches PIP_CORNER_RADIUS in call_pip.rs. */
+      border-radius: 12px;
     }
     #${HOST_ID} .sovlium-native-call-pip__chrome {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 28px;
+      height: 34px;
       z-index: 2;
       display: flex;
       align-items: center;
       justify-content: flex-end;
       padding: 0 6px;
+      /* Tauri starts the native drag from a real mousedown, so the strip has to
+         be hit-testable: with pointer-events none the window cannot be moved. */
+      pointer-events: auto;
+      cursor: grab;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent);
+      opacity: 0;
+      transition: opacity 120ms ease;
+    }
+    #${HOST_ID}:hover .sovlium-native-call-pip__chrome {
+      opacity: 1;
+    }
+    /* Without a visible affordance the drag strip reads as an invisible line
+       somewhere near the top edge. */
+    #${HOST_ID} .sovlium-native-call-pip__chrome::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
       pointer-events: none;
-      -webkit-app-region: drag;
-      app-region: drag;
     }
     #${HOST_ID} .sovlium-native-call-pip__chrome button {
       pointer-events: auto;
@@ -68,22 +98,11 @@ function ensureStyles(): void {
       cursor: pointer;
       background: rgba(0, 0, 0, 0.45);
       color: #fff;
-      -webkit-app-region: no-drag;
-      app-region: no-drag;
     }
     #${HOST_ID} .sovlium-native-call-pip__body {
       flex: 1;
       min-height: 0;
       height: 100%;
-    }
-    #${HOST_ID} button,
-    #${HOST_ID} a,
-    #${HOST_ID} input,
-    #${HOST_ID} textarea,
-    #${HOST_ID} video,
-    #${HOST_ID} [role='button'] {
-      -webkit-app-region: no-drag;
-      app-region: no-drag;
     }
   `;
   document.head.appendChild(style);

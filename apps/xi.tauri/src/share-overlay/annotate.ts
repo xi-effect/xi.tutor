@@ -1,9 +1,12 @@
 /**
  * Fullscreen transparent drawing surface for screen-share annotations.
- * Strokes live in this window so display capture includes them (Zoom-like).
+ *
+ * The window is excluded from display capture, so remote participants never see
+ * it directly: strokes are mirrored to the main window in surface-relative
+ * coordinates and re-drawn there on top of the incoming video.
  */
 
-import { listen } from '@tauri-apps/api/event';
+import { emit, listen } from '@tauri-apps/api/event';
 
 type Tool = 'pointer' | 'pen' | 'highlighter' | 'eraser';
 type DrawTool = Exclude<Tool, 'pointer'>;
@@ -17,9 +20,37 @@ type AnnotateCommand = {
 type Point = { x: number; y: number };
 
 type Stroke = {
+  id: string;
   tool: DrawTool;
   color: string;
   points: Point[];
+};
+
+/** Fractions of the surface: [x / width, y / height]. */
+type NormalizedPoint = [number, number];
+
+type AnnotationMessage =
+  | {
+      type: 'begin';
+      stroke: {
+        id: string;
+        tool: DrawTool;
+        color: string;
+        width: number;
+        points: NormalizedPoint[];
+      };
+    }
+  | { type: 'append'; id: string; points: NormalizedPoint[] }
+  | { type: 'end'; id: string }
+  | { type: 'undo' }
+  | { type: 'clear' };
+
+const ANNOTATION_EVENT = 'share-annotate-stroke';
+/** Line widths in CSS pixels, converted to surface fractions before sending. */
+const TOOL_WIDTH: Record<DrawTool, number> = {
+  pen: 3.5,
+  highlighter: 22,
+  eraser: 28,
 };
 
 const canvasEl = document.getElementById('annotate');
@@ -42,6 +73,50 @@ let current: Stroke | null = null;
 
 function isDrawTool(value: Tool): value is DrawTool {
   return value === 'pen' || value === 'highlighter' || value === 'eraser';
+}
+
+let strokeCounter = 0;
+
+function nextStrokeId(): string {
+  strokeCounter += 1;
+  return `${Date.now().toString(36)}-${strokeCounter}`;
+}
+
+function send(message: AnnotationMessage): void {
+  void emit(ANNOTATION_EVENT, message).catch((err) => {
+    console.error('[share-annotate] failed to publish stroke', err);
+  });
+}
+
+function toNormalizedPoint(event: PointerEvent): NormalizedPoint {
+  const rect = canvas.getBoundingClientRect();
+  return [
+    (event.clientX - rect.left) / (rect.width || 1),
+    (event.clientY - rect.top) / (rect.height || 1),
+  ];
+}
+
+// Pointer moves arrive at up to 120 Hz; batching keeps the data channel calm
+// without a visible lag on the remote side.
+const FLUSH_INTERVAL_MS = 50;
+let pending: NormalizedPoint[] = [];
+let flushTimer: number | undefined;
+
+function flushPending(): void {
+  if (flushTimer !== undefined) {
+    window.clearTimeout(flushTimer);
+    flushTimer = undefined;
+  }
+  if (!current || pending.length === 0) return;
+  send({ type: 'append', id: current.id, points: pending });
+  pending = [];
+}
+
+function queuePoint(point: NormalizedPoint): void {
+  pending.push(point);
+  if (flushTimer === undefined) {
+    flushTimer = window.setTimeout(flushPending, FLUSH_INTERVAL_MS);
+  }
 }
 
 function resizeCanvas(): void {
@@ -119,13 +194,17 @@ function applyCommand(command: AnnotateCommand): void {
   if (command.type === 'clear') {
     strokes.length = 0;
     current = null;
+    pending = [];
     redraw();
+    send({ type: 'clear' });
     return;
   }
   if (command.type === 'undo') {
     strokes.pop();
     current = null;
+    pending = [];
     redraw();
+    send({ type: 'undo' });
     return;
   }
   if (command.type === 'set-tool') {
@@ -139,23 +218,40 @@ canvas.addEventListener('pointerdown', (event) => {
   if (!isDrawTool(tool) || event.button !== 0) return;
   event.preventDefault();
   canvas.setPointerCapture(event.pointerId);
+  const drawTool = tool;
   current = {
-    tool,
+    id: nextStrokeId(),
+    tool: drawTool,
     color,
     points: [toCanvasPoint(event)],
   };
+  pending = [];
   redraw();
+  send({
+    type: 'begin',
+    stroke: {
+      id: current.id,
+      tool: drawTool,
+      color,
+      width: TOOL_WIDTH[drawTool] / (canvas.getBoundingClientRect().height || 1),
+      points: [toNormalizedPoint(event)],
+    },
+  });
 });
 
 canvas.addEventListener('pointermove', (event) => {
   if (!current) return;
   current.points.push(toCanvasPoint(event));
+  queuePoint(toNormalizedPoint(event));
   redraw();
 });
 
 function endStroke(event: PointerEvent): void {
   if (!current) return;
   current.points.push(toCanvasPoint(event));
+  queuePoint(toNormalizedPoint(event));
+  flushPending();
+  const finished = current;
   strokes.push(current);
   current = null;
   try {
@@ -164,6 +260,7 @@ function endStroke(event: PointerEvent): void {
     // already released
   }
   redraw();
+  send({ type: 'end', id: finished.id });
 }
 
 canvas.addEventListener('pointerup', endStroke);
