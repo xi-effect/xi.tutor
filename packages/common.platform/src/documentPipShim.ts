@@ -31,6 +31,11 @@ function ensureStyles(): void {
     html[data-native-call-pip] #root {
       overflow: hidden;
     }
+    /* Let the rounded corners of the host show the desktop, not the app page. */
+    html[data-native-call-pip],
+    html[data-native-call-pip] body {
+      background: transparent !important;
+    }
     #${HOST_ID} {
       position: fixed;
       inset: 0;
@@ -40,7 +45,12 @@ function ensureStyles(): void {
       background: var(--color-background-page, var(--xi-gray-0, #111318));
       color: inherit;
       overflow: hidden;
+      border-radius: 12px;
     }
+    /*
+     * The strip must stay hit-testable: data-tauri-drag-region is driven by
+     * mousedown, which never fires on a pointer-events:none element.
+     */
     #${HOST_ID} .sovlium-native-call-pip__chrome {
       position: absolute;
       top: 0;
@@ -52,9 +62,12 @@ function ensureStyles(): void {
       align-items: center;
       justify-content: flex-end;
       padding: 0 6px;
-      pointer-events: none;
-      -webkit-app-region: drag;
-      app-region: drag;
+      pointer-events: auto;
+      cursor: grab;
+      background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0));
+    }
+    #${HOST_ID} .sovlium-native-call-pip__chrome:active {
+      cursor: grabbing;
     }
     #${HOST_ID} .sovlium-native-call-pip__chrome button {
       pointer-events: auto;
@@ -68,22 +81,11 @@ function ensureStyles(): void {
       cursor: pointer;
       background: rgba(0, 0, 0, 0.45);
       color: #fff;
-      -webkit-app-region: no-drag;
-      app-region: no-drag;
     }
     #${HOST_ID} .sovlium-native-call-pip__body {
       flex: 1;
       min-height: 0;
       height: 100%;
-    }
-    #${HOST_ID} button,
-    #${HOST_ID} a,
-    #${HOST_ID} input,
-    #${HOST_ID} textarea,
-    #${HOST_ID} video,
-    #${HOST_ID} [role='button'] {
-      -webkit-app-region: no-drag;
-      app-region: no-drag;
     }
   `;
   document.head.appendChild(style);
@@ -211,7 +213,12 @@ function installRequestWindow(): void {
         width: Math.round(options?.width ?? 380),
         height: Math.round(options?.height ?? 300),
       };
-      const applied = await enterCallPip(requested);
+      // CompactView's `openPiP` swallows every rejection, so without this log a
+      // broken bridge is indistinguishable from "the button does nothing".
+      const applied = await enterCallPip(requested).catch((err) => {
+        console.error('[common.platform] enterCallPip failed', err);
+        throw err;
+      });
       const { body, restore } = mountHost();
 
       const fake = createFakePipWindow(body, applied, () => {

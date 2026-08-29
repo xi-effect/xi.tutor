@@ -3972,6 +3972,7 @@ dependencies = [
  "base64 0.22.1",
  "cc",
  "log",
+ "objc2",
  "reqwest 0.12.28",
  "serde",
  "serde_json",
@@ -3987,6 +3988,8 @@ dependencies = [
  "tauri-plugin-process",
  "tauri-plugin-single-instance",
  "tauri-plugin-updater",
+ "tokio",
+ "windows",
 ]
 
 [[package]]

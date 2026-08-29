@@ -29,6 +29,8 @@ log = "0.4"
 # without depending on WebView CORS (local origin → *.sovlium.ru).
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
 base64 = "0.22"
+# Awaiting the macOS full-screen exit animation before resizing into PiP.
+tokio = { version = "1", features = ["time"] }
 
 # Cross-platform plugins.
 tauri-plugin-log = "2"
@@ -38,6 +40,18 @@ tauri-plugin-notification = "2"
 tauri-plugin-deep-link = "2"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-opener = "2"
+
+# Raw NSWindow access for the always-on-top call / annotation overlays.
+# Tauri only exposes `NSFloatingWindowLevel`, which is hidden by full-screen apps.
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.61", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Dwm",
+  "Win32_UI_WindowsAndMessaging",
+] }
 
 # Desktop-only plugins. Mobile platforms either ship store-managed updates
 # (updater) or have no concept equivalent to `relaunch` from the user's side

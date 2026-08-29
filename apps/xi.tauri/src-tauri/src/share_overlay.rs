@@ -13,6 +13,9 @@ use tauri::{
     WebviewWindowBuilder,
 };
 
+#[cfg(desktop)]
+use crate::overlay_window::{make_non_activating, pin_above_everything, OverlayLevel};
+
 pub const OVERLAY_LABEL: &str = "share-overlay";
 pub const ANNOTATE_LABEL: &str = "share-annotate";
 pub const STOP_EVENT: &str = "share-overlay-stop";
@@ -99,7 +102,9 @@ fn ensure_overlay_window<R: Runtime>(app: &AppHandle<R>) -> Result<WebviewWindow
     .build()
     .map_err(|err| format!("failed to create share overlay: {err}"))?;
 
-    let _ = window.set_visible_on_all_workspaces(true);
+    // Clicking a pen or colour must not yank focus out of the app being shown.
+    make_non_activating(&window);
+    pin_above_everything(&window, OverlayLevel::Toolbar);
     // Hide the toolbar from the shared video so remotes only see drawings.
     let _ = window.set_content_protected(true);
     Ok(window)
@@ -133,14 +138,15 @@ fn ensure_annotate_window<R: Runtime>(app: &AppHandle<R>) -> Result<WebviewWindo
     .build()
     .map_err(|err| format!("failed to create share annotate overlay: {err}"))?;
 
-    let _ = window.set_visible_on_all_workspaces(true);
+    make_non_activating(&window);
+    pin_above_everything(&window, OverlayLevel::Annotation);
     let _ = window.set_ignore_cursor_events(true);
     Ok(window)
 }
 
 fn raise_toolbar<R: Runtime>(app: &AppHandle<R>) {
     if let Some(bar) = app.get_webview_window(OVERLAY_LABEL) {
-        let _ = bar.set_always_on_top(true);
+        pin_above_everything(&bar, OverlayLevel::Toolbar);
     }
 }
 
@@ -161,17 +167,16 @@ pub async fn share_overlay_show<R: Runtime>(app: AppHandle<R>) -> Result<(), Str
         annotate
             .show()
             .map_err(|err| format!("failed to show share annotate overlay: {err}"))?;
-        let _ = annotate.set_always_on_top(true);
-        let _ = annotate.set_visible_on_all_workspaces(true);
+        // `show()` rebuilds the native chrome and drops the level/collection
+        // behaviour set at build time, so it has to be re-applied afterwards.
+        pin_above_everything(&annotate, OverlayLevel::Annotation);
 
         let window = ensure_overlay_window(&app)?;
         position_top_center(&app, &window);
         window
             .show()
             .map_err(|err| format!("failed to show share overlay: {err}"))?;
-        let _ = window.set_always_on_top(true);
-        let _ = window.set_visible_on_all_workspaces(true);
-        let _ = window.set_focus();
+        pin_above_everything(&window, OverlayLevel::Toolbar);
 
         let _ = app.emit(
             ANNOTATE_COMMAND_EVENT,
@@ -257,7 +262,7 @@ pub async fn share_annotate_set_click_through<R: Runtime>(
                 .set_ignore_cursor_events(ignore)
                 .map_err(|err| format!("set ignore cursor events: {err}"))?;
             if !ignore {
-                let _ = window.set_always_on_top(true);
+                pin_above_everything(&window, OverlayLevel::Annotation);
             }
         }
         raise_toolbar(&app);

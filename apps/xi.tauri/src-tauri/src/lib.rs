@@ -8,6 +8,8 @@ mod call_pip;
 mod commands;
 mod media;
 mod navigation;
+#[cfg(desktop)]
+mod overlay_window;
 mod setup;
 mod share_overlay;
 mod theme;

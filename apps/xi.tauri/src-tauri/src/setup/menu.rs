@@ -48,11 +48,23 @@ fn toggle_call_overlay(app: &tauri::AppHandle) {
         return;
     }
 
+    // Let the call UI drive this: its handler enters PiP *and* mounts the
+    // overlay host that the LiveKit tiles are portalled into. Calling
+    // `call_pip_enter` directly here would shrink the window to an empty frame.
     let _ = window.eval(
         "try { window.dispatchEvent(new Event('sovlium:call-pip-request')); } catch (e) {}",
     );
+
+    // Older remote builds of the web UI have no listener for that event, so fall
+    // back to the bare native window if nothing picked it up.
     let handle = app.clone();
-    tauri::async_runtime::spawn(async move {
-        let _ = crate::call_pip::call_pip_enter(handle, 380.0, 300.0).await;
+    std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_millis(600));
+        if crate::call_pip::is_active() {
+            return;
+        }
+        tauri::async_runtime::spawn(async move {
+            let _ = crate::call_pip::call_pip_enter(handle, 380.0, 300.0).await;
+        });
     });
 }

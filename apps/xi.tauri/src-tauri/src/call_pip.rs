@@ -11,6 +11,12 @@ use tauri::{
     AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Runtime, WebviewWindow, WindowEvent,
 };
 
+#[cfg(desktop)]
+use crate::overlay_window::{pin_above_everything, set_corner_radius, unpin, OverlayLevel};
+
+/// Matches the `border-radius` of the PiP host overlay in `pip_shim.js`.
+const PIP_CORNER_RADIUS: f64 = 12.0;
+
 const MAIN_LABEL: &str = "main";
 const MARGIN_PX: f64 = 16.0;
 const DEFAULT_MIN_W: f64 = 1024.0;
@@ -28,6 +34,8 @@ struct SavedFrame {
     min_height: f64,
     decorations: bool,
     resizable: bool,
+    maximized: bool,
+    fullscreen: bool,
 }
 
 struct PipInner {
@@ -123,20 +131,17 @@ fn apply_pip_chrome<R: Runtime>(
         .set_decorations(false)
         .map_err(|err| format!("set decorations: {err}"))?;
     window
-        .set_always_on_top(true)
-        .map_err(|err| format!("set always on top: {err}"))?;
-    let _ = window.set_visible_on_all_workspaces(true);
-    window
         .set_size(LogicalSize::new(width, height))
         .map_err(|err| format!("set size: {err}"))?;
+    // Dropping decorations recreates the native window chrome, so pinning and
+    // rounding have to happen after it — otherwise both are reset.
+    pin_above_everything(window, OverlayLevel::Call);
+    set_corner_radius(window, PIP_CORNER_RADIUS);
     Ok(())
 }
 
 fn restore_chrome<R: Runtime>(window: &WebviewWindow<R>, saved: SavedFrame) -> Result<(), String> {
-    let _ = window.set_visible_on_all_workspaces(false);
-    window
-        .set_always_on_top(false)
-        .map_err(|err| format!("restore always on top: {err}"))?;
+    unpin(window);
     window
         .set_decorations(saved.decorations)
         .map_err(|err| format!("restore decorations: {err}"))?;
@@ -144,12 +149,23 @@ fn restore_chrome<R: Runtime>(window: &WebviewWindow<R>, saved: SavedFrame) -> R
         .set_resizable(saved.resizable)
         .map_err(|err| format!("restore resizable: {err}"))?;
     let _ = window.set_min_size(Some(LogicalSize::new(saved.min_width, saved.min_height)));
+
+    // The snapshot was taken while full screen, so its frame is the whole
+    // display — AppKit already remembers the real one. Just go back.
+    if saved.fullscreen {
+        let _ = window.set_fullscreen(true);
+        return Ok(());
+    }
+
     window
         .set_size(LogicalSize::new(saved.width, saved.height))
         .map_err(|err| format!("restore size: {err}"))?;
     window
         .set_position(LogicalPosition::new(saved.x, saved.y))
         .map_err(|err| format!("restore position: {err}"))?;
+    if saved.maximized {
+        let _ = window.maximize();
+    }
     Ok(())
 }
 
@@ -165,7 +181,28 @@ fn snapshot_frame<R: Runtime>(window: &WebviewWindow<R>) -> Result<SavedFrame, S
         min_height: DEFAULT_MIN_H,
         decorations: window.is_decorated().unwrap_or(true),
         resizable: window.is_resizable().unwrap_or(true),
+        maximized: window.is_maximized().unwrap_or(false),
+        fullscreen: window.is_fullscreen().unwrap_or(false),
     })
+}
+
+/// A window inside a macOS full-screen Space ignores `setContentSize:`, so
+/// entering PiP from full screen would leave a full-screen black frame with the
+/// call panel floating in a corner. Leaving full screen is animated and
+/// asynchronous, hence the poll instead of a plain call.
+async fn leave_fullscreen_and_wait<R: Runtime>(window: &WebviewWindow<R>) {
+    if !window.is_fullscreen().unwrap_or(false) {
+        return;
+    }
+    let _ = window.set_fullscreen(false);
+    for _ in 0..40 {
+        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+        if !window.is_fullscreen().unwrap_or(false) {
+            // The AppKit animation still needs a beat to settle the frame.
+            tokio::time::sleep(std::time::Duration::from_millis(150)).await;
+            return;
+        }
+    }
 }
 
 pub fn is_active() -> bool {
@@ -232,12 +269,24 @@ pub async fn call_pip_enter<R: Runtime>(
             }
         }
 
+        leave_fullscreen_and_wait(&window).await;
+        let _ = window.unmaximize();
+
         apply_pip_chrome(&window, width, height)?;
         position_bottom_right(&app, &window, width, height);
         let _ = window.show();
-        let _ = window.set_always_on_top(true);
-        let _ = window.set_visible_on_all_workspaces(true);
-        Ok(CallPipSize { width, height })
+        pin_above_everything(&window, OverlayLevel::Call);
+
+        let (actual_w, actual_h) = logical_inner_size(&window).unwrap_or((width, height));
+        if (actual_w - width).abs() > 2.0 || (actual_h - height).abs() > 2.0 {
+            log::warn!(
+                "call pip requested {width}x{height} but the window settled at {actual_w}x{actual_h}"
+            );
+        }
+        Ok(CallPipSize {
+            width: actual_w,
+            height: actual_h,
+        })
     }
 }
 

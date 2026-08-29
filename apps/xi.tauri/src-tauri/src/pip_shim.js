@@ -12,12 +12,26 @@
   var active = null;
   var leaving = false;
 
+  // CompactView's `openPiP` swallows every rejection, so a broken bridge looks
+  // exactly like "the button does nothing". Log loudly before we reject.
+  function fail(reason) {
+    var message = '[sovlium] call PiP unavailable: ' + reason;
+    try {
+      console.error(message);
+    } catch (_) {}
+    return new Error(message);
+  }
+
   function invoke(cmd, args) {
     var internals = window.__TAURI_INTERNALS__;
     if (!internals || typeof internals.invoke !== 'function') {
-      return Promise.reject(new Error('tauri invoke unavailable'));
+      return Promise.reject(
+        fail('__TAURI_INTERNALS__ missing (page is not IPC-enabled for this origin)'),
+      );
     }
-    return internals.invoke(cmd, args || {});
+    return internals.invoke(cmd, args || {}).catch(function (err) {
+      throw fail(cmd + ' -> ' + (err && err.message ? err.message : String(err)));
+    });
   }
 
   function ensureStyles() {
@@ -26,12 +40,18 @@
     style.id = STYLE_ID;
     style.textContent =
       'html[data-native-call-pip] #root{overflow:hidden}' +
+      // Let the rounded corners of the host show the desktop, not the app page.
+      'html[data-native-call-pip],html[data-native-call-pip] body{background:transparent!important}' +
       '#' + HOST_ID + '{position:fixed;inset:0;z-index:2147483646;display:flex;flex-direction:column;' +
-      'background:var(--color-background-page,var(--xi-gray-0,#111318));color:inherit;overflow:hidden}' +
+      'background:var(--color-background-page,var(--xi-gray-0,#111318));color:inherit;overflow:hidden;border-radius:12px}' +
+      // The strip must stay hit-testable: `data-tauri-drag-region` is driven by
+      // mousedown, which never fires on a `pointer-events:none` element.
       '#' + HOST_ID + ' .sovlium-native-call-pip__chrome{position:absolute;top:0;left:0;right:0;height:28px;z-index:2;' +
-      'display:flex;align-items:center;justify-content:flex-end;padding:0 6px;pointer-events:none;-webkit-app-region:drag}' +
+      'display:flex;align-items:center;justify-content:flex-end;padding:0 6px;pointer-events:auto;cursor:grab;' +
+      'background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,0))}' +
+      '#' + HOST_ID + ' .sovlium-native-call-pip__chrome:active{cursor:grabbing}' +
       '#' + HOST_ID + ' .sovlium-native-call-pip__chrome button{pointer-events:auto;appearance:none;border:0;border-radius:8px;' +
-      'width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;background:rgba(0,0,0,.45);color:#fff;-webkit-app-region:no-drag}' +
+      'width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;background:rgba(0,0,0,.45);color:#fff}' +
       '#' + HOST_ID + ' .sovlium-native-call-pip__body{flex:1;min-height:0;height:100%}';
     document.head.appendChild(style);
   }
