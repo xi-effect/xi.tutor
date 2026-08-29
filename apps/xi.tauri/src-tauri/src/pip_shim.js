@@ -44,8 +44,8 @@
       'html[data-native-call-pip],html[data-native-call-pip] body{background:transparent!important}' +
       '#' + HOST_ID + '{position:fixed;inset:0;z-index:2147483646;display:flex;flex-direction:column;' +
       'background:var(--color-background-page,var(--xi-gray-0,#111318));color:inherit;overflow:hidden;border-radius:12px}' +
-      // The strip must stay hit-testable: `data-tauri-drag-region` is driven by
-      // mousedown, which never fires on a `pointer-events:none` element.
+      // The strip must stay hit-testable: data-tauri-drag-region is driven by
+      // mousedown, which never fires on a pointer-events:none element.
       '#' + HOST_ID + ' .sovlium-native-call-pip__chrome{position:absolute;top:0;left:0;right:0;height:28px;z-index:2;' +
       'display:flex;align-items:center;justify-content:flex-end;padding:0 6px;pointer-events:auto;cursor:grab;' +
       'background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,0))}' +
