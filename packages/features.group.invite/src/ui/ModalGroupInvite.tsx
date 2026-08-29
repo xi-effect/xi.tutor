@@ -20,6 +20,7 @@ import {
 
 import { useEffect, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
+import { writeText } from 'common.platform';
 import { toast } from 'sonner';
 import { env } from 'common.env';
 import { Input } from '@xipkg/input';
@@ -61,7 +62,7 @@ export const ModalGroupInvite = ({
   const handleCopyLink = () => {
     if (!inviteLink) return;
 
-    navigator.clipboard.writeText(inviteLink);
+    void writeText(inviteLink);
     toast.success(t('toast.linkCopied'));
     toast.info(t('toast.sendToStudents'));
   };

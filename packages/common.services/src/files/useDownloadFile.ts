@@ -1,5 +1,6 @@
 import { getAxiosInstance } from 'common.config';
 import { filesApiConfig, FilesQueryKey } from 'common.api';
+import { saveBlob } from 'common.platform';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
 import { handleError } from '..';
@@ -29,18 +30,8 @@ export async function downloadFileRequest({
 
   if (response.status !== 200) throw new Error(`File download failed: ${response.status}`);
 
-  const blob = response.data;
-
-  const url = window.URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-
-  a.remove();
-  window.URL.revokeObjectURL(url);
+  const blob = response.data as Blob;
+  await saveBlob(blob, { fileName });
 }
 
 export const useDownloadFile = () => {

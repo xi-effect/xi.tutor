@@ -22,3 +22,8 @@ app_common_files: &app_common_files  # тригерят все билда (и д
 xi_web_files:  # запускает билд и депой для xi.web
   - *app_common_files
   - 'apps/xi.web/**'
+
+xi_tauri_files:  # запускает сборку desktop-бандлов для xi.tauri
+  - *app_common_files
+  - 'apps/xi.web/**'        # обёртка реиспользует исходники xi.web
+  - 'apps/xi.tauri/**'

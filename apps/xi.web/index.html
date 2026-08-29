@@ -35,10 +35,14 @@
           }
         } catch (e) {}
 
+        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__TAURI_INTERNALS__);
+        var injected = document.documentElement.getAttribute('data-theme');
         var preference =
           chosen && (stored === 'light' || stored === 'dark')
             ? stored
-            : 'light';
+            : isNative && (injected === 'light' || injected === 'dark')
+              ? injected
+              : 'light';
 
         document.documentElement.setAttribute('data-theme', preference);
         document.documentElement.setAttribute('data-theme-preference', preference);
@@ -55,18 +59,26 @@
   <body class="overflow-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Yandex.Metrika counter -->
+    <!-- Yandex.Metrika: browser only. Skip inside Tauri / native shell
+         (__TAURI_INTERNALS__ or __SOVLIUM_NATIVE__ injected by xi.tauri). -->
     <script type="text/javascript">
-      (function(m,e,t,r,i,k,a){
-          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-          m[i].l=1*new Date();
-          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103653512', 'ym');
+      (function () {
+        var isNative =
+          !!(window.__TAURI_INTERNALS__ || window.__SOVLIUM_NATIVE__);
+        if (isNative) {
+          window.ym = function () {};
+          return;
+        }
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103653512', 'ym');
 
-      ym(103653512, 'init', {ssr:false, webvisor:false, clickmap:false, ecommerce:false, accurateTrackBounce:true, trackLinks:true});
+        ym(103653512, 'init', {ssr:false, webvisor:false, clickmap:false, ecommerce:false, accurateTrackBounce:true, trackLinks:true});
+      })();
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/103653512" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
   </body>
 </html>

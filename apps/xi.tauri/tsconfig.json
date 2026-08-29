@@ -1,0 +1,16 @@
+{
+  "include": [
+    "src/**/*",
+    "vite-env.d.ts",
+    "../xi.web/src/umami.d.ts",
+    "../xi.web/src/yandex-metrika.d.ts"
+  ],
+  "extends": ["../../packages/common.typescript/tsconfig.app.json"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "web/*": ["../xi.web/src/*"]
+    }
+  },
+  "exclude": ["dist", "build", "node_modules", "src-tauri/target"]
+}

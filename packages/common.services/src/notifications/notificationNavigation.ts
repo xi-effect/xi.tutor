@@ -1,3 +1,5 @@
+import { openUrl } from 'common.platform';
+
 export type NotificationRouterNavigateOptions = {
   to: string;
   params?: Record<string, string>;
@@ -89,7 +91,7 @@ export function navigateFromNotification(url: string): void {
   const parsed = parseNotificationUrl(url);
 
   if (parsed === 'external') {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    void openUrl(url);
     return;
   }
 
@@ -113,7 +115,7 @@ export function openNotificationLinkWithRouter(
   const parsed = parseNotificationUrl(url);
 
   if (parsed === 'external') {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    void openUrl(url);
     return;
   }
 
