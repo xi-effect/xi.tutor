@@ -3,8 +3,14 @@
   "updated": "Updated: {{date}}",
   "updatedGallery": "Updated {{date}}",
   "date": {
-    "today": "today",
-    "yesterday": "yesterday"
+    "justNow": "just now",
+    "minutesAgo_one": "a minute ago",
+    "minutesAgo_other": "{{count}} minutes ago",
+    "hoursAgo_one": "an hour ago",
+    "hoursAgo_other": "{{count}} hours ago",
+    "yesterday": "yesterday",
+    "daysAgo_one": "a day ago",
+    "daysAgo_other": "{{count}} days ago"
   },
   "accessMode": {
     "read_write": "collaborative",

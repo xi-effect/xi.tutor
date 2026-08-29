@@ -267,3 +267,22 @@
 .dr-shape[data-shape-type='math-figure'] circle {
   shape-rendering: geometricPrecision;
 }
+
+/*
+ * Название доски: Tailwind utilities в @layer проигрывают UA fieldtext
+ * у <input>, поэтому цвет задаём вне слоя.
+ */
+.dr-container [data-board-name-input] {
+  color: var(--xi-text-primary);
+  -webkit-text-fill-color: var(--xi-text-primary);
+  caret-color: var(--xi-brand-80);
+  background-color: transparent;
+}
+
+html[data-theme='dark'] .dr-container [data-board-name-input] {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] .dr-container [data-board-name-input] {
+  color-scheme: light;
+}

@@ -67,7 +67,7 @@ export const ModalEditClassroomName = ({
         {
           classroomId,
           data: {
-            name_override: formValues.name,
+            name_override: formValues.name.trim(),
           },
         },
         { onSuccess },
@@ -79,7 +79,7 @@ export const ModalEditClassroomName = ({
       {
         classroomId,
         data: {
-          name: formValues.name,
+          name: formValues.name.trim(),
         },
       },
       { onSuccess },

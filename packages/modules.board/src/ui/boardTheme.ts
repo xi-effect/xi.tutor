@@ -56,6 +56,19 @@ export const boardToolbarIconCompactClass = cn(
 export const boardTextClass = 'text-text-primary';
 
 /**
+ * Нативный input на доске: цвет текста задаётся в customstyles.css
+ * (вне @layer), иначе UA fieldtext остаётся чёрным.
+ */
+export const boardNativeInputClass = cn(
+  boardTextClass,
+  'appearance-none bg-transparent outline-none',
+);
+
+/** Попап форматирования текста — не bg-gray-0: примитив всегда белый и ломает тёмную тему */
+export const boardTextToolbarClass =
+  'border-border-default bg-background-surface flex gap-1 rounded-xl border p-1 shadow-md';
+
+/**
  * Слои UI доски относительно приложения:
  * mobile bottom bar z-30 < chrome z-40 < portaled menus z-[45] < @xipkg/modal z-50.
  * Канвас дополнительно изолирован через z-0 на обёртке, чтобы внутренние

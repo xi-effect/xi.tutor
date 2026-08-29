@@ -11,7 +11,7 @@ export const createFormSchema = (t: TFunction) => {
 
   return z
     .object({
-      title: z.string().min(1, t('validation.titleRequired')),
+      title: z.string().trim().min(1, t('validation.titleRequired')),
       description: z.string().max(4000).optional().default(''),
       studentId: z.string().min(1, t('validation.studentRequired')),
       startTime: timeValidation,

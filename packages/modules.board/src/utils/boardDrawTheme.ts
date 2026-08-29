@@ -11,15 +11,20 @@ const applyPalette = (theme: DrTheme, mode: 'light' | 'dark') => {
     const entry = colors[option.name];
     if (!isDefaultColor(entry)) continue;
 
-    entry.solid = option.cssVar;
-    entry.fill = option.cssVar;
-    entry.pattern = option.cssVar;
-    entry.linedFill = option.cssVar;
-    entry.semi = option.semiCssVar;
+    // Stickers keep the picker token in both themes (yellow stays yellow).
     entry.noteFill = option.cssVar;
     entry.noteText = option.noteTextCssVar;
-    entry.frameHeadingStroke = option.cssVar;
-    entry.frameStroke = option.cssVar;
+    entry.semi = option.semiCssVar;
+
+    // Ink (text, pen, geo stroke) follows theme: black is dark on light canvas
+    // and light on dark canvas. Chromatic colors keep the same token.
+    const ink = mode === 'dark' ? (option.cssVarDark ?? option.cssVar) : option.cssVar;
+    entry.solid = ink;
+    entry.fill = ink;
+    entry.pattern = ink;
+    entry.linedFill = ink;
+    entry.frameHeadingStroke = ink;
+    entry.frameStroke = ink;
   }
 };
 

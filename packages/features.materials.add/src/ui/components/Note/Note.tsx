@@ -36,7 +36,8 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
         {
           onSuccess: (response) => {
             navigate({
-              to: `/materials/${response.data.id}/${response.data.content_kind}`,
+              to: '/materials/$materialId/note',
+              params: { materialId: response.data.id },
             });
           },
         },

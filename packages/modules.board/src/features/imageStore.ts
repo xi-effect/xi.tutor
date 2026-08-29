@@ -1,10 +1,10 @@
-import { uploadImageRequest, uploadFileRequest } from 'common.services';
+import { uploadImageRequest, uploadFileRequest, uploadPresentationRequest } from 'common.services';
 import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
-import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
+import { ALLOWED_IMAGE_MIME_TYPES, isPresentationFile } from '../constants/mimeTypes';
 import i18n from 'i18next';
 
 export type DrAssetContextT = {
@@ -53,11 +53,13 @@ async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl
 
 /** POST через сервисные функции запросов (без хуков) */
 async function postUpload(file: File, token: string) {
-  const isImage = file.type.startsWith('image/');
-
-  return isImage
-    ? await uploadImageRequest({ file, token })
-    : await uploadFileRequest({ file, token });
+  if (file.type.startsWith('image/')) {
+    return uploadImageRequest({ file, token });
+  }
+  if (isPresentationFile(file)) {
+    return uploadPresentationRequest({ file, token });
+  }
+  return uploadFileRequest({ file, token });
 }
 
 /**

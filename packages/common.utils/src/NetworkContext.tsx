@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { toast } from 'sonner';
 
 export interface NetworkStatus {
@@ -9,6 +9,10 @@ export interface NetworkStatus {
 }
 
 const NetworkContext = createContext<NetworkStatus | null>(null);
+
+const NETWORK_TOAST_ID = 'network-status';
+const TOAST_GAP_MS = 8000;
+const RESTORE_TOAST_AFTER_MS = 4000;
 
 interface NetworkProviderProps {
   children: ReactNode;
@@ -23,38 +27,56 @@ export const NetworkProvider: React.FC<NetworkProviderProps> = ({
   const [isReconnecting, setIsReconnecting] = useState<boolean>(false);
   const [lastOnlineTime, setLastOnlineTime] = useState<Date | null>(null);
   const [lastOfflineTime, setLastOfflineTime] = useState<Date | null>(null);
-  const [lastToastTime, setLastToastTime] = useState<number>(0);
+  const lastToastAtRef = useRef(0);
+  const wentOfflineAtRef = useRef<number | null>(null);
+  const shouldShowNotificationRef = useRef(shouldShowNotification);
+
+  useEffect(() => {
+    shouldShowNotificationRef.current = shouldShowNotification;
+  }, [shouldShowNotification]);
 
   useEffect(() => {
     const handleOnline = () => {
       const now = Date.now();
+      const offlineAt = wentOfflineAtRef.current;
+      wentOfflineAtRef.current = null;
+
       setIsOnline(true);
       setIsReconnecting(false);
       setLastOnlineTime(new Date());
 
-      // Показываем уведомление только если разрешено и прошло больше 2 секунд с последнего
-      if (shouldShowNotification() && now - lastToastTime > 2000) {
-        setLastToastTime(now);
-        toast.success('Интернет-соединение восстановлено', {
-          duration: 3000,
-          description: 'Теперь можно продолжить работу.',
-        });
+      if (!shouldShowNotificationRef.current()) {
+        toast.dismiss(NETWORK_TOAST_ID);
+        return;
       }
+
+      if (offlineAt && now - offlineAt < RESTORE_TOAST_AFTER_MS) {
+        toast.dismiss(NETWORK_TOAST_ID);
+        return;
+      }
+
+      lastToastAtRef.current = now;
+      toast.success('Соединение восстановлено', {
+        id: NETWORK_TOAST_ID,
+        duration: 2500,
+      });
     };
 
     const handleOffline = () => {
       const now = Date.now();
+      wentOfflineAtRef.current = now;
       setIsOnline(false);
       setLastOfflineTime(new Date());
 
-      // Показываем уведомление только если разрешено и прошло больше 2 секунд с последнего
-      if (shouldShowNotification() && now - lastToastTime > 2000) {
-        setLastToastTime(now);
-        toast.error('Интернет-соединение потеряно', {
-          duration: 0,
-          description: 'Проверьте подключение к сети.',
-        });
-      }
+      if (!shouldShowNotificationRef.current()) return;
+      if (now - lastToastAtRef.current < TOAST_GAP_MS) return;
+
+      lastToastAtRef.current = now;
+      toast.warning('Нет соединения', {
+        id: NETWORK_TOAST_ID,
+        description: 'Проверьте подключение к сети.',
+        duration: 5000,
+      });
     };
 
     window.addEventListener('online', handleOnline);
@@ -64,7 +86,7 @@ export const NetworkProvider: React.FC<NetworkProviderProps> = ({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [lastToastTime, shouldShowNotification]);
+  }, []);
 
   const value: NetworkStatus = {
     isOnline,

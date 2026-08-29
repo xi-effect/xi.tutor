@@ -153,6 +153,14 @@ html {
   color: var(--xi-text-primary);
 }
 
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
 body,
 #root {
   background-color: var(--xi-background-page);

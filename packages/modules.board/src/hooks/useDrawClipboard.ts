@@ -25,7 +25,7 @@ function approxBase64Size(dataUrl: string): number {
  * that uses the system clipboard (not tldraw's internal one).
  *
  * Cross-board / cross-tab paste:
- * - Every board registers its x-storage-token in localStorage (token registry).
+ * - Every board registers its content token in localStorage (token registry).
  * - On paste, reuploadPastedAssets tries all known tokens to download files
  *   from any previously visited board, then re-uploads them to the current one.
  * - myAssetStore.resolve also has the same fallback for immediate display.

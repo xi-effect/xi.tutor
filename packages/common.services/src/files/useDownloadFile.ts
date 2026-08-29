@@ -24,7 +24,7 @@ export async function downloadFileRequest({
     url: getUrl(fileId),
     responseType: 'blob',
     headers: {
-      ...{ 'x-storage-token': token },
+      'x-content-token': token,
     },
   });
 

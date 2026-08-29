@@ -5,3 +5,8 @@ export { useUpdateMaterial } from './useUpdateMaterial';
 export { useGetStorageItem } from './useGetStorageItem';
 export { useDuplicateMaterial } from './useDuplicateMaterial';
 export { useGetMaterialsList } from './useGetMaterialsList';
+export {
+  serializeMaterialScope,
+  PERSONAL_MATERIAL_SCOPE,
+  buildAnyMaterialFilters,
+} from 'common.types';

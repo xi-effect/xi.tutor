@@ -63,7 +63,7 @@ const MaterialsContent = () => {
   };
 
   const { data: materials, isLoading: isMaterialsLoading } = useGetMaterialsList({
-    content_type: selectedFilter === 'all' ? null : selectedFilter === 'note' ? 'note' : 'board',
+    content_kind: selectedFilter === 'all' ? null : selectedFilter === 'note' ? 'note' : 'board',
   });
   const isLoading = FORCE_MAIN_LISTS_LOADING || isMaterialsLoading;
 

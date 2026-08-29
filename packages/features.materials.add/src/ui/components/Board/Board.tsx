@@ -36,7 +36,8 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
         {
           onSuccess: (response) => {
             navigate({
-              to: `/materials/${response.data.id}/${response.data.content_kind}`,
+              to: '/materials/$materialId/board',
+              params: { materialId: response.data.id },
             });
           },
         },

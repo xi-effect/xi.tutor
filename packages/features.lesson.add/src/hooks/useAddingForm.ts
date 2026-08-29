@@ -65,7 +65,7 @@ const buildRequestBody = (data: FormData): CreateClassroomEventRequestDto => {
     return {
       kind: 'single',
       event: {
-        name: data.title,
+        name: data.title.trim(),
         description: data.description || null,
       },
       sole_instance: {
@@ -80,7 +80,7 @@ const buildRequestBody = (data: FormData): CreateClassroomEventRequestDto => {
   return {
     kind: 'repeating',
     event: {
-      name: data.title,
+      name: data.title.trim(),
       description: data.description || null,
     },
     repetition_mode:

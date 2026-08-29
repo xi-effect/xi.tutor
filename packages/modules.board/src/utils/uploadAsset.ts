@@ -10,6 +10,7 @@ import {
   ALLOWED_IMAGE_MIME_TYPES,
   getFileExtension,
   isPdfMime,
+  isPresentationFile,
 } from '../constants/mimeTypes';
 import { toast } from 'sonner';
 import i18n from 'i18next';
@@ -56,7 +57,7 @@ export function checkAssetType(asset: File): AssetType | null {
   if (ALLOWED_IMAGE_MIME_TYPES.has(asset.type)) return 'img';
   if (ALLOWED_AUDIO_MIME_TYPES.has(asset.type)) return 'audio';
   if (isPdfMime(asset.type) || getFileExtension(asset.name) === 'pdf') return 'pdf';
-  if (asset.name.toLowerCase().endsWith('.pptx')) return 'presentation';
+  if (isPresentationFile(asset)) return 'presentation';
   if (ALLOWED_FILE_MIME_TYPES.has(asset.type)) return 'file';
 
   // Android/Huawei/Яндекс часто отдают пустой type или application/octet-stream

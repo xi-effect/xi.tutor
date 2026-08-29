@@ -123,7 +123,10 @@ export const ColorPicker = track(() => {
       triggerTitle={isCoordinateAxes ? t('toolbar.axisColor') : t('toolbar.style')}
       triggerChild={
         <div
-          className={cn('h-4 w-4 rounded-full', !currentColorOption?.cssVar && 'bg-gray-100')}
+          className={cn(
+            'border-border-default h-4 w-4 rounded-full border',
+            !currentColorOption?.cssVar && 'bg-gray-100',
+          )}
           style={
             currentColorOption?.cssVar ? { backgroundColor: currentColorOption.cssVar } : undefined
           }

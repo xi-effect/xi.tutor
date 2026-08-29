@@ -50,11 +50,11 @@ function isFullUrl(src: string): boolean {
   return src.startsWith('http://') || src.startsWith('https://');
 }
 
-const FILE_URL_RE = /\/storage-service\/v2\/files\/([^/]+)\/?$/;
+const FILE_URL_RE = /\/(?:storage-service\/v2|content-service)\/files\/([^/]+)\/?$/;
 
 /**
- * Extracts the file ID from a legacy full URL
- * (e.g. `.../storage-service/v2/files/{id}/`).
+ * Extracts the file ID from a full URL
+ * (`.../content-service/files/{id}/` or legacy `.../storage-service/v2/files/{id}/`).
  * Returns `null` if the URL doesn't match.
  */
 export function extractFileIdFromUrl(src: string): string | null {
@@ -65,7 +65,7 @@ export function extractFileIdFromUrl(src: string): string | null {
 
 /**
  * Resolves a file `src` (storage file id, or legacy full URL) into a blob URL.
- * Fetches with x-storage-token and caches the result.
+ * Fetches with x-content-token and caches the result.
  *
  * Optimisations:
  * - In-flight deduplication: concurrent calls for the same src share one request.
@@ -149,10 +149,10 @@ async function fetchAndCacheBlobUrl(url: string, cacheKey: string, token: string
   try {
     response = await axiosInst.get(url, {
       responseType: 'blob',
-      headers: { 'x-storage-token': token },
+      headers: { 'x-content-token': token },
     });
   } catch (err) {
-    // Сервер явно сказал, что этот x-storage-token мёртв — выбрасываем его из реестра,
+    // Сервер явно сказал, что этот x-content-token мёртв — выбрасываем его из реестра,
     // чтобы все следующие картинки/PDF/аудио не пытались с ним стучаться.
     // 403 для нашего storage по факту всегда означает протухший / неверный токен.
     if (getAxiosStatus(err) === 403) {

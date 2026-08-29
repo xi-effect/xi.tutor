@@ -7,7 +7,9 @@ import { BOARD_COLORS } from '../../../../utils/boardColors';
 
 const stickerColors = [
   ...BOARD_COLORS.filter((color) => color.name === 'grey'),
-  ...BOARD_COLORS.filter((color) => color.name !== 'black' && color.name !== 'grey'),
+  ...BOARD_COLORS.filter(
+    (color) => color.name !== 'black' && color.name !== 'white' && color.name !== 'grey',
+  ),
 ];
 
 export const ColorSet = ({ className }: { className?: string }) => {

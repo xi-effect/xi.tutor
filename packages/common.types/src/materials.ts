@@ -1,27 +1,77 @@
-export type MaterialT = {
-  id: number;
-  name: string;
-  content_kind: 'note' | 'board';
-  created_at: string;
+export type MaterialId = string;
+export type YDocContentKind = 'note' | 'board';
+export type AccessModeT = 'no_access' | 'read_only' | 'read_write';
+
+export type MaterialCursor = {
   updated_at: string;
-  kind: 'tutor' | 'classroom';
 };
 
+export type PersonalMaterialScope = {
+  access_kind: 'personal';
+};
+
+export type ClassroomMaterialScope = {
+  access_kind: 'classroom';
+  classroom_ids?: number[] | null;
+};
+
+export type MaterialScope = PersonalMaterialScope | ClassroomMaterialScope;
+
+export type AnyMaterialFilters = {
+  content_kind?: YDocContentKind | null;
+  scope?: MaterialScope | null;
+};
+
+export type AnyMaterialSearchRequest = {
+  cursor?: MaterialCursor | null;
+  limit?: number;
+  filters: AnyMaterialFilters;
+};
+
+export type ClassroomMaterialFilters = {
+  content_kind?: YDocContentKind | null;
+};
+
+export type ClassroomMaterialSearchRequest = {
+  cursor?: MaterialCursor | null;
+  limit?: number;
+  filters: ClassroomMaterialFilters;
+};
+
+export type PersonalMaterialResponse = {
+  id: MaterialId;
+  updated_at: string;
+  content_kind: YDocContentKind;
+  name?: string;
+  access_kind?: 'personal';
+};
+
+export type ClassroomMaterialResponse = {
+  id: MaterialId;
+  updated_at: string;
+  content_kind: YDocContentKind;
+  name?: string;
+  classroom_id?: number | null;
+  student_access_mode?: AccessModeT;
+  access_kind?: 'classroom';
+};
+
+export type MaterialT = PersonalMaterialResponse | ClassroomMaterialResponse;
+
 export type MaterialPropsT = {
-  content_kind: 'note' | 'board';
-  created_at: string;
-  id: number;
-  last_opened_at?: string;
-  name: string;
+  content_kind: YDocContentKind;
+  id: MaterialId;
+  name?: string;
   updated_at: string;
   student_access_mode?: AccessModeT;
-  onDuplicate?: (id: number) => void;
+  access_kind?: 'personal' | 'classroom';
+  classroom_id?: number | null;
+  onDuplicate?: (id: MaterialId) => void;
   hasIcon?: boolean;
   isLoading?: boolean;
   className?: string;
+  last_opened_at?: string;
 };
-
-export type AccessModeT = 'no_access' | 'read_only' | 'read_write';
 
 export type MaterialActionsMenuPropsT = {
   isClassroom: boolean;
@@ -42,26 +92,39 @@ export type ModalEditMaterialNamePropsT = {
   content_kind: MaterialPropsT['content_kind'];
   isLoading?: boolean;
   handleUpdateName: (
-    type: MaterialT['kind'],
+    type: 'personal' | 'classroom',
     newName: UpdateMaterialDataT['name'],
     onNameUpdated: () => void,
   ) => void;
 };
 
-export type ClassroomMaterialsT = MaterialT & {
-  student_access_mode: AccessModeT;
-};
+export type ClassroomMaterialsT = ClassroomMaterialResponse;
 
 export type UpdateMaterialDataT = {
   name?: string;
-  kind?: string;
   student_access_mode?: AccessModeT;
 };
 
-export type StorageItemT = {
-  access_group_id: string;
-  storage_token: string;
-  kind: string;
-  file_id?: string;
-  ydoc_id?: string;
+export type ContentYDocItem = {
+  ydoc_id: string;
+  content_token: string;
 };
+
+export const PERSONAL_MATERIAL_SCOPE: PersonalMaterialScope = { access_kind: 'personal' };
+
+export function serializeMaterialScope(scope?: MaterialScope | null): string {
+  if (scope == null) return 'all';
+  if (scope.access_kind === 'personal') return 'personal';
+  if (scope.classroom_ids == null) return 'classroom:all';
+  return `classroom:${scope.classroom_ids.join(',')}`;
+}
+
+export function buildAnyMaterialFilters(params: {
+  content_kind?: YDocContentKind | null;
+  scope?: MaterialScope | null;
+}): AnyMaterialFilters {
+  return {
+    content_kind: params.content_kind ?? null,
+    scope: params.scope === undefined ? PERSONAL_MATERIAL_SCOPE : params.scope,
+  };
+}

@@ -25,6 +25,7 @@ import { TimerDropdown } from './TimerDropdown';
 import {
   boardChromeZClass,
   boardIconClass,
+  boardNativeInputClass,
   boardPanelClass,
   boardTextClass,
 } from '../../boardTheme';
@@ -123,7 +124,7 @@ export const Header = () => {
       return;
     }
 
-    handleUpdateName(classroomId ? 'classroom' : 'tutor', trimmedValue, () => {
+    handleUpdateName(classroomId ? 'classroom' : 'personal', trimmedValue, () => {
       setIsEditMode(false);
     });
   };
@@ -202,9 +203,16 @@ export const Header = () => {
                     aria-label={t('header.editInputAria')}
                     aria-invalid={!nameValue}
                     autoFocus
+                    data-board-name-input=""
+                    style={{
+                      color: 'var(--xi-text-primary)',
+                      WebkitTextFillColor: 'var(--xi-text-primary)',
+                      caretColor: 'var(--xi-brand-80)',
+                      backgroundColor: 'transparent',
+                    }}
                     className={cn(
-                      boardTextClass,
-                      `text-l-base xs:max-w-[130px] caret-brand-80 flex h-6 max-w-[100px] min-w-0 rounded-xl px-1 disabled:opacity-50 md:max-w-[220px] lg:h-8 lg:rounded-2xl`,
+                      boardNativeInputClass,
+                      'text-l-base xs:max-w-[130px] flex h-6 max-w-[100px] min-w-0 rounded-xl px-1 disabled:opacity-50 md:max-w-[220px] lg:h-8 lg:rounded-2xl',
                     )}
                   />
                   {isUpdating && (

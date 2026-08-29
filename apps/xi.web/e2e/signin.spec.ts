@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   mockAuthenticatedSession,
+  mockAuthenticatedSessionWithNetworkBlip,
   mockHomeAfterAuth,
   mockNoise,
   mockSigninFailure,
@@ -81,5 +82,15 @@ test.describe('Signin', () => {
     await submitSignin(page);
 
     await expect(page).toHaveURL(/\/calendar/, { timeout: 15_000 });
+  });
+
+  test('краткий обрыв сети при refresh не открывает /signin', async ({ page }) => {
+    const user = mockUser({ onboarding_stage: 'completed', default_layout: 'tutor' });
+    await mockAuthenticatedSessionWithNetworkBlip(page, user, 1);
+
+    await page.goto('/schedule');
+
+    await expect(page).toHaveURL(/\/schedule/, { timeout: 15_000 });
+    await expect(page).not.toHaveURL(/\/signin/);
   });
 });

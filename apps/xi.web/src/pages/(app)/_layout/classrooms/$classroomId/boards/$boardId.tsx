@@ -13,12 +13,17 @@ const paramsSchema = z.object({
   boardId: z.string(),
 });
 
-const searchSchema = z.object({
-  shape: z.string().optional(),
-  comment: z.string().optional(),
-  call: z.string().optional(),
-  demo: z.union([z.string(), z.number()]).optional(),
-});
+const searchSchema = z
+  .object({
+    shape: z.string().optional(),
+    comment: z.string().optional(),
+    call: z.string().optional(),
+    demo: z.union([z.string(), z.number()]).optional(),
+    role: z.enum(['tutor', 'student']).optional(),
+    read_notification_id: z.string().optional(),
+    board_nav: z.string().optional(),
+  })
+  .passthrough();
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/boards/$boardId')({
