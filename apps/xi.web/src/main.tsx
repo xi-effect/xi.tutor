@@ -1,3 +1,4 @@
+import './utils/installStaleChunkReload';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { i18nInitPromise } from './config/i18n';

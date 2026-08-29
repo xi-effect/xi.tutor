@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/browser';
 import type { ErrorEvent, EventHint } from '@sentry/browser';
 import { env } from 'common.env';
+import { isStaleChunkError } from 'common.utils';
 
 /**
  * Проверяет, является ли ошибка CORS ошибкой
@@ -157,6 +158,10 @@ const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
   }
 
   const originalException = hint.originalException;
+
+  if (isStaleChunkError(originalException)) {
+    return null;
+  }
 
   // Исключаем CORS ошибки
   if (isCorsError(originalException)) {
