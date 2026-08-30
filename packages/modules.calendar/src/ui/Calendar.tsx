@@ -109,7 +109,7 @@ export const CalendarModule = ({
         />
       </div>
 
-      <div className="mt-6 min-h-0 min-w-0 flex-1 pl-5 sm:pl-10">
+      <div className="mt-6 flex min-h-0 min-w-0 flex-1 flex-col px-5 pb-5 sm:px-10">
         <div
           ref={containerRef}
           className={

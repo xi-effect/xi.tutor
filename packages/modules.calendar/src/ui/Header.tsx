@@ -4,6 +4,8 @@ import { DatePicker } from '@xipkg/datepicker';
 import { ArrowRight, Calendar, ArrowLeft, Plus } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { addDays, startOfDay } from 'date-fns';
+import { cn } from '@xipkg/utils';
+import { pageSwitcherTrackClass } from 'common.ui';
 import { formatDateRangeDisplay } from '../utils';
 
 export type CalendarWeekNavProps = {
@@ -17,7 +19,13 @@ export type CalendarWeekNavProps = {
   onWeekSelect: (date: Date, visibleCount: number) => void;
 };
 
-/** Блок «назад — диапазон дат — вперёд» */
+const weekNavArrowClass = cn(
+  'text-text-secondary hover:text-text-primary flex h-full w-10 flex-none items-center justify-center rounded-lg border-0 p-0',
+  'hover:bg-background-surface hover:border-transparent',
+  'focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent',
+);
+
+/** Блок «назад — диапазон дат — вперёд» в стиле Switch (track без белой подложки) */
 export const CalendarWeekNav = ({
   weekStart,
   visibleDayCount,
@@ -40,16 +48,21 @@ export const CalendarWeekNav = ({
   );
 
   return (
-    <div className="flex h-8 flex-none flex-row items-center" style={{ flexGrow: 0 }}>
+    <div
+      className={cn(
+        pageSwitcherTrackClass,
+        'flex !h-10 h-10 w-auto flex-none items-center gap-0.5 p-1',
+      )}
+    >
       <Button
         type="button"
-        variant="text"
-        className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 w-[60px] flex-none items-center justify-center rounded-l-lg rounded-r-none border border-r-0 p-0"
+        variant="none"
+        className={weekNavArrowClass}
         onClick={onPrev}
         aria-label={t('prev_week')}
         data-umami-event="schedule-prev-week"
       >
-        <ArrowLeft className="fill-icon-primary dark:fill-icon-primary h-5 w-5" />
+        <ArrowLeft className="fill-icon-secondary h-5 w-5" />
       </Button>
 
       <DatePicker
@@ -64,23 +77,23 @@ export const CalendarWeekNav = ({
       >
         <button
           type="button"
-          className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent"
+          className="text-text-primary hover:text-text-primary flex h-full flex-none flex-row items-center justify-center gap-2 rounded-lg px-3 text-center text-base leading-5 font-medium"
           data-umami-event="schedule-week-picker"
         >
-          <span className="text-xs-base text-text-primary w-full">{dateRangeLabel}</span>
-          <Calendar className="fill-icon-brand dark:fill-icon-brand h-5 w-5 flex-none" />
+          <span className="whitespace-nowrap">{dateRangeLabel}</span>
+          <Calendar className="fill-icon-secondary h-5 w-5 flex-none" />
         </button>
       </DatePicker>
 
       <Button
         type="button"
-        variant="text"
-        className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 w-[60px] flex-none items-center justify-center rounded-l-none rounded-r-lg border border-l-0 p-0"
+        variant="none"
+        className={weekNavArrowClass}
         onClick={onNext}
         aria-label={t('next_week')}
         data-umami-event="schedule-next-week"
       >
-        <ArrowRight className="fill-icon-primary dark:fill-icon-primary h-5 w-5" />
+        <ArrowRight className="fill-icon-secondary h-5 w-5" />
       </Button>
     </div>
   );

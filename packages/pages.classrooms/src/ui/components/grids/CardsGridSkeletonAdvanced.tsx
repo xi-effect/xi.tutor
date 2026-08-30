@@ -6,16 +6,17 @@ interface CardsGridSkeletonAdvancedProps {
   className?: string;
 }
 
+/** Сетка как у GridVirtualizer списка кабинетов: 1 колонка ≤960px, иначе auto-fill min 300px. */
 export const CardsGridSkeletonAdvanced: React.FC<CardsGridSkeletonAdvancedProps> = ({
   count = 12,
   className = '',
 }) => {
   return (
     <div
-      className={`max-xs:gap-4 grid grid-cols-1 gap-8 pr-4 min-[550px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ${className}`}
+      className={`grid grid-cols-1 gap-5 min-[961px]:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] ${className}`}
     >
       {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="classroom-card">
+        <div key={index} className="classroom-card min-w-0">
           <CardSkeletonAdvanced />
         </div>
       ))}

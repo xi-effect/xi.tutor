@@ -69,17 +69,14 @@ export const formatDate = (date: Date) => {
   return `${dd}.${mm}.${yyyy}`;
 };
 
-const formatLocalizedDatePart = (date: Date, withYear: boolean, locale: string): string => {
-  const s = date.toLocaleDateString(
-    locale,
-    withYear
-      ? { day: 'numeric', month: 'long', year: 'numeric' }
-      : { day: 'numeric', month: 'long' },
-  );
-  return s.replace(/\s*г\.?$/, '').trim();
+const formatLocalizedDatePart = (date: Date, locale: string): string => {
+  const day = date.getDate();
+  const monthRaw = date.toLocaleDateString(locale, { month: 'short' }).replace(/\./g, '').trim();
+  const month = monthRaw.slice(0, 3);
+  return `${day} ${month}`;
 };
 
-/** Диапазон для кнопки DatePicker: «2 марта — 8 марта»; при смене года — «30 декабря 2025 — 3 января 2026» */
+/** Диапазон для кнопки DatePicker: «2 мар — 8 мар» (без года). */
 export const formatDateRangeDisplay = (
   weekStart: Date,
   dayCount: number,
@@ -88,10 +85,7 @@ export const formatDateRangeDisplay = (
   const days = Math.max(1, Math.min(7, dayCount));
   const end = new Date(weekStart);
   end.setDate(end.getDate() + days - 1);
-  const crossesYear = weekStart.getFullYear() !== end.getFullYear();
-  const startLabel = formatLocalizedDatePart(weekStart, crossesYear, locale);
-  const endLabel = formatLocalizedDatePart(end, crossesYear, locale);
-  return `${startLabel} — ${endLabel}`;
+  return `${formatLocalizedDatePart(weekStart, locale)} — ${formatLocalizedDatePart(end, locale)}`;
 };
 
 export const formatWeekRange = (weekStart: Date, locale: string = getDateLocale()): string => {

@@ -14,7 +14,7 @@
   },
   "success": {
     "title": "Done!",
-    "description": "Invitation accepted. A classroom with your tutor has been created."
+    "description": "A new classroom has appeared in your list"
   },
   "alreadyConnected": {
     "title": "You are already connected to this tutor",
@@ -23,7 +23,7 @@
   "subtitle": {
     "tutor": "Tutor",
     "tutorInvites": "A tutor is inviting you to join classes.",
-    "groupFromTutor": "to the group “{{name}}” from the tutor",
+    "groupName": "group “{{name}}”",
     "platformDescription": "This is where lessons, the shared board and learning materials will live.",
     "freeForStudent": "Using sovlium is free for students."
   },
