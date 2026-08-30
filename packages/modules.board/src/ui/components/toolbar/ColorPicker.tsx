@@ -5,11 +5,11 @@ import { BOARD_COLORS } from '../../../utils/boardColors';
 import { useDrawStyles } from '../../../hooks/useDrawStyles';
 import { ColorDot } from '../canvas';
 import { FillTypePicker } from '../../../shapes/geo';
-
 import { useDrawStore } from '../../../store';
 import { Picker } from '../popups';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
+import { FlipCardShape } from '../../../shapes/flipCard/FlipCardShape';
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 
@@ -36,6 +36,14 @@ export const ColorPicker = track(() => {
 
   const selectedShapes = editor.getSelectedShapes();
 
+  const flipCardShape = useMemo(
+    () =>
+      selectedShapes.length === 1 && selectedShapes[0].type === 'flip-card'
+        ? (selectedShapes[0] as FlipCardShape)
+        : null,
+    [selectedShapes],
+  );
+
   const isGeo = useMemo(
     () => selectedShapes.some((shape) => shape.type === 'xi-geo'),
     [selectedShapes],
@@ -52,6 +60,12 @@ export const ColorPicker = track(() => {
   );
 
   const currentColor = useMemo((): string => {
+    if (flipCardShape) {
+      return flipCardShape.props.isFlipped
+        ? flipCardShape.props.backColor
+        : flipCardShape.props.frontColor;
+    }
+
     if (selectedShapes.length === 0) return 'black';
     try {
       const shapeProps = (selectedShapes[0] as { props?: { color?: string } }).props;
@@ -62,7 +76,7 @@ export const ColorPicker = track(() => {
       console.warn('Error getting shape color:', error);
     }
     return 'black';
-  }, [selectedShapes]);
+  }, [flipCardShape, selectedShapes]);
 
   const currentThickness = useMemo((): string => {
     if (selectedShapes.length === 0) return 'm';
@@ -88,10 +102,20 @@ export const ColorPicker = track(() => {
 
   const handleColorClick = useCallback(
     (colorName: string) => {
+      if (flipCardShape) {
+        const propKey = flipCardShape.props.isFlipped ? 'backColor' : 'frontColor';
+        editor.updateShape<FlipCardShape>({
+          id: flipCardShape.id,
+          type: 'flip-card',
+          props: { [propKey]: colorName as FlipCardShape['props']['frontColor'] },
+        });
+        return;
+      }
+
       setSelectedShapesColor(colorName);
       if (isGeo) setGeoColor(colorName);
     },
-    [setSelectedShapesColor, isGeo, setGeoColor],
+    [flipCardShape, editor, setSelectedShapesColor, isGeo, setGeoColor],
   );
 
   const handleSize = useCallback(
@@ -136,7 +160,6 @@ export const ColorPicker = track(() => {
       }
       popoverChild={
         <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-          {/* Слайдеры — только для draw-фигур */}
           {isDrawShape && (
             <>
               <div className="flex min-w-0 flex-col gap-3">
@@ -171,7 +194,6 @@ export const ColorPicker = track(() => {
             </>
           )}
 
-          {/* Тип заливки */}
           {isGeo && (
             <>
               <FillTypePicker />
@@ -179,7 +201,6 @@ export const ColorPicker = track(() => {
             </>
           )}
 
-          {/* Цвета */}
           <div className="flex flex-wrap items-center gap-1.5">
             {BOARD_COLORS.map(({ name, class: colorClass, cssVar }) => (
               <ColorDot

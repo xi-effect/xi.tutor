@@ -21,6 +21,7 @@ import {
   FLIP_BUTTON_SIZE_RATIO,
   FLIP_BUTTON_ZONE_GAP_PX,
 } from './consts';
+import { getBoardColorOption } from '../../utils/boardColors';
 
 export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
   const editor = useEditor();
@@ -46,6 +47,9 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
 
   const frontBackgroundColor = getColorValue(colors, frontColor, 'solid');
   const backBackgroundColor = getColorValue(colors, backColor, 'solid');
+
+  const frontTextColor = getBoardColorOption(frontColor)?.noteTextCssVar ?? 'var(--xi-gray-0)';
+  const backTextColor = getBoardColorOption(backColor)?.noteTextCssVar ?? 'var(--xi-gray-0)';
 
   const frontResolvedSrc = useResolvedAssetSrc(editor, frontImageAssetId, token);
   const backResolvedSrc = useResolvedAssetSrc(editor, backImageAssetId, token);
@@ -145,6 +149,7 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
           onFacePointerDown={handleFacePointerDown}
           onFacePointerUp={handleFacePointerUp}
           backgroundColor={frontBackgroundColor}
+          textColor={frontTextColor}
         />
         <FlipCardFace
           shapeId={id}
@@ -167,6 +172,7 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
           onFacePointerDown={handleFacePointerDown}
           onFacePointerUp={handleFacePointerUp}
           backgroundColor={backBackgroundColor}
+          textColor={backTextColor}
         />
       </div>
 

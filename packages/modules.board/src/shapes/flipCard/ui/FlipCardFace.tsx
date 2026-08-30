@@ -9,6 +9,7 @@ type FlipCardFaceProps = {
   side: 'front' | 'back';
   isFlipped: boolean;
   backgroundColor: string;
+  textColor: string;
   cardWidth: number;
   cardHeight: number;
   cardScale: number;
@@ -33,6 +34,7 @@ export const FlipCardFace = ({
   isFlipped,
   cardWidth,
   backgroundColor,
+  textColor,
   cardScale,
   hasImage,
   resolvedImageSrc,
@@ -96,7 +98,7 @@ export const FlipCardFace = ({
               fontFamily="draw_draw, sans-serif"
               fontSize={LABEL_FONT_SIZE * cardScale}
               lineHeight={LABEL_LINE_HEIGHT}
-              labelColor="black"
+              labelColor={textColor}
               textAlign="center"
               verticalAlign="middle"
               padding={LABEL_PADDING}
@@ -116,7 +118,7 @@ export const FlipCardFace = ({
               verticalAlign="middle"
               richText={displayRichText}
               isSelected={isSelected}
-              labelColor="black"
+              labelColor={textColor}
               wrap
               padding={LABEL_PADDING}
               hasCustomTabBehavior
@@ -139,7 +141,7 @@ export const FlipCardFace = ({
                 overflowWrap: 'break-word',
                 wordBreak: 'break-word',
                 fontFamily: 'draw_draw, sans-serif',
-                color: 'black',
+                color: textColor,
                 boxSizing: 'border-box',
               }}
             >
