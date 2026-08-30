@@ -3,11 +3,20 @@ export { FileCard } from './src/ui/Files/Card';
 export { FilePreviewModal } from './src/ui/Files/preview';
 export { FilesUploaderFilter } from './src/ui/Files/FilesUploaderFilter';
 export { FilesTagsFilter } from './src/ui/Files/FilesTagsFilter';
+export { FilesTypeFilter } from './src/ui/Files/FilesTypeFilter';
 export { FilesFilteredEmpty } from './src/ui/Files/FilesFilteredEmpty';
 export { MaterialsGallerySkeleton } from './src/ui/MaterialsGallerySkeleton';
 export { LibraryTagsUiProvider } from './src/ui/Files/tags/LibraryTagsUiContext';
 export { useLibraryTags } from './src/ui/Files/tags/useLibraryTags';
-export { formatToShortDate, filterLibraryFiles, hasActiveFilesFilters } from './src/utils';
+export {
+  formatToShortDate,
+  formatFileSize,
+  formatUploadedAt,
+  filterLibraryFiles,
+  getLibraryFileDisplayName,
+  hasActiveFilesFilters,
+} from './src/utils';
 export { DEFAULT_FILES_FILTERS, type FilesFiltersT } from './src/types';
+export { LIBRARY_TAG_COLORS, MAX_TAG_NAME_LENGTH, getTagColor } from './src/ui/Files/tags';
 export { MaterialsDuplicateProvider, useMaterialsDuplicate } from './src/provider';
 export { materialsEn, materialsRu } from './src/locales';

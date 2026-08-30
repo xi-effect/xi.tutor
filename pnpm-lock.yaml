@@ -3540,6 +3540,9 @@ importers:
       '@paddleocr/paddleocr-js':
         specifier: ^0.4.2
         version: 0.4.2
+      '@radix-ui/react-context-menu':
+        specifier: ^2.2.6
+        version: 2.3.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/react-popover':
         specifier: ^1.1.6
         version: 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -3579,6 +3582,9 @@ importers:
       '@xipkg/form':
         specifier: 4.3.0
         version: 4.3.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.5
         version: 3.1.5(react@19.2.8)
@@ -3663,6 +3669,9 @@ importers:
       nanoid:
         specifier: ^5.1.5
         version: 5.1.5
+      pages.materials:
+        specifier: workspace:*
+        version: link:../pages.materials
       pdfjs-dist:
         specifier: ^4.10.38
         version: 4.10.38
@@ -3687,6 +3696,9 @@ importers:
       swiper:
         specifier: ^12.1.3
         version: 12.2.0
+      vaul:
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       y-utility:
         specifier: 0.1.4
         version: 0.1.4(yjs@13.6.32)

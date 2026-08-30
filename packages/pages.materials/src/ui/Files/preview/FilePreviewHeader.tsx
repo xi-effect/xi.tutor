@@ -44,6 +44,11 @@ type FilePreviewHeaderProps = {
   onShare?: () => void;
   onRename?: () => void;
   onClose: () => void;
+  primaryAction?: {
+    label: string;
+    onClick: () => void;
+    loading?: boolean;
+  };
 };
 
 export const FilePreviewHeader = ({
@@ -64,6 +69,7 @@ export const FilePreviewHeader = ({
   onShare,
   onRename,
   onClose,
+  primaryAction,
 }: FilePreviewHeaderProps) => {
   const { t } = useTranslation('materials');
   const Icon = kindIcon[kind];
@@ -95,6 +101,21 @@ export const FilePreviewHeader = ({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        {primaryAction ? (
+          <Button
+            type="button"
+            variant="primary"
+            size="s"
+            className="h-8 rounded-xl px-3 text-sm font-medium"
+            onClick={primaryAction.onClick}
+            onMouseDown={(event) => event.preventDefault()}
+            loading={primaryAction.loading}
+            disabled={primaryAction.loading}
+            data-umami-event="materials-file-preview-primary-action"
+          >
+            {primaryAction.label}
+          </Button>
+        ) : null}
         {showDownload ? (
           <Button
             type="button"

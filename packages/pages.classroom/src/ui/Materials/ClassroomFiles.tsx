@@ -21,11 +21,7 @@ type ClassroomFilesProps = {
   onResetFilters: () => void;
 };
 
-const ClassroomFilesGallery = ({
-  classroomId,
-  filters,
-  onResetFilters,
-}: ClassroomFilesProps) => {
+const ClassroomFilesGallery = ({ classroomId, filters, onResetFilters }: ClassroomFilesProps) => {
   const { t } = useTranslation('classroom');
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { data: user, isLoading: isUserLoading } = useCurrentUser();

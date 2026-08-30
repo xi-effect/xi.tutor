@@ -46,6 +46,11 @@ type FilePreviewModalProps = {
   onOpenChange: (open: boolean) => void;
   onFileChange?: (file: LibraryFile) => void;
   readOnly?: boolean;
+  primaryAction?: {
+    label: string;
+    onClick: () => void;
+    loading?: boolean;
+  };
 };
 
 export const FilePreviewModal = ({
@@ -54,6 +59,7 @@ export const FilePreviewModal = ({
   onOpenChange,
   onFileChange,
   readOnly = false,
+  primaryAction,
 }: FilePreviewModalProps) => {
   const { t } = useTranslation('materials');
   const open = Boolean(file);
@@ -333,6 +339,7 @@ export const FilePreviewModal = ({
                 onShare={() => setShareOpen(true)}
                 onRename={() => setRenameOpen(true)}
                 onClose={handleClose}
+                primaryAction={primaryAction}
               />
               <ModalDescription className="sr-only">{subtitle}</ModalDescription>
               <ModalBody
