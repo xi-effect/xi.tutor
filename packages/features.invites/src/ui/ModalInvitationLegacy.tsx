@@ -13,6 +13,7 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from 'f
 import { Button } from '@xipkg/button';
 import { Trash, Copy } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { writeText } from 'common.platform';
 import { toast } from 'sonner';
 import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
 import { InvitationDataT } from 'common.types';
@@ -87,7 +88,7 @@ export const ModalInvitationLegacy = ({
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleCopyLink = (link: InvitationDataT['code'], inviteId?: number) => () => {
-    navigator.clipboard.writeText(`${env.VITE_APP_DOMAIN}/invite/${link}`);
+    void writeText(`${env.VITE_APP_DOMAIN}/invite/${link}`);
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LINK_COPIED, {
       invite_id: inviteId != null ? String(inviteId) : undefined,
       source: analyticsSource,

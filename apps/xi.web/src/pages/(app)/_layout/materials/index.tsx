@@ -4,9 +4,13 @@ import { BoardRouteWarmup } from 'modules.board/warmup';
 import { MaterialsPage } from 'pages.materials';
 import { z } from 'zod';
 
-const searchSchema = z.object({
-  tab: z.enum(['boards', 'notes']).optional(),
-});
+const searchSchema = z
+  .object({
+    tab: z.enum(['boards', 'notes']).optional(),
+    role: z.enum(['tutor', 'student']).optional(),
+    read_notification_id: z.string().optional(),
+  })
+  .passthrough();
 
 const Materials = () => {
   return (

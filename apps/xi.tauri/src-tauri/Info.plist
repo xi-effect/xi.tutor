@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Sovlium использует камеру для видеозвонков и занятий.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Sovlium использует микрофон для аудио в звонках и занятиях.</string>
+	<key>NSScreenCaptureUsageDescription</key>
+	<string>Sovlium использует запись экрана для демонстрации рабочего стола на занятиях.</string>
+</dict>
+</plist>

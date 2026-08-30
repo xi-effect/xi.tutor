@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from 'react';
 import * as Sentry from '@sentry/browser';
-import { ErrorPage } from 'common.ui';
+import { ErrorPage, LoadingScreen } from 'common.ui';
+import { isStaleChunkError, isStaleChunkReloadPending, reloadOnceOnStaleChunk } from 'common.utils';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -10,6 +11,7 @@ interface ErrorBoundaryProps {
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
+  staleChunkReloadFailed: boolean;
 }
 
 /**
@@ -19,15 +21,22 @@ interface ErrorBoundaryState {
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, staleChunkReloadFailed: false };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: { componentStack: string }) {
-    // Отправляем ошибку в GlitchTip
+    if (reloadOnceOnStaleChunk(error) || isStaleChunkReloadPending()) {
+      return;
+    }
+
+    if (isStaleChunkError(error)) {
+      this.setState({ staleChunkReloadFailed: true });
+    }
+
     Sentry.captureException(error, {
       contexts: {
         react: {
@@ -38,11 +47,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   resetError = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, error: null, staleChunkReloadFailed: false });
   };
 
   render() {
     if (this.state.hasError && this.state.error) {
+      if (
+        !this.state.staleChunkReloadFailed &&
+        (isStaleChunkReloadPending() || isStaleChunkError(this.state.error))
+      ) {
+        return <LoadingScreen />;
+      }
+
       if (this.props.fallback) {
         return this.props.fallback(this.state.error, this.resetError);
       }

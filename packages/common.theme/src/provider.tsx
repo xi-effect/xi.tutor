@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getShellTheme, isNativeShell, setShellTheme } from 'common.platform';
 import { useUpdateProfile, useCurrentUser } from 'common.services';
 
 import { THEME_CUSTOMIZATION_ENABLED } from './config';
@@ -34,13 +35,48 @@ const applyTheme = (preference: ThemeT) => {
   root.setAttribute('data-theme-preference', preference);
 };
 
+/** Theme already on `<html>` (splash / native init script) before React mounts. */
+const readDocumentTheme = (): ThemeT | null => {
+  if (typeof document === 'undefined') return null;
+  return normalizeTheme(document.documentElement.getAttribute('data-theme'));
+};
+
 export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   const { data: user } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
   const [theme, setThemeState] = useState<ThemeT>(
-    () => readStoredThemePreference() ?? DEFAULT_THEME,
+    () => readStoredThemePreference() ?? readDocumentTheme() ?? DEFAULT_THEME,
   );
+  // Avoid persisting the default light theme over a dark shell/profile
+  // preference before hydration finishes (splash origin ≠ remote localStorage).
+  const [canPersistShell, setCanPersistShell] = useState(() => !isNativeShell());
+
+  useEffect(() => {
+    if (!isNativeShell()) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const profileTheme = normalizeTheme(user?.theme);
+        if (profileTheme) {
+          setThemeState((current) => (current === profileTheme ? current : profileTheme));
+          return;
+        }
+        const shell = await getShellTheme();
+        if (cancelled) return;
+        if (!readThemeChosen()) {
+          setThemeState((current) => (current === shell ? current : shell));
+        }
+      } finally {
+        if (!cancelled) setCanPersistShell(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.theme]);
 
   useEffect(() => {
     if (!THEME_CUSTOMIZATION_ENABLED) return;
@@ -49,18 +85,25 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
     if (!profileTheme) return;
 
     const hasChosenLocally = readThemeChosen();
-    const shouldSyncFromProfile = hasChosenLocally || profileTheme === 'dark';
+    const shouldSyncFromProfile = isNativeShell() || hasChosenLocally || profileTheme === 'dark';
 
     if (!shouldSyncFromProfile) return;
 
     setThemeState((current) => (current === profileTheme ? current : profileTheme));
+    if (isNativeShell()) {
+      writeStoredTheme(profileTheme);
+      writeThemeChosen(true);
+      void setShellTheme(profileTheme);
+    }
   }, [user?.theme]);
 
   const effectiveTheme = THEME_CUSTOMIZATION_ENABLED ? theme : DEFAULT_THEME;
 
   useEffect(() => {
     applyTheme(effectiveTheme);
-  }, [effectiveTheme]);
+    if (!canPersistShell || !isNativeShell()) return;
+    void setShellTheme(effectiveTheme);
+  }, [effectiveTheme, canPersistShell]);
 
   const setTheme = async (newTheme: ThemeT) => {
     if (!THEME_CUSTOMIZATION_ENABLED) return;
@@ -72,6 +115,9 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
       await updateProfile.mutateAsync({ theme: newTheme });
       writeStoredTheme(newTheme);
       writeThemeChosen(true);
+      if (isNativeShell()) {
+        void setShellTheme(newTheme);
+      }
     } catch (error) {
       setThemeState(previousTheme);
       console.error('Ошибка при обновлении темы', error);

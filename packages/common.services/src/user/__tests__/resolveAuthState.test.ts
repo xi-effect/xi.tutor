@@ -12,7 +12,6 @@ describe('resolveAuthState', () => {
         isAuthenticated: false,
         isSuccess: false,
         user: undefined,
-        isError: true,
         isFetching: false,
         error: networkError,
       }),
@@ -25,7 +24,6 @@ describe('resolveAuthState', () => {
         isAuthenticated: null,
         isSuccess: true,
         user,
-        isError: false,
         isFetching: false,
         error: null,
       }),
@@ -38,24 +36,46 @@ describe('resolveAuthState', () => {
         isAuthenticated: null,
         isSuccess: false,
         user: undefined,
-        isError: true,
         isFetching: false,
         error: unauthorizedError,
       }),
     ).toBe(false);
   });
 
-  it('сетевой сбой на первичной загрузке не разлогинивает — ждём сеть', () => {
+  it('401 во время ретрая на первичной загрузке сразу считает неавторизованным', () => {
     expect(
       resolveAuthState({
         isAuthenticated: null,
         isSuccess: false,
         user: undefined,
-        isError: true,
-        isFetching: false,
+        isFetching: true,
+        error: unauthorizedError,
+      }),
+    ).toBe(false);
+  });
+
+  it('пока сеть ретраится, ждём и не пускаем на signin', () => {
+    expect(
+      resolveAuthState({
+        isAuthenticated: null,
+        isSuccess: false,
+        user: undefined,
+        isFetching: true,
         error: networkError,
       }),
     ).toBeNull();
+  });
+
+  it('после исчерпания ретраев не держит спиннер — уводит как неавторизованного', () => {
+    expect(
+      resolveAuthState({
+        isAuthenticated: null,
+        isSuccess: false,
+        user: undefined,
+        isFetching: false,
+        error: networkError,
+      }),
+    ).toBe(false);
   });
 
   it('сетевой сбой при уже подтверждённой сессии её сохраняет', () => {
@@ -64,7 +84,6 @@ describe('resolveAuthState', () => {
         isAuthenticated: true,
         isSuccess: false,
         user: undefined,
-        isError: true,
         isFetching: false,
         error: networkError,
       }),
@@ -77,7 +96,6 @@ describe('resolveAuthState', () => {
         isAuthenticated: true,
         isSuccess: false,
         user: undefined,
-        isError: true,
         isFetching: true,
         error: unauthorizedError,
       }),

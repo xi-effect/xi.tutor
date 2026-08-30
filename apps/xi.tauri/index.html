@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="apple-mobile-web-app-title" content="sovlium" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>sovlium</title>
+    <script>
+      (function () {
+        var themeKey = 'sovlium-theme';
+        var chosenKey = 'sovlium-theme-chosen';
+        var languageKey = 'xi_language';
+        var stored = null;
+        var chosen = false;
+        var language = 'ru';
+
+        try {
+          stored = localStorage.getItem(themeKey);
+          chosen = localStorage.getItem(chosenKey) === '1';
+          var storedLanguage = localStorage.getItem(languageKey);
+          if (storedLanguage === 'en' || storedLanguage === 'ru') {
+            language = storedLanguage;
+          }
+        } catch (e) {}
+
+        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__TAURI_INTERNALS__);
+        var injected = document.documentElement.getAttribute('data-theme');
+        var preference =
+          chosen && (stored === 'light' || stored === 'dark')
+            ? stored
+            : isNative && (injected === 'light' || injected === 'dark')
+              ? injected
+              : 'light';
+
+        document.documentElement.setAttribute('data-theme', preference);
+        document.documentElement.setAttribute('data-theme-preference', preference);
+        document.documentElement.classList.add(preference);
+        document.documentElement.lang = language;
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      html[data-theme='dark'] {
+        color-scheme: dark;
+      }
+      html,
+      body,
+      #root {
+        height: 100%;
+        margin: 0;
+        /* Match common.ui `background-page` (light / dark). */
+        background: #f7f8fa;
+      }
+      html[data-theme='dark'],
+      html[data-theme='dark'] body,
+      html[data-theme='dark'] #root {
+        background: #111318;
+      }
+      /* Avoid native overscroll glow on mobile WebViews. */
+      html,
+      body {
+        overscroll-behavior: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      /* Allow text selection inside editable surfaces. */
+      input,
+      textarea,
+      [contenteditable='true'],
+      [data-allow-select='true'],
+      [data-allow-select='true'] * {
+        -webkit-user-select: text;
+        user-select: text;
+      }
+    </style>
+  </head>
+  <body class="overflow-hidden">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

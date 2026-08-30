@@ -13,19 +13,26 @@ const paramsSchema = z.object({
   classroomId: z.string(),
 });
 
-const searchSchema = z.object({
-  tab: z.string().optional(),
-  call: z.string().optional(),
-  /** ISO-дата — перейти на неделю расписания, содержащую этот момент (вместе с `tab=schedule`). */
-  focused_at: z.string().optional(),
-  /** Persisted инстанс — открыть карточку занятия; дата недели берётся из ответа деталей (`starts_at`). */
-  event_instance_id: z.string().optional(),
-  /** Повторяющийся виртуальный инстанс — открыть карточку занятия серии */
-  repetition_mode_id: z.string().optional(),
-  instance_index: z.coerce.number().optional(),
-  /** Служебный токен повторного диплинка из уведомления */
-  schedule_dl: z.string().optional(),
-});
+const searchSchema = z
+  .object({
+    tab: z.string().optional(),
+    call: z.string().optional(),
+    /** Диплинк уведомления / шаринга: переключить роль приложения */
+    role: z.enum(['tutor', 'student']).optional(),
+    /** Диплинк уведомления: сразу открыть звонок */
+    goto: z.string().optional(),
+    read_notification_id: z.string().optional(),
+    /** ISO-дата — перейти на неделю расписания, содержащую этот момент (вместе с `tab=schedule`). */
+    focused_at: z.string().optional(),
+    /** Persisted инстанс — открыть карточку занятия; дата недели берётся из ответа деталей (`starts_at`). */
+    event_instance_id: z.string().optional(),
+    /** Повторяющийся виртуальный инстанс — открыть карточку занятия серии */
+    repetition_mode_id: z.string().optional(),
+    instance_index: z.coerce.number().optional(),
+    /** Служебный токен повторного диплинка из уведомления */
+    schedule_dl: z.string().optional(),
+  })
+  .passthrough();
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/')({

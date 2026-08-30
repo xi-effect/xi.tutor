@@ -8,6 +8,7 @@ describe('shouldNotifySessionRestoreNetwork', () => {
         isSessionUnresolved: true,
         failureCount: 0,
         error: null,
+        isOnline: false,
       }),
     ).toBe(false);
   });
@@ -18,6 +19,7 @@ describe('shouldNotifySessionRestoreNetwork', () => {
         isSessionUnresolved: true,
         failureCount: 1,
         error: { response: { status: 401 } },
+        isOnline: false,
       }),
     ).toBe(false);
   });
@@ -28,16 +30,29 @@ describe('shouldNotifySessionRestoreNetwork', () => {
         isSessionUnresolved: false,
         failureCount: 2,
         error: { code: 'ERR_NETWORK' },
+        isOnline: false,
       }),
     ).toBe(false);
   });
 
-  it('предлагает toast при сетевом сбое во время проверки сессии', () => {
+  it('молчит, если браузер считает сеть живой (не airplane mode)', () => {
     expect(
       shouldNotifySessionRestoreNetwork({
         isSessionUnresolved: true,
         failureCount: 1,
         error: { code: 'ERR_NETWORK' },
+        isOnline: true,
+      }),
+    ).toBe(false);
+  });
+
+  it('предлагает toast только при реальном offline', () => {
+    expect(
+      shouldNotifySessionRestoreNetwork({
+        isSessionUnresolved: true,
+        failureCount: 1,
+        error: { code: 'ERR_NETWORK' },
+        isOnline: false,
       }),
     ).toBe(true);
   });

@@ -29,7 +29,7 @@ export const LinkNavbarButton = ({
         title="Ссылка"
         isActive={isActive}
         onClick={onClick}
-        className="data-[state=open]:bg-brand-0"
+        className="data-[state=open]:bg-status-info-background"
       />
     </PopoverTrigger>
     <PopoverContent side="top" sideOffset={8} asChild>

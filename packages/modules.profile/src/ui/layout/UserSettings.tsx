@@ -22,7 +22,7 @@ export const UserSettings = ({
   const [showContent, setShowContent] = React.useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const search = useSearch({ strict: false });
+  const search = useSearch({ strict: false }) as { profile?: string };
 
   const profileType = search.profile || '';
 

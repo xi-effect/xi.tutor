@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "ru.sovlium.mobile",
+  "bundle": {
+    "android": {
+      "minSdkVersion": 24
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": false
+    },
+    "deep-link": {
+      "mobile": [
+        {
+          "host": "app.sovlium.ru",
+          "pathPrefix": ["/"]
+        }
+      ]
+    }
+  }
+}

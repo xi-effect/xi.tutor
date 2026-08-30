@@ -21,6 +21,7 @@
     "@xipkg/tooltip": "^2.2.0",
     "@xipkg/utils": "^1.8.0",
     "common.env": "workspace:*",
+    "common.platform": "workspace:*",
     "common.services": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",

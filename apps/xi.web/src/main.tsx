@@ -1,8 +1,12 @@
+import './utils/installStaleChunkReload';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { i18nInitPromise } from './config/i18n';
 import { initBugsink } from './config/bugsink';
 import { AppProviders } from './providers';
+import { installNativeWebApiBridges } from 'common.platform';
+
+installNativeWebApiBridges();
 
 // Инициализируем BUGSINK как можно раньше
 initBugsink();

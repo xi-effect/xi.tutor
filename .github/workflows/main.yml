@@ -28,6 +28,8 @@ on:
         value: ${{ jobs.build_xi_web.result }}
       xi_web_deployment_status:
         value: ${{ jobs.deploy_xi_web.result }}
+      xi_tauri_check_status:
+        value: ${{ jobs.check_xi_tauri.result }}
 
 jobs:
   analyze_files:
@@ -45,6 +47,7 @@ jobs:
 
     outputs:
       xi_web_files: ${{ steps.path_filter.outputs.xi_web_files }}
+      xi_tauri_files: ${{ steps.path_filter.outputs.xi_tauri_files }}
 
   lint:
     needs: analyze_files
@@ -99,3 +102,29 @@ jobs:
       deployment_name: ${{ inputs.deployment_name }}
       github_environment_name: ${{ inputs.github_environment_name }}
     secrets: inherit
+
+  check_xi_tauri:
+    needs:
+      - analyze_files
+      - lint
+    if: needs.analyze_files.outputs.xi_tauri_files == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install pnpm (version from package.json)
+        uses: pnpm/action-setup@v6
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Typecheck native shell frontend
+        run: pnpm --filter xi.tauri check-types
