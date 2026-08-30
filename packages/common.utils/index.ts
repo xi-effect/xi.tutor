@@ -103,3 +103,9 @@ export {
   type UmamiEventPayload,
 } from './src/productAnalytics';
 export { useSyncAutofillOnSubmit } from './src/useSyncAutofillOnSubmit';
+export {
+  isStaleChunkError,
+  isStaleChunkReloadPending,
+  reloadOnceOnStaleChunk,
+  resetStaleChunkReloadState,
+} from './src/staleChunkError';

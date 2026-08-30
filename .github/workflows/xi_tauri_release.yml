@@ -1,0 +1,193 @@
+name: xi.tauri Desktop Release
+
+# Desktop installers + updater CDN. Mobile is App Store / Play Store — not here.
+#
+# Trigger: tag `xi.tauri-vX.Y.Z` or workflow_dispatch.
+# Publishes:
+#   1. GitHub Release (draft by default) — convenient download page
+#   2. Static files to releases.sovlium.ru (updater endpoint)
+#
+# Required secrets: TAURI_SIGNING_PRIVATE_KEY (+ optional password)
+# Optional: Apple / Windows code-signing secrets, SSH_* + var RELEASES_REMOTE_PATH
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g. xi.tauri-v0.1.0). Created if missing.'
+        required: true
+        type: string
+      notes:
+        description: 'Release notes shown by the in-app updater'
+        required: false
+        type: string
+        default: ''
+      draft:
+        description: 'Create the GitHub release as a draft'
+        required: false
+        default: 'true'
+        type: string
+  push:
+    tags:
+      - 'xi.tauri-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - id: meta
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.release_tag || github.ref_name }}"
+          if [[ ! "$TAG" =~ ^xi\.tauri-v[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
+            echo "Tag must look like xi.tauri-v1.2.3, got: $TAG" >&2
+            exit 1
+          fi
+          VERSION="${TAG#xi.tauri-v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            rust_targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
+            tauri_args: '--target universal-apple-darwin -c src-tauri/tauri.macos.bundle-installers.conf.json -c src-tauri/tauri.updater-artifacts.conf.json'
+          - os: windows-latest
+            rust_targets: 'x86_64-pc-windows-msvc'
+            tauri_args: '-c src-tauri/tauri.windows.conf.json -c src-tauri/tauri.updater-artifacts.conf.json'
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/xi.tauri/src-tauri -> target
+
+      - name: Set app version from tag
+        shell: bash
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const path = 'apps/xi.tauri/src-tauri/tauri.conf.json';
+          const json = JSON.parse(fs.readFileSync(path, 'utf8'));
+          json.version = process.env.VERSION;
+          fs.writeFileSync(path, `${JSON.stringify(json, null, 2)}\n`);
+          EOF
+
+      - name: Install JS deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Build with Tauri Action
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        with:
+          projectPath: apps/xi.tauri
+          tagName: ${{ needs.version.outputs.tag }}
+          releaseName: 'Sovlium ${{ needs.version.outputs.version }}'
+          releaseBody: ${{ github.event.inputs.notes }}
+          releaseDraft: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.draft != 'false' }}
+          prerelease: false
+          updaterJsonPreferNsis: true
+          args: ${{ matrix.tauri_args }}
+
+      - name: Upload updater bundles
+        if: success()
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: updater-${{ matrix.os }}
+          path: |
+            apps/xi.tauri/src-tauri/target/**/release/bundle/**/*.app.tar.gz
+            apps/xi.tauri/src-tauri/target/**/release/bundle/**/*.app.tar.gz.sig
+            apps/xi.tauri/src-tauri/target/**/release/bundle/**/*.nsis.zip
+            apps/xi.tauri/src-tauri/target/**/release/bundle/**/*.nsis.zip.sig
+          if-no-files-found: error
+
+  publish:
+    needs:
+      - version
+      - build
+    runs-on: ubuntu-latest
+    environment: xi-production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Download updater bundles
+        uses: actions/download-artifact@v4
+        with:
+          pattern: updater-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Build latest.json
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+          NOTES: ${{ github.event.inputs.notes }}
+        run: |
+          node apps/xi.tauri/scripts/make-updater-manifest.mjs \
+            --dir artifacts \
+            --version "$VERSION" \
+            --base-url https://releases.sovlium.ru/desktop \
+            --out publish/desktop \
+            --notes "${NOTES:-}"
+
+      - name: Publish to releases.sovlium.ru
+        if: ${{ vars.RELEASES_REMOTE_PATH != '' }}
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: --verbose --human-readable --compress --recursive
+          path: ./publish/desktop/
+          remote_path: ${{ vars.RELEASES_REMOTE_PATH }}/desktop/
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
+
+      - name: Upload CDN folder
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: desktop-cdn
+          path: publish/desktop

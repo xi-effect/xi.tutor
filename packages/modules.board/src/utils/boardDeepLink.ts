@@ -3,6 +3,7 @@ import { env } from 'common.env';
 import { toast } from 'sonner';
 import { getCommentThreadPagePoint } from '../comments/commentQueries';
 import type { DrCommentThread } from '../comments/commentRecords';
+import { writeText } from 'common.platform';
 import i18n from 'i18next';
 
 export type BoardDeepLinkSearch = {
@@ -43,7 +44,7 @@ export function buildBoardDeepLink({
 
 export async function copyBoardDeepLink(url: string): Promise<void> {
   try {
-    await navigator.clipboard.writeText(url);
+    await writeText(url);
     toast.success(i18n.t('toast.linkCopied', { ns: 'board' }));
   } catch {
     toast.error(i18n.t('toast.linkCopyFailed', { ns: 'board' }));

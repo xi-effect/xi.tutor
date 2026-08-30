@@ -1,18 +1,8 @@
+import { readHtml, writeHtmlAndText } from 'common.platform';
+
 export async function writeClipboardHtmlAndText(html: string, plain: string) {
   try {
-    const htmlBlob = new Blob([html], { type: 'text/html' });
-    const textBlob = new Blob([plain], { type: 'text/plain' });
-
-    if (navigator.clipboard?.write) {
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          'text/html': htmlBlob,
-          'text/plain': textBlob,
-        }),
-      ]);
-    } else if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(html);
-    }
+    await writeHtmlAndText(html, plain);
   } catch (error) {
     console.error('Failed to write clipboard:', error);
   }
@@ -20,20 +10,9 @@ export async function writeClipboardHtmlAndText(html: string, plain: string) {
 
 export async function readClipboardHtml(): Promise<string> {
   try {
-    if (navigator.clipboard?.read) {
-      const items = await navigator.clipboard.read();
-      for (const item of items) {
-        if (item.types.includes('text/html')) {
-          const blob = await item.getType('text/html');
-          return await blob.text();
-        }
-      }
-    }
-    if (navigator.clipboard?.readText) {
-      return await navigator.clipboard.readText();
-    }
+    return await readHtml();
   } catch (error) {
     console.error('Failed to read clipboard:', error);
+    return '';
   }
-  return '';
 }

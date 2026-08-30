@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { useEditor } from '@ibodr/draw';
 import type { DrRecord } from '@ibodr/draw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
+import { saveBlob } from 'common.platform';
 import { useTranslation } from 'react-i18next';
 import { PNG_EXPORT_PIXEL_RATIO } from '../../../../utils/shapeSvgExport';
 
@@ -77,16 +78,8 @@ export const useDropdownActions = () => {
         padding: 20,
       });
 
-      // Создаем ссылку для скачивания с названием доски
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
       const fileName = data?.name ? `${data.name}.png` : `board-${Date.now()}.png`;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      await saveBlob(blob, { fileName });
 
       toast.success(t('toast.exportSuccess'));
     } catch (error) {

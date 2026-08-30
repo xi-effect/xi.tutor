@@ -1,13 +1,14 @@
+import { LoadingScreen } from 'common.ui';
+import { saveBlob } from 'common.platform';
+import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
+import { useKeyPress } from 'common.utils';
+import { useTheme } from 'common.theme';
+import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
 import { useSearch } from '@tanstack/react-router';
-import { JSX } from 'react/jsx-runtime';
 import { useTranslation } from 'react-i18next';
-import { LoadingScreen } from 'common.ui';
-import { useKeyPress } from 'common.utils';
-import { useTheme } from 'common.theme';
 import { useRetryFileQueue } from 'common.services';
-import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import {
   useLockedShapeSelection,
   useDrawClipboard,
@@ -461,12 +462,7 @@ export const DrawCanvas = ({
                 const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
                   type: 'application/json',
                 });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `board-snapshot-${Date.now()}.json`;
-                link.click();
-                URL.revokeObjectURL(url);
+                void saveBlob(blob, { fileName: `board-snapshot-${Date.now()}.json` });
                 return snapshot;
               };
               win.showBoardImportOption = () => {

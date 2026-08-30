@@ -31,7 +31,7 @@ type AllLessonsProps = {
 };
 
 const scheduleEmptyActionButtonClass =
-  'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
+  'bg-background-page hover:bg-background-subtle text-xs-base-size flex h-8 items-center rounded-lg px-4 font-medium text-text-primary';
 
 const LessonCardSkeleton = ({ showTutorActions = true }: { showTutorActions?: boolean }) => (
   <div className="bg-background-surface relative flex min-h-[136px] shrink-0 flex-row gap-4 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
@@ -95,7 +95,7 @@ export const AllLessons = ({
             />
             <div className="flex max-w-md flex-col gap-2 text-center">
               <p className="text-m-base text-text-primary font-semibold">
-                {t('lessons.emptyTitle')}
+                {onAddLesson ? t('lessons.emptyTitle') : t('lessons.emptyStudentTitle')}
               </p>
               <p className="text-s-base text-text-secondary dark:text-text-muted">
                 {onAddLesson

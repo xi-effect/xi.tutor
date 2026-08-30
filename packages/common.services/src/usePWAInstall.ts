@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { isPWA } from './notifications/webNotifications';
+import { isNativeShell } from 'common.platform';
 
 /** Событие «установить приложение» (Chrome, Edge и др.). Не в стандартных DOM-типах. */
 interface BeforeInstallPromptEvent extends Event {
@@ -123,7 +124,7 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
       ? (window as Window & { __beforeInstallPrompt?: BeforeInstallPromptEvent | null })
       : null;
   const hasPrompt = Boolean(installEvent ?? win?.__beforeInstallPrompt);
-  const canInstall = (hasPrompt || hasInstallAPI()) && !installed;
+  const canInstall = (hasPrompt || hasInstallAPI()) && !installed && !isNativeShell();
   const installHintKey = getPlatformInstallHintKey();
 
   return { canInstall, promptInstall, isInstalled: installed, installHintKey };

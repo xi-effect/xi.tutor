@@ -1,31 +1,40 @@
 /**
- * Системные уведомления (Web Notifications API).
- * Работают в браузере (в т.ч. в другой вкладке) и в установленном PWA.
- * Используются вместо toast, когда пользователь выдал разрешение и включил настройку.
+ * Системные уведомления.
+ * В браузере / PWA — Web Notifications API.
+ * В Tauri (macOS / Windows) — `@tauri-apps/plugin-notification`.
  */
+
+import {
+  getNotificationPermission as getPlatformNotificationPermission,
+  isNativeShell,
+  isNotificationSupported,
+  refreshNotificationPermission,
+  requestNotificationPermission,
+  showNotification,
+  type ShowNotificationOptions,
+} from 'common.platform';
 
 const STORAGE_KEY = 'pwa.notifications.enabled';
 
 const isBrowser = typeof window !== 'undefined';
 
-/** Приложение запущено как установленное PWA (standalone) */
+/** Приложение запущено как установленное PWA (standalone). В native shell — false. */
 export const isPWA = (): boolean => {
-  if (!isBrowser) return false;
+  if (!isBrowser || isNativeShell()) return false;
   const mode = window.matchMedia('(display-mode: standalone)').matches;
   const standalone = (navigator as { standalone?: boolean }).standalone;
   const referrer = document.referrer.includes('android-app://');
   return Boolean(mode || standalone || referrer);
 };
 
-/** Web Notifications API доступен */
-export const isNotificationAPIAvailable = (): boolean =>
-  isBrowser && typeof Notification !== 'undefined';
+/** Системные уведомления доступны (Web API или native plugin). */
+export const isNotificationAPIAvailable = (): boolean => isNotificationSupported();
 
-/** Текущее разрешение на уведомления */
-export const getNotificationPermission = (): NotificationPermission => {
-  if (!isNotificationAPIAvailable()) return 'denied';
-  return Notification.permission;
-};
+/** Текущее (кэшированное) разрешение на уведомления */
+export const getNotificationPermission = (): NotificationPermission =>
+  getPlatformNotificationPermission();
+
+export { refreshNotificationPermission, requestNotificationPermission };
 
 /** Включены ли системные уведомления в настройках пользователя (localStorage) */
 export const getSystemNotificationsEnabled = (): boolean => {
@@ -47,64 +56,33 @@ export const setSystemNotificationsEnabled = (enabled: boolean): void => {
 };
 
 /**
- * Нужно ли показывать входящие уведомления через Web API вместо toast:
- * API доступен + разрешение выдано + настройка включена (работает и в вкладке, и в PWA).
+ * Нужно ли показывать входящие уведомления через системный канал вместо toast:
+ * API доступен + разрешение выдано + настройка включена.
  */
 export const shouldUseSystemNotifications = (): boolean =>
   isNotificationAPIAvailable() &&
   getNotificationPermission() === 'granted' &&
   getSystemNotificationsEnabled();
 
-export interface ShowSystemNotificationOptions {
-  title: string;
-  body: string;
-  /** URL для перехода по клику (относительный или абсолютный) */
-  url?: string | null;
-  /** Вызывается при клике по уведомлению (фокус окна + навигация) */
-  onNavigate?: (url: string) => void;
-}
+export type ShowSystemNotificationOptions = ShowNotificationOptions;
 
 /**
  * Показывает системное уведомление. Вызывать только если shouldUseSystemNotifications() === true.
  */
 export const showSystemNotification = (options: ShowSystemNotificationOptions): void => {
-  const { title, body, url, onNavigate } = options;
-  if (!isNotificationAPIAvailable() || getNotificationPermission() !== 'granted') {
-    return;
-  }
-  try {
-    const notification = new Notification(title, {
-      body,
-      icon: '/web-app-manifest-192x192.png',
-      tag: `sovlium-${Date.now()}`, // разный tag, чтобы каждое уведомление показывалось
-    });
-    notification.onclick = () => {
-      window.focus();
-      if (url && onNavigate) {
-        onNavigate(url);
-      }
-      notification.close();
-    };
-  } catch {
-    // игнорируем (браузер/ОС не показали уведомление)
-  }
+  void showNotification(options);
 };
 
 /**
- * Показывает тестовое системное уведомление (для проверки на localhost и в браузере).
+ * Показывает тестовое системное уведомление.
  * Работает только при выданном разрешении.
  */
-export const showTestSystemNotification = (): boolean => {
-  if (!isNotificationAPIAvailable() || getNotificationPermission() !== 'granted') {
-    return false;
-  }
-  try {
-    showSystemNotification({
-      title: 'Тест уведомлений',
-      body: 'Если вы видите это — системные уведомления работают.',
-    });
-    return true;
-  } catch {
-    return false;
-  }
+export const showTestSystemNotification = async (): Promise<boolean> => {
+  if (!isNotificationAPIAvailable()) return false;
+  const permission = await refreshNotificationPermission();
+  if (permission !== 'granted') return false;
+  return showNotification({
+    title: 'Тест уведомлений',
+    body: 'Если вы видите это — системные уведомления работают.',
+  });
 };

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { refreshNotificationPermission } from 'common.platform';
 import {
   getNotificationPermission,
   getSystemNotificationsEnabled,
@@ -6,6 +7,7 @@ import {
   isPWA,
   setSystemNotificationsEnabled as setStorageEnabled,
   shouldUseSystemNotifications,
+  requestNotificationPermission,
 } from './webNotifications';
 
 export type SystemNotificationPermission = NotificationPermission;
@@ -13,11 +15,11 @@ export type SystemNotificationPermission = NotificationPermission;
 export interface UseSystemNotificationSettingsReturn {
   /** Приложение запущено как PWA */
   isPWA: boolean;
-  /** Web Notifications API доступен */
+  /** Системные уведомления доступны (Web API или native plugin) */
   isSupported: boolean;
-  /** Можно ли использовать системные уведомления (PWA + разрешение + включено) */
+  /** Можно ли использовать системные уведомления (разрешение + включено) */
   canUse: boolean;
-  /** Текущее разрешение браузера */
+  /** Текущее разрешение */
   permission: SystemNotificationPermission;
   /** Включены ли системные уведомления в настройках */
   enabled: boolean;
@@ -33,8 +35,8 @@ export const useSystemNotificationSettings = (): UseSystemNotificationSettingsRe
   const [enabled, setEnabledState] = useState<boolean>(() => getSystemNotificationsEnabled());
 
   useEffect(() => {
-    setPermission(getNotificationPermission());
     setEnabledState(getSystemNotificationsEnabled());
+    void refreshNotificationPermission().then(setPermission);
   }, []);
 
   const setEnabled = useCallback((value: boolean) => {
@@ -46,7 +48,7 @@ export const useSystemNotificationSettings = (): UseSystemNotificationSettingsRe
     if (!isNotificationAPIAvailable() || permission === 'granted') {
       return permission;
     }
-    const result = await Notification.requestPermission();
+    const result = await requestNotificationPermission();
     setPermission(result);
     return result;
   }, [permission]);

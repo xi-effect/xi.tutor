@@ -13,6 +13,7 @@ import { cn } from '@xipkg/utils';
 import { useCallback } from 'react';
 import { ActiveBlockT } from '../../types';
 import { common } from 'lowlight';
+import { writeText } from 'common.platform';
 import { toast } from 'sonner';
 
 export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
@@ -46,8 +47,9 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
   // Копирование содержимого блока кода в буфер обмена
   const handleCopyCode = () => {
     const codeText = node.textContent;
-    navigator.clipboard.writeText(codeText);
-    toast.success(t('codeBlock.copied'));
+    void writeText(codeText).then(() => {
+      toast.success(t('codeBlock.copied'));
+    });
   };
 
   // Изменение языка через встроенный метод Tiptap `updateAttributes`

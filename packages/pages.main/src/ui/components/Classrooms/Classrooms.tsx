@@ -74,8 +74,11 @@ export const Classrooms = () => {
       : t('classrooms.emptyInvite')
     : t('classrooms.emptyStudent');
 
+  const createGroupEmptyButtonClass =
+    'bg-background-page hover:bg-background-subtle text-xs-base-size flex h-8 items-center gap-2 rounded-lg px-4 font-medium text-text-primary';
+
   const inviteEmptyButtonClass =
-    'bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 text-xs-base flex h-8 items-center gap-2 rounded-lg border-transparent px-4 font-medium text-text-link';
+    'text-xs-base-size text-text-on-accent flex h-8 items-center gap-2 rounded-lg px-4 font-medium';
 
   const headerActions =
     isTutor && !isMobile ? (
@@ -183,16 +186,28 @@ export const Classrooms = () => {
           illustration={<EmptyClassrooms className={emptyClassroomsIllustrationClass} />}
           actions={
             !isMobile ? (
-              <Button
-                type="button"
-                variant="none"
-                className={inviteEmptyButtonClass}
-                onClick={() => setInviteModalOpen(true)}
-                data-umami-event="classrooms-empty-invite"
-              >
-                {t('classrooms.inviteStudent')}
-                <UserPlus className="text-text-link size-4 shrink-0" />
-              </Button>
+              <>
+                <Button
+                  type="button"
+                  variant="primary"
+                  className={inviteEmptyButtonClass}
+                  onClick={() => setInviteModalOpen(true)}
+                  data-umami-event="classrooms-empty-invite"
+                >
+                  {t('classrooms.inviteStudent')}
+                  <UserPlus className="fill-action-primary-text text-text-on-accent size-4 shrink-0" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="none"
+                  className={createGroupEmptyButtonClass}
+                  onClick={() => setAddGroupModalOpen(true)}
+                  data-umami-event="classrooms-empty-create-group"
+                >
+                  {t('classrooms.createGroup')}
+                  <Group className="fill-icon-primary size-4 shrink-0" />
+                </Button>
+              </>
             ) : undefined
           }
         />

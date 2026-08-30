@@ -27,6 +27,7 @@
     "common.utils": "workspace:*",
     "common.services": "workspace:*",
     "common.env": "workspace:*",
+    "common.platform": "workspace:*",
     "common.types": "workspace:*",
     "features.table": "workspace:*",
     "features.invites": "workspace:*",

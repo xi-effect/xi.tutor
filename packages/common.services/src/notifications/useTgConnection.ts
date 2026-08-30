@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { openUrl, shouldSkipBlankPopup } from 'common.platform';
 import { useCreateTgConnection } from './useCreateTgConnection';
 import { useDeleteDeliveryMethod } from './useDeleteDeliveryMethod';
 import { useGetDeliveryMethods } from './useGetDeliveryMethods';
@@ -94,7 +95,7 @@ export function useTgConnection() {
   }, [isAwaitingConfirmation, syncDeliveryMethods]);
 
   const openLink = useCallback((url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    void openUrl(url);
   }, []);
 
   const handleOpenLink = useCallback(() => {
@@ -107,6 +108,28 @@ export function useTgConnection() {
 
     if (link) {
       handleOpenLink();
+      return;
+    }
+
+    if (shouldSkipBlankPopup()) {
+      const connectNative = () => {
+        createConnection(undefined, {
+          onSuccess: (responseLink: string) => {
+            if (!responseLink) return;
+            setLink(responseLink);
+            void openUrl(responseLink);
+          },
+        });
+      };
+
+      if (isBlocked || isReplaced) {
+        deleteConnection('telegram', {
+          onSuccess: connectNative,
+        });
+        return;
+      }
+
+      connectNative();
       return;
     }
 
