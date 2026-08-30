@@ -1,8 +1,13 @@
 export { MaterialsPage } from './src/ui';
 export { FileCard } from './src/ui/Files/Card';
 export { FilePreviewModal } from './src/ui/Files/preview';
+export { FilesUploaderFilter } from './src/ui/Files/FilesUploaderFilter';
+export { FilesTagsFilter } from './src/ui/Files/FilesTagsFilter';
+export { FilesFilteredEmpty } from './src/ui/Files/FilesFilteredEmpty';
 export { MaterialsGallerySkeleton } from './src/ui/MaterialsGallerySkeleton';
 export { LibraryTagsUiProvider } from './src/ui/Files/tags/LibraryTagsUiContext';
-export { formatToShortDate } from './src/utils';
+export { useLibraryTags } from './src/ui/Files/tags/useLibraryTags';
+export { formatToShortDate, filterLibraryFiles, hasActiveFilesFilters } from './src/utils';
+export { DEFAULT_FILES_FILTERS, type FilesFiltersT } from './src/types';
 export { MaterialsDuplicateProvider, useMaterialsDuplicate } from './src/provider';
 export { materialsEn, materialsRu } from './src/locales';

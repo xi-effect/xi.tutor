@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { Button } from '@xipkg/button';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { cn, useMediaQuery } from '@xipkg/utils';
@@ -16,6 +17,13 @@ import {
 import { MaterialsCard } from 'features.materials.card';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
+import {
+  DEFAULT_FILES_FILTERS,
+  FilesTagsFilter,
+  FilesUploaderFilter,
+  hasActiveFilesFilters,
+  type FilesFiltersT,
+} from 'pages.materials';
 import { ClassroomFiles } from './ClassroomFiles';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
@@ -35,13 +43,16 @@ const isYDocMaterial = (
 
 export const Materials = () => {
   const { t } = useTranslation('classroom');
+  const { t: tMaterials } = useTranslation('materials');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
 
   const activeTab: MaterialTypeTab = isMaterialTypeTab(search.tab) ? search.tab : 'boards';
   const contentType = activeTab === 'notes' ? 'note' : 'board';
+  const filesFiltersActive = hasActiveFilesFilters(filesFilters);
 
   const typeTabs = useMemo(
     () => [
@@ -110,6 +121,29 @@ export const Materials = () => {
             tabClassName={pageSwitcherTabClass}
             indicatorClassName={pageSwitcherIndicatorClass}
           />
+          {activeTab === 'files' ? (
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <FilesUploaderFilter
+                value={filesFilters.uploader}
+                onChange={(uploader) => setFilesFilters((prev) => ({ ...prev, uploader }))}
+              />
+              <FilesTagsFilter
+                value={filesFilters.tags}
+                onChange={(tags) => setFilesFilters((prev) => ({ ...prev, tags }))}
+              />
+              {filesFiltersActive ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
+                  onClick={() => setFilesFilters(DEFAULT_FILES_FILTERS)}
+                  data-umami-event="classroom-files-reset-all"
+                >
+                  {tMaterials('files.resetAll')}
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -117,7 +151,11 @@ export const Materials = () => {
         <div className="pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10">
           <div className={galleryShadowPadClass}>
             {activeTab === 'files' ? (
-              <ClassroomFiles classroomId={classroomId || ''} />
+              <ClassroomFiles
+                classroomId={classroomId || ''}
+                filters={filesFilters}
+                onResetFilters={() => setFilesFilters(DEFAULT_FILES_FILTERS)}
+              />
             ) : isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
               <ErrorState />
             ) : isClassroomLoading || isMaterialsLoading || !roleReady ? (
