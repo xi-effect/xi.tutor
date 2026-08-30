@@ -148,6 +148,7 @@ export const ScheduleDaySwiper = ({
                         onAddLessonClick != null ? () => onAddLessonClick(day) : undefined
                       }
                       fillColumn
+                      withIllustration
                       className="min-h-0"
                     />
                   ) : (

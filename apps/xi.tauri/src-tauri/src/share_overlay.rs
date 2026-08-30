@@ -2,8 +2,8 @@
 //!
 //! Two local windows:
 //! - `share-overlay` — control + annotation toolbar (excluded from capture)
-//! - `share-annotate` — fullscreen transparent canvas (captured with the display
-//!   so remote participants see the drawings)
+//! - `share-annotate` — fullscreen transparent canvas (excluded from capture;
+//!   strokes are mirrored to remotes over the LiveKit data channel)
 //!
 //! Capture itself stays in LiveKit/`getDisplayMedia`.
 
@@ -141,6 +141,9 @@ fn ensure_annotate_window<R: Runtime>(app: &AppHandle<R>) -> Result<WebviewWindo
     make_non_activating(&window);
     pin_above_everything(&window, OverlayLevel::Annotation);
     let _ = window.set_ignore_cursor_events(true);
+    // Strokes reach remotes over the data channel and are re-drawn on their
+    // side. Leaving the canvas in the capture would paint every stroke twice.
+    let _ = window.set_content_protected(true);
     Ok(window)
 }
 

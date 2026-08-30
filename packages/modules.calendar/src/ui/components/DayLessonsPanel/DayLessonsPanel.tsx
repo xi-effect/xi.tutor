@@ -181,7 +181,7 @@ export const DayLessonsPanel = ({
               />
               <div className="flex max-w-md flex-col gap-2 text-center">
                 <p className="text-m-base text-text-primary font-semibold">
-                  {t('no_lessons_on_date')}
+                  {isTutorEmptyState ? t('no_lessons_on_date') : t('no_lessons_on_date_student')}
                 </p>
                 <p className="text-s-base text-text-secondary dark:text-text-muted">
                   {isTutorEmptyState ? t('empty_day_tutor_hint') : t('empty_day_student_hint')}

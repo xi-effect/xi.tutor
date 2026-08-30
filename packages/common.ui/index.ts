@@ -17,6 +17,11 @@ export { EmptyMaterialsFull } from './src/empty/EmptyMaterialsFull';
 export { EmptyPayments } from './src/empty/EmptyPayments';
 export { EmptyPaymentsFull } from './src/empty/EmptyPaymentsFull';
 export { EmptySchedule } from './src/empty/EmptySchedule';
+export {
+  PageEmptyState,
+  pageEmptyIllustrationClass,
+  pageEmptyActionButtonClass,
+} from './src/empty/PageEmptyState';
 export { DateTimeDisplay } from './src/DateTimeDisplay';
 export { LoadingScreen } from './src/LoadingScreen';
 export { Logo } from './src/Logo';

@@ -127,7 +127,22 @@ export function installNativeMediaAdapters(): void {
       } catch {
         // Permission preflight must never block capture.
       }
-      return original(options);
+      // Annotations live in a separate always-on-top window, so they only reach
+      // the remote side when the captured surface is a whole display that also
+      // includes this app's own windows.
+      const stream = await original({
+        ...options,
+        video: {
+          ...(typeof options?.video === 'object' ? options.video : {}),
+          displaySurface: 'monitor',
+        },
+        selfBrowserSurface: 'include',
+        monitorTypeSurfaces: 'include',
+      } as DisplayMediaStreamOptions);
+      const settings = stream.getVideoTracks()[0]?.getSettings() as
+        (MediaTrackSettings & { displaySurface?: string }) | undefined;
+      console.info('[common.platform] display capture surface:', settings?.displaySurface);
+      return stream;
     }) as typeof mediaDevices.getDisplayMedia;
   }
 }

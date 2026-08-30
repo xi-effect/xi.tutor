@@ -18,6 +18,8 @@ import { ProductCallAnalyticsTracker } from './productAnalytics/ProductCallAnaly
 import { BoardCallStorageWarmup } from './boardWarmup/BoardCallStorageWarmup';
 import { NativeShareOverlayBridge } from './useNativeShareOverlay';
 import { NativeCallPipBridge } from './useNativeCallPip';
+import { ShareAnnotationPublisher } from './shareAnnotations/useShareAnnotationPublisher';
+import { ShareAnnotationsOverlay } from './shareAnnotations/ShareAnnotationsOverlay';
 import { installMediaPermissionRequestAnalytics } from './productAnalytics/installMediaPermissionRequestAnalytics';
 import { installNativeWebApiBridges } from 'common.platform';
 
@@ -73,6 +75,8 @@ const CallsShellProviders = ({ children }: CallsShellPropsT) => {
             <ProductCallAnalyticsTracker />
             <NativeShareOverlayBridge />
             <NativeCallPipBridge />
+            <ShareAnnotationPublisher />
+            <ShareAnnotationsOverlay />
             <BoardCallStorageWarmup />
             <CallsShellInit />
             {children}

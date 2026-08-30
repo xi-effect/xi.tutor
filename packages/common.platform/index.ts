@@ -55,7 +55,13 @@ export {
   focusMainFromShareOverlay,
   requestStopShareOverlay,
   onShareOverlayStop,
+  onShareAnnotation,
   SHARE_OVERLAY_STOP_EVENT,
+  SHARE_ANNOTATION_EVENT,
+  type AnnotationTool,
+  type AnnotationPoint,
+  type AnnotationStroke,
+  type AnnotationMessage,
 } from './src/calls';
 
 export {

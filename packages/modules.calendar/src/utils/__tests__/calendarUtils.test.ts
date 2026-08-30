@@ -45,10 +45,16 @@ describe('calendarUtils format/parse', () => {
     expect(parsed.getMinutes()).toBe(30);
   });
 
-  it('formatDateRangeDisplay без/с годом на границе', () => {
-    expect(formatDateRangeDisplay(new Date(2026, 2, 2), 7, 'ru-RU')).toContain('—');
-    expect(formatDateRangeDisplay(new Date(2025, 11, 30), 5, 'ru-RU')).toMatch(/2025/);
-    expect(formatDateRangeDisplay(new Date(2025, 11, 30), 5, 'ru-RU')).toMatch(/2026/);
+  it('formatDateRangeDisplay без года даже на границе лет', () => {
+    const sameYear = formatDateRangeDisplay(new Date(2026, 2, 2), 7, 'ru-RU');
+    expect(sameYear).toContain('—');
+    expect(sameYear).toMatch(/\d+ \p{L}{3}/u);
+    expect(sameYear).not.toMatch(/марта|августа|декабря|января/i);
+    expect(sameYear).not.toMatch(/20\d{2}/);
+
+    const crossYear = formatDateRangeDisplay(new Date(2025, 11, 30), 5, 'ru-RU');
+    expect(crossYear).toContain('—');
+    expect(crossYear).not.toMatch(/20\d{2}/);
   });
 
   it('getLessonCardSkeletonCountForDay стабилен для одной даты', () => {

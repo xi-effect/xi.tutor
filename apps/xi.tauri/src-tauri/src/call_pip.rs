@@ -12,10 +12,15 @@ use tauri::{
 };
 
 #[cfg(desktop)]
-use crate::overlay_window::{pin_above_everything, set_corner_radius, unpin, OverlayLevel};
+use crate::overlay_window::{
+    log_state, pin_above_everything, set_corner_radius, set_transparent, unpin, OverlayLevel,
+};
 
 /// Matches the `border-radius` of the PiP host overlay in `pip_shim.js`.
 const PIP_CORNER_RADIUS: f64 = 12.0;
+/// Floor for programmatic sizing; the user cannot drag the frame at all.
+const PIP_FLOOR_W: f64 = 240.0;
+const PIP_FLOOR_H: f64 = 120.0;
 
 const MAIN_LABEL: &str = "main";
 const MARGIN_PX: f64 = 16.0;
@@ -123,9 +128,14 @@ fn apply_pip_chrome<R: Runtime>(
     width: f64,
     height: f64,
 ) -> Result<(), String> {
-    let _ = window.set_min_size(Some(LogicalSize::new(280.0, 120.0)));
+    // The configured 1024x640 minimum would clamp the mini window, so it has to
+    // be relaxed before the resize, not after.
+    let _ = window.set_min_size(Some(LogicalSize::new(PIP_FLOOR_W, PIP_FLOOR_H)));
+    let _ = window.set_max_size(None::<LogicalSize<f64>>);
+    // The floating window has a fixed size: only the call UI changes it, and
+    // only through `call_pip_resize`.
     window
-        .set_resizable(true)
+        .set_resizable(false)
         .map_err(|err| format!("set resizable: {err}"))?;
     window
         .set_decorations(false)
@@ -135,7 +145,13 @@ fn apply_pip_chrome<R: Runtime>(
         .map_err(|err| format!("set size: {err}"))?;
     // Dropping decorations recreates the native window chrome, so pinning and
     // rounding have to happen after it — otherwise both are reset.
+    // The panel class would also float this window over other apps' full-screen
+    // Spaces, but swapping the isa of a window that already hosts a WKWebView
+    // destroys WebKit's KVO registration on `contentLayoutRect` and AppKit
+    // throws on the next teardown. It is only safe on windows we re-class before
+    // their webview attaches, which is not the case for the main window.
     pin_above_everything(window, OverlayLevel::Call);
+    set_transparent(window, true);
     set_corner_radius(window, PIP_CORNER_RADIUS);
     Ok(())
 }
@@ -149,6 +165,7 @@ fn restore_chrome<R: Runtime>(window: &WebviewWindow<R>, saved: SavedFrame) -> R
         .set_resizable(saved.resizable)
         .map_err(|err| format!("restore resizable: {err}"))?;
     let _ = window.set_min_size(Some(LogicalSize::new(saved.min_width, saved.min_height)));
+    let _ = window.set_max_size(None::<LogicalSize<f64>>);
 
     // The snapshot was taken while full screen, so its frame is the whole
     // display — AppKit already remembers the real one. Just go back.
@@ -277,6 +294,13 @@ pub async fn call_pip_enter<R: Runtime>(
         let _ = window.show();
         pin_above_everything(&window, OverlayLevel::Call);
 
+        // tao reacts to show/resize by touching the window chrome again, and its
+        // messages travel on a different queue than ours. Re-assert once the
+        // dust settles, then report what actually stuck.
+        tokio::time::sleep(std::time::Duration::from_millis(400)).await;
+        pin_above_everything(&window, OverlayLevel::Call);
+        log_state(&window, "call-pip");
+
         let (actual_w, actual_h) = logical_inner_size(&window).unwrap_or((width, height));
         if (actual_w - width).abs() > 2.0 || (actual_h - height).abs() > 2.0 {
             log::warn!(
@@ -328,9 +352,12 @@ pub async fn call_pip_resize<R: Runtime>(
         let (old_w, old_h) = logical_inner_size(&window).unwrap_or((width, height));
         let (old_x, old_y) = logical_outer_position(&window).unwrap_or((0.0, 0.0));
         let _ = old_w;
+        let _ = window.set_min_size(Some(LogicalSize::new(PIP_FLOOR_W, PIP_FLOOR_H)));
         window
             .set_size(LogicalSize::new(width, height))
             .map_err(|err| format!("resize: {err}"))?;
+        // Growing downwards would walk the window off the screen edge, so the
+        // bottom stays put and the top moves instead.
         let new_y = old_y + old_h - height;
         let _ = window.set_position(LogicalPosition::new(old_x, new_y));
         Ok(CallPipSize { width, height })
