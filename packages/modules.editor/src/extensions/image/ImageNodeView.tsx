@@ -19,7 +19,7 @@ import { DrawMenuItem } from '../../ui/components/drawing/DrawMenuItem';
 export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
   const src = node.attrs.src;
   const { editor, storageToken, isReadOnly } = useYjsContext();
-  const { isDrawing, toggle, close } = useDrawingToggle();
+  const { isDrawing, toggle, close } = useDrawingToggle(editor, getPos);
 
   const getActiveBlock = useNodeActiveBlock(editor, getPos, 'image');
   const { downloadImage } = useBlockMenuActions(editor, getActiveBlock);

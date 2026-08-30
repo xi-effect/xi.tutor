@@ -155,7 +155,9 @@ export const PdfViewer = ({
   }
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="relative flex h-full w-full flex-col">
+      {isDrawingBarOpen && <DrawingToolbar {...toolbarProps} onClose={closeDrawingBar} />}
+
       <div
         ref={containerRef}
         className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden"
@@ -173,7 +175,6 @@ export const PdfViewer = ({
             isActive={isDrawingBarOpen && !isReadOnly && !loading}
           />
         </div>
-        {isDrawingBarOpen && <DrawingToolbar {...toolbarProps} onClose={closeDrawingBar} />}
       </div>
       <PageControls
         fileName={fileName}

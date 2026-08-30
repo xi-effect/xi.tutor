@@ -28,7 +28,7 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
   const { insertImage } = useBlockMenuActions(editor, getActiveBlock);
   const { mutateAsync: uploadImage } = useUploadImage();
   const blobUrl = useProtectedImage(node.attrs.src, storageToken);
-  const { isDrawing, toggle, close } = useDrawingToggle();
+  const { isDrawing, toggle, close } = useDrawingToggle(editor, getPos);
 
   const handleDownload = () => {
     if (!node.attrs.src || !storageToken) return;
@@ -61,7 +61,7 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
 
   return (
     <NodeViewWrapper className="group relative my-3" contentEditable={false}>
-      <div className="bg-background-page border-border-default h-[520px] overflow-hidden rounded-xl border shadow-md">
+      <div className="bg-background-page border-border-default h-[520px] rounded-xl border shadow-md">
         {!node.attrs.src || !isResolvedSrc(blobUrl) ? (
           <div className="text-text-disabled flex h-full items-center justify-center text-sm">
             {t('pdf.loading')}

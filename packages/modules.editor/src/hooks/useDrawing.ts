@@ -1,22 +1,67 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DrawToolT, StrokeT } from '../types';
 import { useInterfaceStore } from '../store/interfaceStore';
+import { NodeSelection } from '@tiptap/pm/state';
+import { Editor } from '@tiptap/react';
 
-export function useDrawingToggle(initial = false) {
+function isNodeSelected(editor: Editor | null, position: number | undefined) {
+  return (
+    typeof position === 'number' &&
+    editor?.state.selection instanceof NodeSelection &&
+    editor.state.selection.from === position
+  );
+}
+
+export function useDrawingToggle(
+  editor: Editor | null,
+  getPos: () => number | undefined,
+  initial = false,
+) {
   const [isDrawing, setIsDrawing] = useState(initial);
+
   const isModalOpen = useInterfaceStore((s) => s.activeModal !== null);
   const isBlockMenuOpen = useInterfaceStore((s) => s.isBlockMenuOpen);
 
   const toggle = useCallback(() => setIsDrawing((v) => !v), []);
   const close = useCallback(() => setIsDrawing(false), []);
 
+  // Любой посторонний UI (блок-меню, модалка) поверх ноды -> выходим из режима рисования
   useEffect(() => {
-    if (isBlockMenuOpen) setIsDrawing(false);
-  }, [isBlockMenuOpen]);
+    if (isModalOpen || isBlockMenuOpen) setIsDrawing(false);
+  }, [isModalOpen, isBlockMenuOpen]);
 
+  // "Последнее известное" значение isDrawing для обработчика selectionUpdate ниже.
+  // Нужен, чтобы не пересоздавать подписку на editor.on(...) при каждом toggle
+  const isDrawingRef = useRef(isDrawing);
   useEffect(() => {
-    if (isModalOpen) setIsDrawing(false);
-  }, [isModalOpen]);
+    isDrawingRef.current = isDrawing;
+  }, [isDrawing]);
+
+  // Открытие: явный клик пользователя включил isDrawing -> синхронизируем
+  // selection редактора с этой нодой, чтобы дальше можно было отследить её потерю.
+  useEffect(() => {
+    if (!editor || !isDrawing) return;
+    const position = getPos();
+    if (typeof position === 'number') {
+      editor.commands.setNodeSelection(position);
+    }
+  }, [isDrawing, editor, getPos]);
+
+  // Закрытие: подписка живёт всё время жизни editor/getPos, актуальность
+  // isDrawing берём из рефа
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleSelectionUpdate = () => {
+      if (!isDrawingRef.current) return;
+      if (!isNodeSelected(editor, getPos())) setIsDrawing(false);
+    };
+
+    editor.on('selectionUpdate', handleSelectionUpdate);
+    return () => {
+      editor.off('selectionUpdate', handleSelectionUpdate);
+    };
+  }, [editor, getPos]);
 
   return { isDrawing, toggle, close };
 }
