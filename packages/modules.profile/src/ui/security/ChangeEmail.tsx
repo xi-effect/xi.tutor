@@ -7,6 +7,7 @@ import { Input } from '@xipkg/input';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import {
   ModalCloseIcon,
+  modalBodyClass,
   modalCancelButtonClass,
   modalConfirmButtonClass,
   modalContentClass,
@@ -86,83 +87,81 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
       <M.ModalTrigger asChild>{children}</M.ModalTrigger>
       <M.ModalContent className={modalContentClass} aria-describedby={undefined}>
         {(stage.type === 'form' && (
-          <>
-            <div className="flex flex-col gap-6 p-6 pb-0">
+          <Form {...form}>
+            <form className={modalBodyClass} onSubmit={handleSubmit(onSubmit)}>
               <div className={modalHeaderRowClass}>
                 <M.ModalTitle className={modalTitleClass}>{t('changeEmail.title')}</M.ModalTitle>
                 <ModalCloseIcon onClick={() => onOpenChange(false)} />
               </div>
-            </div>
-            <Form {...form}>
-              <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex flex-col gap-3 px-5 pt-5 pb-3">
-                  {timer && (
-                    <Timer
-                      durationSecs={10 * 60}
-                      getTitle={(time) => t('changeEmail.resendTimer', { time })}
-                      onTimerEnd={() => setTimer(false)}
-                    />
+
+              <div className="flex flex-col gap-3">
+                {timer && (
+                  <Timer
+                    durationSecs={10 * 60}
+                    getTitle={(time) => t('changeEmail.resendTimer', { time })}
+                    onTimerEnd={() => setTimer(false)}
+                  />
+                )}
+                <FormField
+                  control={control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('changeEmail.newEmail')}</FormLabel>
+                      <FormControl className="mt-2">
+                        <Input {...field} error={!!errors.email} autoComplete="on" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <FormField
-                    control={control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('changeEmail.newEmail')}</FormLabel>
-                        <FormControl className="mt-2">
-                          <Input {...field} error={!!errors.email} autoComplete="on" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('changeEmail.password')}</FormLabel>
-                        <FormControl className="mt-2">
-                          <Input
-                            {...field}
-                            error={!!errors?.password}
-                            autoComplete="off"
-                            afterClassName="cursor-pointer"
-                            type={isPasswordShow ? 'text' : 'password'}
-                            after={isPasswordShow ? <Eyeoff /> : <Eyeon />}
-                            afterProps={{
-                              onClick: changePasswordShow,
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className={modalFooterClass}>
-                  <Button
-                    variant="none"
-                    type="button"
-                    size="m"
-                    className={modalCancelButtonClass}
-                    onClick={() => onOpenChange(false)}
-                  >
-                    {t('changeEmail.cancel')}
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="m"
-                    className={modalConfirmButtonClass}
-                    disabled={timer}
-                    type="submit"
-                  >
-                    {t('changeEmail.change')}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </>
+                />
+                <FormField
+                  control={control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('changeEmail.password')}</FormLabel>
+                      <FormControl className="mt-2">
+                        <Input
+                          {...field}
+                          error={!!errors?.password}
+                          autoComplete="off"
+                          afterClassName="cursor-pointer"
+                          type={isPasswordShow ? 'text' : 'password'}
+                          after={isPasswordShow ? <Eyeoff /> : <Eyeon />}
+                          afterProps={{
+                            onClick: changePasswordShow,
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className={modalFooterClass}>
+                <Button
+                  variant="none"
+                  type="button"
+                  size="m"
+                  className={modalCancelButtonClass}
+                  onClick={() => onOpenChange(false)}
+                >
+                  {t('changeEmail.cancel')}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="m"
+                  className={modalConfirmButtonClass}
+                  disabled={timer}
+                  type="submit"
+                >
+                  {t('changeEmail.change')}
+                </Button>
+              </div>
+            </form>
+          </Form>
         )) ||
           (stage.type === 'success' && (
             <div className="space-y-8 p-8">
