@@ -1,0 +1,160 @@
+.share-bar {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 10px 0 8px;
+  border-radius: 14px;
+  background: rgba(22, 26, 34, 0.92);
+  color: #f4f6fa;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.share-bar *,
+.share-bar *::before,
+.share-bar *::after {
+  box-sizing: border-box;
+}
+
+.share-bar__grip {
+  width: 10px;
+  align-self: stretch;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.share-bar__pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55);
+  animation: share-pulse 1.6s ease-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes share-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.share-bar__copy {
+  min-width: 0;
+  text-align: left;
+  padding-right: 4px;
+}
+
+.share-bar__brand {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(244, 246, 250, 0.62);
+  line-height: 1.1;
+}
+
+.share-bar__title {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.share-bar__divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.share-bar__tools,
+.share-bar__colors,
+.share-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.share-bar__icon {
+  appearance: none;
+  border: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: rgba(244, 246, 250, 0.88);
+  cursor: pointer;
+}
+
+.share-bar__icon:hover,
+.share-bar__swatch:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.share-bar__icon.is-active {
+  background: rgba(92, 95, 209, 0.9);
+  color: #fff;
+}
+
+.share-bar__swatch {
+  appearance: none;
+  border: 2px solid transparent;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  padding: 0;
+  background: var(--swatch);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.share-bar__swatch.is-active {
+  border-color: #fff;
+}
+
+.share-bar__btn {
+  appearance: none;
+  border: 0;
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.share-bar__btn--ghost {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f4f6fa;
+}
+
+.share-bar__btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.share-bar__btn--danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.share-bar__btn--danger:hover {
+  background: #b91c1c;
+}

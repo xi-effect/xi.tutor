@@ -3,6 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Plus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { cn } from '@xipkg/utils';
+import {
+  EmptySchedule,
+  PageEmptyState,
+  pageEmptyActionButtonClass,
+  pageEmptyIllustrationClass,
+} from 'common.ui';
 
 type ScheduleEmptyStateProps = {
   /** Дни, к которым относится пустое состояние (один или несколько подряд выбранных дней) */
@@ -11,10 +17,15 @@ type ScheduleEmptyStateProps = {
   onScheduleClick?: () => void;
   className?: string;
   /**
-   * Канбан: высота блока по viewport (calc(100dvh − шапки − отступы)), не на всю высоту скролла.
+   * Канбан: высота блока по viewport, не на всю высоту скролла.
    * Мобильный список: компактный блок по содержимому.
    */
   fillColumn?: boolean;
+  /**
+   * Полноэкранный empty с иллюстрацией — когда пусты все видимые дни
+   * (та же сетка PageEmptyState, что у кабинетов / материалов / оплат).
+   */
+  withIllustration?: boolean;
 };
 
 export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
@@ -22,9 +33,50 @@ export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
   onScheduleClick,
   className,
   fillColumn = false,
+  withIllustration = false,
 }) => {
   const { t } = useTranslation('calendar');
   const isSingleDay = days.length <= 1;
+  const isTutor = onScheduleClick != null;
+
+  if (withIllustration) {
+    const title = isSingleDay
+      ? isTutor
+        ? t('no_lessons_on_date')
+        : t('no_lessons_on_date_student')
+      : t('schedule_empty_selected_days');
+    const description = isSingleDay
+      ? isTutor
+        ? t('empty_day_tutor_hint')
+        : t('empty_day_student_hint')
+      : isTutor
+        ? t('empty_days_tutor_hint')
+        : t('empty_days_student_hint');
+
+    return (
+      <PageEmptyState
+        className={className}
+        title={title}
+        description={description}
+        actions={
+          onScheduleClick ? (
+            <Button
+              type="button"
+              variant="none"
+              className={pageEmptyActionButtonClass}
+              onClick={onScheduleClick}
+              data-umami-event="schedule-empty-add-lesson-kanban"
+            >
+              {t('add_lesson')}
+              <Plus className="fill-icon-primary ml-1 size-4 shrink-0" />
+            </Button>
+          ) : undefined
+        }
+        illustration={<EmptySchedule className={pageEmptyIllustrationClass} />}
+      />
+    );
+  }
+
   const messageKey = isSingleDay ? 'schedule_empty_day' : 'schedule_empty_selected_days';
 
   return (
@@ -47,14 +99,13 @@ export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
         {onScheduleClick ? (
           <Button
             type="button"
-            variant="ghost"
-            size="s"
-            className="text-text-link h-9 shrink-0 font-medium"
+            variant="none"
+            className={pageEmptyActionButtonClass}
             onClick={onScheduleClick}
             data-umami-event="schedule-empty-add-lesson-kanban"
           >
             {t('add_lesson')}
-            <Plus className="fill-icon-brand ml-2 h-5 w-5" />
+            <Plus className="fill-icon-primary ml-1 size-4 shrink-0" />
           </Button>
         ) : null}
       </div>

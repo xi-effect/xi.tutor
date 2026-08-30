@@ -49,6 +49,7 @@
     "@xipkg/utils": "^1.8.0",
     "common.config": "workspace:*",
     "common.env": "workspace:*",
+    "common.platform": "workspace:*",
     "common.services": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",

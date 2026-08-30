@@ -138,6 +138,28 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   const gridTemplateColumns =
     n > 0 ? `repeat(${n}, minmax(${Math.max(columnWidth, 0)}px, 1fr))` : '1fr';
 
+  const isFullyEmpty = !eventsLoading && visibleDays.length > 0 && hasEvents.every((has) => !has);
+
+  if (isFullyEmpty) {
+    const firstDay = visibleDays[0];
+    return (
+      <div
+        className={cn(
+          'flex h-full min-h-0 flex-1 flex-col',
+          allowHorizontalOverflow ? 'overflow-y-hidden' : 'min-w-0 overflow-hidden',
+        )}
+      >
+        <ScheduleEmptyState
+          withIllustration
+          days={visibleDays}
+          onScheduleClick={onAddLessonClick != null ? () => onAddLessonClick(firstDay) : undefined}
+          className="h-full w-full"
+        />
+        {lessonInfoModal}
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(

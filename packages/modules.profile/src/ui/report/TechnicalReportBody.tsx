@@ -1,6 +1,7 @@
 import { Button } from '@xipkg/button';
 import { useEffect, useState } from 'react';
 import { collectTechnicalInfo, formatReport, ReportSection } from '../../utils';
+import { writeText } from 'common.platform';
 import { toast } from 'sonner';
 import { Copy } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +36,7 @@ export const TechnicalReportBody = ({ isMobile, app }: TechnicalReportBodyProps)
   const handleCopy = async () => {
     try {
       const reportText = formatReport(sections);
-      await navigator.clipboard.writeText(reportText);
+      await writeText(reportText);
       toast.success(t('report.copied'));
     } catch (error) {
       console.error('Ошибка при копировании:', error);

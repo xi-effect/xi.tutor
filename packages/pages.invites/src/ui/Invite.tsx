@@ -142,7 +142,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         </h3>
         {invite.kind === 'group' ? (
           <p className="text-text-secondary dark:text-text-secondary text-sm">
-            {t('subtitle.groupFromTutor', { name: invite.classroom.name })}
+            {t('subtitle.groupName', { name: invite.classroom.name })}
           </p>
         ) : null}
       </div>

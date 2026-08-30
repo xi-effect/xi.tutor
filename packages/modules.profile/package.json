@@ -28,6 +28,7 @@
     "common.auth": "workspace:*",
     "common.config": "workspace:*",
     "common.env": "workspace:*",
+    "common.platform": "workspace:*",
     "common.services": "workspace:*",
     "common.theme": "workspace:*",
     "common.types": "workspace:*",

@@ -4,7 +4,7 @@
   "linkPlaceholder": "Ссылка",
   "resetLink": "Сбросить ссылку",
   "copyLink": "Копировать ссылку",
-  "studentsCount": "Cтудентов в кабинете: {{count}} из 15",
+  "studentsCount": "Учеников в кабинете: {{count}} из 15",
   "toast": {
     "linkCopied": "Ссылка скопирована",
     "sendToStudents": "Отправьте ссылку ученикам",
