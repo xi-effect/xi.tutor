@@ -12,7 +12,7 @@ export * from './notifications';
 export { usePWAInstall } from './usePWAInstall';
 export * from './network';
 export * from './calls';
-export * from './subjects';
+export * from './tags';
 export * from './students';
 export * from './enrollments';
 export * from './tutors';
@@ -29,5 +29,11 @@ export {
   type UploadFileResponse,
   type ContentTokenHeaders,
   type ReadFileHeaders,
+  tagsApiConfig,
+  TagsQueryKey,
+  tagsQueryKeys,
+  TAG_KIND,
+  type TagKind,
+  type TagSchema,
 } from 'common.api';
 export * from './scheduler';
