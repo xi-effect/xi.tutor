@@ -10,7 +10,12 @@ import { AudioPreview } from './AudioPreview';
 import { FilePreviewError } from './FilePreviewError';
 import { FilePreviewHeader } from './FilePreviewHeader';
 import { FilePreviewLoading } from './FilePreviewLoading';
+import { FilePreviewNav } from './FilePreviewNav';
 import { FilePreviewUnsupported } from './FilePreviewUnsupported';
+import {
+  readFilePreviewFullscreen,
+  writeFilePreviewFullscreen,
+} from './filePreviewFullscreenStore';
 import { ShareFileModal } from '../ShareFileModal';
 import { RenameFileModal } from '../RenameFileModal';
 import { useLibraryTagsManage } from '../tags/libraryTagsUiStore';
@@ -37,15 +42,25 @@ const DISMISS_GUARD_MS = 500;
 
 type FilePreviewModalProps = {
   file: LibraryFile | null;
+  files?: LibraryFile[];
   onOpenChange: (open: boolean) => void;
+  onFileChange?: (file: LibraryFile) => void;
+  readOnly?: boolean;
 };
 
-export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) => {
+export const FilePreviewModal = ({
+  file,
+  files,
+  onOpenChange,
+  onFileChange,
+  readOnly = false,
+}: FilePreviewModalProps) => {
   const { t } = useTranslation('materials');
   const open = Boolean(file);
   const previewKind = file ? getFilePreviewKind(file) : 'unsupported';
   const needsBlob = previewKind !== 'unsupported';
   const dismissGuardUntilRef = useRef(0);
+  const wasOpenRef = useRef(false);
   const windowSize = usePreviewWindowSize();
 
   const { blob, blobUrl, isLoading, isError, refetch } = useLibraryFileBlob(
@@ -67,8 +82,29 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
   const displayName = file ? getLibraryFileDisplayName(file) : '';
   const extensionLabel = file ? getExtensionLabel(file) : '';
 
+  const fileIndex = useMemo(() => {
+    if (!file || !files?.length) return -1;
+    return files.findIndex((item) => item.id === file.id);
+  }, [file, files]);
+
+  const hasPrev = Boolean(onFileChange && files && fileIndex > 0);
+  const hasNext = Boolean(onFileChange && files && fileIndex >= 0 && fileIndex < files.length - 1);
+
+  const setFullscreen = useCallback((value: boolean) => {
+    setIsFullscreen(value);
+    writeFilePreviewFullscreen(value);
+  }, []);
+
+  const goToSibling = useCallback(
+    (direction: -1 | 1) => {
+      if (!onFileChange || !files || fileIndex < 0) return;
+      const next = files[fileIndex + direction];
+      if (next) onFileChange(next);
+    },
+    [fileIndex, files, onFileChange],
+  );
+
   useEffect(() => {
-    setIsFullscreen(false);
     setDeleteOpen(false);
     setShareOpen(false);
     setRenameOpen(false);
@@ -82,19 +118,72 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
   }, [blobUrl]);
 
   useEffect(() => {
-    if (open) {
+    if (open && !wasOpenRef.current && file) {
+      const preferred = readFilePreviewFullscreen();
+      setIsFullscreen(preferred && canPreviewFullscreen(getFilePreviewKind(file)));
       dismissGuardUntilRef.current = Date.now() + DISMISS_GUARD_MS;
-    } else {
+    }
+
+    if (!open && wasOpenRef.current) {
       setIsFullscreen(false);
       cleanupBodyScrollLock();
     }
+
+    wasOpenRef.current = open;
     return cleanupBodyScrollLock;
-  }, [open]);
+  }, [open, file]);
+
+  useEffect(() => {
+    if (!open || !file || !isFullscreen) return;
+    if (!canPreviewFullscreen(getFilePreviewKind(file))) {
+      setFullscreen(false);
+    }
+  }, [file, isFullscreen, open, setFullscreen]);
+
+  useEffect(() => {
+    if (!open || !isFullscreen || !onFileChange || !files?.length) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (
+        target?.closest('input, textarea, select, [contenteditable="true"]') ||
+        deleteOpen ||
+        shareOpen ||
+        renameOpen ||
+        tagsOpen ||
+        manageOpen
+      ) {
+        return;
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goToSibling(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goToSibling(1);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [
+    deleteOpen,
+    goToSibling,
+    isFullscreen,
+    manageOpen,
+    onFileChange,
+    open,
+    renameOpen,
+    shareOpen,
+    tagsOpen,
+    files?.length,
+  ]);
 
   const isDismissGuarded = () => Date.now() < dismissGuardUntilRef.current;
 
   const handleClose = () => {
-    setIsFullscreen(false);
     cleanupBodyScrollLock();
     onOpenChange(false);
   };
@@ -122,6 +211,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
   const showUnsupported = previewKind === 'unsupported';
   const showFullscreen = Boolean(file) && canPreviewFullscreen(previewKind) && !showError;
   const effectiveFullscreen = isFullscreen && showFullscreen;
+  const showFileNav = effectiveFullscreen && Boolean(onFileChange && files && files.length > 1);
 
   const subtitle = useMemo(() => {
     if (!file) return '';
@@ -141,7 +231,8 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
     if (!nextOpen) handleClose();
   };
 
-  const stageClass = previewKind === 'audio' ? undefined : PREVIEW_STAGE_CLASS;
+  const stageClass =
+    previewKind === 'audio' && !effectiveFullscreen ? undefined : PREVIEW_STAGE_CLASS;
   const overlayOpen = shareOpen || renameOpen || tagsOpen || manageOpen;
 
   return (
@@ -164,7 +255,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
           onEscapeKeyDown={(event) => {
             if (effectiveFullscreen) {
               event.preventDefault();
-              setIsFullscreen(false);
+              setFullscreen(false);
             }
           }}
           onClick={(event) => {
@@ -198,7 +289,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
             <motion.div
               initial={false}
               animate={
-                previewKind === 'audio'
+                previewKind === 'audio' && !effectiveFullscreen
                   ? undefined
                   : effectiveFullscreen
                     ? {
@@ -214,7 +305,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
               }
               transition={previewFullscreenTransition}
               className={cn(
-                'flex flex-col overflow-hidden',
+                'relative flex flex-col overflow-hidden',
                 effectiveFullscreen
                   ? 'bg-background-page'
                   : cn(
@@ -231,12 +322,13 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
                 kind={previewKind}
                 isFullscreen={effectiveFullscreen}
                 showFullscreen={showFullscreen}
-                showMore
+                showMore={!readOnly}
+                showDownload={!readOnly}
                 isDownloading={isDownloading}
                 tagsOpen={tagsOpen}
                 onTagsOpenChange={setTagsOpen}
                 onDownload={handleDownload}
-                onToggleFullscreen={() => setIsFullscreen((value) => !value)}
+                onToggleFullscreen={() => setFullscreen(!isFullscreen)}
                 onDelete={() => setDeleteOpen(true)}
                 onShare={() => setShareOpen(true)}
                 onRename={() => setRenameOpen(true)}
@@ -245,8 +337,8 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
               <ModalDescription className="sr-only">{subtitle}</ModalDescription>
               <ModalBody
                 className={cn(
-                  'min-h-0 flex-1',
-                  previewKind === 'audio' ? '' : 'flex flex-col',
+                  'relative min-h-0 flex-1',
+                  previewKind === 'audio' && !effectiveFullscreen ? '' : 'flex flex-col',
                   effectiveFullscreen ? 'bg-transparent p-6 pt-0' : 'p-6',
                 )}
               >
@@ -276,6 +368,7 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
                 ) : previewKind === 'audio' && blobUrl ? (
                   <AudioPreview
                     blobUrl={blobUrl}
+                    isFullscreen={effectiveFullscreen}
                     onDuration={setAudioDuration}
                     onError={handleRenderError}
                   />
@@ -296,6 +389,14 @@ export const FilePreviewModal = ({ file, onOpenChange }: FilePreviewModalProps) 
                 ) : (
                   <FilePreviewLoading isFullscreen={effectiveFullscreen} className={stageClass} />
                 )}
+                {showFileNav ? (
+                  <FilePreviewNav
+                    hasPrev={hasPrev}
+                    hasNext={hasNext}
+                    onPrev={() => goToSibling(-1)}
+                    onNext={() => goToSibling(1)}
+                  />
+                ) : null}
               </ModalBody>
             </motion.div>
           ) : null}

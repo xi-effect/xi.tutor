@@ -165,7 +165,9 @@
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
       "zoomReset": "Reset zoom",
-      "zoomLevel": "{{value}}%"
+      "zoomLevel": "{{value}}%",
+      "prevFile": "Previous file",
+      "nextFile": "Next file"
     },
     "deleteConfirm": {
       "title": "Delete file?",

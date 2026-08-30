@@ -16,6 +16,7 @@ import { Copy, Edit, Eyeon, MoreVert, Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
   cardMenuButtonClass,
+  cardMenuCheckboxItemClass,
   cardMenuDeleteItemClass,
   cardMenuIconClass,
   cardMenuItemClass,
@@ -105,8 +106,7 @@ export const MaterialActionsMenu = ({
                   onCheckedChange={() => handleChange(value)}
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                   className={cn(
-                    cardMenuItemClass,
-                    'cursor-pointer',
+                    cardMenuCheckboxItemClass,
                     studentAccessMode === value && 'bg-status-info-background text-text-link',
                   )}
                   data-umami-event="material-access-mode-change"

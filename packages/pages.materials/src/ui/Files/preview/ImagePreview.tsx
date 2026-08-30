@@ -27,8 +27,8 @@ export const ImagePreview = ({
   return (
     <div
       className={cn(
-        'bg-background-page relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden',
-        !isFullscreen && 'rounded-xl p-4',
+        'bg-background-page relative min-h-0 w-full flex-1 overflow-hidden',
+        !isFullscreen && 'rounded-xl',
       )}
     >
       {!loaded ? (
@@ -36,15 +36,16 @@ export const ImagePreview = ({
           <FilePreviewLoading isFullscreen={isFullscreen} className="min-h-0" />
         </div>
       ) : null}
-      <PreviewZoomStage enabled={isFullscreen}>
+      <PreviewZoomStage
+        enabled={isFullscreen}
+        className={cn('absolute inset-0', !isFullscreen && 'p-4')}
+      >
         <img
           src={blobUrl}
           alt={fileName}
           className={cn(
-            'rounded-xl object-contain',
-            isFullscreen
-              ? 'max-h-[calc(100dvh-160px)] max-w-[min(1280px,calc(100vw-80px))]'
-              : 'max-h-full max-w-full',
+            'h-auto max-h-full w-auto max-w-full rounded-xl object-contain',
+            isFullscreen && 'max-h-[calc(100dvh-160px)] max-w-[min(1280px,calc(100vw-80px))]',
             loaded ? 'opacity-100' : 'opacity-0',
           )}
           onLoad={(event) => {

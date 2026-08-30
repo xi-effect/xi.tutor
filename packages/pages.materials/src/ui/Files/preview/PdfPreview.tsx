@@ -24,7 +24,7 @@ const settleRenderTask = async (task: RenderTask | null) => {
 };
 
 export const PdfPreview = ({ source, isFullscreen, onError }: PdfPreviewProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const sizeHostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const renderTaskRef = useRef<RenderTask | null>(null);
   const docRef = useRef<PDFDocumentProxy | null>(null);
@@ -80,7 +80,7 @@ export const PdfPreview = ({ source, isFullscreen, onError }: PdfPreviewProps) =
   }, [source]);
 
   useEffect(() => {
-    const el = containerRef.current;
+    const el = sizeHostRef.current;
     if (!el) return;
 
     let raf = 0;
@@ -173,27 +173,22 @@ export const PdfPreview = ({ source, isFullscreen, onError }: PdfPreviewProps) =
 
   return (
     <div
-      className={cn(
-        'bg-background-page relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-xl',
-      )}
+      className={cn('bg-background-page relative min-h-0 w-full flex-1 overflow-hidden rounded-xl')}
     >
       {loading ? (
         <div className="absolute inset-0 z-10 flex items-center justify-center">
           <FilePreviewLoading isFullscreen={isFullscreen} className="min-h-0" />
         </div>
       ) : null}
-      <PreviewZoomStage
-        enabled={isFullscreen}
-        resetKey={page}
-        viewportRef={containerRef}
-        className="p-4"
-      >
-        <canvas
-          ref={canvasRef}
-          className="block max-h-full max-w-full rounded-lg shadow-[0px_8px_24px_rgba(16,16,16,0.08)]"
-          style={{ opacity: loading ? 0.3 : 1 }}
-        />
-      </PreviewZoomStage>
+      <div ref={sizeHostRef} className="absolute inset-0 p-4 pb-14">
+        <PreviewZoomStage enabled={isFullscreen} resetKey={page} className="h-full w-full">
+          <canvas
+            ref={canvasRef}
+            className="block max-h-full max-w-full rounded-lg shadow-[0px_8px_24px_rgba(16,16,16,0.08)]"
+            style={{ opacity: loading ? 0.3 : 1 }}
+          />
+        </PreviewZoomStage>
+      </div>
       <PagePager
         currentPage={page}
         totalPages={totalPages}

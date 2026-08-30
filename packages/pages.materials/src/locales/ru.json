@@ -165,7 +165,9 @@
       "zoomIn": "Приблизить",
       "zoomOut": "Отдалить",
       "zoomReset": "Сбросить масштаб",
-      "zoomLevel": "{{value}}%"
+      "zoomLevel": "{{value}}%",
+      "prevFile": "Предыдущий файл",
+      "nextFile": "Следующий файл"
     },
     "deleteConfirm": {
       "title": "Удалить файл?",

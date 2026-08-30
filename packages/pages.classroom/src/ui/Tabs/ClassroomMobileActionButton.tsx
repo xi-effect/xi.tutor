@@ -32,6 +32,7 @@ type ClassroomMobileActionButtonProps = {
   classroomKind: string | undefined;
   isPendingAddMaterial: boolean;
   isDeletingClassroom: boolean;
+  isFilesTab?: boolean;
   isStudentsModalOpen: boolean;
   isGroupInviteModalOpen: boolean;
   onAddMaterial: (contentKind: ContentKind, studentAccessMode: StudentAccessMode) => void;
@@ -103,6 +104,7 @@ export const ClassroomMobileActionButton = ({
   classroomKind,
   isPendingAddMaterial,
   isDeletingClassroom,
+  isFilesTab = false,
   isStudentsModalOpen,
   isGroupInviteModalOpen,
   onAddMaterial,
@@ -151,6 +153,10 @@ export const ClassroomMobileActionButton = ({
     }
 
     if (currentTab === 'materials') {
+      if (isFilesTab) {
+        return [];
+      }
+
       return materialActionsConfig.map(
         ({ contentKind, accessMode, labelKey, Icon, umamiEvent }) => ({
           id: `${contentKind}-${accessMode}`,
@@ -206,6 +212,7 @@ export const ClassroomMobileActionButton = ({
     classroomKind,
     currentTab,
     isDeletingClassroom,
+    isFilesTab,
     isPendingAddMaterial,
     onAddMaterial,
     onDeleteClassroom,

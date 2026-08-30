@@ -43,10 +43,13 @@
   "materials": {
     "boards": "Boards",
     "notes": "Notes",
+    "files": "Files",
     "noBoards": "Create your first board",
     "noBoardsDescription": "You can add images, presentations, audio, and other files to a board",
     "noNotes": "Create your first note",
     "noNotesDescription": "You can add text, lists, checklists, and images to a note",
+    "noFiles": "No files yet",
+    "noFilesDescription": "Files shared with this classroom will appear here",
     "noMaterials": "No materials",
     "emptyDescription": "To jot down ideas for lessons",
     "loadError": "Failed to load materials",

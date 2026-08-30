@@ -31,6 +31,7 @@ interface TutorDesktopToolbarProps {
   currentTab: string;
   classroomKind: string | undefined;
   materialKind: 'note' | 'board';
+  isFilesTab: boolean;
   onAddLessonClick: () => void;
   onOpenInvoiceModal: () => void;
   onDeleteClassroom: () => void;
@@ -41,6 +42,7 @@ const TutorDesktopToolbar = ({
   currentTab,
   classroomKind,
   materialKind,
+  isFilesTab,
   onAddLessonClick,
   onOpenInvoiceModal,
   onDeleteClassroom,
@@ -74,6 +76,10 @@ const TutorDesktopToolbar = ({
   }
 
   if (currentTab === 'materials') {
+    if (isFilesTab) {
+      return null;
+    }
+
     return (
       <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
         <MaterialsAdd kind={materialKind} />
@@ -158,6 +164,7 @@ export const TabsTutor = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const materialKind = search.tab === 'notes' ? 'note' : 'board';
+  const isFilesTab = search.tab === 'files';
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
@@ -219,6 +226,7 @@ export const TabsTutor = () => {
                 currentTab={currentTab}
                 classroomKind={classroom?.kind}
                 materialKind={materialKind}
+                isFilesTab={isFilesTab}
                 onAddLessonClick={() => onAddLessonClick?.()}
                 onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
                 onDeleteClassroom={handleDeleteClassroomClick}
@@ -258,6 +266,7 @@ export const TabsTutor = () => {
             classroomKind={classroom?.kind}
             isPendingAddMaterial={addClassroomMaterials.isPending}
             isDeletingClassroom={isDeletingClassroom}
+            isFilesTab={isFilesTab}
             isStudentsModalOpen={isStudentsModalOpen}
             isGroupInviteModalOpen={isGroupInviteModalOpen}
             onAddMaterial={handleAddMaterial}

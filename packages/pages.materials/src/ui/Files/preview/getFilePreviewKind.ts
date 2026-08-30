@@ -50,4 +50,4 @@ export const getFilePreviewKind = (file: LibraryFile): FilePreviewKind => {
 };
 
 export const canPreviewFullscreen = (kind: FilePreviewKind): boolean =>
-  kind === 'image' || kind === 'pdf' || kind === 'presentation';
+  kind === 'image' || kind === 'audio' || kind === 'pdf' || kind === 'presentation';

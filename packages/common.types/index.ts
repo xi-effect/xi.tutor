@@ -26,6 +26,7 @@ export type {
 export type {
   MaterialId,
   YDocContentKind,
+  ClassroomContentKind,
   MaterialT,
   PersonalMaterialResponse,
   ClassroomMaterialResponse,

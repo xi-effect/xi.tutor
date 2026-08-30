@@ -109,6 +109,8 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
       />
       <FilePreviewModal
         file={currentPreviewFile}
+        files={filteredFiles}
+        onFileChange={setPreviewFile}
         onOpenChange={(open) => {
           if (!open) setPreviewFile(null);
         }}

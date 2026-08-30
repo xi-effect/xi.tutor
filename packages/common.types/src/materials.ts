@@ -1,5 +1,6 @@
 export type MaterialId = string;
 export type YDocContentKind = 'note' | 'board';
+export type ClassroomContentKind = YDocContentKind | 'file';
 export type AccessModeT = 'no_access' | 'read_only' | 'read_write';
 
 export type MaterialCursor = {
@@ -49,11 +50,12 @@ export type PersonalMaterialResponse = {
 export type ClassroomMaterialResponse = {
   id: MaterialId;
   updated_at: string;
-  content_kind: YDocContentKind;
+  content_kind: ClassroomContentKind;
   name?: string;
   classroom_id?: number | null;
   student_access_mode?: AccessModeT;
   access_kind?: 'classroom';
+  file_id?: string;
 };
 
 export type MaterialT = PersonalMaterialResponse | ClassroomMaterialResponse;

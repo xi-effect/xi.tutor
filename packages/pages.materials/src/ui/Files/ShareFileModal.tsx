@@ -163,7 +163,7 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
           </ModalDescription>
         </div>
 
-        <div className="flex flex-col gap-4 px-6 pb-6">
+        <div className="flex flex-col gap-4 px-6">
           <div className="bg-status-info-background flex items-center gap-3 rounded-lg p-3">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px]">
               <Icon className="fill-icon-brand size-6" />
@@ -259,7 +259,7 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
           </div>
         </div>
 
-        <div className={modalFooterClass}>
+        <div className={cn(modalFooterClass, 'px-6 pt-4 pb-6')}>
           <Button
             type="button"
             variant="none"

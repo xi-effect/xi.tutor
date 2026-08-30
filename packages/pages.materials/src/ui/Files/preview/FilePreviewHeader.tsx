@@ -34,6 +34,7 @@ type FilePreviewHeaderProps = {
   isFullscreen: boolean;
   showFullscreen: boolean;
   showMore: boolean;
+  showDownload?: boolean;
   isDownloading?: boolean;
   tagsOpen: boolean;
   onTagsOpenChange: (open: boolean) => void;
@@ -53,6 +54,7 @@ export const FilePreviewHeader = ({
   isFullscreen,
   showFullscreen,
   showMore,
+  showDownload = true,
   isDownloading,
   tagsOpen,
   onTagsOpenChange,
@@ -85,7 +87,7 @@ export const FilePreviewHeader = ({
           <Icon className="fill-icon-brand size-6" />
         </div>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <ModalTitle className="text-text-primary m-0 truncate text-xl leading-7 font-medium">
+          <ModalTitle className="font-playfair text-text-primary m-0 truncate text-xl leading-7 font-medium">
             {title}
           </ModalTitle>
           <p className="text-text-secondary text-xs leading-4 font-normal">{subtitle}</p>
@@ -93,18 +95,20 @@ export const FilePreviewHeader = ({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <Button
-          type="button"
-          variant="none"
-          size="s"
-          className={iconButtonClass}
-          onClick={onDownload}
-          onMouseDown={(event) => event.preventDefault()}
-          disabled={isDownloading}
-          aria-label={t('files.menu.download')}
-        >
-          <Download className={iconClass} />
-        </Button>
+        {showDownload ? (
+          <Button
+            type="button"
+            variant="none"
+            size="s"
+            className={iconButtonClass}
+            onClick={onDownload}
+            onMouseDown={(event) => event.preventDefault()}
+            disabled={isDownloading}
+            aria-label={t('files.menu.download')}
+          >
+            <Download className={iconClass} />
+          </Button>
+        ) : null}
         {showFullscreen ? (
           <Button
             type="button"

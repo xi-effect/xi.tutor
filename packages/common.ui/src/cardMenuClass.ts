@@ -22,6 +22,17 @@ export const cardMenuItemClass = cn(
   'hover:[&_svg]:fill-icon-brand focus:[&_svg]:fill-icon-brand',
 );
 
+/**
+ * CheckboxItem из @xipkg/dropdown: галочка absolute left-2 + базовый pl-8.
+ * cardMenuItemClass с px-3 сбивает отступ — текст наезжает на Check (lucide, stroke).
+ */
+export const cardMenuCheckboxItemClass = cn(
+  'text-text-primary relative flex h-10 cursor-pointer items-center rounded-lg pr-3 pl-8 text-sm leading-5 font-normal',
+  'hover:bg-status-info-background hover:text-text-link focus:bg-status-info-background focus:text-text-link',
+  'hover:font-medium focus:font-medium',
+  '[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:fill-none [&_svg]:stroke-current',
+);
+
 export const cardMenuDeleteItemClass = cn(
   'flex h-10 items-center gap-2 rounded-lg px-3 text-sm leading-5 font-normal',
   'text-text-danger hover:bg-status-error-background hover:text-text-danger',

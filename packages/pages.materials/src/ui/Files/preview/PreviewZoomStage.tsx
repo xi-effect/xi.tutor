@@ -106,7 +106,7 @@ export const PreviewZoomStage = ({
       onPointerCancel={enabled ? onPointerUp : undefined}
     >
       <div
-        className="relative z-0"
+        className="relative z-0 flex h-full w-full items-center justify-center"
         style={{
           transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.scale})`,
           transformOrigin: 'center center',

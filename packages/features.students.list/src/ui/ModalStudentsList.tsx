@@ -15,7 +15,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmDialog } from 'common.ui';
+import { ConfirmDialog, modalTitleClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
 import { useDeleteStudent } from '../services';
 import { useStudentsList } from 'common.services';
 import { TutorStudentSchemaMarshal } from 'common.types';
@@ -83,7 +84,7 @@ export const ModalStudentsList = ({ children, onInviteStudent }: ModalStudentsLi
         <ModalContent onClose={() => setIsDelete(false)} aria-describedby={undefined}>
           <ModalHeader>
             <ModalCloseButton />
-            <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+            <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-48px)]')}>
               {t('title')}
             </ModalTitle>
           </ModalHeader>

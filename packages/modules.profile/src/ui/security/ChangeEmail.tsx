@@ -167,7 +167,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
           (stage.type === 'success' && (
             <div className="space-y-8 p-8">
               <M.ModalTitle className="hidden">{t('changeEmail.title')}</M.ModalTitle>
-              <p className="text-text-primary text-center text-2xl font-semibold">
+              <p className="font-playfair text-text-primary text-center text-2xl font-medium">
                 {t('changeEmail.successMessage', { email: stage.email })}
               </p>
               <Button onClick={() => setStage({ type: 'form', email: '' })} className="mt-4 w-full">

@@ -24,6 +24,7 @@ type FileCardProps = {
   file: LibraryFile;
   className?: string;
   onPreview?: (file: LibraryFile) => void;
+  readOnly?: boolean;
 };
 
 const kindIcon: Record<FileKind, typeof File> = {
@@ -34,7 +35,7 @@ const kindIcon: Record<FileKind, typeof File> = {
   uncategorized: File,
 };
 
-export const FileCard = ({ file, className, onPreview }: FileCardProps) => {
+export const FileCard = ({ file, className, onPreview, readOnly = false }: FileCardProps) => {
   const { t } = useTranslation('materials');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -76,30 +77,32 @@ export const FileCard = ({ file, className, onPreview }: FileCardProps) => {
           </div>
         </div>
 
-        <div
-          className={cardMenuPositionClass}
-          onClick={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-        >
-          <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
-            <FileActionsMenu
-              onPreview={openPreview}
-              onRename={() => setRenameOpen(true)}
-              onEditTags={() => setTagsOpen(true)}
-              onShare={() => setShareOpen(true)}
-              onDelete={() => setDeleteOpen(true)}
-            >
-              <Button
-                className={cardMenuButtonClass}
-                variant="none"
-                size="icon"
-                data-umami-event="materials-file-menu-open"
+        {readOnly ? null : (
+          <div
+            className={cardMenuPositionClass}
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
+              <FileActionsMenu
+                onPreview={openPreview}
+                onRename={() => setRenameOpen(true)}
+                onEditTags={() => setTagsOpen(true)}
+                onShare={() => setShareOpen(true)}
+                onDelete={() => setDeleteOpen(true)}
               >
-                <MoreVert className={cardMenuIconClass} />
-              </Button>
-            </FileActionsMenu>
-          </AssignFileTagsPopover>
-        </div>
+                <Button
+                  className={cardMenuButtonClass}
+                  variant="none"
+                  size="icon"
+                  data-umami-event="materials-file-menu-open"
+                >
+                  <MoreVert className={cardMenuIconClass} />
+                </Button>
+              </FileActionsMenu>
+            </AssignFileTagsPopover>
+          </div>
+        )}
 
         <p
           className={cn(

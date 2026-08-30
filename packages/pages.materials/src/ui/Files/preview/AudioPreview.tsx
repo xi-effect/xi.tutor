@@ -10,6 +10,7 @@ const WAVEFORM_HEIGHT = 88;
 
 type AudioPreviewProps = {
   blobUrl: string;
+  isFullscreen?: boolean;
   onDuration: (duration: number) => void;
   onError: () => void;
 };
@@ -44,10 +45,17 @@ const progressClipPath = (time: number, duration: number) => {
   return `inset(0 ${(1 - ratio) * 100}% 0 0)`;
 };
 
-export const AudioPreview = ({ blobUrl, onDuration, onError }: AudioPreviewProps) => {
+export const AudioPreview = ({
+  blobUrl,
+  isFullscreen = false,
+  onDuration,
+  onError,
+}: AudioPreviewProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playedLayerRef = useRef<SVGSVGElement | null>(null);
   const durationRef = useRef(0);
+  const onDurationRef = useRef(onDuration);
+  onDurationRef.current = onDuration;
 
   const [waveform, setWaveform] = useState<number[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -81,8 +89,25 @@ export const AudioPreview = ({ blobUrl, onDuration, onError }: AudioPreviewProps
     audio.currentTime = 0;
     setIsPlaying(false);
     setCurrentTime(0);
-    setDuration(0);
     syncProgress(0);
+
+    const applyDuration = () => {
+      const next = audio.duration;
+      if (Number.isFinite(next) && next > 0) {
+        setDuration(next);
+        onDurationRef.current(next);
+        return;
+      }
+      setDuration(0);
+    };
+
+    applyDuration();
+    audio.addEventListener('loadedmetadata', applyDuration);
+    audio.addEventListener('durationchange', applyDuration);
+    return () => {
+      audio.removeEventListener('loadedmetadata', applyDuration);
+      audio.removeEventListener('durationchange', applyDuration);
+    };
   }, [blobUrl, syncProgress]);
 
   useEffect(() => {
@@ -152,17 +177,15 @@ export const AudioPreview = ({ blobUrl, onDuration, onError }: AudioPreviewProps
   };
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div
+      className={
+        isFullscreen ? 'flex min-h-0 w-full flex-1 flex-col' : 'flex w-full flex-col gap-6'
+      }
+    >
       <audio
         ref={audioRef}
         src={blobUrl}
         preload="metadata"
-        onLoadedMetadata={(event) => {
-          const nextDuration = event.currentTarget.duration || 0;
-          setDuration(nextDuration);
-          onDuration(nextDuration);
-          syncProgress(event.currentTarget.currentTime);
-        }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => {
@@ -172,52 +195,68 @@ export const AudioPreview = ({ blobUrl, onDuration, onError }: AudioPreviewProps
         onError={onError}
       />
 
-      <div className="flex flex-col gap-2">
+      <div
+        className={
+          isFullscreen
+            ? 'flex min-h-0 w-full flex-1 flex-col items-center justify-center px-4'
+            : 'contents'
+        }
+      >
         <div
-          className="relative w-full cursor-pointer"
-          role="slider"
-          aria-label="Позиция воспроизведения"
-          aria-valuemin={0}
-          aria-valuemax={duration || 0}
-          aria-valuenow={currentTime}
-          onPointerDown={(event) => {
-            event.currentTarget.setPointerCapture(event.pointerId);
-            seekFromPointer(event);
-          }}
-          onPointerMove={(event) => {
-            if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
-            seekFromPointer(event);
-          }}
+          className={isFullscreen ? 'flex w-full max-w-3xl flex-col gap-2' : 'flex flex-col gap-2'}
         >
-          <svg
-            className="block w-full"
-            height={WAVEFORM_HEIGHT}
-            viewBox={`0 0 100 ${WAVEFORM_HEIGHT}`}
-            preserveAspectRatio="none"
+          <div
+            className="relative w-full cursor-pointer"
+            role="slider"
+            aria-label="Позиция воспроизведения"
+            aria-valuemin={0}
+            aria-valuemax={duration || 0}
+            aria-valuenow={currentTime}
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              seekFromPointer(event);
+            }}
+            onPointerMove={(event) => {
+              if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+              seekFromPointer(event);
+            }}
           >
-            <g className="fill-icon-disabled">
-              <WaveformBars waveform={waveform} />
-            </g>
-          </svg>
-          <svg
-            ref={playedLayerRef}
-            className="pointer-events-none absolute inset-0 block h-full w-full"
-            viewBox={`0 0 100 ${WAVEFORM_HEIGHT}`}
-            preserveAspectRatio="none"
-            style={{ clipPath: 'inset(0 100% 0 0)' }}
-          >
-            <g className="fill-icon-brand">
-              <WaveformBars waveform={waveform} />
-            </g>
-          </svg>
-        </div>
-        <div className="text-text-secondary flex items-center justify-between text-xs tabular-nums">
-          <span>{formatMediaTime(currentTime)}</span>
-          <span>{formatMediaTime(duration)}</span>
+            <svg
+              className="block w-full"
+              height={isFullscreen ? WAVEFORM_HEIGHT * 1.5 : WAVEFORM_HEIGHT}
+              viewBox={`0 0 100 ${WAVEFORM_HEIGHT}`}
+              preserveAspectRatio="none"
+            >
+              <g className="fill-icon-disabled">
+                <WaveformBars waveform={waveform} />
+              </g>
+            </svg>
+            <svg
+              ref={playedLayerRef}
+              className="pointer-events-none absolute inset-0 block h-full w-full"
+              viewBox={`0 0 100 ${WAVEFORM_HEIGHT}`}
+              preserveAspectRatio="none"
+              style={{ clipPath: 'inset(0 100% 0 0)' }}
+            >
+              <g className="fill-icon-brand">
+                <WaveformBars waveform={waveform} />
+              </g>
+            </svg>
+          </div>
+          <div className="text-text-secondary flex items-center justify-between text-xs tabular-nums">
+            <span>{formatMediaTime(currentTime)}</span>
+            <span>{formatMediaTime(duration)}</span>
+          </div>
         </div>
       </div>
 
-      <div className="relative flex items-center justify-center">
+      <div
+        className={
+          isFullscreen
+            ? 'relative mx-auto flex w-full max-w-3xl shrink-0 items-center justify-center px-4 pt-4 pb-2'
+            : 'relative flex items-center justify-center'
+        }
+      >
         <div className="flex items-center gap-3">
           <Button
             type="button"
@@ -260,7 +299,13 @@ export const AudioPreview = ({ blobUrl, onDuration, onError }: AudioPreviewProps
           </Button>
         </div>
 
-        <div className="absolute right-0 flex items-center gap-2">
+        <div
+          className={
+            isFullscreen
+              ? 'absolute right-4 flex items-center gap-2'
+              : 'absolute right-0 flex items-center gap-2'
+          }
+        >
           <SoundTwo className="fill-icon-secondary size-4" />
           <Slider
             value={[volume]}

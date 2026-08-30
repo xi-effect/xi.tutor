@@ -8,6 +8,8 @@ import {
   YDocContentKind,
 } from 'common.types';
 
+type YDocMaterialT = MaterialT & { content_kind: YDocContentKind };
+
 interface MaterialsListParams {
   content_kind?: YDocContentKind | null;
   scope?: MaterialScope | null;
@@ -43,7 +45,7 @@ export const useGetMaterialsList = ({
   });
 
   return {
-    data: data as MaterialT[],
+    data: data as YDocMaterialT[],
     isError,
     isLoading,
     ...rest,
