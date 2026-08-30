@@ -124,7 +124,7 @@ export const CalendarHeader = ({
   return (
     <header className="flex w-full flex-col gap-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center">
       {showTitle ? (
-        <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:justify-self-start sm:text-5xl">
+        <h1 className="font-playfair text-text-primary pb-2 text-2xl font-medium sm:justify-self-start sm:text-4xl">
           {t('schedule')}
         </h1>
       ) : (

@@ -42,7 +42,7 @@ export const Header = ({
     <div className="flex w-full flex-col gap-4">
       <div className="inline-flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex flex-col items-start justify-start gap-4 sm:flex-row sm:items-center sm:gap-10">
-          <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:text-5xl">
+          <h1 className="font-playfair text-text-primary pb-2 text-2xl font-medium sm:text-4xl">
             {t('title')}
           </h1>
 

@@ -20,7 +20,7 @@ export const ClassroomsPage = () => {
       )}
     >
       <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
-        <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:text-5xl">
+        <h1 className="font-playfair text-text-primary pb-2 text-2xl font-medium sm:text-4xl">
           {t('title')}
         </h1>
 
