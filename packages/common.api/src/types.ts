@@ -1,3 +1,5 @@
+import type { TagSchema } from './tags';
+
 export type MaterialsKindT = 'note' | 'board';
 export type YDocContentKind = MaterialsKindT;
 
@@ -41,10 +43,8 @@ export interface TutorshipSchema {
   created_at: string;
 }
 
-// Типы для предметов
-export interface SubjectSchema {
-  id: number;
-  name: string;
+/** Предмет кабинета как бизнес-сущность. По данным совпадает с Tag. */
+export interface SubjectSchema extends TagSchema {
   description?: string;
 }
 

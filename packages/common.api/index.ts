@@ -28,6 +28,20 @@ export {
   type ContentTokenHeaders,
   type ReadFileHeaders,
 } from './src/files';
+export {
+  tagsApiConfig,
+  TagsQueryKey,
+  tagsQueryKeys,
+  TAG_KIND,
+  normalizeTagAutocompleteLimit,
+  buildTagKindUrl,
+  TAG_AUTOCOMPLETE_DEFAULT_LIMIT,
+  TAG_AUTOCOMPLETE_MAX_LIMIT,
+  TAG_AUTOCOMPLETE_MIN_SEARCH_LENGTH,
+  TAG_AUTOCOMPLETE_MAX_SEARCH_LENGTH,
+  type TagKind,
+  type TagSchema,
+} from './src/tags';
 export { onboardingApiConfig } from './src/onboarding';
 export { getClassroomDisplayName } from './src/getClassroomDisplayName';
 export type { ClassroomDisplayNameSource } from './src/getClassroomDisplayName';
@@ -52,7 +66,6 @@ export type {
 export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';
 export { callsApiConfig, CallsQueryKey } from './src/calls';
-export { subjectsApiConfig, SubjectsQueryKey } from './src/subjects';
 export { enrollmentsApiConfig, EnrollmentsQueryKey } from './src/enrollments';
 export { contactsApiConfig, ContactsQueryKey } from './src/contacts';
 export { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from './src/classrooms';
