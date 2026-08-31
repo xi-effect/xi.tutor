@@ -63,13 +63,8 @@
   },
   "files": {
     "upload": "Загрузить файл",
-    "addFromLibrary": "Добавить из библиотеки",
-    "addFromLibraryDescription": "Выберите файл из личной библиотеки",
-    "add": "Добавить",
-    "loading": "Загрузка...",
-    "libraryEmpty": "В библиотеке пока нет файлов",
     "emptyTitle": "Пока нет файлов",
-    "emptyDescription": "Загрузите файл или добавьте его из библиотеки — он появится здесь"
+    "emptyDescription": "Загрузите файл — он появится здесь"
   },
   "overview": {
     "materials": "Материалы",

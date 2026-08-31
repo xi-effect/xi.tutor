@@ -40,6 +40,7 @@
     "title": "Edit tags",
     "searchPlaceholder": "Find a tag",
     "empty": "No tags found",
+    "none": "No tags yet",
     "loading": "Loading..."
   }
 }

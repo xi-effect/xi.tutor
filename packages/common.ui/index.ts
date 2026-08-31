@@ -84,6 +84,7 @@ export {
 } from './src/store/useSoundEffectsStore';
 export { playSoundEffect, unlockSoundEffect } from './src/sounds/playSoundEffect';
 export { TagChip } from './src/tags/TagChip';
+export { TagChips } from './src/tags/TagChips';
 export { TagDot } from './src/tags/TagDot';
 export {
   TAG_COLOR_STYLES,

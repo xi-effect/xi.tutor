@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { TAG_AUTOCOMPLETE_MAX_LIMIT, TAG_KIND, type TagSchema } from 'common.api';
-import { useAutocompleteTags } from 'common.services';
-import { rememberApiTags } from './libraryTagsStore';
+import { rememberApiTags, useAutocompleteTags } from 'common.services';
 
 export const useGenericTagSuggestions = (search: string, enabled = true) => {
   const query = search.trim();

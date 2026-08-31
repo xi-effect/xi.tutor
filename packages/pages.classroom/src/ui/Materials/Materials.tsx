@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Button } from '@xipkg/button';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
@@ -21,13 +21,14 @@ import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pa
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
+import { ClassroomFiles } from './ClassroomFiles';
 import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../galleryShadowClass';
 import { sectionTitleClass } from '../sectionTitleClass';
 
-type MaterialTypeTab = 'boards' | 'notes';
+type MaterialTypeTab = 'boards' | 'notes' | 'files';
 
 const isMaterialTypeTab = (tab: unknown): tab is MaterialTypeTab =>
-  tab === 'boards' || tab === 'notes';
+  tab === 'boards' || tab === 'notes' || tab === 'files';
 
 const isYDocMaterial = (
   material: ClassroomMaterialsT,
@@ -51,6 +52,7 @@ const ClassroomMaterialsGallery = () => {
     () => [
       { id: 'boards', label: t('materials.boards') },
       { id: 'notes', label: t('materials.notes') },
+      { id: 'files', label: t('materials.files') },
     ],
     [t],
   );
@@ -64,7 +66,7 @@ const ClassroomMaterialsGallery = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const roleReady = !isUserLoading && user != null;
-  const documentsEnabled = Boolean(classroomId) && roleReady;
+  const documentsEnabled = Boolean(classroomId) && roleReady && activeTab !== 'files';
 
   const tutorList = useGetClassroomMaterialsList({
     classroomId: classroomId || '',
@@ -97,6 +99,24 @@ const ClassroomMaterialsGallery = () => {
     });
   };
 
+  const heading: ReactNode = (
+    <>
+      <h2 className={sectionTitleClass}>{t('tabs.materials')}</h2>
+      <SwitcherAnimate
+        tabs={typeTabs}
+        activeTab={activeTab}
+        onChange={handleTypeChange}
+        className={cn(pageSwitcherTrackClass, 'w-auto')}
+        tabClassName={pageSwitcherTabClass}
+        indicatorClassName={pageSwitcherIndicatorClass}
+      />
+    </>
+  );
+
+  if (activeTab === 'files') {
+    return <ClassroomFiles classroomId={classroomId} heading={heading} />;
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2">
       <div className="shrink-0 pr-5 sm:pr-8 md:pr-10">
@@ -106,15 +126,7 @@ const ClassroomMaterialsGallery = () => {
             galleryShadowHeaderInsetClass,
           )}
         >
-          <h2 className={sectionTitleClass}>{t('tabs.materials')}</h2>
-          <SwitcherAnimate
-            tabs={typeTabs}
-            activeTab={activeTab}
-            onChange={handleTypeChange}
-            className={cn(pageSwitcherTrackClass, 'w-auto')}
-            tabClassName={pageSwitcherTabClass}
-            indicatorClassName={pageSwitcherIndicatorClass}
-          />
+          {heading}
           <div className="ml-auto flex flex-wrap items-center gap-3">
             <FilesTagsFilter value={materialTags} onChange={setMaterialTags} maxCount={5} />
             {materialTags.length > 0 ? (

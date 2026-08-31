@@ -86,7 +86,7 @@ export const AssignFileTagsPopover = ({
         <div className="flex max-h-52 w-full flex-col gap-1 overflow-y-auto">
           {tags.length === 0 && !search.trim() ? (
             <p className="text-s-base text-text-secondary py-4 text-center">
-              {t('files.assignTags.none')}
+              {isSearchLoading ? t('files.tags.loading') : t('files.assignTags.none')}
             </p>
           ) : visibleTags.length === 0 ? (
             <p className="text-s-base text-text-secondary py-4 text-center">

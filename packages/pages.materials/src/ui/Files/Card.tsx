@@ -5,7 +5,7 @@ import { File, Image, MoreVert, Music } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
   ConfirmDialog,
-  TagChip,
+  TagChips,
   cardMenuButtonClass,
   cardMenuIconClass,
   cardMenuPositionClass,
@@ -123,13 +123,7 @@ export const FileCard = ({
           {displayName}
         </p>
 
-        {fileTags.length > 0 ? (
-          <div className="mt-1 flex w-full min-w-0 items-center gap-1 overflow-hidden">
-            {fileTags.slice(0, 2).map((tag) => (
-              <TagChip key={tag.id} name={tag.name} color={tag.color} />
-            ))}
-          </div>
-        ) : null}
+        <TagChips tags={fileTags} />
 
         <div className="mt-auto flex w-full min-w-0 flex-col items-start gap-0.5 overflow-hidden pt-2">
           <p className="text-text-secondary w-full truncate text-xs leading-4 font-normal">

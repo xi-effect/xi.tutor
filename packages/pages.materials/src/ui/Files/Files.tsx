@@ -15,6 +15,7 @@ import {
   toLibraryFileSearchFilters,
 } from '../../utils';
 import { useLibraryTags } from './tags/useLibraryTags';
+import { useParentScrollPagination } from '../../hooks';
 import type { FilesFiltersT } from '../../types';
 
 type FilesProps = {
@@ -48,22 +49,13 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   const filtersActive = hasActiveFilesFilters(filters);
   const clientFiltersActive = hasClientFilesFilters(filters);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!parentRef.current || isFetchingNextPage || !hasNextPage) return;
-
-      const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
-      if (scrollHeight - scrollTop - clientHeight < 120) {
-        fetchNextPage();
-      }
-    };
-
-    const element = parentRef.current;
-    if (!element) return;
-
-    element.addEventListener('scroll', handleScroll);
-    return () => element.removeEventListener('scroll', handleScroll);
-  }, [parentRef, fetchNextPage, hasNextPage, isFetchingNextPage]);
+  useParentScrollPagination({
+    parentRef,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    itemsCount: filteredFiles.length,
+  });
 
   useEffect(() => {
     if (!clientFiltersActive || isFetchingNextPage || !hasNextPage || filteredFiles.length > 0) {

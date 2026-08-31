@@ -44,5 +44,6 @@ export type MaterialPropsT = {
   access_kind?: 'personal' | 'classroom';
   classroom_id?: number | null;
   student_access_mode?: 'no_access' | 'read_only' | 'read_write';
+  tag_ids?: number[] | null;
   tags?: TagSchema[];
 };

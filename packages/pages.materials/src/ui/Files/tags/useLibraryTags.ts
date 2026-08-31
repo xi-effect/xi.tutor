@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'r
 import { AxiosError } from 'axios';
 import { TAG_KIND, TAG_MAX_COUNT, type TagSchema, tagsApiConfig, TagsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
-import { createTagRequest, useCreateTag, useDeleteTag, useUpdateTag } from 'common.services';
 import {
+  createTagRequest,
   deleteLibraryTag,
   getLibraryTagsServerSnapshot,
   getLibraryTagsSnapshot,
@@ -14,8 +14,11 @@ import {
   toggleFileLibraryTag,
   updateLibraryTag,
   upsertLibraryTag,
+  useCreateTag,
+  useDeleteTag,
+  useUpdateTag,
   type LibraryTag,
-} from './libraryTagsStore';
+} from 'common.services';
 import type { LibraryTagColorId } from './tagColors';
 
 let legacyMigration: Promise<void> | null = null;

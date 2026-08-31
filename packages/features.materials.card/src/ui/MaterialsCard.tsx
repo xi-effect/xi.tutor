@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useRouterState } from '@tanstack/react-router';
 import { accessModeStyles, formatUpdatedLabel } from '../utils';
 import { cn } from '@xipkg/utils';
@@ -6,13 +6,17 @@ import { Badge } from '@xipkg/badge';
 import { MaterialActionsMenu } from './MaterialActionsMenu';
 import { useMaterialActions, useNavigateToMaterial } from '../hooks';
 import { cardIcon } from './CardIcon';
-import { AccessModeT, MaterialPropsT } from 'common.types';
-import { useCurrentUser, useGetClassroom } from 'common.services';
-import { ConfirmDialog, TagChip, cardMenuPositionClass } from 'common.ui';
+import {
+  AccessModeT,
+  getMaterialTagIds,
+  MaterialPropsT,
+  serializeMaterialTagIds,
+} from 'common.types';
+import { useCurrentUser, useGetClassroom, useTagsByIds } from 'common.services';
+import { ConfirmDialog, TagChips, cardMenuPositionClass } from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
 import { AssignMaterialTagsPopover } from './AssignMaterialTagsPopover';
-import type { TagSchema } from 'common.services';
 
 type MaterialsCardProps = MaterialPropsT & {
   layout?: 'default' | 'compact' | 'gallery';
@@ -30,6 +34,7 @@ export const MaterialsCard = ({
   isLoading,
   className,
   layout = 'default',
+  tag_ids,
   tags = [],
 }: MaterialsCardProps) => {
   const { t } = useTranslation('materialsCard');
@@ -65,7 +70,11 @@ export const MaterialsCard = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
-  const materialTags = (tags ?? []) as TagSchema[];
+  const tagIds = useMemo(
+    () => getMaterialTagIds({ tag_ids, tags }),
+    [serializeMaterialTagIds(tag_ids), tags],
+  );
+  const { tags: materialTags } = useTagsByIds(tagIds);
 
   const handleCardClick = () => {
     if (modalOpen || deleteConfirmOpen) return;
@@ -118,6 +127,7 @@ export const MaterialsCard = ({
   const menu = isTutor && (
     <AssignMaterialTagsPopover
       materialId={id}
+      tagIds={tagIds}
       tags={materialTags}
       open={tagsOpen}
       onOpenChange={setTagsOpen}
@@ -181,13 +191,7 @@ export const MaterialsCard = ({
             <p className="text-text-primary truncate text-base leading-[22px] font-medium">
               {name}
             </p>
-            {materialTags.length > 0 ? (
-              <div className="flex w-full min-w-0 items-center gap-1 overflow-hidden">
-                {materialTags.slice(0, 2).map((tag) => (
-                  <TagChip key={tag.id} name={tag.name} color={tag.color} />
-                ))}
-              </div>
-            ) : null}
+            <TagChips tags={materialTags} className="mt-0" />
             <span className="text-text-secondary text-sm leading-5 font-normal">
               {t('changed', { date: updatedLabel })}
             </span>
@@ -246,13 +250,7 @@ export const MaterialsCard = ({
             {name}
           </p>
 
-          {materialTags.length > 0 ? (
-            <div className="mt-1 flex w-full min-w-0 items-center gap-1 overflow-hidden">
-              {materialTags.slice(0, 2).map((tag) => (
-                <TagChip key={tag.id} name={tag.name} color={tag.color} />
-              ))}
-            </div>
-          ) : null}
+          <TagChips tags={materialTags} />
 
           <div className="mt-auto flex w-full min-w-0 flex-col items-start gap-0.5 overflow-hidden pt-2">
             <p className="text-text-secondary w-full truncate text-xs leading-4 font-normal">

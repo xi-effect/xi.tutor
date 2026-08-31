@@ -32,7 +32,7 @@ export interface FileSearchRequest {
   filters: FileFilters;
 }
 
-export const LIBRARY_FILES_DEFAULT_LIMIT = 12;
+export const LIBRARY_FILES_DEFAULT_LIMIT = 24;
 export const LIBRARY_FILES_MAX_LIMIT = 99;
 
 export interface LibraryReadFileHeaders {

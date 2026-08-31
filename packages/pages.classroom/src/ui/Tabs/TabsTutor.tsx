@@ -30,7 +30,7 @@ const ghostActionClass = '!h-auto rounded-[10px] px-5 py-3 text-base leading-5 f
 interface TutorDesktopToolbarProps {
   currentTab: string;
   classroomKind: string | undefined;
-  materialKind: 'note' | 'board';
+  materialKind: 'note' | 'board' | 'file';
   onAddLessonClick: () => void;
   onOpenInvoiceModal: () => void;
   onDeleteClassroom: () => void;
@@ -73,10 +73,10 @@ const TutorDesktopToolbar = ({
     );
   }
 
-  if (currentTab === 'materials') {
+  if (currentTab === 'materials' && materialKind !== 'file') {
     return (
       <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
-        <MaterialsAdd kind={materialKind} />
+        <MaterialsAdd kind={materialKind === 'note' ? 'note' : 'board'} />
       </div>
     );
   }
@@ -141,7 +141,6 @@ export const TabsTutor = () => {
     () => [
       { id: 'overview', label: t('tabs.overview') },
       { id: 'materials', label: t('tabs.materials') },
-      { id: 'files', label: t('tabs.files') },
       { id: 'schedule', label: t('tabs.schedule') },
       { id: 'payments', label: t('tabs.payments') },
       { id: 'info', label: t('tabs.info') },
@@ -158,8 +157,7 @@ export const TabsTutor = () => {
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const materialKind = search.tab === 'notes' ? 'note' : 'board';
-  const isFilesTab = search.tab === 'files';
+  const materialKind = search.tab === 'notes' ? 'note' : search.tab === 'files' ? 'file' : 'board';
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
@@ -233,10 +231,7 @@ export const TabsTutor = () => {
         <div
           className={cn(
             'xs:min-h-0 mt-4 flex min-h-[calc(100dvh-272px)] min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
-            currentTab === 'overview' ||
-              currentTab === 'payments' ||
-              currentTab === 'materials' ||
-              currentTab === 'files'
+            currentTab === 'overview' || currentTab === 'payments' || currentTab === 'materials'
               ? 'pr-0 pb-0'
               : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
           )}
@@ -263,7 +258,7 @@ export const TabsTutor = () => {
             classroomKind={classroom?.kind}
             isPendingAddMaterial={addClassroomMaterials.isPending}
             isDeletingClassroom={isDeletingClassroom}
-            isFilesTab={isFilesTab}
+            isFilesTab={search.tab === 'files'}
             isStudentsModalOpen={isStudentsModalOpen}
             isGroupInviteModalOpen={isGroupInviteModalOpen}
             onAddMaterial={handleAddMaterial}

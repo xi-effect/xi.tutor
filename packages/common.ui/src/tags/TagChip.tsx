@@ -10,7 +10,7 @@ type TagChipProps = {
 export const TagChip = ({ name, color, className }: TagChipProps) => (
   <span
     className={cn(
-      'max-w-[50%] truncate rounded-md px-2 py-0.5 text-xs leading-4 font-medium',
+      'max-w-full shrink-0 truncate rounded-md px-2 py-0.5 text-xs leading-4 font-medium',
       getTagColor(color).chip,
       className,
     )}

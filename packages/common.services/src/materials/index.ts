@@ -9,6 +9,7 @@ export { useSetMaterialTags, setMaterialTagsRequest } from './useSetMaterialTags
 export {
   serializeMaterialScope,
   serializeMaterialTagIds,
+  getMaterialTagIds,
   PERSONAL_MATERIAL_SCOPE,
   buildAnyMaterialFilters,
   buildClassroomMaterialFilters,

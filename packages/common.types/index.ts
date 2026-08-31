@@ -49,6 +49,7 @@ export type {
 export {
   serializeMaterialScope,
   serializeMaterialTagIds,
+  getMaterialTagIds,
   PERSONAL_MATERIAL_SCOPE,
   buildAnyMaterialFilters,
   buildClassroomMaterialFilters,

@@ -74,7 +74,9 @@ export const FilesTagsFilter = ({ value, onChange, maxCount }: FilesTagsFilterPr
         </div>
         <div className="flex max-h-52 w-full min-w-0 flex-col items-stretch gap-2.5 overflow-y-auto bg-transparent">
           {tags.length === 0 && !search.trim() ? (
-            <p className="text-s-base text-text-secondary leading-5">{t('files.tags.none')}</p>
+            <p className="text-s-base text-text-secondary leading-5">
+              {isSearchLoading ? t('files.tags.loading') : t('files.tags.none')}
+            </p>
           ) : visibleTags.length === 0 ? (
             <p className="text-s-base text-text-secondary leading-5">
               {isSearchLoading ? t('files.tags.loading') : t('files.tags.empty')}

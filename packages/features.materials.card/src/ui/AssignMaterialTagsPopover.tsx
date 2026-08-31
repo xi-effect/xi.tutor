@@ -8,20 +8,33 @@ import {
   TAG_KIND,
   type TagSchema,
   useAutocompleteTags,
+  useGenericTagsCatalog,
   useSetMaterialTags,
 } from 'common.services';
 import { TagDot } from 'common.ui';
 
 type AssignMaterialTagsPopoverProps = {
   materialId: string;
+  tagIds: number[];
   tags: TagSchema[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: ReactNode;
 };
 
+const mergeTags = (...lists: TagSchema[][]): TagSchema[] => {
+  const byId = new Map<number, TagSchema>();
+  for (const list of lists) {
+    for (const tag of list) {
+      byId.set(tag.id, tag);
+    }
+  }
+  return [...byId.values()];
+};
+
 export const AssignMaterialTagsPopover = ({
   materialId,
+  tagIds,
   tags,
   open,
   onOpenChange,
@@ -30,6 +43,7 @@ export const AssignMaterialTagsPopover = ({
   const { t } = useTranslation('materialsCard');
   const [search, setSearch] = useState('');
   const setTags = useSetMaterialTags();
+  const { tags: catalog } = useGenericTagsCatalog();
   const query = search.trim();
   const { data, isLoading: isSearchLoading } = useAutocompleteTags(
     TAG_KIND.Generic,
@@ -38,15 +52,22 @@ export const AssignMaterialTagsPopover = ({
     !open || query.length < 1,
   );
 
-  const assignedIds = useMemo(() => tags.map((tag) => tag.id), [tags]);
+  const assignedIds = tagIds;
   const suggestions = useMemo((): TagSchema[] => (Array.isArray(data) ? data : []), [data]);
+  const allTags = useMemo(
+    () => mergeTags(catalog, tags, suggestions),
+    [catalog, suggestions, tags],
+  );
+  const isLoading = isSearchLoading;
 
   const visibleTags = useMemo(() => {
     if (!query) {
-      return tags;
+      return allTags;
     }
-    return suggestions;
-  }, [query, suggestions, tags]);
+    const needle = query.toLowerCase();
+    const fromCatalog = allTags.filter((tag) => tag.name.toLowerCase().includes(needle));
+    return mergeTags(fromCatalog, suggestions);
+  }, [allTags, query, suggestions]);
 
   const toggleTag = (tag: TagSchema) => {
     const nextIds = assignedIds.includes(tag.id)
@@ -95,9 +116,13 @@ export const AssignMaterialTagsPopover = ({
         </div>
 
         <div className="flex max-h-52 w-full flex-col gap-1 overflow-y-auto">
-          {visibleTags.length === 0 ? (
+          {allTags.length === 0 && !query ? (
             <p className="text-s-base text-text-secondary py-4 text-center">
-              {isSearchLoading ? t('tags.loading') : t('tags.empty')}
+              {isLoading ? t('tags.loading') : t('tags.none')}
+            </p>
+          ) : visibleTags.length === 0 ? (
+            <p className="text-s-base text-text-secondary py-4 text-center">
+              {isLoading ? t('tags.loading') : t('tags.empty')}
             </p>
           ) : (
             visibleTags.map((tag) => {

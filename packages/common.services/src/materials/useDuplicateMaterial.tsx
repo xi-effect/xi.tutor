@@ -19,6 +19,7 @@ interface DuplicateMaterialResponse {
     name?: string;
     content_kind: 'note' | 'board';
     updated_at: string;
+    tag_ids?: number[] | null;
   };
 }
 

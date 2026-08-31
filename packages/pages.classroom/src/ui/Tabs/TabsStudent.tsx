@@ -18,7 +18,6 @@ export const TabsStudent = () => {
     () => [
       { id: 'overview', label: t('tabs.overview') },
       { id: 'materials', label: t('tabs.materials') },
-      { id: 'files', label: t('tabs.files') },
       { id: 'schedule', label: t('tabs.schedule') },
       { id: 'payments', label: t('tabs.payments') },
     ],
@@ -43,10 +42,7 @@ export const TabsStudent = () => {
         <div
           className={cn(
             'mt-4 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
-            currentTab === 'overview' ||
-              currentTab === 'payments' ||
-              currentTab === 'materials' ||
-              currentTab === 'files'
+            currentTab === 'overview' || currentTab === 'payments' || currentTab === 'materials'
               ? 'pr-0 pb-0'
               : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
             isMobile && 'pb-16',

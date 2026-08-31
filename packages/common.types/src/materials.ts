@@ -49,7 +49,7 @@ export type PersonalMaterialResponse = {
   content_kind: YDocContentKind;
   name?: string;
   access_kind?: 'personal';
-  tags?: TagSchema[];
+  tag_ids?: number[] | null;
 };
 
 export type ClassroomMaterialResponse = {
@@ -61,7 +61,7 @@ export type ClassroomMaterialResponse = {
   student_access_mode?: AccessModeT;
   access_kind?: 'classroom';
   file_id?: string;
-  tags?: TagSchema[];
+  tag_ids?: number[] | null;
 };
 
 export type MaterialT = PersonalMaterialResponse | ClassroomMaterialResponse;
@@ -74,6 +74,7 @@ export type MaterialPropsT = {
   student_access_mode?: AccessModeT;
   access_kind?: 'personal' | 'classroom';
   classroom_id?: number | null;
+  tag_ids?: number[] | null;
   tags?: TagSchema[];
   onDuplicate?: (id: MaterialId) => void;
   hasIcon?: boolean;
@@ -131,6 +132,15 @@ export function serializeMaterialScope(scope?: MaterialScope | null): string {
 
 export function serializeMaterialTagIds(tagIds?: number[] | null): string {
   return tagIds?.join(',') ?? '';
+}
+
+export function getMaterialTagIds(
+  material?: {
+    tag_ids?: number[] | null;
+    tags?: Array<{ id: number }> | null;
+  } | null,
+): number[] {
+  return normalizeTagIds(material?.tag_ids ?? material?.tags?.map((tag) => tag.id) ?? null) ?? [];
 }
 
 export function buildAnyMaterialFilters(params: {
