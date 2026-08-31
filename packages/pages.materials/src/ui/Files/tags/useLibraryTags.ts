@@ -40,7 +40,11 @@ const migrateLegacyTags = async () => {
 
   for (const tag of legacy) {
     try {
-      const created = await createTagRequest({ kind: TAG_KIND.Generic, name: tag.name });
+      const created = await createTagRequest({
+        kind: TAG_KIND.Generic,
+        name: tag.name,
+        color: tag.color,
+      });
       remapLibraryTagId(tag.id, String(created.id), created.name);
     } catch (error) {
       const status = error instanceof AxiosError ? error.response?.status : undefined;
@@ -98,11 +102,11 @@ export const useLibraryTags = () => {
 
   const createTag = useCallback(
     async (name: string, color: LibraryTagColorId): Promise<LibraryTag> => {
-      const created = await createMutation.mutateAsync({ kind: TAG_KIND.Generic, name });
+      const created = await createMutation.mutateAsync({ kind: TAG_KIND.Generic, name, color });
       return upsertLibraryTag({
         id: String(created.id),
         name: created.name,
-        color,
+        color: created.color,
       });
     },
     [createMutation],
@@ -112,13 +116,14 @@ export const useLibraryTags = () => {
     async (tagId: string, patch: { name?: string; color?: LibraryTagColorId }): Promise<void> => {
       const current = tagsById.get(tagId);
       const nextName = patch.name?.trim() || current?.name;
-      if (nextName && nextName !== current?.name && isBackendTagId(tagId)) {
+      if (isBackendTagId(tagId)) {
         const updated = await updateMutation.mutateAsync({
           kind: TAG_KIND.Generic,
           id: Number(tagId),
-          name: nextName,
+          ...(patch.name !== undefined ? { name: nextName } : {}),
+          ...(patch.color !== undefined ? { color: patch.color } : {}),
         });
-        updateLibraryTag(tagId, { name: updated.name, color: patch.color });
+        updateLibraryTag(tagId, { name: updated.name, color: updated.color });
         return;
       }
 

@@ -3,6 +3,7 @@ export * from './user';
 export * from './invitations';
 export * from './materials';
 export * from './classroom-materials';
+export * from './classroom-files';
 export * from './classroom-notes';
 export * from './payments';
 export * from './utils';
@@ -44,8 +45,16 @@ export {
   tagsApiConfig,
   TagsQueryKey,
   tagsQueryKeys,
+  classroomFilesApiConfig,
+  ClassroomFilesQueryKey,
+  classroomFilesQueryKeys,
   TAG_KIND,
+  TAG_COLORS,
+  DEFAULT_TAG_COLOR,
+  TAG_ASSIGN_MAX_COUNT,
+  isTagColor,
   type TagKind,
+  type TagColor,
   type TagSchema,
   type CreateTagBody,
   type UpdateTagBody,

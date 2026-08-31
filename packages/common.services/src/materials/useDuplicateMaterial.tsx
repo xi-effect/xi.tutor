@@ -10,6 +10,7 @@ interface DuplicateMaterialParams {
   name?: string;
   student_access_mode?: AccessModeT;
   source_id: MaterialId;
+  should_copy_tags?: boolean;
 }
 
 interface DuplicateMaterialResponse {
@@ -39,7 +40,10 @@ export const useDuplicateMaterial = () => {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
           method: materialsApiConfig[MaterialsQueryKey.MaterialDuplicates].method,
-          url: materialsApiConfig[MaterialsQueryKey.MaterialDuplicates].getUrl(params.classroomId),
+          url: materialsApiConfig[MaterialsQueryKey.MaterialDuplicates].getUrl(
+            params.classroomId,
+            params.should_copy_tags ?? true,
+          ),
           data: {
             source_id: params.source_id,
             ...(params.name ? { name: params.name } : {}),

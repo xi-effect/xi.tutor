@@ -7,7 +7,7 @@ import { cn } from '@xipkg/utils';
 import type { LibraryFile } from 'common.api';
 import { matchesSearchQuery } from 'common.utils';
 import { getLibraryFileDisplayName } from '../../../utils';
-import { getTagColor } from './tagColors';
+import { TagDot } from 'common.ui';
 import { useLibraryTagsManage } from './libraryTagsUiStore';
 import { useGenericTagSuggestions } from './useGenericTagSuggestions';
 import { useLibraryTags } from './useLibraryTags';
@@ -95,7 +95,6 @@ export const AssignFileTagsPopover = ({
           ) : (
             visibleTags.map((tag) => {
               const selected = assignedIds.includes(tag.id);
-              const color = getTagColor(tag.color);
 
               return (
                 <button
@@ -108,7 +107,7 @@ export const AssignFileTagsPopover = ({
                   data-umami-event="materials-file-toggle-tag"
                   data-umami-event-tag={tag.id}
                 >
-                  <span className={cn('size-2.5 shrink-0 rounded-full', color.dot)} />
+                  <TagDot color={tag.color} />
                   <span className="text-text-primary min-w-0 flex-1 truncate text-sm leading-5">
                     {tag.name}
                   </span>

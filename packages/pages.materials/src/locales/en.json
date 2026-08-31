@@ -118,6 +118,7 @@
       "whereUsed": "Where used",
       "download": "Download",
       "delete": "Delete",
+      "removeFromClassroom": "Remove from classroom",
       "soon": "Coming soon"
     },
     "rename": {
@@ -179,6 +180,11 @@
       "confirm": "Delete",
       "deleting": "Deleting...",
       "cancel": "Cancel"
+    },
+    "removeFromClassroom": {
+      "title": "Remove file from classroom?",
+      "description": "The file “{{name}}” will be detached from the classroom but will stay in the library.",
+      "confirm": "Remove"
     }
   },
   "empty": {

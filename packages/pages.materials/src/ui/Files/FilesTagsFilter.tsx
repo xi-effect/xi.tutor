@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { Search } from '@xipkg/icons';
-import { cn } from '@xipkg/utils';
 import { matchesSearchQuery } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { MaterialsFilterOption } from '../MaterialsFilterOption';
 import { FilesFilterChip } from './FilesFilterChip';
 import { FilesFilterActions, filesFilterPopoverClass } from './FilesFilterActions';
-import { getTagColor } from './tags/tagColors';
+import { TagDot } from 'common.ui';
 import { useGenericTagSuggestions } from './tags/useGenericTagSuggestions';
 import { useLibraryTags } from './tags/useLibraryTags';
 import type { FilesTagOptionT } from '../../types';
@@ -15,9 +14,10 @@ import type { FilesTagOptionT } from '../../types';
 type FilesTagsFilterProps = {
   value: FilesTagOptionT[];
   onChange: (tags: FilesTagOptionT[]) => void;
+  maxCount?: number;
 };
 
-export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
+export const FilesTagsFilter = ({ value, onChange, maxCount }: FilesTagsFilterProps) => {
   const { t } = useTranslation('materials');
   const { tags } = useLibraryTags();
   const [open, setOpen] = useState(false);
@@ -38,11 +38,15 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
   }, [search, tags]);
 
   const toggleTag = (tag: FilesTagOptionT) => {
-    setDraft((current) =>
-      current.some((item) => item.id === tag.id)
-        ? current.filter((item) => item.id !== tag.id)
-        : [...current, tag],
-    );
+    setDraft((current) => {
+      if (current.some((item) => item.id === tag.id)) {
+        return current.filter((item) => item.id !== tag.id);
+      }
+      if (maxCount && current.length >= maxCount) {
+        return current;
+      }
+      return [...current, tag];
+    });
   };
 
   return (
@@ -81,14 +85,12 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
                 key={tag.id}
                 variant="checkbox"
                 selected={draft.some((item) => item.id === tag.id)}
-                onSelect={() => toggleTag({ id: tag.id, name: tag.name })}
+                onSelect={() => toggleTag({ id: tag.id, name: tag.name, color: tag.color })}
                 umamiEvent="materials-files-tag-option"
                 umamiScope={tag.id}
               >
                 <span className="flex min-w-0 items-center gap-2">
-                  <span
-                    className={cn('size-2.5 shrink-0 rounded-full', getTagColor(tag.color).dot)}
-                  />
+                  <TagDot color={tag.color} />
                   <span className="truncate">{tag.name}</span>
                 </span>
               </MaterialsFilterOption>

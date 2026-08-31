@@ -1,11 +1,12 @@
-import { DEFAULT_TAG_COLOR, isLibraryTagColorId, type LibraryTagColorId } from './tagColors';
+import { DEFAULT_TAG_COLOR, type TagColor } from 'common.api';
+import { normalizeLibraryTagColor } from './tagColors';
 
 const STORAGE_KEY = 'xi.tutor.library-tags.v1';
 
 export type LibraryTag = {
   id: string;
   name: string;
-  color: LibraryTagColorId;
+  color: TagColor;
 };
 
 export type LibraryTagsState = {
@@ -50,10 +51,7 @@ function parseTag(value: unknown): LibraryTag | null {
   return {
     id: value.id,
     name,
-    color:
-      typeof value.color === 'string' && isLibraryTagColorId(value.color)
-        ? value.color
-        : DEFAULT_TAG_COLOR,
+    color: normalizeLibraryTagColor(typeof value.color === 'string' ? value.color : undefined),
   };
 }
 
@@ -169,13 +167,12 @@ export const upsertLibraryTag = (tag: LibraryTag): LibraryTag => {
   return nextTag;
 };
 
-export const rememberApiTags = (tags: { id: number; name: string }[]): void => {
+export const rememberApiTags = (tags: { id: number; name: string; color?: string }[]): void => {
   tags.forEach((tag) => {
-    const existing = state.tags.find((item) => item.id === String(tag.id));
     upsertLibraryTag({
       id: String(tag.id),
       name: tag.name,
-      color: existing?.color ?? DEFAULT_TAG_COLOR,
+      color: normalizeLibraryTagColor(tag.color),
     });
   });
 };
@@ -207,7 +204,7 @@ export const remapLibraryTagId = (fromId: string, toId: string, name?: string): 
   });
 };
 
-export const createLibraryTag = (name: string, color: LibraryTagColorId): LibraryTag => {
+export const createLibraryTag = (name: string, color: TagColor): LibraryTag => {
   const tag: LibraryTag = {
     id: createId(),
     name: name.trim(),
@@ -224,7 +221,7 @@ export const createLibraryTag = (name: string, color: LibraryTagColorId): Librar
 
 export const updateLibraryTag = (
   tagId: string,
-  patch: { name?: string; color?: LibraryTagColorId },
+  patch: { name?: string; color?: TagColor },
 ): void => {
   persist({
     tags: state.tags.map((tag) =>

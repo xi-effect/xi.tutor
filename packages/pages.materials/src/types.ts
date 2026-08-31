@@ -1,4 +1,4 @@
-import type { FileKind } from 'common.api';
+import type { FileKind, TagSchema } from 'common.api';
 
 export type MaterialPropsTT = {
   idMaterial: string;
@@ -18,6 +18,7 @@ export type FilesUploaderFilterT = 'mine' | 'students' | 'all';
 export type FilesTagOptionT = {
   id: string;
   name: string;
+  color?: string;
 };
 
 export type FilesFiltersT = {
@@ -43,4 +44,5 @@ export type MaterialPropsT = {
   access_kind?: 'personal' | 'classroom';
   classroom_id?: number | null;
   student_access_mode?: 'no_access' | 'read_only' | 'read_write';
+  tags?: TagSchema[];
 };

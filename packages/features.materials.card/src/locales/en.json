@@ -21,6 +21,7 @@
     "changeAccess": "Change access",
     "duplicateToClassroom": "Duplicate to classroom",
     "edit": "Edit",
+    "editTags": "Edit tags",
     "delete": "Delete"
   },
   "deleteConfirm": {
@@ -34,5 +35,11 @@
     "cancel": "Cancel",
     "confirm": "Delete",
     "deleting": "Deleting..."
+  },
+  "tags": {
+    "title": "Edit tags",
+    "searchPlaceholder": "Find a tag",
+    "empty": "No tags found",
+    "loading": "Loading..."
   }
 }

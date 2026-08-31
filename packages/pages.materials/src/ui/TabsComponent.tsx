@@ -11,6 +11,7 @@ type TabsComponentProps = {
   parentRef: RefObject<HTMLDivElement | null>;
   filesFilters: FilesFiltersT;
   onResetFilesFilters: () => void;
+  materialTagIds: number[];
 };
 
 export const TabsComponent = ({
@@ -20,6 +21,7 @@ export const TabsComponent = ({
   parentRef,
   filesFilters,
   onResetFilesFilters,
+  materialTagIds,
 }: TabsComponentProps) => {
   if (activeTab === 'files') {
     return (
@@ -29,9 +31,21 @@ export const TabsComponent = ({
 
   if (activeTab === 'boards') {
     return (
-      <Materials parentRef={parentRef} scopeFilter={scopeFilter} classroomIds={classroomIds} />
+      <Materials
+        parentRef={parentRef}
+        scopeFilter={scopeFilter}
+        classroomIds={classroomIds}
+        tagIds={materialTagIds}
+      />
     );
   }
 
-  return <Notes parentRef={parentRef} scopeFilter={scopeFilter} classroomIds={classroomIds} />;
+  return (
+    <Notes
+      parentRef={parentRef}
+      scopeFilter={scopeFilter}
+      classroomIds={classroomIds}
+      tagIds={materialTagIds}
+    />
+  );
 };

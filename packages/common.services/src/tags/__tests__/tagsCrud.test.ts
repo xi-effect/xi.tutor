@@ -18,18 +18,24 @@ describe('tags CRUD', () => {
     vi.mocked(getAxiosInstance).mockResolvedValue(axiosMock as never);
   });
 
-  it('создаёт generic-тег POST с name', async () => {
-    axiosMock.mockResolvedValue({ status: 201, data: { id: 1, name: 'ЕГЭ' } });
+  it('создаёт generic-тег POST с name и color', async () => {
+    axiosMock.mockResolvedValue({
+      status: 201,
+      data: { id: 1, name: 'ЕГЭ', color: 'blue' },
+    });
 
-    await expect(createTagRequest({ kind: TAG_KIND.Generic, name: 'ЕГЭ' })).resolves.toEqual({
+    await expect(
+      createTagRequest({ kind: TAG_KIND.Generic, name: 'ЕГЭ', color: 'blue' }),
+    ).resolves.toEqual({
       id: 1,
       name: 'ЕГЭ',
+      color: 'blue',
     });
 
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'POST',
-        data: { name: 'ЕГЭ' },
+        data: { name: 'ЕГЭ', color: 'blue' },
       }),
     );
     expect(String(axiosMock.mock.calls[0][0].url)).toBe(
@@ -37,17 +43,20 @@ describe('tags CRUD', () => {
     );
   });
 
-  it('переименовывает тег PATCH', async () => {
-    axiosMock.mockResolvedValue({ status: 200, data: { id: 1, name: 'ЕГЭ 2027' } });
+  it('меняет имя и цвет тега PATCH', async () => {
+    axiosMock.mockResolvedValue({
+      status: 200,
+      data: { id: 1, name: 'ЕГЭ 2027', color: 'orange' },
+    });
 
     await expect(
-      updateTagRequest({ kind: TAG_KIND.Generic, id: 1, name: 'ЕГЭ 2027' }),
-    ).resolves.toEqual({ id: 1, name: 'ЕГЭ 2027' });
+      updateTagRequest({ kind: TAG_KIND.Generic, id: 1, name: 'ЕГЭ 2027', color: 'orange' }),
+    ).resolves.toEqual({ id: 1, name: 'ЕГЭ 2027', color: 'orange' });
 
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'PATCH',
-        data: { name: 'ЕГЭ 2027' },
+        data: { name: 'ЕГЭ 2027', color: 'orange' },
       }),
     );
   });

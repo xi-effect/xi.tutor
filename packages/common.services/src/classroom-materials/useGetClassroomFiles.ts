@@ -1,7 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { ClassroomMaterialsQueryKey, type FileFilters } from 'common.api';
-import { useSearchLibraryFiles } from '../libraryFiles/useSearchLibraryFiles';
-import { getMockClassroomFiles } from './mockClassroomFiles';
+import { useSearchClassroomFiles } from '../classroom-files/useSearchClassroomFiles';
+import type { FileFilters } from 'common.api';
 
 type UseGetClassroomFilesParams = {
   classroomId: string;
@@ -16,30 +14,20 @@ export const useGetClassroomFiles = ({
   disabled = false,
   filters,
 }: UseGetClassroomFilesParams) => {
-  const enabled = !disabled && Boolean(classroomId);
-
-  const tutorLibrarySearch = useSearchLibraryFiles({
-    enabled: enabled && isTutor,
+  const search = useSearchClassroomFiles({
+    classroomId,
+    isTutor,
+    enabled: !disabled && Boolean(classroomId),
     filters,
   });
 
-  const studentQuery = useQuery({
-    queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterialsStudent, classroomId, 'file', 'list'],
-    queryFn: async () => getMockClassroomFiles(classroomId),
-    enabled: enabled && !isTutor,
-  });
-
-  if (!isTutor) {
-    return {
-      files: studentQuery.data ?? [],
-      isLoading: studentQuery.isLoading,
-      isError: studentQuery.isError,
-    };
-  }
-
   return {
-    files: tutorLibrarySearch.files,
-    isLoading: tutorLibrarySearch.isLoading,
-    isError: tutorLibrarySearch.isError,
+    files: search.files,
+    isLoading: search.isLoading,
+    isError: search.isError,
+    fetchNextPage: search.fetchNextPage,
+    hasNextPage: search.hasNextPage,
+    isFetchingNextPage: search.isFetchingNextPage,
+    refetch: search.refetch,
   };
 };

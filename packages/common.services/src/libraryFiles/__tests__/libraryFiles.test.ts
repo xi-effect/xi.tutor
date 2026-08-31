@@ -298,7 +298,7 @@ describe('library files API', () => {
     );
   });
 
-  it('отправляет файл в кабинет через materials с file_id', async () => {
+  it('прикрепляет файл к кабинету через PUT files', async () => {
     axiosMock.mockResolvedValue({ status: 200, data: { id: 'material-1' } });
 
     await expect(
@@ -311,17 +311,11 @@ describe('library files API', () => {
 
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        method: 'POST',
-        data: {
-          content_kind: 'file',
-          file_id: libraryFile.id,
-          name: 'notes.pdf',
-          student_access_mode: 'read_only',
-        },
+        method: 'PUT',
       }),
     );
     expect(String(axiosMock.mock.calls[0][0].url)).toContain(
-      '/api/protected/content-service/roles/tutor/classrooms/42/materials/',
+      `/api/protected/content-service/roles/tutor/classrooms/42/files/${libraryFile.id}/`,
     );
   });
 

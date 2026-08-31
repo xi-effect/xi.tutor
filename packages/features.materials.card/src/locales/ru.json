@@ -27,6 +27,7 @@
     "changeAccess": "Поменять доступ",
     "duplicateToClassroom": "Дублировать в кабинет",
     "edit": "Редактировать",
+    "editTags": "Изменить теги",
     "delete": "Удалить"
   },
   "deleteConfirm": {
@@ -40,5 +41,11 @@
     "cancel": "Отменить",
     "confirm": "Удалить",
     "deleting": "Удаление..."
+  },
+  "tags": {
+    "title": "Изменить теги",
+    "searchPlaceholder": "Найти тег",
+    "empty": "Теги не найдены",
+    "loading": "Загрузка..."
   }
 }

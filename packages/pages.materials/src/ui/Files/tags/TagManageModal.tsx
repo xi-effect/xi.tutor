@@ -27,10 +27,10 @@ import {
   modalFooterClass,
   modalHeaderRowClass,
   modalTitleClass,
+  TagDot,
 } from 'common.ui';
 import type { LibraryTag } from './libraryTagsStore';
 import { TagFormModal } from './TagFormModal';
-import { getTagColor } from './tagColors';
 import { useGenericTagSuggestions } from './useGenericTagSuggestions';
 import { useLibraryTags } from './useLibraryTags';
 
@@ -154,14 +154,12 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
                 </p>
               ) : (
                 visibleTags.map((tag) => {
-                  const color = getTagColor(tag.color);
-
                   return (
                     <div
                       key={tag.id}
                       className="border-border-default flex h-12 shrink-0 items-center gap-3 border-b last:border-b-0"
                     >
-                      <span className={cn('size-2.5 shrink-0 rounded-full', color.dot)} />
+                      <TagDot color={tag.color} />
                       <p className="text-text-primary min-w-0 flex-1 truncate text-base leading-5">
                         {tag.name}
                       </p>

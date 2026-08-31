@@ -1,8 +1,9 @@
-import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
+import { classroomFilesApiConfig, ClassroomFilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { handleError } from '../utils';
+import { invalidateClassroomFiles } from '../classroom-files/useUploadClassroomFile';
 
 export type ShareLibraryFileToClassroomVars = {
   fileId: string;
@@ -13,24 +14,13 @@ export type ShareLibraryFileToClassroomVars = {
 export async function shareLibraryFileToClassroomRequest({
   fileId,
   classroomId,
-  name,
 }: ShareLibraryFileToClassroomVars): Promise<void> {
   const axiosInst = await getAxiosInstance();
-  const { getUrl, method } =
-    classroomMaterialsApiConfig[ClassroomMaterialsQueryKey.AddClassroomMaterials];
+  const { getUrl, method } = classroomFilesApiConfig[ClassroomFilesQueryKey.AttachClassroomFile];
 
   await axiosInst({
     method,
-    url: getUrl(String(classroomId)),
-    data: {
-      content_kind: 'file',
-      file_id: fileId,
-      name,
-      student_access_mode: 'read_only',
-    },
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    url: getUrl(String(classroomId), fileId),
   });
 }
 
@@ -47,9 +37,7 @@ export const useShareLibraryFileToClassroom = () => {
       handleError(err, 'files');
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, String(variables.classroomId)],
-      });
+      invalidateClassroomFiles(queryClient, String(variables.classroomId));
     },
   });
 };

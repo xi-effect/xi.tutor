@@ -11,10 +11,11 @@ import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
 import { FilesToolbar } from './Files/FilesToolbar';
+import { FilesTagsFilter } from './Files/FilesTagsFilter';
 import { UploadFilesModal } from './Files/UploadFilesModal';
 import { MaterialsClassroomFilter } from './MaterialsClassroomFilter';
 import { MaterialsScopeFilter } from './MaterialsScopeFilter';
-import type { FilesFiltersT, MaterialScopeFilterT, MaterialsTabT } from '../types';
+import type { FilesFiltersT, FilesTagOptionT, MaterialScopeFilterT, MaterialsTabT } from '../types';
 
 interface HeaderProps {
   activeTab: MaterialsTabT;
@@ -26,6 +27,8 @@ interface HeaderProps {
   filesFilters: FilesFiltersT;
   onFilesFiltersChange: (filters: FilesFiltersT) => void;
   onResetFilesFilters: () => void;
+  materialTags: FilesTagOptionT[];
+  onMaterialTagsChange: (tags: FilesTagOptionT[]) => void;
 }
 
 export const Header = ({
@@ -38,6 +41,8 @@ export const Header = ({
   filesFilters,
   onFilesFiltersChange,
   onResetFilesFilters,
+  materialTags,
+  onMaterialTagsChange,
 }: HeaderProps) => {
   const { t } = useTranslation('materials');
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -104,6 +109,7 @@ export const Header = ({
           {scopeFilter === 'classroom' ? (
             <MaterialsClassroomFilter value={classroomIds} onChange={onClassroomChange} />
           ) : null}
+          <FilesTagsFilter value={materialTags} onChange={onMaterialTagsChange} maxCount={5} />
         </div>
       )}
       <UploadFilesModal open={uploadOpen} onOpenChange={setUploadOpen} />

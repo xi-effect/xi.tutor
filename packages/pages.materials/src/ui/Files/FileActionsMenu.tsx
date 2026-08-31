@@ -26,7 +26,8 @@ type FileActionsMenuProps = {
   onEditTags?: () => void;
   onShare?: () => void;
   onWhereUsed?: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
+  deleteLabel?: string;
   modal?: boolean;
   contentClassName?: string;
   previewUmami?: string;
@@ -45,6 +46,7 @@ export const FileActionsMenu = ({
   onShare,
   onWhereUsed,
   onDelete,
+  deleteLabel,
   modal = false,
   contentClassName,
   previewUmami = 'materials-file-preview',
@@ -83,34 +85,50 @@ export const FileActionsMenu = ({
           },
         ]
       : []),
-    {
-      key: 'rename',
-      label: t('files.menu.rename'),
-      icon: Edit,
-      onSelect: onRename,
-      umami: renameUmami,
-    },
-    {
-      key: 'tags',
-      label: t('files.menu.editTags'),
-      icon: Flag,
-      onSelect: onEditTags,
-      umami: editTagsUmami,
-    },
-    {
-      key: 'share',
-      label: t('files.menu.share'),
-      icon: Share,
-      onSelect: onShare,
-      umami: shareUmami,
-    },
-    {
-      key: 'whereUsed',
-      label: t('files.menu.whereUsed'),
-      icon: Folder,
-      onSelect: onWhereUsed,
-      umami: whereUsedUmami,
-    },
+    ...(onRename
+      ? [
+          {
+            key: 'rename',
+            label: t('files.menu.rename'),
+            icon: Edit,
+            onSelect: onRename,
+            umami: renameUmami,
+          },
+        ]
+      : []),
+    ...(onEditTags
+      ? [
+          {
+            key: 'tags',
+            label: t('files.menu.editTags'),
+            icon: Flag,
+            onSelect: onEditTags,
+            umami: editTagsUmami,
+          },
+        ]
+      : []),
+    ...(onShare
+      ? [
+          {
+            key: 'share',
+            label: t('files.menu.share'),
+            icon: Share,
+            onSelect: onShare,
+            umami: shareUmami,
+          },
+        ]
+      : []),
+    ...(onWhereUsed
+      ? [
+          {
+            key: 'whereUsed',
+            label: t('files.menu.whereUsed'),
+            icon: Folder,
+            onSelect: onWhereUsed,
+            umami: whereUsedUmami,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -137,16 +155,20 @@ export const FileActionsMenu = ({
             {label}
           </DropdownMenuItem>
         ))}
-        <DropdownMenuSeparator className={cardMenuSeparatorClass} />
-        <DropdownMenuItem
-          error
-          className={cardMenuDeleteItemClass}
-          onClick={onDelete}
-          data-umami-event={deleteUmami}
-        >
-          <Trash />
-          {t('files.menu.delete')}
-        </DropdownMenuItem>
+        {onDelete ? (
+          <>
+            {items.length > 0 ? <DropdownMenuSeparator className={cardMenuSeparatorClass} /> : null}
+            <DropdownMenuItem
+              error
+              className={cardMenuDeleteItemClass}
+              onClick={onDelete}
+              data-umami-event={deleteUmami}
+            >
+              <Trash />
+              {deleteLabel ?? t('files.menu.delete')}
+            </DropdownMenuItem>
+          </>
+        ) : null}
       </DropdownMenuContent>
     </DropdownMenu>
   );

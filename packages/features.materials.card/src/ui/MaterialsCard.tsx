@@ -8,9 +8,11 @@ import { useMaterialActions, useNavigateToMaterial } from '../hooks';
 import { cardIcon } from './CardIcon';
 import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser, useGetClassroom } from 'common.services';
-import { ConfirmDialog, cardMenuPositionClass } from 'common.ui';
+import { ConfirmDialog, TagChip, cardMenuPositionClass } from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
+import { AssignMaterialTagsPopover } from './AssignMaterialTagsPopover';
+import type { TagSchema } from 'common.services';
 
 type MaterialsCardProps = MaterialPropsT & {
   layout?: 'default' | 'compact' | 'gallery';
@@ -28,6 +30,7 @@ export const MaterialsCard = ({
   isLoading,
   className,
   layout = 'default',
+  tags = [],
 }: MaterialsCardProps) => {
   const { t } = useTranslation('materialsCard');
   const { classroomId: routeClassroomId } = useParams({ strict: false });
@@ -61,6 +64,8 @@ export const MaterialsCard = ({
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
+  const materialTags = (tags ?? []) as TagSchema[];
 
   const handleCardClick = () => {
     if (modalOpen || deleteConfirmOpen) return;
@@ -111,16 +116,24 @@ export const MaterialsCard = ({
       : t('deleteConfirm.noteDescription', { name });
 
   const menu = isTutor && (
-    <MaterialActionsMenu
-      isClassroom={isClassroom}
-      isTutor={isTutor}
-      studentAccessMode={student_access_mode}
-      onDelete={handleDeleteClick}
-      onDeleteFromClassroom={handleDeleteClick}
-      onUpdateAccessMode={handleAccessModeUpdate}
-      onDuplicate={handleDuplicate}
-      setModalOpen={setModalOpen}
-    />
+    <AssignMaterialTagsPopover
+      materialId={id}
+      tags={materialTags}
+      open={tagsOpen}
+      onOpenChange={setTagsOpen}
+    >
+      <MaterialActionsMenu
+        isClassroom={isClassroom}
+        isTutor={isTutor}
+        studentAccessMode={student_access_mode}
+        onDelete={handleDeleteClick}
+        onDeleteFromClassroom={handleDeleteClick}
+        onUpdateAccessMode={handleAccessModeUpdate}
+        onDuplicate={handleDuplicate}
+        onEditTags={() => setTagsOpen(true)}
+        setModalOpen={setModalOpen}
+      />
+    </AssignMaterialTagsPopover>
   );
 
   const editModal = (
@@ -168,6 +181,13 @@ export const MaterialsCard = ({
             <p className="text-text-primary truncate text-base leading-[22px] font-medium">
               {name}
             </p>
+            {materialTags.length > 0 ? (
+              <div className="flex w-full min-w-0 items-center gap-1 overflow-hidden">
+                {materialTags.slice(0, 2).map((tag) => (
+                  <TagChip key={tag.id} name={tag.name} color={tag.color} />
+                ))}
+              </div>
+            ) : null}
             <span className="text-text-secondary text-sm leading-5 font-normal">
               {t('changed', { date: updatedLabel })}
             </span>
@@ -217,9 +237,22 @@ export const MaterialsCard = ({
 
           {isTutor && <div className={cardMenuPositionClass}>{menu}</div>}
 
-          <p className="text-text-primary mt-4 line-clamp-2 w-full shrink-0 text-base leading-5 font-medium">
+          <p
+            className={cn(
+              'text-text-primary mt-4 w-full shrink-0 text-base leading-5 font-medium',
+              materialTags.length > 0 ? 'line-clamp-1' : 'line-clamp-2',
+            )}
+          >
             {name}
           </p>
+
+          {materialTags.length > 0 ? (
+            <div className="mt-1 flex w-full min-w-0 items-center gap-1 overflow-hidden">
+              {materialTags.slice(0, 2).map((tag) => (
+                <TagChip key={tag.id} name={tag.name} color={tag.color} />
+              ))}
+            </div>
+          ) : null}
 
           <div className="mt-auto flex w-full min-w-0 flex-col items-start gap-0.5 overflow-hidden pt-2">
             <p className="text-text-secondary w-full truncate text-xs leading-4 font-normal">

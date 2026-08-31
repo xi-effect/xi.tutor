@@ -30,7 +30,7 @@ import {
   usePreviewWindowSize,
 } from './previewFrame';
 import { previewFullscreenTransition } from './previewMotion';
-import { useLibraryFileBlob } from './useLibraryFileBlob';
+import { useLibraryFileBlob, type FileContentSource } from './useLibraryFileBlob';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -46,6 +46,12 @@ type FilePreviewModalProps = {
   onOpenChange: (open: boolean) => void;
   onFileChange?: (file: LibraryFile) => void;
   readOnly?: boolean;
+  contentSource?: FileContentSource;
+  deleteLabel?: string;
+  deleteTitle?: string;
+  deleteDescription?: string;
+  onDeleteFile?: (fileId: string) => void;
+  hideLibraryActions?: boolean;
   primaryAction?: {
     label: string;
     onClick: () => void;
@@ -59,6 +65,12 @@ export const FilePreviewModal = ({
   onOpenChange,
   onFileChange,
   readOnly = false,
+  contentSource = { type: 'library' },
+  deleteLabel,
+  deleteTitle,
+  deleteDescription,
+  onDeleteFile,
+  hideLibraryActions = false,
   primaryAction,
 }: FilePreviewModalProps) => {
   const { t } = useTranslation('materials');
@@ -71,6 +83,7 @@ export const FilePreviewModal = ({
 
   const { blob, blobUrl, isLoading, isError, refetch } = useLibraryFileBlob(
     open && file && needsBlob ? file.id : null,
+    contentSource,
   );
   const deleteMutation = useDeleteLibraryFile();
 
@@ -198,7 +211,7 @@ export const FilePreviewModal = ({
     if (!file) return;
     setIsDownloading(true);
     try {
-      await downloadLibraryFile(file.id, displayName);
+      await downloadLibraryFile(file.id, displayName, contentSource);
     } finally {
       setIsDownloading(false);
     }
@@ -329,15 +342,17 @@ export const FilePreviewModal = ({
                 isFullscreen={effectiveFullscreen}
                 showFullscreen={showFullscreen}
                 showMore={!readOnly}
-                showDownload={!readOnly}
+                showDownload
+                hideLibraryActions={hideLibraryActions}
+                deleteLabel={deleteLabel}
                 isDownloading={isDownloading}
                 tagsOpen={tagsOpen}
                 onTagsOpenChange={setTagsOpen}
                 onDownload={handleDownload}
                 onToggleFullscreen={() => setFullscreen(!isFullscreen)}
                 onDelete={() => setDeleteOpen(true)}
-                onShare={() => setShareOpen(true)}
-                onRename={() => setRenameOpen(true)}
+                onShare={hideLibraryActions ? undefined : () => setShareOpen(true)}
+                onRename={hideLibraryActions ? undefined : () => setRenameOpen(true)}
                 onClose={handleClose}
                 primaryAction={primaryAction}
               />
@@ -418,15 +433,22 @@ export const FilePreviewModal = ({
         <ConfirmDialog
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
-          title={t('files.deleteConfirm.title')}
-          description={t('files.deleteConfirm.description', { name: displayName })}
+          title={deleteTitle ?? t('files.deleteConfirm.title')}
+          description={
+            deleteDescription ?? t('files.deleteConfirm.description', { name: displayName })
+          }
           confirmLabel={
             deleteMutation.isPending
               ? t('files.deleteConfirm.deleting')
-              : t('files.deleteConfirm.confirm')
+              : (deleteLabel ?? t('files.deleteConfirm.confirm'))
           }
           cancelLabel={t('files.deleteConfirm.cancel')}
           onConfirm={() => {
+            if (onDeleteFile) {
+              onDeleteFile(file.id);
+              handleClose();
+              return;
+            }
             deleteMutation.mutate(file.id, {
               onSuccess: () => handleClose(),
             });

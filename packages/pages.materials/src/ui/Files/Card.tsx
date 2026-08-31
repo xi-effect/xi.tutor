@@ -5,6 +5,7 @@ import { File, Image, MoreVert, Music } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
   ConfirmDialog,
+  TagChip,
   cardMenuButtonClass,
   cardMenuIconClass,
   cardMenuPositionClass,
@@ -17,7 +18,6 @@ import { FileActionsMenu } from './FileActionsMenu';
 import { RenameFileModal } from './RenameFileModal';
 import { ShareFileModal } from './ShareFileModal';
 import { AssignFileTagsPopover } from './tags/AssignFileTagsPopover';
-import { getTagColor } from './tags/tagColors';
 import { useLibraryTags } from './tags/useLibraryTags';
 
 type FileCardProps = {
@@ -25,6 +25,7 @@ type FileCardProps = {
   className?: string;
   onPreview?: (file: LibraryFile) => void;
   readOnly?: boolean;
+  onRemoveFromClassroom?: (file: LibraryFile) => void;
 };
 
 const kindIcon: Record<FileKind, typeof File> = {
@@ -35,7 +36,13 @@ const kindIcon: Record<FileKind, typeof File> = {
   uncategorized: File,
 };
 
-export const FileCard = ({ file, className, onPreview, readOnly = false }: FileCardProps) => {
+export const FileCard = ({
+  file,
+  className,
+  onPreview,
+  readOnly = false,
+  onRemoveFromClassroom,
+}: FileCardProps) => {
   const { t } = useTranslation('materials');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -43,6 +50,7 @@ export const FileCard = ({ file, className, onPreview, readOnly = false }: FileC
   const [tagsOpen, setTagsOpen] = useState(false);
   const deleteMutation = useDeleteLibraryFile();
   const { getTagsForFile } = useLibraryTags();
+  const isClassroomFile = Boolean(onRemoveFromClassroom);
   const fileTags = getTagsForFile(file.id);
 
   const displayName = getLibraryFileDisplayName(file);
@@ -86,10 +94,11 @@ export const FileCard = ({ file, className, onPreview, readOnly = false }: FileC
             <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
               <FileActionsMenu
                 onPreview={openPreview}
-                onRename={() => setRenameOpen(true)}
-                onEditTags={() => setTagsOpen(true)}
-                onShare={() => setShareOpen(true)}
+                onRename={isClassroomFile ? undefined : () => setRenameOpen(true)}
+                onEditTags={isClassroomFile ? undefined : () => setTagsOpen(true)}
+                onShare={isClassroomFile ? undefined : () => setShareOpen(true)}
                 onDelete={() => setDeleteOpen(true)}
+                deleteLabel={isClassroomFile ? t('files.menu.removeFromClassroom') : undefined}
               >
                 <Button
                   className={cardMenuButtonClass}
@@ -117,15 +126,7 @@ export const FileCard = ({ file, className, onPreview, readOnly = false }: FileC
         {fileTags.length > 0 ? (
           <div className="mt-1 flex w-full min-w-0 items-center gap-1 overflow-hidden">
             {fileTags.slice(0, 2).map((tag) => (
-              <span
-                key={tag.id}
-                className={cn(
-                  'max-w-[50%] truncate rounded-md px-2 py-0.5 text-xs leading-4 font-medium',
-                  getTagColor(tag.color).chip,
-                )}
-              >
-                {tag.name}
-              </span>
+              <TagChip key={tag.id} name={tag.name} color={tag.color} />
             ))}
           </div>
         ) : null}
@@ -141,15 +142,30 @@ export const FileCard = ({ file, className, onPreview, readOnly = false }: FileC
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        title={t('files.deleteConfirm.title')}
-        description={t('files.deleteConfirm.description', { name: displayName })}
+        title={
+          isClassroomFile ? t('files.removeFromClassroom.title') : t('files.deleteConfirm.title')
+        }
+        description={
+          isClassroomFile
+            ? t('files.removeFromClassroom.description', { name: displayName })
+            : t('files.deleteConfirm.description', { name: displayName })
+        }
         confirmLabel={
-          deleteMutation.isPending
-            ? t('files.deleteConfirm.deleting')
-            : t('files.deleteConfirm.confirm')
+          isClassroomFile
+            ? t('files.removeFromClassroom.confirm')
+            : deleteMutation.isPending
+              ? t('files.deleteConfirm.deleting')
+              : t('files.deleteConfirm.confirm')
         }
         cancelLabel={t('files.deleteConfirm.cancel')}
-        onConfirm={() => deleteMutation.mutate(file.id)}
+        onConfirm={() => {
+          if (onRemoveFromClassroom) {
+            onRemoveFromClassroom(file);
+            setDeleteOpen(false);
+            return;
+          }
+          deleteMutation.mutate(file.id);
+        }}
         isPending={deleteMutation.isPending}
       />
     </>

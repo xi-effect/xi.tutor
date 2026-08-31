@@ -1,22 +1,38 @@
-import { type TagKind, type TagSchema, tagsApiConfig, TagsQueryKey } from 'common.api';
+import {
+  type TagColor,
+  type TagKind,
+  type TagSchema,
+  tagsApiConfig,
+  TagsQueryKey,
+} from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from '../utils';
+import { invalidateTagRelatedQueries } from './useCreateTag';
 
 export type UpdateTagVars = {
   kind: TagKind;
   id: number;
-  name: string;
+  name?: string;
+  color?: TagColor;
 };
 
-export async function updateTagRequest({ kind, id, name }: UpdateTagVars): Promise<TagSchema> {
+export async function updateTagRequest({
+  kind,
+  id,
+  name,
+  color,
+}: UpdateTagVars): Promise<TagSchema> {
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = tagsApiConfig[TagsQueryKey.UpdateTag];
 
   const response = await axiosInst<TagSchema>({
     method,
     url: getUrl(kind, id),
-    data: { name },
+    data: {
+      ...(name !== undefined ? { name } : {}),
+      ...(color !== undefined ? { color } : {}),
+    },
     headers: {
       'Content-Type': 'application/json',
     },
@@ -35,8 +51,7 @@ export const useUpdateTag = () => {
     },
     onSuccess: (data, { kind, id }) => {
       queryClient.setQueryData([TagsQueryKey.GetTagById, kind, id], data);
-      queryClient.invalidateQueries({ queryKey: [TagsQueryKey.TagsAutocomplete, kind] });
-      queryClient.invalidateQueries({ queryKey: [TagsQueryKey.GetTagById, kind] });
+      invalidateTagRelatedQueries(queryClient, kind);
     },
   });
 };

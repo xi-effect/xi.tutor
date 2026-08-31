@@ -6,7 +6,7 @@ const CONTENT_SERVICE_URL = `${env.VITE_SERVER_URL_BACKEND}/api/protected/conten
 const TUTOR_LIBRARY_FILES_URL = `${CONTENT_SERVICE_URL}/roles/tutor/files`;
 
 export interface LibraryFile {
-  uploader_id: number;
+  uploader_id?: number;
   id: string;
   name: string;
   extension: string;

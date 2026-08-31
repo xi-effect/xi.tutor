@@ -18,6 +18,7 @@ import {
   MaterialsTabT,
   DEFAULT_FILES_FILTERS,
   FilesFiltersT,
+  type FilesTagOptionT,
 } from '../types';
 
 const getTabFromUrl = (): MaterialsTabT => {
@@ -83,6 +84,7 @@ const MaterialsPageContent = () => {
     getScopeFromUrl() === 'classroom' ? getClassroomIdsFromUrl() : [],
   );
   const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
+  const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -100,6 +102,10 @@ const MaterialsPageContent = () => {
       }
 
       return { ...current, tags: nextTags };
+    });
+    setMaterialTags((current) => {
+      const nextTags = current.filter((tag) => validIds.has(tag.id));
+      return nextTags.length === current.length ? current : nextTags;
     });
   }, [tags]);
 
@@ -169,6 +175,8 @@ const MaterialsPageContent = () => {
             filesFilters={filesFilters}
             onFilesFiltersChange={setFilesFilters}
             onResetFilesFilters={handleResetFilesFilters}
+            materialTags={materialTags}
+            onMaterialTagsChange={setMaterialTags}
           />
         </div>
 
@@ -186,6 +194,7 @@ const MaterialsPageContent = () => {
             parentRef={parentRef}
             filesFilters={filesFilters}
             onResetFilesFilters={handleResetFilesFilters}
+            materialTagIds={materialTags.map((tag) => Number(tag.id)).filter(Number.isFinite)}
           />
         </div>
       </div>

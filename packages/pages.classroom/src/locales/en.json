@@ -2,6 +2,7 @@
   "tabs": {
     "overview": "Overview",
     "materials": "Materials",
+    "files": "Files",
     "schedule": "Schedule",
     "payments": "Payments",
     "info": "Information",
@@ -59,6 +60,16 @@
     "boardCollaborative": "Board: Collaborative",
     "boardTutorOnly": "Board: Tutor only",
     "boardDrafts": "Board: Drafts"
+  },
+  "files": {
+    "upload": "Upload file",
+    "addFromLibrary": "Add from library",
+    "addFromLibraryDescription": "Choose a file from your library",
+    "add": "Add",
+    "loading": "Loading...",
+    "libraryEmpty": "No files in the library yet",
+    "emptyTitle": "No files yet",
+    "emptyDescription": "Upload a file or add one from the library to see it here"
   },
   "overview": {
     "materials": "Materials",

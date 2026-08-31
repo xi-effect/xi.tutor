@@ -83,3 +83,14 @@ export {
   type SoundKey,
 } from './src/store/useSoundEffectsStore';
 export { playSoundEffect, unlockSoundEffect } from './src/sounds/playSoundEffect';
+export { TagChip } from './src/tags/TagChip';
+export { TagDot } from './src/tags/TagDot';
+export {
+  TAG_COLOR_STYLES,
+  TAG_COLORS,
+  DEFAULT_TAG_COLOR,
+  getTagColor,
+  isTagColor,
+  type TagColor,
+  type TagColorStyle,
+} from './src/tags/tagColors';

@@ -17,48 +17,40 @@ import {
 import { MaterialsCard } from 'features.materials.card';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
-import {
-  DEFAULT_FILES_FILTERS,
-  FilesTagsFilter,
-  FilesUploaderFilter,
-  hasActiveFilesFilters,
-  type FilesFiltersT,
-} from 'pages.materials';
-import { ClassroomFiles } from './ClassroomFiles';
+import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
 import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../galleryShadowClass';
 import { sectionTitleClass } from '../sectionTitleClass';
 
-type MaterialTypeTab = 'boards' | 'notes' | 'files';
+type MaterialTypeTab = 'boards' | 'notes';
 
 const isMaterialTypeTab = (tab: unknown): tab is MaterialTypeTab =>
-  tab === 'boards' || tab === 'notes' || tab === 'files';
+  tab === 'boards' || tab === 'notes';
 
 const isYDocMaterial = (
   material: ClassroomMaterialsT,
 ): material is ClassroomMaterialsT & { content_kind: YDocContentKind } =>
   material.content_kind === 'note' || material.content_kind === 'board';
 
-export const Materials = () => {
+const ClassroomMaterialsGallery = () => {
   const { t } = useTranslation('classroom');
   const { t: tMaterials } = useTranslation('materials');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
+  const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
+  const tagIds = materialTags.map((tag) => Number(tag.id)).filter(Number.isFinite);
 
   const activeTab: MaterialTypeTab = isMaterialTypeTab(search.tab) ? search.tab : 'boards';
   const contentType = activeTab === 'notes' ? 'note' : 'board';
-  const filesFiltersActive = hasActiveFilesFilters(filesFilters);
 
   const typeTabs = useMemo(
     () => [
       { id: 'boards', label: t('materials.boards') },
       { id: 'notes', label: t('materials.notes') },
-      { id: 'files', label: t('materials.files') },
     ],
     [t],
   );
@@ -72,16 +64,18 @@ export const Materials = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const roleReady = !isUserLoading && user != null;
-  const documentsEnabled = Boolean(classroomId) && roleReady && activeTab !== 'files';
+  const documentsEnabled = Boolean(classroomId) && roleReady;
 
   const tutorList = useGetClassroomMaterialsList({
     classroomId: classroomId || '',
     content_kind: contentType,
+    tag_ids: tagIds,
     disabled: !documentsEnabled || !isTutor,
   });
   const studentList = useGetClassroomMaterialsListStudent({
     classroomId: classroomId || '',
     content_kind: contentType,
+    tag_ids: tagIds,
     disabled: !documentsEnabled || isTutor,
   });
 
@@ -96,7 +90,7 @@ export const Materials = () => {
     navigate({
       to: '/classrooms/$classroomId',
       params: { classroomId },
-      search: (prev) => ({
+      search: (prev: Record<string, unknown>) => ({
         ...prev,
         tab: tabId,
       }),
@@ -121,42 +115,26 @@ export const Materials = () => {
             tabClassName={pageSwitcherTabClass}
             indicatorClassName={pageSwitcherIndicatorClass}
           />
-          {activeTab === 'files' ? (
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <FilesUploaderFilter
-                value={filesFilters.uploader}
-                onChange={(uploader) => setFilesFilters((prev) => ({ ...prev, uploader }))}
-              />
-              <FilesTagsFilter
-                value={filesFilters.tags}
-                onChange={(tags) => setFilesFilters((prev) => ({ ...prev, tags }))}
-              />
-              {filesFiltersActive ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
-                  onClick={() => setFilesFilters(DEFAULT_FILES_FILTERS)}
-                  data-umami-event="classroom-files-reset-all"
-                >
-                  {tMaterials('files.resetAll')}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
+          <div className="ml-auto flex flex-wrap items-center gap-3">
+            <FilesTagsFilter value={materialTags} onChange={setMaterialTags} maxCount={5} />
+            {materialTags.length > 0 ? (
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
+                onClick={() => setMaterialTags([])}
+              >
+                {tMaterials('files.resetAll')}
+              </Button>
+            ) : null}
+          </div>
         </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         <div className="pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10">
           <div className={galleryShadowPadClass}>
-            {activeTab === 'files' ? (
-              <ClassroomFiles
-                classroomId={classroomId || ''}
-                filters={filesFilters}
-                onResetFilters={() => setFilesFilters(DEFAULT_FILES_FILTERS)}
-              />
-            ) : isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
+            {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
               <ErrorState />
             ) : isClassroomLoading || isMaterialsLoading || !roleReady ? (
               <LoadingState />
@@ -192,3 +170,9 @@ export const Materials = () => {
     </div>
   );
 };
+
+export const Materials = () => (
+  <LibraryTagsUiProvider>
+    <ClassroomMaterialsGallery />
+  </LibraryTagsUiProvider>
+);

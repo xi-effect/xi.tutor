@@ -64,7 +64,13 @@ export {
   TAG_NAME_MIN_LENGTH,
   TAG_NAME_MAX_LENGTH,
   TAG_MAX_COUNT,
+  TAG_ASSIGN_MAX_COUNT,
+  TAG_COLORS,
+  DEFAULT_TAG_COLOR,
+  isTagColor,
+  normalizeTagIds,
   type TagKind,
+  type TagColor,
   type TagSchema,
   type CreateTagBody,
   type UpdateTagBody,
@@ -96,6 +102,11 @@ export { callsApiConfig, CallsQueryKey } from './src/calls';
 export { enrollmentsApiConfig, EnrollmentsQueryKey } from './src/enrollments';
 export { contactsApiConfig, ContactsQueryKey } from './src/contacts';
 export { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from './src/classrooms';
+export {
+  classroomFilesApiConfig,
+  ClassroomFilesQueryKey,
+  classroomFilesQueryKeys,
+} from './src/classrooms';
 export { classroomNotesApiConfig, ClassroomNotesQueryKey } from './src/classrooms';
 export { classroomPaymentsApiConfig, ClassroomPaymentsQueryKey } from './src/classrooms';
 export {

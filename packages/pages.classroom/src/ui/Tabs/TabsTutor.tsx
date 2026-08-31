@@ -31,7 +31,6 @@ interface TutorDesktopToolbarProps {
   currentTab: string;
   classroomKind: string | undefined;
   materialKind: 'note' | 'board';
-  isFilesTab: boolean;
   onAddLessonClick: () => void;
   onOpenInvoiceModal: () => void;
   onDeleteClassroom: () => void;
@@ -42,7 +41,6 @@ const TutorDesktopToolbar = ({
   currentTab,
   classroomKind,
   materialKind,
-  isFilesTab,
   onAddLessonClick,
   onOpenInvoiceModal,
   onDeleteClassroom,
@@ -76,10 +74,6 @@ const TutorDesktopToolbar = ({
   }
 
   if (currentTab === 'materials') {
-    if (isFilesTab) {
-      return null;
-    }
-
     return (
       <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
         <MaterialsAdd kind={materialKind} />
@@ -147,6 +141,7 @@ export const TabsTutor = () => {
     () => [
       { id: 'overview', label: t('tabs.overview') },
       { id: 'materials', label: t('tabs.materials') },
+      { id: 'files', label: t('tabs.files') },
       { id: 'schedule', label: t('tabs.schedule') },
       { id: 'payments', label: t('tabs.payments') },
       { id: 'info', label: t('tabs.info') },
@@ -226,7 +221,6 @@ export const TabsTutor = () => {
                 currentTab={currentTab}
                 classroomKind={classroom?.kind}
                 materialKind={materialKind}
-                isFilesTab={isFilesTab}
                 onAddLessonClick={() => onAddLessonClick?.()}
                 onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
                 onDeleteClassroom={handleDeleteClassroomClick}
@@ -239,7 +233,10 @@ export const TabsTutor = () => {
         <div
           className={cn(
             'xs:min-h-0 mt-4 flex min-h-[calc(100dvh-272px)] min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
-            currentTab === 'overview' || currentTab === 'payments' || currentTab === 'materials'
+            currentTab === 'overview' ||
+              currentTab === 'payments' ||
+              currentTab === 'materials' ||
+              currentTab === 'files'
               ? 'pr-0 pb-0'
               : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
           )}

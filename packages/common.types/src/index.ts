@@ -47,8 +47,10 @@ export type {
 } from './materials';
 export {
   serializeMaterialScope,
+  serializeMaterialTagIds,
   PERSONAL_MATERIAL_SCOPE,
   buildAnyMaterialFilters,
+  buildClassroomMaterialFilters,
 } from './materials';
 export type {
   TemplateT,

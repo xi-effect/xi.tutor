@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
-import { Copy, Edit, Eyeon, MoreVert, Trash } from '@xipkg/icons';
+import { Copy, Edit, Eyeon, Flag, MoreVert, Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
   cardMenuButtonClass,
@@ -34,6 +34,7 @@ export const MaterialActionsMenu = ({
   onDeleteFromClassroom,
   onUpdateAccessMode,
   onDuplicate,
+  onEditTags,
   setModalOpen,
 }: MaterialActionsMenuPropsT) => {
   const { t } = useTranslation('materialsCard');
@@ -136,6 +137,16 @@ export const MaterialActionsMenu = ({
           <Edit />
           {t('menu.edit')}
         </DropdownMenuItem>
+        {onEditTags ? (
+          <DropdownMenuItem
+            className={cardMenuItemClass}
+            onClick={handleAction(onEditTags)}
+            data-umami-event="material-edit-tags"
+          >
+            <Flag />
+            {t('menu.editTags')}
+          </DropdownMenuItem>
+        ) : null}
 
         <DropdownMenuSeparator className={cardMenuSeparatorClass} />
         <DropdownMenuItem
