@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Notification, Settings } from '@xipkg/icons';
+import { Notification, Settings, Check } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-
+import { useNotificationsContext } from 'common.services';
 import { NotificationBadge } from './NotificationBadge';
 
 export const NotificationsMobileDropdown = ({
@@ -43,6 +43,14 @@ export const NotificationsMobileDropdown = ({
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, [isOpen]);
+
+  const { markAllAsRead } = useNotificationsContext();
+
+  const handleMarkAsReadAll = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    await markAllAsRead();
+  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
@@ -79,6 +87,9 @@ export const NotificationsMobileDropdown = ({
           <span className="min-w-0 shrink">{t('notifications')}</span>
           {hasUnread && <NotificationBadge count={countLabel} variant="sidebar" />}
           <div className="ml-auto flex shrink-0 items-center gap-1">
+            <Button onClick={handleMarkAsReadAll} variant="none" className="h-[32px] w-[32px] p-1">
+              <Check className="fill-icon-primary size-6" size="s" />
+            </Button>
             <Button onClick={onOpenSettings} variant="none" className="h-[32px] w-[32px] p-1">
               <Settings className="fill-icon-primary size-6" size="s" />
             </Button>

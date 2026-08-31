@@ -119,7 +119,7 @@ export const NotificationItem = ({
               <Button
                 variant="none"
                 size="sm"
-                className="group/button bg-background-surface hover:bg-action-primary-background-default h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="group/button bg-background-surface hover:bg-action-primary-background-default h-6 w-6 rounded-sm transition-opacity pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100"
                 onClick={handleMarkAsRead}
               >
                 <Check className="group-hover/button:fill-action-primary-text fill-icon-primary h-3 w-3" />
@@ -143,8 +143,13 @@ export const NotificationItem = ({
   }
 
   return (
-    <button type="button" className={cn(className, 'w-full text-left')} onClick={handleClick}>
+    <div
+      role="button"
+      tabIndex={0}
+      className={cn(className, 'w-full text-left')}
+      onClick={handleClick}
+    >
       {content}
-    </button>
+    </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Notification, Settings } from '@xipkg/icons';
+import { Check, Notification, Settings } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -8,8 +8,9 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { SidebarMenuButton, SidebarMenuItem, useSidebar } from '@xipkg/sidebar';
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { NotificationBadge } from './NotificationBadge';
+import { useNotificationsContext } from 'common.services';
 
 export const NotificationsDropdown = ({
   isOpen,
@@ -29,6 +30,14 @@ export const NotificationsDropdown = ({
   const { t } = useTranslation('navigation');
   const { state } = useSidebar();
   const showCountPill = hasUnread && state === 'expanded';
+
+  const { markAllAsRead } = useNotificationsContext();
+
+  const handleMarkAsReadAll = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    await markAllAsRead();
+  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
@@ -59,11 +68,29 @@ export const NotificationsDropdown = ({
         side="top"
         alignOffset={0}
         sideOffset={8}
-        className="flex w-[268px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
+        collisionPadding={16}
+        className="flex max-h-[var(--radix-dropdown-menu-content-available-height)] w-[268px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
       >
         <DropdownMenuLabel className="text-s-base text-text-primary flex h-[48px] items-center p-3 font-semibold">
           {t('notifications')}
           <div className="ml-auto flex items-center gap-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleMarkAsReadAll}
+                    variant="none"
+                    className="h-[32px] w-[32px] p-1"
+                  >
+                    <Check className="fill-icon-primary size-6" size="s" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>{t('markAllAsRead')}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             <Button onClick={onOpenSettings} variant="none" className="h-[32px] w-[32px] p-1">
               <Settings className="fill-icon-primary size-6" size="s" />
             </Button>
