@@ -47,6 +47,7 @@ export {
   type FileFilters,
   type FileSearchRequest,
   type LibraryReadFileHeaders,
+  type UploadLibraryFileBody,
 } from './src/libraryFiles';
 export {
   tagsApiConfig,

@@ -40,8 +40,13 @@ export interface LibraryReadFileHeaders {
   'if-modified-since'?: string | null;
 }
 
+export interface UploadLibraryFileBody {
+  upload: File;
+}
+
 enum LibraryFilesQueryKey {
   SearchLibraryFiles = 'SearchLibraryFiles',
+  UploadLibraryFile = 'UploadLibraryFile',
   GetLibraryFile = 'GetLibraryFile',
   GetLibraryFileMeta = 'GetLibraryFileMeta',
   UpdateLibraryFile = 'UpdateLibraryFile',
@@ -107,6 +112,10 @@ function getNextLibraryFilesCursor(lastPage: LibraryFile[], limit: number): File
 const libraryFilesApiConfig = {
   [LibraryFilesQueryKey.SearchLibraryFiles]: {
     getUrl: () => `${TUTOR_LIBRARY_FILES_URL}/searches/`,
+    method: HttpMethod.POST,
+  },
+  [LibraryFilesQueryKey.UploadLibraryFile]: {
+    getUrl: () => `${TUTOR_LIBRARY_FILES_URL}/`,
     method: HttpMethod.POST,
   },
   [LibraryFilesQueryKey.GetLibraryFile]: {

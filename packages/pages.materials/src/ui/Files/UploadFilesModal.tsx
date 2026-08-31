@@ -15,6 +15,7 @@ import {
   modalTitleClass,
 } from 'common.ui';
 import { toast } from 'sonner';
+import { getLibraryFileDisplayName } from '../../utils';
 import { LIBRARY_UPLOAD_MAX_FILES } from './libraryUpload';
 import { useLibraryFileUploads, type LibraryUploadItem } from './useLibraryFileUploads';
 
@@ -259,9 +260,13 @@ type UploadFileRowProps = {
 
 const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
   const { t } = useTranslation('materials');
-  const Icon = kindIcon[item.kind] ?? File;
+  const kind = item.libraryFile?.kind ?? item.kind;
+  const Icon = kindIcon[kind] ?? File;
   const isDone = item.status === 'done';
   const isError = item.status === 'error';
+  const displayName = item.libraryFile
+    ? getLibraryFileDisplayName(item.libraryFile)
+    : item.file.name;
 
   return (
     <div
@@ -287,7 +292,7 @@ const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-center justify-between gap-3">
           <p className="text-text-primary line-clamp-1 min-w-0 flex-1 text-xs leading-4 font-medium">
-            {item.file.name}
+            {displayName}
           </p>
           <p
             className={cn(

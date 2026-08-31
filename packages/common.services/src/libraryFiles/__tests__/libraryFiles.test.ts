@@ -24,6 +24,7 @@ import { getLibraryFileRequest } from '../useGetLibraryFile';
 import { searchLibraryFilesRequest } from '../useSearchLibraryFiles';
 import { renameLibraryFileRequest } from '../useRenameLibraryFile';
 import { shareLibraryFileToClassroomRequest } from '../useShareLibraryFileToClassroom';
+import { uploadLibraryFile, uploadLibraryFileRequest } from '../uploadLibraryFile';
 
 const axiosMock = vi.fn();
 
@@ -64,8 +65,16 @@ describe('library files API', () => {
     const deleteUrl = libraryFilesApiConfig[LibraryFilesQueryKey.DeleteLibraryFile].getUrl(
       libraryFile.id,
     );
+    const uploadUrl = libraryFilesApiConfig[LibraryFilesQueryKey.UploadLibraryFile].getUrl();
 
     expect(searchUrl).toContain('/api/protected/content-service/roles/tutor/files/searches/');
+    expect(uploadUrl).toBe(
+      searchUrl.replace(/searches\/$/, ''),
+    );
+    expect(uploadUrl).toContain('/api/protected/content-service/roles/tutor/files/');
+    expect(uploadUrl).not.toContain('/file-kinds/');
+    expect(uploadUrl).not.toMatch(/\/content-service\/files\/$/);
+    expect(libraryFilesApiConfig[LibraryFilesQueryKey.UploadLibraryFile].method).toBe('POST');
     expect(metaUrl).toContain(
       `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/meta/`,
     );
@@ -340,5 +349,34 @@ describe('library files API', () => {
     await expect(getLibraryFileRequest(libraryFile.id)).rejects.toMatchObject({
       response: { status },
     });
+  });
+
+  it('загружает файл в библиотеку через POST /roles/tutor/files/', async () => {
+    axiosMock.mockResolvedValue({ status: 201, data: libraryFile });
+    const file = new File(['pdf'], 'notes.pdf', { type: 'application/pdf' });
+
+    await expect(uploadLibraryFile(file)).resolves.toEqual(libraryFile);
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }),
+    );
+    expect(String(axiosMock.mock.calls[0][0].url)).toContain(
+      '/api/protected/content-service/roles/tutor/files/',
+    );
+    expect(String(axiosMock.mock.calls[0][0].url)).not.toMatch(
+      /\/content-service\/files\/$/,
+    );
+    expect(axiosMock.mock.calls[0][0].headers).not.toHaveProperty('x-content-token');
+    const body = axiosMock.mock.calls[0][0].data as FormData;
+    expect(body.get('upload')).toBe(file);
+  });
+
+  it('принимает 200 и тело LibraryFile при загрузке в библиотеку', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: libraryFile });
+    const file = new File(['png'], 'cover.png', { type: 'image/png' });
+
+    await expect(uploadLibraryFileRequest({ file })).resolves.toEqual(libraryFile);
   });
 });

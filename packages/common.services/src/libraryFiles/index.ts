@@ -17,3 +17,10 @@ export {
   shareLibraryFileToClassroomRequest,
   type ShareLibraryFileToClassroomVars,
 } from './useShareLibraryFileToClassroom';
+export {
+  uploadLibraryFile,
+  uploadLibraryFileRequest,
+  useUploadLibraryFile,
+  insertLibraryFileInSearchCache,
+  type UploadLibraryFileVars,
+} from './uploadLibraryFile';

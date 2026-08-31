@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { FileKind } from 'common.api';
+import type { FileKind, LibraryFile } from 'common.api';
 import {
   LibraryFilesQueryKey,
   handleError,
+  insertLibraryFileInSearchCache,
   isFileNameTooLong,
-  uploadFileRequest,
+  showSuccess,
+  uploadLibraryFileRequest,
 } from 'common.services';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -19,6 +21,7 @@ export type LibraryUploadItem = {
   kind: FileKind;
   progress: number;
   status: 'uploading' | 'done' | 'error';
+  libraryFile?: LibraryFile;
 };
 
 export type AddLibraryUploadFilesResult = {
@@ -57,7 +60,7 @@ export const useLibraryFileUploads = (open: boolean) => {
       abortRef.current.set(id, controller);
 
       try {
-        const uploaded = await uploadFileRequest({
+        const uploaded = await uploadLibraryFileRequest({
           file,
           signal: controller.signal,
           onUploadProgress: (percent) => {
@@ -74,12 +77,22 @@ export const useLibraryFileUploads = (open: boolean) => {
         abortRef.current.delete(id);
         setItems((current) =>
           current.map((item) =>
-            item.id === id ? { ...item, kind: uploaded.kind, progress: 100, status: 'done' } : item,
+            item.id === id
+              ? {
+                  ...item,
+                  kind: uploaded.kind,
+                  progress: 100,
+                  status: 'done',
+                  libraryFile: uploaded,
+                }
+              : item,
           ),
         );
+        insertLibraryFileInSearchCache(queryClient, uploaded);
         queryClient.invalidateQueries({
           queryKey: [LibraryFilesQueryKey.SearchLibraryFiles],
         });
+        showSuccess('files');
       } catch (error) {
         abortRef.current.delete(id);
         if (controller.signal.aborted) {
