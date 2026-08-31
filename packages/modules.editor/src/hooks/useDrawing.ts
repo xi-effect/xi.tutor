@@ -22,7 +22,17 @@ export function useDrawingToggle(
   const isModalOpen = useInterfaceStore((s) => s.activeModal !== null);
   const isBlockMenuOpen = useInterfaceStore((s) => s.isBlockMenuOpen);
 
-  const toggle = useCallback(() => setIsDrawing((v) => !v), []);
+  const toggle = useCallback(() => {
+    const next = !isDrawing;
+    setIsDrawing(next);
+
+    if (next) {
+      const position = getPos();
+      if (typeof position === 'number' && editor) {
+        editor.commands.setNodeSelection(position);
+      }
+    }
+  }, [isDrawing, editor, getPos]);
   const close = useCallback(() => setIsDrawing(false), []);
 
   // Любой посторонний UI (блок-меню, модалка) поверх ноды -> выходим из режима рисования
@@ -33,22 +43,9 @@ export function useDrawingToggle(
   // "Последнее известное" значение isDrawing для обработчика selectionUpdate ниже.
   // Нужен, чтобы не пересоздавать подписку на editor.on(...) при каждом toggle
   const isDrawingRef = useRef(isDrawing);
-  useEffect(() => {
-    isDrawingRef.current = isDrawing;
-  }, [isDrawing]);
+  isDrawingRef.current = isDrawing;
 
-  // Открытие: явный клик пользователя включил isDrawing -> синхронизируем
-  // selection редактора с этой нодой, чтобы дальше можно было отследить её потерю.
-  useEffect(() => {
-    if (!editor || !isDrawing) return;
-    const position = getPos();
-    if (typeof position === 'number') {
-      editor.commands.setNodeSelection(position);
-    }
-  }, [isDrawing, editor, getPos]);
-
-  // Закрытие: подписка живёт всё время жизни editor/getPos, актуальность
-  // isDrawing берём из рефа
+  // Закрытие: подписка живёт всё время жизни editor/getPos, актуальность isDrawing берём из рефа
   useEffect(() => {
     if (!editor) return;
 
