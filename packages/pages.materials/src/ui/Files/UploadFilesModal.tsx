@@ -16,7 +16,7 @@ import {
 } from 'common.ui';
 import { toast } from 'sonner';
 import { LIBRARY_UPLOAD_MAX_FILES } from './libraryUpload';
-import { useSimulatedLibraryUploads, type LibraryUploadItem } from './useSimulatedLibraryUploads';
+import { useLibraryFileUploads, type LibraryUploadItem } from './useLibraryFileUploads';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -45,7 +45,7 @@ export const UploadFilesModal = ({ open, onOpenChange }: UploadFilesModalProps) 
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const { items, addFiles, removeItem, cancelAll } = useSimulatedLibraryUploads(open);
+  const { items, addFiles, removeItem, cancelAll } = useLibraryFileUploads(open);
 
   const doneCount = items.filter((item) => item.status === 'done').length;
   const canAddMore = items.length < LIBRARY_UPLOAD_MAX_FILES;
@@ -261,16 +261,28 @@ const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
   const { t } = useTranslation('materials');
   const Icon = kindIcon[item.kind] ?? File;
   const isDone = item.status === 'done';
+  const isError = item.status === 'error';
 
   return (
     <div
       className={cn(
         'flex items-center gap-3 rounded-lg p-3',
-        isDone ? 'bg-status-success-background' : 'bg-background-subtle',
+        isDone
+          ? 'bg-status-success-background'
+          : isError
+            ? 'bg-status-error-background'
+            : 'bg-background-subtle',
       )}
     >
       <Icon
-        className={cn('size-6 shrink-0', isDone ? 'fill-status-success-text' : 'fill-icon-primary')}
+        className={cn(
+          'size-6 shrink-0',
+          isDone
+            ? 'fill-status-success-text'
+            : isError
+              ? 'fill-status-error-text'
+              : 'fill-icon-primary',
+        )}
       />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-center justify-between gap-3">
@@ -280,13 +292,21 @@ const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
           <p
             className={cn(
               'shrink-0 text-xs leading-4',
-              isDone ? 'text-status-success-text font-medium' : 'text-text-secondary font-normal',
+              isDone
+                ? 'text-status-success-text font-medium'
+                : isError
+                  ? 'text-status-error-text font-medium'
+                  : 'text-text-secondary font-normal',
             )}
           >
-            {isDone ? t('files.uploadModal.done') : `${item.progress}%`}
+            {isDone
+              ? t('files.uploadModal.done')
+              : isError
+                ? t('files.uploadModal.failed')
+                : `${item.progress}%`}
           </p>
         </div>
-        {isDone ? null : (
+        {isDone || isError ? null : (
           <div className="bg-border-default dark:bg-background-page h-1.5 w-full overflow-hidden rounded-[3px]">
             <div
               className="bg-action-primary-background-default h-full rounded-[3px] transition-[width] duration-150"

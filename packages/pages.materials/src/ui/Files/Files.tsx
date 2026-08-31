@@ -2,13 +2,18 @@ import { RefObject, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
-import { useCurrentUser, useSearchLibraryFiles, type LibraryFile } from 'common.services';
+import { useSearchLibraryFiles, type LibraryFile } from 'common.services';
 import { FileCard } from './Card';
 import { FilesFilteredEmpty } from './FilesFilteredEmpty';
 import { FilePreviewModal } from './preview';
 import { MaterialsGallerySkeleton } from '../MaterialsGallerySkeleton';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
-import { filterLibraryFiles, hasActiveFilesFilters } from '../../utils';
+import {
+  filterLibraryFiles,
+  hasActiveFilesFilters,
+  hasClientFilesFilters,
+  toLibraryFileSearchFilters,
+} from '../../utils';
 import { useLibraryTags } from './tags/useLibraryTags';
 import type { FilesFiltersT } from '../../types';
 
@@ -21,15 +26,15 @@ type FilesProps = {
 export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const { data: user } = useCurrentUser();
   const { fileTagIds } = useLibraryTags();
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
+  const searchFilters = useMemo(() => toLibraryFileSearchFilters(filters), [filters]);
   const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useSearchLibraryFiles();
+    useSearchLibraryFiles({ filters: searchFilters });
 
   const filteredFiles = useMemo(
-    () => filterLibraryFiles(files, filters, user?.id, fileTagIds),
-    [fileTagIds, files, filters, user?.id],
+    () => filterLibraryFiles(files, filters, undefined, fileTagIds),
+    [fileTagIds, files, filters],
   );
 
   const currentPreviewFile = useMemo(() => {
@@ -41,6 +46,7 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   }, [files, previewFile]);
 
   const filtersActive = hasActiveFilesFilters(filters);
+  const clientFiltersActive = hasClientFilesFilters(filters);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,11 +66,11 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   }, [parentRef, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   useEffect(() => {
-    if (!filtersActive || isFetchingNextPage || !hasNextPage || filteredFiles.length > 0) {
+    if (!clientFiltersActive || isFetchingNextPage || !hasNextPage || filteredFiles.length > 0) {
       return;
     }
     fetchNextPage();
-  }, [fetchNextPage, filteredFiles.length, filtersActive, hasNextPage, isFetchingNextPage]);
+  }, [clientFiltersActive, fetchNextPage, filteredFiles.length, hasNextPage, isFetchingNextPage]);
 
   if (isLoading) {
     return <MaterialsGallerySkeleton />;
@@ -74,7 +80,7 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
     return <p className="text-s-base text-text-secondary py-10 text-center">{t('files.error')}</p>;
   }
 
-  if (!files.length) {
+  if (!files.length && !filtersActive) {
     return (
       <MaterialsTabEmptyState
         title={t('empty.filesTitle')}

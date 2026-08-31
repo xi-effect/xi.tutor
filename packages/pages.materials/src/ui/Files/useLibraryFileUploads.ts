@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FileKind } from 'common.api';
-import { isFileNameTooLong } from 'common.services';
+import {
+  LibraryFilesQueryKey,
+  handleError,
+  isFileNameTooLong,
+  uploadFileRequest,
+} from 'common.services';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   LIBRARY_UPLOAD_MAX_FILES,
   getBrowserFileKind,
@@ -12,7 +18,7 @@ export type LibraryUploadItem = {
   file: File;
   kind: FileKind;
   progress: number;
-  status: 'uploading' | 'done';
+  status: 'uploading' | 'done' | 'error';
 };
 
 export type AddLibraryUploadFilesResult = {
@@ -27,68 +33,78 @@ const createItemId = () =>
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-export const useSimulatedLibraryUploads = (open: boolean) => {
+export const useLibraryFileUploads = (open: boolean) => {
+  const queryClient = useQueryClient();
   const [items, setItems] = useState<LibraryUploadItem[]>([]);
   const itemsRef = useRef(items);
-  const framesRef = useRef<Map<string, number>>(new Map());
+  const abortRef = useRef(new Map<string, AbortController>());
 
   itemsRef.current = items;
 
-  const stop = useCallback((id: string) => {
-    const frame = framesRef.current.get(id);
-    if (frame == null) {
-      return;
-    }
-
-    cancelAnimationFrame(frame);
-    framesRef.current.delete(id);
+  const abort = useCallback((id: string) => {
+    abortRef.current.get(id)?.abort();
+    abortRef.current.delete(id);
   }, []);
 
-  const stopAll = useCallback(() => {
-    framesRef.current.forEach((frame) => cancelAnimationFrame(frame));
-    framesRef.current.clear();
+  const abortAll = useCallback(() => {
+    abortRef.current.forEach((controller) => controller.abort());
+    abortRef.current.clear();
   }, []);
 
-  const start = useCallback((id: string) => {
-    const duration = 1800 + Math.random() * 2200;
-    const startedAt = performance.now();
+  const start = useCallback(
+    async (id: string, file: File) => {
+      const controller = new AbortController();
+      abortRef.current.set(id, controller);
 
-    const tick = (now: number) => {
-      const progress = Math.min(100, Math.round(((now - startedAt) / duration) * 100));
+      try {
+        const uploaded = await uploadFileRequest({
+          file,
+          signal: controller.signal,
+          onUploadProgress: (percent) => {
+            setItems((current) =>
+              current.map((item) =>
+                item.id === id && item.status === 'uploading'
+                  ? { ...item, progress: percent }
+                  : item,
+              ),
+            );
+          },
+        });
 
-      setItems((current) =>
-        current.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                progress,
-                status: progress >= 100 ? 'done' : 'uploading',
-              }
-            : item,
-        ),
-      );
+        abortRef.current.delete(id);
+        setItems((current) =>
+          current.map((item) =>
+            item.id === id ? { ...item, kind: uploaded.kind, progress: 100, status: 'done' } : item,
+          ),
+        );
+        queryClient.invalidateQueries({
+          queryKey: [LibraryFilesQueryKey.SearchLibraryFiles],
+        });
+      } catch (error) {
+        abortRef.current.delete(id);
+        if (controller.signal.aborted) {
+          return;
+        }
 
-      if (progress < 100) {
-        framesRef.current.set(id, requestAnimationFrame(tick));
-        return;
+        handleError(error, 'files');
+        setItems((current) =>
+          current.map((item) => (item.id === id ? { ...item, status: 'error' } : item)),
+        );
       }
-
-      framesRef.current.delete(id);
-    };
-
-    framesRef.current.set(id, requestAnimationFrame(tick));
-  }, []);
+    },
+    [queryClient],
+  );
 
   useEffect(() => {
     if (open) {
       return;
     }
 
-    stopAll();
+    abortAll();
     setItems([]);
-  }, [open, stopAll]);
+  }, [abortAll, open]);
 
-  useEffect(() => () => stopAll(), [stopAll]);
+  useEffect(() => () => abortAll(), [abortAll]);
 
   const addFiles = useCallback(
     (files: File[]): AddLibraryUploadFilesResult => {
@@ -131,7 +147,9 @@ export const useSimulatedLibraryUploads = (open: boolean) => {
 
       if (nextItems.length > 0) {
         setItems((current) => [...current, ...nextItems]);
-        nextItems.forEach((item) => start(item.id));
+        nextItems.forEach((item) => {
+          void start(item.id, item.file);
+        });
       }
 
       return result;
@@ -141,16 +159,16 @@ export const useSimulatedLibraryUploads = (open: boolean) => {
 
   const removeItem = useCallback(
     (id: string) => {
-      stop(id);
+      abort(id);
       setItems((current) => current.filter((item) => item.id !== id));
     },
-    [stop],
+    [abort],
   );
 
   const cancelAll = useCallback(() => {
-    stopAll();
+    abortAll();
     setItems([]);
-  }, [stopAll]);
+  }, [abortAll]);
 
   return {
     items,

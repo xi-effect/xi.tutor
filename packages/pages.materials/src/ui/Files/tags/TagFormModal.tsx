@@ -39,10 +39,11 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
   const { t } = useTranslation('materials');
   const nameId = useId();
   const colorGroupId = useId();
-  const { tags, createTag, updateTag } = useLibraryTags();
+  const { tags, createTag, updateTag, canCreateMore, isCreating, isUpdating } = useLibraryTags();
   const isEdit = Boolean(tag);
   const [name, setName] = useState('');
   const [color, setColor] = useState<LibraryTagColorId>(DEFAULT_TAG_COLOR);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => cleanupBodyScrollLock, []);
 
@@ -59,33 +60,43 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
   const isTooLong = name.length > MAX_TAG_NAME_LENGTH;
   const isEmpty = trimmedName.length === 0;
   const isDuplicate = useMemo(
-    () =>
-      tags.some(
-        (item) =>
-          item.id !== tag?.id && item.name.trim().toLowerCase() === trimmedName.toLowerCase(),
-      ),
+    () => tags.some((item) => item.id !== tag?.id && item.name.trim() === trimmedName),
     [tag?.id, tags, trimmedName],
   );
+  const isAtLimit = !isEdit && !canCreateMore;
   const isUnchanged = isEdit && trimmedName === tag?.name && color === tag?.color;
-  const canSubmit = !isEmpty && !isTooLong && !isDuplicate && !isUnchanged;
+  const isBusy = isSubmitting || isCreating || isUpdating;
+  const canSubmit = !isEmpty && !isTooLong && !isDuplicate && !isUnchanged && !isAtLimit && !isBusy;
 
   const handleClose = () => {
+    if (isBusy) {
+      return;
+    }
+
     onOpenChange(false);
     cleanupBodyScrollLock();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!canSubmit) {
       return;
     }
 
-    if (tag) {
-      updateTag(tag.id, { name: trimmedName, color });
-    } else {
-      createTag(trimmedName, color);
-    }
+    setIsSubmitting(true);
+    try {
+      if (tag) {
+        await updateTag(tag.id, { name: trimmedName, color });
+      } else {
+        await createTag(trimmedName, color);
+      }
 
-    handleClose();
+      onOpenChange(false);
+      cleanupBodyScrollLock();
+    } catch {
+      /* toast is shown by the mutation */
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -112,7 +123,7 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
           className={modalBodyClass}
           onSubmit={(event) => {
             event.preventDefault();
-            handleSubmit();
+            void handleSubmit();
           }}
         >
           <div className={modalHeaderRowClass}>
@@ -137,11 +148,13 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
               onChange={(event) => setName(event.target.value)}
             />
             <p className="text-text-danger min-h-4 text-xs leading-4">
-              {isTooLong
-                ? t('files.tagForm.tooLong', { max: MAX_TAG_NAME_LENGTH })
-                : isDuplicate
-                  ? t('files.tagForm.duplicate')
-                  : null}
+              {isAtLimit
+                ? t('files.tagForm.limit')
+                : isTooLong
+                  ? t('files.tagForm.tooLong', { max: MAX_TAG_NAME_LENGTH })
+                  : isDuplicate
+                    ? t('files.tagForm.duplicate')
+                    : null}
             </p>
           </div>
 
@@ -186,6 +199,7 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
               size="m"
               className={modalCancelButtonClass}
               onClick={handleClose}
+              disabled={isBusy}
               data-umami-event="materials-tag-form-cancel"
             >
               {t('files.tagForm.cancel')}
@@ -198,7 +212,11 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
               disabled={!canSubmit}
               data-umami-event={isEdit ? 'materials-tag-form-save' : 'materials-tag-form-create'}
             >
-              {isEdit ? t('files.tagForm.save') : t('files.tagForm.create')}
+              {isBusy
+                ? t('files.tagForm.saving')
+                : isEdit
+                  ? t('files.tagForm.save')
+                  : t('files.tagForm.create')}
             </Button>
           </div>
         </form>

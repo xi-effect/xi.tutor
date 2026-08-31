@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { ClassroomMaterialsQueryKey } from 'common.api';
+import { ClassroomMaterialsQueryKey, type FileFilters } from 'common.api';
 import { useSearchLibraryFiles } from '../libraryFiles/useSearchLibraryFiles';
 import { getMockClassroomFiles } from './mockClassroomFiles';
 
@@ -7,16 +7,21 @@ type UseGetClassroomFilesParams = {
   classroomId: string;
   isTutor: boolean;
   disabled?: boolean;
+  filters?: FileFilters | null;
 };
 
 export const useGetClassroomFiles = ({
   classroomId,
   isTutor,
   disabled = false,
+  filters,
 }: UseGetClassroomFilesParams) => {
   const enabled = !disabled && Boolean(classroomId);
 
-  const tutorLibrarySearch = useSearchLibraryFiles({ enabled: enabled && isTutor });
+  const tutorLibrarySearch = useSearchLibraryFiles({
+    enabled: enabled && isTutor,
+    filters,
+  });
 
   const studentQuery = useQuery({
     queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterialsStudent, classroomId, 'file', 'list'],

@@ -2,6 +2,7 @@ export { LIBRARY_TAG_COLORS, MAX_TAG_NAME_LENGTH, getTagColor } from './tagColor
 export type { LibraryTagColorId } from './tagColors';
 export type { LibraryTag } from './libraryTagsStore';
 export { useLibraryTags } from './useLibraryTags';
+export { useGenericTagSuggestions } from './useGenericTagSuggestions';
 export { LibraryTagsUiProvider } from './LibraryTagsUiContext';
 export { useLibraryTagsManage } from './libraryTagsUiStore';
 export { AssignFileTagsPopover } from './AssignFileTagsPopover';

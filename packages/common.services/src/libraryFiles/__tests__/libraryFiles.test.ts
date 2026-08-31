@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  FILE_FILTER_MAX_KINDS,
   LIBRARY_FILES_DEFAULT_LIMIT,
   LIBRARY_FILES_MAX_LIMIT,
   LibraryFilesQueryKey,
@@ -7,6 +8,7 @@ import {
   getNextLibraryFilesCursor,
   libraryFilesApiConfig,
   libraryFilesQueryKeys,
+  normalizeFileFilters,
   normalizeLibraryFilesLimit,
   type LibraryFile,
 } from 'common.api';
@@ -91,6 +93,41 @@ describe('library files API', () => {
     expect(normalizeLibraryFilesLimit(1000)).toBe(LIBRARY_FILES_MAX_LIMIT);
   });
 
+  it('нормализует filters: уникальные kinds, максимум 5, boolean owner', () => {
+    expect(
+      normalizeFileFilters({
+        kinds: ['image', 'document', 'image', 'audio'],
+        is_uploaded_by_owner: true,
+      }),
+    ).toEqual({
+      kinds: ['image', 'document', 'audio'],
+      is_uploaded_by_owner: true,
+    });
+    expect(
+      normalizeFileFilters({
+        kinds: ['image', 'document', 'audio', 'presentation', 'uncategorized', 'image'],
+        is_uploaded_by_owner: null,
+      }),
+    ).toEqual({
+      kinds: ['image', 'document', 'audio', 'presentation', 'uncategorized'],
+    });
+    expect(FILE_FILTER_MAX_KINDS).toBe(5);
+    expect(normalizeFileFilters({ kinds: [], is_uploaded_by_owner: null })).toEqual({});
+  });
+
+  it('передаёт kinds и is_uploaded_by_owner в search request', () => {
+    expect(buildFileSearchRequest(null, 12, { kinds: ['image', 'document'] })).toEqual({
+      cursor: null,
+      limit: 12,
+      filters: { kinds: ['image', 'document'] },
+    });
+    expect(buildFileSearchRequest(null, 12, { is_uploaded_by_owner: false })).toEqual({
+      cursor: null,
+      limit: 12,
+      filters: { is_uploaded_by_owner: false },
+    });
+  });
+
   it('вычисляет следующий cursor и останавливает пагинацию на короткой странице', () => {
     const fullPage = Array.from({ length: 12 }, (_, index) => ({
       ...libraryFile,
@@ -106,7 +143,15 @@ describe('library files API', () => {
   });
 
   it('кладёт limit в query key поиска и fileId в ключи meta/file', () => {
-    expect(libraryFilesQueryKeys.search(12)).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12]);
+    expect(libraryFilesQueryKeys.search(12)).toEqual([
+      LibraryFilesQueryKey.SearchLibraryFiles,
+      12,
+      '',
+      null,
+    ]);
+    expect(
+      libraryFilesQueryKeys.search(12, { kinds: ['image'], is_uploaded_by_owner: true }),
+    ).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12, 'image', true]);
     expect(libraryFilesQueryKeys.meta(libraryFile.id)).toEqual([
       LibraryFilesQueryKey.GetLibraryFileMeta,
       libraryFile.id,
@@ -135,6 +180,28 @@ describe('library files API', () => {
     );
     expect(String(axiosMock.mock.calls[0][0].url)).toContain(
       '/api/protected/content-service/roles/tutor/files/searches/',
+    );
+  });
+
+  it('отправляет kinds и is_uploaded_by_owner в теле поиска', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: [libraryFile] });
+
+    await searchLibraryFilesRequest(null, 12, {
+      kinds: ['image', 'document'],
+      is_uploaded_by_owner: true,
+    });
+
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          cursor: null,
+          limit: 12,
+          filters: {
+            kinds: ['image', 'document'],
+            is_uploaded_by_owner: true,
+          },
+        },
+      }),
     );
   });
 

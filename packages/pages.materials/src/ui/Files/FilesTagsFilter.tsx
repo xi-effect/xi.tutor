@@ -8,6 +8,7 @@ import { MaterialsFilterOption } from '../MaterialsFilterOption';
 import { FilesFilterChip } from './FilesFilterChip';
 import { FilesFilterActions, filesFilterPopoverClass } from './FilesFilterActions';
 import { getTagColor } from './tags/tagColors';
+import { useGenericTagSuggestions } from './tags/useGenericTagSuggestions';
 import { useLibraryTags } from './tags/useLibraryTags';
 import type { FilesTagOptionT } from '../../types';
 
@@ -22,6 +23,7 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [draft, setDraft] = useState<FilesTagOptionT[]>(value);
+  const { isLoading: isSearchLoading } = useGenericTagSuggestions(search, open);
 
   useEffect(() => {
     if (open) {
@@ -67,10 +69,12 @@ export const FilesTagsFilter = ({ value, onChange }: FilesTagsFilterProps) => {
           />
         </div>
         <div className="flex max-h-52 w-full min-w-0 flex-col items-stretch gap-2.5 overflow-y-auto bg-transparent">
-          {tags.length === 0 ? (
+          {tags.length === 0 && !search.trim() ? (
             <p className="text-s-base text-text-secondary leading-5">{t('files.tags.none')}</p>
           ) : visibleTags.length === 0 ? (
-            <p className="text-s-base text-text-secondary leading-5">{t('files.tags.empty')}</p>
+            <p className="text-s-base text-text-secondary leading-5">
+              {isSearchLoading ? t('files.tags.loading') : t('files.tags.empty')}
+            </p>
           ) : (
             visibleTags.map((tag) => (
               <MaterialsFilterOption

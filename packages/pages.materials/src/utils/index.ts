@@ -7,5 +7,7 @@ export {
   getLibraryFileDisplayName,
   getLibraryFileNameParts,
   hasActiveFilesFilters,
+  hasClientFilesFilters,
+  toLibraryFileSearchFilters,
   FILE_TYPE_OPTIONS,
 } from './filterLibraryFiles';

@@ -15,14 +15,26 @@ export interface TagSchema {
   name: string;
 }
 
+export interface CreateTagBody {
+  name: string;
+}
+
+export type UpdateTagBody = CreateTagBody;
+
 export const TAG_AUTOCOMPLETE_DEFAULT_LIMIT = 10;
 export const TAG_AUTOCOMPLETE_MAX_LIMIT = 20;
 export const TAG_AUTOCOMPLETE_MIN_SEARCH_LENGTH = 1;
 export const TAG_AUTOCOMPLETE_MAX_SEARCH_LENGTH = 100;
+export const TAG_NAME_MIN_LENGTH = 1;
+export const TAG_NAME_MAX_LENGTH = 100;
+export const TAG_MAX_COUNT = 100;
 
 enum TagsQueryKey {
   GetTagById = 'GetTagById',
   TagsAutocomplete = 'TagsAutocomplete',
+  CreateTag = 'CreateTag',
+  UpdateTag = 'UpdateTag',
+  DeleteTag = 'DeleteTag',
 }
 
 function normalizeTagAutocompleteLimit(limit?: number): number {
@@ -32,6 +44,10 @@ function normalizeTagAutocompleteLimit(limit?: number): number {
 
 function buildTagKindUrl(kind: TagKind, path: string): string {
   return `${AUTOCOMPLETE_SERVICE_URL}/tag-kinds/${kind}/${path}`;
+}
+
+function buildTutorTagKindUrl(kind: TagKind, path: string): string {
+  return `${AUTOCOMPLETE_SERVICE_URL}/roles/tutor/tag-kinds/${kind}/${path}`;
 }
 
 const tagsApiConfig = {
@@ -49,6 +65,18 @@ const tagsApiConfig = {
     },
     method: HttpMethod.GET,
   },
+  [TagsQueryKey.CreateTag]: {
+    getUrl: (kind: TagKind) => buildTutorTagKindUrl(kind, 'tags/'),
+    method: HttpMethod.POST,
+  },
+  [TagsQueryKey.UpdateTag]: {
+    getUrl: (kind: TagKind, id: number) => buildTutorTagKindUrl(kind, `tags/${id}/`),
+    method: HttpMethod.PATCH,
+  },
+  [TagsQueryKey.DeleteTag]: {
+    getUrl: (kind: TagKind, id: number) => buildTutorTagKindUrl(kind, `tags/${id}/`),
+    method: HttpMethod.DELETE,
+  },
 };
 
 const tagsQueryKeys = {
@@ -59,6 +87,7 @@ const tagsQueryKeys = {
     limit,
   ],
   byId: (kind: TagKind, id: number): (string | number)[] => [TagsQueryKey.GetTagById, kind, id],
+  mutations: (kind: TagKind): string[] => [TagsQueryKey.CreateTag, kind],
 };
 
 export {
@@ -67,4 +96,5 @@ export {
   tagsQueryKeys,
   normalizeTagAutocompleteLimit,
   buildTagKindUrl,
+  buildTutorTagKindUrl,
 };

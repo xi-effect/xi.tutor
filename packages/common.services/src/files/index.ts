@@ -1,8 +1,8 @@
-export { useUploadImage, uploadImageRequest } from './useUploadImage';
+export { useUploadImage, useUploadFile, uploadImageRequest } from './useUploadImage';
 export { uploadAudioRequest } from './uploadAudioRequest';
 export { uploadDocumentRequest } from './uploadDocumentRequest';
 export { uploadPresentationRequest } from './uploadPresentationRequest';
-export { uploadFileRequest } from './uploadFileRequest';
+export { uploadFileRequest, uploadFileIdRequest, type UploadFileVars } from './uploadFileRequest';
 export { useDownloadFile, downloadFileRequest } from './useDownloadFile';
 export { useAttachFileToYDoc, attachFileToYDocRequest } from './useAttachFileToYDoc';
 export type { AttachFileToYDocVars } from './useAttachFileToYDoc';

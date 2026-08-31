@@ -2,6 +2,7 @@ import {
   LIBRARY_FILES_DEFAULT_LIMIT,
   type LibraryFile,
   type FileCursor,
+  type FileFilters,
   libraryFilesApiConfig,
   LibraryFilesQueryKey,
   libraryFilesQueryKeys,
@@ -15,14 +16,16 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 interface UseSearchLibraryFilesProps {
   limit?: number;
   enabled?: boolean;
+  filters?: FileFilters | null;
 }
 
 export async function searchLibraryFilesRequest(
   cursor: FileCursor | null,
   limit?: number,
+  filters?: FileFilters | null,
 ): Promise<LibraryFile[]> {
   const axiosInst = await getAxiosInstance();
-  const request = buildFileSearchRequest(cursor, limit);
+  const request = buildFileSearchRequest(cursor, limit, filters);
 
   const response = await axiosInst<LibraryFile[]>({
     method: libraryFilesApiConfig[LibraryFilesQueryKey.SearchLibraryFiles].method,
@@ -39,6 +42,7 @@ export async function searchLibraryFilesRequest(
 export const useSearchLibraryFiles = ({
   limit = LIBRARY_FILES_DEFAULT_LIMIT,
   enabled = true,
+  filters,
 }: UseSearchLibraryFilesProps = {}) => {
   const normalizedLimit = normalizeLibraryFilesLimit(limit);
 
@@ -52,9 +56,13 @@ export const useSearchLibraryFiles = ({
     refetch,
     ...rest
   } = useInfiniteQuery<LibraryFile[]>({
-    queryKey: libraryFilesQueryKeys.search(normalizedLimit),
+    queryKey: libraryFilesQueryKeys.search(normalizedLimit, filters),
     queryFn: async ({ pageParam }) =>
-      searchLibraryFilesRequest((pageParam as FileCursor | undefined) ?? null, normalizedLimit),
+      searchLibraryFilesRequest(
+        (pageParam as FileCursor | undefined) ?? null,
+        normalizedLimit,
+        filters,
+      ),
     initialPageParam: undefined as FileCursor | undefined,
     getNextPageParam: (lastPage) => getNextLibraryFilesCursor(lastPage, normalizedLimit),
     enabled,

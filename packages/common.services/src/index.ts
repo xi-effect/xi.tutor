@@ -24,6 +24,8 @@ export * from './classroom-payments';
 export {
   filesApiConfig,
   FilesQueryKey,
+  FILE_KIND,
+  FILE_KINDS,
   type FileKind,
   type FileResponse,
   type FileMetaResponse,
@@ -45,5 +47,7 @@ export {
   TAG_KIND,
   type TagKind,
   type TagSchema,
+  type CreateTagBody,
+  type UpdateTagBody,
 } from 'common.api';
 export * from './scheduler';

@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
 import { boardDropdownZClass, boardIconClass, boardMenuSurfaceClass } from '../../ui/boardTheme';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadImageRequest } from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'common.services';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -102,7 +102,7 @@ async function uploadPickedImage(file: File, token: string) {
   }
 
   try {
-    const fileId = await uploadImageRequest({ file: next, token });
+    const fileId = await uploadFileIdRequest({ file: next, token });
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
     toast.error(boardToast('toast.imageUploadFailed'));

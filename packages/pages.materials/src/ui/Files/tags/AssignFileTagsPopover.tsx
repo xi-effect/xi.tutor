@@ -9,6 +9,7 @@ import { matchesSearchQuery } from 'common.utils';
 import { getLibraryFileDisplayName } from '../../../utils';
 import { getTagColor } from './tagColors';
 import { useLibraryTagsManage } from './libraryTagsUiStore';
+import { useGenericTagSuggestions } from './useGenericTagSuggestions';
 import { useLibraryTags } from './useLibraryTags';
 
 type AssignFileTagsPopoverProps = {
@@ -28,6 +29,7 @@ export const AssignFileTagsPopover = ({
   const { tags, fileTagIds, toggleFileTag } = useLibraryTags();
   const { openManage } = useLibraryTagsManage();
   const [search, setSearch] = useState('');
+  const { isLoading: isSearchLoading } = useGenericTagSuggestions(search, open);
   const displayName = getLibraryFileDisplayName(file);
   const assignedIds = fileTagIds[file.id] ?? [];
 
@@ -82,13 +84,13 @@ export const AssignFileTagsPopover = ({
         </div>
 
         <div className="flex max-h-52 w-full flex-col gap-1 overflow-y-auto">
-          {tags.length === 0 ? (
+          {tags.length === 0 && !search.trim() ? (
             <p className="text-s-base text-text-secondary py-4 text-center">
               {t('files.assignTags.none')}
             </p>
           ) : visibleTags.length === 0 ? (
             <p className="text-s-base text-text-secondary py-4 text-center">
-              {t('files.tags.empty')}
+              {isSearchLoading ? t('files.tags.loading') : t('files.tags.empty')}
             </p>
           ) : (
             visibleTags.map((tag) => {

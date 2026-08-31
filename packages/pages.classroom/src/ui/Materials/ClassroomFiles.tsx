@@ -7,6 +7,8 @@ import {
   FilesFilteredEmpty,
   LibraryTagsUiProvider,
   filterLibraryFiles,
+  hasActiveFilesFilters,
+  toLibraryFileSearchFilters,
   useLibraryTags,
   type FilesFiltersT,
 } from 'pages.materials';
@@ -34,6 +36,7 @@ const ClassroomFilesGallery = ({ classroomId, filters, onResetFilters }: Classro
     classroomId,
     isTutor,
     disabled: !classroomId || !roleReady,
+    filters: isTutor ? toLibraryFileSearchFilters(filters) : undefined,
   });
 
   const filteredFiles = useMemo(
@@ -54,7 +57,7 @@ const ClassroomFilesGallery = ({ classroomId, filters, onResetFilters }: Classro
     return <ErrorState />;
   }
 
-  if (!files.length) {
+  if (!files.length && !hasActiveFilesFilters(filters)) {
     return (
       <EmptyDataState
         title={t('materials.noFiles')}

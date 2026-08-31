@@ -21,6 +21,7 @@ export type ErrorType =
   | 'calls'
   | 'createGroup'
   | 'files'
+  | 'tags'
   | 'notifications'
   | 'emailConfirmation'
   | 'emailConfirmationRequest'
@@ -118,6 +119,12 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Insufficient content token permissions': 'Недостаточно прав токена доступа к контенту',
     'Invalid content token': 'Недействительный токен доступа к контенту',
   },
+  tags: {
+    'Tag already exists': 'Тег с таким названием уже существует',
+    'Quantity exceeded': 'Достигнут лимит тегов',
+    'Tag not found': 'Тег не найден',
+    'Tag access denied': 'Нельзя изменить чужой тег',
+  },
   notifications: {
     'Validation Error': 'Ошибка валидации',
     'Notification not found': 'Уведомление не найдено',
@@ -171,6 +178,7 @@ const successMessages: Record<ErrorType, string> = {
   calls: 'Access token создан',
   createGroup: 'Группа успешно создана',
   files: 'Файл успешно загружен',
+  tags: 'Тег сохранён',
   notifications: 'Уведомление успешно отмечено как прочитанное',
   emailConfirmation: 'Письмо для подтверждения email было отправлено',
   emailConfirmationRequest: 'Почта успешно подтверждена',
@@ -249,6 +257,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'создании группы';
     case 'files':
       return 'загрузке файла';
+    case 'tags':
+      return 'сохранении тега';
     case 'notifications':
       return 'обработке уведомления';
     default:

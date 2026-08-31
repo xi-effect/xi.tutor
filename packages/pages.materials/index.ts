@@ -15,6 +15,7 @@ export {
   filterLibraryFiles,
   getLibraryFileDisplayName,
   hasActiveFilesFilters,
+  toLibraryFileSearchFilters,
 } from './src/utils';
 export { DEFAULT_FILES_FILTERS, type FilesFiltersT } from './src/types';
 export { LIBRARY_TAG_COLORS, MAX_TAG_NAME_LENGTH, getTagColor } from './src/ui/Files/tags';

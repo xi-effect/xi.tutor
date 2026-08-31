@@ -1,15 +1,9 @@
 import { useRef, useCallback } from 'react';
 import { useNetworkStatus } from 'common.utils';
 import { nanoid } from 'nanoid';
-
-import {
-  uploadFileRequest,
-  uploadPresentationRequest,
-  deleteFileFromDB,
-  getFileFromDB,
-  getAllFileKeys,
-} from 'common.services';
 import { DrShapeId } from '@ibodr/draw';
+import { uploadFileIdRequest } from './uploadFileRequest';
+import { deleteFileFromDB, getAllFileKeys, getFileFromDB } from './fileStorage';
 
 export type RetryRequest = {
   id: string;
@@ -72,10 +66,7 @@ export const useRetryFileQueue = () => {
           continue;
         }
 
-        const upload = fileObject.file.name.toLowerCase().endsWith('.pptx')
-          ? uploadPresentationRequest
-          : uploadFileRequest;
-        const fileId = await upload({
+        const fileId = await uploadFileIdRequest({
           file: fileObject.file,
           token: fileObject.token,
         });

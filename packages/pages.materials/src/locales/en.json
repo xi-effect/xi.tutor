@@ -36,6 +36,7 @@
       "limitsEmpty": "Up to 10 files: images up to 1 MB, other files up to 5 MB",
       "limitsCount": "You can upload up to {{max}} files at a time",
       "limitsSize": "Images up to 1 MB, PDF, audio and other files up to 5 MB",
+      "failed": "Upload failed",
       "tooLarge": "The file “{{name}}” is too large",
       "tooLong": "The name “{{name}}” is longer than 100 characters",
       "maxFiles": "You can upload at most {{max}} files at a time"
@@ -66,7 +67,8 @@
       "searchPlaceholder": "Find a tag",
       "empty": "Tags not found",
       "none": "No tags yet",
-      "hint": "Start typing a tag name"
+      "hint": "Start typing a tag name",
+      "loading": "Loading..."
     },
     "tagManage": {
       "title": "Tag management",
@@ -86,8 +88,10 @@
       "cancel": "Cancel",
       "create": "Create",
       "save": "Save",
+      "saving": "Saving...",
       "tooLong": "Name cannot be longer than {{max}} characters",
       "duplicate": "A tag with this name already exists",
+      "limit": "You can create at most 100 tags",
       "close": "Close"
     },
     "tagDelete": {

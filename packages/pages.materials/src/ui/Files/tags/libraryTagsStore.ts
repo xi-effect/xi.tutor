@@ -148,6 +148,65 @@ export const subscribeLibraryTags = (listener: () => void): (() => void) => {
   return () => listeners.delete(listener);
 };
 
+export const isBackendTagId = (id: string): boolean => /^\d+$/.test(id);
+
+export const upsertLibraryTag = (tag: LibraryTag): LibraryTag => {
+  const name = tag.name.trim();
+  const existing = state.tags.find((item) => item.id === tag.id);
+  const nextTag: LibraryTag = {
+    id: tag.id,
+    name,
+    color: tag.color || existing?.color || DEFAULT_TAG_COLOR,
+  };
+
+  persist({
+    tags: existing
+      ? state.tags.map((item) => (item.id === tag.id ? nextTag : item))
+      : [...state.tags, nextTag],
+    fileTagIds: state.fileTagIds,
+  });
+
+  return nextTag;
+};
+
+export const rememberApiTags = (tags: { id: number; name: string }[]): void => {
+  tags.forEach((tag) => {
+    const existing = state.tags.find((item) => item.id === String(tag.id));
+    upsertLibraryTag({
+      id: String(tag.id),
+      name: tag.name,
+      color: existing?.color ?? DEFAULT_TAG_COLOR,
+    });
+  });
+};
+
+export const remapLibraryTagId = (fromId: string, toId: string, name?: string): void => {
+  if (fromId === toId) {
+    return;
+  }
+
+  const from = state.tags.find((tag) => tag.id === fromId);
+  const to = state.tags.find((tag) => tag.id === toId);
+  const nextTag: LibraryTag = {
+    id: toId,
+    name: name?.trim() || to?.name || from?.name || '',
+    color: from?.color || to?.color || DEFAULT_TAG_COLOR,
+  };
+
+  const fileTagIds: Record<string, string[]> = {};
+  Object.entries(state.fileTagIds).forEach(([fileId, ids]) => {
+    const nextIds = [...new Set(ids.map((id) => (id === fromId ? toId : id)))];
+    if (nextIds.length > 0) {
+      fileTagIds[fileId] = nextIds;
+    }
+  });
+
+  persist({
+    tags: [...state.tags.filter((tag) => tag.id !== fromId && tag.id !== toId), nextTag],
+    fileTagIds,
+  });
+};
+
 export const createLibraryTag = (name: string, color: LibraryTagColorId): LibraryTag => {
   const tag: LibraryTag = {
     id: createId(),

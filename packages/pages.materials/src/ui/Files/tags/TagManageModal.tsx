@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import {
@@ -8,9 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Edit, MoreVert, Trash } from '@xipkg/icons';
+import { Edit, MoreVert, Search, Trash } from '@xipkg/icons';
 import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
+import { matchesSearchQuery } from 'common.utils';
 import {
   ConfirmDialog,
   ModalCloseIcon,
@@ -30,6 +31,7 @@ import {
 import type { LibraryTag } from './libraryTagsStore';
 import { TagFormModal } from './TagFormModal';
 import { getTagColor } from './tagColors';
+import { useGenericTagSuggestions } from './useGenericTagSuggestions';
 import { useLibraryTags } from './useLibraryTags';
 
 const cleanupBodyScrollLock = () => {
@@ -45,11 +47,13 @@ type TagManageModalProps = {
 
 export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
   const { t } = useTranslation('materials');
-  const { tags, deleteTag } = useLibraryTags();
+  const { tags, deleteTag, canCreateMore } = useLibraryTags();
   const [editingTag, setEditingTag] = useState<LibraryTag | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deletingTag, setDeletingTag] = useState<LibraryTag | null>(null);
+  const [search, setSearch] = useState('');
   const formOpen = createOpen || editingTag != null;
+  const { isLoading: isSearchLoading } = useGenericTagSuggestions(search, open);
 
   useEffect(() => cleanupBodyScrollLock, []);
 
@@ -61,6 +65,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
     setCreateOpen(false);
     setEditingTag(null);
     setDeletingTag(null);
+    setSearch('');
   }, [open]);
 
   const handleClose = () => {
@@ -71,6 +76,15 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
     onOpenChange(false);
     cleanupBodyScrollLock();
   };
+
+  const visibleTags = useMemo(() => {
+    const query = search.trim();
+    if (!query) {
+      return tags;
+    }
+
+    return tags.filter((tag) => matchesSearchQuery(tag.name, query));
+  }, [search, tags]);
 
   return (
     <>
@@ -119,13 +133,27 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
               <ModalCloseIcon onClick={handleClose} aria-label={t('files.tagManage.close')} />
             </div>
 
+            <div className="border-border-control flex h-9 w-full items-center gap-1 rounded-xl border px-2">
+              <Search className="fill-icon-secondary size-4 shrink-0" />
+              <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder={t('files.tags.searchPlaceholder')}
+                className="text-s-base text-text-primary placeholder:text-text-secondary min-w-0 flex-1 bg-transparent leading-5 outline-none"
+              />
+            </div>
+
             <div className="flex max-h-80 min-h-16 flex-col overflow-y-auto">
-              {tags.length === 0 ? (
+              {tags.length === 0 && !search.trim() ? (
                 <p className="text-s-base text-text-secondary py-6 text-center">
                   {t('files.tagManage.empty')}
                 </p>
+              ) : visibleTags.length === 0 ? (
+                <p className="text-s-base text-text-secondary py-6 text-center">
+                  {isSearchLoading ? t('files.tags.loading') : t('files.tags.empty')}
+                </p>
               ) : (
-                tags.map((tag) => {
+                visibleTags.map((tag) => {
                   const color = getTagColor(tag.color);
 
                   return (
@@ -188,6 +216,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
                 variant="primary"
                 size="m"
                 className={modalConfirmButtonClass}
+                disabled={!canCreateMore}
                 onClick={() => setCreateOpen(true)}
                 data-umami-event="materials-tag-create-open"
               >
@@ -232,7 +261,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
         cancelLabel={t('files.tagDelete.cancel')}
         onConfirm={() => {
           if (deletingTag) {
-            deleteTag(deletingTag.id);
+            void deleteTag(deletingTag.id);
           }
         }}
       />

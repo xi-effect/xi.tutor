@@ -1,4 +1,4 @@
-import type { FileKind, LibraryFile } from 'common.api';
+import type { FileFilters, FileKind, LibraryFile } from 'common.api';
 import { matchesSearchQuery } from 'common.utils';
 import type { FilesFiltersT } from '../types';
 
@@ -28,6 +28,15 @@ export const hasActiveFilesFilters = (filters: FilesFiltersT): boolean =>
   filters.uploader !== 'mine' ||
   filters.kinds.length > 0 ||
   filters.tags.length > 0;
+
+export const hasClientFilesFilters = (filters: FilesFiltersT): boolean =>
+  Boolean(filters.search.trim()) || filters.tags.length > 0;
+
+export const toLibraryFileSearchFilters = (filters: FilesFiltersT): FileFilters => ({
+  kinds: filters.kinds.length > 0 ? filters.kinds : null,
+  is_uploaded_by_owner:
+    filters.uploader === 'mine' ? true : filters.uploader === 'students' ? false : null,
+});
 
 export const filterLibraryFiles = (
   files: LibraryFile[],

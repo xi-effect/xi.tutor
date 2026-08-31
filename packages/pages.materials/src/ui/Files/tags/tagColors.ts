@@ -1,4 +1,4 @@
-export const MAX_TAG_NAME_LENGTH = 50;
+export const MAX_TAG_NAME_LENGTH = 100;
 
 export const LIBRARY_TAG_COLORS = [
   {

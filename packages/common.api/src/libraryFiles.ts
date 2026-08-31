@@ -1,6 +1,6 @@
 import { env } from 'common.env';
 import { HttpMethod } from './config';
-import type { FileKind } from './files';
+import { FILE_KINDS, type FileKind } from './files';
 
 const CONTENT_SERVICE_URL = `${env.VITE_SERVER_URL_BACKEND}/api/protected/content-service`;
 const TUTOR_LIBRARY_FILES_URL = `${CONTENT_SERVICE_URL}/roles/tutor/files`;
@@ -19,11 +19,12 @@ export interface FileCursor {
   created_at: string;
 }
 
-/**
- * Backend FileFiltersSchema is currently empty.
- * Do not add frontend-only filters until the contract is provided.
- */
-export type FileFilters = Record<string, never>;
+export const FILE_FILTER_MAX_KINDS = 5;
+
+export interface FileFilters {
+  kinds?: FileKind[] | null;
+  is_uploaded_by_owner?: boolean | null;
+}
 
 export interface FileSearchRequest {
   cursor: FileCursor | null;
@@ -52,11 +53,41 @@ function normalizeLibraryFilesLimit(limit?: number): number {
   return Math.min(Math.max(value, 1), LIBRARY_FILES_MAX_LIMIT);
 }
 
-function buildFileSearchRequest(cursor: FileCursor | null, limit?: number): FileSearchRequest {
+function normalizeFileFilters(filters?: FileFilters | null): FileFilters {
+  const next: FileFilters = {};
+
+  if (filters?.kinds?.length) {
+    const seen = new Set<FileKind>();
+    for (const kind of filters.kinds) {
+      if (!FILE_KINDS.includes(kind) || seen.has(kind)) {
+        continue;
+      }
+      seen.add(kind);
+      if (seen.size >= FILE_FILTER_MAX_KINDS) {
+        break;
+      }
+    }
+    if (seen.size > 0) {
+      next.kinds = [...seen];
+    }
+  }
+
+  if (typeof filters?.is_uploaded_by_owner === 'boolean') {
+    next.is_uploaded_by_owner = filters.is_uploaded_by_owner;
+  }
+
+  return next;
+}
+
+function buildFileSearchRequest(
+  cursor: FileCursor | null,
+  limit?: number,
+  filters?: FileFilters | null,
+): FileSearchRequest {
   return {
     cursor,
     limit: normalizeLibraryFilesLimit(limit),
-    filters: {},
+    filters: normalizeFileFilters(filters),
   };
 }
 
@@ -101,7 +132,15 @@ function getLibraryFileUrl(fileId: string): string {
 }
 
 const libraryFilesQueryKeys = {
-  search: (limit: number): (string | number)[] => [LibraryFilesQueryKey.SearchLibraryFiles, limit],
+  search: (limit: number, filters?: FileFilters | null): (string | number | boolean | null)[] => {
+    const normalized = normalizeFileFilters(filters);
+    return [
+      LibraryFilesQueryKey.SearchLibraryFiles,
+      limit,
+      normalized.kinds?.join(',') ?? '',
+      normalized.is_uploaded_by_owner ?? null,
+    ];
+  },
   meta: (fileId: string): string[] => [LibraryFilesQueryKey.GetLibraryFileMeta, fileId],
   file: (fileId: string): string[] => [LibraryFilesQueryKey.GetLibraryFile, fileId],
 };
@@ -112,6 +151,7 @@ export {
   libraryFilesQueryKeys,
   getLibraryFileUrl,
   normalizeLibraryFilesLimit,
+  normalizeFileFilters,
   buildFileSearchRequest,
   getNextLibraryFilesCursor,
 };
