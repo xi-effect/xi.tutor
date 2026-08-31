@@ -1,9 +1,10 @@
-import { type InfiniteData, type QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  type LibraryFile,
-  libraryFilesApiConfig,
-  LibraryFilesQueryKey,
-} from 'common.api';
+  type InfiniteData,
+  type QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { type LibraryFile, libraryFilesApiConfig, LibraryFilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError, showSuccess } from '../utils';
 import { assertValidFileName } from '../files/validateFileName';
@@ -68,10 +69,7 @@ export async function uploadLibraryFileRequest({
 export const uploadLibraryFile = (file: File): Promise<LibraryFile> =>
   uploadLibraryFileRequest({ file });
 
-export const insertLibraryFileInSearchCache = (
-  queryClient: QueryClient,
-  uploaded: LibraryFile,
-) => {
+export const insertLibraryFileInSearchCache = (queryClient: QueryClient, uploaded: LibraryFile) => {
   queryClient.setQueriesData<InfiniteData<LibraryFile[]>>(
     { queryKey: [LibraryFilesQueryKey.SearchLibraryFiles] },
     (current) => {

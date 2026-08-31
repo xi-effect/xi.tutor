@@ -68,9 +68,7 @@ describe('library files API', () => {
     const uploadUrl = libraryFilesApiConfig[LibraryFilesQueryKey.UploadLibraryFile].getUrl();
 
     expect(searchUrl).toContain('/api/protected/content-service/roles/tutor/files/searches/');
-    expect(uploadUrl).toBe(
-      searchUrl.replace(/searches\/$/, ''),
-    );
+    expect(uploadUrl).toBe(searchUrl.replace(/searches\/$/, ''));
     expect(uploadUrl).toContain('/api/protected/content-service/roles/tutor/files/');
     expect(uploadUrl).not.toContain('/file-kinds/');
     expect(uploadUrl).not.toMatch(/\/content-service\/files\/$/);
@@ -365,9 +363,7 @@ describe('library files API', () => {
     expect(String(axiosMock.mock.calls[0][0].url)).toContain(
       '/api/protected/content-service/roles/tutor/files/',
     );
-    expect(String(axiosMock.mock.calls[0][0].url)).not.toMatch(
-      /\/content-service\/files\/$/,
-    );
+    expect(String(axiosMock.mock.calls[0][0].url)).not.toMatch(/\/content-service\/files\/$/);
     expect(axiosMock.mock.calls[0][0].headers).not.toHaveProperty('x-content-token');
     const body = axiosMock.mock.calls[0][0].data as FormData;
     expect(body.get('upload')).toBe(file);
