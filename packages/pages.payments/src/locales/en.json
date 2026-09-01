@@ -2,6 +2,7 @@
   "title": "Payment control",
   "tabs": {
     "invoices": "Payment journal",
+    "analytics": "Analytics",
     "templates": "Payment types"
   },
   "actions": {
@@ -25,6 +26,66 @@
   "charts": {
     "title": "Getting started with analytics",
     "description": "On this page you can view payment and income analytics. It may take some time before data starts appearing."
+  },
+  "analytics": {
+    "emptyValue": "—",
+    "delta": {
+      "new": "New"
+    },
+    "periods": {
+      "month": "This month",
+      "last_30_days": "30 days",
+      "year": "This year",
+      "custom": "Custom"
+    },
+    "kpi": {
+      "received": "Received",
+      "awaitingPayment": "Awaiting payment",
+      "awaitingConfirmation": "Needs confirmation",
+      "openStudents": "With open invoices",
+      "openStudentsValue_one": "{{count}} student",
+      "openStudentsValue_other": "{{count}} students",
+      "invoicesCount_one": "{{count}} invoice",
+      "invoicesCount_other": "{{count}} invoices"
+    },
+    "hints": {
+      "forPeriod": "For the period",
+      "now": "Now"
+    },
+    "secondary": {
+      "title": "Invoices issued in the period",
+      "paidShare": "{{paid}} of {{total}} paid",
+      "averageCheck": "Average payment"
+    },
+    "chart": {
+      "title": "Received",
+      "subtitle": "{{current}}",
+      "compare": "Compare",
+      "approximate": "{{amount}} is mapped to the invoice date — exact payment date is missing"
+    },
+    "attention": {
+      "title": "Needs attention",
+      "description": "Invoices you need to confirm come first, then those waiting for the student.",
+      "empty": "No open invoices"
+    },
+    "empty": {
+      "title": "No analytics yet",
+      "description": "Create the first invoice — income, outstanding amounts and trends will appear here."
+    },
+    "monthsShort": {
+      "01": "Jan",
+      "02": "Feb",
+      "03": "Mar",
+      "04": "Apr",
+      "05": "May",
+      "06": "Jun",
+      "07": "Jul",
+      "08": "Aug",
+      "09": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dec"
+    }
   },
   "templateCard": {
     "edit": "Edit",

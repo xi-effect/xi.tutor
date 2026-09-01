@@ -5710,6 +5710,9 @@ importers:
       '@xipkg/button':
         specifier: 4.3.0
         version: 4.3.0(@types/react@19.2.18)(react@19.2.8)
+      '@xipkg/datepicker':
+        specifier: 2.4.0
+        version: 2.4.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/dropdown':
         specifier: 3.1.0
         version: 3.1.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -5737,6 +5740,9 @@ importers:
       '@xipkg/tabs':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/toggle':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/userprofile':
         specifier: 4.2.0
         version: 4.2.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

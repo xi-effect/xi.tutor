@@ -30,12 +30,14 @@ export const Header = ({
   const tabs = useMemo(() => {
     const baseTabs = [
       { id: 'invoices', label: t('tabs.invoices') },
+      { id: 'analytics', label: t('tabs.analytics') },
       { id: 'templates', label: t('tabs.templates') },
     ];
-    return isTutor ? baseTabs : baseTabs.filter((tab) => tab.id !== 'templates');
+    return isTutor ? baseTabs : baseTabs.filter((tab) => tab.id === 'invoices');
   }, [isTutor, t]);
 
   const isTemplatesTab = activeTab === 'templates';
+  const isAnalyticsTab = activeTab === 'analytics';
   const actionLabel = isTemplatesTab ? t('actions.createTemplate') : t('actions.createInvoice');
   const onActionClick = isTemplatesTab ? onCreateTemplate : onCreateInvoice;
 
@@ -58,7 +60,7 @@ export const Header = ({
         )}
       </div>
 
-      {isTutor && (
+      {isTutor && !isAnalyticsTab && (
         <div className="hidden items-center justify-start sm:flex">
           <Button
             variant="primary"
