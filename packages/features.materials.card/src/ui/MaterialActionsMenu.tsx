@@ -15,7 +15,7 @@ import { Button } from '@xipkg/button';
 import { Copy, Edit, Eyeon, Flag, MoreVert, Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
-  cardMenuButtonClass,
+  cardMaterialMenuButtonClass,
   cardMenuCheckboxItemClass,
   cardMenuDeleteItemClass,
   cardMenuIconClass,
@@ -42,9 +42,10 @@ export const MaterialActionsMenu = ({
 
   const options = useMemo(
     () =>
-      (['read_only', 'no_access', 'read_write'] as AccessModeT[]).map((value) => ({
+      (['read_write', 'read_only', 'no_access'] as AccessModeT[]).map((value) => ({
         value,
         label: t(`accessMode.${value}`),
+        hint: t(`accessMode.${value}Hint`),
       })),
     [t],
   );
@@ -67,7 +68,7 @@ export const MaterialActionsMenu = ({
       <DropdownMenuTrigger asChild>
         <Button
           onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
-          className={cardMenuButtonClass}
+          className={cardMaterialMenuButtonClass}
           variant="none"
           size="icon"
           data-umami-event="material-actions-menu-open"
@@ -97,10 +98,10 @@ export const MaterialActionsMenu = ({
             <DropdownMenuSubContent
               sideOffset={8}
               alignOffset={-4}
-              className={cn(cardMenuSurfaceClass, 'text-text-primary')}
+              className={cn(cardMenuSurfaceClass, 'text-text-primary w-72 min-w-72')}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
-              {options.map(({ value, label }) => (
+              {options.map(({ value, label, hint }) => (
                 <DropdownMenuCheckboxItem
                   key={value}
                   checked={studentAccessMode === value}
@@ -108,13 +109,19 @@ export const MaterialActionsMenu = ({
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                   className={cn(
                     cardMenuCheckboxItemClass,
+                    'h-auto items-start py-2',
                     studentAccessMode === value && 'bg-status-info-background text-text-link',
                   )}
                   data-umami-event="material-access-mode-change"
                   data-umami-event-mode={value}
                   data-umami-event-from={studentAccessMode}
                 >
-                  {label}
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
+                    <span className="leading-5">{label}</span>
+                    <span className="text-text-secondary text-xs leading-4 font-normal">
+                      {hint}
+                    </span>
+                  </span>
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>

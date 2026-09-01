@@ -13,7 +13,7 @@ import {
   serializeMaterialTagIds,
 } from 'common.types';
 import { useCurrentUser, useGetClassroom, useTagsByIds } from 'common.services';
-import { ConfirmDialog, TagChips, cardMenuPositionClass } from 'common.ui';
+import { ConfirmDialog, TagChips, cardAccessBadgeClass, cardTypeIconBoxClass } from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
 import { AssignMaterialTagsPopover } from './AssignMaterialTagsPopover';
@@ -186,9 +186,7 @@ export const MaterialsCard = ({
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
         >
-          {hasIcon && (
-            <div className="size-6 shrink-0 [&>svg]:size-6">{cardIcon[content_kind]}</div>
-          )}
+          {hasIcon && <div className={cardTypeIconBoxClass}>{cardIcon[content_kind]}</div>}
           <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
             <p className="text-text-primary truncate text-base leading-[22px] font-medium">
               {name}
@@ -200,7 +198,7 @@ export const MaterialsCard = ({
             {classroomNameLine()}
           </div>
           {menu && (
-            <div className="bg-background-surface flex size-8 shrink-0 items-center justify-center rounded-lg">
+            <div className="bg-background-surface flex size-9 shrink-0 items-center justify-center rounded-lg">
               {menu}
             </div>
           )}
@@ -223,25 +221,27 @@ export const MaterialsCard = ({
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
         >
-          <div className="flex w-full shrink-0 items-center gap-2 pr-8">
-            <div className="bg-status-info-background [&>svg]:fill-icon-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
-              {cardIcon[content_kind]}
-            </div>
+          <div className="flex w-full min-w-0 shrink-0 items-center gap-2">
+            <div className={cardTypeIconBoxClass}>{cardIcon[content_kind]}</div>
 
             {student_access_mode && (
               <Badge
                 variant="default"
-                className={cn(
-                  'text-s-base min-w-0 truncate px-2 py-1 font-medium',
-                  accessModeStyles[student_access_mode],
-                )}
+                className={cn(cardAccessBadgeClass, accessModeStyles[student_access_mode])}
               >
                 {t(`accessMode.${student_access_mode}`)}
               </Badge>
             )}
-          </div>
 
-          {isTutor && <div className={cardMenuPositionClass}>{menu}</div>}
+            {isTutor ? (
+              <div
+                className="ml-auto flex size-9 shrink-0 items-center justify-center"
+                onClick={(event) => event.stopPropagation()}
+              >
+                {menu}
+              </div>
+            ) : null}
+          </div>
 
           <p
             className={cn(
@@ -282,17 +282,14 @@ export const MaterialsCard = ({
           {student_access_mode && (
             <Badge
               variant="default"
-              className={cn(
-                'text-s-base px-2 py-1 font-medium',
-                accessModeStyles[student_access_mode],
-              )}
+              className={cn('w-fit', cardAccessBadgeClass, accessModeStyles[student_access_mode])}
             >
               {t(`accessMode.${student_access_mode}`)}
             </Badge>
           )}
 
           <div className="text-l-base text-text-primary line-clamp-2 flex w-full items-center gap-2 font-medium">
-            {hasIcon && cardIcon[content_kind]}
+            {hasIcon ? <div className={cardTypeIconBoxClass}>{cardIcon[content_kind]}</div> : null}
             <p className="truncate">{name}</p>
           </div>
           <div className="text-s-base text-text-secondary mt-2 font-normal">
@@ -302,7 +299,7 @@ export const MaterialsCard = ({
         </div>
       </div>
 
-      {isTutor && <div className="flex size-8 items-center justify-center">{menu}</div>}
+      {isTutor && <div className="flex size-9 items-center justify-center">{menu}</div>}
 
       {editModal}
       {deleteConfirmModal}

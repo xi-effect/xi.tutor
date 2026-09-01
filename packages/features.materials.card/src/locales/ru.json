@@ -19,12 +19,15 @@
     "daysAgo_other": "{{count}} дней назад"
   },
   "accessMode": {
-    "read_write": "совместная работа",
-    "read_only": "только репетитор",
-    "no_access": "черновик"
+    "read_write": "Можно править",
+    "read_only": "Только просмотр",
+    "no_access": "Скрыто от ученика",
+    "read_writeHint": "Ученик видит материал и может его менять",
+    "read_onlyHint": "Ученик видит материал, но не может его менять",
+    "no_accessHint": "Ученик не видит этот материал"
   },
   "menu": {
-    "changeAccess": "Поменять доступ",
+    "changeAccess": "Доступ для ученика",
     "duplicateToClassroom": "Дублировать в кабинет",
     "editTags": "Изменить теги",
     "rename": "Переименовать",

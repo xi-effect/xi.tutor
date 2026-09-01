@@ -1,8 +1,18 @@
 import { cn } from '@xipkg/utils';
 
-/** Кнопка «троеточие» на карточках (кабинеты, материалы, шаблоны, ученики). */
+/** Кнопка «троеточие» на карточках кабинетов, шаблонов, учеников. */
 export const cardMenuButtonClass =
   'hover:bg-background-subtle h-8 min-h-8 w-8 min-w-8 rounded-lg p-0';
+
+/** Иконка типа, бейдж доступа и троеточие на карточках материалов и файлов — 36px. */
+export const cardTypeIconBoxClass =
+  'bg-status-info-background flex size-9 shrink-0 items-center justify-center rounded-[10px] [&>svg]:size-5 [&>svg]:fill-icon-brand';
+
+export const cardAccessBadgeClass =
+  'inline-flex h-9 max-h-9 min-h-9 min-w-0 shrink items-center truncate rounded-[10px] px-2.5 py-0 text-s-base leading-4 font-medium';
+
+export const cardMaterialMenuButtonClass =
+  'hover:bg-background-subtle size-9 min-h-9 min-w-9 rounded-lg p-0';
 
 export const cardMenuIconClass = 'fill-icon-secondary dark:fill-icon-primary h-5 w-5';
 

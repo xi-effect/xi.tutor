@@ -66,6 +66,9 @@ export {
 } from './src/pageSwitcherClass';
 export {
   cardMenuButtonClass,
+  cardMaterialMenuButtonClass,
+  cardTypeIconBoxClass,
+  cardAccessBadgeClass,
   cardMenuCheckboxItemClass,
   cardMenuDeleteItemClass,
   cardMenuIconClass,

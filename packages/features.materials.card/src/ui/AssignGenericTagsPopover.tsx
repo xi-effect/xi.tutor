@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Search, Settings } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
@@ -32,6 +32,18 @@ export type AssignGenericTagsPopoverProps = {
   children: ReactNode;
 };
 
+const SAVE_IDLE_MS = 30_000;
+
+const sameTagIds = (left: number[], right: number[]): boolean => {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  const sortedLeft = [...left].sort((a, b) => a - b);
+  const sortedRight = [...right].sort((a, b) => a - b);
+  return sortedLeft.every((id, index) => id === sortedRight[index]);
+};
+
 const mergeTags = (...lists: TagSchema[][]): TagSchema[] => {
   const byId = new Map<number, TagSchema>();
   for (const list of lists) {
@@ -46,7 +58,6 @@ export const AssignGenericTagsPopover = ({
   tagIds,
   tags,
   maxCount,
-  isPending = false,
   open,
   onOpenChange,
   onChange,
@@ -54,6 +65,7 @@ export const AssignGenericTagsPopover = ({
   children,
 }: AssignGenericTagsPopoverProps) => {
   const [search, setSearch] = useState('');
+  const [draftIds, setDraftIds] = useState(tagIds);
   const { openManage } = useLibraryTagsManage();
   const { tags: catalog } = useGenericTagsCatalog();
   const query = search.trim();
@@ -64,7 +76,60 @@ export const AssignGenericTagsPopover = ({
     !open || query.length < 1,
   );
 
-  const assignedIds = tagIds;
+  const wasOpenRef = useRef(open);
+  const draftIdsRef = useRef(draftIds);
+  const savedIdsRef = useRef(tagIds);
+  const pendingIdsRef = useRef<number[] | null>(null);
+  const onChangeRef = useRef(onChange);
+  draftIdsRef.current = draftIds;
+  savedIdsRef.current = tagIds;
+  onChangeRef.current = onChange;
+
+  const flushSave = useCallback(() => {
+    const nextIds = draftIdsRef.current;
+    if (sameTagIds(nextIds, savedIdsRef.current)) {
+      return;
+    }
+    if (pendingIdsRef.current && sameTagIds(nextIds, pendingIdsRef.current)) {
+      return;
+    }
+
+    pendingIdsRef.current = nextIds;
+    onChangeRef.current(nextIds);
+  }, []);
+
+  useEffect(() => {
+    if (pendingIdsRef.current && sameTagIds(tagIds, pendingIdsRef.current)) {
+      pendingIdsRef.current = null;
+    }
+  }, [tagIds]);
+
+  useEffect(() => {
+    if (open && !wasOpenRef.current) {
+      setDraftIds(tagIds);
+      pendingIdsRef.current = null;
+    }
+    wasOpenRef.current = open;
+  }, [open, tagIds]);
+
+  useEffect(() => {
+    if (!open || sameTagIds(draftIds, tagIds)) {
+      return;
+    }
+
+    const timer = window.setTimeout(flushSave, SAVE_IDLE_MS);
+    return () => window.clearTimeout(timer);
+  }, [draftIds, flushSave, open, tagIds]);
+
+  useEffect(() => () => flushSave(), [flushSave]);
+
+  const closePopover = () => {
+    setSearch('');
+    flushSave();
+    onOpenChange(false);
+  };
+
+  const assignedIds = draftIds;
   const suggestions = useMemo((): TagSchema[] => (Array.isArray(data) ? data : []), [data]);
   const allTags = useMemo(
     () => mergeTags(catalog, tags, suggestions),
@@ -81,26 +146,27 @@ export const AssignGenericTagsPopover = ({
   }, [allTags, query, suggestions]);
 
   const toggleTag = (tag: TagSchema) => {
-    const nextIds = assignedIds.includes(tag.id)
-      ? assignedIds.filter((id) => id !== tag.id)
-      : assignedIds.length >= maxCount
-        ? assignedIds
-        : [...assignedIds, tag.id];
-
-    onChange(nextIds);
+    setDraftIds((current) =>
+      current.includes(tag.id)
+        ? current.filter((id) => id !== tag.id)
+        : current.length >= maxCount
+          ? current
+          : [...current, tag.id],
+    );
   };
 
   return (
     <Popover
       open={open}
       onOpenChange={(next) => {
-        if (!next) {
-          setSearch('');
+        if (next) {
+          onOpenChange(true);
+          return;
         }
-        onOpenChange(next);
+        closePopover();
       }}
     >
-      <div className="relative flex size-8 items-center justify-center">
+      <div className="relative flex size-9 items-center justify-center">
         {children}
         {/* Якорь без клика: иначе PopoverTrigger перехватывает троеточие и открывает теги вместо меню. */}
         <PopoverTrigger asChild>
@@ -150,7 +216,7 @@ export const AssignGenericTagsPopover = ({
                   type="button"
                   role="menuitemcheckbox"
                   aria-checked={selected}
-                  disabled={disabled || isPending}
+                  disabled={disabled}
                   className="hover:bg-background-subtle flex h-10 w-full cursor-pointer appearance-none items-center gap-3 rounded-lg border-0 bg-transparent px-1 text-left shadow-none disabled:cursor-default disabled:opacity-50"
                   onClick={() => toggleTag(tag)}
                 >
@@ -183,8 +249,7 @@ export const AssignGenericTagsPopover = ({
               '[&_svg]:fill-icon-brand',
             )}
             onClick={() => {
-              onOpenChange(false);
-              setSearch('');
+              closePopover();
               openManage();
             }}
           >

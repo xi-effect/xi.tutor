@@ -6,9 +6,9 @@ import { cn } from '@xipkg/utils';
 import {
   ConfirmDialog,
   TagChips,
-  cardMenuButtonClass,
+  cardMaterialMenuButtonClass,
   cardMenuIconClass,
-  cardMenuPositionClass,
+  cardTypeIconBoxClass,
   getAppLanguage,
 } from 'common.ui';
 import {
@@ -82,39 +82,39 @@ export const FileCard = ({
           }
         }}
       >
-        <div className="flex w-full shrink-0 items-center gap-2 pr-8">
-          <div className="bg-status-info-background [&>svg]:fill-icon-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
-            <Icon className="fill-icon-primary size-6" />
+        <div className="flex w-full min-w-0 shrink-0 items-center gap-2">
+          <div className={cardTypeIconBoxClass}>
+            <Icon className="fill-icon-primary size-5" />
           </div>
-        </div>
 
-        {readOnly ? null : (
-          <div
-            className={cardMenuPositionClass}
-            onClick={(event) => event.stopPropagation()}
-            onKeyDown={(event) => event.stopPropagation()}
-          >
-            <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
-              <FileActionsMenu
-                onPreview={openPreview}
-                onRename={() => setRenameOpen(true)}
-                onEditTags={() => setTagsOpen(true)}
-                onShare={isClassroomFile ? undefined : () => setShareOpen(true)}
-                onDelete={() => setDeleteOpen(true)}
-                deleteLabel={isClassroomFile ? t('files.menu.removeFromClassroom') : undefined}
-              >
-                <Button
-                  className={cardMenuButtonClass}
-                  variant="none"
-                  size="icon"
-                  data-umami-event="materials-file-menu-open"
+          {readOnly ? null : (
+            <div
+              className="ml-auto flex size-9 shrink-0 items-center justify-center"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
+                <FileActionsMenu
+                  onPreview={openPreview}
+                  onRename={() => setRenameOpen(true)}
+                  onEditTags={() => setTagsOpen(true)}
+                  onShare={isClassroomFile ? undefined : () => setShareOpen(true)}
+                  onDelete={() => setDeleteOpen(true)}
+                  deleteLabel={isClassroomFile ? t('files.menu.removeFromClassroom') : undefined}
                 >
-                  <MoreVert className={cardMenuIconClass} />
-                </Button>
-              </FileActionsMenu>
-            </AssignFileTagsPopover>
-          </div>
-        )}
+                  <Button
+                    className={cardMaterialMenuButtonClass}
+                    variant="none"
+                    size="icon"
+                    data-umami-event="materials-file-menu-open"
+                  >
+                    <MoreVert className={cardMenuIconClass} />
+                  </Button>
+                </FileActionsMenu>
+              </AssignFileTagsPopover>
+            </div>
+          )}
+        </div>
 
         <p
           className={cn(

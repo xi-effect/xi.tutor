@@ -90,35 +90,44 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
         <ChevronSmallBottom className="fill-icon-secondary group-data-[state=open]:fill-icon-primary h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="border-border-default text-s-base w-[160px] border p-1 font-normal">
+      <DropdownMenuContent className="border-border-default w-64 border p-1">
         <DropdownMenuItem
           onClick={() => handleCreateBoardWithAccess('read_write')}
-          className="hover:bg-status-info-background hover:text-text-link py-6 hover:rounded-lg"
+          className="hover:bg-status-info-background hover:text-text-link flex flex-col items-start gap-0.5 rounded-lg px-2 py-2"
           disabled={addClassroomMaterials.isPending}
           data-umami-event="material-create-board"
           data-umami-event-access-mode="read_write"
         >
-          {t('board.collaborative')}
+          <span className="text-s-base leading-5">{t('board.collaborative')}</span>
+          <span className="text-text-secondary text-xs leading-4 font-normal">
+            {t('board.collaborativeHint')}
+          </span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onClick={() => handleCreateBoardWithAccess('read_only')}
-          className="hover:bg-status-info-background hover:text-text-link hover:rounded-lg"
+          className="hover:bg-status-info-background hover:text-text-link flex flex-col items-start gap-0.5 rounded-lg px-2 py-2"
           disabled={addClassroomMaterials.isPending}
           data-umami-event="material-create-board"
           data-umami-event-access-mode="read_only"
         >
-          {t('board.tutorOnly')}
+          <span className="text-s-base leading-5">{t('board.tutorOnly')}</span>
+          <span className="text-text-secondary text-xs leading-4 font-normal">
+            {t('board.tutorOnlyHint')}
+          </span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onClick={() => handleCreateBoardWithAccess('no_access')}
-          className="hover:bg-status-info-background hover:text-text-link hover:rounded-lg"
+          className="hover:bg-status-info-background hover:text-text-link flex flex-col items-start gap-0.5 rounded-lg px-2 py-2"
           disabled={addClassroomMaterials.isPending}
           data-umami-event="material-create-board"
           data-umami-event-access-mode="no_access"
         >
-          {t('board.drafts')}
+          <span className="text-s-base leading-5">{t('board.drafts')}</span>
+          <span className="text-text-secondary text-xs leading-4 font-normal">
+            {t('board.draftsHint')}
+          </span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

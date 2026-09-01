@@ -13,12 +13,15 @@
     "daysAgo_other": "{{count}} days ago"
   },
   "accessMode": {
-    "read_write": "collaborative",
-    "read_only": "tutor only",
-    "no_access": "draft"
+    "read_write": "Can edit",
+    "read_only": "View only",
+    "no_access": "Hidden from student",
+    "read_writeHint": "The student can see the material and edit it",
+    "read_onlyHint": "The student can see the material but cannot edit it",
+    "no_accessHint": "The student cannot see this material"
   },
   "menu": {
-    "changeAccess": "Change access",
+    "changeAccess": "Student access",
     "duplicateToClassroom": "Duplicate to classroom",
     "editTags": "Edit tags",
     "rename": "Rename",
