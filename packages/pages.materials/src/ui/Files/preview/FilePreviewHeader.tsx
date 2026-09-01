@@ -43,8 +43,6 @@ type FilePreviewHeaderProps = {
   onDelete: () => void;
   onShare?: () => void;
   onRename?: () => void;
-  onEditTags?: boolean;
-  hideLibraryActions?: boolean;
   deleteLabel?: string;
   onClose: () => void;
   primaryAction?: {
@@ -71,7 +69,6 @@ export const FilePreviewHeader = ({
   onDelete,
   onShare,
   onRename,
-  hideLibraryActions = false,
   deleteLabel,
   onClose,
   primaryAction,
@@ -151,9 +148,17 @@ export const FilePreviewHeader = ({
           </Button>
         ) : null}
         {showMore ? (
-          hideLibraryActions ? (
+          <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={onTagsOpenChange}>
             <FileActionsMenu
               modal
+              onRename={onRename}
+              renameUmami="materials-file-preview-rename"
+              onEditTags={() => {
+                window.setTimeout(() => onTagsOpenChange(true), 0);
+              }}
+              editTagsUmami="materials-file-preview-edit-tags"
+              onShare={onShare}
+              shareUmami="materials-file-preview-share"
               onDelete={onDelete}
               deleteLabel={deleteLabel}
               deleteUmami="materials-file-preview-delete"
@@ -169,33 +174,7 @@ export const FilePreviewHeader = ({
                 <MoreVert className={iconClass} />
               </Button>
             </FileActionsMenu>
-          ) : (
-            <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={onTagsOpenChange}>
-              <FileActionsMenu
-                modal
-                onRename={onRename}
-                renameUmami="materials-file-preview-rename"
-                onEditTags={() => onTagsOpenChange(true)}
-                editTagsUmami="materials-file-preview-edit-tags"
-                onShare={onShare}
-                shareUmami="materials-file-preview-share"
-                onDelete={onDelete}
-                deleteLabel={deleteLabel}
-                deleteUmami="materials-file-preview-delete"
-              >
-                <Button
-                  type="button"
-                  variant="none"
-                  size="s"
-                  className={iconButtonClass}
-                  aria-label={t('files.preview.more')}
-                  data-umami-event="materials-file-preview-menu-open"
-                >
-                  <MoreVert className={iconClass} />
-                </Button>
-              </FileActionsMenu>
-            </AssignFileTagsPopover>
-          )
+          </AssignFileTagsPopover>
         ) : null}
         <Button
           type="button"

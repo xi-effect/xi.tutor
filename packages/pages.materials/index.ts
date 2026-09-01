@@ -15,6 +15,7 @@ export {
   filterLibraryFiles,
   getLibraryFileDisplayName,
   hasActiveFilesFilters,
+  hasClientFilesFilters,
   toLibraryFileSearchFilters,
 } from './src/utils';
 export { DEFAULT_FILES_FILTERS, type FilesFiltersT, type FilesTagOptionT } from './src/types';

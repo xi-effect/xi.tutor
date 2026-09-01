@@ -10,6 +10,7 @@ import {
   libraryFilesQueryKeys,
   normalizeFileFilters,
   normalizeLibraryFilesLimit,
+  getFileTagIds,
   type LibraryFile,
 } from 'common.api';
 
@@ -25,6 +26,7 @@ import { searchLibraryFilesRequest } from '../useSearchLibraryFiles';
 import { renameLibraryFileRequest } from '../useRenameLibraryFile';
 import { shareLibraryFileToClassroomRequest } from '../useShareLibraryFileToClassroom';
 import { uploadLibraryFile, uploadLibraryFileRequest } from '../uploadLibraryFile';
+import { setFileTagsRequest } from '../useSetFileTags';
 
 const axiosMock = vi.fn();
 
@@ -120,6 +122,16 @@ describe('library files API', () => {
     });
     expect(FILE_FILTER_MAX_KINDS).toBe(5);
     expect(normalizeFileFilters({ kinds: [], is_uploaded_by_owner: null })).toEqual({});
+    expect(
+      normalizeFileFilters({
+        tag_ids: [2, 7, 2, 0, -1, 8, 9, 10],
+      }),
+    ).toEqual({
+      tag_ids: [2, 7, 8, 9, 10],
+    });
+    expect(normalizeFileFilters({ tag_ids: [] })).toEqual({});
+    expect(getFileTagIds({ tag_ids: [1, 1, 2] })).toEqual([1, 2]);
+    expect(getFileTagIds({ tag_ids: null })).toEqual([]);
   });
 
   it('передаёт kinds и is_uploaded_by_owner в search request', () => {
@@ -132,6 +144,11 @@ describe('library files API', () => {
       cursor: null,
       limit: 12,
       filters: { is_uploaded_by_owner: false },
+    });
+    expect(buildFileSearchRequest(null, 12, { tag_ids: [2, 7] })).toEqual({
+      cursor: null,
+      limit: 12,
+      filters: { tag_ids: [2, 7] },
     });
   });
 
@@ -155,10 +172,18 @@ describe('library files API', () => {
       12,
       '',
       null,
+      '',
     ]);
     expect(
       libraryFilesQueryKeys.search(12, { kinds: ['image'], is_uploaded_by_owner: true }),
-    ).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12, 'image', true]);
+    ).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12, 'image', true, '']);
+    expect(libraryFilesQueryKeys.search(12, { tag_ids: [2, 7] })).toEqual([
+      LibraryFilesQueryKey.SearchLibraryFiles,
+      12,
+      '',
+      null,
+      '2,7',
+    ]);
     expect(libraryFilesQueryKeys.meta(libraryFile.id)).toEqual([
       LibraryFilesQueryKey.GetLibraryFileMeta,
       libraryFile.id,
@@ -209,6 +234,40 @@ describe('library files API', () => {
           },
         },
       }),
+    );
+  });
+
+  it('отправляет tag_ids в теле поиска', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: [libraryFile] });
+
+    await searchLibraryFilesRequest(null, 12, { tag_ids: [2, 7, 2] });
+
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          cursor: null,
+          limit: 12,
+          filters: {
+            tag_ids: [2, 7],
+          },
+        },
+      }),
+    );
+  });
+
+  it('ставит теги файла полным PUT tag_ids', async () => {
+    axiosMock.mockResolvedValue({ status: 204, data: '' });
+
+    await setFileTagsRequest({ fileId: libraryFile.id, tagIds: [1, 2, 5, 1] });
+
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: 'PUT',
+        data: { tag_ids: [1, 2, 5] },
+      }),
+    );
+    expect(String(axiosMock.mock.calls[0][0].url)).toContain(
+      `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/tags/`,
     );
   });
 

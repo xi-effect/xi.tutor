@@ -26,8 +26,8 @@
   "menu": {
     "changeAccess": "Поменять доступ",
     "duplicateToClassroom": "Дублировать в кабинет",
-    "edit": "Редактировать",
     "editTags": "Изменить теги",
+    "rename": "Переименовать",
     "delete": "Удалить"
   },
   "deleteConfirm": {
@@ -47,6 +47,7 @@
     "searchPlaceholder": "Найти тег",
     "empty": "Теги не найдены",
     "none": "Пока нет тегов",
-    "loading": "Загрузка..."
+    "loading": "Загрузка...",
+    "manage": "Управление тегами"
   }
 }

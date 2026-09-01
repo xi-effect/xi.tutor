@@ -20,3 +20,8 @@ export {
   type LibraryTag,
   type LibraryTagsState,
 } from './libraryTagsStore';
+export {
+  useLibraryTagsManage,
+  openLibraryTagsManage,
+  setLibraryTagsManageOpen,
+} from './libraryTagsManageStore';

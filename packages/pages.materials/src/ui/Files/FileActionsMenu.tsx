@@ -148,7 +148,9 @@ export const FileActionsMenu = ({
           <DropdownMenuItem
             key={key}
             className={cardMenuItemClass}
-            onClick={() => handleOrSoon(onSelect)}
+            onSelect={() => {
+              window.setTimeout(() => handleOrSoon(onSelect), 0);
+            }}
             data-umami-event={umami}
           >
             <Icon />

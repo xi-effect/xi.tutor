@@ -12,6 +12,7 @@ export {
   renameLibraryFileRequest,
   type RenameLibraryFileVars,
 } from './useRenameLibraryFile';
+export { useSetFileTags, setFileTagsRequest, type SetFileTagsVars } from './useSetFileTags';
 export {
   useShareLibraryFileToClassroom,
   shareLibraryFileToClassroomRequest,

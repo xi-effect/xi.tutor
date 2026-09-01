@@ -1,4 +1,5 @@
 import type { FileFilters, FileKind, LibraryFile } from 'common.api';
+import { TAG_FILTER_MAX_COUNT, normalizeTagIds } from 'common.api';
 import { matchesSearchQuery } from 'common.utils';
 import type { FilesFiltersT } from '../types';
 
@@ -30,50 +31,25 @@ export const hasActiveFilesFilters = (filters: FilesFiltersT): boolean =>
   filters.tags.length > 0;
 
 export const hasClientFilesFilters = (filters: FilesFiltersT): boolean =>
-  Boolean(filters.search.trim()) || filters.tags.length > 0;
+  Boolean(filters.search.trim());
 
 export const toLibraryFileSearchFilters = (filters: FilesFiltersT): FileFilters => ({
   kinds: filters.kinds.length > 0 ? filters.kinds : null,
   is_uploaded_by_owner:
     filters.uploader === 'mine' ? true : filters.uploader === 'students' ? false : null,
+  tag_ids: normalizeTagIds(
+    filters.tags.map((tag) => tag.id),
+    TAG_FILTER_MAX_COUNT,
+  ),
 });
 
-export const filterLibraryFiles = (
-  files: LibraryFile[],
-  filters: FilesFiltersT,
-  currentUserId?: number,
-  fileTagIds: Record<string, string[]> = {},
-): LibraryFile[] => {
+export const filterLibraryFiles = (files: LibraryFile[], filters: FilesFiltersT): LibraryFile[] => {
   const search = filters.search.trim();
-  const selectedTagIds = filters.tags.map((tag) => tag.id);
+  if (!search) {
+    return files;
+  }
 
-  return files.filter((file) => {
-    if (search && !matchesSearchQuery(getLibraryFileDisplayName(file), search)) {
-      return false;
-    }
-
-    if (filters.kinds.length > 0 && !filters.kinds.includes(file.kind)) {
-      return false;
-    }
-
-    if (currentUserId != null) {
-      if (filters.uploader === 'mine' && file.uploader_id !== currentUserId) {
-        return false;
-      }
-      if (filters.uploader === 'students' && file.uploader_id === currentUserId) {
-        return false;
-      }
-    }
-
-    if (selectedTagIds.length > 0) {
-      const assigned = fileTagIds[file.id] ?? [];
-      if (!assigned.some((id) => selectedTagIds.includes(id))) {
-        return false;
-      }
-    }
-
-    return true;
-  });
+  return files.filter((file) => matchesSearchQuery(getLibraryFileDisplayName(file), search));
 };
 
 export const FILE_TYPE_OPTIONS: FileKind[] = [

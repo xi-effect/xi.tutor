@@ -4,6 +4,7 @@ import {
   libraryFilesApiConfig,
   LibraryFilesQueryKey,
   libraryFilesQueryKeys,
+  ClassroomFilesQueryKey,
 } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError } from '../utils';
@@ -81,6 +82,42 @@ export const useRenameLibraryFile = () => {
       });
       queryClient.invalidateQueries({
         queryKey: libraryFilesQueryKeys.meta(fileId),
+      });
+      queryClient.setQueriesData<InfiniteData<LibraryFile[]>>(
+        { queryKey: [ClassroomFilesQueryKey.SearchClassroomFilesTutor] },
+        (current) => {
+          if (!current) {
+            return current;
+          }
+
+          return {
+            ...current,
+            pages: current.pages.map((page) =>
+              page.map((file) => patchLibraryFileName(file, fileId, name, updated ?? undefined)),
+            ),
+          };
+        },
+      );
+      queryClient.setQueriesData<InfiniteData<LibraryFile[]>>(
+        { queryKey: [ClassroomFilesQueryKey.SearchClassroomFilesStudent] },
+        (current) => {
+          if (!current) {
+            return current;
+          }
+
+          return {
+            ...current,
+            pages: current.pages.map((page) =>
+              page.map((file) => patchLibraryFileName(file, fileId, name, updated ?? undefined)),
+            ),
+          };
+        },
+      );
+      queryClient.invalidateQueries({
+        queryKey: [ClassroomFilesQueryKey.SearchClassroomFilesTutor],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [ClassroomFilesQueryKey.SearchClassroomFilesStudent],
       });
     },
   });

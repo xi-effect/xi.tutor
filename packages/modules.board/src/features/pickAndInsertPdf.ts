@@ -7,6 +7,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { getFileExtension, isPdfMime } from '../constants/mimeTypes';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
 import { resolveShapeCoordinates } from '../utils';
+import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import i18n from 'i18next';
 
 const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
@@ -145,10 +146,14 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
       });
     } catch (err) {
       console.error('[insertPdf] Upload failed:', err);
-      const msg =
-        err instanceof Error ? err.message : i18n.t('toast.pdfUploadFailed', { ns: 'board' });
-      toast.error(i18n.t('toast.pdfUploadError', { ns: 'board' }), {
-        description: msg,
+      const { title, description } = getBoardUploadErrorToast(err, file, MAX_PDF_SIZE_BYTES, {
+        sizeDescKey: 'toast.pdfSizeDesc',
+        failedTitleKey: 'toast.pdfUploadError',
+        failedDescKey: 'toast.pdfUploadFailed',
+        formatDescKey: 'toast.pdfFormatDesc',
+      });
+      toast.error(title, {
+        description,
         duration: 5000,
       });
       editor.deleteShapes([shapeId]);

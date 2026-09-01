@@ -65,6 +65,7 @@ export const MaterialsCard = ({
     handleUpdateAccessMode,
     handleUpdateName,
     isDeleting,
+    isUpdating,
   } = useMaterialActions(id, content_kind, name, classroomId);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -156,6 +157,7 @@ export const MaterialsCard = ({
         setModalOpen(false);
       }}
       handleUpdateName={handleUpdateName}
+      isLoading={isUpdating}
     />
   );
 

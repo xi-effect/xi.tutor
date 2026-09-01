@@ -39,6 +39,18 @@ describe('classroom files API', () => {
     expect(axiosMock.mock.calls[0][0].method).toBe('POST');
   });
 
+  it('передаёт tag_ids в поиск файлов кабинета', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: [classroomFile] });
+
+    await searchClassroomFilesRequest('7', true, null, undefined, { tag_ids: [2, 7] });
+
+    expect(axiosMock.mock.calls[0][0].data).toEqual({
+      cursor: null,
+      limit: 24,
+      filters: { tag_ids: [2, 7] },
+    });
+  });
+
   it('загружает файл в кабинет multipart', async () => {
     axiosMock.mockResolvedValue({ status: 201, data: classroomFile });
     const file = new File(['pdf'], 'notes.pdf', { type: 'application/pdf' });

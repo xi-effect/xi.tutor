@@ -4,7 +4,7 @@ import { Button } from '@xipkg/button';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { Close } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useCurrentUser, useSearchLibraryFiles, type LibraryFile } from 'common.services';
+import { useSearchLibraryFiles, type LibraryFile } from 'common.services';
 import {
   DEFAULT_FILES_FILTERS,
   FilePreviewModal,
@@ -15,7 +15,8 @@ import {
   LibraryTagsUiProvider,
   filterLibraryFiles,
   hasActiveFilesFilters,
-  useLibraryTags,
+  hasClientFilesFilters,
+  toLibraryFileSearchFilters,
   type FilesFiltersT,
 } from 'pages.materials';
 import { useTranslation } from 'react-i18next';
@@ -31,20 +32,16 @@ type CloudFilesDrawerProps = {
 const CloudFilesDrawerContent = ({ open, onOpenChange, onSelect }: CloudFilesDrawerProps) => {
   const { t } = useTranslation('board');
   const { t: tMaterials } = useTranslation('materials');
-  const { data: user } = useCurrentUser();
   const parentRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
   const [insertingId, setInsertingId] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
-  const { fileTagIds } = useLibraryTags();
+  const searchFilters = useMemo(() => toLibraryFileSearchFilters(filters), [filters]);
 
   const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useSearchLibraryFiles({ enabled: open, limit: 24 });
+    useSearchLibraryFiles({ enabled: open, limit: 24, filters: searchFilters });
 
-  const filteredFiles = useMemo(
-    () => filterLibraryFiles(files, filters, user?.id, fileTagIds),
-    [fileTagIds, files, filters, user?.id],
-  );
+  const filteredFiles = useMemo(() => filterLibraryFiles(files, filters), [files, filters]);
 
   const currentPreviewFile = useMemo(() => {
     if (!previewFile) return null;
@@ -52,13 +49,27 @@ const CloudFilesDrawerContent = ({ open, onOpenChange, onSelect }: CloudFilesDra
   }, [filteredFiles, previewFile]);
 
   const filtersActive = hasActiveFilesFilters(filters);
+  const clientFiltersActive = hasClientFilesFilters(filters);
 
   useEffect(() => {
-    if (!open || !filtersActive || isFetchingNextPage || !hasNextPage || filteredFiles.length > 0) {
+    if (
+      !open ||
+      !clientFiltersActive ||
+      isFetchingNextPage ||
+      !hasNextPage ||
+      filteredFiles.length > 0
+    ) {
       return;
     }
     fetchNextPage();
-  }, [fetchNextPage, filteredFiles.length, filtersActive, hasNextPage, isFetchingNextPage, open]);
+  }, [
+    clientFiltersActive,
+    fetchNextPage,
+    filteredFiles.length,
+    hasNextPage,
+    isFetchingNextPage,
+    open,
+  ]);
 
   const handleAdd = async (file: LibraryFile) => {
     if (insertingId) return;

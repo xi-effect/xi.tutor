@@ -30,6 +30,7 @@ export interface FileResponse {
   content_type: string;
   size_bytes: number;
   created_at: string;
+  tag_ids?: number[] | null;
 }
 
 export interface UploadFileBody {

@@ -14,7 +14,6 @@ import {
   hasClientFilesFilters,
   toLibraryFileSearchFilters,
 } from '../../utils';
-import { useLibraryTags } from './tags/useLibraryTags';
 import { useParentScrollPagination } from '../../hooks';
 import type { FilesFiltersT } from '../../types';
 
@@ -27,16 +26,12 @@ type FilesProps = {
 export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const { fileTagIds } = useLibraryTags();
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
   const searchFilters = useMemo(() => toLibraryFileSearchFilters(filters), [filters]);
   const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSearchLibraryFiles({ filters: searchFilters });
 
-  const filteredFiles = useMemo(
-    () => filterLibraryFiles(files, filters, undefined, fileTagIds),
-    [fileTagIds, files, filters],
-  );
+  const filteredFiles = useMemo(() => filterLibraryFiles(files, filters), [files, filters]);
 
   const currentPreviewFile = useMemo(() => {
     if (!previewFile) {

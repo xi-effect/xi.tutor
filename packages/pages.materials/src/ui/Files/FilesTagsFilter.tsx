@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { Search } from '@xipkg/icons';
-import { matchesSearchQuery } from 'common.utils';
+import { TAG_FILTER_MAX_COUNT, type TagSchema } from 'common.api';
+import { useGenericTagsCatalog } from 'common.services';
 import { useTranslation } from 'react-i18next';
 import { MaterialsFilterOption } from '../MaterialsFilterOption';
 import { FilesFilterChip } from './FilesFilterChip';
 import { FilesFilterActions, filesFilterPopoverClass } from './FilesFilterActions';
 import { TagDot } from 'common.ui';
 import { useGenericTagSuggestions } from './tags/useGenericTagSuggestions';
-import { useLibraryTags } from './tags/useLibraryTags';
 import type { FilesTagOptionT } from '../../types';
 
 type FilesTagsFilterProps = {
@@ -17,13 +17,28 @@ type FilesTagsFilterProps = {
   maxCount?: number;
 };
 
-export const FilesTagsFilter = ({ value, onChange, maxCount }: FilesTagsFilterProps) => {
+const mergeTags = (...lists: TagSchema[][]): TagSchema[] => {
+  const byId = new Map<number, TagSchema>();
+  for (const list of lists) {
+    for (const tag of list) {
+      byId.set(tag.id, tag);
+    }
+  }
+  return [...byId.values()];
+};
+
+export const FilesTagsFilter = ({
+  value,
+  onChange,
+  maxCount = TAG_FILTER_MAX_COUNT,
+}: FilesTagsFilterProps) => {
   const { t } = useTranslation('materials');
-  const { tags } = useLibraryTags();
+  const { tags: catalog } = useGenericTagsCatalog();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [draft, setDraft] = useState<FilesTagOptionT[]>(value);
-  const { isLoading: isSearchLoading } = useGenericTagSuggestions(search, open);
+  const query = search.trim();
+  const { suggestions, isLoading: isSearchLoading } = useGenericTagSuggestions(search, open);
 
   useEffect(() => {
     if (open) {
@@ -32,20 +47,45 @@ export const FilesTagsFilter = ({ value, onChange, maxCount }: FilesTagsFilterPr
     }
   }, [open, value]);
 
-  const visibleTags = useMemo(() => {
-    const query = search.trim();
-    return query ? tags.filter((tag) => matchesSearchQuery(tag.name, query)) : tags;
-  }, [search, tags]);
+  const selectedTags = useMemo(
+    () =>
+      value.flatMap((tag): TagSchema[] =>
+        Number.isInteger(tag.id)
+          ? [
+              {
+                id: tag.id,
+                name: tag.name,
+                color: (tag.color as TagSchema['color']) ?? 'blue',
+              },
+            ]
+          : [],
+      ),
+    [value],
+  );
 
-  const toggleTag = (tag: FilesTagOptionT) => {
+  const allTags = useMemo(
+    () => mergeTags(catalog, suggestions, selectedTags),
+    [catalog, selectedTags, suggestions],
+  );
+
+  const visibleTags = useMemo(() => {
+    if (!query) {
+      return allTags;
+    }
+    const needle = query.toLowerCase();
+    const fromCatalog = allTags.filter((tag) => tag.name.toLowerCase().includes(needle));
+    return mergeTags(fromCatalog, suggestions);
+  }, [allTags, query, suggestions]);
+
+  const toggleTag = (tag: TagSchema) => {
     setDraft((current) => {
       if (current.some((item) => item.id === tag.id)) {
         return current.filter((item) => item.id !== tag.id);
       }
-      if (maxCount && current.length >= maxCount) {
+      if (current.length >= maxCount) {
         return current;
       }
-      return [...current, tag];
+      return [...current, { id: tag.id, name: tag.name, color: tag.color }];
     });
   };
 
@@ -73,7 +113,7 @@ export const FilesTagsFilter = ({ value, onChange, maxCount }: FilesTagsFilterPr
           />
         </div>
         <div className="flex max-h-52 w-full min-w-0 flex-col items-stretch gap-2.5 overflow-y-auto bg-transparent">
-          {tags.length === 0 && !search.trim() ? (
+          {allTags.length === 0 && !query ? (
             <p className="text-s-base text-text-secondary leading-5">
               {isSearchLoading ? t('files.tags.loading') : t('files.tags.none')}
             </p>
@@ -87,9 +127,9 @@ export const FilesTagsFilter = ({ value, onChange, maxCount }: FilesTagsFilterPr
                 key={tag.id}
                 variant="checkbox"
                 selected={draft.some((item) => item.id === tag.id)}
-                onSelect={() => toggleTag({ id: tag.id, name: tag.name, color: tag.color })}
+                onSelect={() => toggleTag(tag)}
                 umamiEvent="materials-files-tag-option"
-                umamiScope={tag.id}
+                umamiScope={String(tag.id)}
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <TagDot color={tag.color} />

@@ -48,6 +48,8 @@ export type UpdateTagBody = {
 };
 
 export const TAG_ASSIGN_MAX_COUNT = 5;
+export const TAG_FILE_ASSIGN_MAX_COUNT = TAG_ASSIGN_MAX_COUNT;
+export const TAG_FILTER_MAX_COUNT = TAG_ASSIGN_MAX_COUNT;
 
 export const TAG_AUTOCOMPLETE_DEFAULT_LIMIT = 10;
 export const TAG_AUTOCOMPLETE_MAX_LIMIT = 20;

@@ -343,7 +343,6 @@ export const FilePreviewModal = ({
                 showFullscreen={showFullscreen}
                 showMore={!readOnly}
                 showDownload
-                hideLibraryActions={hideLibraryActions}
                 deleteLabel={deleteLabel}
                 isDownloading={isDownloading}
                 tagsOpen={tagsOpen}
@@ -352,7 +351,7 @@ export const FilePreviewModal = ({
                 onToggleFullscreen={() => setFullscreen(!isFullscreen)}
                 onDelete={() => setDeleteOpen(true)}
                 onShare={hideLibraryActions ? undefined : () => setShareOpen(true)}
-                onRename={hideLibraryActions ? undefined : () => setRenameOpen(true)}
+                onRename={readOnly ? undefined : () => setRenameOpen(true)}
                 onClose={handleClose}
                 primaryAction={primaryAction}
               />

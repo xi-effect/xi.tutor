@@ -21,6 +21,7 @@ import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
+import { getBoardUploadErrorToast } from '../../utils/boardUploadError';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024;
 
@@ -105,7 +106,12 @@ async function uploadPickedImage(file: File, token: string) {
     const fileId = await uploadFileIdRequest({ file: next, token });
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
-    toast.error(boardToast('toast.imageUploadFailed'));
+    const { title, description } = getBoardUploadErrorToast(error, next, MAX_IMAGE_SIZE_BYTES, {
+      sizeDescKey: 'toast.imageSizeDesc',
+      failedTitleKey: 'toast.imageUploadFailed',
+      failedDescKey: 'toast.imageUploadFailed',
+    });
+    toast.error(title, { description, duration: 5000 });
     throw error;
   }
 }

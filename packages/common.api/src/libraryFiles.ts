@@ -1,6 +1,7 @@
 import { env } from 'common.env';
 import { HttpMethod } from './config';
 import { FILE_KINDS, type FileKind } from './files';
+import { TAG_FILE_ASSIGN_MAX_COUNT, TAG_FILTER_MAX_COUNT, normalizeTagIds } from './tags';
 
 const CONTENT_SERVICE_URL = `${env.VITE_SERVER_URL_BACKEND}/api/protected/content-service`;
 const TUTOR_LIBRARY_FILES_URL = `${CONTENT_SERVICE_URL}/roles/tutor/files`;
@@ -13,6 +14,7 @@ export interface LibraryFile {
   kind: FileKind;
   size_bytes: number;
   created_at: string;
+  tag_ids?: number[] | null;
 }
 
 export interface FileCursor {
@@ -24,6 +26,7 @@ export const FILE_FILTER_MAX_KINDS = 5;
 export interface FileFilters {
   kinds?: FileKind[] | null;
   is_uploaded_by_owner?: boolean | null;
+  tag_ids?: number[] | null;
 }
 
 export interface FileSearchRequest {
@@ -51,6 +54,7 @@ enum LibraryFilesQueryKey {
   GetLibraryFileMeta = 'GetLibraryFileMeta',
   UpdateLibraryFile = 'UpdateLibraryFile',
   DeleteLibraryFile = 'DeleteLibraryFile',
+  SetLibraryFileTags = 'SetLibraryFileTags',
 }
 
 function normalizeLibraryFilesLimit(limit?: number): number {
@@ -81,7 +85,16 @@ function normalizeFileFilters(filters?: FileFilters | null): FileFilters {
     next.is_uploaded_by_owner = filters.is_uploaded_by_owner;
   }
 
+  const tagIds = normalizeTagIds(filters?.tag_ids, TAG_FILTER_MAX_COUNT);
+  if (tagIds) {
+    next.tag_ids = tagIds;
+  }
+
   return next;
+}
+
+function getFileTagIds(file?: Pick<LibraryFile, 'tag_ids'> | null): number[] {
+  return normalizeTagIds(file?.tag_ids, TAG_FILE_ASSIGN_MAX_COUNT) ?? [];
 }
 
 function buildFileSearchRequest(
@@ -134,6 +147,10 @@ const libraryFilesApiConfig = {
     getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/`,
     method: HttpMethod.DELETE,
   },
+  [LibraryFilesQueryKey.SetLibraryFileTags]: {
+    getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/tags/`,
+    method: HttpMethod.PUT,
+  },
 };
 
 function getLibraryFileUrl(fileId: string): string {
@@ -148,6 +165,7 @@ const libraryFilesQueryKeys = {
       limit,
       normalized.kinds?.join(',') ?? '',
       normalized.is_uploaded_by_owner ?? null,
+      normalized.tag_ids?.join(',') ?? '',
     ];
   },
   meta: (fileId: string): string[] => [LibraryFilesQueryKey.GetLibraryFileMeta, fileId],
@@ -163,4 +181,5 @@ export {
   normalizeFileFilters,
   buildFileSearchRequest,
   getNextLibraryFilesCursor,
+  getFileTagIds,
 };

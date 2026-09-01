@@ -19,7 +19,6 @@ import {
   filterLibraryFiles,
   hasActiveFilesFilters,
   toLibraryFileSearchFilters,
-  useLibraryTags,
   useParentScrollPagination,
   type FilesFiltersT,
 } from 'pages.materials';
@@ -45,7 +44,6 @@ export const ClassroomFiles = ({ classroomId, heading }: ClassroomFilesProps) =>
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
   const uploadInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const { fileTagIds } = useLibraryTags();
   const uploadMutation = useUploadClassroomFile();
   const detachMutation = useDetachClassroomFile();
   const filtersActive = hasActiveFilesFilters(filters);
@@ -58,10 +56,7 @@ export const ClassroomFiles = ({ classroomId, heading }: ClassroomFilesProps) =>
       filters: toLibraryFileSearchFilters(filters),
     });
 
-  const filteredFiles = useMemo(
-    () => filterLibraryFiles(files, filters, user?.id, fileTagIds),
-    [fileTagIds, files, filters, user?.id],
-  );
+  const filteredFiles = useMemo(() => filterLibraryFiles(files, filters), [files, filters]);
 
   const currentPreviewFile = useMemo(() => {
     if (!previewFile) return null;

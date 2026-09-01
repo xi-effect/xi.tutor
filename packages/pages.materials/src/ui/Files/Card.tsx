@@ -11,14 +11,18 @@ import {
   cardMenuPositionClass,
   getAppLanguage,
 } from 'common.ui';
-import { useDeleteLibraryFile, type LibraryFile } from 'common.services';
+import {
+  useDeleteLibraryFile,
+  getFileTagIds,
+  useTagsByIds,
+  type LibraryFile,
+} from 'common.services';
 import type { FileKind } from 'common.api';
 import { formatFileSize, formatUploadedAt, getLibraryFileDisplayName } from '../../utils';
 import { FileActionsMenu } from './FileActionsMenu';
 import { RenameFileModal } from './RenameFileModal';
 import { ShareFileModal } from './ShareFileModal';
 import { AssignFileTagsPopover } from './tags/AssignFileTagsPopover';
-import { useLibraryTags } from './tags/useLibraryTags';
 
 type FileCardProps = {
   file: LibraryFile;
@@ -49,9 +53,8 @@ export const FileCard = ({
   const [renameOpen, setRenameOpen] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
   const deleteMutation = useDeleteLibraryFile();
-  const { getTagsForFile } = useLibraryTags();
   const isClassroomFile = Boolean(onRemoveFromClassroom);
-  const fileTags = getTagsForFile(file.id);
+  const { tags: fileTags } = useTagsByIds(getFileTagIds(file));
 
   const displayName = getLibraryFileDisplayName(file);
   const Icon = kindIcon[file.kind] ?? File;
@@ -94,8 +97,8 @@ export const FileCard = ({
             <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
               <FileActionsMenu
                 onPreview={openPreview}
-                onRename={isClassroomFile ? undefined : () => setRenameOpen(true)}
-                onEditTags={isClassroomFile ? undefined : () => setTagsOpen(true)}
+                onRename={() => setRenameOpen(true)}
+                onEditTags={() => setTagsOpen(true)}
                 onShare={isClassroomFile ? undefined : () => setShareOpen(true)}
                 onDelete={() => setDeleteOpen(true)}
                 deleteLabel={isClassroomFile ? t('files.menu.removeFromClassroom') : undefined}

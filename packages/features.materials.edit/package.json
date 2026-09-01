@@ -19,6 +19,7 @@
     "@xipkg/modal": "4.6.0",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
+    "common.services": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1"
   },

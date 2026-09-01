@@ -1,11 +1,9 @@
 {
   "titleNote": "Rename note",
   "titleBoard": "Rename board",
-  "nameLabel": "Name",
   "save": "Save",
+  "saving": "Saving...",
   "cancel": "Cancel",
-  "validation": {
-    "required": "Enter a name",
-    "max": "Name must not exceed 100 characters"
-  }
+  "tooLong": "Name cannot be longer than {{max}} characters",
+  "counter": "{{current}}/{{max}}"
 }

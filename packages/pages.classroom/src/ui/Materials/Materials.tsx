@@ -43,7 +43,7 @@ const ClassroomMaterialsGallery = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 960px)');
   const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
-  const tagIds = materialTags.map((tag) => Number(tag.id)).filter(Number.isFinite);
+  const tagIds = materialTags.map((tag) => tag.id);
 
   const activeTab: MaterialTypeTab = isMaterialTypeTab(search.tab) ? search.tab : 'boards';
   const contentType = activeTab === 'notes' ? 'note' : 'board';
@@ -128,7 +128,7 @@ const ClassroomMaterialsGallery = () => {
         >
           {heading}
           <div className="ml-auto flex flex-wrap items-center gap-3">
-            <FilesTagsFilter value={materialTags} onChange={setMaterialTags} maxCount={5} />
+            <FilesTagsFilter value={materialTags} onChange={setMaterialTags} />
             {materialTags.length > 0 ? (
               <Button
                 type="button"

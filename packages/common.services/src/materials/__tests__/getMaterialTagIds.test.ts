@@ -19,4 +19,8 @@ describe('getMaterialTagIds', () => {
     expect(getMaterialTagIds({ tag_ids: [] })).toEqual([]);
     expect(getMaterialTagIds({})).toEqual([]);
   });
+
+  it('оставляет не больше пяти тегов', () => {
+    expect(getMaterialTagIds({ tag_ids: [1, 2, 3, 4, 5, 6] })).toEqual([1, 2, 3, 4, 5]);
+  });
 });

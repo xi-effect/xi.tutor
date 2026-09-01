@@ -20,8 +20,8 @@
   "menu": {
     "changeAccess": "Change access",
     "duplicateToClassroom": "Duplicate to classroom",
-    "edit": "Edit",
     "editTags": "Edit tags",
+    "rename": "Rename",
     "delete": "Delete"
   },
   "deleteConfirm": {
@@ -41,6 +41,7 @@
     "searchPlaceholder": "Find a tag",
     "empty": "No tags found",
     "none": "No tags yet",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "manage": "Manage tags"
   }
 }

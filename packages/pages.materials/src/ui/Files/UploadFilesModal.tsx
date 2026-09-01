@@ -46,9 +46,10 @@ export const UploadFilesModal = ({ open, onOpenChange }: UploadFilesModalProps) 
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const { items, addFiles, removeItem, cancelAll } = useLibraryFileUploads(open);
+  const { items, addFiles, removeItem, cancelAll, cancelUploading } = useLibraryFileUploads(open);
 
   const doneCount = items.filter((item) => item.status === 'done').length;
+  const hasUploading = items.some((item) => item.status === 'uploading');
   const canAddMore = items.length < LIBRARY_UPLOAD_MAX_FILES;
 
   useEffect(() => cleanupBodyScrollLock, []);
@@ -220,16 +221,18 @@ export const UploadFilesModal = ({ open, onOpenChange }: UploadFilesModalProps) 
                 <Plus className="fill-action-primary-text size-6 shrink-0" />
                 {t('files.uploadModal.add')}
               </Button>
-              <Button
-                type="button"
-                variant="none"
-                size="m"
-                className={cn(modalCancelButtonClass, 'h-12 w-full')}
-                onClick={cancelAll}
-                data-umami-event="materials-files-upload-cancel"
-              >
-                {t('files.uploadModal.cancel')}
-              </Button>
+              {hasUploading ? (
+                <Button
+                  type="button"
+                  variant="none"
+                  size="m"
+                  className={cn(modalCancelButtonClass, 'h-12 w-full')}
+                  onClick={cancelUploading}
+                  data-umami-event="materials-files-upload-cancel"
+                >
+                  {t('files.uploadModal.cancel')}
+                </Button>
+              ) : null}
             </div>
           ) : null}
 
@@ -296,7 +299,7 @@ const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
           </p>
           <p
             className={cn(
-              'shrink-0 text-xs leading-4',
+              'max-w-[45%] shrink-0 text-right text-xs leading-4',
               isDone
                 ? 'text-status-success-text font-medium'
                 : isError
@@ -307,7 +310,11 @@ const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
             {isDone
               ? t('files.uploadModal.done')
               : isError
-                ? t('files.uploadModal.failed')
+                ? item.errorKind === 'tooLarge'
+                  ? t('files.uploadModal.failedTooLarge')
+                  : item.errorKind === 'unsupported'
+                    ? t('files.uploadModal.failedType')
+                    : t('files.uploadModal.failed')
                 : `${item.progress}%`}
           </p>
         </div>

@@ -55,3 +55,8 @@ export const getBrowserFileKind = (file: File): FileKind => {
 
 export const getLibraryUploadMaxBytes = (kind: FileKind): number =>
   kind === 'image' ? LIBRARY_UPLOAD_MAX_IMAGE_BYTES : LIBRARY_UPLOAD_MAX_OTHER_BYTES;
+
+export {
+  getFileUploadErrorKind as getLibraryUploadErrorKind,
+  type FileUploadErrorKind as LibraryUploadErrorKind,
+} from 'common.services';

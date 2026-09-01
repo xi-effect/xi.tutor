@@ -11,7 +11,6 @@ import {
   remapLibraryTagId,
   rememberApiTags,
   subscribeLibraryTags,
-  toggleFileLibraryTag,
   updateLibraryTag,
   upsertLibraryTag,
   useCreateTag,
@@ -92,17 +91,6 @@ export const useLibraryTags = () => {
     [snapshot.tags],
   );
 
-  const getTagsForFile = useCallback(
-    (fileId: string): LibraryTag[] => {
-      const ids = snapshot.fileTagIds[fileId] ?? [];
-      return ids.flatMap((id) => {
-        const tag = tagsById.get(id);
-        return tag ? [tag] : [];
-      });
-    },
-    [snapshot.fileTagIds, tagsById],
-  );
-
   const createTag = useCallback(
     async (name: string, color: LibraryTagColorId): Promise<LibraryTag> => {
       const created = await createMutation.mutateAsync({ kind: TAG_KIND.Generic, name, color });
@@ -147,12 +135,9 @@ export const useLibraryTags = () => {
 
   return {
     tags: snapshot.tags,
-    fileTagIds: snapshot.fileTagIds,
-    getTagsForFile,
     createTag,
     updateTag,
     deleteTag,
-    toggleFileTag: toggleFileLibraryTag,
     rememberApiTags,
     canCreateMore: snapshot.tags.length < TAG_MAX_COUNT,
     isCreating: createMutation.isPending,

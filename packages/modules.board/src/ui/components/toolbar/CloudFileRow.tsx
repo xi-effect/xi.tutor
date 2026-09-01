@@ -3,15 +3,9 @@ import * as ContextMenu from '@radix-ui/react-context-menu';
 import { Eyeon, File, Image, Music, Plus } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import type { FileKind } from 'common.api';
-import type { LibraryFile } from 'common.services';
-import { getAppLanguage } from 'common.ui';
-import {
-  formatFileSize,
-  formatUploadedAt,
-  getLibraryFileDisplayName,
-  getTagColor,
-  useLibraryTags,
-} from 'pages.materials';
+import { getFileTagIds, type LibraryFile, useTagsByIds } from 'common.services';
+import { TagChip, getAppLanguage } from 'common.ui';
+import { formatFileSize, formatUploadedAt, getLibraryFileDisplayName } from 'pages.materials';
 import { useTranslation } from 'react-i18next';
 import { boardMenuItemClass, boardMenuSurfaceClass } from '../../boardTheme';
 
@@ -47,9 +41,9 @@ export const CloudFileRow = ({
 }: CloudFileRowProps) => {
   const { t } = useTranslation('materials');
   const { t: tBoard } = useTranslation('board');
-  const { getTagsForFile } = useLibraryTags();
+  const { tags: fileTags } = useTagsByIds(getFileTagIds(file));
+  const visibleTags = fileTags.slice(0, MAX_VISIBLE_TAGS);
   const [hovered, setHovered] = useState(false);
-  const fileTags = getTagsForFile(file.id).slice(0, MAX_VISIBLE_TAGS);
   const displayName = getLibraryFileDisplayName(file);
   const Icon = kindIcon[file.kind] ?? File;
   const uploadedAt = formatUploadedAt(file.created_at, t('files.today'));
@@ -112,18 +106,10 @@ export const CloudFileRow = ({
             >
               {displayName}
             </span>
-            {fileTags.length > 0 ? (
+            {visibleTags.length > 0 ? (
               <div className="flex min-w-0 flex-wrap items-center gap-1">
-                {fileTags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className={cn(
-                      'max-w-[7.5rem] truncate rounded px-1.5 py-0.5 text-[11px] leading-4 font-medium',
-                      getTagColor(tag.color).chip,
-                    )}
-                  >
-                    {tag.name}
-                  </span>
+                {visibleTags.map((tag) => (
+                  <TagChip key={tag.id} name={tag.name} color={tag.color} />
                 ))}
               </div>
             ) : null}

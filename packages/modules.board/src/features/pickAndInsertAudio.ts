@@ -10,6 +10,7 @@ import {
 } from '../shapes/audio';
 import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
+import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import i18n from 'i18next';
 
 const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
@@ -120,10 +121,14 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
       });
     } catch (err) {
       console.error('[insertAudio] Upload failed:', err);
-      const msg =
-        err instanceof Error ? err.message : i18n.t('toast.audioUploadFailed', { ns: 'board' });
-      toast.error(i18n.t('toast.audioUploadError', { ns: 'board' }), {
-        description: msg,
+      const { title, description } = getBoardUploadErrorToast(err, file, MAX_AUDIO_SIZE_BYTES, {
+        sizeDescKey: 'toast.audioSizeDesc',
+        failedTitleKey: 'toast.audioUploadError',
+        failedDescKey: 'toast.audioUploadFailed',
+        formatDescKey: 'toast.audioFormatDesc',
+      });
+      toast.error(title, {
+        description,
         duration: 5000,
       });
       editor.deleteShapes([shapeId]);

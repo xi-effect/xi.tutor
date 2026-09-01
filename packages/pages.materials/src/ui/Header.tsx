@@ -109,7 +109,7 @@ export const Header = ({
           {scopeFilter === 'classroom' ? (
             <MaterialsClassroomFilter value={classroomIds} onChange={onClassroomChange} />
           ) : null}
-          <FilesTagsFilter value={materialTags} onChange={onMaterialTagsChange} maxCount={5} />
+          <FilesTagsFilter value={materialTags} onChange={onMaterialTagsChange} />
         </div>
       )}
       <UploadFilesModal open={uploadOpen} onOpenChange={setUploadOpen} />

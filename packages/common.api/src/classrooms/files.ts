@@ -1,6 +1,6 @@
 import { env } from 'common.env';
 import { HttpMethod } from '../config';
-import type { FileFilters } from '../libraryFiles';
+import { normalizeFileFilters, type FileFilters } from '../libraryFiles';
 
 const CONTENT_SERVICE_URL = `${env.VITE_SERVER_URL_BACKEND}/api/protected/content-service`;
 
@@ -65,9 +65,12 @@ const classroomFilesApiConfig = {
 };
 
 const serializeFileFiltersKey = (filters?: FileFilters | null): (string | boolean | null)[] => {
-  const kinds = filters?.kinds?.join(',') ?? '';
-  const owner = filters?.is_uploaded_by_owner ?? null;
-  return [kinds, owner];
+  const normalized = normalizeFileFilters(filters);
+  return [
+    normalized.kinds?.join(',') ?? '',
+    normalized.is_uploaded_by_owner ?? null,
+    normalized.tag_ids?.join(',') ?? '',
+  ];
 };
 
 const classroomFilesQueryKeys = {

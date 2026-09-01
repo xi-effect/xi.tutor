@@ -28,7 +28,7 @@
       "dropTitle": "Drag files here",
       "dropSubtitle": "or choose them on your device",
       "select": "Select files",
-      "add": "Add files",
+      "add": "Add more files",
       "cancel": "Cancel upload",
       "close": "Close",
       "done": "Done",
@@ -37,6 +37,8 @@
       "limitsCount": "You can upload up to {{max}} files at a time",
       "limitsSize": "Images up to 1 MB, PDF, audio and other files up to 5 MB",
       "failed": "Upload failed",
+      "failedTooLarge": "File is too large",
+      "failedType": "Unsupported format",
       "tooLarge": "The file “{{name}}” is too large",
       "tooLong": "The name “{{name}}” is longer than 100 characters",
       "maxFiles": "You can upload at most {{max}} files at a time"

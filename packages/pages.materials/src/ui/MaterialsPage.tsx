@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Header } from './Header';
 import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
-import { useCurrentUser } from 'common.services';
+import { useCurrentUser, isBackendTagId } from 'common.services';
 import { NotFoundPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
@@ -94,7 +94,9 @@ const MaterialsPageContent = () => {
   const { tags } = useLibraryTags();
 
   useEffect(() => {
-    const validIds = new Set(tags.map((tag) => tag.id));
+    const validIds = new Set(
+      tags.filter((tag) => isBackendTagId(tag.id)).map((tag) => Number(tag.id)),
+    );
     setFilesFilters((current) => {
       const nextTags = current.tags.filter((tag) => validIds.has(tag.id));
       if (nextTags.length === current.tags.length) {
@@ -194,7 +196,7 @@ const MaterialsPageContent = () => {
             parentRef={parentRef}
             filesFilters={filesFilters}
             onResetFilesFilters={handleResetFilesFilters}
-            materialTagIds={materialTags.map((tag) => Number(tag.id)).filter(Number.isFinite)}
+            materialTagIds={materialTags.map((tag) => tag.id)}
           />
         </div>
       </div>

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FileKind, LibraryFile } from 'common.api';
 import {
   LibraryFilesQueryKey,
-  handleError,
   insertLibraryFileInSearchCache,
   isFileNameTooLong,
   showSuccess,
@@ -12,7 +11,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   LIBRARY_UPLOAD_MAX_FILES,
   getBrowserFileKind,
+  getLibraryUploadErrorKind,
   getLibraryUploadMaxBytes,
+  type LibraryUploadErrorKind,
 } from './libraryUpload';
 
 export type LibraryUploadItem = {
@@ -21,6 +22,7 @@ export type LibraryUploadItem = {
   kind: FileKind;
   progress: number;
   status: 'uploading' | 'done' | 'error';
+  errorKind?: LibraryUploadErrorKind;
   libraryFile?: LibraryFile;
 };
 
@@ -99,9 +101,19 @@ export const useLibraryFileUploads = (open: boolean) => {
           return;
         }
 
-        handleError(error, 'files');
         setItems((current) =>
-          current.map((item) => (item.id === id ? { ...item, status: 'error' } : item)),
+          current.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  status: 'error',
+                  errorKind: getLibraryUploadErrorKind(error, {
+                    fileSize: file.size,
+                    maxBytes: getLibraryUploadMaxBytes(getBrowserFileKind(file)),
+                  }),
+                }
+              : item,
+          ),
         );
       }
     },
@@ -183,10 +195,20 @@ export const useLibraryFileUploads = (open: boolean) => {
     setItems([]);
   }, [abortAll]);
 
+  const cancelUploading = useCallback(() => {
+    const uploadingIds = itemsRef.current
+      .filter((item) => item.status === 'uploading')
+      .map((item) => item.id);
+
+    uploadingIds.forEach(abort);
+    setItems((current) => current.filter((item) => item.status !== 'uploading'));
+  }, [abort]);
+
   return {
     items,
     addFiles,
     removeItem,
     cancelAll,
+    cancelUploading,
   };
 };

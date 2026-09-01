@@ -131,11 +131,11 @@ export const MaterialActionsMenu = ({
         )}
         <DropdownMenuItem
           className={cardMenuItemClass}
-          onClick={() => setModalOpen(true)}
-          data-umami-event="material-edit"
+          onClick={handleAction(() => setModalOpen(true))}
+          data-umami-event="material-rename"
         >
           <Edit />
-          {t('menu.edit')}
+          {t('menu.rename')}
         </DropdownMenuItem>
         {onEditTags ? (
           <DropdownMenuItem
