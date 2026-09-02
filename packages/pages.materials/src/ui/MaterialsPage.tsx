@@ -3,23 +3,31 @@ import { useEffect, useRef, useState } from 'react';
 import { Header } from './Header';
 import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
-import { useCurrentUser } from 'common.services';
+import { useCurrentUser, isBackendTagId } from 'common.services';
 import { NotFoundPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
+import { LibraryTagsUiProvider } from './Files/tags/LibraryTagsUiContext';
+import { useLibraryTags } from './Files/tags/useLibraryTags';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { MaterialScopeFilterT } from '../types';
+import {
+  MaterialScopeFilterT,
+  MaterialsTabT,
+  DEFAULT_FILES_FILTERS,
+  FilesFiltersT,
+  type FilesTagOptionT,
+} from '../types';
 
-const getTabFromUrl = (): 'notes' | 'boards' => {
+const getTabFromUrl = (): MaterialsTabT => {
   if (typeof window === 'undefined') {
     return 'boards';
   }
 
   const tab = new URLSearchParams(window.location.search).get('tab');
-  return tab === 'notes' || tab === 'boards' ? tab : 'boards';
+  return tab === 'notes' || tab === 'boards' || tab === 'files' ? tab : 'boards';
 };
 
 const getClassroomIdsFromUrl = (): number[] => {
@@ -70,17 +78,38 @@ const replaceSearchParams = (updates: Record<string, string | null>) => {
 };
 
 const MaterialsPageContent = () => {
-  const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
+  const [activeTab, setActiveTab] = useState<MaterialsTabT>(() => getTabFromUrl());
   const [scopeFilter, setScopeFilter] = useState<MaterialScopeFilterT>(() => getScopeFromUrl());
   const [classroomIds, setClassroomIds] = useState<number[]>(() =>
     getScopeFromUrl() === 'classroom' ? getClassroomIdsFromUrl() : [],
   );
+  const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
+  const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
+  const { tags } = useLibraryTags();
+
+  useEffect(() => {
+    const validIds = new Set(
+      tags.filter((tag) => isBackendTagId(tag.id)).map((tag) => Number(tag.id)),
+    );
+    setFilesFilters((current) => {
+      const nextTags = current.tags.filter((tag) => validIds.has(tag.id));
+      if (nextTags.length === current.tags.length) {
+        return current;
+      }
+
+      return { ...current, tags: nextTags };
+    });
+    setMaterialTags((current) => {
+      const nextTags = current.filter((tag) => validIds.has(tag.id));
+      return nextTags.length === current.length ? current : nextTags;
+    });
+  }, [tags]);
 
   useEffect(() => {
     const syncFromUrl = () => {
@@ -97,12 +126,16 @@ const MaterialsPageContent = () => {
   }, []);
 
   const handleTabChange = (tabId: string) => {
-    if (tabId !== 'notes' && tabId !== 'boards') {
+    if (tabId !== 'notes' && tabId !== 'boards' && tabId !== 'files') {
       return;
     }
 
     replaceSearchParams({ tab: tabId });
     setActiveTab(tabId);
+  };
+
+  const handleResetFilesFilters = () => {
+    setFilesFilters(DEFAULT_FILES_FILTERS);
   };
 
   const handleScopeChange = (scope: MaterialScopeFilterT) => {
@@ -141,6 +174,11 @@ const MaterialsPageContent = () => {
             classroomIds={classroomIds}
             onScopeChange={handleScopeChange}
             onClassroomChange={handleClassroomChange}
+            filesFilters={filesFilters}
+            onFilesFiltersChange={setFilesFilters}
+            onResetFilesFilters={handleResetFilesFilters}
+            materialTags={materialTags}
+            onMaterialTagsChange={setMaterialTags}
           />
         </div>
 
@@ -156,6 +194,9 @@ const MaterialsPageContent = () => {
             scopeFilter={scopeFilter}
             classroomIds={classroomIds}
             parentRef={parentRef}
+            filesFilters={filesFilters}
+            onResetFilesFilters={handleResetFilesFilters}
+            materialTagIds={materialTags.map((tag) => tag.id)}
           />
         </div>
       </div>
@@ -180,7 +221,9 @@ const MaterialsPageContent = () => {
 export const MaterialsPage = () => {
   return (
     <MaterialsDuplicateProvider>
-      <MaterialsPageContent />
+      <LibraryTagsUiProvider>
+        <MaterialsPageContent />
+      </LibraryTagsUiProvider>
     </MaterialsDuplicateProvider>
   );
 };

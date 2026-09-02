@@ -27,6 +27,7 @@ import {
   useGetRecipientInvoiceByTutor,
 } from 'common.services';
 import { useTranslation } from 'react-i18next';
+import { modalTitleClass } from 'common.ui';
 
 type ApproveFormPropsT = {
   recipientInvoiceId: number;
@@ -387,9 +388,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
           >
             <Close className="fill-icon-primary h-5 w-5" />
           </ModalCloseButton>
-          <ModalTitle className="text-text-primary m-0 pr-10 sm:pr-0">
-            {t('modal.title')}
-          </ModalTitle>
+          <ModalTitle className={`${modalTitleClass} pr-10 sm:pr-0`}>{t('modal.title')}</ModalTitle>
           <ModalDescription className="sr-only">{t('modal.description')}</ModalDescription>
         </ModalHeader>
         {data && data.recipient_invoice.status !== 'wf_receiver_confirmation' && (

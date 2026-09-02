@@ -30,7 +30,7 @@ const ghostActionClass = '!h-auto rounded-[10px] px-5 py-3 text-base leading-5 f
 interface TutorDesktopToolbarProps {
   currentTab: string;
   classroomKind: string | undefined;
-  materialKind: 'note' | 'board';
+  materialKind: 'note' | 'board' | 'file';
   onAddLessonClick: () => void;
   onOpenInvoiceModal: () => void;
   onDeleteClassroom: () => void;
@@ -73,10 +73,10 @@ const TutorDesktopToolbar = ({
     );
   }
 
-  if (currentTab === 'materials') {
+  if (currentTab === 'materials' && materialKind !== 'file') {
     return (
       <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
-        <MaterialsAdd kind={materialKind} />
+        <MaterialsAdd kind={materialKind === 'note' ? 'note' : 'board'} />
       </div>
     );
   }
@@ -157,7 +157,7 @@ export const TabsTutor = () => {
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const materialKind = search.tab === 'notes' ? 'note' : 'board';
+  const materialKind = search.tab === 'notes' ? 'note' : search.tab === 'files' ? 'file' : 'board';
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
@@ -258,6 +258,7 @@ export const TabsTutor = () => {
             classroomKind={classroom?.kind}
             isPendingAddMaterial={addClassroomMaterials.isPending}
             isDeletingClassroom={isDeletingClassroom}
+            isFilesTab={search.tab === 'files'}
             isStudentsModalOpen={isStudentsModalOpen}
             isGroupInviteModalOpen={isGroupInviteModalOpen}
             onAddMaterial={handleAddMaterial}

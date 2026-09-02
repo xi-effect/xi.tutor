@@ -4,7 +4,7 @@ import { useMedia } from 'common.utils';
 import { SearchParams } from '../../types/router';
 
 interface UseTabNavigationOptions {
-  /** Нормализовать tabs 'notes' и 'boards' в 'materials' (подвкладки материалов) */
+  /** Нормализовать tabs 'notes', 'boards' и 'files' в 'materials' */
   normalizeMaterialTabs?: boolean;
 }
 
@@ -16,7 +16,7 @@ export const useTabNavigation = ({
   const navigate = useNavigate();
 
   const currentTab = normalizeMaterialTabs
-    ? search.tab === 'notes' || search.tab === 'boards'
+    ? search.tab === 'notes' || search.tab === 'boards' || search.tab === 'files'
       ? 'materials'
       : (search.tab ?? 'overview')
     : (search.tab ?? 'overview');

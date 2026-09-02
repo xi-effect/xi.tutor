@@ -1,13 +1,7 @@
 import { Editor } from '@tiptap/core';
 import { toast } from 'sonner';
 import i18n from 'i18next';
-import {
-  isFileNameTooLong,
-  MAX_FILENAME_LENGTH,
-  uploadAudioRequest,
-  uploadDocumentRequest,
-  uploadPresentationRequest,
-} from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'common.services';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
   getFileExtension,
@@ -92,7 +86,7 @@ export async function insertAudioFile(
   }
 
   const duration = await getAudioDuration(file);
-  const src = await uploadAudioRequest({ file, token });
+  const src = await uploadFileIdRequest({ file, token });
 
   return insertAtomBlock(
     editor,
@@ -145,7 +139,7 @@ export async function insertPdfFile(
   }
 
   const totalPages = await getPdfPageCount(file);
-  const src = await uploadDocumentRequest({ file, token });
+  const src = await uploadFileIdRequest({ file, token });
 
   return insertAtomBlock(
     editor,
@@ -189,7 +183,7 @@ export async function insertPresentationFile(
     return false;
   }
 
-  const src = await uploadPresentationRequest({ file, token });
+  const src = await uploadFileIdRequest({ file, token });
 
   return insertAtomBlock(
     editor,

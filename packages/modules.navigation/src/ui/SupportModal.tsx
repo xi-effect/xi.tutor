@@ -1,14 +1,14 @@
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  ModalCloseButton,
-  ModalBody,
-} from '@xipkg/modal';
+import { Modal, ModalContent, ModalTitle, ModalBody } from '@xipkg/modal';
 import { TelegramFilled, MailRounded, External, VK } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
-import { modalTitleClass } from 'common.ui';
+import {
+  ModalCloseIcon,
+  modalBodyClass,
+  modalContentClass,
+  modalDescriptionClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   inferActivationHelpScreen,
@@ -69,13 +69,13 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="max-w-[480px]" aria-describedby={undefined}>
-        <ModalHeader>
-          <ModalCloseButton />
-          <ModalTitle className={modalTitleClass}>{t('supportModal.title')}</ModalTitle>
-        </ModalHeader>
-        <ModalBody className="flex flex-col gap-3 pb-6">
-          <p className="text-text-secondary text-s-base mb-1">{t('supportModal.description')}</p>
+      <ModalContent className={modalContentClass} aria-describedby={undefined}>
+        <ModalBody className={modalBodyClass}>
+          <div className={modalHeaderRowClass}>
+            <ModalTitle className={modalTitleClass}>{t('supportModal.title')}</ModalTitle>
+            <ModalCloseIcon onClick={() => onOpenChange(false)} />
+          </div>
+          <p className={modalDescriptionClass}>{t('supportModal.description')}</p>
 
           {CONTACTS.map((contact) => (
             <a

@@ -8,6 +8,7 @@ interface MaterialsResponseT {
   data: MaterialsDataT & {
     id: string;
     updated_at: string;
+    tag_ids?: number[] | null;
   };
 }
 

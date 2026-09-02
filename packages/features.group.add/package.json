@@ -24,6 +24,7 @@
     "common.api": "workspace:*",
     "common.config": "workspace:*",
     "common.services": "workspace:*",
+    "common.ui": "workspace:*",
     "i18next": "24.2.2",
     "lucide-react": "^0.263.1",
     "react-hook-form": "^7.73.1",

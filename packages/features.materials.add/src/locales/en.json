@@ -2,16 +2,22 @@
   "note": {
     "create": "Create note",
     "creating": "Creating...",
-    "collaborative": "Collaborative",
-    "tutorOnly": "Tutor only",
-    "drafts": "Drafts"
+    "collaborative": "Can edit",
+    "collaborativeHint": "The student can see the note and edit it",
+    "tutorOnly": "View only",
+    "tutorOnlyHint": "The student can see the note but cannot edit it",
+    "drafts": "Hidden from student",
+    "draftsHint": "The student cannot see this note"
   },
   "board": {
     "create": "Create board",
     "creating": "Creating...",
-    "collaborative": "Collaborative",
-    "tutorOnly": "Tutor only",
-    "drafts": "Drafts"
+    "collaborative": "Can edit",
+    "collaborativeHint": "The student can see the board and edit it",
+    "tutorOnly": "View only",
+    "tutorOnlyHint": "The student can see the board but cannot edit it",
+    "drafts": "Hidden from student",
+    "draftsHint": "The student cannot see this board"
   },
   "file": {
     "upload": "Upload file"

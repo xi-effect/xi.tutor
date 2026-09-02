@@ -1,15 +1,10 @@
 import { useRef, useCallback } from 'react';
 import { useNetworkStatus } from 'common.utils';
 import { nanoid } from 'nanoid';
-
-import {
-  uploadFileRequest,
-  uploadPresentationRequest,
-  deleteFileFromDB,
-  getFileFromDB,
-  getAllFileKeys,
-} from 'common.services';
 import { DrShapeId } from '@ibodr/draw';
+import { getFileUploadErrorKind } from './classifyFileUploadError';
+import { uploadFileIdRequest } from './uploadFileRequest';
+import { deleteFileFromDB, getAllFileKeys, getFileFromDB } from './fileStorage';
 
 export type RetryRequest = {
   id: string;
@@ -64,18 +59,15 @@ export const useRetryFileQueue = () => {
     }
 
     for (const req of [...queueRef.current]) {
+      const fileObject = await getFileFromDB(req.shapeId);
+
+      if (!fileObject) {
+        removeFromQueue(req.id);
+        continue;
+      }
+
       try {
-        const fileObject = await getFileFromDB(req.shapeId);
-
-        if (!fileObject) {
-          removeFromQueue(req.id);
-          continue;
-        }
-
-        const upload = fileObject.file.name.toLowerCase().endsWith('.pptx')
-          ? uploadPresentationRequest
-          : uploadFileRequest;
-        const fileId = await upload({
+        const fileId = await uploadFileIdRequest({
           file: fileObject.file,
           token: fileObject.token,
         });
@@ -88,6 +80,17 @@ export const useRetryFileQueue = () => {
           shapeId: req.shapeId,
         });
       } catch (error) {
+        const kind = getFileUploadErrorKind(error, {
+          fileSize: fileObject.file.size,
+          maxBytes: 5 * 1024 * 1024,
+        });
+
+        if (kind === 'tooLarge' || kind === 'unsupported') {
+          await deleteFileFromDB(req.shapeId);
+          removeFromQueue(req.id);
+          continue;
+        }
+
         req.retryCount++;
 
         if (req.retryCount >= req.maxRetries) {

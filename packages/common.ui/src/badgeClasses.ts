@@ -19,7 +19,7 @@ export const paymentStatusBadgeClasses = {
 
 /** Режимы доступа к материалам */
 export const materialAccessBadgeClasses = {
-  read_write: categoryBadgeClass,
-  read_only: 'text-tag-cyan-accent bg-tag-cyan-background',
-  no_access: 'text-tag-violet-accent bg-tag-violet-background',
+  read_write: 'text-status-success-text bg-status-success-background',
+  read_only: 'text-tag-violet-accent bg-tag-violet-background',
+  no_access: 'text-tag-orange-accent bg-tag-orange-background',
 } as const;

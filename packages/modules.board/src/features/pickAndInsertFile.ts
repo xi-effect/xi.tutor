@@ -1,13 +1,20 @@
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { uploadFileRequest, uploadPresentationRequest } from 'common.services';
+import {
+  deleteFileFromDB,
+  saveFileToDB,
+  uploadFileIdRequest,
+  type RetryRequest,
+} from 'common.services';
 import { nanoid } from 'nanoid';
 import { FileShape } from '../shapes/file';
 import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
-import { saveFileToDB } from 'common.services';
-import { type RetryRequest } from 'common.services';
-import { ALLOWED_FILE_MIME_TYPES, isPresentationFile } from '../constants/mimeTypes';
+import { ALLOWED_FILE_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
+import {
+  getBoardUploadErrorToast,
+  isNonRetryableBoardUploadError,
+} from '../utils/boardUploadError';
 import i18n from 'i18next';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
@@ -68,9 +75,7 @@ export async function insertFile(
       },
     });
 
-    const fileId = isPresentationFile(file)
-      ? await uploadPresentationRequest({ file, token })
-      : await uploadFileRequest({ file, token });
+    const fileId = await uploadFileIdRequest({ file, token });
 
     editor.updateShape<FileShape>({
       id: shapeId,
@@ -85,6 +90,18 @@ export async function insertFile(
   } catch (err) {
     if (!editor.getShape(shapeId)) return;
     const isOffline = !navigator.onLine;
+
+    if (!isOffline && isNonRetryableBoardUploadError(err, file, MAX_FILE_SIZE_BYTES)) {
+      editor.deleteShapes([shapeId]);
+      void deleteFileFromDB(shapeId);
+      const { title, description } = getBoardUploadErrorToast(err, file, MAX_FILE_SIZE_BYTES, {
+        sizeDescKey: 'toast.fileSizeDesc',
+        failedTitleKey: 'toast.fileUploadError',
+        failedDescKey: 'toast.fileUploadFailed',
+      });
+      toast.error(title, { description, duration: 5000 });
+      return;
+    }
 
     editor.updateShape<FileShape>({
       id: shapeId,
@@ -103,13 +120,18 @@ export async function insertFile(
 
     console.error('[insertFile] Upload failed:', err);
 
-    const msg = isOffline
-      ? i18n.t('toast.offlineUpload', { ns: 'board' })
-      : err instanceof Error
-        ? err.message
-        : i18n.t('toast.fileUploadFailed', { ns: 'board' });
-    toast.error(i18n.t('toast.fileUploadError', { ns: 'board' }), {
-      description: msg,
+    const { title, description } = isOffline
+      ? {
+          title: i18n.t('toast.fileUploadError', { ns: 'board' }),
+          description: i18n.t('toast.offlineUpload', { ns: 'board' }),
+        }
+      : getBoardUploadErrorToast(err, file, MAX_FILE_SIZE_BYTES, {
+          sizeDescKey: 'toast.fileSizeDesc',
+          failedTitleKey: 'toast.fileUploadError',
+          failedDescKey: 'toast.fileUploadFailed',
+        });
+    toast.error(title, {
+      description,
       duration: 5000,
     });
   }
