@@ -2,6 +2,12 @@ import type { TFunction } from 'i18next';
 import * as z from 'zod';
 import { durationBetweenMinutes, MAX_LESSON_DURATION_MINUTES } from '../utils/utils';
 
+const startOfCalendarDay = (date: Date): number => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+};
+
 export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring', t: TFunction) => {
   const timeValidation = z.string().refine((time) => {
     if (time === '') return true;
@@ -15,6 +21,8 @@ export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring', t: T
     endTime: timeValidation,
     moveMode: z.enum(['single', 'single_and_next']).optional(),
     repeatWeekdays: z.array(z.number().min(0).max(6)).default([]),
+    repeatEnds: z.enum(['never', 'date']).default('never'),
+    repeatUntil: z.date().nullable().default(null),
   });
 
   return movingFormBase.superRefine((data, ctx) => {
@@ -58,6 +66,25 @@ export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring', t: T
         message: t('validation.repeatDaysRequired'),
         path: ['repeatWeekdays'],
       });
+    }
+    if (
+      lessonKind === 'recurring' &&
+      data.moveMode === 'single_and_next' &&
+      data.repeatEnds === 'date'
+    ) {
+      if (data.repeatUntil == null) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t('validation.repeatUntilRequired'),
+          path: ['repeatUntil'],
+        });
+      } else if (startOfCalendarDay(data.repeatUntil) < startOfCalendarDay(data.startDate)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t('validation.repeatUntilBeforeStart'),
+          path: ['repeatUntil'],
+        });
+      }
     }
   });
 };

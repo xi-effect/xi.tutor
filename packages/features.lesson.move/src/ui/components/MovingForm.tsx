@@ -363,6 +363,75 @@ export const MovingForm: FC<MovingFormProps> = ({
           />
         )}
 
+        {showRepetitions && (
+          <FormField
+            control={control}
+            name="repeatEnds"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-2">
+                <FormLabel className="text-text-primary text-[14px] font-normal">
+                  {t('form.repeatEnds')}
+                </FormLabel>
+                <FormControl>
+                  <div role="radiogroup" className="flex flex-col gap-3">
+                    <label className="flex cursor-pointer items-center gap-2">
+                      <input
+                        type="radio"
+                        name="repeatEnds"
+                        checked={field.value === 'never'}
+                        onChange={() => {
+                          field.onChange('never');
+                          form.setValue('repeatUntil', null);
+                        }}
+                        className="accent-action-primary-background-default h-4 w-4"
+                      />
+                      <span className="text-text-primary text-sm">{t('form.repeatEndsNever')}</span>
+                    </label>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex cursor-pointer items-center gap-2">
+                        <input
+                          type="radio"
+                          name="repeatEnds"
+                          checked={field.value === 'date'}
+                          onChange={() => {
+                            field.onChange('date');
+                            if (form.getValues('repeatUntil') == null) {
+                              form.setValue('repeatUntil', startDate);
+                            }
+                          }}
+                          className="accent-action-primary-background-default h-4 w-4"
+                        />
+                        <span className="text-text-primary text-sm">
+                          {t('form.repeatEndsUntilDate')}
+                        </span>
+                      </label>
+                      {field.value === 'date' ? (
+                        <FormField
+                          control={control}
+                          name="repeatUntil"
+                          render={({ field: untilField }) => (
+                            <FormItem>
+                              <FormControl>
+                                <InputDate
+                                  value={untilField.value ?? startDate}
+                                  onChange={untilField.onChange}
+                                  minDate={startDate}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         {children}
       </form>
     </Form>

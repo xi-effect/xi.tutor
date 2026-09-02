@@ -54,9 +54,12 @@ describe('tags API', () => {
       5,
     );
     const byIdUrl = tagsApiConfig[TagsQueryKey.GetTagById].getUrl(TAG_KIND.Generic, 3);
+    const listUrl = tagsApiConfig[TagsQueryKey.GetGenericTags].getUrl();
 
     expect(autocompleteUrl).toContain('/tag-kinds/generic/autocomplete-suggestions/');
     expect(byIdUrl).toContain('/tag-kinds/generic/tags/3/');
+    expect(listUrl).toContain('/tag-kinds/generic/tags/');
+    expect(listUrl).not.toContain('autocomplete-suggestions');
   });
 
   it('кладёт kind в query keys, чтобы subject и generic не пересекались', () => {

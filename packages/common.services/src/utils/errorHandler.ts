@@ -21,6 +21,7 @@ export type ErrorType =
   | 'calls'
   | 'createGroup'
   | 'files'
+  | 'tags'
   | 'notifications'
   | 'emailConfirmation'
   | 'emailConfirmationRequest'
@@ -113,6 +114,10 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
   files: {
     'Invalid file format': 'Недопустимый тип файла',
   },
+  tags: {
+    'Tag already exists': 'Тег с таким названием уже существует',
+    'Quantity exceeded': 'Достигнут лимит тегов',
+  },
   notifications: {
     'Validation Error': 'Ошибка валидации',
     'Notification not found': 'Уведомление не найдено',
@@ -166,6 +171,7 @@ const successMessages: Record<ErrorType, string> = {
   calls: 'Access token создан',
   createGroup: 'Группа успешно создана',
   files: 'Файл успешно загружен',
+  tags: 'Тег сохранён',
   notifications: 'Уведомление успешно отмечено как прочитанное',
   emailConfirmation: 'Письмо для подтверждения email было отправлено',
   emailConfirmationRequest: 'Почта успешно подтверждена',
@@ -244,6 +250,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'создании группы';
     case 'files':
       return 'загрузке файла';
+    case 'tags':
+      return 'работе с тегами';
     case 'notifications':
       return 'обработке уведомления';
     default:

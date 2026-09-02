@@ -33,7 +33,10 @@ export {
   TagsQueryKey,
   tagsQueryKeys,
   TAG_KIND,
+  TAG_MAX_COUNT,
+  TAG_FILTER_MAX_COUNT,
   type TagKind,
+  type TagColor,
   type TagSchema,
 } from 'common.api';
 export * from './scheduler';

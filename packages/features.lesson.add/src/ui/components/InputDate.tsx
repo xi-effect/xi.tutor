@@ -11,9 +11,11 @@ const DATE_PICKER_POPOVER_CLASS =
 interface InputDateProps {
   value?: Date;
   onChange: (val: Date) => void;
+  /** Даты раньше этой недоступны в календаре */
+  minDate?: Date;
 }
 
-export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
+export const InputDate = memo<InputDateProps>(({ value, onChange, minDate }) => {
   const [date, setDate] = useState<Date>(value || new Date());
 
   const handleSelectDate = useCallback(
@@ -33,7 +35,15 @@ export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
 
   return (
     <DatePicker
-      calendarProps={{ mode: 'single', selected: date, onSelect: handleSelectDate, required: true }}
+      calendarProps={{
+        mode: 'single',
+        selected: date,
+        onSelect: handleSelectDate,
+        required: true,
+        disabled: minDate
+          ? { before: new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()) }
+          : undefined,
+      }}
       classNamePopoverContent={DATE_PICKER_POPOVER_CLASS}
       popoverContentProps={{ side: 'bottom', align: 'start' }}
     >
