@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
 import { boardDropdownZClass, boardIconClass, boardMenuSurfaceClass } from '../../ui/boardTheme';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadImageRequest } from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'common.services';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -21,6 +21,7 @@ import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
+import { getBoardUploadErrorToast } from '../../utils/boardUploadError';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024;
 
@@ -102,10 +103,15 @@ async function uploadPickedImage(file: File, token: string) {
   }
 
   try {
-    const fileId = await uploadImageRequest({ file: next, token });
+    const fileId = await uploadFileIdRequest({ file: next, token });
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
-    toast.error(boardToast('toast.imageUploadFailed'));
+    const { title, description } = getBoardUploadErrorToast(error, next, MAX_IMAGE_SIZE_BYTES, {
+      sizeDescKey: 'toast.imageSizeDesc',
+      failedTitleKey: 'toast.imageUploadFailed',
+      failedDescKey: 'toast.imageUploadFailed',
+    });
+    toast.error(title, { description, duration: 5000 });
     throw error;
   }
 }

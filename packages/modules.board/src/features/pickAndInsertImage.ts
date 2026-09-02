@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
+import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import i18n from 'i18next';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
@@ -148,10 +149,13 @@ export async function insertImage(
       ]);
     } catch (err) {
       console.error('Image upload failed:', err);
-      const errorMessage =
-        err instanceof Error ? err.message : i18n.t('toast.imageUploadFailed', { ns: 'board' });
-      toast.error(i18n.t('toast.imageUploadError', { ns: 'board' }), {
-        description: errorMessage,
+      const { title, description } = getBoardUploadErrorToast(err, file, MAX_IMAGE_SIZE_BYTES, {
+        sizeDescKey: 'toast.imageSizeDesc',
+        failedTitleKey: 'toast.imageUploadError',
+        failedDescKey: 'toast.imageUploadFailed',
+      });
+      toast.error(title, {
+        description,
         duration: 5000,
       });
       editor.deleteShapes([shapeId]);

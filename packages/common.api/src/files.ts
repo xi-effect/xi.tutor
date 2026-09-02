@@ -2,8 +2,25 @@ import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 const CONTENT_SERVICE_URL = `${env.VITE_SERVER_URL_BACKEND}/api/protected/content-service`;
+const UPLOAD_FILE_URL = `${CONTENT_SERVICE_URL}/files/`;
 
 export type FileKind = 'uncategorized' | 'image' | 'document' | 'audio' | 'presentation';
+
+export const FILE_KIND = {
+  Uncategorized: 'uncategorized',
+  Image: 'image',
+  Document: 'document',
+  Audio: 'audio',
+  Presentation: 'presentation',
+} as const satisfies Record<string, FileKind>;
+
+export const FILE_KINDS: FileKind[] = [
+  FILE_KIND.Uncategorized,
+  FILE_KIND.Image,
+  FILE_KIND.Document,
+  FILE_KIND.Audio,
+  FILE_KIND.Presentation,
+];
 
 export interface FileResponse {
   id: string;
@@ -13,6 +30,7 @@ export interface FileResponse {
   content_type: string;
   size_bytes: number;
   created_at: string;
+  tag_ids?: number[] | null;
 }
 
 export interface UploadFileBody {
@@ -38,36 +56,34 @@ export interface ReadFileHeaders extends ContentTokenHeaders {
 }
 
 enum FilesQueryKey {
+  UploadFile = 'UploadFile',
+  /** @deprecated Use UploadFile — kind is determined by the backend. */
   UploadImage = 'UploadImage',
+  /** @deprecated Use UploadFile — kind is determined by the backend. */
   UploadAudio = 'UploadAudio',
+  /** @deprecated Use UploadFile — kind is determined by the backend. */
   UploadDocument = 'UploadDocument',
+  /** @deprecated Use UploadFile — kind is determined by the backend. */
   UploadPresentation = 'UploadPresentation',
+  /** @deprecated Use UploadFile — kind is determined by the backend. */
   UploadAttachment = 'UploadAttachment',
   GetFile = 'GetFile',
   GetFileMeta = 'GetFileMeta',
+  AttachFileToYDoc = 'AttachFileToYDoc',
 }
 
+const uploadFileConfig = {
+  getUrl: () => UPLOAD_FILE_URL,
+  method: HttpMethod.POST,
+};
+
 const filesApiConfig = {
-  [FilesQueryKey.UploadAttachment]: {
-    getUrl: () => `${CONTENT_SERVICE_URL}/file-kinds/uncategorized/files/`,
-    method: HttpMethod.POST,
-  },
-  [FilesQueryKey.UploadImage]: {
-    getUrl: () => `${CONTENT_SERVICE_URL}/file-kinds/image/files/`,
-    method: HttpMethod.POST,
-  },
-  [FilesQueryKey.UploadAudio]: {
-    getUrl: () => `${CONTENT_SERVICE_URL}/file-kinds/audio/files/`,
-    method: HttpMethod.POST,
-  },
-  [FilesQueryKey.UploadDocument]: {
-    getUrl: () => `${CONTENT_SERVICE_URL}/file-kinds/document/files/`,
-    method: HttpMethod.POST,
-  },
-  [FilesQueryKey.UploadPresentation]: {
-    getUrl: () => `${CONTENT_SERVICE_URL}/file-kinds/presentation/files/`,
-    method: HttpMethod.POST,
-  },
+  [FilesQueryKey.UploadFile]: uploadFileConfig,
+  [FilesQueryKey.UploadAttachment]: uploadFileConfig,
+  [FilesQueryKey.UploadImage]: uploadFileConfig,
+  [FilesQueryKey.UploadAudio]: uploadFileConfig,
+  [FilesQueryKey.UploadDocument]: uploadFileConfig,
+  [FilesQueryKey.UploadPresentation]: uploadFileConfig,
   [FilesQueryKey.GetFile]: {
     getUrl: (fileId: string) => `${CONTENT_SERVICE_URL}/files/${fileId}/`,
     method: HttpMethod.GET,
@@ -75,6 +91,11 @@ const filesApiConfig = {
   [FilesQueryKey.GetFileMeta]: {
     getUrl: (fileId: string) => `${CONTENT_SERVICE_URL}/files/${fileId}/meta/`,
     method: HttpMethod.GET,
+  },
+  [FilesQueryKey.AttachFileToYDoc]: {
+    getUrl: (ydocId: string, fileId: string) =>
+      `${CONTENT_SERVICE_URL}/ydocs/${ydocId}/files/${fileId}/`,
+    method: HttpMethod.PUT,
   },
 };
 

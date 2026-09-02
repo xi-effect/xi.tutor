@@ -1,18 +1,23 @@
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
-import { MoreVert, Payments } from '@xipkg/icons';
+import { Edit, MoreVert, Payments, Trash } from '@xipkg/icons';
 import { TemplateT } from 'common.types';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import {
   ConfirmDialog,
   cardMenuButtonClass,
+  cardMenuDeleteItemClass,
   cardMenuIconClass,
+  cardMenuItemClass,
   cardMenuPositionClass,
+  cardMenuSeparatorClass,
+  cardMenuSurfaceClass,
   getDateLocale,
 } from 'common.ui';
 import { useTranslation } from 'react-i18next';
@@ -79,19 +84,21 @@ export const TemplateCard = ({
             <DropdownMenuContent
               side="bottom"
               align="end"
-              className="border-border-default bg-background-surface border p-1"
+              className={cardMenuSurfaceClass}
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              onCloseAutoFocus={(event) => event.preventDefault()}
             >
-              <DropdownMenuItem
-                className="text-text-primary hover:text-text-primary focus:text-text-primary"
-                onClick={handleEditTemplate}
-              >
+              <DropdownMenuItem className={cardMenuItemClass} onClick={handleEditTemplate}>
+                <Edit />
                 {t('templateCard.edit')}
               </DropdownMenuItem>
+              <DropdownMenuSeparator className={cardMenuSeparatorClass} />
               <DropdownMenuItem
-                className="text-text-primary hover:text-text-primary focus:text-text-primary"
+                error
+                className={cardMenuDeleteItemClass}
                 onClick={handleDeleteClick}
               >
+                <Trash />
                 {t('templateCard.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>

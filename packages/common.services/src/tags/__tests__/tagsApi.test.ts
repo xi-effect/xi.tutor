@@ -62,6 +62,23 @@ describe('tags API', () => {
     expect(listUrl).not.toContain('autocomplete-suggestions');
   });
 
+  it('строит CRUD URL тегов репетитора через roles/tutor/tag-kinds', () => {
+    const createUrl = tagsApiConfig[TagsQueryKey.CreateTag].getUrl(TAG_KIND.Generic);
+    const updateUrl = tagsApiConfig[TagsQueryKey.UpdateTag].getUrl(TAG_KIND.Generic, 7);
+    const deleteUrl = tagsApiConfig[TagsQueryKey.DeleteTag].getUrl(TAG_KIND.Generic, 7);
+
+    expect(createUrl).toContain(
+      '/api/protected/autocomplete-service/roles/tutor/tag-kinds/generic/tags/',
+    );
+    expect(updateUrl).toContain(
+      '/api/protected/autocomplete-service/roles/tutor/tag-kinds/generic/tags/7/',
+    );
+    expect(deleteUrl).toBe(updateUrl);
+    expect(tagsApiConfig[TagsQueryKey.CreateTag].method).toBe('POST');
+    expect(tagsApiConfig[TagsQueryKey.UpdateTag].method).toBe('PATCH');
+    expect(tagsApiConfig[TagsQueryKey.DeleteTag].method).toBe('DELETE');
+  });
+
   it('кладёт kind в query keys, чтобы subject и generic не пересекались', () => {
     expect(tagsQueryKeys.autocomplete(TAG_KIND.Subject, 'math', 10)).toEqual([
       TagsQueryKey.TagsAutocomplete,

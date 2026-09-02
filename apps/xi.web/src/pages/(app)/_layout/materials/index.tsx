@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 const searchSchema = z
   .object({
-    tab: z.enum(['boards', 'notes']).optional(),
+    tab: z.enum(['boards', 'notes', 'files']).optional(),
     role: z.enum(['tutor', 'student']).optional(),
     read_notification_id: z.string().optional(),
   })

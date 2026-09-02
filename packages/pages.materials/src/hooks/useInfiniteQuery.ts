@@ -9,6 +9,7 @@ import {
   buildAnyMaterialFilters,
   PERSONAL_MATERIAL_SCOPE,
   serializeMaterialScope,
+  serializeMaterialTagIds,
 } from 'common.services';
 
 export const useInfiniteQuery = (
@@ -16,6 +17,7 @@ export const useInfiniteQuery = (
   kind: MaterialsKindT,
   scopeFilter: MaterialScopeFilterT = 'personal',
   classroomIds: number[] = [],
+  tagIds: number[] = [],
 ) => {
   const filters = buildAnyMaterialFilters({
     content_kind: kind,
@@ -28,11 +30,17 @@ export const useInfiniteQuery = (
               classroom_ids: classroomIds.length > 0 ? classroomIds : null,
             }
           : null,
+    tag_ids: tagIds,
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
-      queryKey: [MaterialsQueryKey.Materials, kind, serializeMaterialScope(filters.scope)],
+      queryKey: [
+        MaterialsQueryKey.Materials,
+        kind,
+        serializeMaterialScope(filters.scope),
+        serializeMaterialTagIds(filters.tag_ids),
+      ],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
         const url = materialsApiConfig[MaterialsQueryKey.Materials].getUrl();

@@ -14,6 +14,7 @@ import { Button } from '@xipkg/button';
 import { Clock, Edit05, Redo, Trash } from '@xipkg/icons';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { modalTitleClass } from 'common.ui';
 import { LessonInfoClassroomBlock } from './LessonInfoClassroomBlock';
 import { useCurrentUser } from 'common.services';
 
@@ -130,9 +131,7 @@ export const LessonInfoModal = ({
           <ModalHeader>
             <ModalCloseButton />
             <div className="flex max-w-[calc(100%-56px)] flex-col gap-0.5">
-              <ModalTitle className="text-xl-base text-text-primary max-w-full font-semibold">
-                {t('title')}
-              </ModalTitle>
+              <ModalTitle className={`${modalTitleClass} max-w-full`}>{t('title')}</ModalTitle>
               {lessonDate != null && lessonDate.trim().length > 0 ? (
                 <p className="text-text-secondary text-sm font-normal">{lessonDate.trim()}</p>
               ) : null}

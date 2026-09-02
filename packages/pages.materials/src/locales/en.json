@@ -2,7 +2,8 @@
   "title": "Materials",
   "tabs": {
     "boards": "Boards",
-    "notes": "Notes"
+    "notes": "Notes",
+    "files": "Files"
   },
   "scope": {
     "option": {
@@ -17,6 +18,176 @@
     "classroomLoading": "Loading...",
     "classroomEmpty": "No classrooms yet",
     "unnamedClassroom": "Untitled"
+  },
+  "files": {
+    "upload": "Upload files",
+    "uploadModal": {
+      "title": "Upload files",
+      "description": "Add learning materials to your cloud",
+      "progress": "Uploaded {{done}} of {{total}}",
+      "dropTitle": "Drag files here",
+      "dropSubtitle": "or choose them on your device",
+      "select": "Select files",
+      "add": "Add more files",
+      "cancel": "Cancel upload",
+      "close": "Close",
+      "done": "Done",
+      "remove": "Remove file",
+      "limitsEmpty": "Up to 10 files: images up to 1 MB, other files up to 5 MB",
+      "limitsCount": "You can upload up to {{max}} files at a time",
+      "limitsSize": "Images up to 1 MB, PDF, audio and other files up to 5 MB",
+      "failed": "Upload failed",
+      "failedTooLarge": "File is too large",
+      "failedType": "Unsupported format",
+      "tooLarge": "The file “{{name}}” is too large",
+      "tooLong": "The name “{{name}}” is longer than 100 characters",
+      "maxFiles": "You can upload at most {{max}} files at a time"
+    },
+    "searchPlaceholder": "Search files",
+    "resetAll": "Reset all",
+    "reset": "Reset",
+    "apply": "Apply",
+    "uploader": {
+      "chip": "Uploaded by: {{value}}",
+      "mineShort": "Mine",
+      "mine": "My files",
+      "students": "Students' files",
+      "all": "All files"
+    },
+    "type": {
+      "chip": "File type",
+      "chipCount": "File type · {{count}}",
+      "image": "Image",
+      "document": "Document",
+      "presentation": "Presentation",
+      "audio": "Audio",
+      "uncategorized": "Other"
+    },
+    "tags": {
+      "chip": "Tags",
+      "chipCount": "Tags · {{count}}",
+      "searchPlaceholder": "Find a tag",
+      "empty": "Tags not found",
+      "none": "No tags yet",
+      "hint": "Start typing a tag name",
+      "loading": "Loading..."
+    },
+    "tagManage": {
+      "title": "Tag management",
+      "description": "Create and edit tags for materials",
+      "create": "Create tag",
+      "empty": "No tags yet",
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "Tag actions",
+      "close": "Close"
+    },
+    "tagForm": {
+      "createTitle": "Create tag",
+      "editTitle": "Edit tag",
+      "name": "Name",
+      "color": "Color",
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save",
+      "saving": "Saving...",
+      "tooLong": "Name cannot be longer than {{max}} characters",
+      "duplicate": "A tag with this name already exists",
+      "limit": "You can create at most 100 tags",
+      "close": "Close"
+    },
+    "tagDelete": {
+      "title": "Delete tag “{{name}}”?",
+      "description": "The tag will be removed from all materials. The materials themselves will stay unchanged",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "assignTags": {
+      "title": "Edit tags",
+      "none": "No tags yet",
+      "manage": "Tag management"
+    },
+    "meta": "Uploaded {{date}} · {{size}}",
+    "today": "today",
+    "filteredEmptyTitle": "Nothing found",
+    "filteredEmptyDescription": "Try changing the search or reset the selected filters",
+    "error": "Could not load files",
+    "menu": {
+      "preview": "Preview",
+      "rename": "Rename",
+      "editTags": "Edit tags",
+      "share": "Share",
+      "whereUsed": "Where used",
+      "download": "Download",
+      "delete": "Delete",
+      "removeFromClassroom": "Remove from classroom",
+      "soon": "Coming soon"
+    },
+    "rename": {
+      "title": "Rename file",
+      "tooLong": "Name cannot be longer than {{max}} characters",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "success": "File renamed",
+      "counter": "{{current}}/{{max}}"
+    },
+    "share": {
+      "title": "Share file",
+      "description": "Choose the classroom to add this file to",
+      "searchPlaceholder": "Search classrooms",
+      "loading": "Loading...",
+      "empty": "No classrooms yet",
+      "emptySearch": "No classrooms found",
+      "kindIndividual": "Individual classroom",
+      "kindGroup": "Group classroom",
+      "kindGroupCount_one": "Group classroom · {{count}} student",
+      "kindGroupCount_few": "Group classroom · {{count}} students",
+      "kindGroupCount_many": "Group classroom · {{count}} students",
+      "kindGroupCount_other": "Group classroom · {{count}} students",
+      "alreadyAdded": "Already added",
+      "alreadyAddedError": "This file is already added to the selected classroom",
+      "archived": "Archived",
+      "cancel": "Cancel",
+      "submit": "Share",
+      "sharing": "Sharing...",
+      "success": "File added to the classroom",
+      "close": "Close"
+    },
+    "preview": {
+      "loading": "Loading preview...",
+      "errorTitle": "Could not open the file",
+      "errorDescription": "An error occurred while loading the preview. Try again or download the file",
+      "unsupportedTitle": "Preview is not available",
+      "unsupportedDescription": "This file type cannot be previewed in Sovlium. Download the file to open it on your device",
+      "retry": "Retry",
+      "downloadFile": "Download file",
+      "fullscreen": "Full screen",
+      "exitFullscreen": "Exit full screen",
+      "more": "More",
+      "close": "Close",
+      "page": "Page {{current}} of {{total}}",
+      "prevPage": "Previous page",
+      "nextPage": "Next page",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "zoomReset": "Reset zoom",
+      "zoomLevel": "{{value}}%",
+      "prevFile": "Previous file",
+      "nextFile": "Next file"
+    },
+    "deleteConfirm": {
+      "title": "Delete file?",
+      "description": "The file “{{name}}” will be deleted permanently. Links to it in boards and notes may stop working.",
+      "confirm": "Delete",
+      "deleting": "Deleting...",
+      "cancel": "Cancel"
+    },
+    "removeFromClassroom": {
+      "title": "Remove file from classroom?",
+      "description": "The file “{{name}}” will be detached from the classroom but will stay in the library.",
+      "confirm": "Remove"
+    }
   },
   "empty": {
     "boardsTitle": "No boards yet",

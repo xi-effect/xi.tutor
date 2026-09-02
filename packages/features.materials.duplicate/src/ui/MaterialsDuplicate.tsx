@@ -222,7 +222,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
       <ModalContent className="w-full max-w-2xl max-sm:w-[calc(100vw-32px)]">
         <ModalCloseButton className="right-2" />
         <ModalHeader className="border-border-default border-b">
-          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+          <ModalTitle className="font-playfair text-text-primary m-0 max-w-[calc(100%-48px)] text-2xl leading-normal font-medium">
             {getModalTitle()}
           </ModalTitle>
           <ModalDescription>{t('description', { type: getMaterialTypeLabel() })}</ModalDescription>
@@ -281,16 +281,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2 max-sm:flex-col max-sm:gap-3">
-            <Button
-              size="m"
-              onClick={handleConfirm}
-              disabled={!selectedClassroomId || duplicateMaterial.isPending}
-              className="disabled:text-text-secondary w-full sm:w-fit"
-              data-umami-event="material-duplicate-confirm"
-            >
-              {duplicateMaterial.isPending ? t('confirming') : t('confirm')}
-            </Button>
+          <div className="flex justify-end gap-2 max-sm:flex-col max-sm:gap-3">
             <Button
               size="m"
               variant="none"
@@ -299,6 +290,15 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               data-umami-event="material-duplicate-cancel"
             >
               {t('cancel')}
+            </Button>
+            <Button
+              size="m"
+              onClick={handleConfirm}
+              disabled={!selectedClassroomId || duplicateMaterial.isPending}
+              className="disabled:text-text-secondary w-full sm:w-fit"
+              data-umami-event="material-duplicate-confirm"
+            >
+              {duplicateMaterial.isPending ? t('confirming') : t('confirm')}
             </Button>
           </div>
         </ModalFooter>

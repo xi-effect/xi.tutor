@@ -31,3 +31,18 @@ export {
   openLibraryTagsManage,
   setLibraryTagsManageOpen,
 } from './libraryTagsManageStore';
+export {
+  rememberApiTags,
+  getLibraryTagsSnapshot,
+  getLibraryTagsServerSnapshot,
+  subscribeLibraryTags,
+  upsertLibraryTag,
+  remapLibraryTagId,
+  createLibraryTag,
+  updateLibraryTag,
+  deleteLibraryTag,
+  toggleFileLibraryTag,
+  isBackendTagId,
+  type LibraryTag,
+  type LibraryTagsState,
+} from './libraryTagsStore';

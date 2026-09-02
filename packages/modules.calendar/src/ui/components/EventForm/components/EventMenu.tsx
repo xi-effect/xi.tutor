@@ -6,7 +6,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { MenuDots } from '@xipkg/icons';
+import { Button } from '@xipkg/button';
+import { Copy, FilePlus, FlipBackward, MoreVert, Trash } from '@xipkg/icons';
+import {
+  cardMenuButtonClass,
+  cardMenuDeleteItemClass,
+  cardMenuIconClass,
+  cardMenuItemClass,
+  cardMenuSeparatorClass,
+  cardMenuSurfaceClass,
+} from 'common.ui';
 import { useActiveEventId, useCloseForm } from '../../../../store/formEventStore';
 import { useAddEvent, useDeleteEvent, useEventById } from '../../../../store/eventsStore';
 
@@ -33,15 +42,32 @@ export const EventMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="bg-background-surface flex h-8 w-8 items-center justify-center text-sm">
-        <MenuDots className="fill-icon-primary rotate-90" />
+      <DropdownMenuTrigger asChild>
+        <Button type="button" variant="none" size="icon" className={cardMenuButtonClass}>
+          <MoreVert className={cardMenuIconClass} />
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem>{t('event_menu.cut')}</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleCopyEvent}>{t('event_menu.copy')}</DropdownMenuItem>
-        <DropdownMenuItem>{t('event_menu.duble')}</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-text-danger" onClick={handleRemoveEvent}>
+      <DropdownMenuContent
+        side="bottom"
+        align="end"
+        className={cardMenuSurfaceClass}
+        onCloseAutoFocus={(event) => event.preventDefault()}
+      >
+        <DropdownMenuItem className={cardMenuItemClass}>
+          <FlipBackward />
+          {t('event_menu.cut')}
+        </DropdownMenuItem>
+        <DropdownMenuItem className={cardMenuItemClass} onClick={handleCopyEvent}>
+          <Copy />
+          {t('event_menu.copy')}
+        </DropdownMenuItem>
+        <DropdownMenuItem className={cardMenuItemClass}>
+          <FilePlus />
+          {t('event_menu.duble')}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+        <DropdownMenuItem error className={cardMenuDeleteItemClass} onClick={handleRemoveEvent}>
+          <Trash />
           {t('event_menu.remove')}
         </DropdownMenuItem>
       </DropdownMenuContent>
