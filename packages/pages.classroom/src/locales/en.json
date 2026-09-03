@@ -5,7 +5,7 @@
     "files": "Files",
     "schedule": "Schedule",
     "payments": "Payments",
-    "info": "Information",
+    "info": "About",
     "section": "Section",
     "drawerTitle": "Classroom section"
   },
@@ -100,7 +100,11 @@
     "noDescription": "No description",
     "editNamePlaceholder": "Enter a name",
     "editNameAria": "Classroom name",
-    "editNameError": "Name cannot be empty"
+    "editNameError": "Name cannot be empty",
+    "nextLesson": "Next lesson",
+    "nextLessonToday": "Today {{start}}–{{end}}",
+    "nextLessonTomorrow": "Tomorrow {{start}}–{{end}}",
+    "nextLessonOnDate": "{{date}} {{start}}–{{end}}"
   },
   "descriptionModal": {
     "title": "Edit description",
@@ -114,7 +118,8 @@
     "statusActive": "Studying",
     "statusPaused": "Paused",
     "statusFinished": "Completed",
-    "notePlaceholder": "This is a place for classroom notes. You can keep a lesson plan,\nparent contacts, and more. Tap to start editing"
+    "notePlaceholder": "This is a place for classroom notes. You can keep a lesson plan,\nparent contacts, and more. Tap to start editing",
+    "students": "Students"
   },
   "autocomplete": {
     "loading": "Loading...",

@@ -20,6 +20,10 @@ vi.mock('common.config', () => ({
 
 import { getAxiosInstance } from 'common.config';
 import { deleteLibraryFileRequest } from '../useDeleteLibraryFile';
+import {
+  getLibraryFileClassroomIdsRequest,
+  parseLibraryFileClassroomIds,
+} from '../useGetLibraryFileClassroomIds';
 import { getLibraryFileMetaRequest } from '../useGetLibraryFileMeta';
 import { getLibraryFileRequest } from '../useGetLibraryFile';
 import { searchLibraryFilesRequest } from '../useSearchLibraryFiles';
@@ -58,6 +62,9 @@ describe('library files API', () => {
     const metaUrl = libraryFilesApiConfig[LibraryFilesQueryKey.GetLibraryFileMeta].getUrl(
       libraryFile.id,
     );
+    const classroomIdsUrl = libraryFilesApiConfig[
+      LibraryFilesQueryKey.GetLibraryFileClassroomIds
+    ].getUrl(libraryFile.id);
     const fileUrl = libraryFilesApiConfig[LibraryFilesQueryKey.GetLibraryFile].getUrl(
       libraryFile.id,
     );
@@ -77,6 +84,12 @@ describe('library files API', () => {
     expect(libraryFilesApiConfig[LibraryFilesQueryKey.UploadLibraryFile].method).toBe('POST');
     expect(metaUrl).toContain(
       `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/meta/`,
+    );
+    expect(classroomIdsUrl).toContain(
+      `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/classroom-ids/`,
+    );
+    expect(libraryFilesApiConfig[LibraryFilesQueryKey.GetLibraryFileClassroomIds].method).toBe(
+      'GET',
     );
     expect(fileUrl).toContain(
       `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/`,
@@ -192,6 +205,10 @@ describe('library files API', () => {
       LibraryFilesQueryKey.GetLibraryFile,
       libraryFile.id,
     ]);
+    expect(libraryFilesQueryKeys.classroomIds(libraryFile.id)).toEqual([
+      LibraryFilesQueryKey.GetLibraryFileClassroomIds,
+      libraryFile.id,
+    ]);
   });
 
   it('запрашивает список файлов с cursor, limit и пустыми filters', async () => {
@@ -293,6 +310,17 @@ describe('library files API', () => {
     await expect(getLibraryFileMetaRequest(libraryFile.id)).resolves.toEqual(libraryFile);
     expect(String(axiosMock.mock.calls[0][0].url)).toContain(`/${libraryFile.id}/meta/`);
     expect(axiosMock.mock.calls[0][0].headers).not.toHaveProperty('x-content-token');
+  });
+
+  it('получает id кабинетов, в которых уже есть файл', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: [12, 18, 24] });
+
+    await expect(getLibraryFileClassroomIdsRequest(libraryFile.id)).resolves.toEqual([12, 18, 24]);
+    expect(String(axiosMock.mock.calls[0][0].url)).toContain(
+      `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/classroom-ids/`,
+    );
+    expect(axiosMock.mock.calls[0][0].method).toBe('GET');
+    expect(parseLibraryFileClassroomIds(['12', 18, 18, 0, 'x'])).toEqual([12, 18]);
   });
 
   it('получает сам файл без X-Content-Token и с conditional headers', async () => {

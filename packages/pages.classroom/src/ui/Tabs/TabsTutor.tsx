@@ -1,123 +1,48 @@
 import { useMemo, useState } from 'react';
 import { Tabs } from '@xipkg/tabs';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { Plus } from '@xipkg/icons';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 
 import { InformationLayout } from '../Information';
-import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
-import { MaterialsAdd } from 'features.materials.add';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
 import { ConfirmDialog } from 'common.ui';
 import { cn } from '@xipkg/utils';
-import { ModalStudentsGroup } from 'features.group.manage';
-import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
 import { useTranslation } from 'react-i18next';
 
 import { SharedTabsContent } from './SharedTabsContent';
-import { useTabNavigation } from './useTabNavigation';
+import { isClassroomMaterialTab, useTabNavigation } from './useTabNavigation';
 import { ClassroomMobileActionButton } from './ClassroomMobileActionButton';
 import { ClassroomTabsBar } from './ClassroomTabsBar';
-import { useClassroomScheduleOptional } from '../Calendar/useClassroomSchedule';
+import { NextLessonChip } from '../Header/NextLessonChip';
 
 type ContentKind = 'note' | 'board';
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
-const primaryActionClass = '!h-8 gap-2 rounded-[10px] px-4 font-medium text-text-on-accent';
-const ghostActionClass = '!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium';
+const NEXT_LESSON_TABS = new Set(['boards', 'notes', 'files', 'schedule', 'payments']);
 
 interface TutorDesktopToolbarProps {
   currentTab: string;
-  classroomKind: string | undefined;
-  materialKind: 'note' | 'board' | 'file';
-  onAddLessonClick: () => void;
-  onOpenInvoiceModal: () => void;
   onDeleteClassroom: () => void;
   isDeletingClassroom: boolean;
 }
 
 const TutorDesktopToolbar = ({
   currentTab,
-  classroomKind,
-  materialKind,
-  onAddLessonClick,
-  onOpenInvoiceModal,
   onDeleteClassroom,
   isDeletingClassroom,
 }: TutorDesktopToolbarProps) => {
   const { t } = useTranslation('classroom');
 
-  if (currentTab === 'overview' && classroomKind === 'group') {
-    return (
-      <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
-        <ModalStudentsGroup>
-          <Button
-            variant="ghost"
-            className={ghostActionClass}
-            data-umami-event="classroom-add-student"
-          >
-            {t('actions.addStudent')}
-          </Button>
-        </ModalStudentsGroup>
-        <ModalGroupInvite>
-          <Button
-            variant="ghost"
-            className={ghostActionClass}
-            data-umami-event="classroom-invite-to-group"
-          >
-            {t('actions.inviteToGroup')}
-          </Button>
-        </ModalGroupInvite>
-      </div>
-    );
-  }
-
-  if (currentTab === 'materials' && materialKind !== 'file') {
-    return (
-      <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
-        <MaterialsAdd kind={materialKind === 'note' ? 'note' : 'board'} />
-      </div>
-    );
-  }
-
-  if (currentTab === 'schedule') {
-    return (
-      <div className="ml-auto flex shrink-0 items-center gap-2">
-        <CalendarScheduleToolbar />
-        <Button
-          type="button"
-          variant="primary"
-          className="text-text-on-accent hidden !size-8 shrink-0 rounded-[10px] p-0 sm:inline-flex"
-          onClick={onAddLessonClick}
-          aria-label={t('actions.addLesson')}
-          data-umami-event="classroom-add-lesson"
-        >
-          <Plus className="fill-text-on-accent size-4 shrink-0" />
-        </Button>
-      </div>
-    );
-  }
-
-  if (currentTab === 'payments') {
-    return (
-      <Button
-        variant="primary"
-        className={cn(primaryActionClass, 'ml-auto hidden sm:inline-flex')}
-        onClick={onOpenInvoiceModal}
-        data-umami-event="classroom-create-invoice"
-      >
-        <Plus className="fill-text-on-accent size-4 shrink-0" />
-        {t('actions.createInvoice')}
-      </Button>
-    );
+  if (NEXT_LESSON_TABS.has(currentTab)) {
+    return <NextLessonChip />;
   }
 
   if (currentTab === 'info') {
     return (
       <Button
         variant="ghost"
-        className="bg-status-error-background/50 text-text-danger hover:bg-status-error-background/80 hover:text-text-danger ml-auto hidden !h-8 rounded-[10px] px-4 font-medium sm:inline-flex"
+        className="bg-status-error-background/50 text-text-danger hover:bg-status-error-background/80 hover:text-text-danger hidden h-8! rounded-[10px] px-4 font-medium sm:inline-flex"
         onClick={onDeleteClassroom}
         disabled={isDeletingClassroom}
         data-umami-event="classroom-delete"
@@ -132,15 +57,14 @@ const TutorDesktopToolbar = ({
 
 export const TabsTutor = () => {
   const { t } = useTranslation('classroom');
-  const { isMobile, currentTab, handleTabChange } = useTabNavigation({
-    normalizeMaterialTabs: true,
-  });
+  const { isMobile, currentTab, handleTabChange } = useTabNavigation();
   const navigate = useNavigate();
 
   const tabs = useMemo(
     () => [
-      { id: 'overview', label: t('tabs.overview') },
-      { id: 'materials', label: t('tabs.materials') },
+      { id: 'boards', label: t('materials.boards') },
+      { id: 'notes', label: t('materials.notes') },
+      { id: 'files', label: t('materials.files') },
       { id: 'schedule', label: t('tabs.schedule') },
       { id: 'payments', label: t('tabs.payments') },
       { id: 'info', label: t('tabs.info') },
@@ -153,11 +77,7 @@ export const TabsTutor = () => {
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
-  const { onAddLessonClick } = useClassroomScheduleOptional() ?? {};
-
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const materialKind = search.tab === 'notes' ? 'note' : search.tab === 'files' ? 'file' : 'board';
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
@@ -217,10 +137,6 @@ export const TabsTutor = () => {
             isMobile ? undefined : (
               <TutorDesktopToolbar
                 currentTab={currentTab}
-                classroomKind={classroom?.kind}
-                materialKind={materialKind}
-                onAddLessonClick={() => onAddLessonClick?.()}
-                onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
                 onDeleteClassroom={handleDeleteClassroomClick}
                 isDeletingClassroom={isDeletingClassroom}
               />
@@ -231,12 +147,14 @@ export const TabsTutor = () => {
         <div
           className={cn(
             'xs:min-h-0 mt-4 flex min-h-[calc(100dvh-272px)] min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
-            currentTab === 'overview' || currentTab === 'payments' || currentTab === 'materials'
+            currentTab === 'payments' || isClassroomMaterialTab(currentTab)
               ? 'pr-0 pb-0'
               : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
           )}
         >
           <SharedTabsContent
+            currentTab={currentTab}
+            onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
             extraContent={
               <Tabs.Content
                 className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain data-[state=inactive]:hidden"
@@ -258,7 +176,6 @@ export const TabsTutor = () => {
             classroomKind={classroom?.kind}
             isPendingAddMaterial={addClassroomMaterials.isPending}
             isDeletingClassroom={isDeletingClassroom}
-            isFilesTab={search.tab === 'files'}
             isStudentsModalOpen={isStudentsModalOpen}
             isGroupInviteModalOpen={isGroupInviteModalOpen}
             onAddMaterial={handleAddMaterial}

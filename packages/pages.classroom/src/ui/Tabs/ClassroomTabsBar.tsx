@@ -39,11 +39,11 @@ export const ClassroomTabsBar = ({
         tabs={tabs}
         activeTab={currentTab}
         onChange={onChange}
-        className={pageSwitcherTrackClass}
+        className={`${pageSwitcherTrackClass} min-w-0`}
         tabClassName={pageSwitcherTabClass}
         indicatorClassName={pageSwitcherIndicatorClass}
       />
     )}
-    {extra ? <div className="ml-auto flex shrink-0 items-center gap-2">{extra}</div> : null}
+    {extra ? <div className="ml-auto flex h-10 shrink-0 items-center gap-2">{extra}</div> : null}
   </div>
 );

@@ -5,7 +5,7 @@
     "files": "Файлы",
     "schedule": "Расписание",
     "payments": "Оплаты",
-    "info": "Информация",
+    "info": "О кабинете",
     "section": "Раздел",
     "drawerTitle": "Раздел кабинета"
   },
@@ -100,7 +100,11 @@
     "noDescription": "Описание не указано",
     "editNamePlaceholder": "Введите название",
     "editNameAria": "Название кабинета",
-    "editNameError": "Название не может быть пустым"
+    "editNameError": "Название не может быть пустым",
+    "nextLesson": "Ближайшее",
+    "nextLessonToday": "Сегодня {{start}}–{{end}}",
+    "nextLessonTomorrow": "Завтра {{start}}–{{end}}",
+    "nextLessonOnDate": "{{date}} {{start}}–{{end}}"
   },
   "descriptionModal": {
     "title": "Редактировать описание",
@@ -114,7 +118,8 @@
     "statusActive": "Учится",
     "statusPaused": "На паузе",
     "statusFinished": "Обучение завершено",
-    "notePlaceholder": "Это место для заметок к кабинету. Можно вести план занятий,\nхранить контакты родителей ученика. Нажмите, чтобы начать редактировать"
+    "notePlaceholder": "Это место для заметок к кабинету. Можно вести план занятий,\nхранить контакты родителей ученика. Нажмите, чтобы начать редактировать",
+    "students": "Ученики"
   },
   "autocomplete": {
     "loading": "Загрузка...",

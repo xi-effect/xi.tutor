@@ -17,10 +17,11 @@ export type CalendarWeekNavProps = {
   onNext: () => void;
   /** Переход к дате: выбранный день — по центру видимого окна */
   onWeekSelect: (date: Date, visibleCount: number) => void;
+  className?: string;
 };
 
 const weekNavArrowClass = cn(
-  'text-text-secondary hover:text-text-primary flex h-full w-10 flex-none items-center justify-center rounded-lg border-0 p-0',
+  'text-text-secondary hover:text-text-primary flex h-full! min-h-0 w-10 flex-none items-center justify-center rounded-lg border-0 p-0',
   'hover:bg-background-surface hover:border-transparent',
   'focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent',
 );
@@ -32,6 +33,7 @@ export const CalendarWeekNav = ({
   onPrev,
   onNext,
   onWeekSelect,
+  className,
 }: CalendarWeekNavProps) => {
   const { t } = useTranslation('calendar');
 
@@ -51,7 +53,8 @@ export const CalendarWeekNav = ({
     <div
       className={cn(
         pageSwitcherTrackClass,
-        'flex !h-10 h-10 w-auto flex-none items-center gap-0.5 p-1',
+        'flex h-10! min-h-0 w-auto flex-none items-center gap-0.5 overflow-hidden p-1',
+        className,
       )}
     >
       <Button

@@ -32,7 +32,6 @@ type ClassroomMobileActionButtonProps = {
   classroomKind: string | undefined;
   isPendingAddMaterial: boolean;
   isDeletingClassroom: boolean;
-  isFilesTab?: boolean;
   isStudentsModalOpen: boolean;
   isGroupInviteModalOpen: boolean;
   onAddMaterial: (contentKind: ContentKind, studentAccessMode: StudentAccessMode) => void;
@@ -117,7 +116,6 @@ export const ClassroomMobileActionButton = ({
   classroomKind,
   isPendingAddMaterial,
   isDeletingClassroom,
-  isFilesTab = false,
   isStudentsModalOpen,
   isGroupInviteModalOpen,
   onAddMaterial,
@@ -138,7 +136,7 @@ export const ClassroomMobileActionButton = ({
   const closeDrawer = () => setDrawerOpen(false);
 
   const actions = useMemo((): DrawerAction[] => {
-    if (currentTab === 'overview' && classroomKind === 'group') {
+    if (currentTab === 'info' && classroomKind === 'group') {
       return [
         {
           id: 'add-student',
@@ -162,16 +160,27 @@ export const ClassroomMobileActionButton = ({
             onGroupInviteModalChange(true);
           },
         },
+        {
+          id: 'delete-classroom',
+          label: isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroom'),
+          description: t('actions.deleteClassroomDescription'),
+          Icon: Trash,
+          umamiEvent: 'classroom-delete',
+          disabled: isDeletingClassroom,
+          destructive: true,
+          onClick: () => {
+            closeDrawer();
+            onDeleteClassroom();
+          },
+        },
       ];
     }
 
-    if (currentTab === 'materials') {
-      if (isFilesTab) {
-        return [];
-      }
-
-      return materialActionsConfig.map(
-        ({ contentKind, accessMode, labelKey, descriptionKey, Icon, umamiEvent }) => ({
+    if (currentTab === 'boards' || currentTab === 'notes') {
+      const kind = currentTab === 'notes' ? 'note' : 'board';
+      return materialActionsConfig
+        .filter(({ contentKind }) => contentKind === kind)
+        .map(({ contentKind, accessMode, labelKey, descriptionKey, Icon, umamiEvent }) => ({
           id: `${contentKind}-${accessMode}`,
           label: t(labelKey),
           description: t(descriptionKey),
@@ -183,8 +192,7 @@ export const ClassroomMobileActionButton = ({
             closeDrawer();
             onAddMaterial(contentKind, accessMode);
           },
-        }),
-      );
+        }));
     }
 
     if (currentTab === 'payments') {
@@ -226,7 +234,6 @@ export const ClassroomMobileActionButton = ({
     classroomKind,
     currentTab,
     isDeletingClassroom,
-    isFilesTab,
     isPendingAddMaterial,
     onAddMaterial,
     onDeleteClassroom,
