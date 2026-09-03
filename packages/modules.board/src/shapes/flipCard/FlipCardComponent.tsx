@@ -2,12 +2,7 @@ import { useCallback } from 'react';
 import { getColorValue, useEditor, useValue } from '@ibodr/draw';
 import { startLabelEditing } from '../labels/startLabelEditing';
 import type { FlipCardShape } from './FlipCardShape';
-import {
-  useResolvedAssetSrc,
-  useFaceFitFontSize,
-  useFlipCardFlip,
-  useFaceClickToEdit,
-} from './hooks';
+import { useResolvedAssetSrc, useFaceFitFontSize, useFlipCardFlip } from './hooks';
 import { FlipCardFace, FlipCardFlipButton } from './ui';
 import { computeImageAreaHeight } from './utils/computeImageAreaHeight';
 import { useYjsContext } from '../../providers/YjsContext';
@@ -81,11 +76,6 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
 
   const startEditing = useCallback(() => startLabelEditing(editor, id), [editor, id]);
   const handleFlipClick = useFlipCardFlip(id);
-  const { handleFacePointerDown, handleFacePointerUp } = useFaceClickToEdit(
-    id,
-    isEditing,
-    startEditing,
-  );
 
   const buttonSize = Math.min(
     FLIP_BUTTON_MAX_SIZE_PX,
@@ -146,8 +136,6 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
           isSelected={isSelected}
           isEditing={isEditing}
           onStartEditing={startEditing}
-          onFacePointerDown={handleFacePointerDown}
-          onFacePointerUp={handleFacePointerUp}
           backgroundColor={frontBackgroundColor}
           textColor={frontTextColor}
         />
@@ -169,8 +157,6 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
           isSelected={isSelected}
           isEditing={isEditing}
           onStartEditing={startEditing}
-          onFacePointerDown={handleFacePointerDown}
-          onFacePointerUp={handleFacePointerUp}
           backgroundColor={backBackgroundColor}
           textColor={backTextColor}
         />

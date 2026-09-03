@@ -3,6 +3,7 @@ import { DrShapeId, RichTextLabel, type DrRichText } from '@ibodr/draw';
 import { EmptyLabelCaret } from '../../labels/EmptyLabelCaret';
 import { FlipCardGhostMeasurer } from './FlipCardGhostMeasurer';
 import { LABEL_FONT_SIZE, LABEL_LINE_HEIGHT, LABEL_PADDING } from '../consts';
+import { useFaceClickToEdit } from '../hooks';
 
 type FlipCardFaceProps = {
   shapeId: DrShapeId;
@@ -24,8 +25,6 @@ type FlipCardFaceProps = {
   isSelected: boolean;
   isEditing: boolean;
   onStartEditing: () => void;
-  onFacePointerDown: (e: React.PointerEvent) => void;
-  onFacePointerUp: (e: React.PointerEvent) => void;
 };
 
 export const FlipCardFace = ({
@@ -47,13 +46,13 @@ export const FlipCardFace = ({
   isSelected,
   isEditing,
   onStartEditing,
-  onFacePointerDown,
-  onFacePointerUp,
 }: FlipCardFaceProps) => {
   const isFront = side === 'front';
   const isThisFaceActive = isFront === !isFlipped;
   const isEmpty = plainText.trim() === '';
   const labelStyle = { width: cardWidth, height: textAreaHeight };
+
+  const { faceRef } = useFaceClickToEdit(shapeId, isEditing);
 
   const canUseRichTextLabel = isThisFaceActive || !isEditing;
   const showRichTextLabel = !isEmpty && canUseRichTextLabel;
@@ -62,6 +61,7 @@ export const FlipCardFace = ({
 
   return (
     <div
+      ref={faceRef}
       className="absolute inset-0"
       style={{
         backfaceVisibility: 'hidden',
@@ -69,8 +69,7 @@ export const FlipCardFace = ({
         transform: isFront ? undefined : 'rotateY(180deg)',
         pointerEvents: isFlipped === isFront ? 'none' : 'auto',
       }}
-      onPointerDown={onFacePointerDown}
-      onPointerUp={onFacePointerUp}
+      id={isThisFaceActive ? shapeId : undefined}
     >
       <div
         className="ring-gray-30 dark:ring-gray-0 flex h-full w-full flex-col overflow-hidden rounded-xl ring-1"
