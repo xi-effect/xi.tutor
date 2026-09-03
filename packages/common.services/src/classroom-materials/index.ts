@@ -6,5 +6,13 @@ export { useGetClassroomMaterialsList } from './useGetClassroomMaterialsList';
 export { useUpdateClassroomMaterial } from './useUpdateClassroomMaterial';
 export { useGetClassroomMaterialStudent } from './useGetClassroomMaterialStudent';
 export { useGetClassroomMaterialsListStudent } from './useGetClassroomMaterialsListStudent';
+export { useGetClassroomFiles } from './useGetClassroomFiles';
+export { getMockClassroomFiles } from './mockClassroomFiles';
+export {
+  mapClassroomMaterialsToLibraryFiles,
+  classroomMaterialToLibraryFile,
+  getClassroomMaterialFileId,
+  isLibraryFile,
+} from './mapClassroomFiles';
 export { useGetClassroomStorageItem } from './useGetClassroomStorageItem';
 export { useGetClassroomStorageItemStudent } from './useGetClassroomStorageItemStudent';

@@ -21,6 +21,8 @@ import { mapPaymentStatus, RolePaymentT } from 'common.types';
 import { UserRoleT } from 'common.api';
 import { getUserAvatarUrl } from 'common.utils';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@xipkg/utils';
+import { modalTitleClass } from 'common.ui';
 import { formatDate } from '../utils';
 
 type InvoiceItemT = {
@@ -178,7 +180,9 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
         </Button>
 
         <ModalHeader className="border-0 p-4 sm:p-6">
-          <ModalTitle className="text-text-primary m-0 pr-10">{t('invoiceModal.title')}</ModalTitle>
+          <ModalTitle className={cn(modalTitleClass, 'pr-10')}>
+            {t('invoiceModal.title')}
+          </ModalTitle>
           <ModalDescription className="sr-only">{t('invoiceModal.description')}</ModalDescription>
         </ModalHeader>
 

@@ -1,9 +1,10 @@
 import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { uploadPresentationRequest } from 'common.services';
+import { uploadFileIdRequest } from 'common.services';
 import { PresentationShape } from '../shapes/presentation';
 
+import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import i18n from 'i18next';
 
 const MAX_PRESENTATION_SIZE_BYTES = 5 * 1024 * 1024;
@@ -81,7 +82,7 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
   ]);
 
   try {
-    const serverUrl = await uploadPresentationRequest({
+    const serverUrl = await uploadFileIdRequest({
       file,
       token,
     });
@@ -96,7 +97,18 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
   } catch (err) {
     console.error('[insertPresentation] upload failed', err);
 
-    toast.error(i18n.t('toast.presentationUploadFailed', { ns: 'board' }));
+    const { title, description } = getBoardUploadErrorToast(
+      err,
+      file,
+      MAX_PRESENTATION_SIZE_BYTES,
+      {
+        sizeDescKey: 'toast.presentationSizeDesc',
+        failedTitleKey: 'toast.presentationUploadError',
+        failedDescKey: 'toast.presentationUploadFailed',
+        formatDescKey: 'toast.presentationFormatDesc',
+      },
+    );
+    toast.error(title, { description, duration: 5000 });
 
     editor.deleteShapes([shapeId]);
   }

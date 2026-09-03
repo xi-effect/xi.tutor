@@ -1,12 +1,20 @@
 import { Button } from '@xipkg/button';
-import { Close } from '@xipkg/icons';
 import * as M from '@xipkg/modal';
 import React, { useEffect, useState } from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Clock } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
-import { modalTitleClass } from 'common.ui';
+import {
+  ModalCloseIcon,
+  modalBodyClass,
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { useChangeEmail } from '../../hooks';
 
@@ -77,81 +85,88 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
   return (
     <M.Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
       <M.ModalTrigger asChild>{children}</M.ModalTrigger>
-      <M.ModalContent aria-describedby={undefined}>
+      <M.ModalContent className={modalContentClass} aria-describedby={undefined}>
         {(stage.type === 'form' && (
-          <>
-            <M.ModalCloseButton
-              variant="full"
-              className="bg-background-page top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
-            >
-              <Close className="fill-icon-primary h-5 w-5" />
-            </M.ModalCloseButton>
-            <M.ModalHeader>
-              <M.ModalTitle className={modalTitleClass}>{t('changeEmail.title')}</M.ModalTitle>
-            </M.ModalHeader>
-            <Form {...form}>
-              <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex flex-col gap-3 px-5 pt-5 pb-3">
-                  {timer && (
-                    <Timer
-                      durationSecs={10 * 60}
-                      getTitle={(time) => t('changeEmail.resendTimer', { time })}
-                      onTimerEnd={() => setTimer(false)}
-                    />
+          <Form {...form}>
+            <form className={modalBodyClass} onSubmit={handleSubmit(onSubmit)}>
+              <div className={modalHeaderRowClass}>
+                <M.ModalTitle className={modalTitleClass}>{t('changeEmail.title')}</M.ModalTitle>
+                <ModalCloseIcon onClick={() => onOpenChange(false)} />
+              </div>
+
+              <div className="flex flex-col gap-3">
+                {timer && (
+                  <Timer
+                    durationSecs={10 * 60}
+                    getTitle={(time) => t('changeEmail.resendTimer', { time })}
+                    onTimerEnd={() => setTimer(false)}
+                  />
+                )}
+                <FormField
+                  control={control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('changeEmail.newEmail')}</FormLabel>
+                      <FormControl className="mt-2">
+                        <Input {...field} error={!!errors.email} autoComplete="on" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <FormField
-                    control={control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('changeEmail.newEmail')}</FormLabel>
-                        <FormControl className="mt-2">
-                          <Input {...field} error={!!errors.email} autoComplete="on" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('changeEmail.password')}</FormLabel>
-                        <FormControl className="mt-2">
-                          <Input
-                            {...field}
-                            error={!!errors?.password}
-                            autoComplete="off"
-                            afterClassName="cursor-pointer"
-                            type={isPasswordShow ? 'text' : 'password'}
-                            after={isPasswordShow ? <Eyeoff /> : <Eyeon />}
-                            afterProps={{
-                              onClick: changePasswordShow,
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <M.ModalFooter className="flex justify-start gap-4 px-5 py-5">
-                  <Button disabled={timer} className="disabled:cursor-not-allowed" type="submit">
-                    {t('changeEmail.change')}
-                  </Button>
-                  <Button onClick={() => onOpenChange(false)} type="button" variant="ghost">
-                    {t('changeEmail.cancel')}
-                  </Button>
-                </M.ModalFooter>
-              </form>
-            </Form>
-          </>
+                />
+                <FormField
+                  control={control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('changeEmail.password')}</FormLabel>
+                      <FormControl className="mt-2">
+                        <Input
+                          {...field}
+                          error={!!errors?.password}
+                          autoComplete="off"
+                          afterClassName="cursor-pointer"
+                          type={isPasswordShow ? 'text' : 'password'}
+                          after={isPasswordShow ? <Eyeoff /> : <Eyeon />}
+                          afterProps={{
+                            onClick: changePasswordShow,
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className={modalFooterClass}>
+                <Button
+                  variant="none"
+                  type="button"
+                  size="m"
+                  className={modalCancelButtonClass}
+                  onClick={() => onOpenChange(false)}
+                >
+                  {t('changeEmail.cancel')}
+                </Button>
+                <Button
+                  variant="primary"
+                  size="m"
+                  className={modalConfirmButtonClass}
+                  disabled={timer}
+                  type="submit"
+                >
+                  {t('changeEmail.change')}
+                </Button>
+              </div>
+            </form>
+          </Form>
         )) ||
           (stage.type === 'success' && (
             <div className="space-y-8 p-8">
               <M.ModalTitle className="hidden">{t('changeEmail.title')}</M.ModalTitle>
-              <p className="text-text-primary text-center text-2xl font-semibold">
+              <p className="font-playfair text-text-primary text-center text-2xl font-medium">
                 {t('changeEmail.successMessage', { email: stage.email })}
               </p>
               <Button onClick={() => setStage({ type: 'form', email: '' })} className="mt-4 w-full">

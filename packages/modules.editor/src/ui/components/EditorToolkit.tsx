@@ -2,7 +2,12 @@ import React, { useState, useCallback } from 'react';
 import { BubbleMenuWrapper } from './BubbleMenuWrapper/BubbleMenuWrapper';
 import { DragHandleWrapper } from './DragHandleWrapper';
 import { Editor } from '@tiptap/core';
-import { ImageUploadModal } from './FileUploadDialog';
+import { ImageLinkModal } from './ImageLinkModal';
+import { CloudFilesPicker } from 'pages.materials';
+import { useTranslation } from 'react-i18next';
+import { useInterfaceStore } from '../../store/interfaceStore';
+import { useYjsContext } from '../../hooks';
+import { insertLibraryFileToEditor } from '../../utils/insertLibraryFileToEditor';
 import { normalizeSelectionAfterDrop } from '../../utils/normalizeSelectionAfterDrop';
 
 type EditorToolkitProps = {
@@ -11,8 +16,11 @@ type EditorToolkitProps = {
 };
 
 export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly }) => {
+  const { t } = useTranslation('editor');
   const [hasMountedDragHandle, setHasMountedDragHandle] = useState(false);
   const initialFixDone = React.useRef(false);
+  const { storageItem } = useYjsContext();
+  const { cloudPickerOpen, closeCloudPicker, insertAnchor } = useInterfaceStore();
 
   const handleDragEnd = useCallback(() => {
     // Сначала нормализуем выделение в след. тике, потом снова показываем BubbleMenu.
@@ -54,7 +62,23 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
         </div>
       )}
       <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />
-      <ImageUploadModal />
+      <ImageLinkModal />
+      <CloudFilesPicker
+        open={cloudPickerOpen}
+        onOpenChange={(open) => {
+          if (!open) closeCloudPicker();
+        }}
+        addLabel={t('blockMenu.cloudAddToNote')}
+        description={t('blockMenu.cloudFilesDescription')}
+        umamiPrefix="editor"
+        onSelect={async (file) => {
+          try {
+            await insertLibraryFileToEditor(editor, file, storageItem.content_token, insertAnchor);
+          } catch (error) {
+            console.error('Ошибка при вставке файла из облака:', error);
+          }
+        }}
+      />
     </>
   );
 };

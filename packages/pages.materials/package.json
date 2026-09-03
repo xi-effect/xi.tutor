@@ -12,6 +12,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@radix-ui/react-context-menu": "^2.2.6",
     "@tanstack/react-query": "5.73.3",
     "@tanstack/react-router": "^1.166.6",
     "@tanstack/react-virtual": "3.13.9",
@@ -21,6 +22,7 @@
     "@xipkg/file": "4.0.0",
     "@xipkg/icons": "3.1.6",
     "@xipkg/popover": "^4.0.0",
+    "@xipkg/slider": "2.3.0",
     "@xipkg/switcher-animate": "1.1.0",
     "@xipkg/tabs": "^2.2.0",
     "@xipkg/userprofile": "4.2.0",
@@ -29,13 +31,19 @@
     "common.config": "workspace:*",
     "common.services": "workspace:*",
     "common.ui": "workspace:*",
+    "common.utils": "workspace:*",
     "dayjs": "^1.11.13",
     "features.invites": "workspace:*",
     "features.materials.add": "workspace:*",
     "features.materials.card": "workspace:*",
     "features.materials.duplicate": "workspace:*",
     "i18next": "24.2.2",
-    "react-i18next": "15.4.1"
+    "motion": "^13.1.1",
+    "pdfjs-dist": "^4.10.38",
+    "pptxviewjs": "1.1.9",
+    "react-i18next": "15.4.1",
+    "sonner": "^2.0.7",
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

@@ -2,9 +2,10 @@
   "tabs": {
     "overview": "Overview",
     "materials": "Materials",
+    "files": "Files",
     "schedule": "Schedule",
     "payments": "Payments",
-    "info": "Information",
+    "info": "About",
     "section": "Section",
     "drawerTitle": "Classroom section"
   },
@@ -43,19 +44,33 @@
   "materials": {
     "boards": "Boards",
     "notes": "Notes",
+    "files": "Files",
     "noBoards": "Create your first board",
     "noBoardsDescription": "You can add images, presentations, audio, and other files to a board",
     "noNotes": "Create your first note",
     "noNotesDescription": "You can add text, lists, checklists, and images to a note",
+    "noFiles": "No files yet",
+    "noFilesDescription": "Files shared with this classroom will appear here",
     "noMaterials": "No materials",
     "emptyDescription": "To jot down ideas for lessons",
     "loadError": "Failed to load materials",
-    "noteCollaborative": "Note: Collaborative",
-    "noteTutorOnly": "Note: Tutor only",
-    "noteDrafts": "Note: Drafts",
-    "boardCollaborative": "Board: Collaborative",
-    "boardTutorOnly": "Board: Tutor only",
-    "boardDrafts": "Board: Drafts"
+    "noteCollaborative": "Note: can edit",
+    "noteCollaborativeHint": "The student can see the note and edit it",
+    "noteTutorOnly": "Note: view only",
+    "noteTutorOnlyHint": "The student can see the note but cannot edit it",
+    "noteDrafts": "Note: hidden from student",
+    "noteDraftsHint": "The student cannot see this note",
+    "boardCollaborative": "Board: can edit",
+    "boardCollaborativeHint": "The student can see the board and edit it",
+    "boardTutorOnly": "Board: view only",
+    "boardTutorOnlyHint": "The student can see the board but cannot edit it",
+    "boardDrafts": "Board: hidden from student",
+    "boardDraftsHint": "The student cannot see this board"
+  },
+  "files": {
+    "upload": "Upload file",
+    "emptyTitle": "No files yet",
+    "emptyDescription": "Upload a file to see it here"
   },
   "overview": {
     "materials": "Materials",
@@ -85,7 +100,11 @@
     "noDescription": "No description",
     "editNamePlaceholder": "Enter a name",
     "editNameAria": "Classroom name",
-    "editNameError": "Name cannot be empty"
+    "editNameError": "Name cannot be empty",
+    "nextLesson": "Next lesson",
+    "nextLessonToday": "Today {{start}}–{{end}}",
+    "nextLessonTomorrow": "Tomorrow {{start}}–{{end}}",
+    "nextLessonOnDate": "{{date}} {{start}}–{{end}}"
   },
   "descriptionModal": {
     "title": "Edit description",
@@ -99,7 +118,8 @@
     "statusActive": "Studying",
     "statusPaused": "Paused",
     "statusFinished": "Completed",
-    "notePlaceholder": "This is a place for classroom notes. You can keep a lesson plan,\nparent contacts, and more. Tap to start editing"
+    "notePlaceholder": "This is a place for classroom notes. You can keep a lesson plan,\nparent contacts, and more. Tap to start editing",
+    "students": "Students"
   },
   "autocomplete": {
     "loading": "Loading...",

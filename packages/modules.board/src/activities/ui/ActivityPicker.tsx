@@ -11,6 +11,7 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
+import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { ACTIVITY_KINDS, type ActivityKind } from '../model/kinds';
 import { insertActivity } from '../shape/insertActivity';
@@ -71,7 +72,7 @@ export function ActivityPicker({
         <ModalHeader>
           <ModalCloseButton />
           <div className="flex max-w-[calc(100%-48px)] items-center gap-2">
-            <ModalTitle className="text-text-primary">{t('activity.picker.title')}</ModalTitle>
+            <ModalTitle className={modalTitleClass}>{t('activity.picker.title')}</ModalTitle>
             <Badge variant="default" className={betaBadgeClassName}>
               {t('activity.picker.beta')}
             </Badge>

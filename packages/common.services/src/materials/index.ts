@@ -5,8 +5,12 @@ export { useUpdateMaterial } from './useUpdateMaterial';
 export { useGetStorageItem } from './useGetStorageItem';
 export { useDuplicateMaterial } from './useDuplicateMaterial';
 export { useGetMaterialsList } from './useGetMaterialsList';
+export { useSetMaterialTags, setMaterialTagsRequest } from './useSetMaterialTags';
 export {
   serializeMaterialScope,
+  serializeMaterialTagIds,
+  getMaterialTagIds,
   PERSONAL_MATERIAL_SCOPE,
   buildAnyMaterialFilters,
+  buildClassroomMaterialFilters,
 } from 'common.types';

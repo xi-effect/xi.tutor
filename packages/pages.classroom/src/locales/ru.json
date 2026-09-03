@@ -2,9 +2,10 @@
   "tabs": {
     "overview": "Сводка",
     "materials": "Материалы",
+    "files": "Файлы",
     "schedule": "Расписание",
     "payments": "Оплаты",
-    "info": "Информация",
+    "info": "О кабинете",
     "section": "Раздел",
     "drawerTitle": "Раздел кабинета"
   },
@@ -43,19 +44,33 @@
   "materials": {
     "boards": "Доски",
     "notes": "Заметки",
+    "files": "Файлы",
     "noBoards": "Создайте первую доску",
     "noBoardsDescription": "На доску можно добавить картинки, презентации, аудио и другие файлы",
     "noNotes": "Создайте первую заметку",
     "noNotesDescription": "В заметку можно добавить тексты, списки, чек-листы и картинки",
+    "noFiles": "Пока нет файлов",
+    "noFilesDescription": "Файлы, которыми поделились с кабинетом, появятся здесь",
     "noMaterials": "Нет материалов",
     "emptyDescription": "Чтобы записать идеи для занятий",
     "loadError": "Ошибка загрузки материалов",
-    "noteCollaborative": "Заметка: Совместная работа",
-    "noteTutorOnly": "Заметка: Только репетитор",
-    "noteDrafts": "Заметка: Черновики",
-    "boardCollaborative": "Доска: Совместная работа",
-    "boardTutorOnly": "Доска: Только репетитор",
-    "boardDrafts": "Доска: Черновики"
+    "noteCollaborative": "Заметка: можно править",
+    "noteCollaborativeHint": "Ученик видит заметку и может её менять",
+    "noteTutorOnly": "Заметка: только просмотр",
+    "noteTutorOnlyHint": "Ученик видит заметку, но не может её менять",
+    "noteDrafts": "Заметка: скрыто от ученика",
+    "noteDraftsHint": "Ученик не видит эту заметку",
+    "boardCollaborative": "Доска: можно править",
+    "boardCollaborativeHint": "Ученик видит доску и может её менять",
+    "boardTutorOnly": "Доска: только просмотр",
+    "boardTutorOnlyHint": "Ученик видит доску, но не может её менять",
+    "boardDrafts": "Доска: скрыто от ученика",
+    "boardDraftsHint": "Ученик не видит эту доску"
+  },
+  "files": {
+    "upload": "Загрузить файл",
+    "emptyTitle": "Пока нет файлов",
+    "emptyDescription": "Загрузите файл — он появится здесь"
   },
   "overview": {
     "materials": "Материалы",
@@ -85,7 +100,11 @@
     "noDescription": "Описание не указано",
     "editNamePlaceholder": "Введите название",
     "editNameAria": "Название кабинета",
-    "editNameError": "Название не может быть пустым"
+    "editNameError": "Название не может быть пустым",
+    "nextLesson": "Ближайшее",
+    "nextLessonToday": "Сегодня {{start}}–{{end}}",
+    "nextLessonTomorrow": "Завтра {{start}}–{{end}}",
+    "nextLessonOnDate": "{{date}} {{start}}–{{end}}"
   },
   "descriptionModal": {
     "title": "Редактировать описание",
@@ -99,7 +118,8 @@
     "statusActive": "Учится",
     "statusPaused": "На паузе",
     "statusFinished": "Обучение завершено",
-    "notePlaceholder": "Это место для заметок к кабинету. Можно вести план занятий,\nхранить контакты родителей ученика. Нажмите, чтобы начать редактировать"
+    "notePlaceholder": "Это место для заметок к кабинету. Можно вести план занятий,\nхранить контакты родителей ученика. Нажмите, чтобы начать редактировать",
+    "students": "Ученики"
   },
   "autocomplete": {
     "loading": "Загрузка...",

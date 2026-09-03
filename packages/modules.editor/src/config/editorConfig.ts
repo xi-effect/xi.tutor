@@ -15,6 +15,7 @@ import {
   CustomImage,
   MoveBlockKeyboard,
   NormalizeSelection,
+  FileNode,
   PdfNode,
   PresentationNode,
 } from '../extensions';
@@ -84,6 +85,7 @@ export const getExtensions = (
     AudioNode,
     PdfNode,
     PresentationNode,
+    FileNode,
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -107,6 +109,7 @@ export const getExtensions = (
         'audio',
         'pdf',
         'presentation',
+        'file',
       ],
     }),
     Placeholder.configure({

@@ -19,6 +19,7 @@
     "@xipkg/input": "2.3.0",
     "@xipkg/modal": "4.6.0",
     "common.services": "workspace:*",
+    "common.ui": "workspace:*",
     "i18next": "24.2.2",
     "react-hook-form": "^7.73.1",
     "react-i18next": "15.4.1",

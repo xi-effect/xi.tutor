@@ -27,6 +27,7 @@
     "common.services": "workspace:*",
     "common.types": "workspace:*",
     "common.utils": "workspace:*",
+    "common.ui": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "sonner": "^2.0.7"

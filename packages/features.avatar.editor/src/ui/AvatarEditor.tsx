@@ -13,6 +13,8 @@ import { Button } from '@xipkg/button';
 import { Slider } from '@xipkg/slider';
 import Cropper from 'react-easy-crop';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@xipkg/utils';
+import { modalTitleClass } from 'common.ui';
 import { useCrop, useZoom, useImageProcessing } from '../hooks';
 
 type AvatarEditorT = {
@@ -58,7 +60,7 @@ export const AvatarEditor = ({
         </ModalCloseButton>
         <div className="rounded-4 max-h-[calc(100dvh-16px)] overflow-auto">
           <ModalHeader className="mb-6">
-            <ModalTitle className="xs:max-w-none text-text-primary max-w-[240px] leading-8">
+            <ModalTitle className={cn(modalTitleClass, 'xs:max-w-none max-w-[240px] leading-8')}>
               {t('title')}
             </ModalTitle>
           </ModalHeader>

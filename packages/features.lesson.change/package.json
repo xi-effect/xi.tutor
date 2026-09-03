@@ -22,6 +22,7 @@
     "@xipkg/tooltip": "2.2.0",
     "@xipkg/userprofile": "4.2.0",
     "@xipkg/utils": "1.8.0",
+    "common.ui": "workspace:*",
     "i18next": "24.2.2",
     "react-hook-form": "^7.73.1",
     "react-i18next": "15.4.1",

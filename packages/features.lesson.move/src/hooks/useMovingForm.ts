@@ -11,6 +11,9 @@ import {
   bitmaskToWeekdays,
   weekdaysToBitmask,
   toLocalISOString,
+  buildRepetitionModeInput,
+  getActivePeriodDays,
+  getRepeatUntil,
 } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { durationBetweenMinutes } from '../utils/utils';
@@ -83,12 +86,19 @@ const getDefaultValues = (
     repeatWeekdays = recurringRepeatWeekdaysFromResolution(initialDate, movingRepetition);
   }
 
+  const restoredUntil =
+    lessonKind === 'recurring' && movingRepetition.seriesStartsAt != null
+      ? getRepeatUntil(movingRepetition.seriesStartsAt, movingRepetition.activePeriodDays)
+      : null;
+
   return {
     startDate,
     startTime: initialStartTime ?? '',
     endTime: initialEndTime ?? '',
     moveMode: lessonKind === 'recurring' ? 'single' : undefined,
     repeatWeekdays,
+    repeatEnds: restoredUntil ? 'date' : 'never',
+    repeatUntil: restoredUntil,
   };
 };
 
@@ -103,9 +113,6 @@ function buildStartsAt(startDate: Date, startTime: string): string {
 function buildDurationSeconds(startTime: string, endTime: string): number {
   return durationBetweenMinutes(startTime, endTime) * 60;
 }
-
-/** 0=Пн … 6=Вс — все дни выбраны */
-const FULL_WEEK_BITMASK = 0x7f;
 
 const defaultMovingRepetition: MovingRepetitionResolution = {
   isDailySeries: false,
@@ -153,6 +160,16 @@ export const useMovingForm = (
       'repeatWeekdays',
       recurringRepeatWeekdaysFromResolution(initialDate, movingRepetition),
     );
+
+    const restoredUntil =
+      movingRepetition.seriesStartsAt != null
+        ? getRepeatUntil(movingRepetition.seriesStartsAt, movingRepetition.activePeriodDays)
+        : null;
+
+    if (movingRepetition.seriesStartsAt != null) {
+      form.setValue('repeatEnds', restoredUntil ? 'date' : 'never');
+      form.setValue('repeatUntil', restoredUntil);
+    }
   }, [lessonKind, movingRepetition, initialDate, form]);
 
   const onSubmit = async (data: FormData) => {
@@ -171,22 +188,19 @@ export const useMovingForm = (
         const startsAtNext = buildStartsAt(data.startDate, data.startTime);
         const durationNext = buildDurationSeconds(data.startTime, data.endTime);
         const nextWeeklyBitmask = weekdaysToBitmask(data.repeatWeekdays);
+        const activePeriodDays =
+          data.repeatEnds === 'never'
+            ? null
+            : getActivePeriodDays(data.startDate, data.repeatUntil);
         await createLastRepetitionMode.mutateAsync({
           classroomId: schedulerTarget.classroomId,
           eventId: schedulerTarget.eventId,
-          body:
-            nextWeeklyBitmask === FULL_WEEK_BITMASK
-              ? {
-                  kind: 'daily',
-                  starts_at: startsAtNext,
-                  duration_seconds: durationNext,
-                }
-              : {
-                  kind: 'weekly',
-                  starts_at: startsAtNext,
-                  duration_seconds: durationNext,
-                  weekly_bitmask: nextWeeklyBitmask,
-                },
+          body: buildRepetitionModeInput({
+            startsAt: startsAtNext,
+            durationSeconds: durationNext,
+            weeklyBitmask: nextWeeklyBitmask,
+            activePeriodDays,
+          }),
         });
       } else {
         await reschedule.mutateAsync({

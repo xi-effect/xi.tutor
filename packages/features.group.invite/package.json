@@ -28,6 +28,7 @@
     "common.platform": "workspace:*",
     "common.services": "workspace:*",
     "common.types": "workspace:*",
+    "common.ui": "workspace:*",
     "common.utils": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1"

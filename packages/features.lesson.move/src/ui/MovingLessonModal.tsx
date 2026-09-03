@@ -11,6 +11,7 @@ import {
   type SoleRescheduleTarget,
 } from '../hooks';
 import type { FormData } from '../model';
+import { modalTitleClass } from 'common.ui';
 import './MovingModal.css';
 
 const getToday = () => {
@@ -159,9 +160,7 @@ export const MovingLessonModal = ({
           </div>
           <div className="flex h-full min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
             <div className="flex h-8 shrink-0 items-center pr-12">
-              <h3 className="text-xl-base text-text-primary m-0 leading-none font-semibold">
-                {formTitle}
-              </h3>
+              <h3 className={`${modalTitleClass} pr-12`}>{formTitle}</h3>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
               <MovingForm

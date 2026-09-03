@@ -53,6 +53,7 @@
     "common.services": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
+    "pages.materials": "workspace:*",
     "file-type": "^19.0.0",
     "i18next": "24.2.2",
     "lowlight": "^3.3.0",

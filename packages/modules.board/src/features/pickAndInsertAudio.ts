@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { uploadAudioRequest } from 'common.services';
+import { uploadFileIdRequest } from 'common.services';
 import {
   AUDIO_SHAPE_WIDTH,
   AUDIO_SHAPE_HEIGHT,
@@ -10,6 +10,7 @@ import {
 } from '../shapes/audio';
 import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
+import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import i18n from 'i18next';
 
 const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
@@ -111,7 +112,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
 
   (async () => {
     try {
-      const serverUrl = await uploadAudioRequest({ file, token });
+      const serverUrl = await uploadFileIdRequest({ file, token });
 
       editor.updateShape<AudioShape>({
         id: shapeId,
@@ -120,10 +121,14 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
       });
     } catch (err) {
       console.error('[insertAudio] Upload failed:', err);
-      const msg =
-        err instanceof Error ? err.message : i18n.t('toast.audioUploadFailed', { ns: 'board' });
-      toast.error(i18n.t('toast.audioUploadError', { ns: 'board' }), {
-        description: msg,
+      const { title, description } = getBoardUploadErrorToast(err, file, MAX_AUDIO_SIZE_BYTES, {
+        sizeDescKey: 'toast.audioSizeDesc',
+        failedTitleKey: 'toast.audioUploadError',
+        failedDescKey: 'toast.audioUploadFailed',
+        formatDescKey: 'toast.audioFormatDesc',
+      });
+      toast.error(title, {
+        description,
         duration: 5000,
       });
       editor.deleteShapes([shapeId]);

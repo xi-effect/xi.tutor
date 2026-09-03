@@ -69,8 +69,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             '**/*onnxruntime*',
             '**/*ort-wasm*',
             '**/*worker-entry*',
+            // PaddleOCR собирается в hashed `assets/dist-*.js` (~24MB) — не кладём в precache.
+            '**/assets/dist-*.js',
           ],
-          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+          maximumFileSizeToCacheInBytes: 32 * 1024 * 1024,
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/deployments\/.*/],
           runtimeCaching: [

@@ -1,14 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-} from '@xipkg/modal';
-import { modalTitleClass } from 'common.ui';
+import { Modal, ModalBody, ModalContent, ModalTitle } from '@xipkg/modal';
+import { ModalCloseIcon, modalContentClass, modalHeaderRowClass, modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@xipkg/utils';
 import { isMac } from '../../../utils';
 
 const PORTAL_Z = 9999;
@@ -202,14 +196,16 @@ export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent
-        className="max-w-4xl"
+        className={cn(modalContentClass, 'max-w-4xl')}
         portalProps={{ container: containerRef.current ?? undefined }}
         aria-describedby={undefined}
       >
-        <ModalHeader>
-          <ModalCloseButton />
-          <ModalTitle className={modalTitleClass}>{t('hotkeys.title')}</ModalTitle>
-        </ModalHeader>
+        <div className="flex flex-col gap-6 p-6">
+          <div className={modalHeaderRowClass}>
+            <ModalTitle className={modalTitleClass}>{t('hotkeys.title')}</ModalTitle>
+            <ModalCloseIcon onClick={() => onOpenChange(false)} />
+          </div>
+        </div>
         <ModalBody style={{ maxHeight: 'calc(80dvh - 80px)', overflowY: 'auto', padding: 0 }}>
           <HotkeysHelpBody />
         </ModalBody>

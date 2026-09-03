@@ -5,9 +5,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { MoreVert } from '@xipkg/icons';
+import { Edit, MoreVert, Trash } from '@xipkg/icons';
 
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
@@ -16,8 +17,12 @@ import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.servic
 import {
   ConfirmDialog,
   cardMenuButtonClass,
+  cardMenuDeleteItemClass,
   cardMenuIconClass,
+  cardMenuItemClass,
   cardMenuPositionClass,
+  cardMenuSeparatorClass,
+  cardMenuSurfaceClass,
 } from 'common.ui';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
@@ -79,7 +84,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
       to: '/classrooms/$classroomId',
       params: { classroomId: id.toString() },
       search: {
-        tab: 'overview',
+        tab: 'boards',
         ...filteredSearch,
       },
     });
@@ -151,7 +156,11 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         </div>
 
         {isTutor && (
-          <div className={cardMenuPositionClass}>
+          <div
+            className={cardMenuPositionClass}
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button className={cardMenuButtonClass} variant="none" size="icon">
@@ -162,13 +171,26 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
               <DropdownMenuContent
                 side="bottom"
                 align="end"
-                className="border-border-default bg-background-surface border p-1"
+                className={cardMenuSurfaceClass}
+                onCloseAutoFocus={(event) => event.preventDefault()}
               >
-                <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="classroom-edit">
+                <DropdownMenuItem
+                  className={cardMenuItemClass}
+                  onClick={handleOpenEditModal}
+                  data-umami-event="classroom-edit"
+                >
+                  <Edit />
                   {t('rename')}
                 </DropdownMenuItem>
-
-                <DropdownMenuItem onClick={handleDeleteClick}>{t('delete')}</DropdownMenuItem>
+                <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+                <DropdownMenuItem
+                  error
+                  className={cardMenuDeleteItemClass}
+                  onClick={handleDeleteClick}
+                >
+                  <Trash />
+                  {t('delete')}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

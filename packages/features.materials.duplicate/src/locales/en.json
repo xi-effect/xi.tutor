@@ -12,12 +12,12 @@
   "error": "Failed to load classrooms",
   "emptyTitle": "Nothing here yet",
   "emptyDescription": "Create classrooms by inviting students to the platform",
-  "accessLabel": "Access type for the material in the classroom",
-  "accessPlaceholder": "Select access type for the material in the classroom",
+  "accessLabel": "What the student can do",
+  "accessPlaceholder": "Choose student access",
   "access": {
-    "read_write": "Collaborative",
-    "read_only": "Tutor only",
-    "no_access": "Draft"
+    "read_write": "Can edit",
+    "read_only": "View only",
+    "no_access": "Hidden from student"
   },
   "confirm": "Duplicate",
   "confirming": "Duplicating...",

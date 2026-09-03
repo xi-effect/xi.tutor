@@ -24,6 +24,8 @@ import {
   type InviteAnalyticsSource,
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@xipkg/utils';
+import { modalTitleClass } from 'common.ui';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -129,7 +131,7 @@ export const ModalInvitationLegacy = ({
       <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+          <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-48px)]')}>
             {t('modal.title')}
           </ModalTitle>
         </ModalHeader>

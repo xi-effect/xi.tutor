@@ -51,6 +51,13 @@ const materialActionsConfig: {
     | 'materials.boardCollaborative'
     | 'materials.boardTutorOnly'
     | 'materials.boardDrafts';
+  descriptionKey:
+    | 'materials.noteCollaborativeHint'
+    | 'materials.noteTutorOnlyHint'
+    | 'materials.noteDraftsHint'
+    | 'materials.boardCollaborativeHint'
+    | 'materials.boardTutorOnlyHint'
+    | 'materials.boardDraftsHint';
   Icon: React.ComponentType<{ className?: string }>;
   umamiEvent: string;
 }[] = [
@@ -58,6 +65,7 @@ const materialActionsConfig: {
     contentKind: 'note',
     accessMode: 'read_write',
     labelKey: 'materials.noteCollaborative',
+    descriptionKey: 'materials.noteCollaborativeHint',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
@@ -65,6 +73,7 @@ const materialActionsConfig: {
     contentKind: 'note',
     accessMode: 'read_only',
     labelKey: 'materials.noteTutorOnly',
+    descriptionKey: 'materials.noteTutorOnlyHint',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
@@ -72,6 +81,7 @@ const materialActionsConfig: {
     contentKind: 'note',
     accessMode: 'no_access',
     labelKey: 'materials.noteDrafts',
+    descriptionKey: 'materials.noteDraftsHint',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
@@ -79,6 +89,7 @@ const materialActionsConfig: {
     contentKind: 'board',
     accessMode: 'read_write',
     labelKey: 'materials.boardCollaborative',
+    descriptionKey: 'materials.boardCollaborativeHint',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
@@ -86,6 +97,7 @@ const materialActionsConfig: {
     contentKind: 'board',
     accessMode: 'read_only',
     labelKey: 'materials.boardTutorOnly',
+    descriptionKey: 'materials.boardTutorOnlyHint',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
@@ -93,6 +105,7 @@ const materialActionsConfig: {
     contentKind: 'board',
     accessMode: 'no_access',
     labelKey: 'materials.boardDrafts',
+    descriptionKey: 'materials.boardDraftsHint',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
@@ -123,7 +136,7 @@ export const ClassroomMobileActionButton = ({
   const closeDrawer = () => setDrawerOpen(false);
 
   const actions = useMemo((): DrawerAction[] => {
-    if (currentTab === 'overview' && classroomKind === 'group') {
+    if (currentTab === 'info' && classroomKind === 'group') {
       return [
         {
           id: 'add-student',
@@ -147,14 +160,30 @@ export const ClassroomMobileActionButton = ({
             onGroupInviteModalChange(true);
           },
         },
+        {
+          id: 'delete-classroom',
+          label: isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroom'),
+          description: t('actions.deleteClassroomDescription'),
+          Icon: Trash,
+          umamiEvent: 'classroom-delete',
+          disabled: isDeletingClassroom,
+          destructive: true,
+          onClick: () => {
+            closeDrawer();
+            onDeleteClassroom();
+          },
+        },
       ];
     }
 
-    if (currentTab === 'materials') {
-      return materialActionsConfig.map(
-        ({ contentKind, accessMode, labelKey, Icon, umamiEvent }) => ({
+    if (currentTab === 'boards' || currentTab === 'notes') {
+      const kind = currentTab === 'notes' ? 'note' : 'board';
+      return materialActionsConfig
+        .filter(({ contentKind }) => contentKind === kind)
+        .map(({ contentKind, accessMode, labelKey, descriptionKey, Icon, umamiEvent }) => ({
           id: `${contentKind}-${accessMode}`,
           label: t(labelKey),
+          description: t(descriptionKey),
           Icon,
           umamiEvent,
           umamiAccessMode: accessMode,
@@ -163,8 +192,7 @@ export const ClassroomMobileActionButton = ({
             closeDrawer();
             onAddMaterial(contentKind, accessMode);
           },
-        }),
-      );
+        }));
     }
 
     if (currentTab === 'payments') {

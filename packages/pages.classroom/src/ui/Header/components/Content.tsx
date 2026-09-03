@@ -8,6 +8,7 @@ import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
 import { useCurrentUser } from 'common.services';
 import { StartLessonButton } from 'features.lesson.start';
+import { NextLessonChip } from '../NextLessonChip';
 import { EditableClassroomName } from './EditableClassroomName';
 
 interface ContentProps {
@@ -125,7 +126,8 @@ export const Content = ({ classroom }: ContentProps) => {
         </div>
       </div>
 
-      <div className="w-full sm:hidden">
+      <div className="flex w-full flex-col gap-2 sm:hidden">
+        <NextLessonChip />
         <StartLessonButton
           className={`${startLessonButtonClass} w-full`}
           classroomId={classroom.id}
