@@ -3,6 +3,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import {
@@ -12,26 +15,42 @@ import {
   H3,
   Text,
   Trash,
-  Image,
-  Music,
-  File,
-  Presentation,
+  Laptop,
+  Materials,
+  Link as LinkIcon,
   ArrowUp,
   ArrowBottom,
   Code,
   Ul,
   Ol,
   Task,
+  File,
+  Image,
 } from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useBlockMenuActions } from '../../hooks';
+import { cn } from '@xipkg/utils';
+import { useCurrentUser } from 'common.services';
+import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { ActiveBlockT } from '../../types';
+import { pickAndInsertComputerFiles } from '../../utils/pickAndInsertComputerFiles';
 
 const menuItemClass =
   'text-text-primary hover:bg-background-page focus:text-text-primary fill-icon-primary [&_svg]:fill-icon-primary h-7 gap-2 rounded p-1 text-sm';
+
+const menuSubTriggerClass = cn(
+  menuItemClass,
+  'relative pr-8',
+  'data-[state=open]:bg-background-page',
+  '[&>svg:last-child]:pointer-events-none [&>svg:last-child]:absolute [&>svg:last-child]:top-1/2 [&>svg:last-child]:right-1',
+  '[&>svg:last-child]:size-4 [&>svg:last-child]:!m-0 [&>svg:last-child]:-translate-y-1/2',
+  '[&>svg:last-child]:!fill-none [&>svg:last-child]:stroke-icon-primary',
+);
+
+const menuContentClass =
+  'border-border-default bg-background-surface text-text-primary flex w-auto flex-col gap-1 space-y-1 rounded-lg border p-2';
 
 type BlockMenuPropsT = {
   children: ReactNode;
@@ -42,8 +61,6 @@ type BlockMenuPropsT = {
   getActiveBlock: () => ActiveBlockT | undefined;
 };
 
-// оборачивает действие так чтобы оно выполнилось ПОСЛЕ того как DropdownMenu закончит своё закрытие/анимацию.
-// Это исключает вызов view.dispatch() внутри React-рендера Radix.
 function deferAction(fn: () => void) {
   return (e: Event) => {
     e.preventDefault();
@@ -61,18 +78,28 @@ export const BlockMenu = ({
 }: BlockMenuPropsT) => {
   const { t } = useTranslation('editor');
   const isMac = navigator.platform.toUpperCase().includes('MAC');
-  const { openModal } = useInterfaceStore();
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+  const { openModal, openCloudPicker } = useInterfaceStore();
+  const { storageItem } = useYjsContext();
   const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
     editor,
     getActiveBlock,
   );
 
-  // Блокируем меню если редактор в readonly режиме
   const shouldShow = editor && !isReadOnly && editor.isEditable !== false;
 
   if (!shouldShow) {
     return null;
   }
+
+  const pickFromComputer = (mode: 'image' | 'file') => {
+    pickAndInsertComputerFiles(editor, storageItem.content_token, getActiveBlock(), mode);
+  };
+
+  const pickFromCloud = () => {
+    openCloudPicker(getActiveBlock());
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
@@ -82,7 +109,7 @@ export const BlockMenu = ({
         side="right"
         align="start"
         onCloseAutoFocus={(e) => e.preventDefault()}
-        className="border-border-default bg-background-surface text-text-primary flex w-auto flex-col gap-1 space-y-1 rounded-lg border p-2"
+        className={menuContentClass}
       >
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('paragraph')}>
           <Text size="sm" className="size-6" />
@@ -119,25 +146,51 @@ export const BlockMenu = ({
           <span>{t('blockMenu.taskList')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
-          <Image size="sm" className="size-6" />
-          <span>{t('blockMenu.image')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadAudio')}>
-          <Music size="sm" className="size-6" />
-          <span>{t('blockMenu.audio')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadPdf')}>
-          <File size="sm" className="size-6" />
-          <span>{t('blockMenu.pdf')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className={menuItemClass}
-          onSelect={() => openModal('uploadPresentation')}
-        >
-          <Presentation size="sm" className="size-6" />
-          <span>{t('blockMenu.presentation')}</span>
-        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className={menuSubTriggerClass}>
+            <File size="sm" className="size-6" />
+            <span>{t('blockMenu.file')}</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className={menuContentClass}>
+            <DropdownMenuItem className={menuItemClass} onSelect={() => pickFromComputer('file')}>
+              <Laptop size="sm" className="size-6" />
+              <span>{t('blockMenu.fromComputer')}</span>
+            </DropdownMenuItem>
+            {isTutor ? (
+              <DropdownMenuItem className={menuItemClass} onSelect={pickFromCloud}>
+                <Materials size="sm" className="size-6" />
+                <span>{t('blockMenu.fromCloud')}</span>
+              </DropdownMenuItem>
+            ) : null}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className={menuSubTriggerClass}>
+            <Image size="sm" className="size-6" />
+            <span>{t('blockMenu.image')}</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className={menuContentClass}>
+            <DropdownMenuItem className={menuItemClass} onSelect={() => pickFromComputer('image')}>
+              <Laptop size="sm" className="size-6" />
+              <span>{t('blockMenu.fromComputer')}</span>
+            </DropdownMenuItem>
+            {isTutor ? (
+              <DropdownMenuItem className={menuItemClass} onSelect={pickFromCloud}>
+                <Materials size="sm" className="size-6" />
+                <span>{t('blockMenu.fromCloud')}</span>
+              </DropdownMenuItem>
+            ) : null}
+            <DropdownMenuItem
+              className={menuItemClass}
+              onSelect={() => openModal('insertImageLink')}
+            >
+              <LinkIcon size="sm" className="size-6" />
+              <span>{t('blockMenu.fromLink')}</span>
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
           <Code size="sm" className="size-6" />
           <span>{t('blockMenu.insertCode')}</span>

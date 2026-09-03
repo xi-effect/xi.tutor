@@ -5,9 +5,8 @@ import { cn } from '@xipkg/utils';
 import type { FileKind } from 'common.api';
 import { getFileTagIds, type LibraryFile, useTagsByIds } from 'common.services';
 import { TagChip, getAppLanguage } from 'common.ui';
-import { formatFileSize, formatUploadedAt, getLibraryFileDisplayName } from 'pages.materials';
 import { useTranslation } from 'react-i18next';
-import { boardMenuItemClass, boardMenuSurfaceClass } from '../../boardTheme';
+import { formatFileSize, formatUploadedAt, getLibraryFileDisplayName } from '../../../utils';
 
 const kindIcon: Record<FileKind, typeof File> = {
   image: Image,
@@ -19,10 +18,16 @@ const kindIcon: Record<FileKind, typeof File> = {
 
 const MAX_VISIBLE_TAGS = 3;
 
+const menuSurfaceClass = 'border-border-default bg-background-elevated z-48 border shadow-md';
+const menuItemClass =
+  'text-text-primary fill-icon-primary data-highlighted:bg-status-info-background flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 outline-none select-none';
+
 type CloudFileRowProps = {
   file: LibraryFile;
+  addLabel: string;
   disabled?: boolean;
   previewOpen?: boolean;
+  umamiPrefix?: string;
   onPreview: (file: LibraryFile) => void;
   onAdd: (file: LibraryFile) => void;
 };
@@ -34,13 +39,14 @@ const isTypingTarget = (target: EventTarget | null) => {
 
 export const CloudFileRow = ({
   file,
+  addLabel,
   disabled,
   previewOpen,
+  umamiPrefix = 'cloud',
   onPreview,
   onAdd,
 }: CloudFileRowProps) => {
   const { t } = useTranslation('materials');
-  const { t: tBoard } = useTranslation('board');
   const { tags: fileTags } = useTagsByIds(getFileTagIds(file));
   const visibleTags = fileTags.slice(0, MAX_VISIBLE_TAGS);
   const [hovered, setHovered] = useState(false);
@@ -88,7 +94,7 @@ export const CloudFileRow = ({
               onPreview(file);
             }
           }}
-          data-umami-event="board-cloud-file-add"
+          data-umami-event={`${umamiPrefix}-cloud-file-add`}
           className={cn(
             'hover:bg-status-info-background grid w-full cursor-pointer grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 px-3 py-2.5 transition-colors',
             'focus-visible:bg-status-info-background focus-visible:outline-none',
@@ -126,29 +132,23 @@ export const CloudFileRow = ({
 
       <ContextMenu.Portal>
         <ContextMenu.Content
-          className={cn(boardMenuSurfaceClass, 'z-48 min-w-48 rounded-2xl p-2 outline-none')}
+          className={cn(menuSurfaceClass, 'min-w-48 rounded-2xl p-2 outline-none')}
         >
           <ContextMenu.Item
-            className={cn(
-              boardMenuItemClass,
-              'data-highlighted:bg-status-info-background flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 outline-none select-none',
-            )}
+            className={menuItemClass}
             onSelect={() => onPreview(file)}
-            data-umami-event="board-cloud-file-preview-menu"
+            data-umami-event={`${umamiPrefix}-cloud-file-preview-menu`}
           >
             <Eyeon className="fill-icon-secondary size-4 shrink-0" />
-            {tBoard('navbar.cloudPreview')}
+            {t('files.cloudPicker.preview')}
           </ContextMenu.Item>
           <ContextMenu.Item
-            className={cn(
-              boardMenuItemClass,
-              'data-highlighted:bg-status-info-background flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 outline-none select-none',
-            )}
+            className={menuItemClass}
             onSelect={() => onAdd(file)}
-            data-umami-event="board-cloud-file-add-menu"
+            data-umami-event={`${umamiPrefix}-cloud-file-add-menu`}
           >
             <Plus className="fill-icon-brand size-4 shrink-0" />
-            {tBoard('navbar.cloudAddToBoard')}
+            {addLabel}
           </ContextMenu.Item>
         </ContextMenu.Content>
       </ContextMenu.Portal>

@@ -7,10 +7,13 @@
     "bulletList": "Bullet list",
     "orderedList": "Numbered list",
     "taskList": "Checklist",
+    "file": "File",
     "image": "Image",
-    "audio": "Audio",
-    "pdf": "PDF",
-    "presentation": "Presentation",
+    "fromComputer": "From computer",
+    "fromCloud": "From cloud",
+    "fromLink": "From link",
+    "cloudAddToNote": "Add to note",
+    "cloudFilesDescription": "Pick a file from your materials library to add it to the note",
     "insertCode": "Insert code",
     "duplicate": "Duplicate",
     "moveUp": "Move up",
@@ -52,6 +55,10 @@
     "delete": "Delete",
     "extractPage": "Extract as image"
   },
+  "file": {
+    "loading": "Loading...",
+    "untitled": "File"
+  },
   "pdf": {
     "loading": "Loading...",
     "renderError": "Failed to render PDF",
@@ -88,6 +95,9 @@
     "fileTooLarge": "File is too large",
     "uploadFailed": "Failed to upload file",
     "imageUploadError": "Image upload error",
+    "unsupportedFileFormat": "Unsupported file format",
+    "fileCannotUpload": "“{{name}}” cannot be added to the note.",
+    "cloudInsertFailed": "Could not add the file from the cloud",
     "audioFormatDesc": "Choose an audio file (MP3, OGG, WAV, M4A).",
     "audioInvalidFormat": "Invalid file format",
     "audioInvalidFormatDesc": "File contents do not match the declared audio type.",
@@ -101,7 +111,11 @@
     "presentationFormatDesc": "Choose a PPTX file.",
     "presentationSizeDesc": "Presentation must be at most 5 MiB (currently {{size}} MiB).",
     "presentationLimitTitle": "Presentation limit",
-    "presentationLimitDesc": "A note can contain at most {{max}} presentations."
+    "presentationLimitDesc": "A note can contain at most {{max}} presentations.",
+    "fileFormatDesc": "Choose a file in one of these formats: DOC, XLS, PPT, TXT, CSV, video, or OpenDocument.",
+    "fileSizeDesc": "File must be at most 5 MiB (currently {{size}} MiB).",
+    "fileLimitTitle": "File limit",
+    "fileLimitDesc": "A note can contain at most {{max}} files."
   },
   "codeBlock": {
     "copy": "Copy",

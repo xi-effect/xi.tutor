@@ -12,6 +12,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@radix-ui/react-context-menu": "^2.2.6",
     "@tanstack/react-query": "5.73.3",
     "@tanstack/react-router": "^1.166.6",
     "@tanstack/react-virtual": "3.13.9",
@@ -43,7 +44,8 @@
     "pdfjs-dist": "^4.10.38",
     "pptxviewjs": "1.1.9",
     "react-i18next": "15.4.1",
-    "sonner": "^2.0.7"
+    "sonner": "^2.0.7",
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

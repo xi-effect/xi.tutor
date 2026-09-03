@@ -7,6 +7,7 @@ export { FilesTypeFilter } from './src/ui/Files/FilesTypeFilter';
 export { FilesFilteredEmpty } from './src/ui/Files/FilesFilteredEmpty';
 export { MaterialsGallerySkeleton } from './src/ui/MaterialsGallerySkeleton';
 export { LibraryTagsUiProvider } from './src/ui/Files/tags/LibraryTagsUiContext';
+export { CloudFilesPicker, type CloudFilesPickerProps } from './src/ui/Files/cloudPicker';
 export { useLibraryTags } from './src/ui/Files/tags/useLibraryTags';
 export {
   formatToShortDate,
