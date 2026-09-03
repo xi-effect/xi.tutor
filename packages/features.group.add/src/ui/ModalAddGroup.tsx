@@ -1,15 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Modal,
-  ModalTitle,
-  ModalHeader,
-  ModalContent,
-  ModalBody,
-  ModalFooter,
-  ModalTrigger,
-  ModalCloseButton,
-  ModalDescription,
-} from '@xipkg/modal';
+import { Modal, ModalTitle, ModalContent, ModalTrigger, ModalDescription } from '@xipkg/modal';
 import {
   Form,
   FormControl,
@@ -27,6 +17,16 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormSchema } from '../model';
 import { useCreateGroup } from '../services';
+import {
+  ModalCloseIcon,
+  modalBodyClass,
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 
 const initialValues = { name: '', subject: null };
 
@@ -127,72 +127,60 @@ export const ModalAddGroup = ({
       {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
       <ModalContent
         ref={modalContentRef}
-        className="relative max-w-[600px]"
+        className={modalContentClass}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        <ModalHeader>
-          <ModalCloseButton onClick={closeModal} />
-          <ModalTitle className="text-text-primary m-0 max-w-[calc(100%-48px)] pr-10 leading-8">
-            {t('title')}
-          </ModalTitle>
-          <ModalDescription className="sr-only">{t('description')}</ModalDescription>
-        </ModalHeader>
-
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody className="flex flex-col gap-6 px-4 py-6">
-              <FormField
-                control={control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
-                    <FormLabel htmlFor={field.name} className="text-text-primary m-0">
-                      {t('fields.name')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        error={!!errors?.name}
-                        autoComplete="off"
-                        type="text"
-                        id={field.name}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="subject"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
-                    <FormLabel htmlFor={field.name} className="text-text-primary m-0">
-                      {t('fields.subject')}
-                    </FormLabel>
-                    <FormControl>
-                      <Autocomplete field={field} containerRef={modalContentRef} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </ModalBody>
+          <form className={modalBodyClass} onSubmit={handleSubmit(onSubmit)}>
+            <div className={modalHeaderRowClass}>
+              <ModalTitle className={modalTitleClass}>{t('title')}</ModalTitle>
+              <ModalCloseIcon onClick={closeModal} />
+            </div>
+            <ModalDescription className="sr-only">{t('description')}</ModalDescription>
 
-            <ModalFooter className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-              <Button
-                className="gap-2"
-                type="submit"
-                onClick={handleButtonClick}
-                disabled={!canSubmit}
-                data-umami-event="group-create"
-              >
-                {isPending ? t('actions.creating') : t('actions.create')}
-              </Button>
+            <FormField
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="flex flex-col gap-2">
+                  <FormLabel htmlFor={field.name} className="text-text-primary m-0">
+                    {t('fields.name')}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      error={!!errors?.name}
+                      autoComplete="off"
+                      type="text"
+                      id={field.name}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="subject"
+              render={({ field }) => (
+                <FormItem className="flex flex-col gap-2">
+                  <FormLabel htmlFor={field.name} className="text-text-primary m-0">
+                    {t('fields.subject')}
+                  </FormLabel>
+                  <FormControl>
+                    <Autocomplete field={field} containerRef={modalContentRef} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className={modalFooterClass}>
               <Button
                 variant="none"
                 type="button"
-                className="bg-background-page hover:bg-background-subtle text-text-primary"
+                size="m"
+                className={modalCancelButtonClass}
                 onClick={() => {
                   handleButtonClick();
                   closeModal();
@@ -201,7 +189,18 @@ export const ModalAddGroup = ({
               >
                 {t('actions.cancel')}
               </Button>
-            </ModalFooter>
+              <Button
+                variant="primary"
+                size="m"
+                className={modalConfirmButtonClass}
+                type="submit"
+                onClick={handleButtonClick}
+                disabled={!canSubmit}
+                data-umami-event="group-create"
+              >
+                {isPending ? t('actions.creating') : t('actions.create')}
+              </Button>
+            </div>
           </form>
         </Form>
       </ModalContent>

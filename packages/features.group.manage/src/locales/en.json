@@ -1,5 +1,5 @@
 {
-  "title": "Add student to group",
+  "title": "Choose who to add to the group",
   "loading": "Loading...",
   "loadError": "Failed to load data",
   "empty": {
@@ -7,8 +7,8 @@
     "description": "You don’t have any students to add to the group yet. Invite a student to the service — they will appear in this list afterward."
   },
   "actions": {
-    "save": "Save",
-    "saving": "Saving...",
+    "save": "Add",
+    "saving": "Adding...",
     "cancel": "Cancel"
   },
   "toast": {

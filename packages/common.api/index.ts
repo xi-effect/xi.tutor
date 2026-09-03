@@ -15,6 +15,8 @@ export {
   filesApiConfig,
   FilesQueryKey,
   getFileUrl,
+  FILE_KIND,
+  FILE_KINDS,
   type FileKind,
   type FileResponse,
   type UploadFileBody,
@@ -28,6 +30,54 @@ export {
   type ContentTokenHeaders,
   type ReadFileHeaders,
 } from './src/files';
+export {
+  libraryFilesApiConfig,
+  LibraryFilesQueryKey,
+  libraryFilesQueryKeys,
+  getLibraryFileUrl,
+  normalizeLibraryFilesLimit,
+  buildFileSearchRequest,
+  normalizeFileFilters,
+  getNextLibraryFilesCursor,
+  getFileTagIds,
+  LIBRARY_FILES_DEFAULT_LIMIT,
+  LIBRARY_FILES_MAX_LIMIT,
+  FILE_FILTER_MAX_KINDS,
+  type LibraryFile,
+  type FileCursor,
+  type FileFilters,
+  type FileSearchRequest,
+  type LibraryReadFileHeaders,
+  type UploadLibraryFileBody,
+} from './src/libraryFiles';
+export {
+  tagsApiConfig,
+  TagsQueryKey,
+  tagsQueryKeys,
+  TAG_KIND,
+  normalizeTagAutocompleteLimit,
+  buildTagKindUrl,
+  buildTutorTagKindUrl,
+  TAG_AUTOCOMPLETE_DEFAULT_LIMIT,
+  TAG_AUTOCOMPLETE_MAX_LIMIT,
+  TAG_AUTOCOMPLETE_MIN_SEARCH_LENGTH,
+  TAG_AUTOCOMPLETE_MAX_SEARCH_LENGTH,
+  TAG_NAME_MIN_LENGTH,
+  TAG_NAME_MAX_LENGTH,
+  TAG_MAX_COUNT,
+  TAG_ASSIGN_MAX_COUNT,
+  TAG_FILE_ASSIGN_MAX_COUNT,
+  TAG_FILTER_MAX_COUNT,
+  TAG_COLORS,
+  DEFAULT_TAG_COLOR,
+  isTagColor,
+  normalizeTagIds,
+  type TagKind,
+  type TagColor,
+  type TagSchema,
+  type CreateTagBody,
+  type UpdateTagBody,
+} from './src/tags';
 export { onboardingApiConfig } from './src/onboarding';
 export { getClassroomDisplayName } from './src/getClassroomDisplayName';
 export type { ClassroomDisplayNameSource } from './src/getClassroomDisplayName';
@@ -52,10 +102,14 @@ export type {
 export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';
 export { callsApiConfig, CallsQueryKey } from './src/calls';
-export { subjectsApiConfig, SubjectsQueryKey } from './src/subjects';
 export { enrollmentsApiConfig, EnrollmentsQueryKey } from './src/enrollments';
 export { contactsApiConfig, ContactsQueryKey } from './src/contacts';
 export { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from './src/classrooms';
+export {
+  classroomFilesApiConfig,
+  ClassroomFilesQueryKey,
+  classroomFilesQueryKeys,
+} from './src/classrooms';
 export { classroomNotesApiConfig, ClassroomNotesQueryKey } from './src/classrooms';
 export { classroomPaymentsApiConfig, ClassroomPaymentsQueryKey } from './src/classrooms';
 export {

@@ -1,8 +1,19 @@
 import { useCallback } from 'react';
-import { Modal, ModalContent, ModalTitle, ModalBody } from '@xipkg/modal';
+import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import {
+  ModalCloseIcon,
+  modalBodyClass,
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalDescriptionClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import {
   buildOccurrenceCancellationParams,
   buildRepeatingCancellationStartsAt,
@@ -132,16 +143,18 @@ export const CancelLessonModal = ({
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="w-full max-w-[480px]" aria-describedby={undefined}>
-        <ModalTitle className="sr-only">{t('title')}</ModalTitle>
-        <ModalBody className="flex flex-col items-center gap-4 p-6">
-          <h3 className="text-xl-base text-text-primary font-semibold">{t('title')}</h3>
-          <p className="text-m-base text-text-secondary text-center">{t('description')}</p>
+      <ModalContent className={modalContentClass} aria-describedby={undefined}>
+        <div className={modalBodyClass}>
+          <div className={modalHeaderRowClass}>
+            <ModalTitle className={modalTitleClass}>{t('title')}</ModalTitle>
+            <ModalCloseIcon onClick={handleClose} disabled={isPending} />
+          </div>
+          <p className={modalDescriptionClass}>{t('description')}</p>
 
           {isRecurring ? (
-            <>
+            <div className="flex flex-col gap-3">
               <Button
-                className="w-full"
+                className={modalConfirmButtonClass}
                 variant="primary"
                 size="m"
                 onClick={handleCancelThisOccurrence}
@@ -151,8 +164,8 @@ export const CancelLessonModal = ({
                 {t('cancelThis')}
               </Button>
               <Button
-                className="w-full"
-                variant="ghost"
+                className={modalCancelButtonClass}
+                variant="none"
                 size="m"
                 onClick={handleCancelThisAndFollowing}
                 disabled={isPending}
@@ -160,30 +173,46 @@ export const CancelLessonModal = ({
               >
                 {t('cancelThisAndFollowing')}
               </Button>
-            </>
+            </div>
           ) : (
-            <Button
-              className="w-full"
-              variant="primary"
-              size="m"
-              onClick={handleCancelThisOccurrence}
-              disabled={isPending}
-              data-umami-event="lesson-cancel-single"
-            >
-              {t('cancelLesson')}
-            </Button>
+            <div className={modalFooterClass}>
+              <Button
+                variant="none"
+                size="m"
+                className={modalCancelButtonClass}
+                onClick={handleClose}
+                disabled={isPending}
+                data-umami-event="lesson-cancel-dismiss"
+              >
+                {t('close')}
+              </Button>
+              <Button
+                variant="error"
+                size="m"
+                className={modalConfirmButtonClass}
+                onClick={handleCancelThisOccurrence}
+                disabled={isPending}
+                data-umami-event="lesson-cancel-single"
+              >
+                {t('cancelLesson')}
+              </Button>
+            </div>
           )}
-          <Button
-            variant="none"
-            size="m"
-            className="text-m-base text-text-primary w-full cursor-pointer font-semibold"
-            onClick={handleClose}
-            disabled={isPending}
-            data-umami-event="lesson-cancel-dismiss"
-          >
-            {t('close')}
-          </Button>
-        </ModalBody>
+          {isRecurring ? (
+            <div className={modalFooterClass}>
+              <Button
+                variant="none"
+                size="m"
+                className={modalCancelButtonClass}
+                onClick={handleClose}
+                disabled={isPending}
+                data-umami-event="lesson-cancel-dismiss"
+              >
+                {t('close')}
+              </Button>
+            </div>
+          ) : null}
+        </div>
       </ModalContent>
     </Modal>
   );

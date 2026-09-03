@@ -12,7 +12,7 @@ import {
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { Copy } from '@xipkg/icons';
-import { Skeleton } from 'common.ui';
+import { Skeleton, modalTitleClass } from 'common.ui';
 import { writeText } from 'common.platform';
 import { toast } from 'sonner';
 import { env } from 'common.env';
@@ -23,6 +23,7 @@ import {
   type InviteAnalyticsSource,
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@xipkg/utils';
 import { useCurrentInvite } from '../services/useCurrentInvite';
 
 const cleanupBodyScrollLock = () => {
@@ -189,7 +190,7 @@ export const ModalInvitationV2 = ({
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+          <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-48px)]')}>
             {t('inviteModalV2.title')}
           </ModalTitle>
           <ModalDescription className="text-text-secondary">

@@ -7,14 +7,16 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
-import { MoreVert } from '@xipkg/icons';
+import { MoreVert, Trash } from '@xipkg/icons';
 import { ModalStudentsGroup, useDeleteStudentFromGroup } from 'features.group.manage';
 import {
   ConfirmDialog,
   EmptyClassrooms,
   cardMenuButtonClass,
+  cardMenuDeleteItemClass,
   cardMenuIconClass,
   cardMenuPositionClass,
+  cardMenuSurfaceClass,
 } from 'common.ui';
 import { ErrorState } from './ErrorState';
 import { GroupStudentsListSchema } from 'common.types';
@@ -121,13 +123,17 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
                   <DropdownMenuContent
                     side="bottom"
                     align="end"
-                    className="border-border-default bg-background-surface border p-1"
+                    className={cardMenuSurfaceClass}
+                    onCloseAutoFocus={(event) => event.preventDefault()}
                   >
                     <DropdownMenuItem
+                      error
+                      className={cardMenuDeleteItemClass}
                       onClick={() => {
                         setStudentToDelete({ userId: user_id, name: display_name ?? '' });
                       }}
                     >
+                      <Trash />
                       {t('actions.deleteFromGroup')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>

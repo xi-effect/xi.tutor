@@ -25,6 +25,7 @@ export type {
 export type {
   MaterialId,
   YDocContentKind,
+  ClassroomContentKind,
   MaterialT,
   PersonalMaterialResponse,
   ClassroomMaterialResponse,
@@ -46,8 +47,11 @@ export type {
 } from './materials';
 export {
   serializeMaterialScope,
+  serializeMaterialTagIds,
+  getMaterialTagIds,
   PERSONAL_MATERIAL_SCOPE,
   buildAnyMaterialFilters,
+  buildClassroomMaterialFilters,
 } from './materials';
 export type {
   TemplateT,

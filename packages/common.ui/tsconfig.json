@@ -1,5 +1,8 @@
 {
-  "include": ["src/**/*"],
-  "extends": ["common.typescript/tsconfig.app.json"],
+  "extends": "../common.typescript/tsconfig.app.json",
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  },
+  "include": ["index.ts", "src/**/*"],
   "exclude": ["dist", "build", "node_modules"]
 }

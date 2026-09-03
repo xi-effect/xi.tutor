@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { FileUploader } from '@xipkg/fileuploader';
 import { useTranslation } from 'react-i18next';
+import { modalTitleClass } from 'common.ui';
 import { EditorModalT, useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
@@ -161,7 +162,7 @@ export const ImageUploadModal = () => {
           </>
         ) : (
           <>
-            <ModalTitle>
+            <ModalTitle className={modalTitleClass}>
               {activeModal === 'uploadAudio' && t('upload.audioTitle')}
               {activeModal === 'uploadPdf' && t('upload.pdfTitle')}
               {activeModal === 'uploadPresentation' && t('upload.presentationTitle')}

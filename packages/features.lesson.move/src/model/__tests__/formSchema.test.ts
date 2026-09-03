@@ -61,6 +61,32 @@ describe('createMovingFormSchema', () => {
     expect(withDays.success).toBe(true);
   });
 
+  it('для recurring + single_and_next + дата окончания валидирует дату', () => {
+    const schema = createMovingFormSchema('recurring', t);
+    const withoutUntil = schema.safeParse({
+      ...validBase,
+      moveMode: 'single_and_next',
+      repeatWeekdays: [1],
+      repeatEnds: 'date',
+      repeatUntil: null,
+    });
+    expect(withoutUntil.success).toBe(false);
+
+    const beforeStart = schema.safeParse({
+      ...validBase,
+      moveMode: 'single_and_next',
+      repeatWeekdays: [1],
+      repeatEnds: 'date',
+      repeatUntil: new Date('2026-04-20T00:00:00'),
+    });
+    expect(beforeStart.success).toBe(false);
+    if (!beforeStart.success) {
+      expect(
+        beforeStart.error.issues.some((i) => i.message === 'validation.repeatUntilBeforeStart'),
+      ).toBe(true);
+    }
+  });
+
   it('не требует дни для recurring + single', () => {
     const schema = createMovingFormSchema('recurring', t);
     expect(

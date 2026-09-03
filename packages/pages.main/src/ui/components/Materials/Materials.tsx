@@ -89,7 +89,7 @@ const MaterialsContent = () => {
   }, [selectedFilter, t]);
 
   const emptyActionButtonClass =
-    'bg-background-surface hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
+    'bg-background-page hover:bg-background-subtle text-xs-base-size flex h-8 items-center rounded-lg px-4 font-medium text-text-primary';
 
   const headerActions =
     isTutor && !isMobile ? (

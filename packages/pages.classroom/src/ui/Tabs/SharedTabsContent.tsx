@@ -5,7 +5,6 @@ import { Calendar } from '../Calendar';
 import { Payments } from '../Payments';
 
 interface SharedTabsContentProps {
-  /** Дополнительные Tabs.Content — специфичные для конкретной роли */
   extraContent?: React.ReactNode;
 }
 

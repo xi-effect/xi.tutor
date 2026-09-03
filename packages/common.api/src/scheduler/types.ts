@@ -20,16 +20,16 @@ export type DailyRepetitionModeInputDto = {
   kind: 'daily';
   starts_at: string;
   duration_seconds: number;
-  /** Если не задано — поведение определяет бэкенд */
-  active_period_days?: number;
+  /** Календарные дни активности режима; `null` — без даты окончания */
+  active_period_days: number | null;
 };
 
 export type WeeklyRepetitionModeInputDto = {
   kind: 'weekly';
   starts_at: string;
   duration_seconds: number;
-  /** Если не задано — поведение определяет бэкенд */
-  active_period_days?: number;
+  /** Календарные дни активности режима; `null` — без даты окончания */
+  active_period_days: number | null;
   weekly_bitmask: number;
 };
 
