@@ -4,7 +4,7 @@ import {
   useGetClassroomMaterialsList,
   useGetClassroomMaterialsListStudent,
 } from 'common.services';
-import { ClassroomMaterialsT } from 'common.types';
+import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 import { MaterialsCard } from 'features.materials.card';
 import { EmptyMaterials } from 'common.ui';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +34,10 @@ export const MaterialsList = () => {
 
   const { data: materials, isError } = isTutor ? tutorList : studentList;
   const isLoading = !roleReady || (isTutor ? tutorList.isLoading : studentList.isLoading);
+  const visibleMaterials = (materials ?? []).filter(
+    (material): material is ClassroomMaterialsT & { content_kind: YDocContentKind } =>
+      material.content_kind === 'note' || material.content_kind === 'board',
+  );
 
   if (isLoading) {
     return (
@@ -55,7 +59,7 @@ export const MaterialsList = () => {
     );
   }
 
-  if (!materials || materials.length === 0) {
+  if (!visibleMaterials.length) {
     return (
       <SectionEmptyState
         title={t('materials.noMaterials')}
@@ -68,7 +72,7 @@ export const MaterialsList = () => {
 
   return (
     <WidgetCardsCarousel>
-      {materials.map((material: ClassroomMaterialsT) => (
+      {visibleMaterials.map((material) => (
         <div key={material.id} className={widgetCardSlotClass}>
           <MaterialsCard
             {...material}

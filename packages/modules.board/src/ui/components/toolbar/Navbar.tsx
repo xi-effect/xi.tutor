@@ -15,9 +15,8 @@ import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
-import { insertAsset } from '../../../utils/uploadAsset';
-import { getBoardFileInputAccept } from '../../../constants/mimeTypes';
 import { stickers } from '../../../config';
+import { AssetUploadControl } from './AssetUploadControl';
 
 const toolMapping: Record<string, string> = {
   select: 'select',
@@ -32,6 +31,7 @@ const toolMapping: Record<string, string> = {
   emoji: 'emoji',
   'emoji-sticker': 'emoji-sticker',
   'coordinate-axes': 'coordinate-axes',
+  'flip-card': 'flip-card',
 };
 
 const COMMENT_ACTION = 'comment';
@@ -66,7 +66,8 @@ export const Navbar = track(
       recentEmojis,
       addRecentEmoji,
     } = useDrawStore();
-    const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
+    const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
+      useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
     const editor = useEditor();
@@ -137,6 +138,7 @@ export const Navbar = track(
       }
 
       if (toolName === 'pen') {
+        applyStoreStylesForShape('pen');
         setColor(pencilColor);
         setThickness(pencilThickness);
         setOpacity(pencilOpacity);
@@ -144,33 +146,6 @@ export const Navbar = track(
         setColor(stickerColor);
       } else if (!popupId) {
         resetToDefaults();
-      }
-
-      if (toolName === 'asset') {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = getBoardFileInputAccept();
-        input.multiple = true;
-        input.style.display = 'none';
-        document.body.appendChild(input);
-
-        input.onchange = async (e) => {
-          const selected = Array.from((e.target as HTMLInputElement).files ?? []);
-          try {
-            for (const file of selected) {
-              try {
-                await insertAsset(editor, file, token, addToQueue);
-              } catch (error) {
-                console.error('Ошибка при загрузке файла:', error);
-              }
-            }
-          } finally {
-            input.remove();
-          }
-        };
-
-        input.click();
-        return;
       }
 
       const mappedTool = toolMapping[toolName];
@@ -194,6 +169,7 @@ export const Navbar = track(
         emoji: 'emoji',
         'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
+        'flip-card': 'flip-card',
         'math-figure': 'geo',
       };
 
@@ -206,12 +182,24 @@ export const Navbar = track(
       const isActive =
         item.action === 'activity' ? activityPickerOpen : item.action === currentTool;
 
+      if (item.action === 'asset') {
+        return (
+          <AssetUploadControl
+            icon={item.icon}
+            title={item.title}
+            isActive={isActive}
+            editor={editor}
+            token={token}
+            addToQueue={addToQueue}
+          />
+        );
+      }
+
       if (
         item.action === 'select' ||
         item.action === 'hand' ||
         item.action === 'eraser' ||
-        item.action === 'text' ||
-        item.action === 'asset'
+        item.action === 'text'
       ) {
         return (
           <TooltipProvider>

@@ -46,8 +46,8 @@ export const MaterialsFilterOption = ({
     >
       <span
         className={cn(
-          'flex size-5 shrink-0 items-center justify-center border bg-transparent',
-          isCheckbox ? 'rounded-md' : 'rounded-full',
+          'flex shrink-0 items-center justify-center border bg-transparent',
+          isCheckbox ? 'size-6 rounded-md' : 'size-5 rounded-full',
           selected
             ? 'border-border-focus bg-action-primary-background-default'
             : 'border-border-control',
@@ -55,7 +55,7 @@ export const MaterialsFilterOption = ({
       >
         {selected ? (
           isCheckbox ? (
-            <Check className="fill-background-surface size-3" />
+            <Check className="fill-background-surface size-3.5" />
           ) : (
             <span className="bg-background-surface size-2 rounded-full" />
           )

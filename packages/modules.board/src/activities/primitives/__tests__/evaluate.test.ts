@@ -87,6 +87,57 @@ describe('evaluateActivity', () => {
     expect(evaluateActivity(definition, attempt)).toMatchObject({ correct: 1, total: 1 });
   });
 
+  it('reveal для single choice выбирает правильный ответ', () => {
+    const definition = getDefaultDefinition('multiple-choice');
+    if (definition.kind !== 'multiple-choice') throw new Error('kind');
+    const revealed = revealAttempt(definition, createEmptyAttempt(definition, 1));
+    expect(evaluateActivity(definition, revealed)).toMatchObject({ correct: 1, total: 1 });
+    for (const option of definition.options) {
+      expect(Boolean(revealed.selected[option.id])).toBe(option.correct);
+    }
+  });
+
+  it('пустой ответ при multiple без выбранных correct не даёт полный балл', () => {
+    const definition = getDefaultDefinition('multiple-choice');
+    if (definition.kind !== 'multiple-choice') throw new Error('kind');
+    definition.multiple = true;
+    definition.options = definition.options.map((option) => ({ ...option, correct: false }));
+    const attempt = createEmptyAttempt(definition, 1);
+    expect(evaluateActivity(definition, attempt)).toMatchObject({ correct: 0, total: 1 });
+  });
+
+  it('пустой ответ при multiple с correct не засчитывает true negatives', () => {
+    const definition = getDefaultDefinition('multiple-choice');
+    if (definition.kind !== 'multiple-choice') throw new Error('kind');
+    definition.multiple = true;
+    const attempt = createEmptyAttempt(definition, 1);
+    const scored = evaluateActivity(definition, attempt);
+    expect(scored.correct).toBe(0);
+    expect(scored.total).toBe(1);
+  });
+
+  it('multiple choice считает только отмеченные и ошибочно выбранные', () => {
+    const definition = getDefaultDefinition('multiple-choice');
+    if (definition.kind !== 'multiple-choice') throw new Error('kind');
+    definition.multiple = true;
+    const [a, b, c] = definition.options;
+    definition.options = [
+      { ...a!, correct: true },
+      { ...b!, correct: true },
+      { ...c!, correct: false },
+    ];
+    const attempt = createEmptyAttempt(definition, 1);
+    attempt.selected[a!.id] = true;
+    attempt.selected[b!.id] = true;
+    expect(evaluateActivity(definition, attempt)).toMatchObject({ correct: 2, total: 2 });
+
+    attempt.selected[c!.id] = true;
+    const withWrong = evaluateActivity(definition, attempt);
+    expect(withWrong.correct).toBe(2);
+    expect(withWrong.total).toBe(3);
+    expect(withWrong.byItem[c!.id]).toBe(false);
+  });
+
   it('сброс очищает ответы', () => {
     const definition = getDefaultDefinition('gap-text');
     const revealed = revealAttempt(definition, createEmptyAttempt(definition, 1));

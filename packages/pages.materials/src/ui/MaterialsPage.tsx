@@ -9,17 +9,25 @@ import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
+import { LibraryTagsUiProvider } from './Files/tags/LibraryTagsUiContext';
+import { useLibraryTags } from './Files/tags/useLibraryTags';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { MaterialScopeFilterT } from '../types';
+import {
+  MaterialScopeFilterT,
+  MaterialsTabT,
+  DEFAULT_FILES_FILTERS,
+  FilesFiltersT,
+  type FilesTagOptionT,
+} from '../types';
 
-const getTabFromUrl = (): 'notes' | 'boards' => {
+const getTabFromUrl = (): MaterialsTabT => {
   if (typeof window === 'undefined') {
     return 'boards';
   }
 
   const tab = new URLSearchParams(window.location.search).get('tab');
-  return tab === 'notes' || tab === 'boards' ? tab : 'boards';
+  return tab === 'notes' || tab === 'boards' || tab === 'files' ? tab : 'boards';
 };
 
 const getClassroomIdsFromUrl = (): number[] => {
@@ -70,17 +78,39 @@ const replaceSearchParams = (updates: Record<string, string | null>) => {
 };
 
 const MaterialsPageContent = () => {
-  const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
+  const [activeTab, setActiveTab] = useState<MaterialsTabT>(() => getTabFromUrl());
   const [scopeFilter, setScopeFilter] = useState<MaterialScopeFilterT>(() => getScopeFromUrl());
   const [classroomIds, setClassroomIds] = useState<number[]>(() =>
     getScopeFromUrl() === 'classroom' ? getClassroomIdsFromUrl() : [],
   );
+  const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
+  const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
+  const { tags, isFetched } = useLibraryTags();
+
+  useEffect(() => {
+    if (!isFetched) {
+      return;
+    }
+    const validIds = new Set(tags.map((tag) => tag.id));
+    setFilesFilters((current) => {
+      const nextTags = current.tags.filter((tag) => validIds.has(tag.id));
+      if (nextTags.length === current.tags.length) {
+        return current;
+      }
+
+      return { ...current, tags: nextTags };
+    });
+    setMaterialTags((current) => {
+      const nextTags = current.filter((tag) => validIds.has(tag.id));
+      return nextTags.length === current.length ? current : nextTags;
+    });
+  }, [isFetched, tags]);
 
   useEffect(() => {
     const syncFromUrl = () => {
@@ -97,12 +127,16 @@ const MaterialsPageContent = () => {
   }, []);
 
   const handleTabChange = (tabId: string) => {
-    if (tabId !== 'notes' && tabId !== 'boards') {
+    if (tabId !== 'notes' && tabId !== 'boards' && tabId !== 'files') {
       return;
     }
 
     replaceSearchParams({ tab: tabId });
     setActiveTab(tabId);
+  };
+
+  const handleResetFilesFilters = () => {
+    setFilesFilters(DEFAULT_FILES_FILTERS);
   };
 
   const handleScopeChange = (scope: MaterialScopeFilterT) => {
@@ -130,7 +164,7 @@ const MaterialsPageContent = () => {
       <div
         className={cn(
           'bg-background-page flex flex-col gap-4',
-          isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+          isMobile ? 'h-full min-h-0 overflow-hidden' : 'h-screen',
         )}
       >
         <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
@@ -141,14 +175,19 @@ const MaterialsPageContent = () => {
             classroomIds={classroomIds}
             onScopeChange={handleScopeChange}
             onClassroomChange={handleClassroomChange}
+            filesFilters={filesFilters}
+            onFilesFiltersChange={setFilesFilters}
+            onResetFilesFilters={handleResetFilesFilters}
+            materialTags={materialTags}
+            onMaterialTagsChange={setMaterialTags}
           />
         </div>
 
         <div
           ref={parentRef}
           className={cn(
-            'h-full overflow-y-auto px-5 pb-5 sm:mt-4 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
-            !isMobile && 'flex-1',
+            'min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-5 sm:mt-4 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
+            isMobile && 'pb-20',
           )}
         >
           <TabsComponent
@@ -156,6 +195,9 @@ const MaterialsPageContent = () => {
             scopeFilter={scopeFilter}
             classroomIds={classroomIds}
             parentRef={parentRef}
+            filesFilters={filesFilters}
+            onResetFilesFilters={handleResetFilesFilters}
+            materialTagIds={materialTags.map((tag) => tag.id)}
           />
         </div>
       </div>
@@ -180,7 +222,9 @@ const MaterialsPageContent = () => {
 export const MaterialsPage = () => {
   return (
     <MaterialsDuplicateProvider>
-      <MaterialsPageContent />
+      <LibraryTagsUiProvider>
+        <MaterialsPageContent />
+      </LibraryTagsUiProvider>
     </MaterialsDuplicateProvider>
   );
 };

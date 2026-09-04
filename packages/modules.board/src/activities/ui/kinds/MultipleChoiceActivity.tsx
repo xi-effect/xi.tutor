@@ -3,7 +3,14 @@ import { Checkbox } from '@xipkg/checkbox';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
-import type { ActivityAttempt, CheckStatus, MultipleChoiceDefinition } from '../../model/types';
+import { normalizeMultipleChoiceDefinition } from '../../model/multipleChoice';
+import type {
+  ActivityAttempt,
+  CheckStatus,
+  ChoiceOption,
+  ItemStatus,
+  MultipleChoiceDefinition,
+} from '../../model/types';
 import { Selectable } from '../primitives';
 import { ActivityInputField, ActivityTextareaField } from '../activityFields';
 import { ActivityMotionList } from '../activityUiMotion';
@@ -12,18 +19,44 @@ type Props = {
   definition: MultipleChoiceDefinition;
   attempt: ActivityAttempt;
   checkStatus: CheckStatus;
-  byItem: Record<string, boolean>;
+  byItem?: Record<string, boolean>;
   mode: 'edit' | 'play';
   onDefinition: (definition: MultipleChoiceDefinition) => void;
   onAttempt: (attempt: ActivityAttempt) => void;
   interactLocked?: boolean;
 };
 
+function optionPlayStatus(
+  option: ChoiceOption,
+  selected: boolean,
+  checkStatus: CheckStatus,
+  multiple: boolean,
+): ItemStatus {
+  if (checkStatus === 'idle') return 'idle';
+
+  if (checkStatus === 'revealed') {
+    if (option.correct) return 'correct';
+    if (selected) return 'wrong';
+    return 'idle';
+  }
+
+  // checked
+  if (multiple) {
+    if (option.correct && selected) return 'correct';
+    if (option.correct && !selected) return 'wrong';
+    if (!option.correct && selected) return 'wrong';
+    return 'idle';
+  }
+
+  if (selected && option.correct) return 'correct';
+  if (selected && !option.correct) return 'wrong';
+  return 'idle';
+}
+
 export function MultipleChoiceActivity({
   definition,
   attempt,
   checkStatus,
-  byItem,
   mode,
   onDefinition,
   onAttempt,
@@ -31,17 +64,22 @@ export function MultipleChoiceActivity({
 }: Props) {
   const { t } = useTranslation('board');
   const locked = checkStatus === 'revealed' || interactLocked;
+  const playDefinition = normalizeMultipleChoiceDefinition(definition);
   const optionIds = attempt.optionOrder.length
     ? attempt.optionOrder
-    : definition.options.map((option) => option.id);
-  const optionsById = new Map(definition.options.map((option) => [option.id, option]));
+    : playDefinition.options.map((option) => option.id);
+  const optionsById = new Map(playDefinition.options.map((option) => [option.id, option]));
+
+  const commitDefinition = (next: MultipleChoiceDefinition) => {
+    onDefinition(normalizeMultipleChoiceDefinition(next));
+  };
 
   if (mode === 'edit') {
     return (
       <div className="flex flex-col gap-2 p-3">
         <ActivityTextareaField
           value={definition.question}
-          onChange={(event) => onDefinition({ ...definition, question: event.target.value })}
+          onChange={(event) => commitDefinition({ ...definition, question: event.target.value })}
         />
         {definition.multiple ? (
           definition.options.map((option) => (
@@ -51,7 +89,7 @@ export function MultipleChoiceActivity({
                 data-board-control=""
                 checked={option.correct}
                 onCheckedChange={() =>
-                  onDefinition({
+                  commitDefinition({
                     ...definition,
                     options: definition.options.map((entry) =>
                       entry.id === option.id ? { ...entry, correct: !entry.correct } : entry,
@@ -63,7 +101,7 @@ export function MultipleChoiceActivity({
               <ActivityInputField
                 value={option.text}
                 onChange={(event) =>
-                  onDefinition({
+                  commitDefinition({
                     ...definition,
                     options: definition.options.map((entry) =>
                       entry.id === option.id ? { ...entry, text: event.target.value } : entry,
@@ -77,7 +115,7 @@ export function MultipleChoiceActivity({
           <Radio
             value={definition.options.find((option) => option.correct)?.id ?? ''}
             onValueChange={(id) =>
-              onDefinition({
+              commitDefinition({
                 ...definition,
                 options: definition.options.map((entry) => ({
                   ...entry,
@@ -95,7 +133,7 @@ export function MultipleChoiceActivity({
                 <ActivityInputField
                   value={option.text}
                   onChange={(event) =>
-                    onDefinition({
+                    commitDefinition({
                       ...definition,
                       options: definition.options.map((entry) =>
                         entry.id === option.id ? { ...entry, text: event.target.value } : entry,
@@ -112,15 +150,16 @@ export function MultipleChoiceActivity({
           size="s"
           className="h-7 self-start px-3 text-xs"
           data-board-control=""
-          onClick={() =>
-            onDefinition({
+          onClick={() => {
+            const id = createActivityId();
+            commitDefinition({
               ...definition,
-              options: [
-                ...definition.options,
-                { id: createActivityId(), text: t('activity.option'), correct: false },
-              ],
-            })
-          }
+              options: [...definition.options, { id, text: t('activity.option'), correct: false }],
+            });
+            if (attempt.optionOrder.length > 0) {
+              onAttempt({ ...attempt, optionOrder: [...attempt.optionOrder, id] });
+            }
+          }}
         >
           {t('activity.addOption')}
         </Button>
@@ -130,27 +169,12 @@ export function MultipleChoiceActivity({
 
   return (
     <ActivityMotionList className="flex flex-col gap-2 p-3">
-      <p className="text-text-primary text-sm font-medium">{definition.question}</p>
+      <p className="text-text-primary text-sm font-medium">{playDefinition.question}</p>
       {optionIds.map((id) => {
         const option = optionsById.get(id);
         if (!option) return null;
         const selected = Boolean(attempt.selected[option.id]);
-        const status =
-          checkStatus === 'idle'
-            ? 'idle'
-            : definition.multiple
-              ? byItem[option.id]
-                ? 'correct'
-                : selected || option.correct
-                  ? 'wrong'
-                  : 'idle'
-              : byItem.question
-                ? selected
-                  ? 'correct'
-                  : 'idle'
-                : selected
-                  ? 'wrong'
-                  : 'idle';
+        const status = optionPlayStatus(option, selected, checkStatus, playDefinition.multiple);
         return (
           <Selectable
             key={option.id}
@@ -158,10 +182,10 @@ export function MultipleChoiceActivity({
             status={status}
             disabled={locked}
             onToggle={() => {
-              const next = definition.multiple
+              const next = playDefinition.multiple
                 ? { ...attempt.selected, [option.id]: !selected }
                 : Object.fromEntries(
-                    definition.options.map((entry) => [entry.id, entry.id === option.id]),
+                    playDefinition.options.map((entry) => [entry.id, entry.id === option.id]),
                   );
               onAttempt({ ...attempt, selected: next });
             }}

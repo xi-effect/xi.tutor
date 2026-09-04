@@ -34,7 +34,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         ? 'w-full h-screen min-h-0 overflow-hidden'
         : 'h-screen min-h-0 overflow-hidden'
       : isMobile
-        ? 'w-full'
+        ? 'h-dvh min-h-0 w-full overflow-hidden'
         : 'h-screen min-h-0 overflow-hidden';
 
   // paddingBottom через style: динамический `pb-[${n}px]` Tailwind JIT не генерирует.

@@ -9,6 +9,7 @@ enum MaterialsQueryKey {
   DeleteMaterials = 'DeleteMaterials',
   GetMaterial = 'GetMaterial',
   UpdateMaterial = 'UpdateMaterial',
+  SetMaterialTags = 'SetMaterialTags',
   StorageItem = 'StorageItem',
   MaterialDuplicates = 'MaterialDuplicates',
 }
@@ -37,14 +38,22 @@ const materialsApiConfig = {
     getUrl: (id: string) => `${CONTENT_SERVICE_URL}/roles/tutor/personal-materials/${id}/`,
     method: HttpMethod.PATCH,
   },
+  [MaterialsQueryKey.SetMaterialTags]: {
+    getUrl: (id: string) => `${CONTENT_SERVICE_URL}/roles/tutor/materials/${id}/tags/`,
+    method: HttpMethod.PUT,
+  },
   [MaterialsQueryKey.StorageItem]: {
     getUrl: (id: string) =>
       `${CONTENT_SERVICE_URL}/roles/tutor/personal-materials/${id}/storage-item/`,
     method: HttpMethod.GET,
   },
   [MaterialsQueryKey.MaterialDuplicates]: {
-    getUrl: (classroomId: string) =>
-      `${CONTENT_SERVICE_URL}/roles/tutor/classrooms/${classroomId}/material-duplicates/`,
+    getUrl: (classroomId: string, shouldCopyTags = true) => {
+      const params = new URLSearchParams({
+        should_copy_tags: String(shouldCopyTags),
+      });
+      return `${CONTENT_SERVICE_URL}/roles/tutor/classrooms/${classroomId}/material-duplicates/?${params.toString()}`;
+    },
     method: HttpMethod.POST,
   },
 };

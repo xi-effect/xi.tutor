@@ -147,7 +147,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
       <ModalContent aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+          <ModalTitle className="font-playfair text-text-primary m-0 max-w-[calc(100%-48px)] text-2xl leading-normal font-medium">
             {t('title')}
           </ModalTitle>
         </ModalHeader>

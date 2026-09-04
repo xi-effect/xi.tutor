@@ -1,4 +1,14 @@
-import { Account, Exit, Key, Palette, Notification, File, Music, SoundOn } from '@xipkg/icons';
+import {
+  Account,
+  Exit,
+  File,
+  Key,
+  Music,
+  Notification,
+  Palette,
+  SoundOn,
+  WhiteBoard,
+} from '@xipkg/icons';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
@@ -48,6 +58,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <SoundOn className={iconClasses} key="sound-and-video-icon" />;
       case 'effects':
         return <Music className={iconClasses} key="music-icon" />;
+      case 'board':
+        return <WhiteBoard className={iconClasses} key="board-icon" />;
       case 'report':
         return <File className={iconClasses} key="report-icon" />;
       default:
@@ -120,6 +132,10 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
       {
         name: t('menu.effects'),
         query: 'effects',
+      },
+      {
+        name: t('menu.board'),
+        query: 'board',
       },
       {
         name: t('menu.report'),

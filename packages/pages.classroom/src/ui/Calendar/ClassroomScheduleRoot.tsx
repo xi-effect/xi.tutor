@@ -1,11 +1,10 @@
 import { useCallback, useState, type ReactNode } from 'react';
 import { useParams } from '@tanstack/react-router';
-import { AddingLessonModal } from 'features.lesson.add';
+import { AddingLessonModal, buildCreateClassroomEventRequest } from 'features.lesson.add';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { useCreateClassroomEvent } from 'modules.calendar';
 import { useCurrentUser, useGetClassroom } from 'common.services';
 import { ClassroomScheduleProvider } from './scheduleContext';
-import { buildCreateClassroomEventRequest } from './schedulerMapping';
 
 export const ClassroomScheduleRoot = ({ children }: { children: ReactNode }) => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();

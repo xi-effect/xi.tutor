@@ -191,7 +191,7 @@ export const PaymentsPage = () => {
     <div
       className={cn(
         'bg-background-page flex flex-col gap-4',
-        isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+        isMobile ? 'h-full min-h-0 overflow-hidden' : 'h-screen',
       )}
     >
       <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
@@ -203,7 +203,12 @@ export const PaymentsPage = () => {
         />
       </div>
 
-      <div className={cn('h-full pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10', !isMobile && 'flex-1')}>
+      <div
+        className={cn(
+          'flex min-h-0 flex-1 flex-col pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10',
+          isMobile && 'pb-20',
+        )}
+      >
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
           activeTab={activeTab}

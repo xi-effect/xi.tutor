@@ -1,34 +1,11 @@
 import type { GetEventInstanceDetailsResponseDto } from 'common.api';
 import { extractInstanceSlot } from 'common.services';
 import { getDateLocale } from 'common.ui';
-import type { FormData as AddingLessonFormData } from 'features.lesson.add';
-import { durationBetweenMinutes } from 'features.lesson.add';
-import type {
-  CreateClassroomEventRequestDto,
-  ICalendarEvent,
-  ScheduleItem,
-  ScheduleLessonRow,
-} from 'modules.calendar';
+import type { ICalendarEvent, ScheduleItem, ScheduleLessonRow } from 'modules.calendar';
 import { resolveSchedulerStartsAt } from 'modules.calendar';
 import { startOfDay } from 'date-fns';
 
 const MS_PER_SECOND = 1000;
-const WEEKDAY_TO_BIT = [1, 2, 4, 8, 16, 32, 64] as const;
-
-const parseTimeParts = (time: string): [number, number] => {
-  const [hours = '0', minutes = '0'] = time.split(':');
-  return [Number(hours), Number(minutes)];
-};
-
-const combineDateAndTime = (date: Date, time: string): Date => {
-  const [hours, minutes] = parseTimeParts(time);
-  const result = new Date(date);
-  result.setHours(hours, minutes, 0, 0);
-  return result;
-};
-
-const durationBetweenToSeconds = (startTime: string, endTime: string): number =>
-  durationBetweenMinutes(startTime, endTime) * 60;
 
 const getCalendarEventId = (item: ScheduleItem): string => {
   const instance = item.eventInstance;
@@ -169,43 +146,6 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
         }
       : undefined,
   }));
-
-export const buildCreateClassroomEventRequest = (
-  data: AddingLessonFormData,
-): CreateClassroomEventRequestDto => {
-  const startsAt = combineDateAndTime(data.startDate, data.startTime);
-  const durationSeconds = durationBetweenToSeconds(data.startTime, data.endTime);
-  const descriptionTrimmed = data.description?.trim() ?? '';
-  const event = {
-    name: data.title.trim(),
-    description: descriptionTrimmed.length > 0 ? descriptionTrimmed : null,
-  };
-
-  if (data.repeatMode === 'none') {
-    return {
-      kind: 'single',
-      event,
-      sole_instance: {
-        starts_at: startsAt.toISOString(),
-        duration_seconds: durationSeconds,
-      },
-    };
-  }
-
-  const selectedDays = data.repeatDays.length > 0 ? data.repeatDays : [(startsAt.getDay() + 6) % 7];
-  const weeklyBitmask = selectedDays.reduce((mask, day) => mask | WEEKDAY_TO_BIT[day], 0);
-
-  return {
-    kind: 'repeating',
-    event,
-    repetition_mode: {
-      kind: 'weekly',
-      starts_at: startsAt.toISOString(),
-      duration_seconds: durationSeconds,
-      weekly_bitmask: weeklyBitmask,
-    },
-  };
-};
 
 export const getScheduleQueryRange = (
   days: Date[],

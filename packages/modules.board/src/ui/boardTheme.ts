@@ -4,7 +4,8 @@ import { cn } from '@xipkg/utils';
 export const boardPanelClass =
   'bg-background-surface border-border-default border rounded-xl lg:rounded-2xl';
 
-export const boardMenuSurfaceClass = 'border-border-default bg-background-surface border';
+export const boardMenuSurfaceClass =
+  'border-border-default bg-background-elevated border shadow-md';
 
 /**
  * Пункты выпадающих меню доски.
@@ -85,5 +86,5 @@ export const boardDropdownZClass = 'z-[45]';
  */
 export const boardPopoverListItemClass = cn(
   boardMenuItemClass,
-  'bg-transparent hover:bg-background-page rounded-lg transition-colors',
+  'appearance-none bg-transparent hover:bg-background-page rounded-lg shadow-none transition-colors',
 );

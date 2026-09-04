@@ -15,6 +15,12 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
+import {
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalFooterClass,
+  modalTitleClass,
+} from 'common.ui';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createChangeLessonFormSchema, type ChangeLessonFormData } from '../model';
@@ -150,7 +156,7 @@ export const ChangeLessonModal = ({
       <ModalContent className="relative w-full max-w-[480px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className="text-xl-base text-text-primary max-w-[calc(100%-56px)] font-semibold">
+          <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-56px)]')}>
             {t('title')}
           </ModalTitle>
         </ModalHeader>
@@ -223,12 +229,12 @@ export const ChangeLessonModal = ({
               </div>
             </ModalBody>
 
-            <ModalFooter className="flex flex-row gap-2 px-6 pb-6">
+            <ModalFooter className={modalFooterClass}>
               <Button
                 type="button"
                 variant="none"
                 size="m"
-                className="bg-background-page hover:bg-background-subtle text-text-primary h-11 flex-1 p-0 font-medium"
+                className={modalCancelButtonClass}
                 onClick={handleClose}
                 data-umami-event="lesson-change-cancel"
               >
@@ -238,7 +244,7 @@ export const ChangeLessonModal = ({
                 type="submit"
                 variant="primary"
                 size="m"
-                className="h-11 flex-1 p-0"
+                className={modalConfirmButtonClass}
                 data-umami-event="lesson-change-save"
               >
                 {t('save')}

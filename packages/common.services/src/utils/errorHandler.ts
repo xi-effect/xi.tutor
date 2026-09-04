@@ -1,7 +1,6 @@
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
-// Типы ошибок для разных операций
 export type ErrorType =
   | 'profile'
   | 'email'
@@ -21,13 +20,17 @@ export type ErrorType =
   | 'calls'
   | 'createGroup'
   | 'files'
+  | 'tags'
   | 'notifications'
   | 'emailConfirmation'
   | 'emailConfirmationRequest'
   | 'scheduler';
 
-// Маппинг ошибок для разных операций
-const errorMessages: Record<ErrorType, Record<string, string>> = {
+/**
+ * Только те ответы бэкенда, по которым пользователь может что-то сделать.
+ * 4xx вроде 404/403/Validation Error — нормальные статусы API, в toast не идут.
+ */
+const userFacingDetails: Partial<Record<ErrorType, Record<string, string>>> = {
   profile: {
     'Username already in use': 'Такое имя пользователя уже занято',
     'Display name already in use': 'Такое отображаемое имя уже занято',
@@ -51,102 +54,98 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Invalid password format': 'Неверный формат пароля',
   },
   materials: {
-    'Invalid material type': 'Неверный тип',
     'Name is required': 'Название обязательно',
-  },
-  role: {
-    'Invalid role value': 'Неверное значение роли',
   },
   addInvitation: {
     'Invitation quantity exceeded': 'Превышено количество приглашений',
     'Quantity exceeded':
       'Достигнут лимит ссылок. Используйте уже созданную — она подходит для нескольких учеников.',
   },
-  deleteInvitation: {
-    'Validation Error': 'Ошибка валидации',
-    'Invitation not found': 'Приглашение не найдено',
-    'Invitation access denied': 'Доступ к приглашению запрещён',
-  },
-  onboarding: {
-    'Invalid transition': 'Неверный режим перехода',
-  },
   addInvoiceTemplate: {
-    'Validation Error': 'Ошибка валидации',
-    'Quantity exceeded': 'Превышено допустимое количество',
-  },
-  deleteInvoiceTemplate: {
-    'Validation Error': 'Ошибка валидации',
-    'Invoice item template not found': 'Шаблон не найден',
-  },
-  updateInvoiceTemplate: {
-    'Validation Error': 'Ошибка валидации',
-    'Invoice item template access denied': 'Доступ к шаблону запрещен',
-    'Invoice item template not found': 'Шаблон не найден',
-  },
-  deleteStudent: {
-    'Validation Error': 'Ошибка валидации',
-    'Student not found': 'Ученик не найден',
+    'Quantity exceeded': 'Превышено допустимое количество шаблонов',
   },
   acceptInvite: {
-    'Validation Error': 'Ошибка валидации',
-    'Invitation not found': 'Приглашение не найдено',
-    'Invitation access denied': 'Доступ к приглашению запрещен',
     'Already joined': 'Вы уже приняли это приглашение',
     'Target is the source': 'Репетитор не может принять собственное приглашение',
   },
-  classroom: {
-    'Validation Error': 'Ошибка валидации',
-    'Classroom not found': 'Класс не найден',
-    'Classroom access denied': 'Доступ к классу запрещен',
-    'Invalid status': 'Неверный статус класса',
-  },
-  calls: {
-    'Validation Error': 'Ошибка валидации',
-    'Access token not found': 'Access token не найден',
-    'Access token access denied': 'Доступ к access token запрещен',
-  },
   createGroup: {
-    'Validation Error': 'Ошибка валидации',
     'Group name already exists': 'Группа с таким названием уже существует',
-    'Subject not found': 'Предмет не найден',
   },
   files: {
     'Invalid file format': 'Недопустимый тип файла',
   },
-  notifications: {
-    'Validation Error': 'Ошибка валидации',
-    'Notification not found': 'Уведомление не найдено',
-    'Notification access denied': 'Доступ к уведомлению запрещен',
+  tags: {
+    'Tag already exists': 'Тег с таким названием уже существует',
+    'Quantity exceeded': 'Достигнут лимит тегов',
   },
   emailConfirmation: {
-    'Too many emails': 'Слишком много запросов',
+    'Too many emails': 'Слишком много запросов. Попробуйте позже',
     'Email already confirmed': 'Email уже подтвержден',
-    'Invalid token': 'Неверный токен',
+    'Invalid token': 'Неверная ссылка подтверждения',
   },
   emailConfirmationRequest: {
     'Email already confirmed': 'Email уже подтвержден',
-    'Invalid token': 'Неверный токен',
-  },
-  scheduler: {
-    'Validation Error': 'Ошибка валидации',
-    'Event not found': 'Событие не найдено',
-    'Event access denied': 'Доступ к событию запрещён',
+    'Invalid token': 'Неверная ссылка подтверждения',
   },
 };
 
-// Общие сообщения об ошибках по статусам
-const statusMessages: Record<number, string> = {
-  400: 'Неверные данные',
-  401: 'Необходима авторизация',
-  403: 'Недостаточно прав',
-  404: 'Ресурс не найден',
-  413: 'Слишком большой файл',
-  415: 'Недопустимый формат файла',
-  422: 'Ошибка валидации данных',
-  500: 'Внутренняя ошибка сервера',
+const FILE_TOO_LARGE = 'Файл слишком большой. Изображения — до 1 МБ, остальные — до 5 МБ';
+const FILE_UNSUPPORTED = 'Недопустимый формат файла';
+const ACTION_FAILED = 'Не получилось выполнить действие. Попробуйте позже.';
+
+const readDetail = (error: AxiosError): string | undefined => {
+  const data = error.response?.data;
+  if (typeof data !== 'object' || data === null || !('detail' in data)) {
+    return undefined;
+  }
+
+  const { detail } = data;
+  return typeof detail === 'string' ? detail : undefined;
 };
 
-// Успешные сообщения
+/**
+ * Текст для toast: null, если пользователю не нужно ничего объяснять.
+ */
+export const getUserFacingErrorMessage = (error: unknown, type: ErrorType): string | null => {
+  if (!(error instanceof AxiosError)) {
+    return null;
+  }
+
+  const status = error.response?.status;
+  const detail = readDetail(error);
+
+  if (type === 'emailConfirmationRequest' && status === 401) {
+    return 'Пользователь не найден';
+  }
+
+  if (detail && userFacingDetails[type]?.[detail]) {
+    return userFacingDetails[type][detail];
+  }
+
+  if (type === 'files' && (status === 413 || status === 415 || status === 422)) {
+    return status === 413 ? FILE_TOO_LARGE : FILE_UNSUPPORTED;
+  }
+
+  if (typeof status === 'number' && status >= 500) {
+    return ACTION_FAILED;
+  }
+
+  return null;
+};
+
+/**
+ * Сообщение для UI (формы, инлайн). Для неизвестных 4xx не подставляет статус бэкенда.
+ */
+export const getApiErrorMessage = (error: unknown, type: ErrorType): string =>
+  getUserFacingErrorMessage(error, type) ?? ACTION_FAILED;
+
+export const handleError = (error: unknown, type: ErrorType): void => {
+  const message = getUserFacingErrorMessage(error, type);
+  if (message) {
+    toast.error(message);
+  }
+};
+
 const successMessages: Record<ErrorType, string> = {
   profile: 'Профиль успешно обновлен',
   email: 'Email успешно обновлен. Проверьте почту для подтверждения.',
@@ -166,87 +165,17 @@ const successMessages: Record<ErrorType, string> = {
   calls: 'Access token создан',
   createGroup: 'Группа успешно создана',
   files: 'Файл успешно загружен',
+  tags: 'Тег сохранён',
   notifications: 'Уведомление успешно отмечено как прочитанное',
   emailConfirmation: 'Письмо для подтверждения email было отправлено',
   emailConfirmationRequest: 'Почта успешно подтверждена',
   scheduler: 'Операция с расписанием выполнена',
 };
 
-/**
- * Обрабатывает ошибки и показывает соответствующие toast уведомления
- */
-export const handleError = (error: unknown, type: ErrorType): void => {
-  if (error instanceof AxiosError) {
-    const status = error.response?.status;
-    const detail = error.response?.data?.detail;
-
-    if (type === 'emailConfirmationRequest' && status === 401) {
-      toast.error('Пользователь не найден');
-      return;
-    }
-
-    // if (type === 'emailConfirmation' && detail === 'Too many emails') {
-
-    // Проверяем специфичные ошибки для типа операции
-    if (detail && errorMessages[type][detail]) {
-      toast.error(errorMessages[type][detail]);
-      return;
-    }
-
-    // Проверяем общие ошибки по статусу
-    if (status && statusMessages[status]) {
-      toast.error(statusMessages[status]);
-      return;
-    }
-
-    // Общая ошибка для типа операции
-    toast.error(`Произошла ошибка при ${getOperationName(type)}`);
-  } else if (error instanceof Error && error.message) {
-    toast.error(error.message);
-  } else {
-    toast.error('Произошла неизвестная ошибка');
-  }
-};
-
-/**
- * Показывает успешное уведомление
- */
 export const showSuccess = (type: ErrorType, message?: string): void => {
   if (message) {
     toast.success(message);
   } else {
     toast.success(successMessages[type]);
-  }
-};
-
-/**
- * Возвращает название операции для сообщений об ошибках
- */
-const getOperationName = (type: ErrorType): string => {
-  switch (type) {
-    case 'profile':
-      return 'обновлении профиля';
-    case 'email':
-      return 'обновлении email';
-    case 'password':
-      return 'обновлении пароля';
-    case 'resetPassword':
-      return 'сбросе пароля';
-    case 'materials':
-      return 'создании материала';
-    case 'role':
-      return 'назначении роли';
-    case 'onboarding':
-      return 'переходе на этап онбординга';
-    case 'deleteStudent':
-      return 'удалении ученика';
-    case 'createGroup':
-      return 'создании группы';
-    case 'files':
-      return 'загрузке файла';
-    case 'notifications':
-      return 'обработке уведомления';
-    default:
-      return 'выполнении операции';
   }
 };

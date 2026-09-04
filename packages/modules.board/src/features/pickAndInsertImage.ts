@@ -1,9 +1,11 @@
+import { prepareContentUpload } from 'common.services';
 import { nanoid } from 'nanoid';
 import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
+import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import i18n from 'i18next';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
@@ -27,7 +29,9 @@ export async function insertImage(
   placement?: InsertImagePlacement,
 ) {
   // Клон: временный <input> могут убрать из DOM до чтения File (Safari / первый выбор).
-  file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
+  file = prepareContentUpload(
+    new File([file], file.name, { type: file.type, lastModified: file.lastModified }),
+  ).file;
 
   if (!file.size) {
     toast.error(i18n.t('toast.fileEmpty', { ns: 'board' }), {
@@ -148,10 +152,13 @@ export async function insertImage(
       ]);
     } catch (err) {
       console.error('Image upload failed:', err);
-      const errorMessage =
-        err instanceof Error ? err.message : i18n.t('toast.imageUploadFailed', { ns: 'board' });
-      toast.error(i18n.t('toast.imageUploadError', { ns: 'board' }), {
-        description: errorMessage,
+      const { title, description } = getBoardUploadErrorToast(err, file, MAX_IMAGE_SIZE_BYTES, {
+        sizeDescKey: 'toast.imageSizeDesc',
+        failedTitleKey: 'toast.imageUploadError',
+        failedDescKey: 'toast.imageUploadFailed',
+      });
+      toast.error(title, {
+        description,
         duration: 5000,
       });
       editor.deleteShapes([shapeId]);

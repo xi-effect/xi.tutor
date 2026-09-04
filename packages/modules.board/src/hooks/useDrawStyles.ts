@@ -35,6 +35,11 @@ export const useDrawStyles = () => {
     (toolName: ToolType) => {
       if (!editor) return;
 
+      if (toolName === 'pen') {
+        // Иначе заливка от фигур (semi) остаётся на карандаше и заливает замкнутый штрих.
+        editor.setStyleForNextShapes(DefaultFillStyle, 'none');
+      }
+
       if (toolName === 'xi-geo') {
         editor.setStyleForNextShapes(DefaultFillStyle, geoFillType);
         editor.setStyleForNextShapes(

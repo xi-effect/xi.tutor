@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { isSameDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
+import { Virtual } from 'swiper/modules';
 import { cn } from '@xipkg/utils';
 import { getWeekDays, getWeekStartsRange } from '../../../utils';
 
 import 'swiper/css';
+import 'swiper/css/virtual';
 
 /** ±5 лет — практически без «края» ленты недель */
 const WEEKS_PAST = 260;
@@ -84,18 +86,24 @@ export const ScheduleWeekCarousel = ({
 
   return (
     <Swiper
+      modules={[Virtual]}
       className="h-[84px] w-full"
       slidesPerView={1}
       spaceBetween={0}
+      virtual={{
+        enabled: true,
+        addSlidesBefore: 1,
+        addSlidesAfter: 1,
+      }}
       onSwiper={handleSwiper}
       onSlideChange={handleSlideChange}
       initialSlide={currentWeekIndex}
       resistanceRatio={0.85}
     >
-      {weeks.map((start) => {
+      {weeks.map((start, weekIndex) => {
         const days = getWeekDays(start);
         return (
-          <SwiperSlide key={start.toISOString()} className="py-6">
+          <SwiperSlide key={start.toISOString()} virtualIndex={weekIndex} className="py-6">
             <div className="grid grid-cols-7 gap-1 px-1">
               {days.map((date, i) => {
                 const isSelected = isSameDay(date, selectedDate);

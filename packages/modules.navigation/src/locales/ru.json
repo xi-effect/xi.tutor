@@ -52,6 +52,20 @@
     "responseTime": "Обычно отвечаем за пару часов, максимум — в течение суток",
     "socials": "Следить за актуальными новостями платформы",
     "socialTelegram": "Канал в Telegram",
-    "socialVk": "Группа ВКонтакте"
+    "socialVk": "Группа ВКонтакте",
+    "devtoolsTitle": "Инструменты",
+    "devtoolsDescription": "Служебные действия для диагностики и восстановления работы приложения.",
+    "devtoolsBack": "Назад",
+    "devtoolsCancel": "Отменить",
+    "forceLogout": "Принудительно выйти",
+    "forceLogoutDesc": "Завершить сессию и вернуться на экран входа",
+    "forceLogoutConfirmTitle": "Принудительно выйти?",
+    "forceLogoutConfirmDescription": "Вы выйдете из аккаунта и вернётесь на экран входа",
+    "forceLogoutConfirmAction": "Выйти",
+    "clearData": "Очистить данные приложения",
+    "clearDataDesc": "Удалить локальные данные, кэш и Service Worker",
+    "clearDataConfirmTitle": "Очистить данные?",
+    "clearDataConfirmDescription": "Будут удалены локальные данные, кэш и офлайн-хранилище. Затем откроется экран входа",
+    "clearDataConfirmAction": "Очистить"
   }
 }

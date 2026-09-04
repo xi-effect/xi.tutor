@@ -1,14 +1,16 @@
 import { Button } from '@xipkg/button';
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from '@xipkg/modal';
+import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import type { CustomNotificationModalPayload } from 'common.services';
+import {
+  ModalCloseIcon,
+  modalBodyClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
+import { cn } from '@xipkg/utils';
 import type { NotificationLinkNavigateT } from './notificationsNavigation';
 
 export const CustomNotificationModal = ({
@@ -23,36 +25,38 @@ export const CustomNotificationModal = ({
   return (
     <Modal open={!!payload} onOpenChange={(open) => !open && onClose()}>
       <ModalContent
-        className="flex max-h-[90vh] max-w-[480px] flex-col"
+        className={cn(modalContentClass, 'flex max-h-[90vh] flex-col')}
         aria-describedby={undefined}
       >
-        <ModalHeader>
-          <ModalTitle className="text-m-base text-text-primary max-w-[calc(100%-48px)] font-semibold">
-            {payload?.header}
-          </ModalTitle>
-          <ModalCloseButton />
-        </ModalHeader>
+        <div className={modalBodyClass}>
+          <div className={modalHeaderRowClass}>
+            <ModalTitle className={modalTitleClass}>{payload?.header}</ModalTitle>
+            <ModalCloseIcon onClick={onClose} />
+          </div>
 
-        <ModalBody className="text-xs-base text-text-primary flex-1 overflow-y-auto">
-          {payload?.content}
-        </ModalBody>
+          <div className="text-m-base text-text-secondary max-h-[50vh] overflow-y-auto">
+            {payload?.content}
+          </div>
 
-        {payload?.button_text && payload?.button_link && (
-          <ModalFooter>
-            <Button
-              size="m"
-              onClick={() => {
-                const link = payload?.button_link;
-                if (link) {
-                  onNavigate(link);
-                  onClose();
-                }
-              }}
-            >
-              {payload.button_text}
-            </Button>
-          </ModalFooter>
-        )}
+          {payload?.button_text && payload?.button_link ? (
+            <div className={modalFooterClass}>
+              <Button
+                variant="primary"
+                size="m"
+                className={modalConfirmButtonClass}
+                onClick={() => {
+                  const link = payload?.button_link;
+                  if (link) {
+                    onNavigate(link);
+                    onClose();
+                  }
+                }}
+              >
+                {payload.button_text}
+              </Button>
+            </div>
+          ) : null}
+        </div>
       </ModalContent>
     </Modal>
   );

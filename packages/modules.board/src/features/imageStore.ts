@@ -1,10 +1,10 @@
-import { uploadImageRequest, uploadFileRequest, uploadPresentationRequest } from 'common.services';
+import { prepareContentUpload, uploadFileIdRequest } from 'common.services';
 import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
-import { ALLOWED_IMAGE_MIME_TYPES, isPresentationFile } from '../constants/mimeTypes';
+import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
 import i18n from 'i18next';
 
 export type DrAssetContextT = {
@@ -51,15 +51,9 @@ async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl
   return { w: img.naturalWidth, h: img.naturalHeight, objectUrl };
 }
 
-/** POST через сервисные функции запросов (без хуков) */
+/** POST через единую ручку; kind определяет бэкенд. */
 async function postUpload(file: File, token: string) {
-  if (file.type.startsWith('image/')) {
-    return uploadImageRequest({ file, token });
-  }
-  if (isPresentationFile(file)) {
-    return uploadPresentationRequest({ file, token });
-  }
-  return uploadFileRequest({ file, token });
+  return uploadFileIdRequest({ file, token });
 }
 
 /**
@@ -113,6 +107,7 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
       const token = holder.get() || (await holder.whenReady());
+      file = prepareContentUpload(file).file;
       const assetType = checkAssetType(file) || 'file';
 
       if (!file.type.startsWith('image/')) {

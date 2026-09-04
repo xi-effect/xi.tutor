@@ -1,4 +1,5 @@
 import { matchingPairs } from '../model/matching';
+import { normalizeMultipleChoiceDefinition } from '../model/multipleChoice';
 import { createEmptyAttempt } from '../model/defaults';
 import type { ActivityAttempt, ActivityDefinition } from '../model/types';
 
@@ -51,11 +52,13 @@ export function revealAttempt(
         next.placements[hotspot.id] = hotspot.id;
       }
       break;
-    case 'multiple-choice':
+    case 'multiple-choice': {
+      const normalized = normalizeMultipleChoiceDefinition(definition);
       next.selected = Object.fromEntries(
-        definition.options.map((option) => [option.id, option.correct]),
+        normalized.options.map((option) => [option.id, option.correct]),
       );
       break;
+    }
     case 'mystery-tiles':
       for (const tile of definition.tiles) {
         next.revealed[tile.id] = true;

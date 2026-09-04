@@ -14,7 +14,10 @@
     "time": "Time",
     "startPlaceholder": "17:40 Start",
     "endPlaceholder": "19:00 End",
-    "repetitions": "Repetitions"
+    "repetitions": "Repetitions",
+    "repeatEnds": "Repeat",
+    "repeatEndsNever": "No end date",
+    "repeatEndsUntilDate": "Until date"
   },
   "weekdays_short": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
   "studentSelector": {
@@ -31,7 +34,9 @@
     "endTimeRequired": "Enter an end time",
     "endAfterStart": "End time must be later than start time",
     "maxDuration": "Maximum lesson duration is 12 hours",
-    "repeatDaysRequired": "Select at least one day"
+    "repeatDaysRequired": "Select at least one day",
+    "repeatUntilRequired": "Select an end date",
+    "repeatUntilBeforeStart": "End date cannot be earlier than the series start date"
   },
   "hours_one": "{{count}} hour",
   "hours_other": "{{count}} hours",

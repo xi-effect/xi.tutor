@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
 import { Button } from '@xipkg/button';
 import { Form, FormField, FormItem, FormMessage, useFieldArray } from '@xipkg/form';
-import { Close } from '@xipkg/icons';
-import {
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from '@xipkg/modal';
+import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { useMediaQuery } from '@xipkg/utils';
+import { cn } from '@xipkg/utils';
 import { useFetchClassrooms } from 'common.services';
+import {
+  ModalCloseIcon,
+  modalCancelButtonClass,
+  modalConfirmButtonClass,
+  modalContentClass,
+  modalFooterClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { useInvoiceForm } from '../hooks';
 import { roundMoney, type FormData } from '../model';
@@ -37,7 +38,6 @@ type InvoiceModalProps = {
 export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   const { t } = useTranslation('invoice');
   const isMobile = useMediaQuery('(max-width: 500px)');
-  const isTablet = useMediaQuery('(max-width: 719px)');
 
   const { form, control, handleSubmit, handleClearForm, onSubmit, items, append } =
     useInvoiceForm();
@@ -86,143 +86,133 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
         }
       }}
     >
-      <ModalContent className="max-w-[800px] max-sm:w-fit md:w-[800px]">
-        {!isTablet ? (
-          <ModalCloseButton className="" onClick={handleCloseModal}>
-            <Close className="fill-icon-primary sm:fill-action-primary-text dark:fill-icon-primary" />
-          </ModalCloseButton>
-        ) : (
-          <Close
-            className="fill-icon-primary sm:fill-action-primary-text dark:fill-icon-primary absolute top-6 right-6 cursor-pointer"
-            onClick={handleCloseModal}
-          />
-        )}
-
-        <ModalHeader className="border-border-default border-b" innerClassName="max-sm:p-4">
-          <ModalTitle className="text-text-primary max-[515px]:max-w-[215px] max-sm:text-xl">
-            {t('modal.title')}
-          </ModalTitle>
+      <ModalContent className={cn(modalContentClass, 'max-w-[800px] max-sm:w-fit md:w-[800px]')}>
+        <div className="flex flex-col gap-6 p-6">
+          <div className={modalHeaderRowClass}>
+            <ModalTitle className={modalTitleClass}>{t('modal.title')}</ModalTitle>
+            <ModalCloseIcon onClick={handleCloseModal} />
+          </div>
           <ModalDescription className="sr-only">{t('modal.description')}</ModalDescription>
-        </ModalHeader>
-        <Form {...form}>
-          <form
-            onSubmit={handleSubmit(onFormSubmit)}
-            className="flex flex-col gap-6 p-6 max-sm:p-4"
-          >
-            <div>
-              <p className="text-text-primary max-sm:text-base">{t('modal.intro1')}</p>
-              <p className="text-text-primary">{t('modal.intro2')}</p>
-            </div>
-
-            <ClassroomSelector control={control} />
-
-            <FormField
-              control={control}
-              name="items"
-              render={() => (
-                <FormItem>
-                  <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
-                    <Button
-                      className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
-                      variant="primary"
-                      size="s"
-                      type="button"
-                      onClick={() => {
-                        append({
-                          id: generateRandomId(),
-                          name: '',
-                          price: 0,
-                          quantity: 1,
-                        });
-                      }}
-                    >
-                      {isMobile ? t('modal.addRow') : t('modal.addLesson')}
-                    </Button>
-
-                    <TemplateSelector control={control} />
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* TODO: подумать над тем, чтобы сделать один компонент */}
-            {!isMobile && items.length > 0 && (
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col gap-6 max-sm:p-0">
               <div>
-                <div className="text-text-secondary grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
-                  <span>{t('modal.lessons')}</span>
-                  <span>{t('modal.price')}</span>
-                  <div className="w-[12px]" />
-                  <span>{t('modal.quantity')}</span>
-                  <div className="w-[12px]" />
-                  <span>{t('modal.sum')}</span>
-                  <div className="ml-2 h-[24px] w-[24px]" />
-                </div>
-                <div className="my-2">
-                  {items.map((item, index) => (
-                    <SubjectRow
-                      key={item.id}
-                      control={control}
-                      index={index}
-                      onRemove={() => remove(index)}
-                    />
-                  ))}
-                  <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
-                    <div />
-                    <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
+                <p className="text-text-primary max-sm:text-base">{t('modal.intro1')}</p>
+                <p className="text-text-primary">{t('modal.intro2')}</p>
+              </div>
+
+              <ClassroomSelector control={control} />
+
+              <FormField
+                control={control}
+                name="items"
+                render={() => (
+                  <FormItem>
+                    <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
+                      <Button
+                        className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
+                        variant="primary"
+                        size="s"
+                        type="button"
+                        onClick={() => {
+                          append({
+                            id: generateRandomId(),
+                            name: '',
+                            price: 0,
+                            quantity: 1,
+                          });
+                        }}
+                      >
+                        {isMobile ? t('modal.addRow') : t('modal.addLesson')}
+                      </Button>
+
+                      <TemplateSelector control={control} />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* TODO: подумать над тем, чтобы сделать один компонент */}
+              {!isMobile && items.length > 0 && (
+                <div>
+                  <div className="text-text-secondary grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
+                    <span>{t('modal.lessons')}</span>
+                    <span>{t('modal.price')}</span>
                     <div className="w-[12px]" />
-                    <span className="dark:text-text-primary text-right">{totalLessons}</span>
+                    <span>{t('modal.quantity')}</span>
                     <div className="w-[12px]" />
-                    <span className="dark:text-text-primary text-right">{totalInvoicePrice} ₽</span>
+                    <span>{t('modal.sum')}</span>
                     <div className="ml-2 h-[24px] w-[24px]" />
                   </div>
-                </div>
-              </div>
-            )}
-
-            {isMobile && items.length > 0 && (
-              <div>
-                <div className="text-text-secondary grid grid-cols-3 items-center gap-2 text-sm">
-                  <span>{t('modal.price')}</span>
-                  <span>{t('modal.quantity')}</span>
-                  <span>{t('modal.sum')}</span>
-                </div>
-                <div className="my-2 flex flex-col gap-3">
-                  {items.map((_, index) => (
-                    <SubjectRowMobile key={index} control={control} index={index} />
-                  ))}
-                  <div className="grid grid-cols-3 items-center gap-2">
-                    <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
-                    <span className="dark:text-text-primary text-center">{totalLessons}</span>
-                    <span className="dark:text-text-primary text-right">{totalInvoicePrice} ₽</span>
+                  <div className="my-2">
+                    {items.map((item, index) => (
+                      <SubjectRow
+                        key={item.id}
+                        control={control}
+                        index={index}
+                        onRemove={() => remove(index)}
+                      />
+                    ))}
+                    <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
+                      <div />
+                      <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
+                      <div className="w-[12px]" />
+                      <span className="dark:text-text-primary text-right">{totalLessons}</span>
+                      <div className="w-[12px]" />
+                      <span className="dark:text-text-primary text-right">
+                        {totalInvoicePrice} ₽
+                      </span>
+                      <div className="ml-2 h-[24px] w-[24px]" />
+                    </div>
                   </div>
                 </div>
+              )}
+
+              {isMobile && items.length > 0 && (
+                <div>
+                  <div className="text-text-secondary grid grid-cols-3 items-center gap-2 text-sm">
+                    <span>{t('modal.price')}</span>
+                    <span>{t('modal.quantity')}</span>
+                    <span>{t('modal.sum')}</span>
+                  </div>
+                  <div className="my-2 flex flex-col gap-3">
+                    {items.map((_, index) => (
+                      <SubjectRowMobile key={index} control={control} index={index} />
+                    ))}
+                    <div className="grid grid-cols-3 items-center gap-2">
+                      <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
+                      <span className="dark:text-text-primary text-center">{totalLessons}</span>
+                      <span className="dark:text-text-primary text-right">
+                        {totalInvoicePrice} ₽
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <CommentField control={control} />
+              <div className={cn(modalFooterClass, isMobile && 'flex-col items-stretch')}>
+                <Button
+                  className={modalCancelButtonClass}
+                  size="m"
+                  variant="none"
+                  onClick={handleCloseModal}
+                >
+                  {t('modal.cancel')}
+                </Button>
+                <Button
+                  disabled={classrooms && classrooms.length === 0}
+                  className={modalConfirmButtonClass}
+                  type="submit"
+                  size="m"
+                  variant="primary"
+                  data-umami-event="invoice-create"
+                >
+                  {t('modal.create')}
+                </Button>
               </div>
-            )}
-            <CommentField control={control} />
-            <ModalFooter
-              className={`border-border-default flex gap-2 border-t px-0 pt-6 pb-0 ${isMobile ? 'flex-col' : ''}`}
-            >
-              <Button
-                disabled={classrooms && classrooms.length === 0}
-                className={`${isMobile ? 'w-full' : 'w-[114px]'} rounded-2xl`}
-                type="submit"
-                size="m"
-                data-umami-event="invoice-create"
-              >
-                {t('modal.create')}
-              </Button>
-              <Button
-                className={`${isMobile ? 'w-full' : 'w-[128px]'} rounded-2xl`}
-                size="m"
-                variant="ghost"
-                onClick={handleCloseModal}
-              >
-                {t('modal.cancel')}
-              </Button>
-            </ModalFooter>
-          </form>
-        </Form>
+            </form>
+          </Form>
+        </div>
       </ModalContent>
     </Modal>
   );

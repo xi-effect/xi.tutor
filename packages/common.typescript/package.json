@@ -4,6 +4,10 @@
     "./tsconfig.app.json",
     "./tsconfig.node.json"
   ],
+  "exports": {
+    "./tsconfig.app.json": "./tsconfig.app.json",
+    "./tsconfig.node.json": "./tsconfig.node.json"
+  },
   "version": "0.0.0",
   "private": true,
   "license": "MIT",

@@ -8,6 +8,7 @@ import { DayLessonsPanel } from 'modules.calendar';
 import { AddingForm } from './components/AddingForm';
 import './AddingModal.css';
 import type { FormData } from '../model';
+import { modalCancelButtonClass, modalConfirmButtonClass, modalTitleClass } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   trackProductEvent,
@@ -106,9 +107,7 @@ export const AddingLessonModal = ({
           </div>
           <div className="flex h-full min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
             <div className="flex h-8 shrink-0 items-center pr-12">
-              <h3 className="text-xl-base text-text-primary m-0 leading-none font-semibold">
-                {t('title')}
-              </h3>
+              <h3 className={`${modalTitleClass} pr-12`}>{t('title')}</h3>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
               <AddingForm
@@ -120,9 +119,9 @@ export const AddingLessonModal = ({
                 onSubmittingChange={handleSubmittingChange}
               />
             </div>
-            <div className="flex w-full min-w-0 shrink-0 flex-row gap-2">
+            <div className="flex w-full min-w-0 shrink-0 flex-row items-center justify-end gap-3">
               <Button
-                className="bg-background-page hover:bg-background-subtle text-text-primary h-11 min-w-0 flex-1 font-medium"
+                className={modalCancelButtonClass}
                 form="adding-lesson-form"
                 size="m"
                 variant="none"
@@ -133,7 +132,7 @@ export const AddingLessonModal = ({
                 {t('cancel')}
               </Button>
               <Button
-                className="h-11 min-w-0 flex-1"
+                className={modalConfirmButtonClass}
                 form="adding-lesson-form"
                 variant="primary"
                 type="submit"

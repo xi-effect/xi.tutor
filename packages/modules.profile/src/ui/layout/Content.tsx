@@ -5,6 +5,7 @@ import { PersonalData } from '../personal-data';
 import { Notifications } from '../notifications';
 import { SoundAndVideo } from '../sound-and-video';
 import { Effects } from '../effects';
+import { Board } from '../board';
 import { TechnicalReport } from '../report';
 
 type ComponentMapT = {
@@ -18,6 +19,7 @@ const componentMap: ComponentMapT = {
   notifications: <Notifications />,
   soundAndVideo: <SoundAndVideo />,
   effects: <Effects />,
+  board: <Board />,
   report: <TechnicalReport />,
 };
 

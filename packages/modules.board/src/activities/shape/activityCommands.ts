@@ -3,6 +3,7 @@ import { hasCheckableAnswers } from '../primitives/evaluate';
 import { resetAttempt, revealAttempt } from '../primitives/reset';
 import type { ActivityStudentAccessKey } from '../model/studentAccess';
 import { normalizeStudentAccess } from '../model/studentAccess';
+import { normalizeMultipleChoiceDefinition } from '../model/multipleChoice';
 import type { ActivityShape } from './ActivityShape';
 import { useActivityEditStore } from '../store/activityEditStore';
 import type { ActivityDefinition } from '../model/types';
@@ -11,6 +12,11 @@ function asActivity(editor: Editor, shape: ActivityShape): ActivityShape | null 
   const next = editor.getShape(shape.id);
   if (!next || next.type !== 'activity') return null;
   return next as ActivityShape;
+}
+
+function normalizeDefinition(definition: ActivityDefinition): ActivityDefinition {
+  if (definition.kind !== 'multiple-choice') return definition;
+  return normalizeMultipleChoiceDefinition(definition);
 }
 
 export function applyActivityAction(
@@ -27,6 +33,23 @@ export function applyActivityAction(
     const store = useActivityEditStore.getState();
     const nextEditing = !current.every((shape) => store.isEditing(shape.id));
     for (const shape of current) store.setEditing(shape.id, nextEditing);
+    if (!nextEditing) {
+      const updates = current.flatMap((shape) => {
+        const definition = normalizeDefinition(shape.props.definition);
+        if (definition === shape.props.definition) return [];
+        return [
+          {
+            id: shape.id,
+            type: 'activity' as const,
+            props: { definition },
+          },
+        ];
+      });
+      if (updates.length > 0) {
+        editor.markHistoryStoppingPoint('activity-normalize');
+        editor.updateShapes(updates);
+      }
+    }
     return;
   }
 
@@ -62,14 +85,18 @@ export function applyActivityAction(
   editor.updateShapes(
     current
       .filter((shape) => shape.props.kind !== 'random-card')
-      .map((shape) => ({
-        id: shape.id,
-        type: 'activity' as const,
-        props: {
-          attempt: revealAttempt(shape.props.definition, shape.props.attempt),
-          checkStatus: 'revealed' as const,
-        },
-      })),
+      .map((shape) => {
+        const definition = normalizeDefinition(shape.props.definition);
+        return {
+          id: shape.id,
+          type: 'activity' as const,
+          props: {
+            definition,
+            attempt: revealAttempt(definition, shape.props.attempt),
+            checkStatus: 'revealed' as const,
+          },
+        };
+      }),
   );
 }
 

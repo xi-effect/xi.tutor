@@ -1,34 +1,23 @@
 import { useMutation } from '@tanstack/react-query';
-import { filesApiConfig, FilesQueryKey, type FileResponse } from 'common.api';
-import { getAxiosInstance } from 'common.config';
+import type { FileResponse } from 'common.api';
 import { handleError } from '..';
 import { toast } from 'sonner';
-import { assertValidFileName } from './validateFileName';
+import { uploadFileIdRequest, uploadFileRequest, type UploadFileVars } from './uploadFileRequest';
 
-export type UploadImageVars = { file: File; token?: string };
+export type UploadImageVars = UploadFileVars;
 
-export async function uploadImageRequest({ file, token }: UploadImageVars): Promise<string> {
-  assertValidFileName(file);
-
-  const axiosInst = await getAxiosInstance();
-  const { getUrl, method } = filesApiConfig[FilesQueryKey.UploadImage];
-  const formData = new FormData();
-  formData.append('upload', file);
-
-  const response = await axiosInst({
-    method,
-    url: getUrl(),
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      ...(token ? { 'x-content-token': token } : {}),
-    },
-  });
-
-  if (response.status !== 201) throw new Error(`Image upload failed: ${response.status}`);
-  const data = response.data as FileResponse;
-  return data.id;
+/** @deprecated Use uploadFileRequest — бэкенд сам определяет kind. */
+export async function uploadImageRequest(vars: UploadImageVars): Promise<string> {
+  return uploadFileIdRequest(vars);
 }
+
+export const useUploadFile = () => {
+  return useMutation<FileResponse, Error, UploadFileVars>({
+    mutationFn: uploadFileRequest,
+    onSuccess: () => toast('Файл успешно загружен'),
+    onError: (err) => handleError(err, 'files'),
+  });
+};
 
 export const useUploadImage = () => {
   return useMutation<string, Error, UploadImageVars>({

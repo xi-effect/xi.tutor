@@ -6,6 +6,7 @@ import {
   patchActivityDefinitions,
   setActivityStudentAccess,
 } from '../shape/activityCommands';
+import { normalizeMultipleChoiceDefinition } from '../model/multipleChoice';
 import {
   ACTIVITY_STUDENT_ACCESS_KEYS,
   studentAccessFlag,
@@ -62,6 +63,9 @@ export function getActivityMenuActions({
       label: allEditing ? t('activity.play') : t('activity.edit'),
     });
   }
+
+  // В режиме редактирования проверка/сброс/ответ не имеют смысла — только переключение в выполнение
+  if (allEditing) return items;
 
   const allowCheck = isTutor || Boolean(access?.canCheck);
   const allowReset = isTutor || Boolean(access?.canReset);
@@ -160,9 +164,10 @@ export function getActivityKindSettings(shapes: ActivityShape[]): ActivityKindSe
       mixed: !multiple.every(Boolean) && multiple.some(Boolean),
       apply: (editor, nextShapes) => {
         const enable = !multiple.every(Boolean);
-        patchActivityDefinitions(editor, nextShapes, (definition) =>
-          definition.kind === 'multiple-choice' ? { ...definition, multiple: enable } : null,
-        );
+        patchActivityDefinitions(editor, nextShapes, (definition) => {
+          if (definition.kind !== 'multiple-choice') return null;
+          return normalizeMultipleChoiceDefinition({ ...definition, multiple: enable });
+        });
       },
     });
     settings.push({

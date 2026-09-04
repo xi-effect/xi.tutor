@@ -42,6 +42,7 @@ export const CalendarScheduleToolbar = () => {
       onWeekSelect={(date, count) =>
         isFullWeek ? goToWeekStart(date) : goToVisibleWindowForDate(date, count)
       }
+      className="h-8!"
     />
   );
 };

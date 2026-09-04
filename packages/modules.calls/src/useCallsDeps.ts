@@ -122,7 +122,7 @@ export const useCallsDeps = (): CallsProviderDepsT => {
       },
       appConfig: {
         getClassroomJoinLink: (classroomId) =>
-          `${env.VITE_APP_DOMAIN}/classrooms/${classroomId}?tab=overview&goto=call`,
+          `${env.VITE_APP_DOMAIN}/classrooms/${classroomId}?tab=boards&goto=call`,
       },
     }),
     [

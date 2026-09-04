@@ -1,9 +1,22 @@
-export { useUploadImage, uploadImageRequest } from './useUploadImage';
+export { useUploadImage, useUploadFile, uploadImageRequest } from './useUploadImage';
 export { uploadAudioRequest } from './uploadAudioRequest';
 export { uploadDocumentRequest } from './uploadDocumentRequest';
 export { uploadPresentationRequest } from './uploadPresentationRequest';
-export { uploadFileRequest } from './uploadFileRequest';
+export { uploadFileRequest, uploadFileIdRequest, type UploadFileVars } from './uploadFileRequest';
+export { collectDroppedFiles, cloneDroppedFile } from './collectDroppedFiles';
+export {
+  getContentUploadKind,
+  prepareContentUpload,
+  PPTX_CONTENT_TYPE,
+} from './prepareContentUpload';
+export {
+  getFileUploadErrorKind,
+  getFileUploadHttpStatus,
+  type FileUploadErrorKind,
+} from './classifyFileUploadError';
 export { useDownloadFile, downloadFileRequest } from './useDownloadFile';
+export { useAttachFileToYDoc, attachFileToYDocRequest } from './useAttachFileToYDoc';
+export type { AttachFileToYDocVars } from './useAttachFileToYDoc';
 export { useRetryFileQueue, type RetryRequest } from './useRetryFileQueue';
 export {
   saveFileToDB,
