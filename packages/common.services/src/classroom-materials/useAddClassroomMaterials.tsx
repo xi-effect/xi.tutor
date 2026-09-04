@@ -8,6 +8,7 @@ interface ClassroomMaterialsResponseT {
   data: ClassroomMaterialsDataT & {
     id: string;
     updated_at: string;
+    tag_ids?: number[] | null;
   };
 }
 

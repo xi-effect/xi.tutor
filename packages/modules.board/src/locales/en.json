@@ -109,6 +109,18 @@
     "sticker": "Sticker",
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
+    "coordinateAxes": "Coordinate axes",
+    "flipCard": "Flip card",
+    "fromComputer": "From computer",
+    "fromCloud": "From cloud",
+    "cloudFilesTitle": "Cloud files",
+    "cloudFilesDescription": "Pick a file from your materials library to add it to the board",
+    "cloudFilesLoading": "Loading files…",
+    "cloudFilesError": "Could not load files",
+    "cloudFilesEmpty": "No files in the cloud yet",
+    "cloudPreview": "Preview",
+    "cloudAddToBoard": "Add to board",
+    "cloudInsertFailed": "Could not add the file to the board",
     "activities": "Activities",
     "more": "More"
   },
@@ -181,7 +193,8 @@
     "forbidControl": "Forbid control",
     "allowControl": "Allow control",
     "axisColor": "Axis color",
-    "style": "Style"
+    "style": "Style",
+    "flipCardAddImage": "Add image"
   },
   "ocr": {
     "recognize": "Recognize printed text",
@@ -476,6 +489,9 @@
     "imagePlaceholder": "Upload an image, then click to place a hotspot",
     "imagePlaceholderPlay": "The image will appear here",
     "label": "Label",
+    "labelEditHint": "Click the image to add a hotspot. Drag a label by the handle on the left.",
+    "moveLabel": "Move label",
+    "addLabel": "Add label",
     "distractor": "Extra label",
     "addDistractor": "Add extra label",
     "multipleAnswers": "Multiple correct answers",

@@ -20,8 +20,11 @@ import {
 } from 'features.lesson.move';
 import { useTranslation } from 'react-i18next';
 import { useClassroomSchedule } from './useClassroomSchedule';
-import { CalendarScheduleKanban } from './ClassroomScheduleParts';
+import { CalendarScheduleKanban, CalendarScheduleToolbar } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
+import { Button } from '@xipkg/button';
+import { Plus } from '@xipkg/icons';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 function jsWeekdayToSeriesIndex(date: Date): number {
   const d = date.getDay();
@@ -225,11 +228,29 @@ export const Calendar = () => {
             onLessonReschedule={isTutor ? handleLessonReschedule : undefined}
             onSaveLesson={isTutor ? handleLessonSave : undefined}
             hideLessonCardClassroomAndSubject
+            embedded
             mobileScheduleAnchorTs={mobileScheduleAnchorTs}
           />
         </div>
       ) : (
-        <div className="flex h-full min-h-0 min-w-0 flex-col">
+        <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
+          <div className={galleryShadowHeaderInsetClass}>
+            <div className="flex min-w-0 flex-row flex-wrap items-center gap-3">
+              <CalendarScheduleToolbar />
+              {isTutor ? (
+                <Button
+                  type="button"
+                  variant="primary"
+                  className="text-text-on-accent ml-auto h-8! shrink-0 gap-2 rounded-[10px] px-4 font-medium"
+                  onClick={() => onAddLessonClick?.()}
+                  data-umami-event="classroom-add-lesson"
+                >
+                  <Plus className="fill-text-on-accent size-4 shrink-0" />
+                  {t('actions.addLesson')}
+                </Button>
+              ) : null}
+            </div>
+          </div>
           <CalendarScheduleKanban
             onLessonReschedule={isTutor ? handleLessonReschedule : undefined}
             onSaveLesson={isTutor ? handleLessonSave : undefined}

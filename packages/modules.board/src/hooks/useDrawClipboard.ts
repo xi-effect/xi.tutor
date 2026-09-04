@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { collectDroppedFiles } from 'common.services';
 import { Editor, react, DrAssetId, DrShapeId, decodeMiroClipboardHtml } from '@ibodr/draw';
 import { deserializeDrawContent, readClipboardHtml, serializeDrawContent } from '../utils';
 import {
@@ -31,6 +32,9 @@ function approxBase64Size(dataUrl: string): number {
  * - myAssetStore.resolve also has the same fallback for immediate display.
  */
 export function useDrawClipboard(editor: Editor | null, token?: string) {
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
+
   // Prefetch: подписываемся на выделение и заранее качаем data:URL для
   // выделенных image-assets. К моменту нажатия Ctrl+C у нас в кэше уже
   // готовый data:URL, и paste картинок будет работать независимо от того,
@@ -142,11 +146,11 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
         const dataUrl = getCachedDataUrl(src);
         if (dataUrl && approxBase64Size(dataUrl) <= MAX_INLINED_ASSET_BYTES) {
           asset.props.src = dataUrl;
-          asset.meta = { ...asset.meta, originalSrc: src, sourceToken: token };
+          asset.meta = { ...asset.meta, originalSrc: src, sourceToken: tokenRef.current };
         } else {
           // Fallback: prefetch не успел / файл слишком большой / нет токена —
           // используем старую логику с sourceToken (paste сработает, если токен жив).
-          asset.meta = { ...asset.meta, originalSrc: src, sourceToken: token };
+          asset.meta = { ...asset.meta, originalSrc: src, sourceToken: tokenRef.current };
         }
       }
       for (const shape of rawContent.shapes ?? []) {
@@ -158,7 +162,7 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
         // → ~6.7 MiB base64) ломает setData('text/html') в Chrome, и тогда вместе с
         // PDF из clipboard теряются и соседние картинки. Эти типы по-прежнему
         // работают через sourceToken + in-memory blobUrlCache (шаг 0 в reuploadSrc).
-        shape.meta = { ...shape.meta, originalSrc: src, sourceToken: token };
+        shape.meta = { ...shape.meta, originalSrc: src, sourceToken: tokenRef.current };
       }
 
       const serialized = serializeDrawContent(rawContent);
@@ -191,8 +195,13 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
       // и т.д., скопированные из Finder/Explorer или "Copy image"). Идёт через
       // тот же 'files'-хендлер, что и drag-and-drop (см. DrawCanvas.tsx),
       // поэтому типы/размеры/тосты об ошибках обрабатываются одинаково.
-      const pastedFiles = Array.from(event.clipboardData?.files ?? []);
-      if (pastedFiles.length > 0 && token) {
+      const pastedFiles = collectDroppedFiles(event.clipboardData);
+      if (pastedFiles.length > 0) {
+        const uploadToken = tokenRef.current;
+        if (!uploadToken) {
+          console.error('Failed to paste files: нет content token');
+          return;
+        }
         if (!editor!.getIsFocused()) editor!.focus();
         try {
           await editor!.putExternalContent({
@@ -252,7 +261,9 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
 
       // 1) Синхронная подготовка: same-board restore + сбор задач на upload.
       //    Тяжёлые ввод/вывод-операции сюда не лезут.
-      const uploadTasks = token ? preparePastedContent(content, editor!, token) : [];
+      const uploadTasks = tokenRef.current
+        ? preparePastedContent(content, editor!, tokenRef.current)
+        : [];
 
       // 2) Мгновенная вставка: shape'ы появляются на доске сразу.
       //    На той же доске id из clipboard уже есть в store — preserveIds:true
@@ -278,8 +289,8 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
       //    upload'а зовётся editor.updateAssets/updateShape — картинки заменяются
       //    с preview src (data:URL / blob из cache / originalSrc) на серверный URL
       //    индивидуально, без ожидания общего батча.
-      if (token && uploadTasks.length > 0) {
-        uploadPastedAssetsInBackground(uploadTasks, editor!, token);
+      if (tokenRef.current && uploadTasks.length > 0) {
+        uploadPastedAssetsInBackground(uploadTasks, editor!, tokenRef.current);
       }
     }
 
@@ -311,5 +322,5 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
         capture: true,
       });
     };
-  }, [editor, token]);
+  }, [editor]);
 }

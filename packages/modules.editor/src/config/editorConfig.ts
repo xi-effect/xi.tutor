@@ -15,6 +15,7 @@ import {
   CustomImage,
   MoveBlockKeyboard,
   NormalizeSelection,
+  FileNode,
   PdfNode,
   PresentationNode,
 } from '../extensions';
@@ -80,10 +81,11 @@ export const getExtensions = (
       },
       codeBlock: false,
     }),
-    CustomImage,
+    CustomImage.configure({ allowBase64: false }),
     AudioNode,
     PdfNode,
     PresentationNode,
+    FileNode,
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -107,6 +109,7 @@ export const getExtensions = (
         'audio',
         'pdf',
         'presentation',
+        'file',
       ],
     }),
     Placeholder.configure({

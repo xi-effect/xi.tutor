@@ -51,6 +51,13 @@ const materialActionsConfig: {
     | 'materials.boardCollaborative'
     | 'materials.boardTutorOnly'
     | 'materials.boardDrafts';
+  descriptionKey:
+    | 'materials.noteCollaborativeHint'
+    | 'materials.noteTutorOnlyHint'
+    | 'materials.noteDraftsHint'
+    | 'materials.boardCollaborativeHint'
+    | 'materials.boardTutorOnlyHint'
+    | 'materials.boardDraftsHint';
   Icon: React.ComponentType<{ className?: string }>;
   umamiEvent: string;
 }[] = [
@@ -58,6 +65,7 @@ const materialActionsConfig: {
     contentKind: 'note',
     accessMode: 'read_write',
     labelKey: 'materials.noteCollaborative',
+    descriptionKey: 'materials.noteCollaborativeHint',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
@@ -65,6 +73,7 @@ const materialActionsConfig: {
     contentKind: 'note',
     accessMode: 'read_only',
     labelKey: 'materials.noteTutorOnly',
+    descriptionKey: 'materials.noteTutorOnlyHint',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
@@ -72,6 +81,7 @@ const materialActionsConfig: {
     contentKind: 'note',
     accessMode: 'no_access',
     labelKey: 'materials.noteDrafts',
+    descriptionKey: 'materials.noteDraftsHint',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
@@ -79,6 +89,7 @@ const materialActionsConfig: {
     contentKind: 'board',
     accessMode: 'read_write',
     labelKey: 'materials.boardCollaborative',
+    descriptionKey: 'materials.boardCollaborativeHint',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
@@ -86,6 +97,7 @@ const materialActionsConfig: {
     contentKind: 'board',
     accessMode: 'read_only',
     labelKey: 'materials.boardTutorOnly',
+    descriptionKey: 'materials.boardTutorOnlyHint',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
@@ -93,6 +105,7 @@ const materialActionsConfig: {
     contentKind: 'board',
     accessMode: 'no_access',
     labelKey: 'materials.boardDrafts',
+    descriptionKey: 'materials.boardDraftsHint',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
@@ -123,7 +136,7 @@ export const ClassroomMobileActionButton = ({
   const closeDrawer = () => setDrawerOpen(false);
 
   const actions = useMemo((): DrawerAction[] => {
-    if (currentTab === 'overview' && classroomKind === 'group') {
+    if (currentTab === 'info' && classroomKind === 'group') {
       return [
         {
           id: 'add-student',
@@ -147,14 +160,30 @@ export const ClassroomMobileActionButton = ({
             onGroupInviteModalChange(true);
           },
         },
+        {
+          id: 'delete-classroom',
+          label: isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroom'),
+          description: t('actions.deleteClassroomDescription'),
+          Icon: Trash,
+          umamiEvent: 'classroom-delete',
+          disabled: isDeletingClassroom,
+          destructive: true,
+          onClick: () => {
+            closeDrawer();
+            onDeleteClassroom();
+          },
+        },
       ];
     }
 
-    if (currentTab === 'materials') {
-      return materialActionsConfig.map(
-        ({ contentKind, accessMode, labelKey, Icon, umamiEvent }) => ({
+    if (currentTab === 'boards' || currentTab === 'notes') {
+      const kind = currentTab === 'notes' ? 'note' : 'board';
+      return materialActionsConfig
+        .filter(({ contentKind }) => contentKind === kind)
+        .map(({ contentKind, accessMode, labelKey, descriptionKey, Icon, umamiEvent }) => ({
           id: `${contentKind}-${accessMode}`,
           label: t(labelKey),
+          description: t(descriptionKey),
           Icon,
           umamiEvent,
           umamiAccessMode: accessMode,
@@ -163,8 +192,7 @@ export const ClassroomMobileActionButton = ({
             closeDrawer();
             onAddMaterial(contentKind, accessMode);
           },
-        }),
-      );
+        }));
     }
 
     if (currentTab === 'payments') {
@@ -234,7 +262,7 @@ export const ClassroomMobileActionButton = ({
 
   return createPortal(
     <>
-      <div className="pointer-events-none fixed bottom-[36px] left-1/2 z-40 -translate-x-1/2">
+      <div className="pointer-events-none fixed bottom-[76px] left-1/2 z-40 -translate-x-1/2">
         <ActionButton
           onClick={() => setDrawerOpen(true)}
           classname="pointer-events-auto !relative !right-auto !bottom-auto h-[52px] w-[52px] !rounded-full p-0 shadow-[0_8px_24px_rgba(0,0,0,0.28)]"
@@ -242,7 +270,7 @@ export const ClassroomMobileActionButton = ({
       </div>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} modal>
-        <DrawerContent className="max-h-screen w-full">
+        <DrawerContent className="bottom-16 max-h-[calc(100dvh-64px)] w-full overflow-y-auto">
           <div className="flex flex-col gap-4 pb-8">
             <DrawerTitle className="text-m-base text-text-primary font-medium">
               {drawerTitle}

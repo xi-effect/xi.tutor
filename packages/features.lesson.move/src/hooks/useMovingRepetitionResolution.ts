@@ -21,6 +21,10 @@ export type MovingRepetitionResolution = {
   isDailySeries: boolean;
   /** UTC-битмаска (`weekly_starting_bitmask`), только для weekly. */
   bitmaskUtc?: number;
+  /** `active_period_days` текущего repetition mode (`null` — без даты окончания). */
+  activePeriodDays?: number | null;
+  /** `starts_at` текущего repetition mode — для восстановления даты окончания. */
+  seriesStartsAt?: string;
 };
 
 export type UseMovingRepetitionResolutionParams = {
@@ -85,24 +89,56 @@ export const useMovingRepetitionResolution = ({
   const detailKind = repetitionMode?.kind;
   const detailWeeklyMask =
     detailKind === 'weekly' ? (repetitionMode?.weekly_starting_bitmask ?? null) : null;
+  const detailActivePeriodDays = repetitionMode?.active_period_days;
+  const detailSeriesStartsAt = repetitionMode?.starts_at;
 
   return useMemo((): MovingRepetitionResolution => {
     if (detailKind === 'daily') {
-      return { isDailySeries: true };
+      return {
+        isDailySeries: true,
+        activePeriodDays: detailActivePeriodDays,
+        seriesStartsAt: detailSeriesStartsAt,
+      };
     }
 
     if (detailKind === 'weekly' && detailWeeklyMask != null) {
-      return { isDailySeries: false, bitmaskUtc: detailWeeklyMask };
+      return {
+        isDailySeries: false,
+        bitmaskUtc: detailWeeklyMask,
+        activePeriodDays: detailActivePeriodDays,
+        seriesStartsAt: detailSeriesStartsAt,
+      };
     }
 
     if (scheduleRepetitionKind === 'daily') {
-      return { isDailySeries: true };
+      return {
+        isDailySeries: true,
+        activePeriodDays: detailActivePeriodDays,
+        seriesStartsAt: detailSeriesStartsAt,
+      };
     }
 
     if (scheduleWeeklyBitmaskUtc != null) {
-      return { isDailySeries: false, bitmaskUtc: scheduleWeeklyBitmaskUtc };
+      return {
+        isDailySeries: false,
+        bitmaskUtc: scheduleWeeklyBitmaskUtc,
+        activePeriodDays: detailActivePeriodDays,
+        seriesStartsAt: detailSeriesStartsAt,
+      };
     }
 
-    return { isDailySeries: false, bitmaskUtc: undefined };
-  }, [detailKind, detailWeeklyMask, scheduleRepetitionKind, scheduleWeeklyBitmaskUtc]);
+    return {
+      isDailySeries: false,
+      bitmaskUtc: undefined,
+      activePeriodDays: detailActivePeriodDays,
+      seriesStartsAt: detailSeriesStartsAt,
+    };
+  }, [
+    detailKind,
+    detailWeeklyMask,
+    detailActivePeriodDays,
+    detailSeriesStartsAt,
+    scheduleRepetitionKind,
+    scheduleWeeklyBitmaskUtc,
+  ]);
 };

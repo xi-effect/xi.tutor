@@ -1,12 +1,7 @@
-import { useMemo } from 'react';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { useState, type ReactNode } from 'react';
+import { Button } from '@xipkg/button';
+import { useParams, useSearch } from '@tanstack/react-router';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import {
-  pageSwitcherIndicatorClass,
-  pageSwitcherTabClass,
-  pageSwitcherTrackClass,
-} from 'common.ui';
 import {
   useCurrentUser,
   useGetClassroom,
@@ -14,32 +9,37 @@ import {
   useGetClassroomMaterialsListStudent,
 } from 'common.services';
 import { MaterialsCard } from 'features.materials.card';
+import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
+import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
+import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
+import { ClassroomFiles } from './ClassroomFiles';
 import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../galleryShadowClass';
-import { sectionTitleClass } from '../sectionTitleClass';
 
-type MaterialTypeTab = 'boards' | 'notes';
+type MaterialTypeTab = 'boards' | 'notes' | 'files';
 
-export const Materials = () => {
+const isMaterialTypeTab = (tab: unknown): tab is MaterialTypeTab =>
+  tab === 'boards' || tab === 'notes' || tab === 'files';
+
+const isYDocMaterial = (
+  material: ClassroomMaterialsT,
+): material is ClassroomMaterialsT & { content_kind: YDocContentKind } =>
+  material.content_kind === 'note' || material.content_kind === 'board';
+
+const ClassroomMaterialsGallery = () => {
   const { t } = useTranslation('classroom');
+  const { t: tMaterials } = useTranslation('materials');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
+  const tagIds = materialTags.map((tag) => tag.id);
 
-  const activeTab: MaterialTypeTab = search.tab === 'notes' ? 'notes' : 'boards';
+  const activeTab: MaterialTypeTab = isMaterialTypeTab(search.tab) ? search.tab : 'boards';
   const contentType = activeTab === 'notes' ? 'note' : 'board';
-
-  const typeTabs = useMemo(
-    () => [
-      { id: 'boards', label: t('materials.boards') },
-      { id: 'notes', label: t('materials.notes') },
-    ],
-    [t],
-  );
 
   const {
     data: classroom,
@@ -50,16 +50,19 @@ export const Materials = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const roleReady = !isUserLoading && user != null;
+  const documentsEnabled = Boolean(classroomId) && roleReady && activeTab !== 'files';
 
   const tutorList = useGetClassroomMaterialsList({
     classroomId: classroomId || '',
     content_kind: contentType,
-    disabled: !classroomId || !roleReady || !isTutor,
+    tag_ids: tagIds,
+    disabled: !documentsEnabled || !isTutor,
   });
   const studentList = useGetClassroomMaterialsListStudent({
     classroomId: classroomId || '',
     content_kind: contentType,
-    disabled: !classroomId || !roleReady || isTutor,
+    tag_ids: tagIds,
+    disabled: !documentsEnabled || isTutor,
   });
 
   const {
@@ -68,17 +71,32 @@ export const Materials = () => {
     isError: isMaterialsError,
   } = isTutor ? tutorList : studentList;
 
-  const handleTypeChange = (tabId: string) => {
-    if (tabId !== 'boards' && tabId !== 'notes') return;
-    navigate({
-      to: '/classrooms/$classroomId',
-      params: { classroomId },
-      search: (prev) => ({
-        ...prev,
-        tab: tabId,
-      }),
-    });
-  };
+  const toolbar: ReactNode = (
+    <div className="flex min-w-0 flex-1 flex-row flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <FilesTagsFilter value={materialTags} onChange={setMaterialTags} />
+        {materialTags.length > 0 ? (
+          <Button
+            type="button"
+            variant="ghost"
+            className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
+            onClick={() => setMaterialTags([])}
+          >
+            {tMaterials('files.resetAll')}
+          </Button>
+        ) : null}
+      </div>
+      {isTutor && !isMobile ? (
+        <div className="ml-auto shrink-0">
+          <MaterialsAdd kind={activeTab === 'notes' ? 'note' : 'board'} />
+        </div>
+      ) : null}
+    </div>
+  );
+
+  if (activeTab === 'files') {
+    return <ClassroomFiles classroomId={classroomId} />;
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2">
@@ -89,20 +107,12 @@ export const Materials = () => {
             galleryShadowHeaderInsetClass,
           )}
         >
-          <h2 className={sectionTitleClass}>{t('tabs.materials')}</h2>
-          <SwitcherAnimate
-            tabs={typeTabs}
-            activeTab={activeTab}
-            onChange={handleTypeChange}
-            className={cn(pageSwitcherTrackClass, 'w-auto')}
-            tabClassName={pageSwitcherTabClass}
-            indicatorClassName={pageSwitcherIndicatorClass}
-          />
+          {toolbar}
         </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10">
+        <div className={cn('pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10', isMobile && 'pb-20')}>
           <div className={galleryShadowPadClass}>
             {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
               <ErrorState />
@@ -124,7 +134,7 @@ export const Materials = () => {
                   isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
                 )}
               >
-                {materials.map((material) => (
+                {materials.filter(isYDocMaterial).map((material) => (
                   <MaterialsCard
                     key={material.id}
                     {...material}
@@ -140,3 +150,9 @@ export const Materials = () => {
     </div>
   );
 };
+
+export const Materials = () => (
+  <LibraryTagsUiProvider>
+    <ClassroomMaterialsGallery />
+  </LibraryTagsUiProvider>
+);

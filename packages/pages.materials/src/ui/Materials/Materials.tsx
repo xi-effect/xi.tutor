@@ -14,9 +14,15 @@ type MaterialsProps = {
   parentRef: RefObject<HTMLDivElement | null>;
   scopeFilter: MaterialScopeFilterT;
   classroomIds: number[];
+  tagIds?: number[];
 };
 
-export const Materials = ({ parentRef, scopeFilter, classroomIds }: MaterialsProps) => {
+export const Materials = ({
+  parentRef,
+  scopeFilter,
+  classroomIds,
+  tagIds = [],
+}: MaterialsProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -25,6 +31,7 @@ export const Materials = ({ parentRef, scopeFilter, classroomIds }: MaterialsPro
     'board',
     scopeFilter,
     classroomIds,
+    tagIds,
   );
   const { openModal } = useMaterialsDuplicate();
 

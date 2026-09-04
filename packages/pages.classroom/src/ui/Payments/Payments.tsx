@@ -5,15 +5,24 @@ import { useScreenSize } from 'common.utils';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom, useCurrentUser } from 'common.services';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@xipkg/button';
+import { Plus } from '@xipkg/icons';
+import { useMediaQuery } from '@xipkg/utils';
 import { LoadingState } from './LoadingState';
 import { RolePaymentT } from 'common.types';
 import { UserRoleT } from 'common.api';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
-export const Payments = () => {
+type PaymentsProps = {
+  onOpenInvoiceModal?: () => void;
+};
+
+export const Payments = ({ onOpenInvoiceModal }: PaymentsProps) => {
   const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const screenSize = useScreenSize();
+  const isMobile = useMediaQuery('(max-width: 960px)');
   const [invoiceDetailsModalState, setInvoiceDetailsModalState] = useState<{
     isOpen: boolean;
     payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
@@ -62,7 +71,23 @@ export const Payments = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
+      {isTutor && onOpenInvoiceModal && !isMobile ? (
+        <div className={galleryShadowHeaderInsetClass}>
+          <div className="flex min-w-0 flex-row items-center">
+            <Button
+              variant="primary"
+              className="text-text-on-accent ml-auto h-8! gap-2 rounded-[10px] px-4 font-medium"
+              onClick={onOpenInvoiceModal}
+              data-umami-event="classroom-create-invoice"
+            >
+              <Plus className="fill-text-on-accent size-4 shrink-0" />
+              {t('actions.createInvoice')}
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
       {invoiceDetailsModalState.isOpen && invoiceDetailsModalState.payment && (
         <PaymentInvoiceDetailsModal
           open={invoiceDetailsModalState.isOpen}

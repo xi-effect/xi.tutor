@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useCallback, useState } from 'react';
+import { useEffect, useMemo, useCallback, useState, useRef } from 'react';
 import * as Y from 'yjs';
 import { useEditor, Editor } from '@tiptap/react';
 import i18n from 'i18next';
 import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
+import { createEditorFileDropProps } from '../utils/editorFileDrop';
 import { toast } from 'sonner';
 import { useCurrentUser } from 'common.services';
 import { ContentYDocItem } from 'common.types';
@@ -183,14 +184,32 @@ export function useYjsStore({
    * 6. Editor — extensions в deps: при загрузке currentUser
    *    userData обновляется, пересоздаём редактор с правильным именем/цветом для курсора.
    * ========================================================== */
+  const storageTokenRef = useRef(storageToken);
+  storageTokenRef.current = storageToken;
+  const editorRef = useRef<Editor | null>(null);
+
+  const fileDropProps = useMemo(
+    () =>
+      createEditorFileDropProps({
+        getEditor: () => editorRef.current,
+        getToken: () => storageTokenRef.current,
+      }),
+    [],
+  );
+
   const editor = useEditor(
     {
       extensions,
       editable: true,
-      editorProps,
+      editorProps: {
+        ...editorProps,
+        ...fileDropProps,
+      },
     },
-    [extensions],
+    [extensions, fileDropProps],
   );
+
+  editorRef.current = editor ?? null;
 
   /* ==========================================================
    * 7. Обновление editable на основе serverReadonly

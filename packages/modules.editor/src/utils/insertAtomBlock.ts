@@ -10,9 +10,10 @@ export function insertAtomBlock(
   if (!editor || !editor.isEditable) return false;
 
   const currentBlock = getCurrentBlock(editor, activeBlock);
-  if (!currentBlock?.node) return false;
+  const insertPos = currentBlock?.node
+    ? currentBlock.pos + currentBlock.node.nodeSize
+    : editor.state.doc.content.size;
 
-  const insertPos = currentBlock.pos + currentBlock.node.nodeSize;
   editor.chain().focus().insertContentAt(insertPos, content).run();
   return true;
 }

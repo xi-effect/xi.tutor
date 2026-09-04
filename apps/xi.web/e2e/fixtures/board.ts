@@ -101,8 +101,52 @@ export async function mockBoardSession(page: Page) {
       return;
     }
 
+    if (method === 'POST' && /\/content-service\/files\/?$/.test(url)) {
+      await fulfillJson(route, 201, {
+        id: '11111111-1111-4111-8111-111111111111',
+        name: 'upload',
+        extension: 'webp',
+        kind: 'image',
+        content_type: 'image/webp',
+        size_bytes: 32,
+        created_at: '2026-01-01T00:00:00Z',
+      });
+      return;
+    }
+
     await fulfillJson(route, 200, {});
   });
+}
+
+export async function mockContentFileUploads(page: Page) {
+  const uploaded: { url: string; filename: string }[] = [];
+
+  await page.route('**/api/protected/content-service/files/', async (route) => {
+    if (route.request().method() === 'OPTIONS') {
+      await fulfillCorsPreflight(route);
+      return;
+    }
+
+    if (route.request().method() !== 'POST') {
+      await route.fallback();
+      return;
+    }
+
+    const url = route.request().url();
+    uploaded.push({ url, filename: url });
+
+    await fulfillJson(route, 201, {
+      id: '11111111-1111-4111-8111-111111111111',
+      name: 'upload',
+      extension: 'webp',
+      kind: 'image',
+      content_type: 'image/webp',
+      size_bytes: 32,
+      created_at: '2026-01-01T00:00:00Z',
+    });
+  });
+
+  return uploaded;
 }
 
 export function boardPath() {

@@ -4,17 +4,9 @@
  * (контракт — ./storedFileSrc.ts), не getFileUrl().
  */
 import type { DrContent, Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
-import {
-  uploadImageRequest,
-  uploadAudioRequest,
-  uploadDocumentRequest,
-  uploadFileRequest,
-  uploadPresentationRequest,
-} from 'common.services';
+import { uploadFileIdRequest } from 'common.services';
 import { resolveAssetUrl, getCachedBlobUrl } from './resolveAssetUrl';
 import { getRegisteredTokens } from './tokenRegistry';
-import { isPresentationFile } from '../constants/mimeTypes';
-
 /**
  * Описание одной "единицы работы" для фоновой докачки. Снимок props/meta
  * берётся ДО putContentOntoCurrentPage, чтобы избежать гонки чтения из
@@ -26,9 +18,9 @@ export interface PasteUploadTask {
   id: string;
   props: Record<string, any>;
   meta: Record<string, any> | undefined;
-  /** true — поддерживается uploadImageRequest (asset.type=image/video). */
+  /** true — исходный ассет image/video, клиентская проверка MIME остаётся. */
   canBeImage: boolean;
-  /** Эндпоинт content-service для shape'ов audio/pdf/presentation. */
+  /** Подсказка типа для UX; загрузка идёт через единую ручку. */
   uploadKind?: 'audio' | 'document' | 'presentation';
 }
 
@@ -250,7 +242,7 @@ async function doResolveAndUpload(
   destToken: string,
   remapped: Map<string, string>,
 ): Promise<string | null> {
-  const { props, meta, id, canBeImage } = task;
+  const { props, meta, id } = task;
   const src: string | undefined = props.src;
   if (!src) return null;
 
@@ -322,13 +314,7 @@ async function doResolveAndUpload(
     const name = ensureFileExtension(rawName, mimeType);
     const file = new File([blob], name, { type: mimeType });
 
-    const fileId = await uploadPastedFile({
-      file,
-      token: destToken,
-      canBeImage,
-      mimeType,
-      uploadKind: task.uploadKind,
-    });
+    const fileId = await uploadFileIdRequest({ file, token: destToken });
     // Контракт персиста: только id — см. utils/storedFileSrc.ts
     const newSrc = fileId;
 
@@ -343,34 +329,6 @@ async function doResolveAndUpload(
     );
     return null;
   }
-}
-
-async function uploadPastedFile({
-  file,
-  token,
-  canBeImage,
-  mimeType,
-  uploadKind,
-}: {
-  file: File;
-  token: string;
-  canBeImage: boolean;
-  mimeType: string;
-  uploadKind?: 'audio' | 'document' | 'presentation';
-}): Promise<string> {
-  if (canBeImage && mimeType.startsWith('image/')) {
-    return uploadImageRequest({ file, token });
-  }
-  if (uploadKind === 'audio' || mimeType.startsWith('audio/')) {
-    return uploadAudioRequest({ file, token });
-  }
-  if (uploadKind === 'document' || mimeType === 'application/pdf') {
-    return uploadDocumentRequest({ file, token });
-  }
-  if (uploadKind === 'presentation' || isPresentationFile(file)) {
-    return uploadPresentationRequest({ file, token });
-  }
-  return uploadFileRequest({ file, token });
 }
 
 async function fetchBlob(src: string): Promise<Blob | null> {

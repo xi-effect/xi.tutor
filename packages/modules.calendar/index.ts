@@ -57,6 +57,12 @@ export {
   weekdaysToBitmask,
 } from './src/utils/bitmaskTimezone';
 export { toLocalISOString } from './src/utils/dateTimezone';
+export {
+  FULL_WEEK_BITMASK,
+  getActivePeriodDays,
+  getRepeatUntil,
+  buildRepetitionModeInput,
+} from './src/utils/repetitionModePayload';
 export { resolveSchedulerStartsAt } from './src/utils/resolveSchedulerStartsAt';
 export { findNearestLessonIndex } from './src/utils/findNearestLessonIndex';
 export { useScheduleLessonRowsForDay } from './src/hooks/useScheduleLessonRowsForDay';

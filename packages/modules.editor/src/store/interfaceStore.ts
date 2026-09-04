@@ -1,7 +1,7 @@
 import { create } from 'zustand';
+import type { ActiveBlockT } from '../types';
 
-export type EditorModalT =
-  'uploadImage' | 'uploadAudio' | 'uploadPdf' | 'uploadPresentation' | null;
+export type EditorModalT = 'insertImageLink' | null;
 
 type useInterfaceStoreT = {
   activeCellControls: string | null;
@@ -11,6 +11,10 @@ type useInterfaceStoreT = {
   activeModal: EditorModalT;
   openModal: (modal: Exclude<EditorModalT, null>) => void;
   closeModal: () => void;
+  cloudPickerOpen: boolean;
+  insertAnchor: ActiveBlockT | undefined;
+  openCloudPicker: (anchor?: ActiveBlockT) => void;
+  closeCloudPicker: () => void;
 };
 
 export const useInterfaceStore = create<useInterfaceStoreT>()((set) => ({
@@ -21,4 +25,8 @@ export const useInterfaceStore = create<useInterfaceStoreT>()((set) => ({
   activeModal: null,
   openModal: (modal) => set({ activeModal: modal }),
   closeModal: () => set({ activeModal: null }),
+  cloudPickerOpen: false,
+  insertAnchor: undefined,
+  openCloudPicker: (anchor) => set({ cloudPickerOpen: true, insertAnchor: anchor }),
+  closeCloudPicker: () => set({ cloudPickerOpen: false, insertAnchor: undefined }),
 }));

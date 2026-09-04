@@ -52,6 +52,20 @@
     "responseTime": "We usually respond within a couple of hours, at most — within a day",
     "socials": "Stay up to date with platform news",
     "socialTelegram": "Telegram channel",
-    "socialVk": "VKontakte group"
+    "socialVk": "VKontakte group",
+    "devtoolsTitle": "Tools",
+    "devtoolsDescription": "Utility actions for diagnosing and restoring the app.",
+    "devtoolsBack": "Back",
+    "devtoolsCancel": "Cancel",
+    "forceLogout": "Force sign out",
+    "forceLogoutDesc": "End the session and return to the sign-in screen",
+    "forceLogoutConfirmTitle": "Force sign out?",
+    "forceLogoutConfirmDescription": "You will be signed out and returned to the sign-in screen",
+    "forceLogoutConfirmAction": "Sign out",
+    "clearData": "Clear app data",
+    "clearDataDesc": "Remove local data, cache, and Service Worker",
+    "clearDataConfirmTitle": "Clear app data?",
+    "clearDataConfirmDescription": "Local data, cache, and offline storage will be removed. Then the sign-in screen will open",
+    "clearDataConfirmAction": "Clear"
   }
 }

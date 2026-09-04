@@ -1,6 +1,8 @@
 import type { DrShapeId, Editor } from '@ibodr/draw';
 import { startEditingShapeWithRichText } from '@ibodr/draw';
 
+const RICH_TEXT_SHAPE_TYPES = new Set(['note', 'text', 'flip-card']);
+
 /** Включить редактирование подписи shape (rich text или plain text). */
 export function startLabelEditing(editor: Editor, shapeId: DrShapeId): void {
   if (editor.getEditingShapeId() === shapeId) return;
@@ -8,7 +10,7 @@ export function startLabelEditing(editor: Editor, shapeId: DrShapeId): void {
   const shape = editor.getShape(shapeId);
   if (!shape || !editor.canEditShape(shape)) return;
 
-  if (shape.type === 'note' || shape.type === 'text') {
+  if (RICH_TEXT_SHAPE_TYPES.has(shape.type)) {
     startEditingShapeWithRichText(editor, shapeId);
     return;
   }

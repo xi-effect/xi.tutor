@@ -109,7 +109,7 @@ export const DayLessonsPanel = ({
         {scheduleHeadingTitle != null ? (
           <div className="flex h-8 shrink-0 flex-row items-center gap-2 pr-3">
             <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
-              <h3 className="text-xl-base text-text-primary m-0 shrink-0 leading-none font-semibold">
+              <h3 className="font-playfair text-text-primary m-0 shrink-0 text-2xl leading-none font-medium">
                 {scheduleHeadingTitle}
               </h3>
               {monthLabelInToolbar ? (

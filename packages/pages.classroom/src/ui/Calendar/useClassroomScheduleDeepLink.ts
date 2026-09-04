@@ -54,7 +54,7 @@ export function useClassroomScheduleDeepLink() {
   const layoutReady = !isUserLoading && user != null;
   const isTutorUser = user?.default_layout === 'tutor';
   const classroomId = Number(classroomIdParam);
-  const isScheduleTab = (search.tab ?? 'overview') === 'schedule';
+  const isScheduleTab = search.tab === 'schedule';
 
   const focusedAtRaw = search.focused_at;
   const urlEventInstanceId = search.event_instance_id;
