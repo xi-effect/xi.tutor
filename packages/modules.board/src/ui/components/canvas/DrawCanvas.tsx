@@ -6,6 +6,9 @@ import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
+import { useSearch } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
+import { useRetryFileQueue } from 'common.services';
 import {
   useLockedShapeSelection,
   useDrawClipboard,
@@ -18,8 +21,7 @@ import {
   useBoardBackgroundSync,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
-import { useFollowUserStore, useDrawStore } from '../../../store';
-import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
+import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { hiddenComponents } from '../../../utils/customConfig';
 import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
 import { Header } from '../header';
@@ -28,23 +30,17 @@ import { CollaboratorCursor } from './CollaboratorCursor';
 import { CanvasOverlays } from './CanvasOverlays';
 import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
+import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
 import './customstyles.css';
-import { UndoRedo } from '../toolbar/UndoRedo';
-import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
-import { XiGeoTool } from '../../../shapes/geo';
-import { EmojiTool } from '../../../shapes/emoji';
-import { EmojiStickerTool } from '../../../shapes/emojiSticker';
-import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
-import { MathFigureTool } from '../../../shapes/math-figure';
 import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { insertAsset } from '../../../utils/uploadAsset';
-import { useRetryFileQueue } from 'common.services';
-import { useSearch } from '@tanstack/react-router';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
-import { useTranslation } from 'react-i18next';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
+import { useDrawStore, useFollowUserStore } from '../../../store';
+import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
+import { boardCustomTools } from '../../../shapes/boardCustomTools';
 
 export const DrawCanvas = ({
   token,
@@ -477,7 +473,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, MathFigureTool, EmojiStickerTool]}
+            tools={boardCustomTools}
             shapeUtils={boardCustomShapeUtils}
             components={drawComponents}
             collaboratorCursorLayout={{
