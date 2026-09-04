@@ -38,6 +38,7 @@ export const DrawingOverlay = ({
       if (stroke.points.length < 2) continue;
       ctx.globalCompositeOperation = stroke.mode === 'erase' ? 'destination-out' : 'source-over';
       ctx.strokeStyle = stroke.color;
+      ctx.globalAlpha = stroke.mode === 'erase' ? 1 : (stroke.opacity ?? 1);
       ctx.lineWidth = Math.max(1, stroke.size * canvas.width);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -51,6 +52,7 @@ export const DrawingOverlay = ({
       ctx.stroke();
     }
     ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
   }, [strokes]);
 
   useEffect(() => {
@@ -114,6 +116,7 @@ export const DrawingOverlay = ({
         color: tool.color,
         size: tool.mode === 'erase' ? tool.size * 2.5 : tool.size,
         mode: tool.mode,
+        opacity: tool.opacity ?? 1,
         points: [point],
       };
       redraw();

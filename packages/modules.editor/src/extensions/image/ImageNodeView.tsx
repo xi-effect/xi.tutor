@@ -14,7 +14,7 @@ import { NodeSelection } from '@tiptap/pm/state';
 import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
 import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
-import { DrawMenuItem } from '../../ui/components/drawing/DrawMenuItem';
+import { DrawMenuItem } from '../../ui/components/drawing/DrawSwitchButton';
 
 export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
   const src = node.attrs.src;
@@ -62,17 +62,16 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
 
       <div
         className={cn(
-          'absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity',
-          'group-hover:pointer-events-auto group-hover:opacity-100',
-          isDrawing && 'pointer-events-auto opacity-100',
+          'absolute top-2 right-2 flex flex-col-reverse gap-1 opacity-100 transition-opacity group-hover:opacity-100 pointer-fine:opacity-0',
+          isDrawing && 'pointer-events-none opacity-0 group-hover:opacity-0',
         )}
       >
+        <DrawMenuItem onClick={toggle} />
         <MediaBlockMenu
           editor={editor}
           getActiveBlock={getActiveBlock}
           isReadOnly={isReadOnly}
           onDownload={() => downloadImage(imageSrc)}
-          extraItems={<DrawMenuItem onSelect={toggle} />}
         />
       </div>
     </NodeViewWrapper>

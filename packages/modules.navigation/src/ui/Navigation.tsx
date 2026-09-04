@@ -1,4 +1,4 @@
-import { useMediaQuery } from '@xipkg/utils';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { Drawer } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { SideBarItems } from './SideBarItems';
@@ -28,14 +28,14 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   // Мемоизируем children, чтобы они не пересоздавались при изменении isMobile
   const stableChildren = useMemo(() => children, [children]);
 
-  const insetClassName =
-    focusMode || hideMobileNav
-      ? isMobile
-        ? 'w-full h-screen min-h-0 overflow-hidden'
-        : 'h-screen min-h-0 overflow-hidden'
-      : isMobile
-        ? 'w-full'
-        : 'h-screen min-h-0 overflow-hidden';
+  const isSidebarHidden = focusMode || hideMobileNav;
+  const allowScroll = isMobile && !isSidebarHidden;
+
+  const insetClassName = cn(
+    'h-screen min-h-0',
+    isMobile && 'w-full',
+    !allowScroll && 'overflow-hidden',
+  );
 
   // paddingBottom через style: динамический `pb-[${n}px]` Tailwind JIT не генерирует.
   // --calls-layout-bottom-offset читают Call / доски / PreJoin, чтобы не залезать под

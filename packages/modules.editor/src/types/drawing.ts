@@ -6,12 +6,14 @@ export type StrokeT = {
   size: number;
   mode: 'draw' | 'erase';
   points: StrokePointT[];
+  opacity: number;
 };
 
 export type DrawToolT = {
   mode: 'draw' | 'erase';
   color: string;
   size: number;
+  opacity: number;
 };
 
 // Для картинки: annotations: StrokeT[] (один слой на изображение).

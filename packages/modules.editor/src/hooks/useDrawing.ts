@@ -63,7 +63,12 @@ export function useDrawingToggle(
   return { isDrawing, toggle, close };
 }
 
-export const DEFAULT_DRAW_TOOL: DrawToolT = { mode: 'draw', color: '#1A1A1A', size: 0.006 };
+export const DEFAULT_DRAW_TOOL: DrawToolT = {
+  mode: 'draw',
+  color: '#1A1A1A',
+  size: 0.006,
+  opacity: 1,
+};
 
 export function useDrawingTool(strokes: StrokeT[], onChangeStrokes: (next: StrokeT[]) => void) {
   const [tool, setTool] = useState<DrawToolT>(DEFAULT_DRAW_TOOL);

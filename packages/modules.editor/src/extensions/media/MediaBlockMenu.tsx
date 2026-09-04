@@ -38,13 +38,13 @@ export const MediaBlockMenu = ({
   return (
     <div
       className={cn(
-        'pointer-events-none absolute top-2 right-2 z-10 flex opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100',
+        'z-10 flex group-hover:pointer-events-auto pointer-fine:pointer-events-none',
         className,
       )}
     >
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button size="s" variant="none" className="rounded-lg px-2">
+          <Button size="s" variant="none" className="bg-background-page rounded-lg px-2">
             <MoreVert size="sm" className="size-6" />
           </Button>
         </DropdownMenuTrigger>

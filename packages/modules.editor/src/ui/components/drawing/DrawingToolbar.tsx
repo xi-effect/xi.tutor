@@ -1,7 +1,10 @@
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { cn } from '@xipkg/utils';
 import { Undo, Eraser, Trash, Close } from '@xipkg/icons';
 import { DrawToolT } from '../../../types';
+import { DropdownMenuSeparator } from '@xipkg/dropdown';
+import { Slider } from '@xipkg/slider';
 
 const COLORS = ['#1A1A1A', '#E53935', '#1E88E5', '#43A047'];
 const SIZES = [0.006, 0.012, 0.02];
@@ -23,8 +26,65 @@ export const DrawingToolbar = ({
   onClose,
   canUndo,
 }: DrawingToolbarPropsT) => {
+  const [isOpacityOpen, setIsOpacityOpen] = useState(false);
+  const opacityRef = useRef<HTMLDivElement>(null);
+  const opacityPercent = Math.round((tool.opacity ?? 1) * 100);
+
+  useEffect(() => {
+    if (!isOpacityOpen) return;
+
+    const handlePointerDownOutside = (e: PointerEvent) => {
+      if (opacityRef.current && !opacityRef.current.contains(e.target as Node)) {
+        setIsOpacityOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDownOutside, true);
+    return () => document.removeEventListener('pointerdown', handlePointerDownOutside, true);
+  }, [isOpacityOpen]);
+
   return (
-    <div className="bg-background-surface border-border-default absolute -top-10 left-2 z-10 flex items-center gap-1 rounded-lg border p-1 px-2 shadow-md">
+    <div className="bg-background-surface border-border-default absolute -right-10 bottom-0 z-10 flex flex-col items-center gap-1 rounded-lg border p-1 py-2 shadow-md">
+      <div className="pointer-events-auto relative" ref={opacityRef}>
+        <Button
+          variant="none"
+          size="s"
+          className="rounded px-1"
+          onClick={() => setIsOpacityOpen((prev) => !prev)}
+        >
+          <span
+            className="border-border-default relative block size-5 overflow-hidden rounded-sm border"
+            style={{
+              backgroundImage:
+                'linear-gradient(45deg, #9CA3AF 25%, transparent 25%), linear-gradient(-45deg, #9CA3AF 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #9CA3AF 75%), linear-gradient(-45deg, transparent 75%, #9CA3AF 75%)',
+              backgroundSize: '6px 6px',
+              backgroundPosition: '0 0, 0 3px, 3px -3px, -3px 0px',
+            }}
+          >
+            <span
+              className="absolute inset-0"
+              style={{ backgroundColor: tool.color, opacity: tool.opacity ?? 1 }}
+            />
+          </span>
+        </Button>
+
+        {isOpacityOpen && (
+          <div className="bg-background-surface border-border-default absolute top-1/2 right-full mr-2 flex -translate-y-1/2 items-center gap-2 rounded-lg border p-2 shadow-md">
+            <Slider
+              onValueChange={(e) => onToolChange({ ...tool, opacity: Number(e[0]) / 100 })}
+              value={[opacityPercent]}
+              min={10}
+              max={100}
+              step={10}
+              className="h-1 w-26 accent-current"
+            />
+            <span className="text-text-primary w-10 shrink-0 text-xs tabular-nums">
+              {opacityPercent}%
+            </span>
+          </div>
+        )}
+      </div>
+
       {COLORS.map((color) => (
         <Button
           key={color}
@@ -39,7 +99,7 @@ export const DrawingToolbar = ({
         ></Button>
       ))}
 
-      <div className="bg-border-default mx-1 h-4 w-px" />
+      <DropdownMenuSeparator className="m-0 w-full" />
 
       {SIZES.map((size) => (
         <Button
@@ -56,7 +116,7 @@ export const DrawingToolbar = ({
         </Button>
       ))}
 
-      <div className="bg-border-default mx-1 h-4 w-px" />
+      <DropdownMenuSeparator className="m-0 w-full" />
 
       <Button
         variant={tool.mode === 'erase' ? 'default' : 'none'}

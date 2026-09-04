@@ -15,7 +15,8 @@ import { MediaBlockMenu } from '../media/MediaBlockMenu';
 import { PdfViewer } from './PdfViewer';
 import { optimizeImage } from '../../utils/optimizeImage';
 import { StrokeT } from '../../types';
-import { DrawMenuItem } from '../../ui/components/drawing/DrawMenuItem';
+import { DrawMenuItem } from '../../ui/components/drawing/DrawSwitchButton';
+import { cn } from '@xipkg/utils';
 
 function isResolvedSrc(src: string) {
   return src.startsWith('blob:') || src.startsWith('http') || src.startsWith('data:');
@@ -80,14 +81,20 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
           />
         )}
       </div>
-
-      <MediaBlockMenu
-        editor={editor}
-        getActiveBlock={getActiveBlock}
-        isReadOnly={isReadOnly}
-        onDownload={handleDownload}
-        extraItems={<DrawMenuItem onSelect={toggle} />}
-      />
+      <div
+        className={cn(
+          'pointer-events-auto absolute top-2 right-2 flex flex-col-reverse gap-1 opacity-100 transition-opacity group-hover:opacity-100 pointer-fine:opacity-0',
+          isDrawing && 'pointer-events-none opacity-0 group-hover:opacity-0',
+        )}
+      >
+        <DrawMenuItem onClick={toggle} />
+        <MediaBlockMenu
+          editor={editor}
+          getActiveBlock={getActiveBlock}
+          isReadOnly={isReadOnly}
+          onDownload={handleDownload}
+        />
+      </div>
     </NodeViewWrapper>
   );
 };
