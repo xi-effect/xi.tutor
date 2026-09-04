@@ -31,6 +31,7 @@ const toolMapping: Record<string, string> = {
   emoji: 'emoji',
   'emoji-sticker': 'emoji-sticker',
   'coordinate-axes': 'coordinate-axes',
+  'flip-card': 'flip-card',
 };
 
 const COMMENT_ACTION = 'comment';
@@ -166,6 +167,7 @@ export const Navbar = track(
         emoji: 'emoji',
         'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
+        'flip-card': 'flip-card',
         'math-figure': 'geo',
       };
 

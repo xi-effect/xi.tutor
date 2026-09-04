@@ -17,6 +17,7 @@ import { ACTIVITY_KINDS, type ActivityKind } from '../model/kinds';
 import { insertActivity } from '../shape/insertActivity';
 import { ACTIVITY_KIND_ICONS } from './activityKindIcons';
 import { ActivityMotionItem, ActivityMotionList } from './activityUiMotion';
+import { insertFlipCardShape } from '../../shapes/flipCard';
 
 const PORTAL_Z = 9999;
 
@@ -50,6 +51,11 @@ export function ActivityPicker({
   }, []);
 
   const addKind = (kind: ActivityKind) => {
+    if (kind === 'flip-card') {
+      insertFlipCardShape(editor);
+      onOpenChange(false);
+      return;
+    }
     insertActivity(editor, kind);
     onOpenChange(false);
   };

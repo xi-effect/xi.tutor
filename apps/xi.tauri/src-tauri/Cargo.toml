@@ -36,7 +36,7 @@ tokio = { version = "1", features = ["time"] }
 tauri-plugin-log = "2"
 tauri-plugin-os = "2"
 tauri-plugin-dialog = "2"
-tauri-plugin-notification = "2"
+tauri-plugin-notification = "2.4"
 tauri-plugin-deep-link = "2"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-opener = "2"
@@ -58,7 +58,7 @@ windows = { version = "0.61", features = [
 # (updater) or have no concept equivalent to `relaunch` from the user's side
 # (process), so we gate these by target.
 [target.'cfg(not(any(target_os = "ios", target_os = "android")))'.dependencies]
-tauri-plugin-updater = "2"
+tauri-plugin-updater = "2.11"
 tauri-plugin-process = "2"
 tauri-plugin-single-instance = "2"
 
