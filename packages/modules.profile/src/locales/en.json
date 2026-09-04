@@ -7,6 +7,7 @@
     "notifications": "Notifications",
     "soundAndVideo": "Sound and video",
     "effects": "Effects",
+    "board": "Board",
     "report": "Report",
     "logout": "Log out",
     "logoutConfirmTitle": "Sign out?",
@@ -132,6 +133,12 @@
     "boardTimerWarn": "Timer warning",
     "boardTimerWarnHint": "Plays when 45 seconds remain on the whiteboard timer",
     "playPreview": "Preview sound"
+  },
+  "board": {
+    "title": "Board",
+    "pencil": "Pencil",
+    "autoCloseDrawShapes": "Close pencil strokes into shapes",
+    "autoCloseDrawShapesHint": "If a stroke almost closes, the pencil turns it into a filled shape. On a tablet with a stylus this often happens by accident"
   },
   "report": {
     "title": "Report",

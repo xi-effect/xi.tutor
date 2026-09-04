@@ -33,12 +33,17 @@ import { DrawZoomPanel } from './DrawZoomPanel';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
 import './customstyles.css';
-import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
+import {
+  applyDrawStrokeClosePreference,
+  isShapeErasable,
+  isEditableTarget,
+  resetInflatedDrawScale,
+} from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
-import { useDrawStore, useFollowUserStore } from '../../../store';
+import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
 
@@ -413,14 +418,24 @@ export const DrawCanvas = ({
               editor.user.updateUserPreferences({ isDynamicSizeMode: false });
               resetInflatedDrawScale(editor);
               editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
+                let next = shape;
                 if (shape.type === 'draw' && shape.props.scale !== 1) {
-                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                  next = { ...shape, props: { ...shape.props, scale: 1 } };
                 }
                 if (shape.type === 'highlight' && shape.props.scale !== 1) {
-                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                  next = { ...shape, props: { ...shape.props, scale: 1 } };
                 }
-                return shape;
+                return applyDrawStrokeClosePreference(
+                  next,
+                  useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
+                );
               });
+              editor.sideEffects.registerBeforeChangeHandler('shape', (_, next) =>
+                applyDrawStrokeClosePreference(
+                  next,
+                  useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
+                ),
+              );
 
               const inputMode = useDrawStore.getState().inputMode;
               if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });

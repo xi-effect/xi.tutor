@@ -5,7 +5,8 @@
   "exports": {
     ".": "./index.ts",
     "./warmup": "./src/warmup/index.ts",
-    "./locales": "./src/locales/index.ts"
+    "./locales": "./src/locales/index.ts",
+    "./preferences": "./src/store/useBoardPreferencesStore.ts"
   },
   "license": "MIT",
   "scripts": {

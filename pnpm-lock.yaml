@@ -85,7 +85,7 @@ importers:
         specifier: ^2.0.0
         version: 2.9.1
       '@tauri-apps/plugin-notification':
-        specifier: ^2.0.0
+        specifier: ^2.4.0
         version: 2.4.0
       '@tauri-apps/plugin-opener':
         specifier: ^2.0.0
@@ -97,7 +97,7 @@ importers:
         specifier: ^2.0.0
         version: 2.3.1
       '@tauri-apps/plugin-updater':
-        specifier: ^2.0.0
+        specifier: ^2.11.0
         version: 2.11.0
       '@xipkg/button':
         specifier: 4.1.0
@@ -4560,6 +4560,9 @@ importers:
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
+      modules.board:
+        specifier: workspace:*
+        version: link:../modules.board
       modules.calls:
         specifier: workspace:*
         version: link:../modules.calls

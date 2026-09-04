@@ -24,6 +24,7 @@ export const Header = ({ activeItem, showContent, setShowContent, handleClose }:
       t('menu.notifications'),
       t('menu.soundAndVideo'),
       t('menu.effects'),
+      t('menu.board'),
       t('menu.report'),
     ],
     [t],
