@@ -1,13 +1,7 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Button } from '@xipkg/button';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { useParams, useSearch } from '@tanstack/react-router';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import {
-  pageSwitcherIndicatorClass,
-  pageSwitcherTabClass,
-  pageSwitcherTrackClass,
-} from 'common.ui';
 import {
   useCurrentUser,
   useGetClassroom,
@@ -15,6 +9,7 @@ import {
   useGetClassroomMaterialsListStudent,
 } from 'common.services';
 import { MaterialsCard } from 'features.materials.card';
+import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pages.materials';
@@ -23,7 +18,6 @@ import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
 import { ClassroomFiles } from './ClassroomFiles';
 import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../galleryShadowClass';
-import { sectionTitleClass } from '../sectionTitleClass';
 
 type MaterialTypeTab = 'boards' | 'notes' | 'files';
 
@@ -40,22 +34,12 @@ const ClassroomMaterialsGallery = () => {
   const { t: tMaterials } = useTranslation('materials');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 960px)');
   const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const tagIds = materialTags.map((tag) => tag.id);
 
   const activeTab: MaterialTypeTab = isMaterialTypeTab(search.tab) ? search.tab : 'boards';
   const contentType = activeTab === 'notes' ? 'note' : 'board';
-
-  const typeTabs = useMemo(
-    () => [
-      { id: 'boards', label: t('materials.boards') },
-      { id: 'notes', label: t('materials.notes') },
-      { id: 'files', label: t('materials.files') },
-    ],
-    [t],
-  );
 
   const {
     data: classroom,
@@ -87,34 +71,31 @@ const ClassroomMaterialsGallery = () => {
     isError: isMaterialsError,
   } = isTutor ? tutorList : studentList;
 
-  const handleTypeChange = (tabId: string) => {
-    if (!isMaterialTypeTab(tabId)) return;
-    navigate({
-      to: '/classrooms/$classroomId',
-      params: { classroomId },
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
-        tab: tabId,
-      }),
-    });
-  };
-
-  const heading: ReactNode = (
-    <>
-      <h2 className={sectionTitleClass}>{t('tabs.materials')}</h2>
-      <SwitcherAnimate
-        tabs={typeTabs}
-        activeTab={activeTab}
-        onChange={handleTypeChange}
-        className={cn(pageSwitcherTrackClass, 'w-auto')}
-        tabClassName={pageSwitcherTabClass}
-        indicatorClassName={pageSwitcherIndicatorClass}
-      />
-    </>
+  const toolbar: ReactNode = (
+    <div className="flex min-w-0 flex-1 flex-row flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <FilesTagsFilter value={materialTags} onChange={setMaterialTags} />
+        {materialTags.length > 0 ? (
+          <Button
+            type="button"
+            variant="ghost"
+            className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
+            onClick={() => setMaterialTags([])}
+          >
+            {tMaterials('files.resetAll')}
+          </Button>
+        ) : null}
+      </div>
+      {isTutor && !isMobile ? (
+        <div className="ml-auto shrink-0">
+          <MaterialsAdd kind={activeTab === 'notes' ? 'note' : 'board'} />
+        </div>
+      ) : null}
+    </div>
   );
 
   if (activeTab === 'files') {
-    return <ClassroomFiles classroomId={classroomId} heading={heading} />;
+    return <ClassroomFiles classroomId={classroomId} />;
   }
 
   return (
@@ -126,20 +107,7 @@ const ClassroomMaterialsGallery = () => {
             galleryShadowHeaderInsetClass,
           )}
         >
-          {heading}
-          <div className="ml-auto flex flex-wrap items-center gap-3">
-            <FilesTagsFilter value={materialTags} onChange={setMaterialTags} />
-            {materialTags.length > 0 ? (
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
-                onClick={() => setMaterialTags([])}
-              >
-                {tMaterials('files.resetAll')}
-              </Button>
-            ) : null}
-          </div>
+          {toolbar}
         </div>
       </div>
 

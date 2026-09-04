@@ -6,7 +6,7 @@ import { Input } from '@xipkg/input';
 import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
 import { getClassroomDisplayName, type FileKind, type LibraryFile } from 'common.api';
-import { useShareLibraryFileToClassroom } from 'common.services';
+import { useGetLibraryFileClassroomIds, useShareLibraryFileToClassroom } from 'common.services';
 import { matchesSearchQuery } from 'common.utils';
 import {
   ModalCloseIcon,
@@ -54,8 +54,18 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [alreadyAddedIds, setAlreadyAddedIds] = useState<Set<number>>(() => new Set());
-  const { classrooms, isLoading } = useAllTutorClassrooms(open);
+  const { classrooms, isLoading: isClassroomsLoading } = useAllTutorClassrooms(open);
+  const { data: classroomIds, isLoading: isClassroomIdsLoading } = useGetLibraryFileClassroomIds(
+    file.id,
+    !open,
+  );
   const shareMutation = useShareLibraryFileToClassroom();
+  const isLoading = isClassroomsLoading || isClassroomIdsLoading;
+  const knownAlreadyAddedIds = useMemo(() => {
+    const next = new Set(classroomIds);
+    alreadyAddedIds.forEach((id) => next.add(id));
+    return next;
+  }, [alreadyAddedIds, classroomIds]);
 
   const displayName = getLibraryFileDisplayName(file);
   const Icon = kindIcon[file.kind] ?? File;
@@ -77,6 +87,12 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
     setSearch('');
   }, [file.id]);
 
+  useEffect(() => {
+    if (selectedId != null && knownAlreadyAddedIds.has(selectedId)) {
+      setSelectedId(null);
+    }
+  }, [knownAlreadyAddedIds, selectedId]);
+
   const filteredClassrooms = useMemo(() => {
     const query = search.trim();
 
@@ -90,7 +106,7 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
   const canShare =
     selectedClassroom != null &&
     !isClassroomArchived(selectedClassroom) &&
-    !alreadyAddedIds.has(selectedClassroom.id) &&
+    !knownAlreadyAddedIds.has(selectedClassroom.id) &&
     !shareMutation.isPending;
 
   const handleClose = () => {
@@ -197,7 +213,7 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
               filteredClassrooms.map((classroom) => {
                 const name = getClassroomDisplayName(classroom) || t('scope.unnamedClassroom');
                 const archived = isClassroomArchived(classroom);
-                const alreadyAdded = alreadyAddedIds.has(classroom.id);
+                const alreadyAdded = knownAlreadyAddedIds.has(classroom.id);
                 const disabled = archived || alreadyAdded;
                 const selected = selectedId === classroom.id && !disabled;
                 const studentsCount = getGroupEnrollmentsCount(classroom);
@@ -243,12 +259,12 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
                       </p>
                     </div>
                     {alreadyAdded ? (
-                      <span className="bg-status-success-background text-status-success-text shrink-0 rounded-md px-2 py-1 text-xs font-medium">
+                      <span className="text-status-success-text shrink-0 text-xs font-medium">
                         {t('files.share.alreadyAdded')}
                       </span>
                     ) : null}
                     {archived ? (
-                      <span className="bg-tag-orange-background text-tag-orange-accent shrink-0 rounded-md px-2 py-1 text-xs font-medium">
+                      <span className="text-tag-orange-accent shrink-0 text-xs font-medium">
                         {t('files.share.archived')}
                       </span>
                     ) : null}

@@ -36,17 +36,21 @@ const kindIcon: Record<FileKind, typeof File> = {
 type UploadFilesModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  classroomId?: string;
 };
 
 const collectDroppedFiles = (event: DragEvent<HTMLElement>): File[] =>
   Array.from(event.dataTransfer.files ?? []);
 
-export const UploadFilesModal = ({ open, onOpenChange }: UploadFilesModalProps) => {
+export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFilesModalProps) => {
   const { t } = useTranslation('materials');
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const { items, addFiles, removeItem, cancelAll, cancelUploading } = useLibraryFileUploads(open);
+  const { items, addFiles, removeItem, cancelAll, cancelUploading } = useLibraryFileUploads(
+    open,
+    classroomId,
+  );
 
   const doneCount = items.filter((item) => item.status === 'done').length;
   const hasUploading = items.some((item) => item.status === 'uploading');

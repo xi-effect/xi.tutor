@@ -70,7 +70,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="bg-background-surface border-border-default sticky top-0 z-50 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
+    <div className="bg-background-surface border-border-default sticky top-0 z-10 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
       <div className="flex w-full items-center justify-between">
         <div className="relative flex w-full items-center justify-center">
           <Button

@@ -44,6 +44,16 @@
       "maxFiles": "You can upload at most {{max}} files at a time"
     },
     "searchPlaceholder": "Search files",
+    "cloudPicker": {
+      "title": "Cloud files",
+      "description": "Pick a file from your materials library",
+      "loading": "Loading files…",
+      "error": "Could not load files",
+      "empty": "No files in the cloud yet",
+      "preview": "Preview",
+      "add": "Add",
+      "close": "Close"
+    },
     "resetAll": "Reset all",
     "reset": "Reset",
     "apply": "Apply",

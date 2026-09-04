@@ -1,11 +1,11 @@
-import { type ReactNode, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
+import { Plus } from '@xipkg/icons';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import {
   useCurrentUser,
   useDetachClassroomFile,
   useGetClassroomFiles,
-  useUploadClassroomFile,
   type LibraryFile,
 } from 'common.services';
 import {
@@ -16,6 +16,7 @@ import {
   FilesTypeFilter,
   FilesUploaderFilter,
   DEFAULT_FILES_FILTERS,
+  UploadFilesModal,
   filterLibraryFiles,
   hasActiveFilesFilters,
   toLibraryFileSearchFilters,
@@ -30,10 +31,9 @@ import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../gallery
 
 type ClassroomFilesProps = {
   classroomId: string;
-  heading: ReactNode;
 };
 
-export const ClassroomFiles = ({ classroomId, heading }: ClassroomFilesProps) => {
+export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
   const { t } = useTranslation('classroom');
   const { t: tMaterials } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
@@ -42,9 +42,8 @@ export const ClassroomFiles = ({ classroomId, heading }: ClassroomFilesProps) =>
   const roleReady = !isUserLoading && user != null;
   const [filters, setFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
-  const uploadInputRef = useRef<HTMLInputElement>(null);
+  const [uploadOpen, setUploadOpen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
-  const uploadMutation = useUploadClassroomFile();
   const detachMutation = useDetachClassroomFile();
   const filtersActive = hasActiveFilesFilters(filters);
 
@@ -63,15 +62,6 @@ export const ClassroomFiles = ({ classroomId, heading }: ClassroomFilesProps) =>
     return files.find((item) => item.id === previewFile.id) ?? previewFile;
   }, [files, previewFile]);
 
-  const handleUpload = (fileList: FileList | null) => {
-    const file = fileList?.[0];
-    if (!file) return;
-    uploadMutation.mutate({ classroomId, file });
-    if (uploadInputRef.current) {
-      uploadInputRef.current.value = '';
-    }
-  };
-
   const handleDetach = (file: LibraryFile) => {
     detachMutation.mutate({ classroomId, fileId: file.id });
   };
@@ -85,61 +75,62 @@ export const ClassroomFiles = ({ classroomId, heading }: ClassroomFilesProps) =>
   });
 
   const header = (
-    <div className="shrink-0 pr-5 sm:pr-8 md:pr-10">
-      <div
-        className={cn(
-          'flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4',
-          galleryShadowHeaderInsetClass,
-        )}
-      >
-        {heading}
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          {isTutor ? (
-            <>
-              <input
-                ref={uploadInputRef}
-                type="file"
-                className="hidden"
-                onChange={(event) => handleUpload(event.target.files)}
+    <>
+      <div className="shrink-0 pr-5 sm:pr-8 md:pr-10">
+        <div
+          className={cn(
+            'flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4',
+            galleryShadowHeaderInsetClass,
+          )}
+        >
+          <div className="flex min-w-0 flex-1 flex-row flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <FilesTagsFilter
+                value={filters.tags}
+                onChange={(tags) => setFilters((prev) => ({ ...prev, tags }))}
               />
+              <FilesUploaderFilter
+                value={filters.uploader}
+                onChange={(uploader) => setFilters((prev) => ({ ...prev, uploader }))}
+              />
+              <FilesTypeFilter
+                value={filters.kinds}
+                onChange={(kinds) => setFilters((prev) => ({ ...prev, kinds }))}
+              />
+              {filtersActive ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
+                  onClick={() => setFilters(DEFAULT_FILES_FILTERS)}
+                >
+                  {tMaterials('files.resetAll')}
+                </Button>
+              ) : null}
+            </div>
+            {isTutor ? (
               <Button
                 type="button"
                 variant="primary"
-                size="s"
-                className="rounded-[10px]"
-                loading={uploadMutation.isPending}
-                onClick={() => uploadInputRef.current?.click()}
+                className="text-text-on-accent ml-auto h-8! gap-2 rounded-[10px] px-4 font-medium"
+                onClick={() => setUploadOpen(true)}
                 data-umami-event="classroom-files-upload"
               >
-                {t('files.upload')}
+                <Plus className="fill-text-on-accent size-4 shrink-0" />
+                {tMaterials('files.upload')}
               </Button>
-            </>
-          ) : null}
-          <FilesUploaderFilter
-            value={filters.uploader}
-            onChange={(uploader) => setFilters((prev) => ({ ...prev, uploader }))}
-          />
-          <FilesTypeFilter
-            value={filters.kinds}
-            onChange={(kinds) => setFilters((prev) => ({ ...prev, kinds }))}
-          />
-          <FilesTagsFilter
-            value={filters.tags}
-            onChange={(tags) => setFilters((prev) => ({ ...prev, tags }))}
-          />
-          {filtersActive ? (
-            <Button
-              type="button"
-              variant="ghost"
-              className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
-              onClick={() => setFilters(DEFAULT_FILES_FILTERS)}
-            >
-              {tMaterials('files.resetAll')}
-            </Button>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
-    </div>
+      {isTutor ? (
+        <UploadFilesModal
+          open={uploadOpen}
+          onOpenChange={setUploadOpen}
+          classroomId={classroomId}
+        />
+      ) : null}
+    </>
   );
 
   if (!roleReady || isLoading) {

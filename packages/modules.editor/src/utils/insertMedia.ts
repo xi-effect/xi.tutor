@@ -5,14 +5,17 @@ import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'com
 import {
   ALLOWED_AUDIO_MIME_TYPES,
   getFileExtension,
+  isGenericFile,
   isPdfFile,
   isPresentationFile,
   MAX_AUDIO_BLOCKS,
+  MAX_FILE_BLOCKS,
   MAX_MEDIA_SIZE_BYTES,
   MAX_PDF_BLOCKS,
   MAX_PRESENTATION_BLOCKS,
   withPdfMimeType,
 } from '../const/media';
+import { optimizeImage } from './optimizeImage';
 import { checkAudioMagicBytes } from './checkAudioMagicBytes';
 import { countNodes } from './countNodes';
 import { getAudioDuration } from './getAudioDuration';
@@ -40,6 +43,39 @@ async function getPdfPageCount(file: File): Promise<number> {
     return 1;
   } finally {
     URL.revokeObjectURL(objectUrl);
+  }
+}
+
+export async function insertImageFile(
+  editor: Editor,
+  file: File,
+  token: string,
+  activeBlock?: ActiveBlockT,
+) {
+  file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
+
+  if (isFileNameTooLong(file.name)) {
+    toast.error(t('upload.fileNameTooLong'), {
+      description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
+    });
+    return false;
+  }
+
+  try {
+    const optimized = await optimizeImage(file);
+    const src = await uploadFileIdRequest({ file: optimized, token });
+    return insertAtomBlock(
+      editor,
+      {
+        type: 'image',
+        attrs: { src, alt: file.name },
+      },
+      activeBlock,
+    );
+  } catch (err) {
+    console.error(err);
+    toast.error(t('toast.imageUploadError'));
+    return false;
   }
 }
 
@@ -190,6 +226,52 @@ export async function insertPresentationFile(
     {
       type: 'presentation',
       attrs: { src, fileName: file.name },
+    },
+    activeBlock,
+  );
+}
+
+export async function insertFileBlock(
+  editor: Editor,
+  file: File,
+  token: string,
+  activeBlock?: ActiveBlockT,
+) {
+  file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
+
+  if (!isGenericFile(file)) {
+    toast.error(t('toast.unsupportedFormat'), { description: t('toast.fileFormatDesc') });
+    return false;
+  }
+
+  if (isFileNameTooLong(file.name)) {
+    toast.error(t('upload.fileNameTooLong'), {
+      description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
+    });
+    return false;
+  }
+
+  if (file.size > MAX_MEDIA_SIZE_BYTES) {
+    toast.error(t('toast.fileTooLarge'), {
+      description: t('toast.fileSizeDesc', { size: sizeMiB(file.size) }),
+    });
+    return false;
+  }
+
+  if (countNodes(editor, 'file') >= MAX_FILE_BLOCKS) {
+    toast.error(t('toast.fileLimitTitle'), {
+      description: t('toast.fileLimitDesc', { max: MAX_FILE_BLOCKS }),
+    });
+    return false;
+  }
+
+  const src = await uploadFileIdRequest({ file, token });
+
+  return insertAtomBlock(
+    editor,
+    {
+      type: 'file',
+      attrs: { src, fileName: file.name, fileSize: file.size },
     },
     activeBlock,
   );

@@ -4089,12 +4089,6 @@ importers:
       '@xipkg/dropdown':
         specifier: ^3.1.0
         version: 3.1.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/file':
-        specifier: ^4.0.0
-        version: 4.0.0(react@19.2.8)
-      '@xipkg/fileuploader':
-        specifier: 5.1.0
-        version: 5.1.0(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.5
         version: 3.1.5(react@19.2.8)
@@ -4152,6 +4146,9 @@ importers:
       nanoid:
         specifier: 5.1.5
         version: 5.1.5
+      pages.materials:
+        specifier: workspace:*
+        version: link:../pages.materials
       pdfjs-dist:
         specifier: ^4.10.38
         version: 4.10.38
@@ -5522,6 +5519,9 @@ importers:
 
   packages/pages.materials:
     dependencies:
+      '@radix-ui/react-context-menu':
+        specifier: ^2.2.6
+        version: 2.3.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@tanstack/react-query':
         specifier: 5.73.3
         version: 5.73.3(react@19.2.8)
@@ -5621,6 +5621,9 @@ importers:
       sonner:
         specifier: ^2.0.7
         version: 2.0.8(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      vaul:
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0

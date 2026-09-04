@@ -86,7 +86,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
       to: '/classrooms/$classroomId',
       params: { classroomId: classroom.id.toString() },
       search: {
-        tab: 'overview',
+        tab: 'boards',
         ...filteredSearch,
       },
     });

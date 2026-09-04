@@ -1,6 +1,12 @@
 export { useSearchLibraryFiles, searchLibraryFilesRequest } from './useSearchLibraryFiles';
 export { useGetLibraryFileMeta, getLibraryFileMetaRequest } from './useGetLibraryFileMeta';
 export {
+  useGetLibraryFileClassroomIds,
+  getLibraryFileClassroomIdsRequest,
+  parseLibraryFileClassroomIds,
+  appendLibraryFileClassroomId,
+} from './useGetLibraryFileClassroomIds';
+export {
   useGetLibraryFile,
   getLibraryFileRequest,
   type GetLibraryFileOptions,

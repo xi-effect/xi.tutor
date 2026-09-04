@@ -2,9 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FileKind, LibraryFile } from 'common.api';
 import {
   LibraryFilesQueryKey,
+  insertClassroomFileInSearchCache,
   insertLibraryFileInSearchCache,
+  invalidateClassroomFiles,
   isFileNameTooLong,
   showSuccess,
+  uploadClassroomFileRequest,
   uploadLibraryFileRequest,
 } from 'common.services';
 import { useQueryClient } from '@tanstack/react-query';
@@ -38,7 +41,7 @@ const createItemId = () =>
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-export const useLibraryFileUploads = (open: boolean) => {
+export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
   const queryClient = useQueryClient();
   const [items, setItems] = useState<LibraryUploadItem[]>([]);
   const itemsRef = useRef(items);
@@ -62,19 +65,26 @@ export const useLibraryFileUploads = (open: boolean) => {
       abortRef.current.set(id, controller);
 
       try {
-        const uploaded = await uploadLibraryFileRequest({
-          file,
-          signal: controller.signal,
-          onUploadProgress: (percent) => {
-            setItems((current) =>
-              current.map((item) =>
-                item.id === id && item.status === 'uploading'
-                  ? { ...item, progress: percent }
-                  : item,
-              ),
-            );
-          },
-        });
+        const onUploadProgress = (percent: number) => {
+          setItems((current) =>
+            current.map((item) =>
+              item.id === id && item.status === 'uploading' ? { ...item, progress: percent } : item,
+            ),
+          );
+        };
+
+        const uploaded = classroomId
+          ? await uploadClassroomFileRequest({
+              classroomId,
+              file,
+              signal: controller.signal,
+              onUploadProgress,
+            })
+          : await uploadLibraryFileRequest({
+              file,
+              signal: controller.signal,
+              onUploadProgress,
+            });
 
         abortRef.current.delete(id);
         setItems((current) =>
@@ -94,6 +104,10 @@ export const useLibraryFileUploads = (open: boolean) => {
         queryClient.invalidateQueries({
           queryKey: [LibraryFilesQueryKey.SearchLibraryFiles],
         });
+        if (classroomId) {
+          insertClassroomFileInSearchCache(queryClient, classroomId, uploaded);
+          invalidateClassroomFiles(queryClient, classroomId);
+        }
         showSuccess('files');
       } catch (error) {
         abortRef.current.delete(id);
@@ -117,7 +131,7 @@ export const useLibraryFileUploads = (open: boolean) => {
         );
       }
     },
-    [queryClient],
+    [classroomId, queryClient],
   );
 
   useEffect(() => {

@@ -84,7 +84,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
       to: '/classrooms/$classroomId',
       params: { classroomId: id.toString() },
       search: {
-        tab: 'overview',
+        tab: 'boards',
         ...filteredSearch,
       },
     });

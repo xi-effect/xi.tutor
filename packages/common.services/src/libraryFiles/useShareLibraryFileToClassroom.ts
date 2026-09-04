@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { handleError } from '../utils';
 import { invalidateClassroomFiles } from '../classroom-files/useUploadClassroomFile';
+import { appendLibraryFileClassroomId } from './useGetLibraryFileClassroomIds';
 
 export type ShareLibraryFileToClassroomVars = {
   fileId: string;
@@ -29,14 +30,16 @@ export const useShareLibraryFileToClassroom = () => {
 
   return useMutation<void, Error, ShareLibraryFileToClassroomVars>({
     mutationFn: shareLibraryFileToClassroomRequest,
-    onError: (err) => {
+    onError: (err, variables) => {
       if (err instanceof AxiosError && err.response?.status === 409) {
+        appendLibraryFileClassroomId(queryClient, variables.fileId, variables.classroomId);
         return;
       }
 
       handleError(err, 'files');
     },
     onSuccess: (_data, variables) => {
+      appendLibraryFileClassroomId(queryClient, variables.fileId, variables.classroomId);
       invalidateClassroomFiles(queryClient, String(variables.classroomId));
     },
   });

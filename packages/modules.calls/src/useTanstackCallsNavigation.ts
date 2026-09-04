@@ -36,7 +36,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
         });
       },
       navigateToClassroomOverview: (classroomId, options) => {
-        const search: Record<string, string | undefined> = { tab: 'overview' };
+        const search: Record<string, string | undefined> = { tab: 'boards' };
         if (options?.backgroundCall) {
           search.call = classroomId;
         }
@@ -87,7 +87,9 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
         const tab = search.tab;
         const call = search.call;
         return (
-          /^\/classrooms\/[^/]+$/.test(location.pathname) && (tab === 'overview' || !tab) && !!call
+          /^\/classrooms\/[^/]+$/.test(location.pathname) &&
+          (tab === 'boards' || tab === 'overview' || !tab) &&
+          !!call
         );
       },
       isOnOtherPageWithCompactCall: () => !location.pathname.includes('/call/') && !!search.call,

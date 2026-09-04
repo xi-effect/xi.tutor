@@ -7,10 +7,13 @@
     "bulletList": "Список",
     "orderedList": "Нумерованный список",
     "taskList": "Чекбоксы",
+    "file": "Файл",
     "image": "Изображение",
-    "audio": "Аудио",
-    "pdf": "PDF",
-    "presentation": "Презентация",
+    "fromComputer": "С компьютера",
+    "fromCloud": "Из облака",
+    "fromLink": "По ссылке",
+    "cloudAddToNote": "Добавить в заметку",
+    "cloudFilesDescription": "Выберите файл из библиотеки материалов, чтобы добавить его в заметку",
     "insertCode": "Вставить код",
     "duplicate": "Дублировать",
     "moveUp": "Переместить вверх",
@@ -53,6 +56,10 @@
     "extractPage": "Извлечь как изображение",
     "draw": "Рисовать"
   },
+  "file": {
+    "loading": "Загрузка...",
+    "untitled": "Файл"
+  },
   "pdf": {
     "loading": "Загрузка...",
     "renderError": "Не удалось отобразить PDF",
@@ -89,6 +96,9 @@
     "fileTooLarge": "Файл слишком большой",
     "uploadFailed": "Не удалось загрузить файл",
     "imageUploadError": "Ошибка загрузки изображения",
+    "unsupportedFileFormat": "Неподдерживаемый формат файла",
+    "fileCannotUpload": "Файл «{{name}}» нельзя добавить в заметку.",
+    "cloudInsertFailed": "Не удалось добавить файл из облака",
     "audioFormatDesc": "Выберите аудиофайл (MP3, OGG, WAV, M4A).",
     "audioInvalidFormat": "Неверный формат файла",
     "audioInvalidFormatDesc": "Содержимое файла не соответствует заявленному типу аудио.",
@@ -102,7 +112,11 @@
     "presentationFormatDesc": "Выберите файл в формате PPTX.",
     "presentationSizeDesc": "Размер презентации не должен превышать 5 MiB (сейчас {{size}} MiB).",
     "presentationLimitTitle": "Лимит презентаций",
-    "presentationLimitDesc": "В заметке может быть не более {{max}} презентаций."
+    "presentationLimitDesc": "В заметке может быть не более {{max}} презентаций.",
+    "fileFormatDesc": "Выберите файл в одном из форматов: DOC, XLS, PPT, TXT, CSV, видео или OpenDocument.",
+    "fileSizeDesc": "Размер файла не должен превышать 5 MiB (сейчас {{size}} MiB).",
+    "fileLimitTitle": "Лимит файлов",
+    "fileLimitDesc": "В заметке может быть не более {{max}} файлов."
   },
   "codeBlock": {
     "copy": "Копировать",

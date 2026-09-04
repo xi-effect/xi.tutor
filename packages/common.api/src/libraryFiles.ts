@@ -52,6 +52,7 @@ enum LibraryFilesQueryKey {
   UploadLibraryFile = 'UploadLibraryFile',
   GetLibraryFile = 'GetLibraryFile',
   GetLibraryFileMeta = 'GetLibraryFileMeta',
+  GetLibraryFileClassroomIds = 'GetLibraryFileClassroomIds',
   UpdateLibraryFile = 'UpdateLibraryFile',
   DeleteLibraryFile = 'DeleteLibraryFile',
   SetLibraryFileTags = 'SetLibraryFileTags',
@@ -139,6 +140,10 @@ const libraryFilesApiConfig = {
     getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/meta/`,
     method: HttpMethod.GET,
   },
+  [LibraryFilesQueryKey.GetLibraryFileClassroomIds]: {
+    getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/classroom-ids/`,
+    method: HttpMethod.GET,
+  },
   [LibraryFilesQueryKey.UpdateLibraryFile]: {
     getUrl: (fileId: string) => `${TUTOR_LIBRARY_FILES_URL}/${fileId}/`,
     method: HttpMethod.PATCH,
@@ -170,6 +175,10 @@ const libraryFilesQueryKeys = {
   },
   meta: (fileId: string): string[] => [LibraryFilesQueryKey.GetLibraryFileMeta, fileId],
   file: (fileId: string): string[] => [LibraryFilesQueryKey.GetLibraryFile, fileId],
+  classroomIds: (fileId: string): string[] => [
+    LibraryFilesQueryKey.GetLibraryFileClassroomIds,
+    fileId,
+  ],
 };
 
 export {

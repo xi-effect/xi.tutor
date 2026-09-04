@@ -14,6 +14,12 @@ import { useTranslation } from 'react-i18next';
 import { Autocomplete } from './Autocomplete';
 import { useParams } from '@tanstack/react-router';
 import { InformationNote } from './InformationNote';
+import { Button } from '@xipkg/button';
+import { StudentsList } from '../Overview/StudentsList';
+import { ModalStudentsGroup } from 'features.group.manage';
+import { ModalGroupInvite } from 'features.group.invite';
+import { sectionTitleClass } from '../sectionTitleClass';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 interface FormData {
   status: ClassroomStatusT;
   subject: number | null;
@@ -169,64 +175,99 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
   }, [form, onSubmit]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2 md:flex-row">
-      <div className="order-2 h-full w-full min-w-0 flex-1 md:order-1">
-        <InformationNote classroom={classroom} note={note} />
-      </div>
+    <div className="flex min-h-0 flex-1 flex-col gap-8 pt-2">
+      {classroom.kind === 'group' ? (
+        <div className="flex flex-col gap-4">
+          <div className={galleryShadowHeaderInsetClass}>
+            <div className="flex w-full min-w-0 flex-row flex-wrap items-center gap-2">
+              <h2 className={sectionTitleClass}>{t('information.students')}</h2>
+              <div className="ml-auto flex shrink-0 items-center gap-2">
+                <ModalStudentsGroup>
+                  <Button
+                    variant="ghost"
+                    className="!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
+                    data-umami-event="classroom-add-student"
+                  >
+                    {t('actions.addStudent')}
+                  </Button>
+                </ModalStudentsGroup>
+                <ModalGroupInvite>
+                  <Button
+                    variant="ghost"
+                    className="!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
+                    data-umami-event="classroom-invite-to-group"
+                  >
+                    {t('actions.inviteToGroup')}
+                  </Button>
+                </ModalGroupInvite>
+              </div>
+            </div>
+          </div>
+          <StudentsList classroomId={String(classroom.id || classroomId)} />
+        </div>
+      ) : null}
 
-      <div className="order-1 w-full md:order-2 md:w-[300px]">
-        <Form {...form}>
-          <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="text-m-base dark:text-text-primary">
-                    {t('information.lessonStatus')}
-                  </FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={isUpdating}
-                    >
-                      <SelectTrigger className="dark:text-text-primary h-[32px] w-full">
-                        <SelectValue
-                          className="w-full"
-                          placeholder={t('information.lessonStatus')}
-                        />
-                      </SelectTrigger>
-                      <SelectContent className="dark:text-text-primary w-full">
-                        <SelectItem value="active">{t('information.statusActive')}</SelectItem>
-                        <SelectItem value="paused">{t('information.statusPaused')}</SelectItem>
-                        <SelectItem value="finished">{t('information.statusFinished')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+      <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+        <div className="order-2 h-full w-full min-w-0 flex-1 md:order-1">
+          <InformationNote classroom={classroom} note={note} />
+        </div>
 
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="text-m-base dark:text-text-primary">
-                    {t('information.subject')}
-                  </FormLabel>
-                  <FormControl>
-                    <Autocomplete
-                      field={field}
-                      disabled={isUpdatingIndividualClassroom || isUpdatingGroupClassroom}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
+        <div className="order-1 w-full md:order-2 md:w-[300px]">
+          <Form {...form}>
+            <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-m-base dark:text-text-primary">
+                      {t('information.lessonStatus')}
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={isUpdating}
+                      >
+                        <SelectTrigger className="dark:text-text-primary h-[32px] w-full">
+                          <SelectValue
+                            className="w-full"
+                            placeholder={t('information.lessonStatus')}
+                          />
+                        </SelectTrigger>
+                        <SelectContent className="dark:text-text-primary w-full">
+                          <SelectItem value="active">{t('information.statusActive')}</SelectItem>
+                          <SelectItem value="paused">{t('information.statusPaused')}</SelectItem>
+                          <SelectItem value="finished">
+                            {t('information.statusFinished')}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-m-base dark:text-text-primary">
+                      {t('information.subject')}
+                    </FormLabel>
+                    <FormControl>
+                      <Autocomplete
+                        field={field}
+                        disabled={isUpdatingIndividualClassroom || isUpdatingGroupClassroom}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   );
