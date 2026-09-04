@@ -5,7 +5,6 @@ import {
   DrBaseShape,
   HTMLContainer,
   Rectangle2d,
-  LruCache,
 } from '@ibodr/draw';
 import { Emoji, getEmojiIconId } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../shapeStyles';
@@ -32,29 +31,17 @@ const EMOJI_BOX_SIZE = 0.7;
 const FALLBACK_FONT_FAMILY =
   'Apple Color Emoji, Twemoji Mozilla, Noto Color Emoji, Android Emoji, sans-serif';
 
-const emojiSvgDataUrlCache = new LruCache<string, string>(100);
-const inFlightRequests = new Map<string, Promise<string | null>>();
+const emojiSvgDataUrlCache = new Map<string, string>();
 
-const getEmojiSvgDataUrl = (iconId: string): Promise<string | null> => {
+const getEmojiSvgDataUrl = async (iconId: string): Promise<string | null> => {
   const cached = emojiSvgDataUrlCache.get(iconId);
-  if (cached) return Promise.resolve(cached);
+  if (cached) return cached;
 
-  const inFlight = inFlightRequests.get(iconId);
-  if (inFlight) return inFlight;
+  const dataUrl = await blobOrUrlToDataUrl(`${EMOJI_IMAGE_BASE_URL}/${iconId}.svg`);
+  const result = dataUrl?.startsWith('data:image/svg') ? dataUrl : null;
+  if (result) emojiSvgDataUrlCache.set(iconId, result);
 
-  const promise = (async () => {
-    const dataUrl = await blobOrUrlToDataUrl(`${EMOJI_IMAGE_BASE_URL}/${iconId}.svg`);
-    const result = dataUrl?.startsWith('data:image/svg') ? dataUrl : null;
-
-    if (result) emojiSvgDataUrlCache.set(iconId, result);
-
-    return result;
-  })();
-
-  inFlightRequests.set(iconId, promise);
-  promise.finally(() => inFlightRequests.delete(iconId));
-
-  return promise;
+  return result;
 };
 
 export class EmojiShapeUtil extends BaseBoxShapeUtil<EmojiShape> {
