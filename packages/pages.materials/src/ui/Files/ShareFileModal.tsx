@@ -6,7 +6,11 @@ import { Input } from '@xipkg/input';
 import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
 import { getClassroomDisplayName, type FileKind, type LibraryFile } from 'common.api';
-import { useGetLibraryFileClassroomIds, useShareLibraryFileToClassroom } from 'common.services';
+import {
+  useAllTutorClassrooms,
+  useGetLibraryFileClassroomIds,
+  useShareLibraryFileToClassroom,
+} from 'common.services';
 import { matchesSearchQuery } from 'common.utils';
 import {
   ModalCloseIcon,
@@ -19,7 +23,6 @@ import {
   modalTitleClass,
 } from 'common.ui';
 import { toast } from 'sonner';
-import { useAllTutorClassrooms } from '../../hooks';
 import { getLibraryFileDisplayName } from '../../utils';
 import {
   getClassroomAvatarTone,

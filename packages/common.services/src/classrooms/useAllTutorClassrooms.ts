@@ -13,7 +13,7 @@ const PAGE_SIZE = 50;
 export const useAllTutorClassrooms = (enabled = true) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } =
     useTanStackInfiniteQuery({
-      queryKey: [ClassroomsQueryKey.GetClassrooms, 'materials-filter'],
+      queryKey: [ClassroomsQueryKey.GetClassrooms, 'all'],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -44,12 +44,12 @@ export const useAllTutorClassrooms = (enabled = true) => {
     });
 
   useEffect(() => {
-    if (!enabled || !hasNextPage || isFetchingNextPage) {
+    if (!enabled || !hasNextPage || isFetchingNextPage || isError) {
       return;
     }
 
     void fetchNextPage();
-  }, [enabled, fetchNextPage, hasNextPage, isFetchingNextPage]);
+  }, [enabled, fetchNextPage, hasNextPage, isFetchingNextPage, isError]);
 
   const classrooms = useMemo(() => {
     const flattened = data?.pages.flat() ?? [];
@@ -72,7 +72,7 @@ export const useAllTutorClassrooms = (enabled = true) => {
 
   return {
     classrooms,
-    isLoading,
+    isLoading: isLoading || isFetchingNextPage || Boolean(hasNextPage),
     isError,
   };
 };
