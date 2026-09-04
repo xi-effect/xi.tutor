@@ -120,7 +120,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
   if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
     const headers = AxiosHeaders.from(config.headers);
-    headers.delete('Content-Type');
+    headers.set('Content-Type', false);
     config.headers = headers;
   }
   return config;

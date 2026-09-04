@@ -43,7 +43,9 @@ export async function uploadClassroomFileRequest({
     url: getUrl(classroomId),
     data: formData,
     signal,
-    headers: {},
+    headers: {
+      'Content-Type': false,
+    },
     onUploadProgress: (event) => {
       if (!onUploadProgress || !event.total) {
         return;

@@ -41,7 +41,9 @@ export async function uploadLibraryFileRequest({
     url: getUrl(),
     data: formData,
     signal,
-    headers: {},
+    headers: {
+      'Content-Type': false,
+    },
     onUploadProgress: (event) => {
       if (!onUploadProgress || !event.total) {
         return;

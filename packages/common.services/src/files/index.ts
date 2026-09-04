@@ -3,6 +3,7 @@ export { uploadAudioRequest } from './uploadAudioRequest';
 export { uploadDocumentRequest } from './uploadDocumentRequest';
 export { uploadPresentationRequest } from './uploadPresentationRequest';
 export { uploadFileRequest, uploadFileIdRequest, type UploadFileVars } from './uploadFileRequest';
+export { collectDroppedFiles, cloneDroppedFile } from './collectDroppedFiles';
 export {
   getContentUploadKind,
   prepareContentUpload,

@@ -16,6 +16,7 @@ import {
 } from 'common.ui';
 import { toast } from 'sonner';
 import { getLibraryFileDisplayName } from '../../utils';
+import { collectDroppedFiles } from 'common.services';
 import { LIBRARY_UPLOAD_MAX_FILES } from './libraryUpload';
 import { useLibraryFileUploads, type LibraryUploadItem } from './useLibraryFileUploads';
 
@@ -39,8 +40,8 @@ type UploadFilesModalProps = {
   classroomId?: string;
 };
 
-const collectDroppedFiles = (event: DragEvent<HTMLElement>): File[] =>
-  Array.from(event.dataTransfer.files ?? []);
+const collectDroppedFilesFromEvent = (event: DragEvent<HTMLElement>): File[] =>
+  collectDroppedFiles(event.dataTransfer);
 
 export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFilesModalProps) => {
   const { t } = useTranslation('materials');
@@ -118,7 +119,7 @@ export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFile
   const handleDrop = (event: DragEvent<HTMLElement>) => {
     event.preventDefault();
     setIsDragging(false);
-    handleFiles(collectDroppedFiles(event));
+    handleFiles(collectDroppedFilesFromEvent(event));
   };
 
   return (

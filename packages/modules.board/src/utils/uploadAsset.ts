@@ -90,6 +90,8 @@ export async function insertAsset(
   token: string,
   addToQueue: (request: Omit<RetryRequest, 'id' | 'timestamp'>) => void,
 ) {
+  // Drop/paste: Safari может обнулить File после синхронного обработчика.
+  file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
   if (isFileNameTooLong(file.name)) {
     toast.error(i18n.t('toast.fileNameTooLong', { ns: 'board' }), {
       description: i18n.t('toast.fileNameTooLongDesc', {

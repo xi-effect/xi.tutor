@@ -4,7 +4,7 @@ import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
 import {
   useLockedShapeSelection,
@@ -40,11 +40,26 @@ import { MathFigureTool } from '../../../shapes/math-figure';
 import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { insertAsset } from '../../../utils/uploadAsset';
-import { useRetryFileQueue } from 'common.services';
+import { cloneDroppedFile, useRetryFileQueue } from 'common.services';
 import { useSearch } from '@tanstack/react-router';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { useTranslation } from 'react-i18next';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
+
+async function waitForBoardUploadToken(
+  tokenRef: MutableRefObject<string>,
+  timeoutMs = 15_000,
+): Promise<string> {
+  if (tokenRef.current) return tokenRef.current;
+
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    if (tokenRef.current) return tokenRef.current;
+  }
+
+  return tokenRef.current;
+}
 
 export const DrawCanvas = ({
   token,
@@ -102,6 +117,10 @@ export const DrawCanvas = ({
   useBoardDeepLinkFocus({ editor, ready: isBoardStoreReady(status) });
   useBoardBackgroundSync(editor);
   const { addToQueue } = useRetryFileQueue();
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
+  const addToQueueRef = useRef(addToQueue);
+  addToQueueRef.current = addToQueue;
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -428,9 +447,16 @@ export const DrawCanvas = ({
               });
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
-                for (const file of files) {
+                const dropped = files.map(cloneDroppedFile);
+                const uploadToken = await waitForBoardUploadToken(tokenRef);
+                if (!uploadToken) {
+                  console.error('Ошибка при загрузке файла: нет content token');
+                  return;
+                }
+
+                for (const file of dropped) {
                   try {
-                    await insertAsset(editor, file, token, addToQueue);
+                    await insertAsset(editor, file, uploadToken, addToQueueRef.current);
                   } catch (error) {
                     console.error('Ошибка при загрузке файла:', error);
                   }

@@ -81,7 +81,7 @@ export const getExtensions = (
       },
       codeBlock: false,
     }),
-    CustomImage,
+    CustomImage.configure({ allowBase64: false }),
     AudioNode,
     PdfNode,
     PresentationNode,

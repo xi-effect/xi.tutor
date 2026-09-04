@@ -2,6 +2,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type DragEvent,
   type MouseEvent,
   type ReactNode,
   type SyntheticEvent,
@@ -12,7 +13,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
 import { boardDropdownZClass, boardIconClass, boardMenuSurfaceClass } from '../../ui/boardTheme';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'common.services';
+import {
+  collectDroppedFiles,
+  isFileNameTooLong,
+  MAX_FILENAME_LENGTH,
+  uploadFileIdRequest,
+} from 'common.services';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -136,6 +142,8 @@ export function ActivityImageField({
 }) {
   const { t } = useTranslation('board');
   const { token } = useYjsContext();
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
   const editor = useEditor();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -150,7 +158,7 @@ export function ActivityImageField({
     if (!file) return;
     setUploading(true);
     try {
-      const fileId = await uploadPickedImage(file, token);
+      const fileId = await uploadPickedImage(file, tokenRef.current);
       onChange(fileId);
     } catch (error) {
       console.error(error);
@@ -163,6 +171,20 @@ export function ActivityImageField({
   const stop = (event: SyntheticEvent) => {
     editor.markEventAsHandled(event);
     event.stopPropagation();
+  };
+
+  const onDragOverFiles = (event: DragEvent<HTMLElement>) => {
+    if (!event.dataTransfer.types.includes('Files')) return;
+    event.preventDefault();
+    stop(event);
+  };
+
+  const onDropFiles = (event: DragEvent<HTMLElement>) => {
+    const files = collectDroppedFiles(event.dataTransfer);
+    if (!files.length) return;
+    event.preventDefault();
+    stop(event);
+    void onFile(files[0]);
   };
 
   const input = (
@@ -187,6 +209,8 @@ export function ActivityImageField({
           className="bg-background-subtle relative min-h-40 flex-1 overflow-hidden rounded-xl"
           data-board-control={onSurfaceClick ? '' : undefined}
           onClick={onSurfaceClick}
+          onDragOver={onDragOverFiles}
+          onDrop={onDropFiles}
         >
           {preview ? (
             <img src={preview} alt="" draggable={false} className="h-full w-full object-contain" />
@@ -254,6 +278,8 @@ export function ActivityImageField({
       className={cn('flex flex-col gap-1', className)}
       data-board-control=""
       onPointerDown={stop}
+      onDragOver={onDragOverFiles}
+      onDrop={onDropFiles}
     >
       {input}
       {preview ? (

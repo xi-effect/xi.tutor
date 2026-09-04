@@ -31,7 +31,10 @@ export async function uploadFileRequest({
     url: getUrl(),
     data: formData,
     signal,
+    validateStatus: (status) => status < 500,
     headers: {
+      // false: axios не подставляет application/json и не сериализует FormData в JSON.
+      'Content-Type': false,
       ...(token ? { 'x-content-token': token } : {}),
     },
     onUploadProgress: (event) => {

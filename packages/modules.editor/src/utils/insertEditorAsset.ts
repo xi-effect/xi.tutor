@@ -2,7 +2,7 @@ import { Editor } from '@tiptap/core';
 import { fileTypeFromBuffer } from 'file-type';
 import { toast } from 'sonner';
 import i18n from 'i18next';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH } from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, cloneDroppedFile } from 'common.services';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
   ALLOWED_FILE_MIME_TYPES,
@@ -49,6 +49,8 @@ export async function insertEditorAsset(
   token: string,
   activeBlock?: ActiveBlockT,
 ) {
+  file = cloneDroppedFile(file);
+
   if (isFileNameTooLong(file.name)) {
     toast.error(i18n.t('upload.fileNameTooLong', { ns: 'editor' }), {
       description: i18n.t('upload.fileNameTooLongDesc', {

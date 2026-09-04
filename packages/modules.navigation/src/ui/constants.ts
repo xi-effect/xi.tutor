@@ -12,6 +12,7 @@ export const NAV_DRAWER_Z_CLASS = 'z-50';
 
 /**
  * Класс для DrawerContent в модуле навигации: панель не перекрывает MobileBottomBar.
- * Ограничение высоты + сдвиг снизу (панель рисуется над нижней панелью).
+ * `bottom-16` перебивает `bottom-0` у NavigationDrawerContent (tailwind-merge).
  */
-export const DRAWER_CONTENT_ABOVE_BAR_CLASS = 'max-h-screen w-full';
+export const DRAWER_CONTENT_ABOVE_BAR_CLASS =
+  'bottom-16 w-full max-h-[calc(100dvh-64px)] overflow-y-auto';

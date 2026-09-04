@@ -44,8 +44,7 @@ describe('content file upload API', () => {
 
     const call = axiosMock.mock.calls[0][0];
     expect(call.url).toMatch(/\/content-service\/files\/$/);
-    expect(call.headers).toEqual({ 'x-content-token': 'tok' });
-    expect(call.headers['Content-Type']).toBeUndefined();
+    expect(call.headers).toEqual({ 'Content-Type': false, 'x-content-token': 'tok' });
     expect((call.data.get('upload') as File).type).toBe('image/png');
   });
 
