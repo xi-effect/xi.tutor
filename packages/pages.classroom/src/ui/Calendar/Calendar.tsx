@@ -228,6 +228,7 @@ export const Calendar = () => {
             onLessonReschedule={isTutor ? handleLessonReschedule : undefined}
             onSaveLesson={isTutor ? handleLessonSave : undefined}
             hideLessonCardClassroomAndSubject
+            embedded
             mobileScheduleAnchorTs={mobileScheduleAnchorTs}
           />
         </div>

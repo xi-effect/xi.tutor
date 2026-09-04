@@ -160,7 +160,7 @@ export const MobileTutorActionButton = ({
 
   return createPortal(
     <>
-      <div className="pointer-events-none fixed bottom-[36px] left-1/2 z-40 hidden -translate-x-1/2 max-[960px]:block">
+      <div className="pointer-events-none fixed bottom-[76px] left-1/2 z-40 hidden -translate-x-1/2 max-[960px]:block">
         <ActionButton
           onClick={() => setDrawerOpen(true)}
           classname="pointer-events-auto !relative !right-auto !bottom-auto h-[52px] w-[52px] !rounded-full p-0 shadow-[0_8px_24px_rgba(0,0,0,0.28)]"
@@ -168,7 +168,7 @@ export const MobileTutorActionButton = ({
       </div>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} modal>
-        <DrawerContent className="max-h-screen w-full">
+        <DrawerContent className="bottom-16 max-h-[calc(100dvh-64px)] w-full overflow-y-auto">
           <div className="flex flex-col gap-4 pb-8">
             <DrawerTitle className="text-m-base text-text-primary font-medium">
               {drawerTitle}

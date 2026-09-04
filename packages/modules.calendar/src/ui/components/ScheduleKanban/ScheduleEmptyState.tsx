@@ -56,6 +56,7 @@ export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
     return (
       <PageEmptyState
         className={className}
+        compact={fillColumn}
         title={title}
         description={description}
         actions={
