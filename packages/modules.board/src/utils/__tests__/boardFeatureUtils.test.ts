@@ -8,6 +8,7 @@ import {
   getFileExtension,
   isPdfMime,
 } from '../../constants/mimeTypes';
+import { checkAssetType } from '../uploadAsset';
 import { parseBoardBackgroundFromYMap } from '../boardBackground';
 import { blobToDataUrl } from '../blobToDataUrl';
 import { BOARD_SCHEMA_VERSION, DEMO_YDOC_ID } from '../yjsConstants';
@@ -48,6 +49,22 @@ describe('mimeTypes', () => {
     expect(getFileExtension('noext')).toBeNull();
     expect(ALLOWED_IMAGE_MIME_TYPES.has('image/png')).toBe(true);
     expect(ALLOWED_AUDIO_MIME_TYPES.has('audio/mpeg')).toBe(true);
+  });
+});
+
+describe('checkAssetType', () => {
+  it('считает png картинкой при пустом MIME', () => {
+    expect(checkAssetType(new File(['x'], 'photo.png', { type: '' }))).toBe('img');
+  });
+
+  it('считает pdf документом при octet-stream', () => {
+    expect(checkAssetType(new File(['x'], 'notes.pdf', { type: 'application/octet-stream' }))).toBe(
+      'pdf',
+    );
+  });
+
+  it('считает pptx презентацией', () => {
+    expect(checkAssetType(new File(['x'], 'deck.pptx', { type: '' }))).toBe('presentation');
   });
 });
 

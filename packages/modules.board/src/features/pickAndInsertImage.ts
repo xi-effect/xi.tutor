@@ -1,3 +1,4 @@
+import { prepareContentUpload } from 'common.services';
 import { nanoid } from 'nanoid';
 import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
@@ -28,7 +29,9 @@ export async function insertImage(
   placement?: InsertImagePlacement,
 ) {
   // Клон: временный <input> могут убрать из DOM до чтения File (Safari / первый выбор).
-  file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
+  file = prepareContentUpload(
+    new File([file], file.name, { type: file.type, lastModified: file.lastModified }),
+  ).file;
 
   if (!file.size) {
     toast.error(i18n.t('toast.fileEmpty', { ns: 'board' }), {

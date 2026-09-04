@@ -438,7 +438,7 @@ describe('library files API', () => {
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {},
       }),
     );
     expect(String(axiosMock.mock.calls[0][0].url)).toContain(
