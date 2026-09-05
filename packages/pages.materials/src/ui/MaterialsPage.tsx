@@ -20,6 +20,7 @@ import {
   FilesFiltersT,
   type FilesTagOptionT,
 } from '../types';
+import { useDebouncedValue } from '../hooks';
 
 const getTabFromUrl = (): MaterialsTabT => {
   if (typeof window === 'undefined') {
@@ -84,9 +85,12 @@ const MaterialsPageContent = () => {
     getScopeFromUrl() === 'classroom' ? getClassroomIdsFromUrl() : [],
   );
   const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
+  const [materialSearch, setMaterialSearch] = useState('');
   const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const debouncedMaterialSearch = useDebouncedValue(materialSearch);
+  const debouncedFilesSearch = useDebouncedValue(filesFilters.search);
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -139,6 +143,11 @@ const MaterialsPageContent = () => {
     setFilesFilters(DEFAULT_FILES_FILTERS);
   };
 
+  const handleResetMaterialsFilters = () => {
+    setMaterialSearch('');
+    setMaterialTags([]);
+  };
+
   const handleScopeChange = (scope: MaterialScopeFilterT) => {
     replaceSearchParams({
       scope,
@@ -178,8 +187,11 @@ const MaterialsPageContent = () => {
             filesFilters={filesFilters}
             onFilesFiltersChange={setFilesFilters}
             onResetFilesFilters={handleResetFilesFilters}
+            materialSearch={materialSearch}
+            onMaterialSearchChange={setMaterialSearch}
             materialTags={materialTags}
             onMaterialTagsChange={setMaterialTags}
+            onResetMaterialsFilters={handleResetMaterialsFilters}
           />
         </div>
 
@@ -195,9 +207,11 @@ const MaterialsPageContent = () => {
             scopeFilter={scopeFilter}
             classroomIds={classroomIds}
             parentRef={parentRef}
-            filesFilters={filesFilters}
+            filesFilters={{ ...filesFilters, search: debouncedFilesSearch }}
             onResetFilesFilters={handleResetFilesFilters}
+            materialSearch={debouncedMaterialSearch}
             materialTagIds={materialTags.map((tag) => tag.id)}
+            onResetMaterialsFilters={handleResetMaterialsFilters}
           />
         </div>
       </div>

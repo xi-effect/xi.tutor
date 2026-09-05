@@ -22,10 +22,12 @@ export interface FileCursor {
 }
 
 export const FILE_FILTER_MAX_KINDS = 5;
+export const SEARCH_FILTER_MAX_LENGTH = 100;
 
 export interface FileFilters {
   kinds?: FileKind[] | null;
   is_uploaded_by_owner?: boolean | null;
+  search?: string | null;
   tag_ids?: number[] | null;
 }
 
@@ -63,6 +65,15 @@ function normalizeLibraryFilesLimit(limit?: number): number {
   return Math.min(Math.max(value, 1), LIBRARY_FILES_MAX_LIMIT);
 }
 
+function normalizeSearchFilter(search?: string | null): string | undefined {
+  const value = search?.trim() ?? '';
+  if (!value) {
+    return undefined;
+  }
+
+  return value.slice(0, SEARCH_FILTER_MAX_LENGTH);
+}
+
 function normalizeFileFilters(filters?: FileFilters | null): FileFilters {
   const next: FileFilters = {};
 
@@ -89,6 +100,11 @@ function normalizeFileFilters(filters?: FileFilters | null): FileFilters {
   const tagIds = normalizeTagIds(filters?.tag_ids, TAG_FILTER_MAX_COUNT);
   if (tagIds) {
     next.tag_ids = tagIds;
+  }
+
+  const search = normalizeSearchFilter(filters?.search);
+  if (search) {
+    next.search = search;
   }
 
   return next;
@@ -171,6 +187,7 @@ const libraryFilesQueryKeys = {
       normalized.kinds?.join(',') ?? '',
       normalized.is_uploaded_by_owner ?? null,
       normalized.tag_ids?.join(',') ?? '',
+      normalized.search ?? '',
     ];
   },
   meta: (fileId: string): string[] => [LibraryFilesQueryKey.GetLibraryFileMeta, fileId],
@@ -188,6 +205,7 @@ export {
   getLibraryFileUrl,
   normalizeLibraryFilesLimit,
   normalizeFileFilters,
+  normalizeSearchFilter,
   buildFileSearchRequest,
   getNextLibraryFilesCursor,
   getFileTagIds,

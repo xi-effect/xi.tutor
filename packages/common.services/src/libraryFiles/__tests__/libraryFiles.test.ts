@@ -143,6 +143,9 @@ describe('library files API', () => {
       tag_ids: [2, 7, 8, 9, 10],
     });
     expect(normalizeFileFilters({ tag_ids: [] })).toEqual({});
+    expect(normalizeFileFilters({ search: '  notes.pdf  ' })).toEqual({ search: 'notes.pdf' });
+    expect(normalizeFileFilters({ search: '' })).toEqual({});
+    expect(normalizeFileFilters({ search: 'a'.repeat(120) })).toEqual({ search: 'a'.repeat(100) });
     expect(getFileTagIds({ tag_ids: [1, 1, 2] })).toEqual([1, 2]);
     expect(getFileTagIds({ tag_ids: null })).toEqual([]);
   });
@@ -162,6 +165,16 @@ describe('library files API', () => {
       cursor: null,
       limit: 12,
       filters: { tag_ids: [2, 7] },
+    });
+    expect(buildFileSearchRequest(null, 12, { search: '  algebra  ' })).toEqual({
+      cursor: null,
+      limit: 12,
+      filters: { search: 'algebra' },
+    });
+    expect(buildFileSearchRequest(null, 12, { search: '   ' })).toEqual({
+      cursor: null,
+      limit: 12,
+      filters: {},
     });
   });
 
@@ -186,16 +199,26 @@ describe('library files API', () => {
       '',
       null,
       '',
+      '',
     ]);
     expect(
       libraryFilesQueryKeys.search(12, { kinds: ['image'], is_uploaded_by_owner: true }),
-    ).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12, 'image', true, '']);
+    ).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12, 'image', true, '', '']);
     expect(libraryFilesQueryKeys.search(12, { tag_ids: [2, 7] })).toEqual([
       LibraryFilesQueryKey.SearchLibraryFiles,
       12,
       '',
       null,
       '2,7',
+      '',
+    ]);
+    expect(libraryFilesQueryKeys.search(12, { search: '  notes  ' })).toEqual([
+      LibraryFilesQueryKey.SearchLibraryFiles,
+      12,
+      '',
+      null,
+      '',
+      'notes',
     ]);
     expect(libraryFilesQueryKeys.meta(libraryFile.id)).toEqual([
       LibraryFilesQueryKey.GetLibraryFileMeta,
@@ -248,6 +271,24 @@ describe('library files API', () => {
           filters: {
             kinds: ['image', 'document'],
             is_uploaded_by_owner: true,
+          },
+        },
+      }),
+    );
+  });
+
+  it('отправляет search в теле поиска', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: [libraryFile] });
+
+    await searchLibraryFilesRequest(null, 12, { search: '  notes  ' });
+
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          cursor: null,
+          limit: 12,
+          filters: {
+            search: 'notes',
           },
         },
       }),

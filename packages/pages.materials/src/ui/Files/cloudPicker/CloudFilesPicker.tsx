@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 import { Button } from '@xipkg/button';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
@@ -7,12 +7,7 @@ import { cn } from '@xipkg/utils';
 import { useSearchLibraryFiles, type LibraryFile } from 'common.services';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_FILES_FILTERS, type FilesFiltersT } from '../../../types';
-import {
-  filterLibraryFiles,
-  hasActiveFilesFilters,
-  hasClientFilesFilters,
-  toLibraryFileSearchFilters,
-} from '../../../utils';
+import { hasActiveFilesFilters, toLibraryFileSearchFilters } from '../../../utils';
 import { FilePreviewModal } from '../preview';
 import { FilesFilteredEmpty } from '../FilesFilteredEmpty';
 import { FilesTagsFilter } from '../FilesTagsFilter';
@@ -53,37 +48,14 @@ const CloudFilesPickerContent = ({
   const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSearchLibraryFiles({ enabled: open, limit: 24, filters: searchFilters });
 
-  const filteredFiles = useMemo(() => filterLibraryFiles(files, filters), [files, filters]);
-
   const currentPreviewFile = useMemo(() => {
     if (!previewFile) return null;
-    return filteredFiles.find((item) => item.id === previewFile.id) ?? previewFile;
-  }, [filteredFiles, previewFile]);
+    return files.find((item) => item.id === previewFile.id) ?? previewFile;
+  }, [files, previewFile]);
 
   const filtersActive = hasActiveFilesFilters(filters);
-  const clientFiltersActive = hasClientFilesFilters(filters);
   const title = t('files.cloudPicker.title');
   const descriptionText = description ?? t('files.cloudPicker.description');
-
-  useEffect(() => {
-    if (
-      !open ||
-      !clientFiltersActive ||
-      isFetchingNextPage ||
-      !hasNextPage ||
-      filteredFiles.length > 0
-    ) {
-      return;
-    }
-    fetchNextPage();
-  }, [
-    clientFiltersActive,
-    fetchNextPage,
-    filteredFiles.length,
-    hasNextPage,
-    isFetchingNextPage,
-    open,
-  ]);
 
   const handleAdd = async (file: LibraryFile) => {
     if (insertingId) return;
@@ -184,17 +156,17 @@ const CloudFilesPickerContent = ({
                 <p className="text-s-base text-text-secondary py-10 text-center">
                   {t('files.cloudPicker.error')}
                 </p>
+              ) : !files.length && filtersActive ? (
+                <FilesFilteredEmpty onReset={() => setFilters(DEFAULT_FILES_FILTERS)} />
               ) : !files.length ? (
                 <p className="text-s-base text-text-secondary py-10 text-center">
                   {t('files.cloudPicker.empty')}
                 </p>
-              ) : !filteredFiles.length ? (
-                <FilesFilteredEmpty onReset={() => setFilters(DEFAULT_FILES_FILTERS)} />
               ) : (
                 <>
                   <GridVirtualizer
                     parentRef={parentRef}
-                    items={filteredFiles}
+                    items={files}
                     isSingleColumn
                     defaultRowHeight={56}
                     gap={0}
@@ -229,7 +201,7 @@ const CloudFilesPickerContent = ({
 
       <FilePreviewModal
         file={currentPreviewFile}
-        files={filteredFiles}
+        files={files}
         readOnly
         onFileChange={setPreviewFile}
         onOpenChange={(next) => {

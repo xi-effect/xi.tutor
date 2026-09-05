@@ -5,6 +5,10 @@
     "notes": "Заметки",
     "files": "Файлы"
   },
+  "search": {
+    "placeholderNotes": "Поиск по заметкам",
+    "placeholderBoards": "Поиск по доскам"
+  },
   "scope": {
     "option": {
       "personal": "Личные",
