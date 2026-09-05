@@ -39,6 +39,12 @@ export interface FileSearchRequest {
 
 export const LIBRARY_FILES_DEFAULT_LIMIT = 24;
 export const LIBRARY_FILES_MAX_LIMIT = 99;
+export const LIBRARY_FILE_NAME_MIN_LENGTH = 1;
+export const LIBRARY_FILE_NAME_MAX_LENGTH = 100;
+
+export interface LibraryFilePatch {
+  name: string;
+}
 
 export interface LibraryReadFileHeaders {
   'if-none-match'?: string;
@@ -112,6 +118,19 @@ function normalizeFileFilters(filters?: FileFilters | null): FileFilters {
 
 function getFileTagIds(file?: Pick<LibraryFile, 'tag_ids'> | null): number[] {
   return normalizeTagIds(file?.tag_ids, TAG_FILE_ASSIGN_MAX_COUNT) ?? [];
+}
+
+function normalizeLibraryFileName(name: string): string {
+  return name.trim().slice(0, LIBRARY_FILE_NAME_MAX_LENGTH);
+}
+
+function buildLibraryFilePatch(name: string): LibraryFilePatch {
+  const next = normalizeLibraryFileName(name);
+  if (next.length < LIBRARY_FILE_NAME_MIN_LENGTH) {
+    throw new Error('File name is required');
+  }
+
+  return { name: next };
 }
 
 function buildFileSearchRequest(
@@ -209,4 +228,6 @@ export {
   buildFileSearchRequest,
   getNextLibraryFilesCursor,
   getFileTagIds,
+  normalizeLibraryFileName,
+  buildLibraryFilePatch,
 };

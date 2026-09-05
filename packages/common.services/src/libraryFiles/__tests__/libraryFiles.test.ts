@@ -3,8 +3,10 @@ import {
   FILE_FILTER_MAX_KINDS,
   LIBRARY_FILES_DEFAULT_LIMIT,
   LIBRARY_FILES_MAX_LIMIT,
+  LIBRARY_FILE_NAME_MAX_LENGTH,
   LibraryFilesQueryKey,
   buildFileSearchRequest,
+  buildLibraryFilePatch,
   getNextLibraryFilesCursor,
   libraryFilesApiConfig,
   libraryFilesQueryKeys,
@@ -407,12 +409,12 @@ describe('library files API', () => {
     expect(axiosMock.mock.calls[0][0].method).toBe('DELETE');
   });
 
-  it('переименовывает файл через PATCH без расширения', async () => {
+  it('переименовывает файл через PATCH /roles/tutor/files/{id}/', async () => {
     const renamed = { ...libraryFile, name: 'new-notes' };
     axiosMock.mockResolvedValue({ status: 200, data: renamed });
 
     await expect(
-      renameLibraryFileRequest({ fileId: libraryFile.id, name: 'new-notes' }),
+      renameLibraryFileRequest({ fileId: libraryFile.id, name: '  new-notes  ' }),
     ).resolves.toEqual(renamed);
 
     expect(axiosMock).toHaveBeenCalledWith(
@@ -424,6 +426,14 @@ describe('library files API', () => {
     expect(String(axiosMock.mock.calls[0][0].url)).toContain(
       `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/`,
     );
+  });
+
+  it('нормализует название для PATCH: trim, 1–100 символов', () => {
+    expect(buildLibraryFilePatch('  notes  ')).toEqual({ name: 'notes' });
+    expect(buildLibraryFilePatch('a'.repeat(LIBRARY_FILE_NAME_MAX_LENGTH + 20))).toEqual({
+      name: 'a'.repeat(LIBRARY_FILE_NAME_MAX_LENGTH),
+    });
+    expect(() => buildLibraryFilePatch('   ')).toThrow('File name is required');
   });
 
   it('прикрепляет файл к кабинету через PUT files', async () => {
