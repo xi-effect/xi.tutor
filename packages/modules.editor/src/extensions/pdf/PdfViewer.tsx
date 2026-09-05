@@ -3,6 +3,10 @@ import { useTranslation } from 'react-i18next';
 import type { RenderTask } from 'pdfjs-dist';
 import { pdfDocCache } from '../../utils/pdfDocCache';
 import { PageControls } from '../media/PageControls';
+import { StrokeT } from '../../types';
+import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
+import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
+import { useDrawingLayer } from '../../hooks';
 
 const PDF_RENDER_QUALITY_SCALE = 2;
 
@@ -10,6 +14,10 @@ type PdfViewerProps = {
   blobUrl: string;
   fileName: string;
   totalPages: number;
+  annotations: Record<number, StrokeT[]>;
+  onAnnotationsChange: (next: Record<number, StrokeT[]>) => void;
+  isDrawingBarOpen: boolean;
+  closeDrawingBar: () => void;
   isReadOnly?: boolean;
   onExtractPage?: (blob: Blob, page: number) => void;
 };
@@ -18,6 +26,10 @@ export const PdfViewer = ({
   blobUrl,
   fileName,
   totalPages: initialTotalPages,
+  annotations,
+  onAnnotationsChange,
+  isDrawingBarOpen,
+  closeDrawingBar,
   isReadOnly,
   onExtractPage,
 }: PdfViewerProps) => {
@@ -31,6 +43,15 @@ export const PdfViewer = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
+  const [canvasCssSize, setCanvasCssSize] = useState({ w: 0, h: 0 });
+
+  const currentStrokes = annotations[page] ?? [];
+  const handlePageStrokesChange = useCallback(
+    (next: StrokeT[]) => onAnnotationsChange({ ...annotations, [page]: next }),
+    [annotations, page, onAnnotationsChange],
+  );
+
+  const { overlayProps, toolbarProps } = useDrawingLayer(currentStrokes, handlePageStrokesChange);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -86,6 +107,7 @@ export const PdfViewer = ({
         canvas.height = viewport.height;
         canvas.style.width = `${vp1.width * baseScale}px`;
         canvas.style.height = `${vp1.height * baseScale}px`;
+        setCanvasCssSize({ w: vp1.width * baseScale, h: vp1.height * baseScale });
 
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
@@ -133,7 +155,9 @@ export const PdfViewer = ({
   }
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="relative flex h-full w-full flex-col">
+      {isDrawingBarOpen && <DrawingToolbar {...toolbarProps} onClose={closeDrawingBar} />}
+
       <div
         ref={containerRef}
         className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden"
@@ -143,11 +167,14 @@ export const PdfViewer = ({
             {t('pdf.loading')}
           </div>
         )}
-        <canvas
-          ref={canvasRef}
-          className="block max-h-full max-w-full"
-          style={{ opacity: loading ? 0.3 : 1 }}
-        />
+        <div className="relative" style={{ width: canvasCssSize.w, height: canvasCssSize.h }}>
+          <canvas ref={canvasRef} className="block" style={{ opacity: loading ? 0.3 : 1 }} />
+          <DrawingOverlay
+            className="absolute inset-0"
+            {...overlayProps}
+            isActive={isDrawingBarOpen && !isReadOnly && !loading}
+          />
+        </div>
       </div>
       <PageControls
         fileName={fileName}

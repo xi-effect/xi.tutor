@@ -5,25 +5,31 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   useBlockMenuActions,
+  useDrawingToggle,
   useNodeActiveBlock,
+  useNodeAttribute,
   useProtectedImage,
   useYjsContext,
 } from '../../hooks';
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
 import { PdfViewer } from './PdfViewer';
 import { optimizeImage } from '../../utils/optimizeImage';
+import { StrokeT } from '../../types';
+import { DrawMenuItem } from '../../ui/components/drawing/DrawSwitchButton';
+import { cn } from '@xipkg/utils';
 
 function isResolvedSrc(src: string) {
   return src.startsWith('blob:') || src.startsWith('http') || src.startsWith('data:');
 }
 
-export const PdfNodeView = ({ node, getPos }: NodeViewProps) => {
+export const PdfNodeView = ({ node, getPos, updateAttributes, selected }: NodeViewProps) => {
   const { t } = useTranslation('editor');
   const { editor, storageToken, isReadOnly } = useYjsContext();
   const getActiveBlock = useNodeActiveBlock(editor, getPos, 'pdf');
   const { insertImage } = useBlockMenuActions(editor, getActiveBlock);
   const { mutateAsync: uploadImage } = useUploadImage();
   const blobUrl = useProtectedImage(node.attrs.src, storageToken);
+  const { isDrawing, toggle, close } = useDrawingToggle(editor, getPos);
 
   const handleDownload = () => {
     if (!node.attrs.src || !storageToken) return;
@@ -47,9 +53,19 @@ export const PdfNodeView = ({ node, getPos }: NodeViewProps) => {
     [insertImage, node.attrs.fileName, storageToken, uploadImage],
   );
 
+  const [annotations, setAnnotations] = useNodeAttribute<Record<number, StrokeT[]>>(
+    updateAttributes,
+    'annotations',
+    node.attrs.annotations,
+    {},
+  );
+
   return (
-    <NodeViewWrapper className="group relative my-3" contentEditable={false}>
-      <div className="bg-background-page border-border-default h-[520px] overflow-hidden rounded-xl border shadow-md">
+    <NodeViewWrapper
+      className={cn('group relative my-3', selected && 'rounded-xl ring-2 ring-blue-500')}
+      contentEditable={false}
+    >
+      <div className="bg-background-page border-border-default h-[520px] rounded-xl border shadow-md">
         {!node.attrs.src || !isResolvedSrc(blobUrl) ? (
           <div className="text-text-disabled flex h-full items-center justify-center text-sm">
             {t('pdf.loading')}
@@ -61,15 +77,27 @@ export const PdfNodeView = ({ node, getPos }: NodeViewProps) => {
             totalPages={node.attrs.totalPages || 1}
             isReadOnly={isReadOnly}
             onExtractPage={handleExtract}
+            annotations={annotations}
+            onAnnotationsChange={setAnnotations}
+            isDrawingBarOpen={isDrawing}
+            closeDrawingBar={close}
           />
         )}
       </div>
-      <MediaBlockMenu
-        editor={editor}
-        getActiveBlock={getActiveBlock}
-        isReadOnly={isReadOnly}
-        onDownload={handleDownload}
-      />
+      <div
+        className={cn(
+          'pointer-events-auto absolute top-2 right-2 flex flex-col-reverse gap-1 opacity-100 transition-opacity group-hover:opacity-100 pointer-fine:opacity-0',
+          isDrawing && 'pointer-events-none opacity-0 group-hover:opacity-0',
+        )}
+      >
+        <DrawMenuItem onClick={toggle} />
+        <MediaBlockMenu
+          editor={editor}
+          getActiveBlock={getActiveBlock}
+          isReadOnly={isReadOnly}
+          onDownload={handleDownload}
+        />
+      </div>
     </NodeViewWrapper>
   );
 };
