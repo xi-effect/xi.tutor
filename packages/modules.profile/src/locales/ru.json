@@ -3,6 +3,7 @@
   "menu": {
     "personalInfo": "Личные данные",
     "personalisation": "Персонализация",
+    "schedule": "Расписание",
     "security": "Безопасность",
     "notifications": "Уведомления",
     "soundAndVideo": "Звук и видео",
@@ -41,10 +42,18 @@
     "support": "поддержку",
     "language": "Язык интерфейса",
     "languageRu": "Русский",
-    "languageEn": "English",
-    "schedule": "Расписание",
+    "languageEn": "English"
+  },
+  "schedule": {
+    "title": "Расписание",
+    "view": "Отображение",
     "showAllDays": "Показывать все 7 дней",
-    "showAllDaysHint": "Все дни недели (Пн–Вс) с горизонтальной прокруткой"
+    "showAllDaysHint": "Все дни недели (Пн–Вс) с горизонтальной прокруткой",
+    "workingHours": "Период занятий",
+    "period": "Рабочее время",
+    "periodHint": "Подсказки времени при создании и переносе занятий",
+    "from": "С",
+    "to": "До"
   },
   "security": {
     "title": "Безопасность",

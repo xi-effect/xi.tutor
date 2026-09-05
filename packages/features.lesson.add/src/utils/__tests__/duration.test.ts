@@ -80,6 +80,25 @@ describe('time picker slots', () => {
     expect(hours).not.toContain(8);
     expect(getTimePickerMinutes(7, '19:00')).toEqual([0]);
   });
+
+  it('для начала ограничивает часы периодом занятий', () => {
+    const range = { from: '09:00', to: '21:00' };
+    expect(getTimePickerHours(undefined, undefined, range)).toEqual(
+      Array.from({ length: 13 }, (_, i) => i + 9),
+    );
+    expect(getTimePickerMinutes(9, undefined, undefined, range)).toEqual([0, 15, 30, 45]);
+    expect(getTimePickerMinutes(21, undefined, undefined, range)).toEqual([0]);
+    expect(getTimePickerMinutes(8, undefined, undefined, range)).toEqual([]);
+  });
+
+  it('для конца пересекает слоты после начала с периодом занятий', () => {
+    const range = { from: '09:00', to: '21:00' };
+    const hours = getTimePickerHours('20:00', undefined, range);
+    expect(hours[0]).toBe(20);
+    expect(hours).toContain(21);
+    expect(hours).not.toContain(22);
+    expect(getTimePickerMinutes(21, '20:00', undefined, range)).toEqual([0]);
+  });
 });
 
 describe('resolveSyncedEndTime', () => {

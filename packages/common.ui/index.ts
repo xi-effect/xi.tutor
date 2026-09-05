@@ -81,6 +81,15 @@ export {
 export { useFocusModeStore } from './src/store/useFocusModeStore';
 export { useSupportModalStore } from './src/store/useSupportModalStore';
 export {
+  useScheduleWorkingHours,
+  readScheduleWorkingHours,
+  writeScheduleWorkingHours,
+  isValidScheduleWorkingHours,
+  DEFAULT_SCHEDULE_WORKING_HOURS,
+  SCHEDULE_WORKING_HOURS_STORAGE_KEY,
+  type ScheduleWorkingHours,
+} from './src/store/useScheduleWorkingHours';
+export {
   useSoundEffectsStore,
   SOUND_DEFAULTS,
   type SoundKey,

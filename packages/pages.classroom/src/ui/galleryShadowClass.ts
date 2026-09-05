@@ -3,7 +3,7 @@
  * и зазор до скроллбара. Такой же горизонтальный inset у шапки.
  */
 export const galleryShadowPadClass = 'px-2 pt-2 pb-4';
-export const galleryShadowHeaderInsetClass = 'px-2';
+export const galleryShadowHeaderInsetClass = 'pl-2';
 
 export const galleryInvoiceCardClass =
   'h-[156px] w-full min-w-0 flex-none bg-background-surface border-0 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] hover:border-transparent';
