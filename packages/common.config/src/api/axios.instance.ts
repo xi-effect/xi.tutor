@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosInstance } from 'axios';
 import { toast } from 'sonner';
 
 interface AxiosLoader {
@@ -113,6 +113,17 @@ const defaultLoaders: Required<AxiosLoaders> = {
 const axiosInstance = axios.create({
   withCredentials: true,
   headers: { 'Content-type': 'application/json; charset=UTF-8' },
+});
+
+// FormData: нельзя слать Content-Type: multipart/form-data без boundary —
+// FastAPI тогда не видит поле upload и отвечает 422.
+axiosInstance.interceptors.request.use((config) => {
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    const headers = AxiosHeaders.from(config.headers);
+    headers.set('Content-Type', false);
+    config.headers = headers;
+  }
+  return config;
 });
 
 export const getAxiosInstance = async (): Promise<AxiosInstance> => {

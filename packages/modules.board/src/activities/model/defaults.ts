@@ -12,6 +12,9 @@ function sortingItem(text: string, categoryId: string) {
 }
 
 export function getDefaultDefinition(kind: ActivityKind): ActivityDefinition {
+  if (!kind) {
+    throw new Error(`getDefaultDefinition: no definition factory registered for kind "${kind}"`);
+  }
   switch (kind) {
     case 'gap-text': {
       const gapId = createActivityId();
@@ -101,6 +104,10 @@ export function getDefaultDefinition(kind: ActivityKind): ActivityDefinition {
           { id: createActivityId(), text: 'Where do you live?' },
         ],
       };
+    case 'flip-card':
+      throw new Error(
+        "getDefaultDefinition('flip-card'): flip-card has no ActivityDefinition — it must be handled before this call (see insertActivity).",
+      );
   }
 }
 

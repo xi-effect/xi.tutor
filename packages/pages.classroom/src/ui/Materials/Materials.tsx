@@ -112,7 +112,7 @@ const ClassroomMaterialsGallery = () => {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10">
+        <div className={cn('pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10', isMobile && 'pb-20')}>
           <div className={galleryShadowPadClass}>
             {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
               <ErrorState />

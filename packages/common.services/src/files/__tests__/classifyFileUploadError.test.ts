@@ -29,4 +29,12 @@ describe('getFileUploadErrorKind', () => {
       ),
     ).toBe('failed');
   });
+
+  it('считает 415 и 422 неподдерживаемым форматом', () => {
+    expect(getFileUploadErrorKind({ response: { status: 415 } })).toBe('unsupported');
+    expect(getFileUploadErrorKind({ response: { status: 422 } })).toBe('unsupported');
+    expect(getFileUploadErrorKind(new Error('Request failed with status code 422'))).toBe(
+      'unsupported',
+    );
+  });
 });

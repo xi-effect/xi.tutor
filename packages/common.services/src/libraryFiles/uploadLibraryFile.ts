@@ -7,6 +7,7 @@ import {
 import { type LibraryFile, libraryFilesApiConfig, LibraryFilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError, showSuccess } from '../utils';
+import { prepareContentUpload } from '../files/prepareContentUpload';
 import { assertValidFileName } from '../files/validateFileName';
 
 export type UploadLibraryFileVars = {
@@ -27,12 +28,13 @@ export async function uploadLibraryFileRequest({
   signal,
   onUploadProgress,
 }: UploadLibraryFileVars): Promise<LibraryFile> {
-  assertValidFileName(file);
+  const prepared = prepareContentUpload(file);
+  assertValidFileName(prepared.file);
 
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = libraryFilesApiConfig[LibraryFilesQueryKey.UploadLibraryFile];
   const formData = new FormData();
-  formData.append('upload', file);
+  formData.append('upload', prepared.file);
 
   const response = await axiosInst<LibraryFile>({
     method,
@@ -40,7 +42,7 @@ export async function uploadLibraryFileRequest({
     data: formData,
     signal,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': false,
     },
     onUploadProgress: (event) => {
       if (!onUploadProgress || !event.total) {

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { uploadFileIdRequest } from 'common.services';
+import { prepareContentUpload, uploadFileIdRequest } from 'common.services';
 import { PresentationShape } from '../shapes/presentation';
 
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
@@ -21,6 +21,8 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
 
     return;
   }
+
+  file = prepareContentUpload(file).file;
 
   if (file.size > MAX_PRESENTATION_SIZE_BYTES) {
     toast.error(

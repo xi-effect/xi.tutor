@@ -44,7 +44,7 @@ export const TabsStudent = () => {
             currentTab === 'payments' || isClassroomMaterialTab(currentTab)
               ? 'pr-0 pb-0'
               : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
-            isMobile && 'pb-16',
+            isMobile && 'pb-20',
           )}
         >
           <SharedTabsContent currentTab={currentTab} />

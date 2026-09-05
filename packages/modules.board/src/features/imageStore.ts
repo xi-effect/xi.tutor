@@ -1,4 +1,4 @@
-import { uploadFileIdRequest } from 'common.services';
+import { prepareContentUpload, uploadFileIdRequest } from 'common.services';
 import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
@@ -107,6 +107,7 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
       const token = holder.get() || (await holder.whenReady());
+      file = prepareContentUpload(file).file;
       const assetType = checkAssetType(file) || 'file';
 
       if (!file.type.startsWith('image/')) {

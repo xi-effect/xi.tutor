@@ -31,6 +31,7 @@ const toolMapping: Record<string, string> = {
   emoji: 'emoji',
   'emoji-sticker': 'emoji-sticker',
   'coordinate-axes': 'coordinate-axes',
+  'flip-card': 'flip-card',
 };
 
 const COMMENT_ACTION = 'comment';
@@ -65,7 +66,8 @@ export const Navbar = track(
       recentEmojis,
       addRecentEmoji,
     } = useDrawStore();
-    const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
+    const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
+      useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
     const editor = useEditor();
@@ -136,6 +138,7 @@ export const Navbar = track(
       }
 
       if (toolName === 'pen') {
+        applyStoreStylesForShape('pen');
         setColor(pencilColor);
         setThickness(pencilThickness);
         setOpacity(pencilOpacity);
@@ -166,6 +169,7 @@ export const Navbar = track(
         emoji: 'emoji',
         'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
+        'flip-card': 'flip-card',
         'math-figure': 'geo',
       };
 

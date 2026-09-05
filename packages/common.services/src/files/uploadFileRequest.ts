@@ -1,5 +1,6 @@
 import { filesApiConfig, FilesQueryKey, type FileResponse } from 'common.api';
 import { getAxiosInstance } from 'common.config';
+import { prepareContentUpload } from './prepareContentUpload';
 import { assertValidFileName } from './validateFileName';
 
 export type UploadFileVars = {
@@ -17,18 +18,23 @@ export async function uploadFileRequest({
 }: UploadFileVars): Promise<FileResponse> {
   assertValidFileName(file);
 
+  const prepared = prepareContentUpload(file);
+  assertValidFileName(prepared.file);
+
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = filesApiConfig[FilesQueryKey.UploadFile];
   const formData = new FormData();
-  formData.append('upload', file);
+  formData.append('upload', prepared.file);
 
   const response = await axiosInst({
     method,
     url: getUrl(),
     data: formData,
     signal,
+    validateStatus: (status) => status < 500,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      // false: axios не подставляет application/json и не сериализует FormData в JSON.
+      'Content-Type': false,
       ...(token ? { 'x-content-token': token } : {}),
     },
     onUploadProgress: (event) => {

@@ -13,6 +13,7 @@ import { EmojiStickerShapeUtil } from './emojiSticker';
 import { TextShapeUtil } from './text';
 import { ArrowShapeUtil } from './arrow';
 import { PresentationShapeUtil } from './presentation';
+import { FlipCardShapeUtil } from './flipCard';
 import { ActivityShapeUtil } from '../activities';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
@@ -28,6 +29,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   EmojiStickerShapeUtil,
   FileShapeUtil,
   CoordinateAxesShapeUtil,
+  FlipCardShapeUtil,
   MathFigureShapeUtil,
   TextShapeUtil,
   ArrowShapeUtil,

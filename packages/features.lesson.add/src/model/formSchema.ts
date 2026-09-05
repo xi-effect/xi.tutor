@@ -68,20 +68,16 @@ export const createFormSchema = (t: TFunction) => {
         });
       }
 
-      if (data.repeatMode !== 'none' && data.repeatEnds === 'date') {
-        if (data.repeatUntil == null) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: t('validation.repeatUntilRequired'),
-            path: ['repeatUntil'],
-          });
-        } else if (startOfCalendarDay(data.repeatUntil) < startOfCalendarDay(data.startDate)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: t('validation.repeatUntilBeforeStart'),
-            path: ['repeatUntil'],
-          });
-        }
+      if (
+        data.repeatMode !== 'none' &&
+        data.repeatUntil != null &&
+        startOfCalendarDay(data.repeatUntil) < startOfCalendarDay(data.startDate)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t('validation.repeatUntilBeforeStart'),
+          path: ['repeatUntil'],
+        });
       }
     });
 };

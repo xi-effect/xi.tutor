@@ -4,7 +4,7 @@ import { ChevronSmallBottom } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { getClassroomDisplayName } from 'common.api';
-import { useAllTutorClassrooms } from '../hooks';
+import { useAllTutorClassrooms } from 'common.services';
 import { MaterialsFilterOption } from './MaterialsFilterOption';
 
 type MaterialsClassroomFilterProps = {

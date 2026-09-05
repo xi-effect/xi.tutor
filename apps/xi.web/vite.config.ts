@@ -69,6 +69,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             '**/*onnxruntime*',
             '**/*ort-wasm*',
             '**/*worker-entry*',
+            '**/emoji/svg/**',
             // PaddleOCR собирается в hashed `assets/dist-*.js` (~24MB) — не кладём в precache.
             '**/assets/dist-*.js',
           ],
@@ -88,6 +89,19 @@ export default defineConfig(({ mode }: ConfigEnv) => {
               handler: 'NetworkOnly',
               urlPattern: /\/deployments\/.*/,
               method: 'GET',
+            },
+            {
+              // Иконки эмодзи попадают в кэш только когда реально запрошены (открытие EmojiPicker),
+              // и переиспользуются из кэша при повторных визитах без похода в сеть.
+              urlPattern: /\/emoji\/svg\/.*\.svg$/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'emoji-icons',
+                expiration: {
+                  maxEntries: 2000,
+                  maxAgeSeconds: 60 * 60 * 24 * 30,
+                },
+              },
             },
           ],
         },

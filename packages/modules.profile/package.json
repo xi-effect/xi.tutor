@@ -16,7 +16,7 @@
     "@xipkg/badge": "2.1.0",
     "@xipkg/button": "4.3.0",
     "@xipkg/dropdown": "3.1.0",
-    "@xipkg/icons": "3.1.5",
+    "@xipkg/icons": "3.1.6",
     "@xipkg/modal": "4.6.0",
     "@xipkg/select": "2.3.0",
     "@xipkg/slider": "2.3.0",
@@ -37,6 +37,7 @@
     "features.avatar.editor": "workspace:*",
     "i18next": "24.2.2",
     "modules.calls": "workspace:*",
+    "modules.board": "workspace:*",
     "react-i18next": "15.4.1",
     "sonner": "^2.0.7"
   },

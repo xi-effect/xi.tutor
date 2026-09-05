@@ -35,13 +35,7 @@ export const TemplatesGrid = () => {
 
   if (isLoading) {
     return (
-      <div
-        className={cn(
-          GRID_SCROLL_CLASS,
-          isMobile && 'h-[calc(100dvh-204px)]',
-          !isMobile && 'h-[calc(100dvh-190px)]',
-        )}
-      >
+      <div className={cn(GRID_SCROLL_CLASS, isMobile ? 'h-full' : 'h-[calc(100dvh-190px)]')}>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
@@ -88,11 +82,7 @@ export const TemplatesGrid = () => {
   return (
     <div
       ref={parentRef}
-      className={cn(
-        GRID_SCROLL_CLASS,
-        isMobile && 'h-[calc(100dvh-204px)]',
-        !isMobile && 'h-[calc(100dvh-190px)]',
-      )}
+      className={cn(GRID_SCROLL_CLASS, isMobile ? 'h-full' : 'h-[calc(100dvh-190px)]')}
     >
       <GridVirtualizer
         parentRef={parentRef}

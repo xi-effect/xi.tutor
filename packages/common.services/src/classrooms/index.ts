@@ -1,4 +1,5 @@
 export { useFetchClassrooms } from './useFetchClassrooms';
+export { useAllTutorClassrooms } from './useAllTutorClassrooms';
 export { useGetClassroom } from './useGetClassroom';
 export { useGetClassroomStudent } from './useGetClassroomStudent';
 export { useFetchClassroomsByStudent } from './useFetchClassroomsByStudent';

@@ -7,6 +7,7 @@ export const ACTIVITY_KINDS = [
   'multiple-choice',
   'mystery-tiles',
   'random-card',
+  'flip-card',
 ] as const;
 
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
@@ -26,6 +27,7 @@ export const ACTIVITY_DEFAULT_SIZE: Record<ActivityKind, { w: number; h: number 
   'multiple-choice': { w: 480, h: 360 },
   'mystery-tiles': { w: 480, h: 420 },
   'random-card': { w: 420, h: 320 },
+  'flip-card': { w: 160, h: 260 },
 };
 
 export const ACTIVITY_MIN_SIZE = { w: 280, h: 56 };

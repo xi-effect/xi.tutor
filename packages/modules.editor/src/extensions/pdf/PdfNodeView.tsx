@@ -22,7 +22,7 @@ function isResolvedSrc(src: string) {
   return src.startsWith('blob:') || src.startsWith('http') || src.startsWith('data:');
 }
 
-export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
+export const PdfNodeView = ({ node, getPos, updateAttributes, selected }: NodeViewProps) => {
   const { t } = useTranslation('editor');
   const { editor, storageToken, isReadOnly } = useYjsContext();
   const getActiveBlock = useNodeActiveBlock(editor, getPos, 'pdf');
@@ -61,7 +61,10 @@ export const PdfNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) =
   );
 
   return (
-    <NodeViewWrapper className="group relative my-3" contentEditable={false}>
+    <NodeViewWrapper
+      className={cn('group relative my-3', selected && 'rounded-xl ring-2 ring-blue-500')}
+      contentEditable={false}
+    >
       <div className="bg-background-page border-border-default h-[520px] rounded-xl border shadow-md">
         {!node.attrs.src || !isResolvedSrc(blobUrl) ? (
           <div className="text-text-disabled flex h-full items-center justify-center text-sm">
