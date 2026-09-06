@@ -6,6 +6,8 @@ import { Virtual } from 'swiper/modules';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
 import { LessonCardSkeleton } from '../ScheduleKanban/LessonCardSkeleton';
 import { ScheduleEmptyState } from '../ScheduleKanban/ScheduleEmptyState';
+import { ScheduleFeedNote } from '../ScheduleFreeSlot';
+import { interleaveWithFreeTimeGaps } from '../../../utils/interleaveWithFreeTimeGaps';
 import {
   getDateKey,
   useCalendarEvents,
@@ -152,18 +154,29 @@ export const ScheduleDaySwiper = ({
                       className="min-h-0"
                     />
                   ) : (
-                    events.map((event) => (
-                      <LessonCard
-                        key={event.id}
-                        event={event}
-                        isPast={isPast}
-                        isToday={isCurrentDay(day, todayStart)}
-                        isNearestLesson={event.id === nearestEventId}
-                        fullWidth
-                        hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
-                        onClick={() => openLessonInfo(event)}
-                      />
-                    ))
+                    interleaveWithFreeTimeGaps(events, (event) => ({
+                      start: event.start,
+                      end: event.end,
+                    })).map((entry, entryIndex) =>
+                      entry.kind === 'gap' || entry.kind === 'overlap' ? (
+                        <ScheduleFeedNote
+                          key={`${entry.kind}-${entry.start.getTime()}-${entry.end.getTime()}-${entryIndex}`}
+                          entry={entry}
+                          fullWidth
+                        />
+                      ) : (
+                        <LessonCard
+                          key={entry.item.id}
+                          event={entry.item}
+                          isPast={isPast}
+                          isToday={isCurrentDay(day, todayStart)}
+                          isNearestLesson={entry.item.id === nearestEventId}
+                          fullWidth
+                          hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
+                          onClick={() => openLessonInfo(entry.item)}
+                        />
+                      ),
+                    )
                   )}
                 </div>
               </div>

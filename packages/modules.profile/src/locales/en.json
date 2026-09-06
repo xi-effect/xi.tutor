@@ -52,6 +52,9 @@
     "workingHours": "Lesson hours",
     "period": "Working hours",
     "periodHint": "Time suggestions when creating or rescheduling a lesson",
+    "lessonDuration": "Lesson duration",
+    "typicalDuration": "Usual duration",
+    "lessonDurationHint": "Schedule gaps that can fit at least one such lesson are highlighted in green",
     "from": "From",
     "to": "To"
   },

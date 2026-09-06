@@ -1,9 +1,11 @@
 import { Calendar, Clock } from '@xipkg/icons';
 import { Toggle } from '@xipkg/toggle';
 import { useMediaQuery } from '@xipkg/utils';
-import { useScheduleWorkingHours } from 'common.ui';
+import { useCurrentUser } from 'common.services';
+import { useScheduleWorkingHours, useTypicalLessonDuration } from 'common.ui';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LessonDurationPicker } from './LessonDurationPicker';
 import { WorkingHoursTimePicker } from './WorkingHoursTimePicker';
 
 const SCHEDULE_VIEW_MODE_KEY = 'xi_schedule_view_mode';
@@ -21,7 +23,10 @@ export const Schedule = () => {
   const { t } = useTranslation('profile');
   const isMobile = useMediaQuery('(max-width: 719px)');
   const [isFullWeek, setIsFullWeekState] = useState<boolean>(readScheduleViewMode);
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
   const { workingHours, setWorkingHours } = useScheduleWorkingHours();
+  const { durationMinutes, setDurationMinutes } = useTypicalLessonDuration();
 
   const handleFullWeekToggle = useCallback((checked: boolean) => {
     try {
@@ -121,6 +126,38 @@ export const Schedule = () => {
           </div>
         </div>
       </div>
+
+      {isTutor ? (
+        <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
+          <div className="flex w-full flex-col p-3">
+            <span className="dark:text-text-primary text-xl font-semibold">
+              {t('schedule.lessonDuration')}
+            </span>
+          </div>
+          <div className="mt-2 flex w-full flex-col gap-3 p-3">
+            <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
+              <div className="flex flex-row gap-4">
+                <Clock className="fill-icon-brand shrink-0" />
+                <div className="flex flex-col gap-0.5">
+                  <span className="dark:text-text-primary text-base leading-6 font-semibold">
+                    {t('schedule.typicalDuration')}
+                  </span>
+                  <span className="text-text-secondary text-s-base">
+                    {t('schedule.lessonDurationHint')}
+                  </span>
+                </div>
+              </div>
+              <div className="flex w-full flex-row items-center gap-2 sm:ml-auto sm:w-auto">
+                <LessonDurationPicker
+                  valueMinutes={durationMinutes}
+                  onChange={setDurationMinutes}
+                  data-umami-event="profile-schedule-typical-duration"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };

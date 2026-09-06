@@ -5,7 +5,9 @@ export {
   CalendarWeekNav,
   ScheduleDateCarousel,
   DayLessonRow,
+  DayLessonFeed,
   DayLessonsPanel,
+  ScheduleFreeSlot,
   NearestLessonCard,
   ScheduleKanban,
   ScheduleMobileView,
@@ -65,6 +67,11 @@ export {
 } from './src/utils/repetitionModePayload';
 export { resolveSchedulerStartsAt } from './src/utils/resolveSchedulerStartsAt';
 export { findNearestLessonIndex } from './src/utils/findNearestLessonIndex';
+export {
+  interleaveWithFreeTimeGaps,
+  interleaveLessonRowsWithFreeTimeGaps,
+} from './src/utils/interleaveWithFreeTimeGaps';
+export type { TimedFeedItem } from './src/utils/interleaveWithFreeTimeGaps';
 export { useScheduleLessonRowsForDay } from './src/hooks/useScheduleLessonRowsForDay';
 export {
   mapScheduleItemToCalendarEvent,

@@ -90,6 +90,16 @@ export {
   type ScheduleWorkingHours,
 } from './src/store/useScheduleWorkingHours';
 export {
+  useTypicalLessonDuration,
+  readTypicalLessonDurationMinutes,
+  writeTypicalLessonDurationMinutes,
+  isValidTypicalLessonDurationMinutes,
+  DEFAULT_TYPICAL_LESSON_DURATION_MINUTES,
+  MIN_TYPICAL_LESSON_DURATION_MINUTES,
+  MAX_TYPICAL_LESSON_DURATION_MINUTES,
+  TYPICAL_LESSON_DURATION_STORAGE_KEY,
+} from './src/store/useTypicalLessonDuration';
+export {
   useSoundEffectsStore,
   SOUND_DEFAULTS,
   type SoundKey,

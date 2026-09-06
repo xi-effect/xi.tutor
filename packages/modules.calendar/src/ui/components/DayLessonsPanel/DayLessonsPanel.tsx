@@ -2,14 +2,12 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { Undo } from '@xipkg/icons';
-import { ScrollArea } from '@xipkg/scrollarea';
 import { EmptySchedule } from 'common.ui';
 import type { DominantVisibleMonthInfo } from '../ScheduleDateCarousel';
 import { ScheduleDateCarousel } from '../ScheduleDateCarousel';
-import { DayLessonRow } from '../DayLessonRow';
+import { DayLessonFeed } from '../DayLessonFeed';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ScheduleLessonRow } from '../../types';
-import { cn } from '@xipkg/utils';
 import { useScheduleLessonRowsForDay } from '../../../hooks/useScheduleLessonRowsForDay';
 import { DayLessonListMetaProvider } from '../../contexts/DayLessonListMetaContext';
 import { findNearestLessonIndex } from '../../../utils/findNearestLessonIndex';
@@ -137,7 +135,7 @@ export const DayLessonsPanel = ({
         ) : null}
 
         <ScheduleDateCarousel
-          className="pr-3"
+          className="shrink-0 pr-3"
           selectedDate={selectedDate}
           onSelectedDateChange={onSelectedDateChange}
           alignCarouselNonce={alignCarouselNonce}
@@ -147,34 +145,31 @@ export const DayLessonsPanel = ({
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           {isLoading ? (
-            <div className="flex flex-col pr-3">
-              {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    'border-border-default relative flex min-h-[136px] shrink-0 flex-row gap-4 p-4',
-                    i < SKELETON_COUNT - 1 && 'border-b',
-                  )}
-                >
-                  <div className="flex shrink-0 flex-col gap-2 pt-1">
-                    <div className="bg-background-subtle h-5 w-14 animate-pulse rounded" />
-                    <div className="bg-background-subtle h-4 w-10 animate-pulse rounded" />
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="flex flex-col gap-3 pr-3 pb-4">
+                {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-background-page relative flex min-h-[136px] shrink-0 flex-row gap-4 rounded-2xl p-5"
+                  >
+                    <div className="flex shrink-0 flex-col gap-2">
+                      <div className="bg-background-subtle h-7 w-14 animate-pulse rounded" />
+                      <div className="bg-background-subtle h-5 w-10 animate-pulse rounded" />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <div className="bg-background-subtle h-3 w-20 animate-pulse rounded" />
+                      <div className="flex items-center gap-2">
+                        <div className="bg-background-subtle size-8 shrink-0 animate-pulse rounded-full" />
+                        <div className="bg-background-subtle h-4 w-28 animate-pulse rounded" />
+                      </div>
+                      <div className="bg-background-subtle mt-auto h-8 w-full max-w-[200px] animate-pulse rounded-lg" />
+                    </div>
                   </div>
-                  <div className="flex flex-1 flex-col gap-3 pt-1">
-                    <div className="bg-background-subtle h-3 w-16 animate-pulse rounded" />
-                    <div className="bg-background-subtle h-6 w-32 animate-pulse rounded" />
-                  </div>
-                  <div className="absolute top-2 right-2 flex flex-1 flex-col gap-2 pt-1">
-                    <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
-                    <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
-                    <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
-                  </div>
-                  <div className="bg-background-subtle absolute right-12 bottom-3 h-8 w-[280px] animate-pulse rounded" />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ) : lessons.length === 0 ? (
-            <div className="border-border-default bg-background-surface dark:border-border-strong mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-xl border border-dashed px-4 py-8 pr-3">
+            <div className="border-border-default bg-background-surface dark:border-border-strong mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-2xl border border-dashed px-4 py-8 pr-3">
               <EmptySchedule
                 className="mb-4 h-auto w-full max-w-[220px] shrink-0 object-contain"
                 aria-hidden
@@ -189,21 +184,20 @@ export const DayLessonsPanel = ({
               </div>
             </div>
           ) : (
-            <ScrollArea className="min-h-0 w-full flex-1">
-              <div className="flex flex-col pr-3">
-                {lessons.map((lesson, index) => (
-                  <DayLessonRow
-                    key={`${lesson.id}-${lesson.startAt?.toISOString() ?? lesson.startTime}`}
-                    lesson={lesson}
-                    lessonDay={selectedDate}
-                    showActions={showLessonActions}
-                    isNearestLesson={nearestIndex >= 0 && index === nearestIndex}
-                    onReschedule={onReschedule}
-                    onSaveLesson={onSaveLesson}
-                  />
-                ))}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="flex flex-col gap-3 pr-3 pb-4">
+                <DayLessonFeed
+                  lessons={lessons}
+                  dayDate={selectedDate}
+                  variant="card"
+                  appearance="muted"
+                  nearestIndex={nearestIndex}
+                  showActions={showLessonActions}
+                  onReschedule={onReschedule}
+                  onSaveLesson={onSaveLesson}
+                />
               </div>
-            </ScrollArea>
+            </div>
           )}
         </div>
       </div>

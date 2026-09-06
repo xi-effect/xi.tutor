@@ -45,10 +45,15 @@ type DayLessonRowProps = {
   /** Синяя рамка «предстоящее / текущее» — только у ближайшего к моменту просмотра занятия в списке */
   isNearestLesson?: boolean;
   /**
-   * `list` — строки с разделителем (панель дня);
-   * `card` — отдельная карточка как на странице расписания
+   * `list` — строки с разделителем;
+   * `card` — отдельная карточка
    */
   variant?: 'list' | 'card';
+  /**
+   * Фон карточки: `elevated` — белая на серой странице (главная, большое расписание);
+   * `muted` — серая на белой модалке
+   */
+  appearance?: 'elevated' | 'muted';
   /** Календарный день списка — для расчёта окончания слота, если нет `lesson.startAt` */
   lessonDay?: Date;
   onReschedule?: (lesson: ScheduleLessonRow) => void;
@@ -60,6 +65,7 @@ export const DayLessonRow = ({
   showActions = false,
   isNearestLesson = false,
   variant = 'list',
+  appearance = 'elevated',
   lessonDay,
   onReschedule,
   onSaveLesson,
@@ -107,7 +113,10 @@ export const DayLessonRow = ({
             : 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14'),
         variant === 'card'
           ? cn(
-              'bg-background-surface rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
+              'rounded-2xl p-5',
+              appearance === 'muted'
+                ? 'bg-background-page'
+                : 'bg-background-surface shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
               isNearestLesson && 'border-border-focus border-2',
             )
           : cn(

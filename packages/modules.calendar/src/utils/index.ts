@@ -39,3 +39,10 @@ export {
   buildRepetitionModeInput,
 } from './repetitionModePayload';
 export { resolveSchedulerStartsAt } from './resolveSchedulerStartsAt';
+export {
+  interleaveWithFreeTimeGaps,
+  interleaveLessonRowsWithFreeTimeGaps,
+  type TimedFeedItem,
+} from './interleaveWithFreeTimeGaps';
+export { formatFreeSlotDuration } from './formatFreeSlotDuration';
+export { canFitTypicalLesson } from './canFitTypicalLesson';
