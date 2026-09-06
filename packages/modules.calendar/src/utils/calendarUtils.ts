@@ -2,13 +2,11 @@ import { addDays, format, isBefore, isSameDay, startOfDay, parse } from 'date-fn
 import { getDateLocale } from 'common.ui';
 
 /**
- * Начало окна из `visibleCount` дней, в котором `anchorDay` — последний видимый день.
- * Нужно, когда на экран помещается меньше 7 колонок: иначе неделя с понедельника
- * обрезается «слева» и сегодня (часто сб/вс) не попадает во вьюпорт.
+ * Начало окна видимых дней: `anchorDay` — первая колонка.
+ * Так на экране сразу сегодня и следующие дни, а не хвост прошлой недели.
  */
-export const getWeekStartForVisibleWindow = (anchorDay: Date, visibleCount: number): Date => {
-  const count = Math.max(1, Math.min(7, visibleCount));
-  return addDays(startOfDay(anchorDay), -(count - 1));
+export const getWeekStartForVisibleWindow = (anchorDay: Date): Date => {
+  return startOfDay(anchorDay);
 };
 
 /**
@@ -34,6 +32,17 @@ export const isWeekend = (day: Date) => {
 
 export const isPastDay = (day: Date, today: Date) => {
   return isBefore(day, startOfDay(today)) && !isSameDay(day, startOfDay(today));
+};
+
+/** Занятие уже закончилось (для целого дня — календарный день в прошлом). */
+export const isCalendarEventInPast = (
+  event: { start: Date; end: Date; isAllDay?: boolean },
+  now: Date = new Date(),
+): boolean => {
+  if (event.isAllDay) {
+    return isPastDay(event.start, now);
+  }
+  return event.end.getTime() < now.getTime();
 };
 
 export const timeToString = (time: Date) => {

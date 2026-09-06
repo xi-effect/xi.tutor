@@ -3,7 +3,7 @@ import { cn } from '@xipkg/utils';
 import { Clock } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
-import { timeToString } from '../../../utils';
+import { isCalendarEventInPast, timeToString } from '../../../utils';
 import { CARD_MIN_WIDTH, CARD_MAX_WIDTH } from '../../../hooks/useKanbanColumns';
 import type { ICalendarEvent } from '../../types';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
@@ -75,7 +75,15 @@ type LessonCardProps = {
 };
 
 export const LessonCard = memo<LessonCardProps>(
-  ({ event, isToday, isNearestLesson, fullWidth, hideClassroomAndSubject = false, onClick }) => {
+  ({
+    event,
+    isPast,
+    isToday,
+    isNearestLesson,
+    fullWidth,
+    hideClassroomAndSubject = false,
+    onClick,
+  }) => {
     // const deleteEvent = useDeleteEvent();
 
     const { ref: cardRef, isInView } = useInView<HTMLDivElement>();
@@ -110,12 +118,13 @@ export const LessonCard = memo<LessonCardProps>(
 
     const nearestBorder = isNearestLesson && !event.isCancelled;
     const todayBorder = isToday && !event.isCancelled && !nearestBorder;
+    const isFaded = !isNearestLesson && (Boolean(isPast) || isCalendarEventInPast(event));
 
     return (
       <div
         ref={cardRef}
         className={cn(
-          'relative flex w-full flex-col rounded-2xl border p-5 transition-colors duration-300',
+          'relative flex w-full flex-col rounded-2xl border p-5 transition-[color,background-color,opacity] duration-300',
           'group-hover:bg-background-subtle',
           nearestBorder
             ? 'border-border-focus bg-background-surface border-2'
@@ -124,6 +133,7 @@ export const LessonCard = memo<LessonCardProps>(
               : 'border-border-default bg-background-surface border',
           event.type === 'rest' && 'bg-background-page dark:bg-background-subtle',
           onClick && 'cursor-pointer',
+          isFaded && 'opacity-60 hover:opacity-90',
         )}
         style={
           fullWidth ? { width: '100%' } : { minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }

@@ -3,9 +3,11 @@ import { extractInstanceSlot } from 'common.services';
 import { getDateLocale } from 'common.ui';
 import type { ICalendarEvent, ScheduleItem, ScheduleLessonRow } from 'modules.calendar';
 import { resolveSchedulerStartsAt } from 'modules.calendar';
-import { startOfDay } from 'date-fns';
+import { addDays, startOfDay } from 'date-fns';
 
 const MS_PER_SECOND = 1000;
+const SCHEDULE_QUERY_PAST_PAD_DAYS = 7;
+const SCHEDULE_QUERY_FUTURE_PAD_DAYS = 14;
 
 const getCalendarEventId = (item: ScheduleItem): string => {
   const instance = item.eventInstance;
@@ -153,10 +155,10 @@ export const getScheduleQueryRange = (
   const today = startOfDay(new Date());
   const firstVisible = startOfDay(days[0] ?? today);
   const lastVisible = startOfDay(days[days.length - 1] ?? firstVisible);
-  const happensAfter = new Date(Math.min(firstVisible.getTime(), today.getTime()));
+  const happensAfter = addDays(firstVisible, -SCHEDULE_QUERY_PAST_PAD_DAYS);
   happensAfter.setHours(0, 0, 0, 0);
 
-  const happensBefore = new Date(Math.max(lastVisible.getTime(), today.getTime()));
+  const happensBefore = addDays(lastVisible, SCHEDULE_QUERY_FUTURE_PAD_DAYS);
   happensBefore.setHours(23, 59, 59, 999);
 
   return {

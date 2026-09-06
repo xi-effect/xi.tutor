@@ -106,7 +106,11 @@ export const DayLessonRow = ({
     <div
       ref={rowRef}
       className={cn(
-        'relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden transition-[padding] duration-200 ease-linear',
+        'relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden transition-[padding,opacity] duration-200 ease-linear',
+        !isNearestLesson &&
+          scheduledEndsAt != null &&
+          scheduledEndsAt.getTime() < Date.now() &&
+          'opacity-60 hover:opacity-90',
         showTutorIconColumn &&
           (variant === 'card'
             ? 'group/day-lesson'

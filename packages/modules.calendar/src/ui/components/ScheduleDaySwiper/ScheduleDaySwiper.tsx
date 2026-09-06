@@ -116,8 +116,8 @@ export const ScheduleDaySwiper = ({
         spaceBetween={8}
         virtual={{
           enabled: true,
-          addSlidesBefore: 1,
-          addSlidesAfter: 1,
+          addSlidesBefore: 3,
+          addSlidesAfter: 7,
         }}
         onSwiper={handleSwiper}
         onSlideChange={handleSlideChange}

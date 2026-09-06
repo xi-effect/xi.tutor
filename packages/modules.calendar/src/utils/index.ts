@@ -4,6 +4,7 @@ export {
   isWeekend,
   timeToString,
   isPastDay,
+  isCalendarEventInPast,
   formatWeekRange,
   formatDateRange,
   formatDateRangeDisplay,

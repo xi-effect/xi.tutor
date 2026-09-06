@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AddingLessonModal } from 'features.lesson.add';
 import {
   MovingLessonModal,
@@ -78,8 +78,8 @@ const CalendarPageContent = () => {
   const [initialDate, setInitialDate] = useState<Date | null>(null);
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
 
-  const { visibleDays } = useCalendarSchedule();
-  const range = useMemo(() => getScheduleQueryRange(visibleDays), [visibleDays]);
+  const { weekDays } = useCalendarSchedule();
+  const range = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -97,10 +97,12 @@ const CalendarPageContent = () => {
 
   const setEvents = useSetEvents();
   const setEventsLoading = useSetEventsLoading();
+  const hasLoadedScheduleRef = useRef(false);
+  if (scheduleQuery.data) hasLoadedScheduleRef.current = true;
 
   useEffect(() => {
-    setEventsLoading(scheduleQuery.isLoading || scheduleQuery.isFetching);
-  }, [scheduleQuery.isFetching, scheduleQuery.isLoading, setEventsLoading]);
+    setEventsLoading(scheduleQuery.isLoading && !hasLoadedScheduleRef.current);
+  }, [scheduleQuery.isLoading, setEventsLoading]);
 
   useEffect(() => {
     if (scheduleQuery.data) {
