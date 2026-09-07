@@ -7,6 +7,7 @@ import { SoundAndVideo } from '../sound-and-video';
 import { Effects } from '../effects';
 import { Board } from '../board';
 import { TechnicalReport } from '../report';
+import { Schedule } from '../schedule';
 
 type ComponentMapT = {
   [key: string]: ReactElement;
@@ -15,6 +16,7 @@ type ComponentMapT = {
 const componentMap: ComponentMapT = {
   personalInfo: <PersonalData />,
   personalisation: <Customization />,
+  schedule: <Schedule />,
   security: <Secure />,
   notifications: <Notifications />,
   soundAndVideo: <SoundAndVideo />,

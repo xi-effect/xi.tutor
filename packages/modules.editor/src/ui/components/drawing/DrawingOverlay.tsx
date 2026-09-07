@@ -13,6 +13,12 @@ function generateId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
+function resolveXiColor(token: string) {
+  if (typeof window === 'undefined') return token;
+  const value = getComputedStyle(document.documentElement).getPropertyValue(`--xi-${token}`).trim();
+  return value || token;
+}
+
 export const DrawingOverlay = ({
   strokes,
   onChangeStrokes,
@@ -113,7 +119,7 @@ export const DrawingOverlay = ({
 
       liveStrokeRef.current = {
         id: generateId(),
-        color: tool.color,
+        color: resolveXiColor(tool.color),
         size: tool.mode === 'erase' ? tool.size * 2.5 : tool.size,
         mode: tool.mode,
         opacity: tool.opacity ?? 1,

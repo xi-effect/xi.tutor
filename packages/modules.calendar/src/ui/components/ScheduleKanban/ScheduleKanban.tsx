@@ -6,6 +6,8 @@ import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
 import { LessonCardSkeleton } from './LessonCardSkeleton';
 import { ScheduleEmptyState } from './ScheduleEmptyState';
+import { ScheduleFeedNote } from '../ScheduleFreeSlot';
+import { interleaveWithFreeTimeGaps } from '../../../utils/interleaveWithFreeTimeGaps';
 import {
   getDateKey,
   useCalendarEvents,
@@ -253,17 +255,27 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                         className="flex min-h-0 min-w-0 flex-col gap-4 self-stretch"
                         style={{ gridColumn: seg.index + 1 }}
                       >
-                        {events.map((event) => (
-                          <LessonCard
-                            key={event.id}
-                            event={event}
-                            isPast={isPastDay(day, today)}
-                            isToday={isCurrentDay(day, todayStart)}
-                            isNearestLesson={event.id === nearestEventId}
-                            hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
-                            onClick={() => openLessonInfo(event)}
-                          />
-                        ))}
+                        {interleaveWithFreeTimeGaps(events, (event) => ({
+                          start: event.start,
+                          end: event.end,
+                        })).map((entry, entryIndex) =>
+                          entry.kind === 'gap' || entry.kind === 'overlap' ? (
+                            <ScheduleFeedNote
+                              key={`${entry.kind}-${entry.start.getTime()}-${entry.end.getTime()}-${entryIndex}`}
+                              entry={entry}
+                            />
+                          ) : (
+                            <LessonCard
+                              key={entry.item.id}
+                              event={entry.item}
+                              isPast={isPastDay(day, today)}
+                              isToday={isCurrentDay(day, todayStart)}
+                              isNearestLesson={entry.item.id === nearestEventId}
+                              hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
+                              onClick={() => openLessonInfo(entry.item)}
+                            />
+                          ),
+                        )}
                       </div>
                     );
                   }

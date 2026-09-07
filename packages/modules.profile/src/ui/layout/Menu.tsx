@@ -1,5 +1,6 @@
 import {
   Account,
+  Calendar,
   Exit,
   File,
   Key,
@@ -50,6 +51,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <Account className={iconClasses} key="account-icon" />;
       case 'personalisation':
         return <Palette className={iconClasses} key="palette-icon" />;
+      case 'schedule':
+        return <Calendar className={iconClasses} key="calendar-icon" />;
       case 'security':
         return <Key className={iconClasses} key="key-icon" />;
       case 'notifications':
@@ -117,6 +120,10 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
             },
           ]
         : []),
+      {
+        name: t('menu.schedule'),
+        query: 'schedule',
+      },
       {
         name: t('menu.security'),
         query: 'security',

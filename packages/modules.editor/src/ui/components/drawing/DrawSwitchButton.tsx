@@ -1,11 +1,11 @@
 import { Button } from '@xipkg/button';
 import { Edit } from '@xipkg/icons';
 
-type DrawMenuItemProps = {
+type DrawSwitchButtonProps = {
   onClick: () => void;
 };
 
-export const DrawMenuItem = ({ onClick }: DrawMenuItemProps) => {
+export const DrawSwitchButton = ({ onClick }: DrawSwitchButtonProps) => {
   return (
     <Button
       size="s"

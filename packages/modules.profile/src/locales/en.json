@@ -3,6 +3,7 @@
   "menu": {
     "personalInfo": "Personal data",
     "personalisation": "Customization",
+    "schedule": "Schedule",
     "security": "Security",
     "notifications": "Notifications",
     "soundAndVideo": "Sound and video",
@@ -41,10 +42,21 @@
     "support": "support",
     "language": "Interface language",
     "languageRu": "Русский",
-    "languageEn": "English",
-    "schedule": "Schedule",
+    "languageEn": "English"
+  },
+  "schedule": {
+    "title": "Schedule",
+    "view": "Display",
     "showAllDays": "Show all 7 days",
-    "showAllDaysHint": "All weekdays (Mon–Sun) with horizontal scrolling"
+    "showAllDaysHint": "All weekdays (Mon–Sun) with horizontal scrolling",
+    "workingHours": "Lesson hours",
+    "period": "Working hours",
+    "periodHint": "Time suggestions when creating or rescheduling a lesson",
+    "lessonDuration": "Lesson duration",
+    "typicalDuration": "Usual duration",
+    "lessonDurationHint": "Schedule gaps that can fit at least one such lesson are highlighted in green",
+    "from": "From",
+    "to": "To"
   },
   "security": {
     "title": "Security",

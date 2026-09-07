@@ -11,10 +11,9 @@ import {
 import { cn } from '@xipkg/utils';
 import { StrokeT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
-import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
-import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
+import { DrawingToolbar, DrawingOverlay, DrawSwitchButton } from '../../ui/components/drawing';
+
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
-import { DrawMenuItem } from '../../ui/components/drawing/DrawSwitchButton';
 
 export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
   const src = node.attrs.src;
@@ -66,7 +65,7 @@ export const ImageNodeView = ({ node, getPos, updateAttributes }: NodeViewProps)
           isDrawing && 'pointer-events-none opacity-0 group-hover:opacity-0',
         )}
       >
-        <DrawMenuItem onClick={toggle} />
+        <DrawSwitchButton onClick={toggle} />
         <MediaBlockMenu
           editor={editor}
           getActiveBlock={getActiveBlock}

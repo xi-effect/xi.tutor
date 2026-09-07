@@ -17,7 +17,6 @@ import {
   FilesUploaderFilter,
   DEFAULT_FILES_FILTERS,
   UploadFilesModal,
-  filterLibraryFiles,
   hasActiveFilesFilters,
   toLibraryFileSearchFilters,
   useParentScrollPagination,
@@ -55,8 +54,6 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
       filters: toLibraryFileSearchFilters(filters),
     });
 
-  const filteredFiles = useMemo(() => filterLibraryFiles(files, filters), [files, filters]);
-
   const currentPreviewFile = useMemo(() => {
     if (!previewFile) return null;
     return files.find((item) => item.id === previewFile.id) ?? previewFile;
@@ -71,7 +68,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    itemsCount: filteredFiles.length,
+    itemsCount: files.length,
   });
 
   const header = (
@@ -156,14 +153,14 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
       {header}
 
       <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className={cn('pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10', isMobile && 'pb-20')}>
+        <div className={cn('pr-3 pb-5 sm:pr-6 sm:pb-8 md:pr-8', isMobile && 'pb-20')}>
           <div className={galleryShadowPadClass}>
             {!files.length && !filtersActive ? (
               <EmptyDataState
                 title={t('files.emptyTitle')}
                 description={t('files.emptyDescription')}
               />
-            ) : !filteredFiles.length ? (
+            ) : !files.length ? (
               <FilesFilteredEmpty onReset={() => setFilters(DEFAULT_FILES_FILTERS)} />
             ) : (
               <>
@@ -173,7 +170,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                     isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
                   )}
                 >
-                  {filteredFiles.map((file) => (
+                  {files.map((file) => (
                     <FileCard
                       key={file.id}
                       file={file}
@@ -188,7 +185,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                 </div>
                 <FilePreviewModal
                   file={currentPreviewFile}
-                  files={filteredFiles}
+                  files={files}
                   readOnly={!isTutor}
                   hideLibraryActions
                   contentSource={{ type: 'classroom', classroomId, isTutor }}

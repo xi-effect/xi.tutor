@@ -11,7 +11,9 @@ type TabsComponentProps = {
   parentRef: RefObject<HTMLDivElement | null>;
   filesFilters: FilesFiltersT;
   onResetFilesFilters: () => void;
+  materialSearch: string;
   materialTagIds: number[];
+  onResetMaterialsFilters: () => void;
 };
 
 export const TabsComponent = ({
@@ -21,7 +23,9 @@ export const TabsComponent = ({
   parentRef,
   filesFilters,
   onResetFilesFilters,
+  materialSearch,
   materialTagIds,
+  onResetMaterialsFilters,
 }: TabsComponentProps) => {
   if (activeTab === 'files') {
     return (
@@ -35,7 +39,9 @@ export const TabsComponent = ({
         parentRef={parentRef}
         scopeFilter={scopeFilter}
         classroomIds={classroomIds}
+        search={materialSearch}
         tagIds={materialTagIds}
+        onResetFilters={onResetMaterialsFilters}
       />
     );
   }
@@ -45,7 +51,9 @@ export const TabsComponent = ({
       parentRef={parentRef}
       scopeFilter={scopeFilter}
       classroomIds={classroomIds}
+      search={materialSearch}
       tagIds={materialTagIds}
+      onResetFilters={onResetMaterialsFilters}
     />
   );
 };

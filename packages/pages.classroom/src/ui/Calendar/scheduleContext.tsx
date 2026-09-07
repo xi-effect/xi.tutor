@@ -62,7 +62,7 @@ export const ClassroomScheduleProvider = ({
 
   useLayoutEffect(() => {
     if (userHasNavigatedRef.current) return;
-    syncWeekStartForVisibleCount(visibleCount);
+    syncWeekStartForVisibleCount();
   }, [visibleCount, syncWeekStartForVisibleCount]);
 
   const deepLink = useClassroomScheduleDeepLink();

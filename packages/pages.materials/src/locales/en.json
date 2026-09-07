@@ -5,6 +5,10 @@
     "notes": "Notes",
     "files": "Files"
   },
+  "search": {
+    "placeholderNotes": "Search notes",
+    "placeholderBoards": "Search boards"
+  },
   "scope": {
     "option": {
       "personal": "Personal",

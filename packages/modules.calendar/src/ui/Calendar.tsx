@@ -88,6 +88,7 @@ export const CalendarModule = ({
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={onLessonReschedule}
           onSaveLesson={onSaveLesson}
+          onQueryWeekChange={goToWeekStart}
         />
       </div>
     );

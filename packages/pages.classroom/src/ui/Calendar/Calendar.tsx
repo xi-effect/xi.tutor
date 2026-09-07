@@ -101,6 +101,7 @@ export const Calendar = () => {
     pendingAnchorDate,
     acknowledgePendingLessonOpen,
     mobileScheduleAnchorTs,
+    goToWeekStart,
   } = useClassroomSchedule();
 
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
@@ -108,6 +109,7 @@ export const Calendar = () => {
   const setEvents = useSetEvents();
   const addEvent = useAddEvent();
   const setEventsLoading = useSetEventsLoading();
+  const hasLoadedScheduleRef = useRef(false);
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const numericClassroomId = Number(classroomId);
@@ -170,9 +172,11 @@ export const Calendar = () => {
     acknowledgePendingLessonOpen();
   }, [pendingEventToOpen, addEvent, openLessonInfo, acknowledgePendingLessonOpen]);
 
+  if (scheduleQuery.data) hasLoadedScheduleRef.current = true;
+
   useEffect(() => {
-    setEventsLoading(scheduleQuery.isLoading || scheduleQuery.isFetching);
-  }, [scheduleQuery.isFetching, scheduleQuery.isLoading, setEventsLoading]);
+    setEventsLoading(scheduleQuery.isLoading && !hasLoadedScheduleRef.current);
+  }, [scheduleQuery.isLoading, setEventsLoading]);
 
   useEffect(() => {
     if (scheduleQuery.data) {
@@ -230,6 +234,7 @@ export const Calendar = () => {
             hideLessonCardClassroomAndSubject
             embedded
             mobileScheduleAnchorTs={mobileScheduleAnchorTs}
+            onQueryWeekChange={goToWeekStart}
           />
         </div>
       ) : (

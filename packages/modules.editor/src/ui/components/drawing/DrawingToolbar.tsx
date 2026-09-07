@@ -6,7 +6,7 @@ import { DrawToolT } from '../../../types';
 import { DropdownMenuSeparator } from '@xipkg/dropdown';
 import { Slider } from '@xipkg/slider';
 
-const COLORS = ['#1A1A1A', '#E53935', '#1E88E5', '#43A047'];
+const COLORS = ['gray-100', 'red-80', 'brand-80', 'green-80'];
 const SIZES = [0.006, 0.012, 0.02];
 
 type DrawingToolbarPropsT = {
@@ -56,14 +56,14 @@ export const DrawingToolbar = ({
             className="border-border-default relative block size-5 overflow-hidden rounded-sm border"
             style={{
               backgroundImage:
-                'linear-gradient(45deg, #9CA3AF 25%, transparent 25%), linear-gradient(-45deg, #9CA3AF 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #9CA3AF 75%), linear-gradient(-45deg, transparent 75%, #9CA3AF 75%)',
+                'linear-gradient(45deg, var(--xi-gray-50) 25%, transparent 25%), linear-gradient(-45deg, var(--xi-gray-50) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--xi-gray-50) 75%), linear-gradient(-45deg, transparent 75%, var(--xi-gray-50) 75%)',
               backgroundSize: '6px 6px',
               backgroundPosition: '0 0, 0 3px, 3px -3px, -3px 0px',
             }}
           >
             <span
               className="absolute inset-0"
-              style={{ backgroundColor: tool.color, opacity: tool.opacity ?? 1 }}
+              style={{ backgroundColor: `var(--xi-${tool.color})`, opacity: tool.opacity ?? 1 }}
             />
           </span>
         </Button>
@@ -95,7 +95,7 @@ export const DrawingToolbar = ({
               tool.color === color &&
               'ring-border-selected ring-2 ring-offset-1',
           )}
-          style={{ backgroundColor: color }}
+          style={{ backgroundColor: `var(--xi-${color})` }}
         ></Button>
       ))}
 

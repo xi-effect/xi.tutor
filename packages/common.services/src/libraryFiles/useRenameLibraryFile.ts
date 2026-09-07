@@ -1,6 +1,9 @@
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { toast } from 'sonner';
 import {
   type LibraryFile,
+  buildLibraryFilePatch,
   libraryFilesApiConfig,
   LibraryFilesQueryKey,
   libraryFilesQueryKeys,
@@ -14,49 +17,78 @@ export type RenameLibraryFileVars = {
   name: string;
 };
 
+const isLibraryFile = (value: unknown): value is LibraryFile =>
+  typeof value === 'object' &&
+  value !== null &&
+  'id' in value &&
+  typeof (value as LibraryFile).id === 'string';
+
+const readDetail = (error: AxiosError): string | undefined => {
+  const data = error.response?.data;
+  if (typeof data === 'object' && data !== null && 'detail' in data) {
+    const detail = (data as { detail?: unknown }).detail;
+    return typeof detail === 'string' ? detail : undefined;
+  }
+};
+
 export async function renameLibraryFileRequest({
   fileId,
   name,
-}: RenameLibraryFileVars): Promise<LibraryFile | void> {
+}: RenameLibraryFileVars): Promise<LibraryFile> {
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = libraryFilesApiConfig[LibraryFilesQueryKey.UpdateLibraryFile];
 
   const response = await axiosInst<LibraryFile>({
     method,
     url: getUrl(fileId),
-    data: { name },
+    data: buildLibraryFilePatch(name),
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
-  if (response.data && typeof response.data === 'object' && 'id' in response.data) {
-    return response.data;
+  if (response.status !== 200 || !isLibraryFile(response.data)) {
+    throw new Error(`Library file rename failed: ${response.status}`);
   }
+
+  return response.data;
 }
 
 const patchLibraryFileName = (
   file: LibraryFile,
   fileId: string,
-  name: string,
-  updated?: LibraryFile,
-): LibraryFile => {
-  if (file.id !== fileId) {
-    return file;
-  }
-
-  return updated ?? { ...file, name };
-};
+  updated: LibraryFile,
+): LibraryFile => (file.id === fileId ? updated : file);
 
 export const useRenameLibraryFile = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<LibraryFile | void, Error, RenameLibraryFileVars>({
+  return useMutation<LibraryFile, Error, RenameLibraryFileVars>({
     mutationFn: renameLibraryFileRequest,
     onError: (err) => {
+      if (err instanceof AxiosError) {
+        const status = err.response?.status;
+        const detail = readDetail(err);
+
+        if (detail === 'File access denied') {
+          toast.error('Нет доступа к этому файлу');
+          return;
+        }
+
+        if (detail === 'File not found') {
+          toast.error('Файл не найден');
+          return;
+        }
+
+        if (status === 422) {
+          toast.error('Название файла не прошло проверку');
+          return;
+        }
+      }
+
       handleError(err, 'files');
     },
-    onSuccess: (updated, { fileId, name }) => {
+    onSuccess: (updated, { fileId }) => {
       queryClient.setQueriesData<InfiniteData<LibraryFile[]>>(
         { queryKey: [LibraryFilesQueryKey.SearchLibraryFiles] },
         (current) => {
@@ -67,22 +99,16 @@ export const useRenameLibraryFile = () => {
           return {
             ...current,
             pages: current.pages.map((page) =>
-              page.map((file) => patchLibraryFileName(file, fileId, name, updated ?? undefined)),
+              page.map((file) => patchLibraryFileName(file, fileId, updated)),
             ),
           };
         },
       );
 
       queryClient.setQueryData<LibraryFile>(libraryFilesQueryKeys.meta(fileId), (current) =>
-        current ? patchLibraryFileName(current, fileId, name, updated ?? undefined) : current,
+        current ? patchLibraryFileName(current, fileId, updated) : updated,
       );
 
-      queryClient.invalidateQueries({
-        queryKey: [LibraryFilesQueryKey.SearchLibraryFiles],
-      });
-      queryClient.invalidateQueries({
-        queryKey: libraryFilesQueryKeys.meta(fileId),
-      });
       queryClient.setQueriesData<InfiniteData<LibraryFile[]>>(
         { queryKey: [ClassroomFilesQueryKey.SearchClassroomFilesTutor] },
         (current) => {
@@ -93,7 +119,7 @@ export const useRenameLibraryFile = () => {
           return {
             ...current,
             pages: current.pages.map((page) =>
-              page.map((file) => patchLibraryFileName(file, fileId, name, updated ?? undefined)),
+              page.map((file) => patchLibraryFileName(file, fileId, updated)),
             ),
           };
         },
@@ -108,11 +134,17 @@ export const useRenameLibraryFile = () => {
           return {
             ...current,
             pages: current.pages.map((page) =>
-              page.map((file) => patchLibraryFileName(file, fileId, name, updated ?? undefined)),
+              page.map((file) => patchLibraryFileName(file, fileId, updated)),
             ),
           };
         },
       );
+      queryClient.invalidateQueries({
+        queryKey: [LibraryFilesQueryKey.SearchLibraryFiles],
+      });
+      queryClient.invalidateQueries({
+        queryKey: libraryFilesQueryKeys.meta(fileId),
+      });
       queryClient.invalidateQueries({
         queryKey: [ClassroomFilesQueryKey.SearchClassroomFilesTutor],
       });

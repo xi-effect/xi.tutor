@@ -29,6 +29,8 @@ type ScheduleMobileViewProps = {
   mobileScheduleAnchorTs?: number | null;
   openLessonInstanceId?: string | null;
   onOpenLessonInstanceConsumed?: () => void;
+  /** Текущая неделя ленты — чтобы API подгружал занятия по мере свайпа */
+  onQueryWeekChange?: (weekStart: Date) => void;
 };
 
 /** Мобильный вид расписания в стиле iOS Calendar: карусель недель + свайп по дням */
@@ -41,6 +43,7 @@ export const ScheduleMobileView = ({
   mobileScheduleAnchorTs,
   openLessonInstanceId,
   onOpenLessonInstanceConsumed,
+  onQueryWeekChange,
 }: ScheduleMobileViewProps) => {
   const { t, i18n } = useTranslation('calendar');
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
@@ -62,9 +65,18 @@ export const ScheduleMobileView = ({
     setSelectedDate(startOfDay(anchor));
   }, [mobileScheduleAnchorTs]);
 
+  useEffect(() => {
+    onQueryWeekChange?.(weekStart);
+  }, [weekStart, onQueryWeekChange]);
+
   const slideDays = useMemo(
-    () => getWeeksRangeDays(weekStart, DAY_SWIPER_WEEKS_BEFORE, DAY_SWIPER_WEEKS_AFTER),
-    [weekStart],
+    () =>
+      getWeeksRangeDays(
+        startOfWeek(new Date(), { weekStartsOn: 1 }),
+        DAY_SWIPER_WEEKS_BEFORE,
+        DAY_SWIPER_WEEKS_AFTER,
+      ),
+    [],
   );
 
   const monthLabel = useMemo(

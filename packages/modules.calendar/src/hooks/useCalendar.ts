@@ -2,9 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { addDays, startOfDay, startOfWeek } from 'date-fns';
 import { getDaysFrom, getWeekStartForCenteredDate, getWeekStartForVisibleWindow } from '../utils';
 
-const DEFAULT_VISIBLE_COUNT = 7;
-
-const getInitialWeekStart = () => getWeekStartForVisibleWindow(new Date(), DEFAULT_VISIBLE_COUNT);
+const getInitialWeekStart = () => getWeekStartForVisibleWindow(new Date());
 
 type UseCalendarOptions = {
   /** Начальная неделя — например, из диплинка `focused_at` в URL кабинета */
@@ -38,21 +36,19 @@ export const useCalendar = (options?: UseCalendarOptions) => {
     setWeekStart((prev) => addDays(prev, dayCount));
   }, []);
 
-  const goToToday = useCallback((visibleCount = DEFAULT_VISIBLE_COUNT) => {
-    setWeekStart(getWeekStartForVisibleWindow(new Date(), visibleCount));
+  const goToToday = useCallback(() => {
+    setWeekStart(getWeekStartForVisibleWindow(new Date()));
   }, []);
 
-  /** Подстроить начало окна так, чтобы `anchorDay` попадал в видимые колонки */
-  const syncWeekStartForVisibleCount = useCallback(
-    (visibleCount: number, anchorDay = new Date()) => {
-      setWeekStart(getWeekStartForVisibleWindow(anchorDay, visibleCount));
-    },
-    [],
-  );
+  /** Подстроить начало окна к якорному дню (первая колонка) */
+  const syncWeekStartForVisibleCount = useCallback((anchorDay = new Date()) => {
+    setWeekStart(getWeekStartForVisibleWindow(anchorDay));
+  }, []);
 
   /** Переход к неделе, содержащей указанную дату */
   const goToWeekStart = useCallback((date: Date) => {
-    setWeekStart(startOfWeek(date, { weekStartsOn: 1 }));
+    const next = startOfWeek(date, { weekStartsOn: 1 });
+    setWeekStart((prev) => (prev.getTime() === next.getTime() ? prev : next));
   }, []);
 
   /** Переход к окну, начинающемуся с указанной даты (без округления до понедельника) */

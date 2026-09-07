@@ -3,6 +3,7 @@ import { useFetching } from 'common.config';
 import {
   buildClassroomMaterialFilters,
   ClassroomMaterialsT,
+  serializeMaterialSearch,
   serializeMaterialTagIds,
   YDocContentKind,
 } from 'common.types';
@@ -10,6 +11,7 @@ import {
 interface ClassroomMaterialsListParams {
   classroomId: string;
   content_kind?: YDocContentKind | null;
+  search?: string | null;
   tag_ids?: number[] | null;
   disabled?: boolean;
 }
@@ -17,10 +19,11 @@ interface ClassroomMaterialsListParams {
 export const useGetClassroomMaterialsListStudent = ({
   classroomId,
   content_kind = null,
+  search = null,
   tag_ids = null,
   disabled = false,
 }: ClassroomMaterialsListParams) => {
-  const filters = buildClassroomMaterialFilters({ content_kind, tag_ids });
+  const filters = buildClassroomMaterialFilters({ content_kind, search, tag_ids });
 
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
@@ -44,6 +47,7 @@ export const useGetClassroomMaterialsListStudent = ({
       classroomId,
       content_kind || 'all',
       serializeMaterialTagIds(filters.tag_ids),
+      serializeMaterialSearch(filters.search),
       'list',
     ],
   });

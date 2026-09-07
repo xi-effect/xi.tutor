@@ -81,6 +81,25 @@ export {
 export { useFocusModeStore } from './src/store/useFocusModeStore';
 export { useSupportModalStore } from './src/store/useSupportModalStore';
 export {
+  useScheduleWorkingHours,
+  readScheduleWorkingHours,
+  writeScheduleWorkingHours,
+  isValidScheduleWorkingHours,
+  DEFAULT_SCHEDULE_WORKING_HOURS,
+  SCHEDULE_WORKING_HOURS_STORAGE_KEY,
+  type ScheduleWorkingHours,
+} from './src/store/useScheduleWorkingHours';
+export {
+  useTypicalLessonDuration,
+  readTypicalLessonDurationMinutes,
+  writeTypicalLessonDurationMinutes,
+  isValidTypicalLessonDurationMinutes,
+  DEFAULT_TYPICAL_LESSON_DURATION_MINUTES,
+  MIN_TYPICAL_LESSON_DURATION_MINUTES,
+  MAX_TYPICAL_LESSON_DURATION_MINUTES,
+  TYPICAL_LESSON_DURATION_STORAGE_KEY,
+} from './src/store/useTypicalLessonDuration';
+export {
   useSoundEffectsStore,
   SOUND_DEFAULTS,
   type SoundKey,

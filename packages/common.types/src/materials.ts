@@ -1,4 +1,4 @@
-import { normalizeTagIds, type TagSchema } from 'common.api';
+import { normalizeSearchFilter, normalizeTagIds, type TagSchema } from 'common.api';
 
 export type MaterialId = string;
 export type YDocContentKind = 'note' | 'board';
@@ -22,6 +22,7 @@ export type MaterialScope = PersonalMaterialScope | ClassroomMaterialScope;
 
 export type AnyMaterialFilters = {
   content_kind?: YDocContentKind | null;
+  search?: string | null;
   scope?: MaterialScope | null;
   tag_ids?: number[] | null;
 };
@@ -34,6 +35,7 @@ export type AnyMaterialSearchRequest = {
 
 export type ClassroomMaterialFilters = {
   content_kind?: YDocContentKind | null;
+  search?: string | null;
   tag_ids?: number[] | null;
 };
 
@@ -134,6 +136,10 @@ export function serializeMaterialTagIds(tagIds?: number[] | null): string {
   return tagIds?.join(',') ?? '';
 }
 
+export function serializeMaterialSearch(search?: string | null): string {
+  return normalizeSearchFilter(search) ?? '';
+}
+
 export function getMaterialTagIds(
   material?: {
     tag_ids?: number[] | null;
@@ -145,11 +151,13 @@ export function getMaterialTagIds(
 
 export function buildAnyMaterialFilters(params: {
   content_kind?: YDocContentKind | null;
+  search?: string | null;
   scope?: MaterialScope | null;
   tag_ids?: number[] | null;
 }): AnyMaterialFilters {
   return {
     content_kind: params.content_kind ?? null,
+    search: normalizeSearchFilter(params.search) ?? null,
     scope: params.scope === undefined ? PERSONAL_MATERIAL_SCOPE : params.scope,
     tag_ids: normalizeTagIds(params.tag_ids),
   };
@@ -157,10 +165,12 @@ export function buildAnyMaterialFilters(params: {
 
 export function buildClassroomMaterialFilters(params: {
   content_kind?: YDocContentKind | null;
+  search?: string | null;
   tag_ids?: number[] | null;
 }): ClassroomMaterialFilters {
   return {
     content_kind: params.content_kind ?? null,
+    search: normalizeSearchFilter(params.search) ?? null,
     tag_ids: normalizeTagIds(params.tag_ids),
   };
 }

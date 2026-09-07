@@ -5,6 +5,7 @@ import {
   MaterialScope,
   MaterialT,
   serializeMaterialScope,
+  serializeMaterialSearch,
   serializeMaterialTagIds,
   YDocContentKind,
 } from 'common.types';
@@ -13,6 +14,7 @@ type YDocMaterialT = MaterialT & { content_kind: YDocContentKind };
 
 interface MaterialsListParams {
   content_kind?: YDocContentKind | null;
+  search?: string | null;
   scope?: MaterialScope | null;
   tag_ids?: number[] | null;
   disabled?: boolean;
@@ -20,11 +22,12 @@ interface MaterialsListParams {
 
 export const useGetMaterialsList = ({
   content_kind = null,
+  search = null,
   scope,
   tag_ids = null,
   disabled = false,
 }: MaterialsListParams) => {
-  const filters = buildAnyMaterialFilters({ content_kind, scope, tag_ids });
+  const filters = buildAnyMaterialFilters({ content_kind, search, scope, tag_ids });
 
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
@@ -44,6 +47,7 @@ export const useGetMaterialsList = ({
       content_kind || 'all',
       serializeMaterialScope(filters.scope),
       serializeMaterialTagIds(filters.tag_ids),
+      serializeMaterialSearch(filters.search),
       'list',
     ],
   });

@@ -4,8 +4,7 @@ import type { RenderTask } from 'pdfjs-dist';
 import { pdfDocCache } from '../../utils/pdfDocCache';
 import { PageControls } from '../media/PageControls';
 import { StrokeT } from '../../types';
-import { DrawingOverlay } from '../../ui/components/drawing/DrawingOverlay';
-import { DrawingToolbar } from '../../ui/components/drawing/DrawingToolbar';
+import { DrawingOverlay, DrawingToolbar } from '../../ui/components/drawing';
 import { useDrawingLayer } from '../../hooks';
 
 const PDF_RENDER_QUALITY_SCALE = 2;

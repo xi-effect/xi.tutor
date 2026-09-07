@@ -1,6 +1,5 @@
 import type { FileFilters, FileKind, LibraryFile } from 'common.api';
 import { TAG_FILTER_MAX_COUNT, normalizeTagIds } from 'common.api';
-import { matchesSearchQuery } from 'common.utils';
 import type { FilesFiltersT } from '../types';
 
 export const getLibraryFileNameParts = (
@@ -30,27 +29,16 @@ export const hasActiveFilesFilters = (filters: FilesFiltersT): boolean =>
   filters.kinds.length > 0 ||
   filters.tags.length > 0;
 
-export const hasClientFilesFilters = (filters: FilesFiltersT): boolean =>
-  Boolean(filters.search.trim());
-
 export const toLibraryFileSearchFilters = (filters: FilesFiltersT): FileFilters => ({
   kinds: filters.kinds.length > 0 ? filters.kinds : null,
   is_uploaded_by_owner:
     filters.uploader === 'mine' ? true : filters.uploader === 'students' ? false : null,
+  search: filters.search,
   tag_ids: normalizeTagIds(
     filters.tags.map((tag) => tag.id),
     TAG_FILTER_MAX_COUNT,
   ),
 });
-
-export const filterLibraryFiles = (files: LibraryFile[], filters: FilesFiltersT): LibraryFile[] => {
-  const search = filters.search.trim();
-  if (!search) {
-    return files;
-  }
-
-  return files.filter((file) => matchesSearchQuery(getLibraryFileDisplayName(file), search));
-};
 
 export const FILE_TYPE_OPTIONS: FileKind[] = [
   'image',

@@ -15,7 +15,7 @@ import { MediaBlockMenu } from '../media/MediaBlockMenu';
 import { PdfViewer } from './PdfViewer';
 import { optimizeImage } from '../../utils/optimizeImage';
 import { StrokeT } from '../../types';
-import { DrawMenuItem } from '../../ui/components/drawing/DrawSwitchButton';
+import { DrawSwitchButton } from '../../ui/components/drawing/DrawSwitchButton';
 import { cn } from '@xipkg/utils';
 
 function isResolvedSrc(src: string) {
@@ -90,7 +90,7 @@ export const PdfNodeView = ({ node, getPos, updateAttributes, selected }: NodeVi
           isDrawing && 'pointer-events-none opacity-0 group-hover:opacity-0',
         )}
       >
-        <DrawMenuItem onClick={toggle} />
+        <DrawSwitchButton onClick={toggle} />
         <MediaBlockMenu
           editor={editor}
           getActiveBlock={getActiveBlock}

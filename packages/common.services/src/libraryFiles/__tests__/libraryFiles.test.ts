@@ -3,8 +3,10 @@ import {
   FILE_FILTER_MAX_KINDS,
   LIBRARY_FILES_DEFAULT_LIMIT,
   LIBRARY_FILES_MAX_LIMIT,
+  LIBRARY_FILE_NAME_MAX_LENGTH,
   LibraryFilesQueryKey,
   buildFileSearchRequest,
+  buildLibraryFilePatch,
   getNextLibraryFilesCursor,
   libraryFilesApiConfig,
   libraryFilesQueryKeys,
@@ -143,6 +145,9 @@ describe('library files API', () => {
       tag_ids: [2, 7, 8, 9, 10],
     });
     expect(normalizeFileFilters({ tag_ids: [] })).toEqual({});
+    expect(normalizeFileFilters({ search: '  notes.pdf  ' })).toEqual({ search: 'notes.pdf' });
+    expect(normalizeFileFilters({ search: '' })).toEqual({});
+    expect(normalizeFileFilters({ search: 'a'.repeat(120) })).toEqual({ search: 'a'.repeat(100) });
     expect(getFileTagIds({ tag_ids: [1, 1, 2] })).toEqual([1, 2]);
     expect(getFileTagIds({ tag_ids: null })).toEqual([]);
   });
@@ -162,6 +167,16 @@ describe('library files API', () => {
       cursor: null,
       limit: 12,
       filters: { tag_ids: [2, 7] },
+    });
+    expect(buildFileSearchRequest(null, 12, { search: '  algebra  ' })).toEqual({
+      cursor: null,
+      limit: 12,
+      filters: { search: 'algebra' },
+    });
+    expect(buildFileSearchRequest(null, 12, { search: '   ' })).toEqual({
+      cursor: null,
+      limit: 12,
+      filters: {},
     });
   });
 
@@ -186,16 +201,26 @@ describe('library files API', () => {
       '',
       null,
       '',
+      '',
     ]);
     expect(
       libraryFilesQueryKeys.search(12, { kinds: ['image'], is_uploaded_by_owner: true }),
-    ).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12, 'image', true, '']);
+    ).toEqual([LibraryFilesQueryKey.SearchLibraryFiles, 12, 'image', true, '', '']);
     expect(libraryFilesQueryKeys.search(12, { tag_ids: [2, 7] })).toEqual([
       LibraryFilesQueryKey.SearchLibraryFiles,
       12,
       '',
       null,
       '2,7',
+      '',
+    ]);
+    expect(libraryFilesQueryKeys.search(12, { search: '  notes  ' })).toEqual([
+      LibraryFilesQueryKey.SearchLibraryFiles,
+      12,
+      '',
+      null,
+      '',
+      'notes',
     ]);
     expect(libraryFilesQueryKeys.meta(libraryFile.id)).toEqual([
       LibraryFilesQueryKey.GetLibraryFileMeta,
@@ -248,6 +273,24 @@ describe('library files API', () => {
           filters: {
             kinds: ['image', 'document'],
             is_uploaded_by_owner: true,
+          },
+        },
+      }),
+    );
+  });
+
+  it('отправляет search в теле поиска', async () => {
+    axiosMock.mockResolvedValue({ status: 200, data: [libraryFile] });
+
+    await searchLibraryFilesRequest(null, 12, { search: '  notes  ' });
+
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          cursor: null,
+          limit: 12,
+          filters: {
+            search: 'notes',
           },
         },
       }),
@@ -366,12 +409,12 @@ describe('library files API', () => {
     expect(axiosMock.mock.calls[0][0].method).toBe('DELETE');
   });
 
-  it('переименовывает файл через PATCH без расширения', async () => {
+  it('переименовывает файл через PATCH /roles/tutor/files/{id}/', async () => {
     const renamed = { ...libraryFile, name: 'new-notes' };
     axiosMock.mockResolvedValue({ status: 200, data: renamed });
 
     await expect(
-      renameLibraryFileRequest({ fileId: libraryFile.id, name: 'new-notes' }),
+      renameLibraryFileRequest({ fileId: libraryFile.id, name: '  new-notes  ' }),
     ).resolves.toEqual(renamed);
 
     expect(axiosMock).toHaveBeenCalledWith(
@@ -383,6 +426,14 @@ describe('library files API', () => {
     expect(String(axiosMock.mock.calls[0][0].url)).toContain(
       `/api/protected/content-service/roles/tutor/files/${libraryFile.id}/`,
     );
+  });
+
+  it('нормализует название для PATCH: trim, 1–100 символов', () => {
+    expect(buildLibraryFilePatch('  notes  ')).toEqual({ name: 'notes' });
+    expect(buildLibraryFilePatch('a'.repeat(LIBRARY_FILE_NAME_MAX_LENGTH + 20))).toEqual({
+      name: 'a'.repeat(LIBRARY_FILE_NAME_MAX_LENGTH),
+    });
+    expect(() => buildLibraryFilePatch('   ')).toThrow('File name is required');
   });
 
   it('прикрепляет файл к кабинету через PUT files', async () => {

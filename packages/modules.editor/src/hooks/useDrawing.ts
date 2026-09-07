@@ -4,13 +4,13 @@ import { useInterfaceStore } from '../store/interfaceStore';
 import { NodeSelection } from '@tiptap/pm/state';
 import { Editor } from '@tiptap/react';
 
-function isNodeSelected(editor: Editor | null, position: number | undefined) {
+const isNodeSelected = (editor: Editor | null, position: number | undefined) => {
   return (
     typeof position === 'number' &&
     editor?.state.selection instanceof NodeSelection &&
     editor.state.selection.from === position
   );
-}
+};
 
 export function useDrawingToggle(
   editor: Editor | null,
@@ -58,7 +58,7 @@ export function useDrawingToggle(
 
 export const DEFAULT_DRAW_TOOL: DrawToolT = {
   mode: 'draw',
-  color: '#1A1A1A',
+  color: 'gray-100',
   size: 0.006,
   opacity: 1,
 };

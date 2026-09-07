@@ -92,8 +92,8 @@ export const ScheduleWeekCarousel = ({
       spaceBetween={0}
       virtual={{
         enabled: true,
-        addSlidesBefore: 1,
-        addSlidesAfter: 1,
+        addSlidesBefore: 2,
+        addSlidesAfter: 2,
       }}
       onSwiper={handleSwiper}
       onSlideChange={handleSlideChange}
