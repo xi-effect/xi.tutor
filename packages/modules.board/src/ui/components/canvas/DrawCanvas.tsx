@@ -32,6 +32,7 @@ import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
+import 'katex/dist/katex.min.css';
 import './customstyles.css';
 import {
   applyDrawStrokeClosePreference,
@@ -40,6 +41,7 @@ import {
   resetInflatedDrawScale,
 } from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
+import { boardTextOptions } from '../../../shapes/text/boardTextOptions';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
@@ -522,6 +524,7 @@ export const DrawCanvas = ({
               iconOffset: { x: -16, y: 2 },
             }}
             {...props}
+            textOptions={boardTextOptions}
           >
             <Header />
             {!isReadonly && (

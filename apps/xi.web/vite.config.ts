@@ -147,7 +147,14 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
     },
     resolve: {
-      alias: {},
+      alias: {
+        // mathlive exports only nested browser.production/development; Vite conditions
+        // here omit those, so the package entry can fail in `vite build`.
+        mathlive: path.resolve(
+          searchForWorkspaceRoot(process.cwd()),
+          'node_modules/mathlive/mathlive.min.mjs',
+        ),
+      },
       conditions: resolveConditions,
       preserveSymlinks: false,
       dedupe: [

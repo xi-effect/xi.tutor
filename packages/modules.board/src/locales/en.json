@@ -196,6 +196,54 @@
     "style": "Style",
     "flipCardAddImage": "Add image"
   },
+  "visualize": {
+    "action": "Visualize",
+    "found": "Found",
+    "build": "Create",
+    "cancel": "Cancel",
+    "failed": "Could not determine a suitable visualization",
+    "actions": {
+      "function_graph": "Plot graph",
+      "coordinate_points": "Plot points",
+      "geometry": "Draw figure",
+      "formula": "Format as formula",
+      "number_line": "Show on number line",
+      "diagram": "Build diagram",
+      "timeline": "Build timeline",
+      "inequality_system": "Visualize system"
+    }
+  },
+  "textFormat": {
+    "math": "Math",
+    "superscript": "Superscript",
+    "subscript": "Subscript",
+    "fraction": "Fraction",
+    "latex": "LaTeX",
+    "latexPlaceholder": "E = mc^2"
+  },
+  "math": {
+    "title": "Formula",
+    "placeholder": "Type a formula",
+    "hint": "⌘/Ctrl + Enter inserts",
+    "more": "More",
+    "closePalette": "Close",
+    "rawLatex": "Raw LaTeX",
+    "editLatex": "Edit LaTeX",
+    "copyLatex": "Copy LaTeX",
+    "latexCopied": "LaTeX copied",
+    "latexCopyFailed": "Could not copy LaTeX",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "matrix": "Matrix",
+    "system": "System",
+    "commandPalette": "Insert math symbol",
+    "searchPlaceholder": "Integral, root, alpha…",
+    "virtualKeyboard": "Math keyboard",
+    "hideKeyboard": "Hide keyboard",
+    "insertFromLatex": "Insert formula from LaTeX",
+    "insertHint": "Ctrl/⌘ + Enter — insert",
+    "insert": "Insert"
+  },
   "ocr": {
     "recognize": "Recognize printed text",
     "processing": "Recognizing text…",

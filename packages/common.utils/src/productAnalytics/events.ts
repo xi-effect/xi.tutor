@@ -85,6 +85,11 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   BOARD_OPENED: 'board_opened',
   BOARD_USED_MEANINGFULLY: 'board_used_meaningfully',
   BOARD_MIRO_PASTE: 'board_miro_paste',
+  MATH_ELEMENT_CREATED: 'math_element_created',
+  MATH_ELEMENT_EDITED: 'math_element_edited',
+  MATH_TOOLBAR_USED: 'math_toolbar_used',
+  MATH_LATEX_MODE_OPENED: 'math_latex_mode_opened',
+  MATH_VIRTUAL_KEYBOARD_OPENED: 'math_virtual_keyboard_opened',
 
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',

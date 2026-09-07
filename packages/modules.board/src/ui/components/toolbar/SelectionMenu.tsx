@@ -12,6 +12,7 @@ import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
 import { MathFigureSettingsPicker } from '../../../shapes/math-figure';
 import { TextEditorToolbar } from '../../../shapes/text';
 import { FlipCardImageButton } from '../../../shapes/flipCard';
+import { VisualizeSelectionButton } from './VisualizeMenu';
 import { useTranslation } from 'react-i18next';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
@@ -132,6 +133,7 @@ export const SelectionMenu = track(function SelectionMenu() {
           {isMathFigure && <MathFigureSettingsPicker />}
           <ColorPicker />
           {isRichText && <TextEditorToolbar editor={editor} />}
+          {isRichText && <VisualizeSelectionButton />}
           {isFlipCard && <FlipCardImageButton />}
 
           <MoreActionsMenu />

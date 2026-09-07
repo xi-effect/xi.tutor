@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 import { TiptapEditor } from '@ibodr/draw';
+import '@tiptap/extension-subscript';
+import '@tiptap/extension-superscript';
 import { ChainedCommandsFallbackT, MarkFormatT } from '../types';
 
 export const useToggleFormat = (textEditor: TiptapEditor | null) => {
@@ -24,6 +26,12 @@ export const useToggleFormat = (textEditor: TiptapEditor | null) => {
           break;
         case 'highlight':
           chain.toggleHighlight?.().run();
+          break;
+        case 'superscript':
+          chain.toggleSuperscript?.().run();
+          break;
+        case 'subscript':
+          chain.toggleSubscript?.().run();
           break;
         case 'link': {
           if (link) {

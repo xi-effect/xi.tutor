@@ -504,6 +504,11 @@ export type ProductAnalyticsEventMap = {
     widget_types?: string;
     miro_host?: string;
   };
+  math_element_created: { action?: string };
+  math_element_edited: { action?: string };
+  math_toolbar_used: { action?: string };
+  math_latex_mode_opened: { action?: string };
+  math_virtual_keyboard_opened: { action?: string };
 
   activation_help_opened: BaseProps & {
     screen: ActivationHelpScreen;

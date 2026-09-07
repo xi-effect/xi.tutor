@@ -190,6 +190,12 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         // Reuse xi.web sources without touching its package boundary.
         // Use as: `import { AppProviders } from 'web/providers';`
         web: webSrc,
+        // mathlive exports only nested browser.production/development; Vite conditions
+        // here omit those, so the package entry fails in `vite build`.
+        mathlive: path.resolve(
+          searchForWorkspaceRoot(process.cwd()),
+          'node_modules/mathlive/mathlive.min.mjs',
+        ),
       },
       conditions: importConditions,
       preserveSymlinks: false,

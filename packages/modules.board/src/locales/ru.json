@@ -196,6 +196,54 @@
     "style": "Стиль",
     "flipCardAddImage": "Добавить изображение"
   },
+  "visualize": {
+    "action": "Визуализировать",
+    "found": "Найдено",
+    "build": "Построить",
+    "cancel": "Отмена",
+    "failed": "Не удалось определить подходящую визуализацию",
+    "actions": {
+      "function_graph": "Построить график",
+      "coordinate_points": "Построить точки",
+      "geometry": "Построить чертёж",
+      "formula": "Оформить как формулу",
+      "number_line": "Показать на числовой прямой",
+      "diagram": "Построить схему",
+      "timeline": "Построить временную шкалу",
+      "inequality_system": "Визуализировать систему"
+    }
+  },
+  "textFormat": {
+    "math": "Математика",
+    "superscript": "Верхний индекс",
+    "subscript": "Нижний индекс",
+    "fraction": "Дробь",
+    "latex": "LaTeX",
+    "latexPlaceholder": "E = mc^2"
+  },
+  "math": {
+    "title": "Формула",
+    "placeholder": "Введите формулу",
+    "hint": "⌘/Ctrl + Enter — вставить",
+    "more": "Ещё",
+    "closePalette": "Закрыть",
+    "rawLatex": "Исходный LaTeX",
+    "editLatex": "Редактировать LaTeX",
+    "copyLatex": "Копировать LaTeX",
+    "latexCopied": "LaTeX скопирован",
+    "latexCopyFailed": "Не удалось скопировать LaTeX",
+    "apply": "Применить",
+    "cancel": "Отмена",
+    "matrix": "Матрица",
+    "system": "Система",
+    "commandPalette": "Вставить математический символ",
+    "searchPlaceholder": "Интеграл, корень, альфа…",
+    "virtualKeyboard": "Математическая клавиатура",
+    "hideKeyboard": "Скрыть клавиатуру",
+    "insertFromLatex": "Вставить формулу из LaTeX",
+    "insertHint": "Ctrl/⌘ + Enter — вставить",
+    "insert": "Вставить"
+  },
   "ocr": {
     "recognize": "Распознать печатный текст",
     "processing": "Распознаём текст…",

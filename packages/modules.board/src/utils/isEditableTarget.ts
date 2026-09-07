@@ -10,6 +10,6 @@ export const isEditableTarget = (target: EventTarget | null): boolean => {
   }
 
   return !!target.closest(
-    '.ProseMirror, .tl-text-input, [contenteditable]:not([contenteditable="false"])',
+    '.ProseMirror, .tl-text-input, math-field, [data-math-editor], [contenteditable]:not([contenteditable="false"])',
   );
 };

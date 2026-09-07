@@ -7,7 +7,9 @@ import {
   preparePastedContent,
   uploadPastedAssetsInBackground,
 } from '../utils/reuploadPastedAssets';
+import { isEditableTarget } from '../utils/isEditableTarget';
 import { getCachedDataUrl, resolveAssetAsDataUrl } from '../utils/resolveAssetUrl';
+import { reconstructPastedMath, pastedMathToRichHtml } from '../shapes/text/utils/clipboardMath';
 
 /** Лимит размера картинки (в байтах) для встраивания в clipboard как data:URL.
  *  Сверх него остаётся fallback на sourceToken — слишком большой clipboard
@@ -102,12 +104,8 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
   useEffect(() => {
     if (!editor) return;
 
-    function isExternalInput(target: HTMLElement): boolean {
-      if (target.isContentEditable) return true;
-      if (['INPUT', 'TEXTAREA'].includes(target.tagName)) {
-        return !editor!.getContainer().contains(target);
-      }
-      return false;
+    function isExternalInput(target: EventTarget | null): boolean {
+      return isEditableTarget(target);
     }
 
     function getTextFromShapes(shapes: any[]): string {
@@ -246,10 +244,12 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
         const text = event.clipboardData?.getData('text/plain') || '';
         if (text.trim()) {
           try {
+            const reconstructed = reconstructPastedMath(text, html);
+            const mathHtml = pastedMathToRichHtml(text, html);
             await editor!.putExternalContent({
               type: 'text',
-              text,
-              html: html || undefined,
+              text: reconstructed,
+              html: mathHtml ?? undefined,
               point: editor!.inputs.currentPagePoint,
             });
           } catch (error) {
