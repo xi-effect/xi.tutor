@@ -83,6 +83,45 @@ export function expandGeometryConstraints(model: GeometrySemanticModel): Geometr
           first: [circle.center, constraint.at],
           second: constraint.line,
         });
+        addUnique(constraints, {
+          type: 'radius',
+          circle: circle.id,
+          segment: [circle.center, constraint.at],
+        });
+      }
+    }
+
+    if (constraint.type === 'arc_measure') {
+      const circle = entities.find(
+        (entity) => entity.type === 'circle' && entity.id === constraint.circle,
+      );
+      if (circle?.type === 'circle') {
+        addUnique(constraints, {
+          type: 'point_on_circle',
+          point: constraint.from,
+          circle: circle.id,
+        });
+        addUnique(constraints, {
+          type: 'point_on_circle',
+          point: constraint.to,
+          circle: circle.id,
+        });
+        addUnique(constraints, {
+          type: 'angle',
+          points: [constraint.from, circle.center, constraint.to],
+          value: constraint.value,
+        });
+        addUnique(constraints, {
+          type: 'chord',
+          circle: circle.id,
+          segment: [constraint.from, constraint.to],
+        });
+      }
+    }
+
+    if (constraint.type === 'cyclic') {
+      for (const point of constraint.points) {
+        addUnique(constraints, { type: 'point_on_circle', point, circle: constraint.circle });
       }
     }
 
@@ -140,10 +179,17 @@ export function expandGeometryConstraints(model: GeometrySemanticModel): Geometr
       )
       .map((constraint) => constraint.point);
     if (points.length > 1) {
-      addUnique(constraints, {
-        type: 'equal_length',
-        segments: points.map((point): GeometrySegment => [circle.center, point]),
-      });
+      const showRadii = constraints.some(
+        (constraint) =>
+          (constraint.type === 'radius' || constraint.type === 'diameter') &&
+          constraint.circle === circle.id,
+      );
+      if (showRadii) {
+        addUnique(constraints, {
+          type: 'equal_length',
+          segments: points.map((point): GeometrySegment => [circle.center, point]),
+        });
+      }
     }
   }
 

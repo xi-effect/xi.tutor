@@ -33,7 +33,8 @@ export const useChangeEmail = () => {
       z.object({
         email: z
           .string({ error: t('validation.required') })
-          .email({ message: t('validation.emailFormat') }),
+          .transform((email) => email.trim().toLowerCase())
+          .pipe(z.string().email({ message: t('validation.emailFormat') })),
         password: z.string({ error: t('validation.required') }).min(6, {
           message: t('validation.minLength', { count: 6 }),
         }),

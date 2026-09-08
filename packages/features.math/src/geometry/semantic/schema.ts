@@ -9,7 +9,7 @@ const scalar = z.discriminatedUnion('type', [
 ]);
 
 export const geometryEntitySchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('point'), id: pointId, label: pointId }),
+  z.object({ type: z.literal('point'), id: pointId, label: z.string() }),
   z.object({ type: z.literal('segment'), id: pointId, from: pointId, to: pointId }),
   z.object({ type: z.literal('line'), id: pointId, through: segment }),
   z.object({ type: z.literal('ray'), id: pointId, from: pointId, through: pointId }),
@@ -48,6 +48,14 @@ export const geometryConstraintSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('altitude'), segment, oppositeSide: segment }),
   z.object({ type: z.literal('chord'), circle: pointId, segment }),
   z.object({ type: z.literal('tangent'), circle: pointId, line: segment, at: pointId.optional() }),
+  z.object({
+    type: z.literal('arc_measure'),
+    circle: pointId,
+    from: pointId,
+    to: pointId,
+    value: z.number().finite(),
+  }),
+  z.object({ type: z.literal('cyclic'), points: z.array(pointId).min(3), circle: pointId }),
   z.object({ type: z.literal('similar_triangles'), triangles: z.tuple([pointId, pointId]) }),
 ]);
 

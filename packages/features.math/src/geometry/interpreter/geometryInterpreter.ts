@@ -18,11 +18,16 @@ const VALUE = '(?:sqrt\\(\\d+(?:\\.\\d+)?\\.?\\)|\\d+(?:\\.\\d+)?)';
 class GeometryModelBuilder {
   readonly entities: GeometryEntity[] = [];
   readonly constraints: GeometryConstraint[] = [];
+  readonly mentionedAngles: GeometryAngle[] = [];
 
-  point(label: string) {
+  point(label: string, options?: { visible?: boolean }) {
     const name = normalizePointName(label);
     if (!this.entities.some((entity) => entity.type === 'point' && entity.id === name)) {
-      this.entities.push({ type: 'point', id: name, label: name });
+      this.entities.push({
+        type: 'point',
+        id: name,
+        label: options?.visible === false ? '' : name,
+      });
     }
   }
 
@@ -53,9 +58,9 @@ class GeometryModelBuilder {
     return triangle;
   }
 
-  circle(center: string) {
+  circle(center: string, options?: { implicit?: boolean }) {
     const normalized = normalizePointName(center);
-    this.point(normalized);
+    this.point(normalized, { visible: !options?.implicit });
     const id = `circle-${normalized}`;
     if (!this.entities.some((entity) => entity.type === 'circle' && entity.id === id)) {
       this.entities.push({ type: 'circle', id, center: normalized });
@@ -71,6 +76,20 @@ class GeometryModelBuilder {
     }
   }
 
+  mentionAngle(points: GeometryAngle) {
+    const normalized = points.map(normalizePointName) as GeometryAngle;
+    normalized.forEach((point) => this.point(point));
+    this.segment([normalized[0], normalized[1]]);
+    this.segment([normalized[1], normalized[2]]);
+    if (
+      !this.mentionedAngles.some(
+        (current) => JSON.stringify(current) === JSON.stringify(normalized),
+      )
+    ) {
+      this.mentionedAngles.push(normalized);
+    }
+  }
+
   build(): GeometrySemanticModel {
     return { entities: this.entities, constraints: this.constraints };
   }
@@ -82,6 +101,54 @@ function parseScalar(source: string): GeometryScalar {
   return Number.isFinite(value)
     ? { type: 'number', value }
     : { type: 'expression', expression: normalized };
+}
+
+function circleCenter(
+  builder: GeometryModelBuilder,
+  circleId: string,
+): string | undefined {
+  const circle = builder.entities.find(
+    (entity): entity is Extract<GeometryEntity, { type: 'circle' }> =>
+      entity.type === 'circle' && entity.id === circleId,
+  );
+  return circle?.center;
+}
+
+function inferTangentContact(
+  line: GeometrySegment,
+  circleId: string,
+  builder: GeometryModelBuilder,
+): string {
+  const [first, second] = line;
+  const center = circleCenter(builder, circleId);
+  if (first === center) return second;
+  if (second === center) return first;
+
+  const arcHit = [first, second].find((point) =>
+    builder.constraints.some(
+      (constraint) =>
+        constraint.type === 'arc_measure' &&
+        (constraint.from === point || constraint.to === point),
+    ),
+  );
+  if (arcHit) return arcHit;
+
+  const angles = [
+    ...builder.mentionedAngles,
+    ...builder.constraints
+      .filter(
+        (constraint): constraint is Extract<GeometryConstraint, { type: 'angle' }> =>
+          constraint.type === 'angle',
+      )
+      .map((constraint) => constraint.points),
+  ];
+  for (const [left, vertex, right] of angles) {
+    if (!center || (left !== center && right !== center)) continue;
+    if (!line.includes(vertex)) continue;
+    const contact = line.find((point) => point !== vertex);
+    if (contact) return contact;
+  }
+  return first;
 }
 
 function triangleAngleAt(triangle: TriangleEntity, vertex: string): GeometryAngle | null {
@@ -125,25 +192,19 @@ function addVertexAngles(
   }
 
   for (const match of text.matchAll(
-    new RegExp(`${VERTEX_ANGLE}\\s*(?:равен\\s*90|прямой)`, 'gi'),
+    new RegExp(
+      `${VERTEX_ANGLE}[^0-9\\n]{0,80}?(?:равен|=)\\s*(\\d+(?:\\.\\d+)?)\\s*${DEGREE_SUFFIX}`,
+      'gi',
+    ),
+  )) {
+    addAngleAtVertex(builder, triangle, normalizePointName(match[1]), Number(match[2]));
+  }
+
+  for (const match of text.matchAll(
+    new RegExp(`${VERTEX_ANGLE}\\s*(?:равен\\s*90|прямой)(?![а-яё])`, 'gi'),
   )) {
     addAngleAtVertex(builder, triangle, normalizePointName(match[1]), 90);
   }
-
-  if (
-    builder.constraints.some(
-      (constraint) => constraint.type === 'angle' && Math.abs(constraint.value - 90) < 1e-6,
-    )
-  ) {
-    return;
-  }
-
-  if (!/(?:^|[^0-9])90(?:°|˚|º)?(?:$|[^0-9.])|прямо(?:й|го)|прямоугольн/.test(text)) {
-    return;
-  }
-
-  const vertex = text.match(new RegExp(VERTEX_ANGLE, 'i'));
-  if (vertex) addAngleAtVertex(builder, triangle, normalizePointName(vertex[1]), 90);
 }
 
 function addNamedCevian(
@@ -172,8 +233,8 @@ export function interpretGeometryText(input: string): GeometrySemanticModel | nu
   const triangleMatches = [
     ...text.matchAll(
       new RegExp(
-        `(?:треугольник(?:е|а|ом|у)?|△)${GAP}(${POINT})${GAP}(${POINT})${GAP}(${POINT})`,
-        'gi',
+        `(?:[Тт]реугольник(?:[еа]|ом|у)?|△)${GAP}(${POINT})${GAP}(${POINT})${GAP}(${POINT})`,
+        'g',
       ),
     ),
   ];
@@ -294,17 +355,38 @@ export function interpretGeometryText(input: string): GeometrySemanticModel | nu
     }
   }
 
+  if (isCircumcirclePhrase(text)) {
+    const polygon = builder.entities.find(
+      (entity): entity is Extract<GeometryEntity, { type: 'quadrilateral' | 'triangle' }> =>
+        entity.type === 'quadrilateral' || entity.type === 'triangle',
+    );
+    const vertices = polygon?.vertices ?? [];
+    if (vertices.length >= 3) {
+      circleId ??= builder.circle(unusedPointName(builder, ['O']), { implicit: true });
+      vertices.forEach((point) => {
+        builder.constraint({ type: 'point_on_circle', point, circle: circleId! });
+      });
+      builder.constraint({ type: 'cyclic', points: [...vertices], circle: circleId });
+    }
+  }
+
   for (const match of text.matchAll(
     new RegExp(
-      `(?:∠|угол\\s*)(${POINT})(${POINT})(${POINT})\\s*(?:=|равен)\\s*(\\d+(?:\\.\\d+)?)\\s*°?`,
-      'gi',
+      `(?:∠|[Уу]гол(?:[аеуы]|ом)?\\s*)(${POINT})(${POINT})(${POINT})\\s*(?:=|равен)\\s*(\\d+(?:\\.\\d+)?)\\s*°?`,
+      'g',
     ),
   )) {
     const points = [match[1], match[2], match[3]].map(normalizePointName) as GeometryAngle;
-    points.forEach((point) => builder.point(point));
-    builder.segment([points[0], points[1]]);
-    builder.segment([points[1], points[2]]);
+    builder.mentionAngle(points);
     builder.constraint({ type: 'angle', points, value: Number(match[4]) });
+  }
+
+  for (const match of text.matchAll(
+    new RegExp(`(?:∠|[Уу]гол(?:[аеуы]|ом)?\\s*)(${POINT})(${POINT})(${POINT})`, 'g'),
+  )) {
+    builder.mentionAngle(
+      [match[1], match[2], match[3]].map(normalizePointName) as GeometryAngle,
+    );
   }
 
   for (const match of text.matchAll(
@@ -442,12 +524,67 @@ export function interpretGeometryText(input: string): GeometrySemanticModel | nu
     builder.constraint({ type: 'chord', circle: circleId, segment });
   }
   for (const match of text.matchAll(
-    new RegExp(`(${SEGMENT})\\s*-?\\s*(?:является\\s+)?касательн[а-я]*`, 'gi'),
+    new RegExp(
+      `(?:сторон[аыи]\\s+)?(${SEGMENT})\\s*-?\\s*(?:является\\s+)?каса(?:ется|тельн[а-я]*)`,
+      'gi',
+    ),
   )) {
     const line = segmentPoints(match[1]);
     builder.segment(line);
     circleId ??= builder.circle('O');
-    builder.constraint({ type: 'tangent', circle: circleId, line, at: line[0] });
+    builder.constraint({
+      type: 'tangent',
+      circle: circleId,
+      line,
+      at: inferTangentContact(line, circleId, builder),
+    });
+  }
+  for (const match of text.matchAll(
+    new RegExp(
+      `(?:отрезок\\s+)?(${SEGMENT})\\s+пересекает\\s+окружност[ьи]\\s+в\\s+точке\\s+(${POINT})`,
+      'gi',
+    ),
+  )) {
+    const segment = segmentPoints(match[1]);
+    const point = normalizePointName(match[2]);
+    builder.segment(segment);
+    builder.point(point);
+    circleId ??= builder.circle('O');
+    builder.constraint({ type: 'point_on_circle', point, circle: circleId });
+    builder.constraint({ type: 'point_on_segment', point, segment });
+    const circle = builder.entities.find(
+      (entity): entity is Extract<GeometryEntity, { type: 'circle' }> =>
+        entity.type === 'circle' && entity.id === circleId,
+    );
+    if (circle && segment.includes(circle.center)) {
+      const outer = segment.find((candidate) => candidate !== circle.center)!;
+      builder.segment([outer, point]);
+      builder.segment([point, circle.center]);
+      builder.constraint({ type: 'collinear', points: [outer, point, circle.center] });
+    }
+  }
+  for (const match of text.matchAll(
+    new RegExp(
+      `дуг[аиеу]\\s*(${SEGMENT})(?:\\s+окружности)?[^.]*?(?:=|равн[а-я]*)\\s*(\\d+(?:\\.\\d+)?)\\s*${DEGREE_SUFFIX}`,
+      'gi',
+    ),
+  )) {
+    const [from, to] = segmentPoints(match[1]);
+    builder.point(from);
+    builder.point(to);
+    circleId ??= builder.circle('O');
+    builder.constraint({
+      type: 'arc_measure',
+      circle: circleId,
+      from,
+      to,
+      value: Number(match[2]),
+    });
+  }
+
+  for (const constraint of builder.constraints) {
+    if (constraint.type !== 'tangent' || !circleId) continue;
+    constraint.at = inferTangentContact(constraint.line, circleId, builder);
   }
 
   if (!primaryTriangle) {
@@ -456,9 +593,16 @@ export function interpretGeometryText(input: string): GeometrySemanticModel | nu
       .map((entity) => entity.id);
     if (pointIds.length === 3) {
       primaryTriangle = builder.triangle([pointIds[0], pointIds[1], pointIds[2]]);
+    } else if (/треугольник/i.test(text)) {
+      primaryTriangle = builder.triangle(['A', 'B', 'C']);
     }
   }
+
+  inferCevianFromVertex(text, builder, primaryTriangle);
   addVertexAngles(text, builder, primaryTriangle);
+  inferRectangularTriangle(text, builder, primaryTriangle);
+  inferIsoscelesTriangle(text, builder, primaryTriangle);
+  inferRightTriangleLegs(text, builder, primaryTriangle);
 
   if (primaryTriangle) {
     const exteriorPatterns = [
@@ -484,26 +628,257 @@ export function interpretGeometryText(input: string): GeometrySemanticModel | nu
   return builder.build();
 }
 
+function isCircumcirclePhrase(text: string): boolean {
+  if (/окружност[ьи]\s+вписан/i.test(text)) return false;
+  if (/описан[аоы]+\s+около\s+окружност/i.test(text)) return false;
+  return (
+    /вписан[аоы]?\s+в\s+окружност/i.test(text) ||
+    /окружност[ьи]\s+описан[аоы]+\s+около/i.test(text) ||
+    /вписанн[аоыйе]+\s+четыр/i.test(text)
+  );
+}
+
+function unusedPointName(builder: GeometryModelBuilder, preferred: readonly string[]): string {
+  const used = new Set(
+    builder.entities.filter((entity) => entity.type === 'point').map((entity) => entity.id),
+  );
+  for (const name of preferred) {
+    if (!used.has(name)) return name;
+  }
+  for (let code = 72; code <= 90; code += 1) {
+    const name = String.fromCharCode(code);
+    if (!used.has(name)) return name;
+  }
+  return `${preferred[0] ?? 'P'}1`;
+}
+
+function occupiedAcuteVertices(
+  text: string,
+  builder: GeometryModelBuilder,
+): Set<string> {
+  const occupied = new Set<string>();
+  for (const constraint of builder.constraints) {
+    if (constraint.type === 'angle' && Math.abs(constraint.value - 90) > 1e-6) {
+      occupied.add(constraint.points[1]);
+    }
+  }
+  for (const match of text.matchAll(new RegExp(`остр[а-яё]*\\s+${VERTEX_ANGLE}`, 'gi'))) {
+    occupied.add(normalizePointName(match[1]));
+  }
+  return occupied;
+}
+
+function inferRightAngleVertex(
+  text: string,
+  triangle: TriangleEntity,
+  occupied: Set<string>,
+): string {
+  const named =
+    text.match(new RegExp(`прям(?:ой|ого|ым)\\s+угл[а-яё]*\\s*(${POINT})`, 'i')) ??
+    text.match(new RegExp(`вершин[аеыу]\\s+прям(?:ого|ой)\\s+угл[а-яё]*\\s*(${POINT})`, 'i')) ??
+    text.match(new RegExp(`угол\\s*(${POINT})\\s*прям(?:ой|ым|ого)(?![а-яё])`, 'i')) ??
+    text.match(new RegExp(`прям(?:ой|ым)\\s+углом\\s*(?:в\\s+)?(${POINT})`, 'i'));
+  const namedVertex = named ? normalizePointName(named[1]) : null;
+  if (
+    namedVertex &&
+    triangle.vertices.includes(namedVertex) &&
+    !occupied.has(namedVertex)
+  ) {
+    return namedVertex;
+  }
+
+  const hypotenuse = text.match(new RegExp(`гипотенуз[а-я]*\\s+(${SEGMENT})`, 'i'));
+  if (hypotenuse) {
+    const [first, second] = segmentPoints(hypotenuse[1]);
+    const remaining = triangle.vertices.find(
+      (point) => point !== first && point !== second && !occupied.has(point),
+    );
+    if (remaining) return remaining;
+  }
+  const preferred = triangle.vertices[2];
+  if (!occupied.has(preferred)) return preferred;
+  return triangle.vertices.find((point) => !occupied.has(point)) ?? preferred;
+}
+
+function inferRectangularTriangle(
+  text: string,
+  builder: GeometryModelBuilder,
+  triangle: TriangleEntity | undefined,
+) {
+  if (!triangle || !/прямоугольн|прям(?:ой|ого|ым)\s+угл/i.test(text)) return;
+  if (
+    builder.constraints.some(
+      (constraint) => constraint.type === 'angle' && Math.abs(constraint.value - 90) < 1e-6,
+    )
+  ) {
+    return;
+  }
+  addAngleAtVertex(
+    builder,
+    triangle,
+    inferRightAngleVertex(text, triangle, occupiedAcuteVertices(text, builder)),
+    90,
+  );
+}
+
+function inferIsoscelesTriangle(
+  text: string,
+  builder: GeometryModelBuilder,
+  triangle: TriangleEntity | undefined,
+) {
+  if (!triangle || !/равнобедренн/i.test(text)) return;
+  const hasEqualSides = builder.constraints.some(
+    (constraint) =>
+      constraint.type === 'equal_length' &&
+      constraint.segments.filter((segment) =>
+        segment.every((point) => triangle.vertices.includes(point)),
+      ).length >= 2,
+  );
+  if (hasEqualSides) return;
+  const baseMatch = text.match(new RegExp(`основани[ея]\\s+(${SEGMENT})`, 'i'));
+  let apex = triangle.vertices[0];
+  if (baseMatch) {
+    const base = segmentPoints(baseMatch[1]);
+    apex = triangle.vertices.find((point) => !base.includes(point)) ?? apex;
+  }
+  const [first, second] = triangle.vertices.filter((point) => point !== apex);
+  builder.constraint({
+    type: 'equal_length',
+    segments: [
+      [apex, first],
+      [apex, second],
+    ],
+  });
+}
+
+function inferRightTriangleLegs(
+  text: string,
+  builder: GeometryModelBuilder,
+  triangle: TriangleEntity | undefined,
+) {
+  if (!triangle) return;
+  const namedLegs = [
+    ...text.matchAll(
+      new RegExp(
+        `катет[аы]?\\s+(${SEGMENT})\\s+и\\s+(${SEGMENT})(?:\\s*(?:=|равн[а-я]*)\\s*(${VALUE})\\s+и\\s+(${VALUE}))?`,
+        'gi',
+      ),
+    ),
+  ];
+  for (const match of namedLegs) {
+    const first = segmentPoints(match[1]);
+    const second = segmentPoints(match[2]);
+    builder.segment(first);
+    builder.segment(second);
+    if (match[3] && match[4]) {
+      builder.constraint({ type: 'length', segment: first, value: parseScalar(match[3]) });
+      builder.constraint({ type: 'length', segment: second, value: parseScalar(match[4]) });
+    }
+  }
+
+  const unnamedLegs = text.match(
+    new RegExp(`катет[аами]*\\s+(?:равны\\s+)?(${VALUE})\\s+и\\s+(${VALUE})`, 'i'),
+  );
+  if (unnamedLegs && namedLegs.length === 0) {
+    const right = builder.constraints.find(
+      (constraint) => constraint.type === 'angle' && Math.abs(constraint.value - 90) < 1e-6,
+    );
+    const vertex =
+      right?.type === 'angle' ? right.points[1] : inferRightAngleVertex(text, triangle);
+    const legs = triangle.vertices.filter((point) => point !== vertex);
+    builder.constraint({
+      type: 'length',
+      segment: [vertex, legs[0]],
+      value: parseScalar(unnamedLegs[1]),
+    });
+    builder.constraint({
+      type: 'length',
+      segment: [vertex, legs[1]],
+      value: parseScalar(unnamedLegs[2]),
+    });
+  }
+
+  const hypotenuse = text.match(
+    new RegExp(`гипотенуз[а-я]*\\s+(?:(${SEGMENT})\\s*(?:=|равн[а-я]*)\\s*)?(${VALUE})`, 'i'),
+  );
+  if (hypotenuse?.[2]) {
+    const segment = hypotenuse[1]
+      ? segmentPoints(hypotenuse[1])
+      : (triangle.vertices.filter((point) => {
+          const right = builder.constraints.find(
+            (constraint) => constraint.type === 'angle' && Math.abs(constraint.value - 90) < 1e-6,
+          );
+          return right?.type === 'angle' ? point !== right.points[1] : true;
+        }) as GeometrySegment);
+    if (segment.length === 2) {
+      builder.constraint({ type: 'length', segment, value: parseScalar(hypotenuse[2]) });
+    }
+  }
+}
+
+function inferCevianFromVertex(
+  text: string,
+  builder: GeometryModelBuilder,
+  triangle: TriangleEntity | undefined,
+) {
+  if (!triangle) return;
+  const kinds = [
+    ['высот', 'altitude', ['H', 'K', 'P']],
+    ['медиан', 'median', ['M', 'N', 'P']],
+    ['биссектрис', 'bisector', ['D', 'L', 'E']],
+  ] as const;
+  for (const [word, kind, preferred] of kinds) {
+    const patterns = [
+      new RegExp(`${word}[а-я]*\\s+из\\s+(?:вершины\\s+)?(${POINT})(?![A-ZА-Я])`, 'gi'),
+      new RegExp(`из\\s+(?:вершины\\s+)?(${POINT})\\s+проведен[аоы]\\s+${word}`, 'gi'),
+    ];
+    for (const pattern of patterns) {
+      for (const match of text.matchAll(pattern)) {
+        const vertex = normalizePointName(match[1]);
+        if (!triangle.vertices.includes(vertex)) continue;
+        const already = builder.constraints.some(
+          (constraint) => constraint.type === kind && constraint.segment[0] === vertex,
+        );
+        if (already) continue;
+        const foot = unusedPointName(builder, preferred);
+        addNamedCevian(builder, triangle, [vertex, foot], kind);
+      }
+    }
+  }
+}
+
+function scoreGeometryModel(model: GeometrySemanticModel): number {
+  const figures = model.entities.filter(
+    (entity) =>
+      entity.type === 'triangle' || entity.type === 'circle' || entity.type === 'quadrilateral',
+  ).length;
+  const metrics = model.constraints.filter((constraint) =>
+    [
+      'length',
+      'angle',
+      'equal_length',
+      'diameter',
+      'radius',
+      'altitude',
+      'median',
+      'bisector',
+      'perpendicular',
+      'parallel',
+      'tangent',
+      'arc_measure',
+      'chord',
+      'cyclic',
+    ].includes(constraint.type),
+  ).length;
+  if (figures === 0 && metrics === 0) return 0;
+  return Math.min(0.98, (figures ? 0.72 : 0.68) + metrics * 0.04);
+}
+
 export const geometryInterpreter: MathInterpreterModule = {
   id: 'geometry',
   canInterpret(input) {
-    const text = normalizeGeometryText(input.text).toLowerCase();
-    const hits = [
-      'треугольник',
-      'окружност',
-      'угол',
-      'высот',
-      'медиан',
-      'биссектрис',
-      'перпендикуляр',
-      'параллел',
-      'радиус',
-      'диаметр',
-      'хорд',
-      'касательн',
-    ].filter((token) => text.includes(token)).length;
-    const symbolHit = /[△∠⊥⟂∥]/.test(text) ? 1 : 0;
-    return hits + symbolHit ? Math.min(0.98, 0.65 + (hits + symbolHit) * 0.08) : 0;
+    const model = interpretGeometryText(input.text);
+    return model ? scoreGeometryModel(model) : 0;
   },
   interpret(input) {
     const model = interpretGeometryText(input.text);
@@ -512,7 +887,7 @@ export const geometryInterpreter: MathInterpreterModule = {
       {
         id: 'geometry',
         label: 'Построить чертёж',
-        confidence: Math.max(0.7, this.canInterpret(input)),
+        confidence: Math.max(0.7, scoreGeometryModel(model)),
         intent: { type: 'geometry', model },
       },
     ];

@@ -53,6 +53,8 @@ export type GeometryConstraint =
   | { type: 'altitude'; segment: GeometrySegment; oppositeSide: GeometrySegment }
   | { type: 'chord'; circle: string; segment: GeometrySegment }
   | { type: 'tangent'; circle: string; line: GeometrySegment; at?: string }
+  | { type: 'arc_measure'; circle: string; from: string; to: string; value: number }
+  | { type: 'cyclic'; points: string[]; circle: string }
   | { type: 'similar_triangles'; triangles: [string, string] };
 
 export type GeometryDecoration =
@@ -75,6 +77,7 @@ export function geometryConstraintPriority(
     case 'angle':
     case 'equal_length':
     case 'equal_angle':
+    case 'arc_measure':
       return 'metric';
     default:
       return 'hard';

@@ -43,4 +43,31 @@ describe('circle diameter solver', () => {
     expect(new Set(keys).size).toBe(keys.length);
     expect(ticks.every((marker) => marker.group === 1)).toBe(true);
   });
+
+  it('ставит точку касания на окружность и внешнюю точку на касательную', () => {
+    const result = solveGeometry(
+      interpretGeometryText(
+        'Сторона CA касается окружности с центром O, отрезок CO пересекает окружность в точке B, дуга AB равна 66°.',
+      )!,
+    );
+    expect(result.status).not.toBe('unsatisfiable');
+    if (result.status === 'unsatisfiable') return;
+    expect(result.solverId).toBe('circle-tangent-arc');
+    const byId = new Map(result.scene.points.map((point) => [point.id, point]));
+    expect(byId.get('A')).toBeDefined();
+    expect(byId.get('B')).toBeDefined();
+    expect(byId.get('C')).toBeDefined();
+  });
+
+  it('строит вписанный четырёхугольник, а не прямоугольник по умолчанию', () => {
+    const result = solveGeometry(
+      interpretGeometryText(
+        'Четырёхугольник ABCD вписан в окружность. Угол ABC равен 120°, угол ABD равен 43°. Найдите угол CAD.',
+      )!,
+    );
+    expect(result.status).not.toBe('unsatisfiable');
+    if (result.status === 'unsatisfiable') return;
+    expect(result.solverId).toBe('cyclic-polygon');
+    expect(result.scene.circles).toHaveLength(1);
+  });
 });

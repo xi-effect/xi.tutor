@@ -30,7 +30,29 @@ describe('visualizationTextFromRichText', () => {
     expect(text).toContain('ABC');
     expect(text).toContain('90^\\circ');
     expect(text).toContain('\\sqrt{19}');
-    expect(text).toMatch(/угол\s+C\s+равен/);
+    expect(text).toMatch(/угол\s*C\s*равен/);
+  });
+
+  it('склеивает соседние однобуквенные формулы в имя точки', () => {
+    const text = visualizationTextFromRichText({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'Отрезки ' },
+            { type: 'inlineMath', attrs: { latex: 'A' } },
+            { type: 'inlineMath', attrs: { latex: 'C' } },
+            { type: 'text', text: ' и ' },
+            { type: 'inlineMath', attrs: { latex: 'B' } },
+            { type: 'inlineMath', attrs: { latex: 'D' } },
+            { type: 'text', text: ' — диаметры' },
+          ],
+        },
+      ],
+    });
+    expect(text).toContain('AC');
+    expect(text).toContain('BD');
   });
 
   it('берёт latex из любого узла с attrs.latex', () => {
@@ -68,5 +90,14 @@ describe('visualizationTextFromHtml', () => {
     );
     expect(text).toContain('ABC');
     expect(text).toContain('треугольнике');
+  });
+
+  it('не размазывает буквы по вложенным span KaTeX', () => {
+    const text = visualizationTextFromHtml(
+      '<p>Отрезки <span data-type="inline-math" data-latex="AC" class="tiptap-mathematics-render"><span class="katex"><span class="mord">A</span><span class="mord">C</span></span></span> и <span data-type="inline-math" data-latex="BD"><span class="mord">B</span><span class="mord">D</span></span> диаметры</p>',
+    );
+    expect(text).toMatch(/\bAC\b/);
+    expect(text).toMatch(/\bBD\b/);
+    expect(text).not.toMatch(/A C/);
   });
 });

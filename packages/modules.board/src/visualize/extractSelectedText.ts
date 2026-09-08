@@ -42,13 +42,55 @@ function decodeHtmlEntities(value: string): string {
     .replace(/&gt;/gi, '>');
 }
 
+function replaceDataLatexElements(html: string): string {
+  const openTag = /<[^>]*\bdata-latex\s*=\s*(["'])([\s\S]*?)\1[^>]*>/gi;
+  let result = '';
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = openTag.exec(html))) {
+    result += html.slice(lastIndex, match.index);
+    const latex = match[2];
+    const tagStart = match[0];
+    if (/\/\s*>$/.test(tagStart)) {
+      result += ` ${latex} `;
+      lastIndex = match.index + tagStart.length;
+      continue;
+    }
+    const tagName = tagStart.match(/^<([a-z][\w:-]*)/i)?.[1] ?? 'span';
+    let depth = 1;
+    let cursor = match.index + tagStart.length;
+    while (cursor < html.length && depth > 0) {
+      const nextLt = html.indexOf('<', cursor);
+      if (nextLt < 0) {
+        cursor = html.length;
+        break;
+      }
+      const rest = html.slice(nextLt);
+      const close = rest.match(new RegExp(`^</${tagName}\\s*>`, 'i'));
+      if (close) {
+        depth -= 1;
+        cursor = nextLt + close[0].length;
+        continue;
+      }
+      const open = rest.match(new RegExp(`^<${tagName}\\b[^>]*>`, 'i'));
+      if (open) {
+        if (!/\/\s*>$/.test(open[0])) depth += 1;
+        cursor = nextLt + open[0].length;
+        continue;
+      }
+      const anyTag = rest.match(/^<[^>]+>/);
+      cursor = nextLt + (anyTag ? anyTag[0].length : 1);
+    }
+    result += ` ${latex} `;
+    lastIndex = cursor;
+    openTag.lastIndex = cursor;
+  }
+  return result + html.slice(lastIndex);
+}
+
 export function visualizationTextFromHtml(html: string): string {
   if (!html) return '';
-  const withLatex = decodeHtmlEntities(html).replace(
-    /<[^>]*data-latex=(["'])([\s\S]*?)\1[^>]*>([\s\S]*?)<\/[^>]+>/gi,
-    (_all, _quote, latex) => ` ${latex} `,
-  );
-  return withLatex
+  return replaceDataLatexElements(decodeHtmlEntities(html))
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -75,7 +117,9 @@ export function visualizationTextFromRichText(richText: unknown): string {
     const attrs = record.attrs;
     const latex = attrs?.latex ?? attrs?.['data-latex'];
     if (typeof latex === 'string' && latex.trim()) {
-      parts.push(` ${latex.trim()} `);
+      const value = latex.trim();
+      parts.push(/^[A-Za-zА-Яа-я]{1,4}$/.test(value) ? value : ` ${value} `);
+      return;
     }
 
     if (Array.isArray(record.content)) {

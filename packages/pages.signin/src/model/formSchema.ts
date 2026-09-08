@@ -1,6 +1,7 @@
 import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
+import { normalizeEmail } from 'common.utils';
 
 const passwordMinLength = 6;
 const passwordMaxLength = 64;
@@ -26,9 +27,12 @@ export const createFormSchema = (t: Translate) => {
       .string({
         error: getTranslation('validation.required', undefined, 'This field is required'),
       })
-      .email({
-        message: getTranslation('validation.wrong_format', undefined, 'Incorrect data format'),
-      }),
+      .transform(normalizeEmail)
+      .pipe(
+        z.string().email({
+          message: getTranslation('validation.wrong_format', undefined, 'Incorrect data format'),
+        }),
+      ),
     password: z
       .string({
         error: getTranslation('validation.required', undefined, 'This field is required'),

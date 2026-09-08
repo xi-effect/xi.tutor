@@ -4,7 +4,7 @@ export const probabilityInterpreter: MathInterpreterModule = {
   id: 'probability-tree',
   canInterpret(input) {
     const t = input.text.toLowerCase();
-    return /(монет|кубик|кости|шар|вероятност)/.test(t) ? 0.55 : 0;
+    return /монет/.test(t) ? 0.9 : 0;
   },
   interpret(input) {
     const t = input.text.toLowerCase();

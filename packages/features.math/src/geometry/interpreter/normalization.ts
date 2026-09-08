@@ -27,28 +27,40 @@ function toAsciiMathCharacter(character: string): string {
   return character;
 }
 
+function compactSpacedTokens(text: string): string {
+  return text
+    .replace(/(^|[^A-ZА-Я])([A-ZА-Я](?:\s+[A-ZА-Я])+)(?![A-ZА-Я])/g, (_all, prefix, names) =>
+      `${prefix}${String(names).replace(/\s+/g, '')}`,
+    )
+    .replace(/(^|[^\d])(\d(?:\s+\d)+)(?!\d)/g, (_all, prefix, digits) =>
+      `${prefix}${String(digits).replace(/\s+/g, '')}`,
+    );
+}
+
 export function normalizeGeometryText(input: string): string {
-  return [...input]
-    .map(toAsciiMathCharacter)
-    .join('')
-    .replace(/[\u2061-\u2064]/g, '')
-    .replace(/\u00a0/g, ' ')
-    .replace(/[–—−]/g, '-')
-    .replace(/[×⋅·]/g, '*')
-    .replace(/÷/g, '/')
-    .replace(/\\circ\b/g, '°')
-    .replace(/\\degree\b/g, '°')
-    .replace(/\^\(?°\)?/g, '°')
-    .replace(/\^\(circ\)/gi, '°')
-    .replace(/\\(?:cos|sin|tan|cot|sec|csc)\b/gi, ' ')
-    .replace(/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)')
-    .replace(/sqrt\((\d+(?:\.\d+)?)\.\)/g, 'sqrt($1)')
-    .replace(/\$+/g, ' ')
-    .replace(/\\[()[\]]/g, ' ')
-    .replace(/√\s*\(?\s*(\d+(?:[.,]\d+)?)\s*\)?/g, 'sqrt($1)')
-    .replace(/(\d),(\d)/g, '$1.$2')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return compactSpacedTokens(
+    [...input]
+      .map(toAsciiMathCharacter)
+      .join('')
+      .replace(/[\u2061-\u2064]/g, '')
+      .replace(/\u00a0/g, ' ')
+      .replace(/[–—−]/g, '-')
+      .replace(/[×⋅·]/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/\\circ\b/g, '°')
+      .replace(/\\degree\b/g, '°')
+      .replace(/\^\(?°\)?/g, '°')
+      .replace(/\^\(circ\)/gi, '°')
+      .replace(/\\(?:cos|sin|tan|cot|sec|csc)\b/gi, ' ')
+      .replace(/\\sqrt\{([^{}]*)\}/g, 'sqrt($1)')
+      .replace(/sqrt\((\d+(?:\.\d+)?)\.\)/g, 'sqrt($1)')
+      .replace(/\$+/g, ' ')
+      .replace(/\\[()[\]]/g, ' ')
+      .replace(/√\s*\(?\s*(\d+(?:[.,]\d+)?)\s*\)?/g, 'sqrt($1)')
+      .replace(/(\d),(\d)/g, '$1.$2')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
 }
 
 export function normalizePointName(value: string): string {

@@ -23,6 +23,7 @@ export const CoordinateAxesComponent = ({ shape }: CoordinateAxesComponentProps)
     yDivisions,
     showLabels,
     equation,
+    extraEquations,
     color,
     plotColor,
   } = shape.props;
@@ -45,6 +46,7 @@ export const CoordinateAxesComponent = ({ shape }: CoordinateAxesComponentProps)
       yDivisions,
       showLabels,
       equation,
+      extraEquations,
       color,
       plotColor,
       theme,

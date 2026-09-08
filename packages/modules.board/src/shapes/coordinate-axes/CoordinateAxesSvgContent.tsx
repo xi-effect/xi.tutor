@@ -31,6 +31,7 @@ type AxesSvgContentProps = {
   showLabels: boolean;
   axisColor: string;
   plotStrokeColor: string;
+  extraPlotColors: string[];
   gridColor: string;
   errorColor: string;
   labelColor: string;
@@ -43,6 +44,7 @@ export function CoordinateAxesSvgContent({
   showLabels,
   axisColor,
   plotStrokeColor,
+  extraPlotColors,
   gridColor,
   errorColor,
   labelColor,
@@ -114,6 +116,17 @@ export function CoordinateAxesSvgContent({
           strokeLinecap="round"
         />
       )}
+      {geometry.extraPlotPaths?.map((path, index) => (
+        <path
+          key={`extra-plot-${index}`}
+          d={path}
+          fill="none"
+          stroke={extraPlotColors[index % extraPlotColors.length]}
+          strokeWidth={plotStrokeWidth}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+      ))}
 
       {geometry.plotError && equation.trim() && (
         <SvgStaticText
@@ -196,6 +209,7 @@ export function buildCoordinateAxesSvgProps(shape: CoordinateAxesShape, editor: 
     yDivisions,
     showLabels,
     equation,
+    extraEquations,
     color,
     plotColor,
   } = shape.props;
@@ -211,7 +225,12 @@ export function buildCoordinateAxesSvgProps(shape: CoordinateAxesShape, editor: 
     yDivisions,
     showLabels,
     equation,
+    extraEquations,
   });
+
+  const extraPlotColors = (['red', 'green', 'orange', 'violet'] as const).map((name) =>
+    getColorValue(colors, name, 'solid'),
+  );
 
   return {
     geometry,
@@ -219,6 +238,7 @@ export function buildCoordinateAxesSvgProps(shape: CoordinateAxesShape, editor: 
     showLabels,
     axisColor: getColorValue(colors, color, 'solid'),
     plotStrokeColor: getColorValue(colors, plotColor, 'solid'),
+    extraPlotColors,
     gridColor: getColorValue(colors, 'grey', 'semi'),
     errorColor: getColorValue(colors, 'red', 'solid'),
     labelColor: getColorValue(colors, 'grey', 'solid'),

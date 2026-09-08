@@ -5,21 +5,12 @@ import type {
   TriangleEntity,
 } from '../semantic/types';
 import { buildScene, type PointCoordinates } from './sceneBuilder';
-import { ANGLE_EPSILON, evaluateGeometryScalar, GEOMETRY_EPSILON } from './math';
+import { ANGLE_EPSILON, GEOMETRY_EPSILON } from './math';
+import { constructTriangleCoordinates, segmentKey, triangleLengthMap } from './triangleConstructions';
 import type { GeometrySolveResult, GeometrySolver } from './types';
 
-function segmentKey([a, b]: GeometrySegment): string {
-  return [a, b].sort().join('');
-}
-
 function lengthMap(model: GeometrySemanticModel): Map<string, number> {
-  const result = new Map<string, number>();
-  for (const constraint of model.constraints) {
-    if (constraint.type !== 'length') continue;
-    const value = evaluateGeometryScalar(constraint.value);
-    if (value != null) result.set(segmentKey(constraint.segment), value);
-  }
-  return result;
+  return triangleLengthMap(model);
 }
 
 function triangleOf(model: GeometrySemanticModel): TriangleEntity | undefined {
@@ -135,6 +126,25 @@ export const rightTriangleSolver: GeometrySolver = {
       hypotenuse = Math.hypot(firstLeg, secondLeg);
     }
 
+    const invented = firstLeg == null || secondLeg == null;
+    const extraAngle = model.constraints.find(
+      (constraint): constraint is Extract<GeometryConstraint, { type: 'angle' }> =>
+        constraint.type === 'angle' &&
+        Math.abs(constraint.value - 90) > ANGLE_EPSILON &&
+        constraint.points[1] !== vertex &&
+        triangle.vertices.includes(constraint.points[1]),
+    );
+    if (extraAngle && invented && hypotenuse == null) {
+      const constructed = constructTriangleCoordinates(triangle, model);
+      if ('coordinates' in constructed) {
+        return {
+          status: constructed.complete ? 'solved' : 'partial',
+          solverId: this.id,
+          scene: buildScene(model, completeTriangleCoordinates(model, constructed.coordinates)),
+        };
+      }
+    }
+
     firstLeg ??= 1.2;
     secondLeg ??= 1;
     hypotenuse ??= Math.hypot(firstLeg, secondLeg);
@@ -148,7 +158,7 @@ export const rightTriangleSolver: GeometrySolver = {
       [second]: { x: secondLeg, y: firstLeg },
     };
     return {
-      status: 'solved',
+      status: invented ? 'partial' : 'solved',
       solverId: this.id,
       scene: buildScene(model, completeTriangleCoordinates(model, coordinates)),
     };
@@ -249,13 +259,29 @@ export const similarTrianglesSolver: GeometrySolver = {
     }
     const [a, b, c] = first.vertices;
     const [d, e, f] = second.vertices;
+    const firstTriangle = constructTriangleCoordinates(first, model);
+    const source =
+      'coordinates' in firstTriangle
+        ? firstTriangle.coordinates
+        : {
+            [a]: { x: 0, y: 0 },
+            [b]: { x: 2, y: 0 },
+            [c]: { x: 0.7, y: 1.4 },
+          };
+    const origin = source[a] ?? { x: 0, y: 0 };
+    const scale = 0.7;
+    const shift = 3.2;
     const coordinates: PointCoordinates = {
-      [a]: { x: 0, y: 0 },
-      [b]: { x: 2, y: 0 },
-      [c]: { x: 0.7, y: 1.4 },
-      [d]: { x: 3.2, y: 0 },
-      [e]: { x: 4.6, y: 0 },
-      [f]: { x: 3.69, y: 0.98 },
+      ...source,
+      [d]: { x: shift, y: 0 },
+      [e]: {
+        x: shift + ((source[b]?.x ?? 2) - origin.x) * scale,
+        y: ((source[b]?.y ?? 0) - origin.y) * scale,
+      },
+      [f]: {
+        x: shift + ((source[c]?.x ?? 0.7) - origin.x) * scale,
+        y: ((source[c]?.y ?? 1.4) - origin.y) * scale,
+      },
     };
     return {
       status: 'partial',
@@ -274,58 +300,14 @@ export const triangleSolver: GeometrySolver = {
     const triangle = triangleOf(model);
     if (!triangle)
       return { status: 'unsatisfiable', solverId: this.id, reason: 'Треугольник не найден' };
-    const [a, b, c] = triangle.vertices;
-    const lengths = lengthMap(model);
-    const ab = lengths.get(segmentKey([a, b]));
-    const bc = lengths.get(segmentKey([b, c]));
-    const ca = lengths.get(segmentKey([c, a]));
-    let coordinates: PointCoordinates;
-    if (ab != null && bc != null && ca != null) {
-      const x = (ca ** 2 + ab ** 2 - bc ** 2) / (2 * ab);
-      const ySquare = ca ** 2 - x ** 2;
-      if (ySquare <= GEOMETRY_EPSILON) {
-        return {
-          status: 'unsatisfiable',
-          solverId: this.id,
-          reason: 'Невозможно построить треугольник',
-        };
-      }
-      coordinates = {
-        [a]: { x: 0, y: 0 },
-        [b]: { x: ab, y: 0 },
-        [c]: { x, y: Math.sqrt(ySquare) },
-      };
-    } else {
-      const knownAngle = model.constraints.find(
-        (constraint) =>
-          constraint.type === 'angle' &&
-          constraint.points.every((point) => triangle.vertices.includes(point)),
-      );
-      if (knownAngle?.type === 'angle') {
-        const [first, vertex, second] = knownAngle.points;
-        const firstLeg = lengths.get(segmentKey([first, vertex])) ?? 1.4;
-        const secondLeg = lengths.get(segmentKey([vertex, second])) ?? 1.2;
-        const radians = (knownAngle.value * Math.PI) / 180;
-        coordinates = {
-          [vertex]: { x: 0, y: 0 },
-          [first]: { x: firstLeg, y: 0 },
-          [second]: {
-            x: Math.cos(radians) * secondLeg,
-            y: Math.sin(radians) * secondLeg,
-          },
-        };
-      } else {
-        coordinates = {
-          [a]: { x: 0, y: 0 },
-          [b]: { x: 1.8, y: 0.2 },
-          [c]: { x: 0.55, y: 1.35 },
-        };
-      }
+    const constructed = constructTriangleCoordinates(triangle, model);
+    if ('unsatisfiable' in constructed) {
+      return { status: 'unsatisfiable', solverId: this.id, reason: constructed.unsatisfiable };
     }
     return {
-      status: 'partial',
+      status: constructed.complete ? 'solved' : 'partial',
       solverId: this.id,
-      scene: buildScene(model, completeTriangleCoordinates(model, coordinates)),
+      scene: buildScene(model, completeTriangleCoordinates(model, constructed.coordinates)),
     };
   },
 };

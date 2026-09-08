@@ -43,6 +43,13 @@ export const geometryConstraintCorpus: GeometryConstraintCorpusCase[] = [
     constraint: 'altitude',
   },
   {
+    id: 'right-triangle-acute-and-cevians',
+    category: 'прямой угол C, высота и медиана',
+    text: 'Острый угол B прямоугольного треугольника ABC равен 9°. Высота CH и медиана CM проведены из вершины прямого угла C.',
+    entity: 'triangle',
+    constraint: 'altitude',
+  },
+  {
     id: 'bisector',
     category: 'биссектриса',
     text: 'В треугольнике ABC AD — биссектриса угла A.',
@@ -99,6 +106,12 @@ export const geometryConstraintCorpus: GeometryConstraintCorpusCase[] = [
     constraint: 'tangent',
   },
   {
+    id: 'tangent-secant-arc',
+    category: 'касательная и дуга',
+    text: 'Сторона CA касается окружности с центром O, отрезок CO пересекает окружность в точке B, дуга AB равна 66°.',
+    constraint: 'tangent',
+  },
+  {
     id: 'inscribed-angle',
     category: 'вписанный угол',
     text: 'В окружности с центром O угол ACB равен 41°.',
@@ -126,6 +139,13 @@ export const geometryConstraintCorpus: GeometryConstraintCorpusCase[] = [
   },
   { id: 'rhombus', category: 'ромб', text: 'Дан ромб ABCD.', entity: 'quadrilateral' },
   { id: 'trapezoid', category: 'трапеция', text: 'Дана трапеция ABCD.', entity: 'quadrilateral' },
+  {
+    id: 'cyclic-quadrilateral',
+    category: 'вписанный четырёхугольник',
+    text: 'Четырёхугольник ABCD вписан в окружность.',
+    entity: 'circle',
+    constraint: 'cyclic',
+  },
   {
     id: 'equal-angles',
     category: 'равные углы',

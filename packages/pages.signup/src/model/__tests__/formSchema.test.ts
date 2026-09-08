@@ -28,6 +28,11 @@ describe('createFormSchema (signup)', () => {
     expect(schema.safeParse({ ...valid, email: 'not-email' }).success).toBe(false);
   });
 
+  it('нормализует регистр и пробелы в email', () => {
+    const parsed = schema.parse({ ...valid, email: '  Ivan@Example.COM ' });
+    expect(parsed.email).toBe('ivan@example.com');
+  });
+
   it('требует пароль минимум 6 символов', () => {
     expect(schema.safeParse({ ...valid, password: '12345' }).success).toBe(false);
     expect(schema.safeParse({ ...valid, password: '123456' }).success).toBe(true);

@@ -9,3 +9,4 @@ export * from './solver/types';
 export * from './solver/solveGeometry';
 export * from './scene/types';
 export * from './scene/normalizeScene';
+export * from './scene/angleMark';

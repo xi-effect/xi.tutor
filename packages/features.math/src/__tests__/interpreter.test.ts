@@ -43,6 +43,26 @@ describe('MathVisualInterpreter', () => {
     const r = interpreter.interpret({ text: 'Монету бросают дважды. Покажите возможные исходы.' });
     const p = r.find((x) => x.intent.type === 'probability_tree');
     expect(p).toBeTruthy();
-    if (p?.intent.type === 'probability_tree') expect(p.intent.stages).toBe(2);
+    expect(p?.intent.type === 'probability_tree' && p.intent.stages).toBe(2);
+  });
+});
+
+describe('MathVisualInterpreter false positives', () => {
+  it('не предлагает дробь внутри геометрической длины', () => {
+    const suggestions = interpreter.interpret({
+      text: 'В треугольнике ABC AB = 3/4, BC = 1, AC = 1.',
+    });
+    expect(suggestions.some((item) => item.intent.type === 'fraction_model')).toBe(false);
+    expect(suggestions.some((item) => item.intent.type === 'geometry')).toBe(true);
+  });
+
+  it('не предлагает геометрию по слову «угол» без модели', () => {
+    const suggestions = interpreter.interpret({ text: 'Сегодня угол зрения хороший' });
+    expect(suggestions.some((item) => item.intent.type === 'geometry')).toBe(false);
+  });
+
+  it('не предлагает дерево вероятностей без монеты', () => {
+    const suggestions = interpreter.interpret({ text: 'Найдите вероятность события A' });
+    expect(suggestions.some((item) => item.intent.type === 'probability_tree')).toBe(false);
   });
 });

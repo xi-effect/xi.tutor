@@ -16,6 +16,7 @@ export function createBoardText(
   y: number,
   text: string,
   width = 160,
+  size?: 's' | 'm' | 'l' | 'xl',
 ): DrShapeId {
   const id = createShapeId();
   const defaults = editor.getShapeUtil('text').getDefaultProps();
@@ -31,7 +32,7 @@ export function createBoardText(
       autoSize: true,
       w: width,
       color: editor.getStyleForNextShape(DefaultColorStyle),
-      size: editor.getStyleForNextShape(DefaultSizeStyle),
+      size: size ?? editor.getStyleForNextShape(DefaultSizeStyle),
       font: editor.getStyleForNextShape(DefaultFontStyle),
     },
   });

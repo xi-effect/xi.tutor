@@ -11,7 +11,9 @@ import {
   type CoordinateAxesShape,
 } from '../../shapes/coordinate-axes/CoordinateAxesShape';
 import { commitEquationForShape } from '../../shapes/coordinate-axes/utils/commitEquationForShape';
+import { evaluateEquation } from '../../shapes/coordinate-axes/utils/evaluateEquation';
 import { getFunctionGraphExpressions, type FunctionGraphIntent } from '../intent/schemas';
+import { inferFunctionGraphRange } from './autoFunctionRange';
 import type { VisualizationRenderContext, VisualizationRenderer } from './types';
 
 const PLOT_COLORS = ['blue', 'red', 'green', 'orange', 'violet'] as const;
@@ -22,8 +24,9 @@ function createAxes(
   x: number,
   y: number,
   equation: string,
+  extraEquations: string[],
   plotColor: (typeof PLOT_COLORS)[number],
-  intent: FunctionGraphIntent,
+  range: { xMin: number; xMax: number; yMin: number; yMax: number },
 ): DrShapeId | null {
   const id = createShapeId();
   const color = editor.getStyleForNextShape(DefaultColorStyle);
@@ -38,14 +41,15 @@ function createAxes(
     props: {
       w: COORDINATE_AXES_DEFAULT_WIDTH,
       h: COORDINATE_AXES_DEFAULT_HEIGHT,
-      xMin: intent.xRange?.[0] ?? -5,
-      xMax: intent.xRange?.[1] ?? 5,
-      yMin: intent.yRange?.[0] ?? -5,
-      yMax: intent.yRange?.[1] ?? 5,
+      xMin: range.xMin,
+      xMax: range.xMax,
+      yMin: range.yMin,
+      yMax: range.yMax,
       xDivisions: 10,
       yDivisions: 10,
       showLabels: true,
       equation: '',
+      extraEquations: extraEquations.join('\n'),
       color,
       plotColor,
       size,
@@ -98,6 +102,8 @@ export const functionGraphRenderer: VisualizationRenderer<FunctionGraphIntent> =
     if (expressions.length === 0) return { createdShapeIds: [] };
 
     const { editor } = context;
+    const extras = expressions.slice(1).filter((expression) => evaluateEquation(expression).ok);
+    const range = inferFunctionGraphRange(expressions, intent);
     const reusable = expressions.length === 1 ? findSelectedOrNearbyAxes(editor, context) : null;
 
     if (reusable) {
@@ -109,27 +115,26 @@ export const functionGraphRenderer: VisualizationRenderer<FunctionGraphIntent> =
         id: reusable.id,
         type: 'coordinate-axes',
         props: {
-          ...(intent.xRange ? { xMin: intent.xRange[0], xMax: intent.xRange[1] } : {}),
-          ...(intent.yRange ? { yMin: intent.yRange[0], yMax: intent.yRange[1] } : {}),
+          extraEquations: extras.join('\n'),
+          xMin: range.xMin,
+          xMax: range.xMax,
+          yMin: range.yMin,
+          yMax: range.yMax,
         },
       });
       return { createdShapeIds: [reusable.id] };
     }
 
-    const createdShapeIds: DrShapeId[] = [];
-    expressions.forEach((expression, index) => {
-      const id = createAxes(
-        editor,
-        context,
-        context.origin.x,
-        context.origin.y + index * (COORDINATE_AXES_DEFAULT_HEIGHT + 16),
-        expression,
-        PLOT_COLORS[index % PLOT_COLORS.length],
-        intent,
-      );
-      if (id) createdShapeIds.push(id);
-    });
-
-    return { createdShapeIds };
+    const id = createAxes(
+      editor,
+      context,
+      context.origin.x,
+      context.origin.y,
+      expressions[0],
+      extras,
+      PLOT_COLORS[0],
+      range,
+    );
+    return { createdShapeIds: id ? [id] : [] };
   },
 };

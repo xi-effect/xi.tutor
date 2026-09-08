@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { authApiConfig, AuthQueryKey } from 'common.api';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
+import { normalizeEmail } from 'common.utils';
 
 export const useRequestPasswordReset = () => {
   const requestPasswordReset = useCallback(async (email: string) => {
@@ -10,7 +11,7 @@ export const useRequestPasswordReset = () => {
       const response = await axiosInst({
         method: authApiConfig[AuthQueryKey.RequestPasswordReset].method,
         url: authApiConfig[AuthQueryKey.RequestPasswordReset].getUrl(),
-        data: { email },
+        data: { email: normalizeEmail(email) },
         headers: {
           'Content-Type': 'application/json',
           'X-Testing': !env.VITE_ENABLE_X_TESTING ? 'false' : env.VITE_ENABLE_X_TESTING,

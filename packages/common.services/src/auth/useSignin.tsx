@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { authApiConfig, AuthQueryKey } from 'common.api';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
+import { normalizeEmail } from 'common.utils';
 import { useNetworkAuthIntegration } from '../network/useNetworkAuthIntegration';
 
 export const useSignin = () => {
@@ -14,7 +15,7 @@ export const useSignin = () => {
         const response = await axiosInst({
           method: authApiConfig[AuthQueryKey.Signin].method,
           url: authApiConfig[AuthQueryKey.Signin].getUrl(),
-          data: { email, password },
+          data: { email: normalizeEmail(email), password },
           headers: {
             'Content-Type': 'application/json',
             'X-Testing': !env.VITE_ENABLE_X_TESTING ? 'false' : env.VITE_ENABLE_X_TESTING,

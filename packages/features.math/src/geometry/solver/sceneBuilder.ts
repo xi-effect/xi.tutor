@@ -1,4 +1,5 @@
 import type { GeometrySemanticModel } from '../semantic/types';
+import { formatGeometryScalar } from '../solver/math';
 import { getGeometrySceneBounds } from '../scene/normalizeScene';
 import type { GeometryScene, ScenePoint, SceneSegment } from '../scene/types';
 
@@ -40,22 +41,57 @@ export function buildScene(
   }
 
   const markers: GeometryScene['markers'] = [];
-  const equalLengthKeys = new Set<string>();
   let parallelGroup = 0;
   let equalAngleGroup = 0;
+  const equalLengthParent = new Map<string, string>();
 
+  const lengthKey = (segment: [string, string]) => [...segment].sort().join(':');
+  const findLength = (key: string): string => {
+    const parent = equalLengthParent.get(key);
+    if (!parent || parent === key) {
+      equalLengthParent.set(key, key);
+      return key;
+    }
+    const root = findLength(parent);
+    equalLengthParent.set(key, root);
+    return root;
+  };
+  const unionLength = (segments: [string, string][]) => {
+    const keys = segments.map(lengthKey);
+    const root = findLength(keys[0]);
+    for (const key of keys.slice(1)) {
+      equalLengthParent.set(findLength(key), root);
+    }
+  };
+
+  for (const constraint of model.constraints) {
+    if (constraint.type === 'equal_length') unionLength(constraint.segments);
+    if (constraint.type === 'midpoint') {
+      unionLength([
+        [constraint.segment[0], constraint.point],
+        [constraint.point, constraint.segment[1]],
+      ]);
+    }
+  }
+
+  const equalLengthGroupByRoot = new Map<string, number>();
+  const seenEqualLength = new Set<string>();
   const addEqualLength = (segment: [string, string]) => {
-    const key = [...segment].sort().join(':');
-    if (equalLengthKeys.has(key)) return;
-    equalLengthKeys.add(key);
-    markers.push({ type: 'equal_length', segment, group: 1 });
+    const key = lengthKey(segment);
+    if (seenEqualLength.has(key)) return;
+    seenEqualLength.add(key);
+    const root = findLength(key);
+    let group = equalLengthGroupByRoot.get(root);
+    if (group == null) {
+      group = equalLengthGroupByRoot.size + 1;
+      equalLengthGroupByRoot.set(root, group);
+    }
+    markers.push({ type: 'equal_length', segment, group });
   };
 
   for (const constraint of model.constraints) {
     if (constraint.type === 'angle' && Math.abs(constraint.value - 90) < 1e-6) {
       markers.push({ type: 'right_angle', points: constraint.points });
-    } else if (constraint.type === 'angle') {
-      markers.push({ type: 'equal_angle', points: constraint.points, group: 1 });
     }
     if (constraint.type === 'perpendicular') {
       const shared = constraint.first.find((point) => constraint.second.includes(point));
@@ -92,16 +128,69 @@ export function buildScene(
     }
   }
 
+  const valuedAngles = model.constraints.filter(
+    (constraint): constraint is Extract<GeometrySemanticModel['constraints'][number], { type: 'angle' }> =>
+      constraint.type === 'angle' && Math.abs(constraint.value - 90) >= 1e-6,
+  );
+  const anglesByVertex = new Map<string, typeof valuedAngles>();
+  for (const constraint of valuedAngles) {
+    const vertex = constraint.points[1];
+    const list = anglesByVertex.get(vertex) ?? [];
+    list.push(constraint);
+    anglesByVertex.set(vertex, list);
+  }
+  const angleGroup = new Map<string, number>();
+  for (const list of anglesByVertex.values()) {
+    list.sort((left, right) => left.value - right.value);
+    list.forEach((constraint, index) => {
+      const group = index + 1;
+      angleGroup.set(constraint.points.join(''), group);
+      markers.push({ type: 'equal_angle', points: constraint.points, group });
+    });
+  }
+
   const uniqueMarkers = markers.filter(
     (marker, index, all) =>
       all.findIndex((candidate) => JSON.stringify(candidate) === JSON.stringify(marker)) === index,
   );
+
+  const measurementLabels: GeometryScene['measurementLabels'] = [];
+  for (const constraint of model.constraints) {
+    if (constraint.type === 'length') {
+      measurementLabels.push({
+        id: `measure-${segmentKey(constraint.segment)}`,
+        segment: constraint.segment,
+        text: formatGeometryScalar(constraint.value),
+      });
+    }
+  }
+
+  const angleLabels: GeometryScene['angleLabels'] = [];
+  for (const constraint of model.constraints) {
+    if (constraint.type !== 'angle' || Math.abs(constraint.value - 90) < 1e-6) continue;
+    const degrees = Number.isInteger(constraint.value)
+      ? String(constraint.value)
+      : constraint.value.toFixed(1).replace(/\.0$/, '');
+    angleLabels.push({
+      id: `angle-${constraint.points.join('')}`,
+      points: constraint.points,
+      text: `${degrees}°`,
+      group: angleGroup.get(constraint.points.join('')) ?? 1,
+    });
+  }
+
   return {
     points,
     segments,
     circles,
     markers: uniqueMarkers,
     labels: [],
+    measurementLabels,
+    angleLabels,
     bounds: getGeometrySceneBounds(points, circles),
   };
+}
+
+function segmentKey(segment: [string, string]): string {
+  return [...segment].sort().join('');
 }

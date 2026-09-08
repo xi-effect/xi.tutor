@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   angle,
   arePerpendicular,
+  distance,
   interpretGeometryText,
   isMidpoint,
   solveGeometry,
@@ -50,5 +51,19 @@ describe('triangle construction strategies', () => {
       angle(points.get('D')!, points.get('A')!, points.get('C')!),
       6,
     );
+  });
+
+  it('строит SAS по двум сторонам и углу между ними', () => {
+    const points = solve('В треугольнике ABC AB = 5, AC = 6, угол A равен 40°.');
+    expect(distance(points.get('A')!, points.get('B')!)).toBeCloseTo(5, 6);
+    expect(distance(points.get('A')!, points.get('C')!)).toBeCloseTo(6, 6);
+    expect(angle(points.get('B')!, points.get('A')!, points.get('C')!)).toBeCloseTo(40, 6);
+  });
+
+  it('строит ASA по стороне и прилежащим углам', () => {
+    const points = solve('В треугольнике ABC угол A равен 40°, угол B равен 60°, AB = 5.');
+    expect(distance(points.get('A')!, points.get('B')!)).toBeCloseTo(5, 6);
+    expect(angle(points.get('B')!, points.get('A')!, points.get('C')!)).toBeCloseTo(40, 5);
+    expect(angle(points.get('A')!, points.get('B')!, points.get('C')!)).toBeCloseTo(60, 5);
   });
 });

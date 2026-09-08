@@ -12,6 +12,8 @@ export const formulaInterpreter: MathInterpreterModule = {
   canInterpret(input) {
     if (input.latex?.trim()) return 0.99;
     const t = extractFormulaSource(input.text);
+    if (/[а-яё]/i.test(t)) return 0;
+    if (/\b(?:y|[a-zA-Z]\w*\(x\))\s*=/.test(t)) return 0;
     if (/^[\d\sa-zA-Z()+\-*/^=<>≤≥.,]+$/i.test(t) && /[=^<>≤≥]/.test(t)) return 0.7;
     return 0;
   },

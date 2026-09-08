@@ -135,3 +135,10 @@ export function isMidpoint(point: ScenePoint, a: ScenePoint, b: ScenePoint): boo
 export function isPointOnCircle(point: ScenePoint, center: ScenePoint, radius: number): boolean {
   return Math.abs(distance(point, center) - radius) <= GEOMETRY_EPSILON;
 }
+
+export function formatGeometryScalar(value: GeometryScalar): string {
+  if (value.type === 'number') {
+    return Number.isInteger(value.value) ? String(value.value) : String(value.value);
+  }
+  return value.expression.replace(/sqrt\(([^)]+)\)/gi, '√$1');
+}

@@ -1,5 +1,5 @@
 import type { CoordinateAxesShapeProps } from '../CoordinateAxesShape';
-import { buildPlotPath } from './buildPlotPath';
+import { buildPlotPath, type PlotPathResult } from './buildPlotPath';
 import { COORDINATE_AXES_VISUAL } from './visualStyles';
 import { snapLine, snapText } from './snapCoords';
 import {
@@ -43,6 +43,7 @@ export type CoordinateAxesGeometry = {
   yName: { x: number; y: number };
   originLabel: { x: number; y: number } | null;
   plotPath: string;
+  extraPlotPaths: string[];
   plotError: string | null;
 };
 
@@ -59,6 +60,7 @@ export function buildCoordinateAxesGeometry(
     | 'yDivisions'
     | 'showLabels'
     | 'equation'
+    | 'extraEquations'
   >,
 ): CoordinateAxesGeometry {
   const { w, h, xMin, xMax, yMin, yMax, xDivisions, yDivisions, showLabels, equation } = props;
@@ -120,6 +122,13 @@ export function buildCoordinateAxesGeometry(
   }
 
   const plotResult = buildPlotPath(equation, range, rw, rh);
+  const extraPlotPaths = (props.extraEquations ?? '')
+    .split('\n')
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((item) => buildPlotPath(item, range, rw, rh))
+    .filter((result): result is Extract<PlotPathResult, { ok: true }> => result.ok && Boolean(result.path))
+    .map((result) => result.path);
 
   return {
     plot,
@@ -137,6 +146,7 @@ export function buildCoordinateAxesGeometry(
     yName: { x: snapText(yAxisLineX + 8), y: snapText(plot.y - 4) },
     originLabel,
     plotPath: plotResult.ok ? plotResult.path : '',
+    extraPlotPaths,
     plotError: plotResult.ok ? null : plotResult.error,
   };
 }

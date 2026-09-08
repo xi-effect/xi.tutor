@@ -14,9 +14,7 @@ function estimateMathVisualizationSize(intent: MathVisualizationIntent): { w: nu
     case 'function_graph':
       return {
         w: COORDINATE_AXES_DEFAULT_WIDTH,
-        h:
-          Math.max(1, intent.expressions.length) * COORDINATE_AXES_DEFAULT_HEIGHT +
-          (intent.expressions.length - 1) * 16,
+        h: COORDINATE_AXES_DEFAULT_HEIGHT,
       };
     case 'coordinate_points':
       return { w: COORDINATE_AXES_DEFAULT_WIDTH, h: COORDINATE_AXES_DEFAULT_HEIGHT };

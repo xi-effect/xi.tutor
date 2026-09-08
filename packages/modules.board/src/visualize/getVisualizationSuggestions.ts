@@ -65,9 +65,12 @@ export function getVisualizationSuggestions(content: string): VisualizationSugge
     }));
 
   const hasFunctionGraph = suggestions.some((item) => item.intent.type === 'function_graph');
-  return suggestions.filter(
-    (suggestion) => suggestion.intent.type !== 'formula' || !hasFunctionGraph,
-  );
+  const hasGeometry = suggestions.some((item) => item.intent.type === 'geometry');
+  return suggestions.filter((suggestion) => {
+    if (suggestion.intent.type === 'formula' && (hasFunctionGraph || hasGeometry)) return false;
+    if (suggestion.intent.type === 'fraction_model' && hasGeometry) return false;
+    return true;
+  });
 }
 
 export function getVisualizationSuggestionsForSelection(editor: Editor): VisualizationSuggestion[] {

@@ -117,7 +117,6 @@ export const SignUpPage = () => {
       {
         ...data,
         username: data.username.trim().toLowerCase(),
-        email: data.email.trim().toLowerCase(),
       },
       form.setError as UseFormSetError<FormData>,
     );

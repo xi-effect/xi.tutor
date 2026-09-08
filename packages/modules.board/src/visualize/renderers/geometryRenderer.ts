@@ -1,5 +1,6 @@
 import type { DrShapeId } from '@ibodr/draw';
 import {
+  getInteriorAngleArc,
   normalizeGeometryScene,
   solveGeometry,
   type GeometryIntent,
@@ -15,7 +16,7 @@ import {
 } from './createBoardPrimitives';
 import type { VisualizationRenderContext, VisualizationRenderResult } from './types';
 
-export const GEOMETRY_TARGET_SIZE = { width: 360, height: 300, padding: 36 };
+export const GEOMETRY_TARGET_SIZE = { width: 520, height: 420, padding: 64 };
 
 function unit(from: ScenePoint, to: ScenePoint) {
   const length = Math.max(Math.hypot(to.x - from.x, to.y - from.y), 1);
@@ -52,7 +53,8 @@ function renderMarker(
     const direction = unit(a, b);
     const perpendicular = { x: -direction.y, y: direction.x };
     const midpoint = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-    const count = marker.type === 'equal_length' ? 1 : Math.min(marker.group, 3);
+    const count =
+      marker.type === 'equal_length' ? Math.min(Math.max(marker.group, 1), 3) : Math.min(marker.group, 3);
     const ids: DrShapeId[] = [];
     for (let index = 0; index < count; index += 1) {
       const shift = (index - (count - 1) / 2) * 6;
@@ -88,16 +90,12 @@ function renderMarker(
 
   const [a, vertex, c] = marker.points.map((id) => byId.get(id));
   if (!a || !vertex || !c) return [];
-  const first = unit(vertex, a);
-  const second = unit(vertex, c);
-  const radius = 22 + marker.group * 4;
-  return [
-    segment(
-      { x: vertex.x + first.x * radius, y: vertex.y + first.y * radius },
-      { x: vertex.x + second.x * radius, y: vertex.y + second.y * radius },
-      14,
-    ),
-  ];
+  const arc = getInteriorAngleArc(vertex, a, c, marker.group);
+  const ids: DrShapeId[] = [];
+  for (let index = 1; index < arc.points.length; index += 1) {
+    ids.push(segment(arc.points[index - 1], arc.points[index]));
+  }
+  return ids;
 }
 
 export function getGeometryScene(intent: GeometryIntent): GeometryScene | null {
@@ -157,6 +155,7 @@ export function renderGeometryIntent(
     createdShapeIds.push(...renderMarker(scene, marker, context));
   }
   for (const point of scene.points) {
+    if (!point.label && scene.circles.some((circle) => circle.center === point.id)) continue;
     createdShapeIds.push(
       createBoardEllipse(
         context.editor,
@@ -170,6 +169,7 @@ export function renderGeometryIntent(
   for (const label of scene.labels) {
     const point = byId.get(label.point);
     if (!point) continue;
+    const isCompact = label.kind === 'angle' || label.kind === 'measure';
     createdShapeIds.push(
       createBoardText(
         context.editor,
@@ -177,7 +177,8 @@ export function renderGeometryIntent(
         context.origin.x + point.x + label.offset.x,
         context.origin.y + point.y + label.offset.y,
         label.text,
-        32,
+        isCompact ? 96 : 48,
+        isCompact ? 's' : undefined,
       ),
     );
   }

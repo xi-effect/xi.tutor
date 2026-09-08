@@ -29,12 +29,20 @@ export type SceneLabel = {
   point: string;
   text: string;
   offset: { x: number; y: number };
+  kind?: 'point' | 'measure' | 'angle';
 };
 
 export type SceneMeasurementLabel = {
   id: string;
   segment: [string, string];
   text: string;
+};
+
+export type SceneAngleLabel = {
+  id: string;
+  points: [string, string, string];
+  text: string;
+  group?: number;
 };
 
 export type SceneBounds = {
@@ -53,5 +61,6 @@ export type GeometryScene = {
   markers: SceneMarker[];
   labels: SceneLabel[];
   measurementLabels?: SceneMeasurementLabel[];
+  angleLabels?: SceneAngleLabel[];
   bounds: SceneBounds;
 };
