@@ -1,15 +1,14 @@
 export const isEditableTarget = (target: EventTarget | null): boolean => {
-  if (!(target instanceof HTMLElement)) return false;
+  if (typeof HTMLElement === 'undefined' || !(target instanceof HTMLElement)) return false;
 
-  if (
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement ||
-    target.isContentEditable
-  ) {
-    return true;
+  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
+    return !target.readOnly && !target.disabled;
   }
 
-  return !!target.closest(
-    '.ProseMirror, .tl-text-input, math-field, [data-math-editor], [contenteditable]:not([contenteditable="false"])',
-  );
+  if (target.closest('math-field, [data-math-editor]')) return true;
+
+  // Только реально редактируемые узлы. `.ProseMirror` / `.tl-text-input` есть
+  // и у неактивных подписей на доске — их нельзя считать полем ввода, иначе
+  // Ctrl+V на канвас молча глотается.
+  return target.isContentEditable;
 };

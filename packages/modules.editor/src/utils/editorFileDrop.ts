@@ -41,6 +41,12 @@ export function createEditorFileDropProps({ getEditor, getToken }: FileDropOptio
       return true;
     },
     handlePaste: (_view: EditorView, event: ClipboardEvent) => {
+      const text = event.clipboardData?.getData('text/plain')?.trim() ?? '';
+      const html = event.clipboardData?.getData('text/html')?.trim() ?? '';
+      // Копирование ссылки/текста со страницы часто кладёт ещё и картинку —
+      // не перехватываем такую вставку, иначе URL не станет ссылкой.
+      if (text || html) return false;
+
       const files = collectDroppedFiles(event.clipboardData);
       if (!files.length) return false;
 

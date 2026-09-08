@@ -60,13 +60,15 @@ export const getExtensions = (
 ) => {
   const base = [
     StarterKit.configure({
-      // Настраиваем Link из StarterKit
       link: {
         HTMLAttributes: {
-          class: 'text-blue-500 hover:text-blue-700 underline cursor-pointer',
+          target: '_blank',
+          rel: 'noopener noreferrer nofollow',
         },
-        openOnClick: false,
+        openOnClick: true,
         autolink: true,
+        linkOnPaste: true,
+        defaultProtocol: 'https',
       },
       // Отключаем undoRedo — Collaboration приносит свою реализацию,
       // конфликт двух history-плагинов вызывает infinite update loop

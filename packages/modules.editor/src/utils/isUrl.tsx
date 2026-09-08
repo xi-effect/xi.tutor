@@ -12,6 +12,16 @@ export const isUrl = (url: string): boolean => {
   }
 };
 
+/** Приводит адрес ссылки к абсолютному href, который принимает Tiptap Link. */
+export const normalizeEditorLink = (link: string): string => {
+  const trimmed = link.trim();
+  if (!trimmed) return trimmed;
+
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+
+  return `https://${trimmed}`;
+};
+
 /**
  * Check if a string is a valid image URL based on extension
  */
