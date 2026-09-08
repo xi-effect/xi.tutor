@@ -148,6 +148,12 @@ export const NotificationItem = ({
       tabIndex={0}
       className={cn(className, 'w-full text-left')}
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick(e as unknown as React.MouseEvent);
+        }
+      }}
     >
       {content}
     </div>

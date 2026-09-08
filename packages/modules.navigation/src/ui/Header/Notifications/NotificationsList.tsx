@@ -59,6 +59,10 @@ export const NotificationsList = ({
             </div>
           )}
         </>
+      ) : isLoading || isFetchingNextPage ? (
+        <div className="flex justify-center p-4">
+          <span className="text-text-primary text-xs-base">{t('notificationsLoading')}</span>
+        </div>
       ) : (
         <div
           className={cn(

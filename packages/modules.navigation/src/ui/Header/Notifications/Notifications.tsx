@@ -16,6 +16,8 @@ import { CustomNotificationModal } from './CustomNotificationModal';
 import { openNotificationLink, navigateToNotification } from './notificationsNavigation';
 import { useNotificationsInfiniteScroll } from '../../../hooks';
 
+const MARK_VISIBLE_AS_READ_DELAY_MS = 1000;
+
 export const Notifications = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,6 +38,7 @@ export const Notifications = () => {
     loadMore,
     isFetchingNextPage,
     loadNotifications,
+    markAllAsRead,
   } = useNotificationsContext();
 
   // Обработчик навигации по URL из уведомления
@@ -78,6 +81,20 @@ export const Notifications = () => {
       loadNotifications();
     }
   };
+
+  // Авто-отметка видимых уведомлений прочитанными при открытии и при подгрузке новых через скролл
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const hasUnreadVisible = notifications.some((n) => !n.is_read);
+    if (!hasUnreadVisible) return;
+
+    const timeoutId = setTimeout(() => {
+      markAllAsRead();
+    }, MARK_VISIBLE_AS_READ_DELAY_MS);
+
+    return () => clearTimeout(timeoutId);
+  }, [isOpen, notifications, markAllAsRead]);
 
   const notificationsList = (
     <NotificationsList
