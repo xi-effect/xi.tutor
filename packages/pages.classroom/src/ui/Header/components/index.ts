@@ -6,3 +6,4 @@ export * from './HeaderStudent';
 export * from './Skeleton';
 export * from './Error';
 export * from './Content';
+export * from './PausedClassroomBanner';

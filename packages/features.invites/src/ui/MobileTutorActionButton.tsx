@@ -10,6 +10,8 @@ import { InvoiceModal } from 'features.invoice';
 import { useCreateMaterial } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { ModalInvitation } from './ModalInvitation';
+import { tryStartClassroomCreate } from 'common.subscription';
+import { trackClassroomLimitReached } from 'common.utils';
 
 const menuRowClassName = cn(
   'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
@@ -134,9 +136,17 @@ export const MobileTutorActionButton = ({
 
     switch (actionId) {
       case 'invite':
+        if (!tryStartClassroomCreate()) {
+          trackClassroomLimitReached(variant === 'classrooms' ? 'classroom' : 'other');
+          break;
+        }
         setInviteModalOpen(true);
         break;
       case 'group':
+        if (!tryStartClassroomCreate()) {
+          trackClassroomLimitReached(variant === 'classrooms' ? 'classroom' : 'other');
+          break;
+        }
         setAddGroupModalOpen(true);
         break;
       case 'note':

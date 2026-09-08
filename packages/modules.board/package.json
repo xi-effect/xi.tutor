@@ -54,6 +54,7 @@
     "common.api": "workspace:*",
     "common.config": "workspace:*",
     "common.env": "workspace:*",
+    "common.subscription": "workspace:*",
     "common.platform": "workspace:*",
     "common.services": "workspace:*",
     "common.theme": "workspace:*",

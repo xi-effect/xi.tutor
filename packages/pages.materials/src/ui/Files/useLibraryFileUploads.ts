@@ -18,6 +18,17 @@ import {
   getLibraryUploadMaxBytes,
   type LibraryUploadErrorKind,
 } from './libraryUpload';
+import { getFileTooLargeMessage } from 'features.subscription';
+import {
+  isStorageQuotaReached,
+  requestStorageLimitDialog,
+  tryStartUpload,
+} from 'common.subscription';
+import {
+  trackFileSizeLimitFromUploadError,
+  trackProductLimitReached,
+  trackUploadEvaluationLimit,
+} from 'common.utils';
 
 export type LibraryUploadItem = {
   id: string;
@@ -26,6 +37,7 @@ export type LibraryUploadItem = {
   progress: number;
   status: 'uploading' | 'done' | 'error';
   errorKind?: LibraryUploadErrorKind;
+  errorMessage?: string;
   libraryFile?: LibraryFile;
 };
 
@@ -34,6 +46,7 @@ export type AddLibraryUploadFilesResult = {
   rejectedTooLarge: string[];
   rejectedTooLong: string[];
   rejectedLimit: number;
+  rejectedStorage: number;
 };
 
 const createItemId = () =>
@@ -115,6 +128,8 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
           return;
         }
 
+        trackFileSizeLimitFromUploadError(error, file, classroomId ? 'classroom' : 'materials');
+
         setItems((current) =>
           current.map((item) =>
             item.id === id
@@ -154,7 +169,21 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
         rejectedTooLarge: [],
         rejectedTooLong: [],
         rejectedLimit: 0,
+        rejectedStorage: 0,
       };
+
+      const source = classroomId ? 'classroom' : 'materials';
+
+      if (isStorageQuotaReached()) {
+        requestStorageLimitDialog();
+        trackProductLimitReached({
+          limit_type: 'storage',
+          source,
+          blocked_on: 'client',
+        });
+        result.rejectedStorage = files.length;
+        return result;
+      }
 
       files.forEach((file) => {
         if (nextItems.length >= remaining) {
@@ -168,8 +197,31 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
         }
 
         const kind = getBrowserFileKind(file);
-        if (file.size > getLibraryUploadMaxBytes(kind)) {
-          result.rejectedTooLarge.push(file.name);
+        const uploadKind = kind === 'image' ? 'image' : 'other';
+        const evaluation = tryStartUpload(file, uploadKind);
+        if (!evaluation.ok) {
+          trackUploadEvaluationLimit(evaluation, file, source);
+        }
+
+        if (!evaluation.ok && evaluation.reason === 'storage') {
+          result.rejectedStorage += 1;
+          return;
+        }
+
+        if (!evaluation.ok && evaluation.reason === 'size') {
+          nextItems.push({
+            id: createItemId(),
+            file,
+            kind,
+            progress: 0,
+            status: 'error',
+            errorKind: 'tooLarge',
+            errorMessage: getFileTooLargeMessage(
+              evaluation.planId,
+              evaluation.kind,
+              evaluation.maxBytes,
+            ),
+          });
           return;
         }
 
@@ -182,12 +234,14 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
         });
       });
 
-      result.added = nextItems.length;
+      result.added = nextItems.filter((item) => item.status === 'uploading').length;
 
       if (nextItems.length > 0) {
         setItems((current) => [...current, ...nextItems]);
         nextItems.forEach((item) => {
-          void start(item.id, item.file);
+          if (item.status === 'uploading') {
+            void start(item.id, item.file);
+          }
         });
       }
 

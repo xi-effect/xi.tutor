@@ -3,8 +3,7 @@ import { toast } from 'sonner';
 import { nanoid } from 'nanoid';
 import { myAssetStore } from '../../../features/imageStore';
 import i18n from 'i18next';
-
-const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024;
+import { assertBoardUploadAllowed } from '../../../utils/planUploadLimit';
 
 export async function insertFlipCardImage(
   editor: Editor,
@@ -17,14 +16,7 @@ export async function insertFlipCardImage(
     return;
   }
 
-  if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
-      description: i18n.t('toast.imageSizeDesc', {
-        ns: 'board',
-        size: (file.size / 1024 / 1024).toFixed(2),
-      }),
-      duration: 5000,
-    });
+  if (!assertBoardUploadAllowed(file, 'image')) {
     return;
   }
 

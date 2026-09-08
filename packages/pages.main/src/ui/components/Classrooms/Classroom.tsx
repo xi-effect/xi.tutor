@@ -1,6 +1,11 @@
 import { useState, type MouseEvent } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { ClassroomT, IndividualClassroomT, getClassroomDisplayName } from 'common.api';
+import {
+  ClassroomT,
+  IndividualClassroomT,
+  getClassroomDisplayName,
+  isClassroomOnPause,
+} from 'common.api';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -70,6 +75,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const search = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isInactive = isClassroomOnPause(classroom.status);
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
   const displayName = isTutor ? getClassroomDisplayName(classroom) : classroom.name;
 
@@ -196,15 +202,19 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
                 className={cardMenuSurfaceClass}
                 onCloseAutoFocus={(event) => event.preventDefault()}
               >
-                <DropdownMenuItem
-                  className={cardMenuItemClass}
-                  onClick={handleOpenEditModal}
-                  data-umami-event="classroom-edit"
-                >
-                  <Edit />
-                  {t('classrooms.rename')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+                {isInactive ? null : (
+                  <>
+                    <DropdownMenuItem
+                      className={cardMenuItemClass}
+                      onClick={handleOpenEditModal}
+                      data-umami-event="classroom-edit"
+                    >
+                      <Edit />
+                      {t('classrooms.rename')}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+                  </>
+                )}
                 <DropdownMenuItem
                   error
                   className={cardMenuDeleteItemClass}

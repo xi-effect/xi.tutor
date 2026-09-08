@@ -43,6 +43,7 @@ import {
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { boardTextOptions } from '../../../shapes/text/boardTextOptions';
 import { insertAsset } from '../../../utils/uploadAsset';
+import { registerBoardElementLimit } from '../../../utils/boardElementLimit';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
@@ -124,6 +125,11 @@ export const DrawCanvas = ({
   tokenRef.current = token;
   const addToQueueRef = useRef(addToQueue);
   addToQueueRef.current = addToQueue;
+
+  useEffect(() => {
+    if (!editor) return;
+    return registerBoardElementLimit(editor);
+  }, [editor]);
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.

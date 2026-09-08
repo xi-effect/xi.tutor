@@ -26,6 +26,7 @@
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
+    "common.subscription": "workspace:*",
     "features.group.add": "workspace:*",
     "features.invoice": "workspace:*",
     "features.materials.add": "workspace:*",

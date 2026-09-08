@@ -49,7 +49,7 @@ export const useDropdownActions = () => {
     classroomId: classroomId || '',
     id: materialIdValue,
   });
-  const { isReadonly, toggleReadonly } = useYjsContext();
+  const { isReadonly, forceReadonly, toggleReadonly } = useYjsContext();
 
   useEffect(() => {
     editor.updateInstanceState({ isReadonly });
@@ -218,5 +218,6 @@ export const useDropdownActions = () => {
     unlockShapes,
     importBoardFromJson,
     isReadonly,
+    forceReadonly,
   };
 };

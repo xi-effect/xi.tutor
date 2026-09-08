@@ -12,6 +12,7 @@ import { MaterialsCard } from 'features.materials.card';
 import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
+import { isClassroomOnPause } from 'common.api';
 import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
@@ -49,6 +50,7 @@ const ClassroomMaterialsGallery = () => {
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isPaused = isClassroomOnPause(classroom?.status);
   const roleReady = !isUserLoading && user != null;
   const documentsEnabled = Boolean(classroomId) && roleReady && activeTab !== 'files';
 
@@ -86,7 +88,7 @@ const ClassroomMaterialsGallery = () => {
           </Button>
         ) : null}
       </div>
-      {isTutor && !isMobile ? (
+      {isTutor && !isMobile && !isPaused ? (
         <div className="ml-auto shrink-0">
           <MaterialsAdd kind={activeTab === 'notes' ? 'note' : 'board'} />
         </div>

@@ -5,9 +5,11 @@ import { cn, useMediaQuery } from '@xipkg/utils';
 import {
   useCurrentUser,
   useDetachClassroomFile,
+  useGetClassroom,
   useGetClassroomFiles,
   type LibraryFile,
 } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import {
   FileCard,
   FilePreviewModal,
@@ -38,6 +40,10 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const { data: classroom } = useGetClassroom(Number(classroomId), !isTutor);
+  const isPaused = isClassroomOnPause(classroom?.status);
+  const canUploadFiles = isTutor && !isPaused;
+  const canRevokeFiles = isTutor;
   const roleReady = !isUserLoading && user != null;
   const [filters, setFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
@@ -105,7 +111,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                 </Button>
               ) : null}
             </div>
-            {isTutor ? (
+            {canUploadFiles ? (
               <Button
                 type="button"
                 variant="primary"
@@ -120,7 +126,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
           </div>
         </div>
       </div>
-      {isTutor ? (
+      {canUploadFiles ? (
         <UploadFilesModal
           open={uploadOpen}
           onOpenChange={setUploadOpen}
@@ -175,8 +181,8 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                       key={file.id}
                       file={file}
                       className="h-44 w-full"
-                      readOnly={!isTutor}
-                      onRemoveFromClassroom={isTutor ? handleDetach : undefined}
+                      readOnly={!canUploadFiles}
+                      onRemoveFromClassroom={canRevokeFiles ? handleDetach : undefined}
                       onPreview={(nextFile) => {
                         window.setTimeout(() => setPreviewFile(nextFile), 0);
                       }}
@@ -186,7 +192,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                 <FilePreviewModal
                   file={currentPreviewFile}
                   files={files}
-                  readOnly={!isTutor}
+                  readOnly={!canUploadFiles}
                   hideLibraryActions
                   contentSource={{ type: 'classroom', classroomId, isTutor }}
                   deleteLabel={tMaterials('files.removeFromClassroom.confirm')}
@@ -199,7 +205,9 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                       : undefined
                   }
                   onDeleteFile={
-                    isTutor ? (fileId) => detachMutation.mutate({ classroomId, fileId }) : undefined
+                    canRevokeFiles
+                      ? (fileId) => detachMutation.mutate({ classroomId, fileId })
+                      : undefined
                   }
                   onFileChange={setPreviewFile}
                   onOpenChange={(open) => {

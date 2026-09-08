@@ -104,7 +104,7 @@ export const Header = () => {
   };
 
   const startEditing = () => {
-    if (isUpdating) return;
+    if (isUpdating || isReadonly || !isTutor) return;
     nameInputRef.current?.focus();
     setNameValue(material?.name || '');
     setIsEditMode(true);
@@ -236,7 +236,7 @@ export const Header = () => {
                           onClick={startEditing}
                           className={cn(
                             boardTextClass,
-                            isTutor ? 'cursor-pointer' : '',
+                            isTutor && !isReadonly ? 'cursor-pointer' : '',
                             'text-l-base xs:max-w-[150px] flex h-6 max-w-[100px] min-w-0 items-center px-1 select-none md:max-w-[240px] lg:h-8',
                           )}
                         >

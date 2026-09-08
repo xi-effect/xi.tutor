@@ -42,6 +42,17 @@ export {
 export { createAttemptId, measureDurationMs, nowMs } from './attemptId';
 export { nextSignupAttemptNumber, nextEmailResendAttemptNumber } from './attemptCounters';
 export { trackOnce, resetTrackOnceKeys } from './once';
+export {
+  getFileCategoryFromFile,
+  getFileSizeBucket,
+  resetProductLimitReachedDedupe,
+  trackBoardObjectsLimitReached,
+  trackClassroomLimitReached,
+  trackFileSizeLimitFromUploadError,
+  trackFileSizeLimitReached,
+  trackProductLimitReached,
+  trackUploadEvaluationLimit,
+} from './productLimitReached';
 export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
 export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
@@ -85,6 +96,12 @@ export type {
   ProductAnalyticsCallFailureReason,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsBoardTrigger,
+  ProductLimitType,
+  ProductLimitSource,
+  ProductLimitFileCategory,
+  ProductLimitSizeBucket,
+  ProductLimitBlockedOn,
+  ProductLimitObjectKind,
   SignupEntryPoint,
   SignupFailureReason,
   SignupValidationFailedField,

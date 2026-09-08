@@ -8,9 +8,11 @@ import { getFileExtension, isPdfMime } from '../constants/mimeTypes';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
 import { resolveShapeCoordinates } from '../utils';
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
+import { getMaxFileBytes } from 'common.subscription';
+import { trackBoardObjectsLimitReached } from 'common.utils';
 import i18n from 'i18next';
 
-const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_PDF_SHAPES = 50;
 const DEFAULT_PDF_WIDTH = 400;
 const PDF_MIME = 'application/pdf';
@@ -48,20 +50,14 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
 
   file = withPdfMimeType(file);
 
-  if (file.size > MAX_PDF_SIZE_BYTES) {
-    toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {
-      description: i18n.t('toast.pdfSizeDesc', {
-        ns: 'board',
-        size: (file.size / 1024 / 1024).toFixed(2),
-      }),
-      duration: 5000,
-    });
+  if (!assertBoardUploadAllowed(file, 'other')) {
     return;
   }
 
   const existingPdfCount = editor.getCurrentPageShapes().filter((s) => s.type === 'pdf').length;
 
   if (existingPdfCount >= MAX_PDF_SHAPES) {
+    trackBoardObjectsLimitReached('pdf');
     toast.error(i18n.t('toast.pdfLimitTitle', { ns: 'board' }), {
       description: i18n.t('toast.pdfLimitDesc', { ns: 'board', max: MAX_PDF_SHAPES }),
       duration: 5000,
@@ -146,7 +142,7 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
       });
     } catch (err) {
       console.error('[insertPdf] Upload failed:', err);
-      const { title, description } = getBoardUploadErrorToast(err, file, MAX_PDF_SIZE_BYTES, {
+      const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.pdfSizeDesc',
         failedTitleKey: 'toast.pdfUploadError',
         failedDescKey: 'toast.pdfUploadFailed',

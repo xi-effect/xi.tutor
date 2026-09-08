@@ -87,6 +87,7 @@ export {
 } from './src/tags';
 export { onboardingApiConfig } from './src/onboarding';
 export { getClassroomDisplayName } from './src/getClassroomDisplayName';
+export { isClassroomInactive, isClassroomOnPause } from './src/types';
 export type { ClassroomDisplayNameSource } from './src/getClassroomDisplayName';
 export type {
   MaterialsKindT,

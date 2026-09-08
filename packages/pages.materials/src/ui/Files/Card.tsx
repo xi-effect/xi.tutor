@@ -60,10 +60,31 @@ export const FileCard = ({
   const Icon = kindIcon[file.kind] ?? File;
   const uploadedAt = formatUploadedAt(file.created_at, t('files.today'));
   const size = formatFileSize(file.size_bytes, getAppLanguage());
+  const showMenu = !readOnly || Boolean(onRemoveFromClassroom);
 
   const openPreview = () => {
     onPreview?.(file);
   };
+
+  const actionsMenu = (
+    <FileActionsMenu
+      onPreview={openPreview}
+      onRename={readOnly ? undefined : () => setRenameOpen(true)}
+      onEditTags={readOnly ? undefined : () => setTagsOpen(true)}
+      onShare={readOnly || isClassroomFile ? undefined : () => setShareOpen(true)}
+      onDelete={() => setDeleteOpen(true)}
+      deleteLabel={isClassroomFile ? t('files.menu.removeFromClassroom') : undefined}
+    >
+      <Button
+        className={cardMaterialMenuButtonClass}
+        variant="none"
+        size="icon"
+        data-umami-event="materials-file-menu-open"
+      >
+        <MoreVert className={cardMenuIconClass} />
+      </Button>
+    </FileActionsMenu>
+  );
 
   return (
     <>
@@ -87,33 +108,21 @@ export const FileCard = ({
             <Icon className="fill-icon-primary size-5" />
           </div>
 
-          {readOnly ? null : (
+          {showMenu ? (
             <div
               className="ml-auto flex size-9 shrink-0 items-center justify-center"
               onClick={(event) => event.stopPropagation()}
               onKeyDown={(event) => event.stopPropagation()}
             >
-              <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
-                <FileActionsMenu
-                  onPreview={openPreview}
-                  onRename={() => setRenameOpen(true)}
-                  onEditTags={() => setTagsOpen(true)}
-                  onShare={isClassroomFile ? undefined : () => setShareOpen(true)}
-                  onDelete={() => setDeleteOpen(true)}
-                  deleteLabel={isClassroomFile ? t('files.menu.removeFromClassroom') : undefined}
-                >
-                  <Button
-                    className={cardMaterialMenuButtonClass}
-                    variant="none"
-                    size="icon"
-                    data-umami-event="materials-file-menu-open"
-                  >
-                    <MoreVert className={cardMenuIconClass} />
-                  </Button>
-                </FileActionsMenu>
-              </AssignFileTagsPopover>
+              {readOnly ? (
+                actionsMenu
+              ) : (
+                <AssignFileTagsPopover file={file} open={tagsOpen} onOpenChange={setTagsOpen}>
+                  {actionsMenu}
+                </AssignFileTagsPopover>
+              )}
             </div>
-          )}
+          ) : null}
         </div>
 
         <p

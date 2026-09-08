@@ -5,6 +5,7 @@ import { Button } from '@xipkg/button';
 
 import { InformationLayout } from '../Information';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import { ConfirmDialog } from 'common.ui';
 import { cn } from '@xipkg/utils';
 import { InvoiceModal } from 'features.invoice';
@@ -79,6 +80,7 @@ export const TabsTutor = () => {
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
+  const isPaused = isClassroomOnPause(classroom?.status);
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
 
@@ -155,7 +157,7 @@ export const TabsTutor = () => {
         >
           <SharedTabsContent
             currentTab={currentTab}
-            onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+            onOpenInvoiceModal={isPaused ? undefined : () => setIsInvoiceModalOpen(true)}
             extraContent={
               <Tabs.Content
                 className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain data-[state=inactive]:hidden"
@@ -167,11 +169,11 @@ export const TabsTutor = () => {
           />
         </div>
 
-        {isInvoiceModalOpen && (
+        {isInvoiceModalOpen && !isPaused && (
           <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
         )}
 
-        {isMobile && (
+        {isMobile && !isPaused && (
           <ClassroomMobileActionButton
             currentTab={currentTab}
             classroomKind={classroom?.kind}

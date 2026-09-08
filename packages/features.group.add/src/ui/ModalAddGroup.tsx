@@ -17,6 +17,8 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormSchema } from '../model';
 import { useCreateGroup } from '../services';
+import { tryStartClassroomCreate } from 'common.subscription';
+import { trackClassroomLimitReached } from 'common.services';
 import {
   ModalCloseIcon,
   modalBodyClass,
@@ -120,6 +122,10 @@ export const ModalAddGroup = ({
     <Modal
       open={isOpen}
       onOpenChange={(next) => {
+        if (next && !tryStartClassroomCreate()) {
+          trackClassroomLimitReached('other');
+          return;
+        }
         handleOpenChange(next);
         if (next === false) cleanupBodyScrollLock();
       }}

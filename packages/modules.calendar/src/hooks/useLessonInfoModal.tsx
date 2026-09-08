@@ -11,6 +11,7 @@ import {
   useTutorEventInstanceDetails,
   useTutorRepeatedEventInstanceDetails,
 } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import { normalizeEventInstanceDetailsResponse } from 'common.services';
 import { formatLessonDate } from 'features.lesson.info';
 import type { ICalendarEvent } from '../ui/types';
@@ -105,6 +106,7 @@ export const useLessonInfoModal = ({
   );
 
   const classroomQuery = isTutor ? tutorClassroomQuery : studentClassroomQuery;
+  const isPaused = isClassroomOnPause(classroomQuery.data?.status);
 
   const eventInstanceId = resolvedEvent?.scheduler?.eventInstanceId ?? '';
   const canFetchInstanceDetails =
@@ -204,6 +206,7 @@ export const useLessonInfoModal = ({
 
   const showCancelFlow =
     isTutor &&
+    !isPaused &&
     classroomId != null &&
     resolvedEvent?.scheduler != null &&
     resolvedEvent.isCancelled !== true;
@@ -247,9 +250,11 @@ export const useLessonInfoModal = ({
               />
             ) : undefined
           }
-          onReschedule={onReschedule != null ? () => onReschedule(resolvedEvent) : undefined}
+          onReschedule={
+            !isPaused && onReschedule != null ? () => onReschedule(resolvedEvent) : undefined
+          }
           changeLesson={
-            isTutor && resolvedEvent != null
+            isTutor && !isPaused && resolvedEvent != null
               ? {
                   hideClassroomAndSubject: false,
                   subjectName: changeLessonPresentation.subjectName,

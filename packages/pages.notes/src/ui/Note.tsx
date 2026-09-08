@@ -6,6 +6,7 @@ import {
   useGetClassroomStorageItem,
   useGetClassroomStorageItemStudent,
   useGetStorageItem,
+  useIsClassroomOnPause,
 } from 'common.services';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 
@@ -30,6 +31,7 @@ export const Note = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isClassroomPaused = useIsClassroomOnPause(classroomId);
 
   const getStorageItem = classroomId
     ? isTutor
@@ -58,7 +60,7 @@ export const Note = () => {
   }
 
   return (
-    <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
+    <YjsProvider key={storageItem.ydoc_id} data={storageItem} forceReadOnly={isClassroomPaused}>
       <NoteContent />
     </YjsProvider>
   );

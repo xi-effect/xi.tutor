@@ -122,6 +122,7 @@
 @source "../../../packages/pages.invites/src";
 @source "../../../packages/pages.reset-password/src";
 @source "../../../packages/features.invoice/src";
+@source "../../../packages/features.subscription/src";
 @source "../../../packages/features.materials.duplicate/src";
 @source "../../../packages/pages.email/src";
 @source "../../../packages/pages.notes/src";

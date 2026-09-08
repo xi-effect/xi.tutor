@@ -13,8 +13,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg
 import { cn } from '@xipkg/utils';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import {
+  cardMenuDeleteItemClass,
+  cardMenuItemClass,
+  cardMenuSeparatorClass,
+  cardMenuSurfaceClass,
+} from 'common.ui';
 
-import { SelectRole } from './SelectRole';
+import { UserPlanBadge } from './UserPlanBadge';
 import { useCurrentUser } from 'common.services';
 import { ChevronUp, Download, Exit, Settings } from '@xipkg/icons';
 import { usePWAInstall } from 'common.services';
@@ -28,17 +34,6 @@ interface DesktopUserMenuProps {
   profileText: string;
   logoutText: string;
 }
-
-const menuItemClassName = cn(
-  'text-text-primary fill-icon-primary h-9 gap-2 rounded-lg px-2 text-sm font-medium',
-  'hover:bg-background-page hover:text-text-primary hover:fill-icon-primary focus:bg-background-page focus:text-text-primary',
-);
-
-const logoutItemClassName = cn(
-  menuItemClassName,
-  'text-text-danger hover:bg-status-error-background hover:text-text-danger focus:bg-status-error-background focus:text-text-danger',
-  '[&_svg]:fill-icon-danger hover:[&_svg]:fill-icon-danger focus:[&_svg]:fill-icon-danger',
-);
 
 export const DesktopUserMenu = ({
   withOutText,
@@ -56,7 +51,6 @@ export const DesktopUserMenu = ({
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  // После закрытия меню фокус возвращается на триггер — без этого тултип открывается сам
   const allowTooltipRef = useRef(true);
 
   const displayName = user?.display_name?.trim() || user?.username || '';
@@ -143,21 +137,26 @@ export const DesktopUserMenu = ({
       )}
 
       <DropdownMenuContent
-        className="flex w-[240px] flex-col gap-2 p-2"
+        className={cn(cardMenuSurfaceClass, 'z-100 flex w-[240px] flex-col gap-2 p-2')}
         side="bottom"
         sideOffset={8}
         align={isDesktopOpen ? 'center' : 'start'}
       >
-        <SelectRole />
+        <div className="flex items-center justify-between gap-2 px-2 pt-2">
+          <span className="text-text-secondary text-xs leading-4 font-medium">
+            {t('plan.label')}
+          </span>
+          <UserPlanBadge />
+        </div>
 
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col">
           <DropdownMenuItem
             onSelect={onOpenProfile}
-            className={menuItemClassName}
+            className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
             data-umami-event="header-profile-open"
           >
-            <Settings className="size-5 shrink-0" />
-            {profileText}
+            <Settings />
+            <span>{profileText}</span>
           </DropdownMenuItem>
 
           {!isInstalled && (
@@ -166,23 +165,23 @@ export const DesktopUserMenu = ({
                 if (canInstall) void promptInstall();
                 else toast.info(t(`installHints.${installHintKey}`));
               }}
-              className={menuItemClassName}
+              className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
               data-umami-event="header-pwa-install"
             >
-              <Download className="size-5 shrink-0" />
-              {t('installApp')}
+              <Download />
+              <span>{t('installApp')}</span>
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuSeparator className="mx-0 my-1" />
+          <DropdownMenuSeparator className={cardMenuSeparatorClass} />
 
           <DropdownMenuItem
             onSelect={onLogout}
-            className={logoutItemClassName}
+            className={cn(cardMenuDeleteItemClass, 'px-2 whitespace-nowrap')}
             data-umami-event="header-logout"
           >
-            <Exit className="fill-icon-danger size-5 shrink-0" />
-            {logoutText}
+            <Exit />
+            <span>{logoutText}</span>
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>

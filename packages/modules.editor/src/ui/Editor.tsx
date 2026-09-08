@@ -6,16 +6,19 @@ import {
   useGetClassroomStorageItem,
   useGetClassroomStorageItemStudent,
   useGetStorageItem,
+  useIsClassroomOnPause,
 } from 'common.services';
 import { ContentYDocItem } from 'common.types';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 
 type TEditorWithData = {
   storageItem: ContentYDocItem;
+  forceReadOnly?: boolean;
 };
 
 type TEditor = {
   storageItem?: ContentYDocItem;
+  forceReadOnly?: boolean;
 };
 
 const EditorWithoutData = () => {
@@ -23,6 +26,7 @@ const EditorWithoutData = () => {
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isClassroomPaused = useIsClassroomOnPause(classroomId);
 
   const getStorageItem = (() => {
     if (classroomId) {
@@ -59,7 +63,11 @@ const EditorWithoutData = () => {
   return (
     <div className="flex w-full justify-center pt-4 pb-8">
       <div className="w-full max-w-4xl pl-16">
-        <YjsProvider key={storageItem?.ydoc_id} data={storageItem}>
+        <YjsProvider
+          key={storageItem?.ydoc_id}
+          data={storageItem}
+          forceReadOnly={isClassroomPaused}
+        >
           <TiptapEditor />
         </YjsProvider>
       </div>
@@ -67,17 +75,17 @@ const EditorWithoutData = () => {
   );
 };
 
-const EditorWithData = ({ storageItem }: TEditorWithData) => {
+const EditorWithData = ({ storageItem, forceReadOnly }: TEditorWithData) => {
   return (
-    <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
+    <YjsProvider key={storageItem.ydoc_id} data={storageItem} forceReadOnly={forceReadOnly}>
       <TiptapEditor />
     </YjsProvider>
   );
 };
 
-export const Editor = ({ storageItem }: TEditor) => {
+export const Editor = ({ storageItem, forceReadOnly }: TEditor) => {
   if (storageItem) {
-    return <EditorWithData storageItem={storageItem} />;
+    return <EditorWithData storageItem={storageItem} forceReadOnly={forceReadOnly} />;
   }
 
   return <EditorWithoutData />;

@@ -49,6 +49,7 @@
     "features.lesson.change": "workspace:*",
     "features.lesson.start": "workspace:*",
     "features.students.list": "workspace:*",
+    "features.subscription": "workspace:*",
     "features.classroom.rename": "workspace:*",
     "features.avatar.editor": "workspace:*",
     "i18next": "24.2.2",

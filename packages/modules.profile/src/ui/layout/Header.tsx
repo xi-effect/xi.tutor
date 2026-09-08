@@ -1,59 +1,88 @@
-import { Dispatch, SetStateAction, useMemo } from 'react';
-import { ArrowLeft, Close } from '@xipkg/icons';
-import { ModalCloseButton } from '@xipkg/modal';
+import { Dispatch, type ReactNode, SetStateAction } from 'react';
+import { ArrowLeft } from '@xipkg/icons';
+import { ModalTitle } from '@xipkg/modal';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
+import {
+  ModalCloseIcon,
+  modalCloseButtonClass,
+  modalHeaderRowClass,
+  modalTitleClass,
+} from 'common.ui';
 import { useTranslation } from 'react-i18next';
 
 type HeaderPropsT = {
-  activeItem: number | 'menu';
+  settingsTitle: string;
+  sectionTitle: string;
+  action?: ReactNode;
   showContent: boolean;
   setShowContent: Dispatch<SetStateAction<boolean>>;
   handleClose: () => void;
 };
 
-export const Header = ({ activeItem, showContent, setShowContent, handleClose }: HeaderPropsT) => {
+const HeaderActions = ({
+  action,
+  handleClose,
+  closeLabel,
+}: {
+  action?: ReactNode;
+  handleClose: () => void;
+  closeLabel: string;
+}) => (
+  <div className="flex shrink-0 items-center gap-3">
+    {action}
+    <ModalCloseIcon onClick={handleClose} aria-label={closeLabel} />
+  </div>
+);
+
+export const Header = ({
+  settingsTitle,
+  sectionTitle,
+  action,
+  showContent,
+  setShowContent,
+  handleClose,
+}: HeaderPropsT) => {
   const { t } = useTranslation('profile');
   const isMobile = useMediaQuery('(max-width: 719px)');
+  const showBack = isMobile && showContent;
+  const closeLabel = t('menu.close');
 
-  const menuLabels = useMemo(
-    () => [
-      t('menu.personalInfo'),
-      ...(THEME_CUSTOMIZATION_ENABLED ? [t('menu.personalisation')] : []),
-      t('menu.schedule'),
-      t('menu.security'),
-      t('menu.notifications'),
-      t('menu.soundAndVideo'),
-      t('menu.effects'),
-      t('menu.board'),
-      t('menu.report'),
-    ],
-    [t],
-  );
+  if (isMobile) {
+    return (
+      <div className={modalHeaderRowClass}>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          {showBack ? (
+            <button
+              type="button"
+              onClick={() => setShowContent(false)}
+              className={modalCloseButtonClass}
+              aria-label={t('menu.back')}
+            >
+              <ArrowLeft className="fill-icon-secondary group-hover:fill-icon-primary size-6" />
+            </button>
+          ) : null}
+          <ModalTitle className={modalTitleClass}>
+            {showBack ? sectionTitle : settingsTitle}
+          </ModalTitle>
+        </div>
+        <HeaderActions
+          action={showBack ? action : undefined}
+          handleClose={handleClose}
+          closeLabel={closeLabel}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="relative flex h-[40px] w-full items-center justify-start">
-      {isMobile && showContent && (
-        <button
-          type="button"
-          onClick={() => setShowContent(false)}
-          className="h-10 w-10 bg-transparent p-2"
-        >
-          <ArrowLeft />
-        </button>
-      )}
-      {isMobile && showContent && (
-        <span className="ml-4 font-semibold">{menuLabels[Number(activeItem)]}</span>
-      )}
-      <ModalCloseButton
-        onClick={() => handleClose()}
-        variant="full"
-        className={cn(
-          'bg-background-page top-0 right-0 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-0',
-        )}
-      >
-        <Close className="fill-icon-primary h-5 w-5" />
-      </ModalCloseButton>
+    <div className="flex items-center gap-8 overflow-hidden">
+      <ModalTitle className={cn(modalTitleClass, 'w-[220px] flex-none shrink-0 pl-2')}>
+        {settingsTitle}
+      </ModalTitle>
+      <div className="flex min-w-0 flex-1 items-center justify-between gap-4 overflow-hidden">
+        <p className={cn(modalTitleClass, 'min-w-0')}>{sectionTitle}</p>
+        <HeaderActions action={action} handleClose={handleClose} closeLabel={closeLabel} />
+      </div>
     </div>
   );
 };

@@ -26,6 +26,7 @@ import {
 } from 'common.ui';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
+import { isClassroomOnPause } from 'common.api';
 import { useTranslation } from 'react-i18next';
 import { ClassroomPropsT } from '../../../types';
 
@@ -113,6 +114,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   const { data: user } = useCurrentUser();
 
   const isTutor = user?.default_layout === 'tutor';
+  const isInactive = isClassroomOnPause(status);
 
   return (
     <div data-umami-event="classroom-card-open" data-umami-event-type={student_id}>
@@ -174,15 +176,19 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                 className={cardMenuSurfaceClass}
                 onCloseAutoFocus={(event) => event.preventDefault()}
               >
-                <DropdownMenuItem
-                  className={cardMenuItemClass}
-                  onClick={handleOpenEditModal}
-                  data-umami-event="classroom-edit"
-                >
-                  <Edit />
-                  {t('rename')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+                {isInactive ? null : (
+                  <>
+                    <DropdownMenuItem
+                      className={cardMenuItemClass}
+                      onClick={handleOpenEditModal}
+                      data-umami-event="classroom-edit"
+                    >
+                      <Edit />
+                      {t('rename')}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+                  </>
+                )}
                 <DropdownMenuItem
                   error
                   className={cardMenuDeleteItemClass}

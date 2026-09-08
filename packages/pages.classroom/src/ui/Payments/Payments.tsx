@@ -10,7 +10,7 @@ import { Plus } from '@xipkg/icons';
 import { useMediaQuery } from '@xipkg/utils';
 import { LoadingState } from './LoadingState';
 import { RolePaymentT } from 'common.types';
-import { UserRoleT } from 'common.api';
+import { UserRoleT, isClassroomOnPause } from 'common.api';
 import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 type PaymentsProps = {
@@ -21,6 +21,7 @@ export const Payments = ({ onOpenInvoiceModal }: PaymentsProps) => {
   const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
+  const isPaused = isClassroomOnPause(classroom?.status);
   const screenSize = useScreenSize();
   const isMobile = useMediaQuery('(max-width: 960px)');
   const [invoiceDetailsModalState, setInvoiceDetailsModalState] = useState<{
@@ -72,7 +73,7 @@ export const Payments = ({ onOpenInvoiceModal }: PaymentsProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {isTutor && onOpenInvoiceModal && !isMobile ? (
+      {isTutor && onOpenInvoiceModal && !isMobile && !isPaused ? (
         <div className={galleryShadowHeaderInsetClass}>
           <div className="flex min-w-0 flex-row items-center">
             <Button

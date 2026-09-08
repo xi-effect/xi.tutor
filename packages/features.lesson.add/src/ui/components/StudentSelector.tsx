@@ -3,7 +3,7 @@ import { Portal as TooltipPortal } from '@radix-ui/react-tooltip';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useTranslation } from 'react-i18next';
-import { getClassroomDisplayName, type ClassroomT } from 'common.api';
+import { getClassroomDisplayName, type ClassroomT, isClassroomOnPause } from 'common.api';
 
 type StudentSelectorProps = {
   value: string;
@@ -21,7 +21,10 @@ export const StudentSelector = ({
   before,
 }: StudentSelectorProps) => {
   const { t } = useTranslation('lessonAdd');
-  const isEmpty = !isLoading && classrooms.length === 0;
+  const selectableClassrooms = classrooms.filter(
+    (classroom) => !isClassroomOnPause(classroom.status),
+  );
+  const isEmpty = !isLoading && selectableClassrooms.length === 0;
 
   const placeholder = isLoading
     ? t('studentSelector.loading')
@@ -40,7 +43,7 @@ export const StudentSelector = ({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="max-h-[300px] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)]">
-        {classrooms.map((classroom) => (
+        {selectableClassrooms.map((classroom) => (
           <SelectItem
             key={classroom.id}
             value={classroom.id.toString()}

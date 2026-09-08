@@ -12,7 +12,12 @@ import {
   MaterialPropsT,
   serializeMaterialTagIds,
 } from 'common.types';
-import { useCurrentUser, useGetClassroom, useTagsByIds } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroom,
+  useIsClassroomOnPause,
+  useTagsByIds,
+} from 'common.services';
 import { ConfirmDialog, TagChips, cardAccessBadgeClass, cardTypeIconBoxClass } from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +61,8 @@ export const MaterialsCard = ({
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isClassroomPaused = useIsClassroomOnPause(isClassroom ? classroomId : undefined);
+  const isClassroomInactive = isClassroomPaused;
 
   const { navigateToMaterial } = useNavigateToMaterial();
 
@@ -125,27 +132,36 @@ export const MaterialsCard = ({
       ? t('deleteConfirm.boardDescription', { name })
       : t('deleteConfirm.noteDescription', { name });
 
-  const menu = isTutor && (
-    <AssignMaterialTagsPopover
-      materialId={id}
-      tagIds={tagIds}
-      tags={materialTags}
-      open={tagsOpen}
-      onOpenChange={setTagsOpen}
-    >
-      <MaterialActionsMenu
-        isClassroom={isClassroom}
-        isTutor={isTutor}
-        studentAccessMode={student_access_mode}
-        onDelete={handleDeleteClick}
-        onDeleteFromClassroom={handleDeleteClick}
-        onUpdateAccessMode={handleAccessModeUpdate}
-        onDuplicate={handleDuplicate}
-        onEditTags={() => setTagsOpen(true)}
-        setModalOpen={setModalOpen}
-      />
-    </AssignMaterialTagsPopover>
+  const actionsMenu = (
+    <MaterialActionsMenu
+      isClassroom={isClassroom}
+      isTutor={isTutor}
+      studentAccessMode={student_access_mode}
+      onDelete={handleDeleteClick}
+      onDeleteFromClassroom={handleDeleteClick}
+      onUpdateAccessMode={handleAccessModeUpdate}
+      onDuplicate={handleDuplicate}
+      onEditTags={isClassroomInactive ? undefined : () => setTagsOpen(true)}
+      setModalOpen={setModalOpen}
+      contentLocked={isClassroomInactive}
+    />
   );
+
+  const menu = isTutor ? (
+    isClassroomInactive ? (
+      actionsMenu
+    ) : (
+      <AssignMaterialTagsPopover
+        materialId={id}
+        tagIds={tagIds}
+        tags={materialTags}
+        open={tagsOpen}
+        onOpenChange={setTagsOpen}
+      >
+        {actionsMenu}
+      </AssignMaterialTagsPopover>
+    )
+  ) : null;
 
   const editModal = (
     <ModalEditMaterialName

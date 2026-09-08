@@ -2,7 +2,12 @@ import { Editor } from '@tiptap/core';
 import { fileTypeFromBuffer } from 'file-type';
 import { toast } from 'sonner';
 import i18n from 'i18next';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, cloneDroppedFile } from 'common.services';
+import {
+  cloneDroppedFile,
+  isFileNameTooLong,
+  MAX_FILENAME_LENGTH,
+  trackFileSizeLimitFromUploadError,
+} from 'common.services';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
   ALLOWED_FILE_MIME_TYPES,
@@ -83,6 +88,7 @@ export async function insertEditorAsset(
     }
   } catch (err) {
     console.error(err);
+    trackFileSizeLimitFromUploadError(err, file, 'other');
     toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
     return false;
   }

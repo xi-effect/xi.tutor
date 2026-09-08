@@ -11,9 +11,11 @@ import {
 import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
+import { getMaxFileBytes } from 'common.subscription';
+import { trackBoardObjectsLimitReached } from 'common.utils';
 import i18n from 'i18next';
 
-const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_AUDIO_SHAPES = 20;
 
 /** Строка для input.accept (из whitelist MIME). */
@@ -59,20 +61,14 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
     return;
   }
 
-  if (file.size > MAX_AUDIO_SIZE_BYTES) {
-    toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {
-      description: i18n.t('toast.audioSizeDesc', {
-        ns: 'board',
-        size: (file.size / 1024 / 1024).toFixed(2),
-      }),
-      duration: 5000,
-    });
+  if (!assertBoardUploadAllowed(file, 'other')) {
     return;
   }
 
   const existingCount = editor.getCurrentPageShapes().filter((s) => s.type === 'audio').length;
 
   if (existingCount >= MAX_AUDIO_SHAPES) {
+    trackBoardObjectsLimitReached('audio');
     toast.error(i18n.t('toast.audioLimitTitle', { ns: 'board' }), {
       description: i18n.t('toast.audioLimitDesc', { ns: 'board', max: MAX_AUDIO_SHAPES }),
       duration: 5000,
@@ -121,7 +117,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
       });
     } catch (err) {
       console.error('[insertAudio] Upload failed:', err);
-      const { title, description } = getBoardUploadErrorToast(err, file, MAX_AUDIO_SIZE_BYTES, {
+      const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.audioSizeDesc',
         failedTitleKey: 'toast.audioUploadError',
         failedDescKey: 'toast.audioUploadFailed',

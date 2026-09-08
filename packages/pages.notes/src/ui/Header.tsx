@@ -6,6 +6,7 @@ import {
   useGetClassroomMaterial,
   useGetClassroomMaterialStudent,
   useGetMaterial,
+  useIsClassroomOnPause,
 } from 'common.services';
 import { Skeleton } from 'common.ui';
 import { EditableTitle } from './EditableTitle';
@@ -22,6 +23,7 @@ export const Header = () => {
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isClassroomPaused = useIsClassroomOnPause(classroomId);
 
   const getMaterial = (() => {
     if (classroomId) {
@@ -88,7 +90,7 @@ export const Header = () => {
               <EditableTitle
                 title={material.name ?? ''}
                 materialId={materialIdValue}
-                isTutor={isTutor}
+                isTutor={isTutor && !isClassroomPaused}
               />
             )}
           </div>

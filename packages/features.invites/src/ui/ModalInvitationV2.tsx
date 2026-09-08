@@ -19,11 +19,13 @@ import { env } from 'common.env';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteTrackingId,
+  trackClassroomLimitReached,
   trackProductEvent,
   type InviteAnalyticsSource,
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
+import { tryStartClassroomCreate } from 'common.subscription';
 import { useCurrentInvite } from '../services/useCurrentInvite';
 
 const cleanupBodyScrollLock = () => {
@@ -182,6 +184,10 @@ export const ModalInvitationV2 = ({
     <Modal
       open={open}
       onOpenChange={(next) => {
+        if (next && !tryStartClassroomCreate()) {
+          trackClassroomLimitReached('other');
+          return;
+        }
         if (typeof next === 'boolean') setOpen(next);
         if (next === false) cleanupBodyScrollLock();
       }}

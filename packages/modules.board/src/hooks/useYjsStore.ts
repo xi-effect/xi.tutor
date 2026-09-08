@@ -64,6 +64,8 @@ type UseYjsStoreArgs = Partial<{
   /** Идентификатор доски в UI — ключ клиентского кэша */
   cacheBoardId?: string;
   cacheUserId?: string;
+  /** Кабинет на паузе — доска только для просмотра, переключатель паузы доски скрыт */
+  forceReadonly?: boolean;
 }>;
 
 type ConnectionStatus = 'online' | 'offline';
@@ -88,6 +90,7 @@ export type ExtendedStoreStatus = {
   canUndo: boolean;
   canRedo: boolean;
   isReadonly: boolean;
+  forceReadonly: boolean;
   toggleReadonly: () => void;
   /** ID своего presence (для фильтрации в списке коллабораторов). null до первой синхронизации. */
   myPresenceId: string | null;
@@ -297,6 +300,7 @@ export function useYjsStore({
   localYjsPreview = false,
   cacheBoardId,
   cacheUserId,
+  forceReadonly = false,
 }: UseYjsStoreArgs): ExtendedStoreStatus {
   const { data: currentUser } = useCurrentUser();
   const currentUserRef = useRef(currentUser);
@@ -994,6 +998,7 @@ export function useYjsStore({
   }
 
   function toggleReadonly() {
+    if (forceReadonly) return;
     const newReadonly = !(readonlyMap.get('isReadonly') ?? false);
     setLocalReadonly(newReadonly);
 
@@ -1044,7 +1049,7 @@ export function useYjsStore({
     [yDoc, boardBackgroundMap],
   );
 
-  const finalIsReadonly = serverReadonly || localReadonly;
+  const finalIsReadonly = forceReadonly || serverReadonly || localReadonly;
 
   return {
     store,
@@ -1059,6 +1064,7 @@ export function useYjsStore({
 
     toggleReadonly,
     isReadonly: finalIsReadonly,
+    forceReadonly,
 
     myPresenceId,
     getUserCamera,

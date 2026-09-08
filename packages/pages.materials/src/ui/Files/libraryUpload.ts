@@ -1,8 +1,7 @@
 import type { FileKind } from 'common.api';
+import { getMaxFileBytes, getMaxImageBytes } from 'common.subscription';
 
 export const LIBRARY_UPLOAD_MAX_FILES = 10;
-export const LIBRARY_UPLOAD_MAX_IMAGE_BYTES = 1 * 1024 * 1024;
-export const LIBRARY_UPLOAD_MAX_OTHER_BYTES = 5 * 1024 * 1024;
 
 const IMAGE_EXTENSIONS = new Set([
   'jpg',
@@ -54,7 +53,7 @@ export const getBrowserFileKind = (file: File): FileKind => {
 };
 
 export const getLibraryUploadMaxBytes = (kind: FileKind): number =>
-  kind === 'image' ? LIBRARY_UPLOAD_MAX_IMAGE_BYTES : LIBRARY_UPLOAD_MAX_OTHER_BYTES;
+  kind === 'image' ? getMaxImageBytes() : getMaxFileBytes();
 
 export {
   getFileUploadErrorKind as getLibraryUploadErrorKind,

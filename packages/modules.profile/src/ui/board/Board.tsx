@@ -1,21 +1,16 @@
 import { Toggle } from '@xipkg/toggle';
 import { Pen } from '@xipkg/icons';
-import { useMediaQuery } from '@xipkg/utils';
 import { useBoardPreferencesStore } from 'modules.board/preferences';
 import { useTranslation } from 'react-i18next';
 
 export const Board = () => {
   const { t } = useTranslation('profile');
-  const isMobile = useMediaQuery('(max-width: 719px)');
   const autoCloseDrawShapes = useBoardPreferencesStore((s) => s.autoCloseDrawShapes);
   const setAutoCloseDrawShapes = useBoardPreferencesStore((s) => s.setAutoCloseDrawShapes);
 
   return (
     <>
-      {!isMobile && (
-        <span className="dark:text-text-primary text-3xl font-semibold">{t('board.title')}</span>
-      )}
-      <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
+      <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
         <div className="flex w-full flex-col p-3">
           <span className="dark:text-text-primary text-xl font-semibold">{t('board.pencil')}</span>
         </div>

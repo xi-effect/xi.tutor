@@ -24,6 +24,7 @@ type UseYjsStoreArgs = {
   ydocId: string;
   storageToken: string;
   storageItem: ContentYDocItem;
+  forceReadOnly?: boolean;
 };
 
 export type UseCollaborativeTiptapReturn = {
@@ -45,6 +46,7 @@ export function useYjsStore({
   ydocId,
   storageToken,
   storageItem,
+  forceReadOnly = false,
 }: UseYjsStoreArgs): UseCollaborativeTiptapReturn {
   /* ==========================================================
    * 1. Provider + Y.Doc через useState — React гарантирует
@@ -217,11 +219,11 @@ export function useYjsStore({
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
 
-    const isEditable = !serverReadonly;
+    const isEditable = !forceReadOnly && !serverReadonly;
     if (editor.isEditable !== isEditable) {
       editor.setEditable(isEditable);
     }
-  }, [editor, serverReadonly]);
+  }, [editor, serverReadonly, forceReadOnly]);
 
   /* ==========================================================
    * 8. Undo / Redo
@@ -231,7 +233,7 @@ export function useYjsStore({
 
   const canUndo = !!editor;
   const canRedo = !!editor;
-  const isReadOnly = serverReadonly || (editor ? !editor.isEditable : false);
+  const isReadOnly = forceReadOnly || serverReadonly || (editor ? !editor.isEditable : false);
 
   /* ==========================================================
    * 9. Мемоизированное возвращаемое значение — предотвращает

@@ -91,6 +91,9 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   MATH_LATEX_MODE_OPENED: 'math_latex_mode_opened',
   MATH_VIRTUAL_KEYBOARD_OPENED: 'math_virtual_keyboard_opened',
 
+  // Product limits (baseline before subscription)
+  PRODUCT_LIMIT_REACHED: 'product_limit_reached',
+
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',
   ACTIVATION_SUPPORT_CONTACTED: 'activation_support_contacted',

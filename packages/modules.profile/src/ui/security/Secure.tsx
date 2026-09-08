@@ -1,5 +1,4 @@
 import { ChevronRight, Key, Mail } from '@xipkg/icons';
-import { useMediaQuery } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 
 import { getRelativeTime } from '../../utils/getRelativeTime';
@@ -12,18 +11,11 @@ export const Secure = () => {
   const { t } = useTranslation('profile');
   const { data: user } = useCurrentUser();
 
-  const isMobile = useMediaQuery('(max-width: 719px)');
-
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
 
   return (
     <>
-      {!isMobile && (
-        <h1 className="dark:text-text-primary mb-4 text-3xl font-semibold">
-          {t('security.title')}
-        </h1>
-      )}
       <div className="flex flex-col gap-6 sm:gap-8">
         <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
           <div className="flex w-full flex-col p-3">

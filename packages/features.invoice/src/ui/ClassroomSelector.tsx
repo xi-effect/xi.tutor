@@ -1,4 +1,4 @@
-import { getClassroomDisplayName } from 'common.api';
+import { getClassroomDisplayName, isClassroomOnPause } from 'common.api';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { useFetchClassrooms } from 'common.services';
@@ -13,7 +13,9 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
   const { t } = useTranslation('invoice');
   const { data: classrooms, isLoading } = useFetchClassrooms();
 
-  const isDisabled = !classrooms || classrooms.length === 0;
+  const selectableClassrooms =
+    classrooms?.filter((classroom) => !isClassroomOnPause(classroom.status)) ?? [];
+  const isDisabled = selectableClassrooms.length === 0;
 
   const getPlaceholder = () => {
     if (isLoading) return t('classroom.loading');
@@ -42,7 +44,7 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
                 />
               </SelectTrigger>
               <SelectContent className="w-full">
-                {classrooms?.map((classroom) => (
+                {selectableClassrooms.map((classroom) => (
                   <SelectItem
                     key={classroom.id}
                     value={classroom.id.toString()}

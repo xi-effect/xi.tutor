@@ -4,7 +4,6 @@ import { Conference, HelpCircle, Notification, SoundOn, WhiteBoard } from '@xipk
 import { Slider } from '@xipkg/slider';
 import { Toggle } from '@xipkg/toggle';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import { useMediaQuery } from '@xipkg/utils';
 import { useSoundEffectsStore, SOUND_DEFAULTS, type SoundKey } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { playSoundPreview } from './playSoundPreview';
@@ -151,7 +150,6 @@ const Category = ({ icon, title, children }: CategoryProps) => (
 
 export const Effects = () => {
   const { t } = useTranslation('profile');
-  const isMobile = useMediaQuery('(max-width: 719px)');
 
   const chatMessageVolume = useSoundEffectsStore((s) => s.chatMessageVolume);
   const handRaiseVolume = useSoundEffectsStore((s) => s.handRaiseVolume);
@@ -164,10 +162,6 @@ export const Effects = () => {
 
   return (
     <>
-      {!isMobile && (
-        <h1 className="dark:text-text-primary mb-4 text-3xl font-semibold">{t('effects.title')}</h1>
-      )}
-
       <div className="flex flex-col gap-4">
         <Category
           icon={<Conference className="fill-icon-brand h-5 w-5" />}

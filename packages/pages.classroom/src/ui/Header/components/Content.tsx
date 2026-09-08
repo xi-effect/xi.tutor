@@ -1,5 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useRef } from 'react';
-import { ClassroomTutorResponseSchema } from 'common.api';
+import { ClassroomTutorResponseSchema, isClassroomOnPause } from 'common.api';
 import { IndividualUser } from './IndividualUser';
 import { SubjectBadge } from './SubjectBadge';
 import { useStartCall } from 'modules.calls';
@@ -10,6 +10,7 @@ import { useCurrentUser } from 'common.services';
 import { StartLessonButton } from 'features.lesson.start';
 import { NextLessonChip } from '../NextLessonChip';
 import { EditableClassroomName } from './EditableClassroomName';
+import { PausedClassroomBanner } from './PausedClassroomBanner';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
@@ -21,6 +22,7 @@ const startLessonButtonClass =
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isPaused = isClassroomOnPause(classroom.status);
   const { startCall } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const hasHandledGotoCallRef = useRef(false);
@@ -28,6 +30,10 @@ export const Content = ({ classroom }: ContentProps) => {
   useEffect(() => {
     const searchParams = search as { goto?: string };
     if (hasHandledGotoCallRef.current || !searchParams.goto || searchParams.goto !== 'call') {
+      return;
+    }
+    if (isClassroomOnPause(classroom.status)) {
+      hasHandledGotoCallRef.current = true;
       return;
     }
     hasHandledGotoCallRef.current = true;
@@ -88,6 +94,7 @@ export const Content = ({ classroom }: ContentProps) => {
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-4 px-5 pt-5 sm:px-8 sm:pt-8 md:px-10 md:pt-10">
+      {isTutor && isPaused ? <PausedClassroomBanner /> : null}
       <div className="flex min-w-0 flex-row items-center gap-3 sm:gap-4">
         <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
           {classroom.kind === 'individual' ? (
@@ -97,7 +104,7 @@ export const Content = ({ classroom }: ContentProps) => {
               nameOverride={isTutor ? classroom.name_override : undefined}
               classroomName={classroom.name}
               studentName={getStudentName()}
-              canEdit={isTutor}
+              canEdit={isTutor && !isPaused}
             />
           ) : (
             <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
@@ -108,7 +115,7 @@ export const Content = ({ classroom }: ContentProps) => {
                 classroomId={classroom.id}
                 kind="group"
                 name={getDisplayName() ?? ''}
-                canEdit={isTutor}
+                canEdit={isTutor && !isPaused}
               />
             </div>
           )}
@@ -116,25 +123,29 @@ export const Content = ({ classroom }: ContentProps) => {
         </div>
 
         <div className="hidden shrink-0 sm:block">
-          <StartLessonButton
-            className={startLessonButtonClass}
-            classroomId={classroom.id}
-            variant="primary"
-            size="m"
-            onStart={handleStartCall}
-          />
+          {isPaused ? null : (
+            <StartLessonButton
+              className={startLessonButtonClass}
+              classroomId={classroom.id}
+              variant="primary"
+              size="m"
+              onStart={handleStartCall}
+            />
+          )}
         </div>
       </div>
 
       <div className="flex w-full flex-col gap-2 sm:hidden">
         <NextLessonChip />
-        <StartLessonButton
-          className={`${startLessonButtonClass} w-full`}
-          classroomId={classroom.id}
-          variant="primary"
-          size="m"
-          onStart={handleStartCall}
-        />
+        {isPaused ? null : (
+          <StartLessonButton
+            className={`${startLessonButtonClass} w-full`}
+            classroomId={classroom.id}
+            variant="primary"
+            size="m"
+            onStart={handleStartCall}
+          />
+        )}
       </div>
     </div>
   );

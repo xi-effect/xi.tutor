@@ -6,14 +6,19 @@ import { useTranslation } from 'react-i18next';
 
 import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from '../constants';
 import { NavigationDrawerContent } from '../NavigationDrawerContent';
-import { DrawerRoleSelector } from './DrawerRoleSelector';
+import { UserPlanBadge } from './UserPlanBadge';
 import { Close, Download, Exit, Settings } from '@xipkg/icons';
 import { toast } from 'sonner';
 import { useCurrentUser, usePWAInstall } from 'common.services';
 import { cn } from '@xipkg/utils';
 
 const menuRowClassName = cn(
-  'border-border-default flex w-full items-center gap-3 rounded-xl border bg-background-surface px-4 h-[48px] text-left transition-colors',
+  'border-border-default bg-background-surface hover:bg-background-page flex h-12 w-full items-center gap-3 rounded-xl border px-4 text-left transition-colors',
+);
+
+const logoutRowClassName = cn(
+  menuRowClassName,
+  'border-border-error hover:bg-status-error-background',
 );
 
 interface MobileUserMenuProps {
@@ -36,6 +41,7 @@ export const MobileUserMenu = ({
   const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
   const displayName = user?.display_name?.trim() || user?.username || '';
+  const username = user?.username?.trim() || '';
 
   const [open, setOpen] = useState(false);
 
@@ -53,25 +59,32 @@ export const MobileUserMenu = ({
       </DrawerTrigger>
       <NavigationDrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
         <div className="dark:bg-background-surface flex flex-col gap-5">
-          <DrawerRoleSelector compact />
-
-          <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <div className="size-10 shrink-0 overflow-hidden rounded-full">
+                <UserProfile id="userprofile-footer" userId={userId} size="40" withOutText />
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <span className="text-m-base text-text-primary truncate font-medium">
+                  {displayName}
+                </span>
+                {username && username !== displayName ? (
+                  <span className="text-text-secondary truncate text-xs">{username}</span>
+                ) : null}
+                <UserPlanBadge />
+              </div>
+            </div>
             <button
               type="button"
-              onClick={() => {
-                setOpen(false);
-                onLogout();
-              }}
-              data-umami-event="header-logout"
-              data-umami-event-device="mobile"
-              className={cn(
-                menuRowClassName,
-                'border-border-error hover:bg-status-error-background',
-              )}
+              aria-label={t('close')}
+              onClick={() => setOpen(false)}
+              className="bg-background-page hover:bg-background-subtle focus:bg-background-subtle flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
             >
-              <Exit className="fill-icon-danger size-6 shrink-0" />
-              <span className="text-m-base text-text-danger font-medium">{logoutText}</span>
+              <Close className="fill-icon-primary size-5" />
             </button>
+          </div>
+
+          <div className="flex flex-col gap-3">
             <button
               type="button"
               onClick={() => {
@@ -82,7 +95,7 @@ export const MobileUserMenu = ({
               data-umami-event-device="mobile"
               className={menuRowClassName}
             >
-              <Settings className="text-text-primary size-6 shrink-0" />
+              <Settings className="fill-icon-primary size-6 shrink-0" />
               <span className="text-m-base text-text-primary font-medium">{profileText}</span>
             </button>
             {!isInstalled && (
@@ -97,28 +110,22 @@ export const MobileUserMenu = ({
                 data-umami-event-device="mobile"
                 className={menuRowClassName}
               >
-                <Download className="text-text-primary size-6 shrink-0" />
+                <Download className="fill-icon-primary size-6 shrink-0" />
                 <span className="text-m-base text-text-primary font-medium">{t('installApp')}</span>
               </button>
             )}
-          </div>
-
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <div className="size-10 shrink-0 overflow-hidden rounded-lg">
-                <UserProfile id="userprofile-footer" userId={userId} size="40" withOutText />
-              </div>
-              <span className="text-m-base text-text-primary truncate font-medium">
-                {displayName}
-              </span>
-            </div>
             <button
               type="button"
-              aria-label={t('close')}
-              onClick={() => setOpen(false)}
-              className="bg-background-page hover:bg-background-subtle focus:bg-background-subtle flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
+              onClick={() => {
+                setOpen(false);
+                onLogout();
+              }}
+              data-umami-event="header-logout"
+              data-umami-event-device="mobile"
+              className={logoutRowClassName}
             >
-              <Close className="fill-icon-primary size-5" />
+              <Exit className="fill-icon-danger size-6 shrink-0" />
+              <span className="text-m-base text-text-danger font-medium">{logoutText}</span>
             </button>
           </div>
         </div>

@@ -30,6 +30,8 @@
     "common.api": "workspace:*",
     "common.config": "workspace:*",
     "common.services": "workspace:*",
+    "common.subscription": "workspace:*",
+    "features.subscription": "workspace:*",
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
     "dayjs": "^1.11.13",

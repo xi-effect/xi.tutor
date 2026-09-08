@@ -31,4 +31,9 @@ export const FORBIDDEN_ANALYTICS_FIELDS = new Set([
   'tutor_id',
   'classroom_id',
   'student_id',
+  'filename',
+  'file_name',
+  'size_bytes',
+  'file_size',
+  'exact_size',
 ]);

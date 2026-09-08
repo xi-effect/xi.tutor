@@ -95,6 +95,7 @@ export type MaterialActionsMenuPropsT = {
   onDuplicate: () => void;
   onEditTags?: () => void;
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  contentLocked?: boolean;
 };
 
 export type ModalEditMaterialNamePropsT = {

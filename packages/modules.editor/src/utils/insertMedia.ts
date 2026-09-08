@@ -10,7 +10,6 @@ import {
   isPresentationFile,
   MAX_AUDIO_BLOCKS,
   MAX_FILE_BLOCKS,
-  MAX_MEDIA_SIZE_BYTES,
   MAX_PDF_BLOCKS,
   MAX_PRESENTATION_BLOCKS,
   withPdfMimeType,
@@ -20,6 +19,13 @@ import { checkAudioMagicBytes } from './checkAudioMagicBytes';
 import { countNodes } from './countNodes';
 import { getAudioDuration } from './getAudioDuration';
 import { insertAtomBlock } from './insertAtomBlock';
+import { tryStartUpload } from 'common.subscription';
+import {
+  trackFileSizeLimitFromUploadError,
+  trackProductLimitReached,
+  trackUploadEvaluationLimit,
+  type ProductLimitObjectKind,
+} from 'common.services';
 import { ActiveBlockT } from '../types';
 import { DEFAULT_AUDIO_ATTRS } from '../extensions/audio/audioTypes';
 import { pdfjsLib } from './pdfjsSetup';
@@ -28,8 +34,32 @@ function t(key: string, options?: Record<string, unknown>) {
   return i18n.t(key, { ns: 'editor', ...options });
 }
 
-function sizeMiB(bytes: number) {
-  return (bytes / 1024 / 1024).toFixed(2);
+function assertEditorUpload(file: File, kind: 'image' | 'other'): boolean {
+  const result = tryStartUpload(file, kind);
+  if (result.ok) return true;
+  trackUploadEvaluationLimit(result, file, 'other');
+  if (result.reason === 'size') {
+    toast.error(t('toast.fileTooLarge'), {
+      description: i18n.t('limits.fileTooLarge', {
+        ns: 'subscription',
+        plan: i18n.t(`plans.${result.planId}`, { ns: 'subscription' }),
+        kind: i18n.t(kind === 'image' ? 'limits.fileKindImage' : 'limits.fileKindOther', {
+          ns: 'subscription',
+        }),
+        size: `${Math.round(result.maxBytes / (1024 * 1024))} МБ`,
+      }),
+    });
+  }
+  return false;
+}
+
+function trackEditorObjectLimit(objectKind: ProductLimitObjectKind) {
+  trackProductLimitReached({
+    limit_type: 'other',
+    source: 'other',
+    object_kind: objectKind,
+    blocked_on: 'client',
+  });
 }
 
 async function getPdfPageCount(file: File): Promise<number> {
@@ -74,6 +104,7 @@ export async function insertImageFile(
     );
   } catch (err) {
     console.error(err);
+    trackFileSizeLimitFromUploadError(err, file, 'other');
     toast.error(t('toast.imageUploadError'));
     return false;
   }
@@ -107,14 +138,12 @@ export async function insertAudioFile(
     return false;
   }
 
-  if (file.size > MAX_MEDIA_SIZE_BYTES) {
-    toast.error(t('toast.fileTooLarge'), {
-      description: t('toast.audioSizeDesc', { size: sizeMiB(file.size) }),
-    });
+  if (!assertEditorUpload(file, 'other')) {
     return false;
   }
 
   if (countNodes(editor, 'audio') >= MAX_AUDIO_BLOCKS) {
+    trackEditorObjectLimit('audio');
     toast.error(t('toast.audioLimitTitle'), {
       description: t('toast.audioLimitDesc', { max: MAX_AUDIO_BLOCKS }),
     });
@@ -160,14 +189,12 @@ export async function insertPdfFile(
     return false;
   }
 
-  if (file.size > MAX_MEDIA_SIZE_BYTES) {
-    toast.error(t('toast.fileTooLarge'), {
-      description: t('toast.pdfSizeDesc', { size: sizeMiB(file.size) }),
-    });
+  if (!assertEditorUpload(file, 'other')) {
     return false;
   }
 
   if (countNodes(editor, 'pdf') >= MAX_PDF_BLOCKS) {
+    trackEditorObjectLimit('pdf');
     toast.error(t('toast.pdfLimitTitle'), {
       description: t('toast.pdfLimitDesc', { max: MAX_PDF_BLOCKS }),
     });
@@ -205,14 +232,12 @@ export async function insertPresentationFile(
     return false;
   }
 
-  if (file.size > MAX_MEDIA_SIZE_BYTES) {
-    toast.error(t('toast.fileTooLarge'), {
-      description: t('toast.presentationSizeDesc', { size: sizeMiB(file.size) }),
-    });
+  if (!assertEditorUpload(file, 'other')) {
     return false;
   }
 
   if (countNodes(editor, 'presentation') >= MAX_PRESENTATION_BLOCKS) {
+    trackEditorObjectLimit('presentation');
     toast.error(t('toast.presentationLimitTitle'), {
       description: t('toast.presentationLimitDesc', { max: MAX_PRESENTATION_BLOCKS }),
     });
@@ -251,14 +276,12 @@ export async function insertFileBlock(
     return false;
   }
 
-  if (file.size > MAX_MEDIA_SIZE_BYTES) {
-    toast.error(t('toast.fileTooLarge'), {
-      description: t('toast.fileSizeDesc', { size: sizeMiB(file.size) }),
-    });
+  if (!assertEditorUpload(file, 'other')) {
     return false;
   }
 
   if (countNodes(editor, 'file') >= MAX_FILE_BLOCKS) {
+    trackEditorObjectLimit('file');
     toast.error(t('toast.fileLimitTitle'), {
       description: t('toast.fileLimitDesc', { max: MAX_FILE_BLOCKS }),
     });

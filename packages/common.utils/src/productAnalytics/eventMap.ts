@@ -22,6 +22,12 @@ import type {
   PermissionFailureReason,
   ProductAnalyticsActorRole,
   ProductAnalyticsBoardTrigger,
+  ProductLimitBlockedOn,
+  ProductLimitFileCategory,
+  ProductLimitObjectKind,
+  ProductLimitSizeBucket,
+  ProductLimitSource,
+  ProductLimitType,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsInviteKind,
   ProductAnalyticsLessonType,
@@ -509,6 +515,16 @@ export type ProductAnalyticsEventMap = {
   math_toolbar_used: { action?: string };
   math_latex_mode_opened: { action?: string };
   math_virtual_keyboard_opened: { action?: string };
+
+  product_limit_reached: {
+    event_version?: number;
+    limit_type: ProductLimitType;
+    source: ProductLimitSource;
+    file_category?: ProductLimitFileCategory;
+    size_bucket?: ProductLimitSizeBucket;
+    object_kind?: ProductLimitObjectKind;
+    blocked_on?: ProductLimitBlockedOn;
+  };
 
   activation_help_opened: BaseProps & {
     screen: ActivationHelpScreen;

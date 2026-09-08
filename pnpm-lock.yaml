@@ -394,6 +394,9 @@ importers:
       features.students.list:
         specifier: workspace:*
         version: link:../../packages/features.students.list
+      features.subscription:
+        specifier: workspace:*
+        version: link:../../packages/features.subscription
       features.table:
         specifier: workspace:*
         version: link:../../packages/features.table
@@ -1040,6 +1043,58 @@ importers:
         specifier: ~5.7.2
         version: 5.7.3
 
+  packages/common.subscription:
+    dependencies:
+      react:
+        specifier: '19'
+        version: 19.2.8
+      zustand:
+        specifier: ^5.0.3
+        version: 5.0.15(@types/react@19.2.18)(immer@11.1.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.39.5
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.43
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.7(@types/react@19.2.18)
+      '@xipkg/eslint':
+        specifier: 4.6.0
+        version: 4.6.0(jiti@2.7.0)(turbo@2.10.12)
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: workspace:*
+        version: link:../common.eslint
+      common.typescript:
+        specifier: workspace:*
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.39.5(jiti@2.7.0)
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.39.5(jiti@2.7.0))
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+
   packages/common.theme:
     dependencies:
       common.platform:
@@ -1673,6 +1728,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
@@ -1991,6 +2049,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
       common.types:
         specifier: workspace:*
         version: link:../common.types
@@ -3466,6 +3527,94 @@ importers:
         specifier: ^8.22.0
         version: 8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
 
+  packages/features.subscription:
+    dependencies:
+      '@tanstack/react-router':
+        specifier: ^1.166.6
+        version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/badge':
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.8)
+      '@xipkg/button':
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.18)(react@19.2.8)
+      '@xipkg/input':
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.8)
+      '@xipkg/link':
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.8)
+      '@xipkg/modal':
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/utils':
+        specifier: 1.8.0
+        version: 1.8.0(react@19.2.8)
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
+      dayjs:
+        specifier: 1.11.13
+        version: 1.11.13
+      i18next:
+        specifier: 24.2.2
+        version: 24.2.2(typescript@5.7.3)
+      react:
+        specifier: '19'
+        version: 19.2.8
+      react-i18next:
+        specifier: 15.4.1
+        version: 15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.39.5
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.43
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.7(@types/react@19.2.18)
+      '@xipkg/eslint':
+        specifier: 4.6.0
+        version: 4.6.0(jiti@2.7.0)(turbo@2.10.12)
+      '@xipkg/tailwind':
+        specifier: 1.0.0
+        version: 1.0.0
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: workspace:*
+        version: link:../common.eslint
+      common.typescript:
+        specifier: workspace:*
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.39.5(jiti@2.7.0)
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.39.5(jiti@2.7.0))
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+
   packages/features.table:
     dependencies:
       '@tanstack/react-table':
@@ -3697,6 +3846,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
       common.theme:
         specifier: workspace:*
         version: link:../common.theme
@@ -4198,6 +4350,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
       common.types:
         specifier: workspace:*
         version: link:../common.types
@@ -4461,6 +4616,9 @@ importers:
       common.sockets:
         specifier: workspace:*
         version: link:../common.sockets
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
       common.types:
         specifier: workspace:*
         version: link:../common.types
@@ -4470,6 +4628,9 @@ importers:
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
+      features.subscription:
+        specifier: workspace:*
+        version: link:../features.subscription
       features.table:
         specifier: workspace:*
         version: link:../features.table
@@ -4552,6 +4713,9 @@ importers:
 
   packages/modules.profile:
     dependencies:
+      '@tanstack/react-router':
+        specifier: ^1.166.6
+        version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/avatar':
         specifier: 3.4.0
         version: 3.4.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4576,6 +4740,9 @@ importers:
       '@xipkg/slider':
         specifier: 2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/switcher-animate':
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/toggle':
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4606,6 +4773,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
       common.theme:
         specifier: workspace:*
         version: link:../common.theme
@@ -4621,6 +4791,9 @@ importers:
       features.avatar.editor:
         specifier: workspace:*
         version: link:../features.avatar.editor
+      features.subscription:
+        specifier: workspace:*
+        version: link:../features.subscription
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -5646,6 +5819,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.subscription:
+        specifier: workspace:*
+        version: link:../common.subscription
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
@@ -5667,6 +5843,9 @@ importers:
       features.materials.duplicate:
         specifier: workspace:*
         version: link:../features.materials.duplicate
+      features.subscription:
+        specifier: workspace:*
+        version: link:../features.subscription
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)

@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 
 import { useEffect, useRef, useCallback } from 'react';
-import { ClassroomT, ClassroomStatusT } from 'common.api';
+import { ClassroomT, ClassroomStatusT, isClassroomOnPause } from 'common.api';
 import {
   useGetNoteStorageItem,
   useUpdateClassroomStatus,
@@ -28,6 +28,7 @@ interface FormData {
 export const Information = ({ classroom }: { classroom: ClassroomT }) => {
   const { t } = useTranslation('classroom');
   const { classroomId = '' } = useParams({ strict: false });
+  const isPaused = isClassroomOnPause(classroom?.status);
 
   const { data: note } = useGetNoteStorageItem({
     classroomId: classroomId,
@@ -92,7 +93,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
           );
         }
 
-        if (subjectChanged && classroom.kind === 'group') {
+        if (subjectChanged && !isPaused && classroom.kind === 'group') {
           promises.push(
             new Promise((resolve, reject) => {
               updateGroupClassroom(
@@ -114,7 +115,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
           );
         }
 
-        if (subjectChanged && classroom.kind === 'individual') {
+        if (subjectChanged && !isPaused && classroom.kind === 'individual') {
           promises.push(
             new Promise((resolve, reject) => {
               updateIndividualClassroom(
@@ -149,6 +150,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
     [
       classroom?.id,
       classroom?.kind,
+      isPaused,
       updateClassroomStatus,
       updateIndividualClassroom,
       updateGroupClassroom,
@@ -182,34 +184,38 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
             <div className="flex w-full min-w-0 flex-row flex-wrap items-center gap-2">
               <h2 className={sectionTitleClass}>{t('information.students')}</h2>
               <div className="ml-auto flex shrink-0 items-center gap-2">
-                <ModalStudentsGroup>
-                  <Button
-                    variant="ghost"
-                    className="!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
-                    data-umami-event="classroom-add-student"
-                  >
-                    {t('actions.addStudent')}
-                  </Button>
-                </ModalStudentsGroup>
-                <ModalGroupInvite>
-                  <Button
-                    variant="ghost"
-                    className="!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
-                    data-umami-event="classroom-invite-to-group"
-                  >
-                    {t('actions.inviteToGroup')}
-                  </Button>
-                </ModalGroupInvite>
+                {isPaused ? null : (
+                  <>
+                    <ModalStudentsGroup>
+                      <Button
+                        variant="ghost"
+                        className="!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
+                        data-umami-event="classroom-add-student"
+                      >
+                        {t('actions.addStudent')}
+                      </Button>
+                    </ModalStudentsGroup>
+                    <ModalGroupInvite>
+                      <Button
+                        variant="ghost"
+                        className="!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
+                        data-umami-event="classroom-invite-to-group"
+                      >
+                        {t('actions.inviteToGroup')}
+                      </Button>
+                    </ModalGroupInvite>
+                  </>
+                )}
               </div>
             </div>
           </div>
-          <StudentsList classroomId={String(classroom.id || classroomId)} />
+          <StudentsList classroomId={String(classroom.id || classroomId)} readOnly={isPaused} />
         </div>
       ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
         <div className="order-2 h-full w-full min-w-0 flex-1 md:order-1">
-          <InformationNote classroom={classroom} note={note} />
+          <InformationNote classroom={classroom} note={note} readOnly={isPaused} />
         </div>
 
         <div className="order-1 w-full md:order-2 md:w-[300px]">
@@ -259,7 +265,9 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                     <FormControl>
                       <Autocomplete
                         field={field}
-                        disabled={isUpdatingIndividualClassroom || isUpdatingGroupClassroom}
+                        disabled={
+                          isPaused || isUpdatingIndividualClassroom || isUpdatingGroupClassroom
+                        }
                       />
                     </FormControl>
                   </FormItem>

@@ -28,8 +28,8 @@ import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/store
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
 import { getBoardUploadErrorToast } from '../../utils/boardUploadError';
-
-const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024;
+import { assertBoardUploadAllowed } from '../../utils/planUploadLimit';
+import { getMaxImageBytes } from 'common.subscription';
 
 const coverToolbarButtonClass =
   'bg-background-surface/95 text-text-primary hover:bg-background-hover border-border-default flex size-8 shrink-0 items-center justify-center rounded-lg border shadow-sm backdrop-blur-sm';
@@ -91,12 +91,8 @@ async function uploadPickedImage(file: File, token: string) {
     throw new Error('empty');
   }
 
-  if (next.size > MAX_IMAGE_SIZE_BYTES) {
-    const description = boardToast('toast.imageSizeDesc', {
-      size: (next.size / 1024 / 1024).toFixed(2),
-    });
-    toast.error(boardToast('toast.imageUploadFailed'), { description, duration: 5000 });
-    throw new Error(description);
+  if (!assertBoardUploadAllowed(next, 'image')) {
+    throw new Error('too-large');
   }
 
   if (isFileNameTooLong(next.name)) {
@@ -115,7 +111,7 @@ async function uploadPickedImage(file: File, token: string) {
     const fileId = await uploadFileIdRequest({ file: next, token });
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
-    const { title, description } = getBoardUploadErrorToast(error, next, MAX_IMAGE_SIZE_BYTES, {
+    const { title, description } = getBoardUploadErrorToast(error, next, getMaxImageBytes(), {
       sizeDescKey: 'toast.imageSizeDesc',
       failedTitleKey: 'toast.imageUploadFailed',
       failedDescKey: 'toast.imageUploadFailed',

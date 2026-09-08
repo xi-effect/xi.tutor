@@ -6,9 +6,9 @@ import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
+import { getMaxImageBytes } from 'common.subscription';
 import i18n from 'i18next';
-
-const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 
 export type InsertImagePlacement = {
   /** Позиция и размер на доске (в координатах страницы). Если не задано — по центру вьюпорта с натуральными размерами. */
@@ -40,16 +40,8 @@ export async function insertImage(
     return;
   }
 
-  if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    const message = i18n.t('toast.imageSizeDesc', {
-      ns: 'board',
-      size: (file.size / 1024 / 1024).toFixed(2),
-    });
-    toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
-      description: message,
-      duration: 5000,
-    });
-    throw new Error(message);
+  if (!assertBoardUploadAllowed(file, 'image')) {
+    throw new Error(i18n.t('toast.fileTooLarge', { ns: 'board' }));
   }
 
   let bitmap: ImageBitmap;
@@ -152,7 +144,7 @@ export async function insertImage(
       ]);
     } catch (err) {
       console.error('Image upload failed:', err);
-      const { title, description } = getBoardUploadErrorToast(err, file, MAX_IMAGE_SIZE_BYTES, {
+      const { title, description } = getBoardUploadErrorToast(err, file, getMaxImageBytes(), {
         sizeDescKey: 'toast.imageSizeDesc',
         failedTitleKey: 'toast.imageUploadError',
         failedDescKey: 'toast.imageUploadFailed',
