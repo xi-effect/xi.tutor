@@ -119,9 +119,7 @@ describe('constraint-based geometry acceptance', () => {
   });
 
   it('ставит подпись 41° внутри угла, а не на вершине', () => {
-    const raw = solve(
-      'Отрезки AC и BD — диаметры окружности с центром O. Угол ACB равен 41°.',
-    );
+    const raw = solve('Отрезки AC и BD — диаметры окружности с центром O. Угол ACB равен 41°.');
     const scene = normalizeGeometryScene(raw, { targetWidth: 360, targetHeight: 300, padding: 36 });
     const vertex = point(scene, 'C');
     const angleLabel = scene.labels.find((label) => label.text === '41°');

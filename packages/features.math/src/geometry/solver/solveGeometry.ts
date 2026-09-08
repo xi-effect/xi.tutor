@@ -1,7 +1,12 @@
 import { expandGeometryConstraints } from '../constraints/expandConstraints';
 import { validateGeometryConstraints } from '../constraints/validateConstraints';
 import type { GeometrySemanticModel } from '../semantic/types';
-import { circleDiameterSolver, circleTangentArcSolver, cyclicPolygonSolver, genericCircleSolver } from './circleSolver';
+import {
+  circleDiameterSolver,
+  circleTangentArcSolver,
+  cyclicPolygonSolver,
+  genericCircleSolver,
+} from './circleSolver';
 import { genericGeometrySolver } from './genericSolver';
 import {
   isoscelesTriangleSolver,

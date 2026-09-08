@@ -6,7 +6,11 @@ import type {
 } from '../semantic/types';
 import { buildScene, type PointCoordinates } from './sceneBuilder';
 import { ANGLE_EPSILON, GEOMETRY_EPSILON } from './math';
-import { constructTriangleCoordinates, segmentKey, triangleLengthMap } from './triangleConstructions';
+import {
+  constructTriangleCoordinates,
+  segmentKey,
+  triangleLengthMap,
+} from './triangleConstructions';
 import type { GeometrySolveResult, GeometrySolver } from './types';
 
 function lengthMap(model: GeometrySemanticModel): Map<string, number> {

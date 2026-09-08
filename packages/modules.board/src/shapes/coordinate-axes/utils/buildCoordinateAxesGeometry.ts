@@ -127,7 +127,10 @@ export function buildCoordinateAxesGeometry(
     .map((item) => item.trim())
     .filter(Boolean)
     .map((item) => buildPlotPath(item, range, rw, rh))
-    .filter((result): result is Extract<PlotPathResult, { ok: true }> => result.ok && Boolean(result.path))
+    .filter(
+      (result): result is Extract<PlotPathResult, { ok: true }> =>
+        result.ok && Boolean(result.path),
+    )
     .map((result) => result.path);
 
   return {

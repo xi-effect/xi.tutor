@@ -284,8 +284,7 @@ export const cyclicPolygonSolver: GeometrySolver = {
     const coordinates: PointCoordinates = { [circle.center]: { x: 0, y: 0 } };
     const inscribed = model.constraints.filter(
       (constraint): constraint is Extract<GeometryConstraint, { type: 'angle' }> =>
-        constraint.type === 'angle' &&
-        constraint.points.every((point) => vertices.includes(point)),
+        constraint.type === 'angle' && constraint.points.every((point) => vertices.includes(point)),
     );
     inscribed.sort((left, right) => right.value - left.value);
     const primary = inscribed[0];
@@ -302,7 +301,10 @@ export const cyclicPolygonSolver: GeometrySolver = {
       }
     }
     vertices.forEach((point, index) => {
-      coordinates[point] ??= pointOnUnitCircle((index * 360) / Math.max(vertices.length, 3), radius);
+      coordinates[point] ??= pointOnUnitCircle(
+        (index * 360) / Math.max(vertices.length, 3),
+        radius,
+      );
     });
     return {
       status: primary ? 'solved' : 'partial',

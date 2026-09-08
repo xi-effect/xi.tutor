@@ -103,10 +103,7 @@ function parseScalar(source: string): GeometryScalar {
     : { type: 'expression', expression: normalized };
 }
 
-function circleCenter(
-  builder: GeometryModelBuilder,
-  circleId: string,
-): string | undefined {
+function circleCenter(builder: GeometryModelBuilder, circleId: string): string | undefined {
   const circle = builder.entities.find(
     (entity): entity is Extract<GeometryEntity, { type: 'circle' }> =>
       entity.type === 'circle' && entity.id === circleId,
@@ -127,8 +124,7 @@ function inferTangentContact(
   const arcHit = [first, second].find((point) =>
     builder.constraints.some(
       (constraint) =>
-        constraint.type === 'arc_measure' &&
-        (constraint.from === point || constraint.to === point),
+        constraint.type === 'arc_measure' && (constraint.from === point || constraint.to === point),
     ),
   );
   if (arcHit) return arcHit;
@@ -384,9 +380,7 @@ export function interpretGeometryText(input: string): GeometrySemanticModel | nu
   for (const match of text.matchAll(
     new RegExp(`(?:∠|[Уу]гол(?:[аеуы]|ом)?\\s*)(${POINT})(${POINT})(${POINT})`, 'g'),
   )) {
-    builder.mentionAngle(
-      [match[1], match[2], match[3]].map(normalizePointName) as GeometryAngle,
-    );
+    builder.mentionAngle([match[1], match[2], match[3]].map(normalizePointName) as GeometryAngle);
   }
 
   for (const match of text.matchAll(
@@ -652,10 +646,7 @@ function unusedPointName(builder: GeometryModelBuilder, preferred: readonly stri
   return `${preferred[0] ?? 'P'}1`;
 }
 
-function occupiedAcuteVertices(
-  text: string,
-  builder: GeometryModelBuilder,
-): Set<string> {
+function occupiedAcuteVertices(text: string, builder: GeometryModelBuilder): Set<string> {
   const occupied = new Set<string>();
   for (const constraint of builder.constraints) {
     if (constraint.type === 'angle' && Math.abs(constraint.value - 90) > 1e-6) {
@@ -679,11 +670,7 @@ function inferRightAngleVertex(
     text.match(new RegExp(`угол\\s*(${POINT})\\s*прям(?:ой|ым|ого)(?![а-яё])`, 'i')) ??
     text.match(new RegExp(`прям(?:ой|ым)\\s+углом\\s*(?:в\\s+)?(${POINT})`, 'i'));
   const namedVertex = named ? normalizePointName(named[1]) : null;
-  if (
-    namedVertex &&
-    triangle.vertices.includes(namedVertex) &&
-    !occupied.has(namedVertex)
-  ) {
+  if (namedVertex && triangle.vertices.includes(namedVertex) && !occupied.has(namedVertex)) {
     return namedVertex;
   }
 
@@ -784,7 +771,9 @@ function inferRightTriangleLegs(
       (constraint) => constraint.type === 'angle' && Math.abs(constraint.value - 90) < 1e-6,
     );
     const vertex =
-      right?.type === 'angle' ? right.points[1] : inferRightAngleVertex(text, triangle);
+      right?.type === 'angle'
+        ? right.points[1]
+        : inferRightAngleVertex(text, triangle, occupiedAcuteVertices(text, builder));
     const legs = triangle.vertices.filter((point) => point !== vertex);
     builder.constraint({
       type: 'length',

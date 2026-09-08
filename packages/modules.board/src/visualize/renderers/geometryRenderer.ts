@@ -54,7 +54,9 @@ function renderMarker(
     const perpendicular = { x: -direction.y, y: direction.x };
     const midpoint = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
     const count =
-      marker.type === 'equal_length' ? Math.min(Math.max(marker.group, 1), 3) : Math.min(marker.group, 3);
+      marker.type === 'equal_length'
+        ? Math.min(Math.max(marker.group, 1), 3)
+        : Math.min(marker.group, 3);
     const ids: DrShapeId[] = [];
     for (let index = 0; index < count; index += 1) {
       const shift = (index - (count - 1) / 2) * 6;

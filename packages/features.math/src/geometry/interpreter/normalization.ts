@@ -29,11 +29,13 @@ function toAsciiMathCharacter(character: string): string {
 
 function compactSpacedTokens(text: string): string {
   return text
-    .replace(/(^|[^A-ZА-Я])([A-ZА-Я](?:\s+[A-ZА-Я])+)(?![A-ZА-Я])/g, (_all, prefix, names) =>
-      `${prefix}${String(names).replace(/\s+/g, '')}`,
+    .replace(
+      /(^|[^A-ZА-Я])([A-ZА-Я](?:\s+[A-ZА-Я])+)(?![A-ZА-Я])/g,
+      (_all, prefix, names) => `${prefix}${String(names).replace(/\s+/g, '')}`,
     )
-    .replace(/(^|[^\d])(\d(?:\s+\d)+)(?!\d)/g, (_all, prefix, digits) =>
-      `${prefix}${String(digits).replace(/\s+/g, '')}`,
+    .replace(
+      /(^|[^\d])(\d(?:\s+\d)+)(?!\d)/g,
+      (_all, prefix, digits) => `${prefix}${String(digits).replace(/\s+/g, '')}`,
     );
 }
 

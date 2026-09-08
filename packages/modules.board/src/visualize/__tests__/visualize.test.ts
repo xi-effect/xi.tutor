@@ -192,7 +192,13 @@ describe('features.math → board suggestions', () => {
     expect(diameterGeometry).toBeDefined();
     if (diameterGeometry?.intent.type !== 'geometry') return;
     const diameterScene = getGeometryScene(diameterGeometry.intent);
-    expect(diameterScene?.points.map((point) => point.id).sort()).toEqual(['A', 'B', 'C', 'D', 'O']);
+    expect(diameterScene?.points.map((point) => point.id).sort()).toEqual([
+      'A',
+      'B',
+      'C',
+      'D',
+      'O',
+    ]);
 
     const tangent = getVisualizationSuggestions(
       'Найдите величину угла ACO, если его сторона CA касается окружности с центром O, отрезок CO пересекает окружность в точке B, а дуга AB равна 66°.',
@@ -217,7 +223,10 @@ describe('features.math → board suggestions', () => {
       120,
       5,
     );
-    expect(angle(cyclicById.get('A')!, cyclicById.get('B')!, cyclicById.get('D')!)).toBeCloseTo(43, 5);
+    expect(angle(cyclicById.get('A')!, cyclicById.get('B')!, cyclicById.get('D')!)).toBeCloseTo(
+      43,
+      5,
+    );
 
     const cevians = getVisualizationSuggestions(
       'Острый угол B прямоугольного треугольника ABC равен 9°. Найдите величину угла между высотой CH и медианой CM, проведёнными из вершины прямого угла C.',
@@ -227,12 +236,14 @@ describe('features.math → board suggestions', () => {
     if (cevianGeometry?.intent.type !== 'geometry') return;
     const cevianScene = getGeometryScene(cevianGeometry.intent);
     const cevianById = new Map(cevianScene!.points.map((point) => [point.id, point]));
-    expect(
-      angle(cevianById.get('A')!, cevianById.get('C')!, cevianById.get('B')!),
-    ).toBeCloseTo(90, 5);
-    expect(
-      angle(cevianById.get('A')!, cevianById.get('B')!, cevianById.get('C')!),
-    ).toBeCloseTo(9, 5);
+    expect(angle(cevianById.get('A')!, cevianById.get('C')!, cevianById.get('B')!)).toBeCloseTo(
+      90,
+      5,
+    );
+    expect(angle(cevianById.get('A')!, cevianById.get('B')!, cevianById.get('C')!)).toBeCloseTo(
+      9,
+      5,
+    );
     expect(cevianById.get('H')).toBeDefined();
     expect(cevianById.get('M')).toBeDefined();
   });

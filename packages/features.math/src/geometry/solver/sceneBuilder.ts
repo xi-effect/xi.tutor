@@ -129,7 +129,9 @@ export function buildScene(
   }
 
   const valuedAngles = model.constraints.filter(
-    (constraint): constraint is Extract<GeometrySemanticModel['constraints'][number], { type: 'angle' }> =>
+    (
+      constraint,
+    ): constraint is Extract<GeometrySemanticModel['constraints'][number], { type: 'angle' }> =>
       constraint.type === 'angle' && Math.abs(constraint.value - 90) >= 1e-6,
   );
   const anglesByVertex = new Map<string, typeof valuedAngles>();

@@ -237,9 +237,18 @@ describe('geometry interpreter', () => {
     ];
     for (const text of texts) {
       const model = interpretGeometryText(text);
-      expect(model?.entities.some((entity) => entity.type === 'quadrilateral'), text).toBe(true);
-      expect(model?.entities.some((entity) => entity.type === 'circle'), text).toBe(true);
-      expect(model?.constraints.some((constraint) => constraint.type === 'cyclic'), text).toBe(true);
+      expect(
+        model?.entities.some((entity) => entity.type === 'quadrilateral'),
+        text,
+      ).toBe(true);
+      expect(
+        model?.entities.some((entity) => entity.type === 'circle'),
+        text,
+      ).toBe(true);
+      expect(
+        model?.constraints.some((constraint) => constraint.type === 'cyclic'),
+        text,
+      ).toBe(true);
       expect(
         model?.constraints.filter((constraint) => constraint.type === 'point_on_circle'),
         text,
@@ -257,7 +266,9 @@ describe('geometry interpreter', () => {
         text,
       ).toBe(true);
       expect(
-        model?.entities.some((entity) => entity.type === 'point' && entity.id === 'O' && entity.label === ''),
+        model?.entities.some(
+          (entity) => entity.type === 'point' && entity.id === 'O' && entity.label === '',
+        ),
         text,
       ).toBe(true);
     }

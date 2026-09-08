@@ -81,10 +81,7 @@ function automaticLabels(points: GeometryScene['points']): SceneLabel[] {
   });
 }
 
-function measurementLabels(
-  scene: GeometryScene,
-  points: GeometryScene['points'],
-): SceneLabel[] {
+function measurementLabels(scene: GeometryScene, points: GeometryScene['points']): SceneLabel[] {
   const byId = new Map(points.map((point) => [point.id, point]));
   const center = centroid(points);
   return (scene.measurementLabels ?? []).flatMap((label) => {
@@ -113,7 +110,10 @@ function measurementLabels(
   });
 }
 
-function estimateLabelSize(label: Pick<SceneLabel, 'text' | 'kind'>): { width: number; height: number } {
+function estimateLabelSize(label: Pick<SceneLabel, 'text' | 'kind'>): {
+  width: number;
+  height: number;
+} {
   if (label.kind === 'angle') {
     return { width: Math.max(36, label.text.length * 9), height: 18 };
   }
@@ -129,8 +129,7 @@ function angleValueLabels(scene: GeometryScene, points: GeometryScene['points'])
     const [first, vertex, third] = label.points.map((id) => byId.get(id));
     if (!first || !vertex || !third) return [];
     const arc = getInteriorAngleArc(vertex, first, third, label.group ?? 1);
-    const along =
-      arc.radius + (arc.theta < 0.35 ? 34 : arc.theta < Math.PI / 3 ? 22 : 14);
+    const along = arc.radius + (arc.theta < 0.35 ? 34 : arc.theta < Math.PI / 3 ? 22 : 14);
     const size = estimateLabelSize({ text: label.text, kind: 'angle' });
     return [
       {
@@ -258,7 +257,7 @@ export function normalizeGeometryScene(
     x: point.x * scale + offsetX,
     y: point.y * scale + offsetY,
   }));
-  let circles = scene.circles.map((circle) => ({ ...circle, radius: circle.radius * scale }));
+  const circles = scene.circles.map((circle) => ({ ...circle, radius: circle.radius * scale }));
   const labels = separateLabels(
     [
       ...automaticLabels(points),
