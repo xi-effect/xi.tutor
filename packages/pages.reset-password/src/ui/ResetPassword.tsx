@@ -16,7 +16,8 @@ export const ResetPassword = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('resetPassword');
 
-  const { form, onSubmit, isSubmitSuccessful, submittedEmail } = usePasswordReset();
+  const { form, onSubmit, onResend, isLoading, isSubmitSuccessful, submittedEmail } =
+    usePasswordReset();
   const syncAutofillAndSubmit = useSyncAutofillOnSubmit(form);
 
   return (
@@ -69,7 +70,11 @@ export const ResetPassword = () => {
                 size="l"
                 theme="brand"
                 variant="hover"
-                onClick={() => form.handleSubmit(onSubmit)()}
+                onClick={() => {
+                  if (isLoading) return;
+                  void onResend();
+                }}
+                disabled={isLoading}
                 data-umami-event="auth-reset-password-resend"
               >
                 {t('resend')}
@@ -93,6 +98,7 @@ export const ResetPassword = () => {
               onClick={() => navigate({ to: '/signin' })}
               className="rounded-xl px-6 py-3"
               data-umami-event="auth-reset-password-signin"
+              disabled={isLoading}
             >
               {t('sign_in_button')}
             </Button>
@@ -100,7 +106,7 @@ export const ResetPassword = () => {
             <Button
               variant="primary"
               type="submit"
-              loading={form.formState.isSubmitting}
+              loading={isLoading}
               className="rounded-xl px-6 py-3"
               data-umami-event="auth-reset-password-send"
             >

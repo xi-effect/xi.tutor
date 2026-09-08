@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
 import { AxiosError } from 'axios';
+import { getUserFacingErrorMessage, useResetPasswordConfirm } from 'common.services';
 
 import { useFormSchemaPassword, FormDataPassword } from '../model/formSchemaPassword';
-import { useResetPasswordConfirm } from 'common.services';
 
 export function useNewPassword(resetToken: string) {
   const { t } = useTranslation('resetPassword');
@@ -38,18 +38,12 @@ export function useNewPassword(resetToken: string) {
     } catch (error: unknown) {
       console.error('Reset password error:', error);
 
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 401) {
-          form.setError('password', {
-            type: 'manual',
-            message: t('resetPassword.tokenExpired'),
-          });
-          toast.error(t('resetPassword.tokenExpired'));
-          return;
-        }
-      }
-
-      if (error instanceof Error && error.message === 'Token expired') {
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        form.setError('password', {
+          type: 'manual',
+          message: t('resetPassword.tokenExpired'),
+        });
+      } else if (error instanceof Error && error.message === 'Token expired') {
         form.setError('password', {
           type: 'manual',
           message: t('resetPassword.tokenExpired'),
@@ -59,7 +53,9 @@ export function useNewPassword(resetToken: string) {
           type: 'manual',
           message: t('resetPassword.invalidPassword'),
         });
-      } else {
+      }
+
+      if (!getUserFacingErrorMessage(error, 'resetPassword')) {
         toast.error(t('resetPassword.error'));
       }
     }

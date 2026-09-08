@@ -204,7 +204,7 @@ export const SignInPage = () => {
           <LinkTanstack
             size="l"
             variant="always"
-            to="/reset-password"
+            to={getUrlWithParams('/reset-password')}
             data-umami-event="auth-forgot-password-link"
           >
             {t('forgot_password')}

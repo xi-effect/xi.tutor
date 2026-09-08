@@ -20,7 +20,8 @@
     "error": "An error occurred. Please try again.",
     "errorResetPassword": "An error occurred. Please try again.",
     "passwordsDoNotMatch": "Passwords do not match",
-    "tokenExpired": "Token expired"
+    "tokenExpired": "Token expired",
+    "invalidPassword": "Invalid password format"
   },
   "validation": {
     "required": "This field is required",
