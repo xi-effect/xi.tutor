@@ -6,6 +6,7 @@ import { SidebarProvider } from '@xipkg/sidebar';
 import { useFocusModeStore, useSupportModalStore } from 'common.ui';
 import { useLocation } from '@tanstack/react-router';
 import { SupportModal } from './SupportModal';
+import { PostLessonFeedbackHost } from './feedback/PostLessonFeedbackHost';
 import { SubscriptionHost } from 'features.subscription';
 import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
@@ -84,6 +85,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       {isMobile && !hideMobileNav && <MobileBottomBar />}
 
       <SupportModal open={isSupportOpen} onOpenChange={setSupportOpen} />
+      <PostLessonFeedbackHost />
       <SubscriptionHost />
     </>
   );

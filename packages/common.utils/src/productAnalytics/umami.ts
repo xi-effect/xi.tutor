@@ -1,6 +1,7 @@
 import { getActivationFlowId } from './activationFlowId';
 import type { ProductAnalyticsEventMap, TrackableEventName } from './eventMap';
-import { FORBIDDEN_ANALYTICS_FIELDS } from './forbiddenFields';
+import { ANALYTICS_ALLOWED_FREE_TEXT_FIELDS, FORBIDDEN_ANALYTICS_FIELDS } from './forbiddenFields';
+import { prepareFeedbackComment } from './feedbackComment';
 import type { UmamiEventPayload } from './types';
 
 const EVENT_VERSION = 1;
@@ -23,8 +24,15 @@ function isProductAnalyticsEnabled(): boolean {
   }
 }
 
+function isForbiddenField(eventName: string | undefined, key: string): boolean {
+  if (!FORBIDDEN_ANALYTICS_FIELDS.has(key)) return false;
+  if (!eventName) return true;
+  return !ANALYTICS_ALLOWED_FREE_TEXT_FIELDS[eventName]?.has(key);
+}
+
 function sanitizeUmamiPayload(
   payload?: UmamiEventPayload,
+  eventName?: string,
 ): Record<string, string | number | boolean> | undefined {
   if (!payload) return undefined;
 
@@ -32,9 +40,15 @@ function sanitizeUmamiPayload(
 
   for (const [key, value] of Object.entries(payload)) {
     if (value === null || value === undefined) continue;
-    if (FORBIDDEN_ANALYTICS_FIELDS.has(key)) continue;
+    if (isForbiddenField(eventName, key)) continue;
 
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      if (eventName === 'feedback_submitted' && key === 'comment' && typeof value === 'string') {
+        const comment = prepareFeedbackComment(value);
+        if (comment) result[key] = comment;
+        continue;
+      }
+
       result[key] = value;
       continue;
     }
@@ -56,14 +70,18 @@ function sanitizeUmamiPayload(
 
 function withCommonProperties(
   payload?: UmamiEventPayload,
+  eventName?: string,
 ): Record<string, string | number | boolean> | undefined {
   const activationFlowId = getActivationFlowId();
 
-  return sanitizeUmamiPayload({
-    event_version: EVENT_VERSION,
-    ...(activationFlowId ? { activation_flow_id: activationFlowId } : {}),
-    ...payload,
-  });
+  return sanitizeUmamiPayload(
+    {
+      event_version: EVENT_VERSION,
+      ...(activationFlowId ? { activation_flow_id: activationFlowId } : {}),
+      ...payload,
+    },
+    eventName,
+  );
 }
 
 /**
@@ -88,7 +106,7 @@ export function trackProductEvent(eventName: string, payload?: UmamiEventPayload
   if (!umami || typeof umami.track !== 'function') return;
 
   try {
-    umami.track(eventName, withCommonProperties(payload));
+    umami.track(eventName, withCommonProperties(payload, eventName));
   } catch {
     // Аналитика не должна ломать пользовательский сценарий.
   }

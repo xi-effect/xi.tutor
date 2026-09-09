@@ -165,6 +165,14 @@ export type ProductLimitBlockedOn = 'client' | 'api';
 
 export type ProductLimitObjectKind = 'elements' | 'pdf' | 'file' | 'presentation' | 'audio';
 
+export type ProductAnalyticsFeedbackType = 'call' | 'board';
+
+export type ProductAnalyticsFeedbackScore = 1 | 2 | 3 | 4 | 5;
+
+export type ProductAnalyticsFeedbackPromptSource = 'post_lesson';
+
+export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
+
 export type UmamiPrimitive = string | number | boolean;
 export type UmamiEventPayload = Record<
   string,

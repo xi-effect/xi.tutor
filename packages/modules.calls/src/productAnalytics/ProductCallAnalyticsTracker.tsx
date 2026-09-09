@@ -9,10 +9,12 @@ import { useCurrentUser } from 'common.services';
 import {
   DURATION_THRESHOLDS_MIN,
   PRODUCT_ANALYTICS_EVENTS,
+  beginCallFeedbackSession,
   createAttemptId,
   getDurationBucket,
   getProductAnalyticsRole,
   mapPermissionError,
+  markCallFeedbackEligible,
   measureDurationMs,
   trackProductEvent,
   type CallFailureReason,
@@ -114,6 +116,10 @@ export const ProductCallAnalyticsTracker = () => {
         state.duration5Reached = true;
       }
 
+      if (threshold === 15) {
+        markCallFeedbackEligible();
+      }
+
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_DURATION_REACHED, {
         lesson_id: lessonId,
         actor_role: actorRole,
@@ -138,6 +144,9 @@ export const ProductCallAnalyticsTracker = () => {
     if (state.lessonFinishedSent || !state.connectedAt) return;
 
     const elapsedMinutes = getElapsedMinutes();
+    if (elapsedMinutes >= 15) {
+      markCallFeedbackEligible();
+    }
     if (elapsedMinutes < MIN_LESSON_FINISH_MINUTES && !state.duration5Reached) return;
 
     syncUsageFlags();
@@ -240,6 +249,7 @@ export const ProductCallAnalyticsTracker = () => {
     if (!wasConnectedRef.current) {
       wasConnectedRef.current = true;
       state.connectedAt = Date.now();
+      beginCallFeedbackSession();
 
       if (!state.callConnectedSent) {
         state.callConnectedSent = true;

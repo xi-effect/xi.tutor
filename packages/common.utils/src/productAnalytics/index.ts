@@ -11,6 +11,32 @@ export {
   getReachedDurationThresholds,
   type LessonDurationThresholdMin,
 } from './lesson';
+export { pickFeedbackType } from './feedbackType';
+export {
+  prepareFeedbackComment,
+  maskFeedbackPii,
+  FEEDBACK_COMMENT_MAX_LENGTH,
+} from './feedbackComment';
+export {
+  POST_LESSON_FEEDBACK_COOLDOWN_MS,
+  POST_LESSON_FEEDBACK_STORAGE_PREFIX,
+  beginCallFeedbackSession,
+  clearPendingPostLessonFeedback,
+  clearPostLessonFeedbackCooldown,
+  debugQueuePostLessonFeedback,
+  endClassroomFeedbackWindow,
+  getPostLessonFeedbackSession,
+  isPostLessonFeedbackCooldownActive,
+  markBoardFeedbackEligible,
+  markCallFeedbackEligible,
+  readPostLessonFeedbackPersisted,
+  resetPostLessonFeedbackState,
+  subscribePostLessonFeedback,
+  tryQueuePostLessonFeedback,
+  writePostLessonFeedbackPersisted,
+  type PostLessonFeedbackPersisted,
+  type PostLessonFeedbackSession,
+} from './postLessonFeedback';
 export { inferProductAnalyticsSourceFromPathname } from './inferSource';
 export { inferSignupEntryPoint } from './inferSignupEntryPoint';
 export { inferEmailConfirmationSource } from './inferEmailConfirmationSource';
@@ -106,6 +132,8 @@ export type {
   ProductAnalyticsCallFailureReason,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsBoardTrigger,
+  ProductAnalyticsFeedbackScore,
+  ProductAnalyticsFeedbackType,
   ProductLimitType,
   ProductLimitSource,
   ProductLimitFileCategory,

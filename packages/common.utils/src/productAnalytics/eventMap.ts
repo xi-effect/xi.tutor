@@ -2,6 +2,10 @@ import type { PRODUCT_ANALYTICS_EVENTS } from './events';
 import type {
   ActivationHelpReason,
   ActivationHelpScreen,
+  ProductAnalyticsFeedbackPromptSource,
+  ProductAnalyticsFeedbackScore,
+  ProductAnalyticsFeedbackSupportSource,
+  ProductAnalyticsFeedbackType,
   CallFailureReason,
   CommonActivationProperties,
   EmailConfirmationFailureReason,
@@ -548,6 +552,46 @@ export type ProductAnalyticsEventMap = {
     reason: FileUploadRejectReason;
     file_category: FileUploadFileCategory;
     size_bucket: FileUploadSizeBucket;
+  };
+
+  feedback_prompt_shown: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    source: ProductAnalyticsFeedbackPromptSource;
+  };
+  feedback_prompt_opened: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    source: ProductAnalyticsFeedbackPromptSource;
+  };
+  feedback_prompt_dismissed: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    source: ProductAnalyticsFeedbackPromptSource;
+  };
+  feedback_submitted:
+    | {
+        event_version?: number;
+        feedback_type: 'call';
+        connection_quality: ProductAnalyticsFeedbackScore;
+        stability: ProductAnalyticsFeedbackScore;
+        media_quality: ProductAnalyticsFeedbackScore;
+        comment?: string;
+        source: ProductAnalyticsFeedbackPromptSource;
+      }
+    | {
+        event_version?: number;
+        feedback_type: 'board';
+        usability: ProductAnalyticsFeedbackScore;
+        stability: ProductAnalyticsFeedbackScore;
+        responsiveness: ProductAnalyticsFeedbackScore;
+        comment?: string;
+        source: ProductAnalyticsFeedbackPromptSource;
+      };
+  feedback_support_clicked: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    source: ProductAnalyticsFeedbackSupportSource;
   };
 
   activation_help_opened: BaseProps & {

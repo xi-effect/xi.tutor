@@ -6,6 +6,7 @@ import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getProductAnalyticsRole,
+  markBoardFeedbackEligible,
   trackProductEvent,
   type ProductAnalyticsBoardTrigger,
   type ProductAnalyticsSource,
@@ -75,6 +76,10 @@ export const useProductBoardAnalytics = ({
       source,
       trigger,
     });
+
+    if (source === 'call' || source === 'classroom') {
+      markBoardFeedbackEligible();
+    }
   };
 
   const evaluateMeaningfulUsage = () => {

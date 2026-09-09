@@ -68,5 +68,26 @@
     "clearDataConfirmTitle": "Clear app data?",
     "clearDataConfirmDescription": "Local data, cache, and offline storage will be removed. Then the sign-in screen will open",
     "clearDataConfirmAction": "Clear"
+  },
+  "feedback": {
+    "toastTitle": "How was the lesson?",
+    "toastDescription": "Help us improve sovlium — it takes about 20 seconds.",
+    "rate": "Rate",
+    "modalTitle": "How was the lesson?",
+    "callConnection": "Connection quality",
+    "callStability": "Call stability",
+    "callMedia": "Audio and video quality",
+    "boardUsability": "Ease of using the board",
+    "boardStability": "Reliability",
+    "boardResponsiveness": "Speed and responsiveness",
+    "commentLabel": "Anything to add?",
+    "commentPrivacy": "Please don’t include students’ personal data in the comment.",
+    "commentPlaceholder": "Optional",
+    "submit": "Submit",
+    "supportPrompt": "Ran into a problem and want us to help?",
+    "supportCta": "Contact support",
+    "thanksTitle": "Thank you!",
+    "thanksGood": "This helps us improve sovlium.",
+    "thanksLow": "Thanks for the feedback. It looks like there were problems during the lesson."
   }
 }

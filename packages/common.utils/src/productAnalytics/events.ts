@@ -99,6 +99,13 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   FILE_UPLOAD_SUCCEEDED: 'file_upload_succeeded',
   FILE_UPLOAD_REJECTED: 'file_upload_rejected',
 
+  // Post-lesson feedback
+  FEEDBACK_PROMPT_SHOWN: 'feedback_prompt_shown',
+  FEEDBACK_PROMPT_OPENED: 'feedback_prompt_opened',
+  FEEDBACK_PROMPT_DISMISSED: 'feedback_prompt_dismissed',
+  FEEDBACK_SUBMITTED: 'feedback_submitted',
+  FEEDBACK_SUPPORT_CLICKED: 'feedback_support_clicked',
+
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',
   ACTIVATION_SUPPORT_CONTACTED: 'activation_support_contacted',

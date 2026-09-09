@@ -68,5 +68,26 @@
     "clearDataConfirmTitle": "Очистить данные?",
     "clearDataConfirmDescription": "Будут удалены локальные данные, кэш и офлайн-хранилище. Затем откроется экран входа",
     "clearDataConfirmAction": "Очистить"
+  },
+  "feedback": {
+    "toastTitle": "Как прошло занятие?",
+    "toastDescription": "Помогите нам улучшить sovlium — это займёт около 20 секунд.",
+    "rate": "Оценить",
+    "modalTitle": "Как прошло занятие?",
+    "callConnection": "Качество связи",
+    "callStability": "Стабильность звонка",
+    "callMedia": "Качество звука и видео",
+    "boardUsability": "Удобство работы с доской",
+    "boardStability": "Стабильность работы",
+    "boardResponsiveness": "Скорость и отзывчивость",
+    "commentLabel": "Хотите что-нибудь добавить?",
+    "commentPrivacy": "Не указывайте в комментарии персональные данные учеников.",
+    "commentPlaceholder": "Необязательно",
+    "submit": "Отправить",
+    "supportPrompt": "Столкнулись с проблемой и хотите, чтобы мы помогли?",
+    "supportCta": "Написать в поддержку",
+    "thanksTitle": "Спасибо!",
+    "thanksGood": "Это помогает нам улучшать sovlium.",
+    "thanksLow": "Спасибо за обратную связь. Похоже, во время занятия были проблемы."
   }
 }
