@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { ClassroomTutorResponseSchema, isClassroomOnPause } from 'common.api';
 import { IndividualUser } from './IndividualUser';
 import { SubjectBadge } from './SubjectBadge';
@@ -77,8 +77,8 @@ export const Content = ({ classroom }: ContentProps) => {
     return classroom.name ?? '';
   };
 
-  const badges: ReactNode = (
-    <div className="flex shrink-0 items-center gap-2">
+  const badges = (
+    <>
       {classroom.subject_id ? <SubjectBadge subject_id={classroom.subject_id} /> : null}
       <StatusBadge status={classroom.status} kind={classroom.kind} />
       {classroom.kind === 'individual' ? (
@@ -89,49 +89,60 @@ export const Content = ({ classroom }: ContentProps) => {
       {classroom.kind === 'group' && !isTutor ? (
         <ContactsBadge userId={classroom.tutor_id ?? 0} />
       ) : null}
-    </div>
+    </>
   );
+
+  const nameRow =
+    classroom.kind === 'individual' ? (
+      <IndividualUser
+        userId={classroom.student_id ?? classroom.student?.id ?? classroom.tutor_id ?? 0}
+        classroomId={classroom.id}
+        nameOverride={isTutor ? classroom.name_override : undefined}
+        classroomName={classroom.name}
+        studentName={getStudentName()}
+        canEdit={isTutor && !isPaused}
+      />
+    ) : (
+      <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
+        <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-medium">
+          {getDisplayName()?.[0]?.toUpperCase() ?? ''}
+        </div>
+        <EditableClassroomName
+          classroomId={classroom.id}
+          kind="group"
+          name={getDisplayName() ?? ''}
+          canEdit={isTutor && !isPaused}
+        />
+      </div>
+    );
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-4 px-5 pt-5 sm:px-8 sm:pt-8 md:px-10 md:pt-10">
       {isTutor && isPaused ? <PausedClassroomBanner /> : null}
-      <div className="flex min-w-0 flex-row items-center gap-3 sm:gap-4">
-        <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
-          {classroom.kind === 'individual' ? (
-            <IndividualUser
-              userId={classroom.student_id ?? classroom.student?.id ?? classroom.tutor_id ?? 0}
-              classroomId={classroom.id}
-              nameOverride={isTutor ? classroom.name_override : undefined}
-              classroomName={classroom.name}
-              studentName={getStudentName()}
-              canEdit={isTutor && !isPaused}
-            />
-          ) : (
-            <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
-              <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-medium">
-                {getDisplayName()?.[0]?.toUpperCase() ?? ''}
-              </div>
-              <EditableClassroomName
-                classroomId={classroom.id}
-                kind="group"
-                name={getDisplayName() ?? ''}
-                canEdit={isTutor && !isPaused}
-              />
+      <div className="flex w-full min-w-0 flex-col gap-2">
+        <div className="flex min-w-0 flex-row items-center gap-3 sm:gap-4">
+          <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
+            {nameRow}
+            <div className="hidden min-w-0 shrink-0 flex-wrap items-center gap-2 min-[961px]:flex">
+              {badges}
             </div>
-          )}
-          {badges}
+          </div>
+
+          <div className="hidden shrink-0 sm:block">
+            {isPaused ? null : (
+              <StartLessonButton
+                className={startLessonButtonClass}
+                classroomId={classroom.id}
+                variant="primary"
+                size="m"
+                onStart={handleStartCall}
+              />
+            )}
+          </div>
         </div>
 
-        <div className="hidden shrink-0 sm:block">
-          {isPaused ? null : (
-            <StartLessonButton
-              className={startLessonButtonClass}
-              classroomId={classroom.id}
-              variant="primary"
-              size="m"
-              onStart={handleStartCall}
-            />
-          )}
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 min-[961px]:hidden">
+          {badges}
         </div>
       </div>
 

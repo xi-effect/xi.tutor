@@ -22,6 +22,11 @@ import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../gallery
 
 type MaterialTypeTab = 'boards' | 'notes' | 'files';
 
+type MaterialsProps = {
+  filesUploadOpen?: boolean;
+  onFilesUploadOpenChange?: (open: boolean) => void;
+};
+
 const isMaterialTypeTab = (tab: unknown): tab is MaterialTypeTab =>
   tab === 'boards' || tab === 'notes' || tab === 'files';
 
@@ -30,7 +35,10 @@ const isYDocMaterial = (
 ): material is ClassroomMaterialsT & { content_kind: YDocContentKind } =>
   material.content_kind === 'note' || material.content_kind === 'board';
 
-const ClassroomMaterialsGallery = () => {
+const ClassroomMaterialsGallery = ({
+  filesUploadOpen,
+  onFilesUploadOpenChange,
+}: MaterialsProps) => {
   const { t } = useTranslation('classroom');
   const { t: tMaterials } = useTranslation('materials');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -97,7 +105,13 @@ const ClassroomMaterialsGallery = () => {
   );
 
   if (activeTab === 'files') {
-    return <ClassroomFiles classroomId={classroomId} />;
+    return (
+      <ClassroomFiles
+        classroomId={classroomId}
+        uploadOpen={filesUploadOpen}
+        onUploadOpenChange={onFilesUploadOpenChange}
+      />
+    );
   }
 
   return (
@@ -153,8 +167,8 @@ const ClassroomMaterialsGallery = () => {
   );
 };
 
-export const Materials = () => (
+export const Materials = (props: MaterialsProps) => (
   <LibraryTagsUiProvider>
-    <ClassroomMaterialsGallery />
+    <ClassroomMaterialsGallery {...props} />
   </LibraryTagsUiProvider>
 );

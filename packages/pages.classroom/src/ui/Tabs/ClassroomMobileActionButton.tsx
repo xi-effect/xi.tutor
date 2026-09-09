@@ -36,6 +36,7 @@ type ClassroomMobileActionButtonProps = {
   isGroupInviteModalOpen: boolean;
   onAddMaterial: (contentKind: ContentKind, studentAccessMode: StudentAccessMode) => void;
   onOpenInvoiceModal: () => void;
+  onOpenUploadFiles: () => void;
   onDeleteClassroom: () => void;
   onStudentsModalChange: (open: boolean) => void;
   onGroupInviteModalChange: (open: boolean) => void;
@@ -120,6 +121,7 @@ export const ClassroomMobileActionButton = ({
   isGroupInviteModalOpen,
   onAddMaterial,
   onOpenInvoiceModal,
+  onOpenUploadFiles,
   onDeleteClassroom,
   onStudentsModalChange,
   onGroupInviteModalChange,
@@ -195,6 +197,22 @@ export const ClassroomMobileActionButton = ({
         }));
     }
 
+    if (currentTab === 'files') {
+      return [
+        {
+          id: 'upload-files',
+          label: t('actions.uploadFiles'),
+          description: t('actions.uploadFilesDescription'),
+          Icon: Add,
+          umamiEvent: 'classroom-files-upload',
+          onClick: () => {
+            closeDrawer();
+            onOpenUploadFiles();
+          },
+        },
+      ];
+    }
+
     if (currentTab === 'payments') {
       return [
         {
@@ -239,6 +257,7 @@ export const ClassroomMobileActionButton = ({
     onDeleteClassroom,
     onGroupInviteModalChange,
     onOpenInvoiceModal,
+    onOpenUploadFiles,
     onStudentsModalChange,
     t,
   ]);
@@ -262,10 +281,10 @@ export const ClassroomMobileActionButton = ({
 
   return createPortal(
     <>
-      <div className="pointer-events-none fixed bottom-[76px] left-1/2 z-40 -translate-x-1/2">
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex h-16 items-start justify-center">
         <ActionButton
           onClick={() => setDrawerOpen(true)}
-          classname="pointer-events-auto !relative !right-auto !bottom-auto h-[52px] w-[52px] !rounded-full p-0 shadow-[0_8px_24px_rgba(0,0,0,0.28)]"
+          classname="pointer-events-auto !relative !right-auto !bottom-auto h-[52px] w-[52px] !-translate-y-1/2 !rounded-full p-0 shadow-[0_8px_24px_rgba(0,0,0,0.28)]"
         />
       </div>
 

@@ -32,9 +32,15 @@ import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../gallery
 
 type ClassroomFilesProps = {
   classroomId: string;
+  uploadOpen?: boolean;
+  onUploadOpenChange?: (open: boolean) => void;
 };
 
-export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
+export const ClassroomFiles = ({
+  classroomId,
+  uploadOpen: uploadOpenProp,
+  onUploadOpenChange,
+}: ClassroomFilesProps) => {
   const { t } = useTranslation('classroom');
   const { t: tMaterials } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
@@ -47,7 +53,9 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
   const roleReady = !isUserLoading && user != null;
   const [filters, setFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
-  const [uploadOpen, setUploadOpen] = useState(false);
+  const [internalUploadOpen, setInternalUploadOpen] = useState(false);
+  const uploadOpen = onUploadOpenChange ? Boolean(uploadOpenProp) : internalUploadOpen;
+  const setUploadOpen = onUploadOpenChange ?? setInternalUploadOpen;
   const listRef = useRef<HTMLDivElement>(null);
   const detachMutation = useDetachClassroomFile();
   const filtersActive = hasActiveFilesFilters(filters);
@@ -115,7 +123,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
               <Button
                 type="button"
                 variant="primary"
-                className="text-text-on-accent ml-auto h-8! gap-2 rounded-[10px] px-4 font-medium"
+                className="text-text-on-accent ml-auto hidden h-8! gap-2 rounded-[10px] px-4 font-medium min-[961px]:inline-flex"
                 onClick={() => setUploadOpen(true)}
                 data-umami-event="classroom-files-upload"
               >

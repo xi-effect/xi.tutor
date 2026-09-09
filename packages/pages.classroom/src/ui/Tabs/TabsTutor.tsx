@@ -74,6 +74,7 @@ export const TabsTutor = () => {
   );
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isFilesUploadOpen, setIsFilesUploadOpen] = useState(false);
   const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -158,6 +159,8 @@ export const TabsTutor = () => {
           <SharedTabsContent
             currentTab={currentTab}
             onOpenInvoiceModal={isPaused ? undefined : () => setIsInvoiceModalOpen(true)}
+            filesUploadOpen={isFilesUploadOpen}
+            onFilesUploadOpenChange={setIsFilesUploadOpen}
             extraContent={
               <Tabs.Content
                 className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain data-[state=inactive]:hidden"
@@ -183,6 +186,7 @@ export const TabsTutor = () => {
             isGroupInviteModalOpen={isGroupInviteModalOpen}
             onAddMaterial={handleAddMaterial}
             onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+            onOpenUploadFiles={() => setIsFilesUploadOpen(true)}
             onDeleteClassroom={handleDeleteClassroomClick}
             onStudentsModalChange={setIsStudentsModalOpen}
             onGroupInviteModalChange={setIsGroupInviteModalOpen}

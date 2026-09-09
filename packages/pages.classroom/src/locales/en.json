@@ -17,6 +17,8 @@
     "inviteToGroupDescription": "Send a group invite link",
     "createInvoice": "Create invoice",
     "createInvoiceDescription": "Issue an invoice for a completed lesson",
+    "uploadFiles": "Upload files",
+    "uploadFilesDescription": "Add files to the classroom",
     "deleteClassroom": "Delete classroom",
     "deleteClassroomDescription": "The classroom and all related data will be deleted",
     "deleting": "Deleting...",

@@ -17,6 +17,8 @@
     "inviteToGroupDescription": "Отправьте ссылку-приглашение в группу",
     "createInvoice": "Создать счёт на оплату",
     "createInvoiceDescription": "Выставьте счёт ученику за проведённое занятие",
+    "uploadFiles": "Загрузить файлы",
+    "uploadFilesDescription": "Добавьте файлы в кабинет",
     "deleteClassroom": "Удалить кабинет",
     "deleteClassroomDescription": "Кабинет и все связанные данные будут удалены",
     "deleting": "Удаление...",
