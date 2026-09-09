@@ -31,6 +31,16 @@
     "daysLeftValue_many": "{{count}} дней",
     "daysLeftValue_other": "{{count}} дней"
   },
+  "paymentMethod": {
+    "title": "Способ оплаты",
+    "cardNumber": "•••• {{last4}}",
+    "unlinked": "Способ оплаты не привязан",
+    "unlink": "Отвязать карту",
+    "unlinkTitle": "Отвязать карту?",
+    "unlinkDescription": "Автоматическое продление подписки будет отключено.",
+    "unlinkConfirm": "Отвязать",
+    "cancel": "Отменить"
+  },
   "compare": {
     "title": "Сравнение тарифов",
     "back": "Назад",

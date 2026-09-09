@@ -1,6 +1,7 @@
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
 import { canUseFeature, type SubscriptionFeatureId } from './features';
 import { getCurrentTariff } from './limits';
+import { getSavedPaymentMethod } from './paymentMethod';
 import { getRemainingSubscriptionDays } from './period';
 import { useSubscriptionStore } from './store';
 import { TARIFFS, type TariffLimits } from './tariffs';
@@ -38,3 +39,17 @@ export const useCanUseFeature = (featureId: SubscriptionFeatureId): boolean => {
 
 export const useCurrentTariff = () =>
   getCurrentTariff(useSubscriptionStore((state) => state.planId));
+
+export const useSavedPaymentMethod = (userId: number | undefined) => {
+  const savedPaymentMethods = useSubscriptionStore((state) => state.savedPaymentMethods) ?? {};
+  const unlinkPaymentMethod = useSubscriptionStore((state) => state.unlinkPaymentMethod);
+  const method = userId == null ? null : getSavedPaymentMethod(savedPaymentMethods, userId);
+
+  return {
+    method,
+    unlink: () => {
+      if (userId == null) return;
+      unlinkPaymentMethod(userId);
+    },
+  };
+};

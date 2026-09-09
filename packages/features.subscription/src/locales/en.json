@@ -29,6 +29,16 @@
     "daysLeftValue_one": "{{count}} day",
     "daysLeftValue_other": "{{count}} days"
   },
+  "paymentMethod": {
+    "title": "Payment method",
+    "cardNumber": "•••• {{last4}}",
+    "unlinked": "No payment method linked",
+    "unlink": "Unlink card",
+    "unlinkTitle": "Unlink card?",
+    "unlinkDescription": "Automatic subscription renewal will be turned off.",
+    "unlinkConfirm": "Unlink",
+    "cancel": "Cancel"
+  },
   "compare": {
     "title": "Compare plans",
     "back": "Back",

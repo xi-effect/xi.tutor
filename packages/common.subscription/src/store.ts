@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { type LinkedPaymentMethod } from './paymentMethod';
 import { addDaysFromLaterOf } from './period';
 import { DEFAULT_PRO_RENEWS_AT, type PlanId } from './tariffs';
 
@@ -18,10 +19,13 @@ export type SubscriptionState = {
   autoRenew: boolean;
   renewsAt: string;
   mock: SubscriptionMock;
+  /** null — карта отвязана; отсутствие ключа — mock привязанной карты. */
+  savedPaymentMethods: Record<string, LinkedPaymentMethod | null>;
   setPlanId: (planId: PlanId) => void;
   setAutoRenew: (autoRenew: boolean) => void;
   setRenewsAt: (renewsAt: string) => void;
   patchMock: (patch: Partial<SubscriptionMock>) => void;
+  unlinkPaymentMethod: (userId: number) => void;
   activatePro: () => void;
   applyPromoDays: (days: number) => void;
   revertToBasic: () => void;
@@ -42,6 +46,7 @@ export const useSubscriptionStore = create<SubscriptionState>()(
       autoRenew: true,
       renewsAt: DEFAULT_PRO_RENEWS_AT,
       mock: defaultMock,
+      savedPaymentMethods: {},
       setPlanId: (planId) =>
         set((state) => ({
           planId,
@@ -50,6 +55,14 @@ export const useSubscriptionStore = create<SubscriptionState>()(
       setAutoRenew: (autoRenew) => set({ autoRenew }),
       setRenewsAt: (renewsAt) => set({ renewsAt }),
       patchMock: (patch) => set((state) => ({ mock: { ...state.mock, ...patch } })),
+      unlinkPaymentMethod: (userId) =>
+        set((state) => ({
+          autoRenew: false,
+          savedPaymentMethods: {
+            ...state.savedPaymentMethods,
+            [String(userId)]: null,
+          },
+        })),
       activatePro: () =>
         set((state) => {
           const base =
@@ -86,6 +99,7 @@ export const useSubscriptionStore = create<SubscriptionState>()(
         autoRenew: state.autoRenew,
         renewsAt: state.renewsAt,
         mock: state.mock,
+        savedPaymentMethods: state.savedPaymentMethods,
       }),
     },
   ),

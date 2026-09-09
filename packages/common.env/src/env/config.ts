@@ -58,6 +58,19 @@ const env = {
   ),
   VITE_DEVTOOLS_ENABLED: asBoolean(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),
   VITE_ENABLE_X_TESTING: asBoolean(import.meta.env.VITE_ENABLE_X_TESTING, false),
+  /**
+   * Временный allowlist для UI привязанной карты ЮKassa на production.
+   * Список email через запятую. Не связан с SUBSCRIPTION_BILLING_ENABLED.
+   */
+  VITE_YOOKASSA_SAVED_CARD_UI_ALLOWED_EMAILS: asString(
+    import.meta.env.VITE_YOOKASSA_SAVED_CARD_UI_ALLOWED_EMAILS,
+    '',
+  ),
+  /** Список числовых user id через запятую — альтернатива email-allowlist. */
+  VITE_YOOKASSA_SAVED_CARD_UI_ALLOWED_USER_IDS: asString(
+    import.meta.env.VITE_YOOKASSA_SAVED_CARD_UI_ALLOWED_USER_IDS,
+    '',
+  ),
   VITE_ENABLE_PERFORMANCE_PROFILING: asBoolean(
     import.meta.env.VITE_ENABLE_PERFORMANCE_PROFILING,
     false,

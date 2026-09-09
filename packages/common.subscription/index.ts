@@ -1,4 +1,8 @@
-export { SUBSCRIPTION_BILLING_ENABLED } from './src/config';
+export {
+  SUBSCRIPTION_BILLING_ENABLED,
+  YOOKASSA_SAVED_CARD_UI_ALLOWED_EMAILS,
+  YOOKASSA_SAVED_CARD_UI_ALLOWED_USER_IDS,
+} from './src/config';
 export {
   DEFAULT_PRO_RENEWS_AT,
   GB,
@@ -63,6 +67,16 @@ export {
   useCanUseFeature,
   useCurrentTariff,
   usePlanLimits,
+  useSavedPaymentMethod,
   useSubscriptionPlan,
 } from './src/hooks';
 export { isSubscriptionDebugEnabled } from './src/debug';
+export {
+  getSavedPaymentMethod,
+  MOCK_LINKED_PAYMENT_METHOD,
+  type LinkedPaymentMethod,
+} from './src/paymentMethod';
+export {
+  isYookassaSavedCardUiEnabled,
+  type YookassaSavedCardUiUser,
+} from './src/yookassaSavedCardUi';

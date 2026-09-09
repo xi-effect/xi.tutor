@@ -1,8 +1,9 @@
 import { InfoCircle } from '@xipkg/icons';
-import { useSubscriptionPlan } from 'common.subscription';
+import { useSubscriptionPlan, type YookassaSavedCardUiUser } from 'common.subscription';
 import { useTranslation } from 'react-i18next';
+import { PaymentMethodSettings } from './PaymentMethodSettings';
 
-export const SubscriptionOverview = () => {
+export const SubscriptionOverview = ({ user }: { user?: YookassaSavedCardUiUser }) => {
   const { t } = useTranslation('subscription');
   const { planId } = useSubscriptionPlan();
 
@@ -22,6 +23,8 @@ export const SubscriptionOverview = () => {
           <span className="text-text-primary text-sm font-medium">{t(`plans.${planId}`)}</span>
         </div>
       </section>
+
+      <PaymentMethodSettings user={user} />
     </div>
   );
 };
