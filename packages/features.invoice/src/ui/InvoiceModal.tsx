@@ -95,10 +95,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
           <ModalDescription className="sr-only">{t('modal.description')}</ModalDescription>
           <Form {...form}>
             <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col gap-6 max-sm:p-0">
-              <div>
-                <p className="text-text-primary max-sm:text-base">{t('modal.intro1')}</p>
-                <p className="text-text-primary">{t('modal.intro2')}</p>
-              </div>
+              <p className="text-text-primary max-sm:text-base">{t('modal.intro')}</p>
 
               <ClassroomSelector control={control} />
 
@@ -157,7 +154,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                       <div />
                       <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
                       <div className="w-[12px]" />
-                      <span className="dark:text-text-primary text-right">{totalLessons}</span>
+                      <span className="dark:text-text-primary text-right">
+                        {items.length > 1 ? totalLessons : ''}
+                      </span>
                       <div className="w-[12px]" />
                       <span className="dark:text-text-primary text-right">
                         {totalInvoicePrice} ₽
@@ -181,7 +180,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                     ))}
                     <div className="grid grid-cols-3 items-center gap-2">
                       <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
-                      <span className="dark:text-text-primary text-center">{totalLessons}</span>
+                      <span className="dark:text-text-primary text-center">
+                        {items.length > 1 ? totalLessons : ''}
+                      </span>
                       <span className="dark:text-text-primary text-right">
                         {totalInvoicePrice} ₽
                       </span>

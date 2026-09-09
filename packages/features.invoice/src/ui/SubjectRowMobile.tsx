@@ -10,7 +10,7 @@ import {
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { useTranslation } from 'react-i18next';
-import { roundMoney } from '../model';
+import { PRICE_STEPPER_STEP, roundMoney } from '../model';
 
 type SubjectRowPropsT = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,7 +81,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                     type="number"
                     placeholder={t('placeholders.price')}
                     min={DEFAULT_VALUE}
-                    step={0.01}
+                    step={PRICE_STEPPER_STEP}
                     variant="s"
                     after={<span className="text-text-secondary">₽</span>}
                     onChange={(e) => {

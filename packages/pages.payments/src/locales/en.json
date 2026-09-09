@@ -10,9 +10,9 @@
   },
   "empty": {
     "tutorTitle": "No invoices yet",
-    "studentTitle": "No invoices yet",
+    "studentTitle": "Invoices from tutors will appear here",
     "tutorDescription": "Create an invoice — it will appear in this list.",
-    "studentDescription": "When a tutor issues an invoice, it will appear here.",
+    "studentDescription": "Invoices help you keep track of payments",
     "templatesTitle": "No payment types yet",
     "templatesDescription": "Create a payment type — it will appear in this list.",
     "helpLink": "Learn more about how payments work"
