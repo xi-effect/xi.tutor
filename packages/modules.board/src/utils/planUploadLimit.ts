@@ -1,7 +1,11 @@
 import i18n from 'i18next';
 import { toast } from 'sonner';
 import { bytesToMb, getCurrentTariff, tryStartUpload, type UploadKind } from 'common.subscription';
-import { trackUploadEvaluationLimit } from 'common.utils';
+import {
+  rejectFileUploadFromEvaluation,
+  trackUploadEvaluationLimit,
+  type FileUploadAttempt,
+} from 'common.utils';
 
 export const getPlanSizeLimitMessage = (kind: UploadKind): string => {
   const tariff = getCurrentTariff();
@@ -17,11 +21,18 @@ export const getPlanSizeLimitMessage = (kind: UploadKind): string => {
   });
 };
 
-export const assertBoardUploadAllowed = (file: File, kind: UploadKind): boolean => {
+export const assertBoardUploadAllowed = (
+  file: File,
+  kind: UploadKind,
+  attempt?: FileUploadAttempt,
+): boolean => {
   const result = tryStartUpload(file, kind);
   if (result.ok) return true;
 
   trackUploadEvaluationLimit(result, file, 'board');
+  if (attempt) {
+    rejectFileUploadFromEvaluation(attempt, result);
+  }
 
   if (result.reason === 'size') {
     toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {

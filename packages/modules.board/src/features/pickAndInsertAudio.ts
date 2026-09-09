@@ -13,7 +13,11 @@ import { resolveShapeCoordinates } from '../utils';
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxFileBytes } from 'common.subscription';
-import { trackBoardObjectsLimitReached } from 'common.utils';
+import {
+  beginFileUploadAttempt,
+  rejectFileUploadFromError,
+  trackBoardObjectsLimitReached,
+} from 'common.utils';
 import i18n from 'i18next';
 
 const MAX_AUDIO_SHAPES = 20;
@@ -44,7 +48,10 @@ async function getAudioDuration(file: File): Promise<number> {
 }
 
 export async function insertAudio(editor: Editor, file: File, token: string) {
+  const attempt = beginFileUploadAttempt('board', file);
+
   if (!ALLOWED_AUDIO_MIME_TYPES.has(file.type)) {
+    attempt.reject('unsupported_type');
     toast.error(i18n.t('toast.unsupportedFormat', { ns: 'board' }), {
       description: i18n.t('toast.audioFormatDesc', { ns: 'board' }),
       duration: 5000,
@@ -54,6 +61,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
 
   const signatureValid = await checkAudioMagicBytes(file);
   if (!signatureValid) {
+    attempt.reject('unsupported_type');
     toast.error(i18n.t('toast.audioInvalidFormat', { ns: 'board' }), {
       description: i18n.t('toast.audioInvalidFormatDesc', { ns: 'board' }),
       duration: 5000,
@@ -61,7 +69,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
     return;
   }
 
-  if (!assertBoardUploadAllowed(file, 'other')) {
+  if (!assertBoardUploadAllowed(file, 'other', attempt)) {
     return;
   }
 
@@ -69,6 +77,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
 
   if (existingCount >= MAX_AUDIO_SHAPES) {
     trackBoardObjectsLimitReached('audio');
+    attempt.reject('unknown');
     toast.error(i18n.t('toast.audioLimitTitle', { ns: 'board' }), {
       description: i18n.t('toast.audioLimitDesc', { ns: 'board', max: MAX_AUDIO_SHAPES }),
       duration: 5000,
@@ -115,8 +124,10 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
         type: 'audio',
         props: { src: serverUrl },
       });
+      attempt.succeed();
     } catch (err) {
       console.error('[insertAudio] Upload failed:', err);
+      rejectFileUploadFromError(attempt, err);
       const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.audioSizeDesc',
         failedTitleKey: 'toast.audioUploadError',

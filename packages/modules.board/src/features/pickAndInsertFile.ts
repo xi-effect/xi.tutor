@@ -18,7 +18,13 @@ import {
 import { tryStartUpload } from 'common.subscription';
 import { getMaxFileBytes } from 'common.subscription';
 import { getPlanSizeLimitMessage } from '../utils/planUploadLimit';
-import { trackBoardObjectsLimitReached, trackUploadEvaluationLimit } from 'common.utils';
+import {
+  beginFileUploadAttempt,
+  rejectFileUploadFromError,
+  rejectFileUploadFromEvaluation,
+  trackBoardObjectsLimitReached,
+  trackUploadEvaluationLimit,
+} from 'common.utils';
 import i18n from 'i18next';
 
 const MAX_FILE_SHAPES = 20;
@@ -30,7 +36,8 @@ export async function insertFile(
   token: string,
   addToQueue: (request: Omit<RetryRequest, 'id' | 'timestamp'>) => void,
 ) {
-  const validationError = validateFile(editor, file);
+  const attempt = beginFileUploadAttempt('board', file);
+  const validationError = validateFile(editor, file, attempt);
 
   if (validationError) {
     if (validationError.title) {
@@ -70,7 +77,10 @@ export async function insertFile(
   await saveFileToDB(shapeId, { file, token });
 
   try {
-    if (!editor.getShape(shapeId)) return; // если shape уже удалён
+    if (!editor.getShape(shapeId)) {
+      attempt.reject('unknown');
+      return;
+    }
 
     editor.updateShape<FileShape>({
       id: shapeId,
@@ -91,8 +101,10 @@ export async function insertFile(
       },
     });
 
+    attempt.succeed();
     toast.success(i18n.t('toast.fileUploadSuccess', { ns: 'board' }), { duration: 5000 });
   } catch (err) {
+    rejectFileUploadFromError(attempt, err);
     if (!editor.getShape(shapeId)) return;
     const isOffline = !navigator.onLine;
 
@@ -142,8 +154,13 @@ export async function insertFile(
   }
 }
 
-function validateFile(editor: Editor, file: File) {
+function validateFile(
+  editor: Editor,
+  file: File,
+  attempt: ReturnType<typeof beginFileUploadAttempt>,
+) {
   if (!ALLOWED_FILE_MIME_TYPES.has(file.type)) {
+    attempt.reject('unsupported_type');
     return {
       title: i18n.t('toast.unsupportedFormat', { ns: 'board' }),
       description: i18n.t('toast.fileFormatDesc', { ns: 'board' }),
@@ -153,6 +170,7 @@ function validateFile(editor: Editor, file: File) {
   const evaluation = tryStartUpload(file, 'other');
   if (!evaluation.ok) {
     trackUploadEvaluationLimit(evaluation, file, 'board');
+    rejectFileUploadFromEvaluation(attempt, evaluation);
     if (evaluation.reason === 'storage') {
       return { title: '', description: '' };
     }
@@ -166,6 +184,7 @@ function validateFile(editor: Editor, file: File) {
 
   if (count >= MAX_FILE_SHAPES) {
     trackBoardObjectsLimitReached('file');
+    attempt.reject('unknown');
     return {
       title: i18n.t('toast.fileLimitTitle', { ns: 'board' }),
       description: i18n.t('toast.fileLimitDesc', { ns: 'board', max: MAX_FILE_SHAPES }),

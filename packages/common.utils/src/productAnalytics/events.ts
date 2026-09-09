@@ -94,6 +94,11 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   // Product limits (baseline before subscription)
   PRODUCT_LIMIT_REACHED: 'product_limit_reached',
 
+  // File upload funnel
+  FILE_UPLOAD_ATTEMPTED: 'file_upload_attempted',
+  FILE_UPLOAD_SUCCEEDED: 'file_upload_succeeded',
+  FILE_UPLOAD_REJECTED: 'file_upload_rejected',
+
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',
   ACTIVATION_SUPPORT_CONTACTED: 'activation_support_contacted',

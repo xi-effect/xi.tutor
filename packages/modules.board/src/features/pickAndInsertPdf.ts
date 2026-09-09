@@ -10,7 +10,11 @@ import { resolveShapeCoordinates } from '../utils';
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxFileBytes } from 'common.subscription';
-import { trackBoardObjectsLimitReached } from 'common.utils';
+import {
+  beginFileUploadAttempt,
+  rejectFileUploadFromError,
+  trackBoardObjectsLimitReached,
+} from 'common.utils';
 import i18n from 'i18next';
 
 const MAX_PDF_SHAPES = 50;
@@ -40,7 +44,10 @@ function withPdfMimeType(file: File): File {
 }
 
 export async function insertPdf(editor: Editor, file: File, token: string) {
+  const attempt = beginFileUploadAttempt('board', file);
+
   if (!isPdfFile(file) && !(await sniffIsPdf(file))) {
+    attempt.reject('unsupported_type');
     toast.error(i18n.t('toast.unsupportedFormat', { ns: 'board' }), {
       description: i18n.t('toast.pdfFormatDesc', { ns: 'board' }),
       duration: 5000,
@@ -50,7 +57,7 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
 
   file = withPdfMimeType(file);
 
-  if (!assertBoardUploadAllowed(file, 'other')) {
+  if (!assertBoardUploadAllowed(file, 'other', attempt)) {
     return;
   }
 
@@ -58,6 +65,7 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
 
   if (existingPdfCount >= MAX_PDF_SHAPES) {
     trackBoardObjectsLimitReached('pdf');
+    attempt.reject('unknown');
     toast.error(i18n.t('toast.pdfLimitTitle', { ns: 'board' }), {
       description: i18n.t('toast.pdfLimitDesc', { ns: 'board', max: MAX_PDF_SHAPES }),
       duration: 5000,
@@ -140,8 +148,10 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
         type: 'pdf',
         props: { src: serverUrl },
       });
+      attempt.succeed();
     } catch (err) {
       console.error('[insertPdf] Upload failed:', err);
+      rejectFileUploadFromError(attempt, err);
       const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.pdfSizeDesc',
         failedTitleKey: 'toast.pdfUploadError',

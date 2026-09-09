@@ -28,6 +28,10 @@ import type {
   ProductLimitSizeBucket,
   ProductLimitSource,
   ProductLimitType,
+  FileUploadFileCategory,
+  FileUploadRejectReason,
+  FileUploadSizeBucket,
+  FileUploadSource,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsInviteKind,
   ProductAnalyticsLessonType,
@@ -524,6 +528,26 @@ export type ProductAnalyticsEventMap = {
     size_bucket?: ProductLimitSizeBucket;
     object_kind?: ProductLimitObjectKind;
     blocked_on?: ProductLimitBlockedOn;
+  };
+
+  file_upload_attempted: {
+    event_version?: number;
+    source: FileUploadSource;
+    file_category: FileUploadFileCategory;
+    size_bucket: FileUploadSizeBucket;
+  };
+  file_upload_succeeded: {
+    event_version?: number;
+    source: FileUploadSource;
+    file_category: FileUploadFileCategory;
+    size_bucket: FileUploadSizeBucket;
+  };
+  file_upload_rejected: {
+    event_version?: number;
+    source: FileUploadSource;
+    reason: FileUploadRejectReason;
+    file_category: FileUploadFileCategory;
+    size_bucket: FileUploadSizeBucket;
   };
 
   activation_help_opened: BaseProps & {

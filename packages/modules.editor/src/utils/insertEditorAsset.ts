@@ -6,6 +6,8 @@ import {
   cloneDroppedFile,
   isFileNameTooLong,
   MAX_FILENAME_LENGTH,
+  beginFileUploadAttempt,
+  rejectFileUploadFromError,
   trackFileSizeLimitFromUploadError,
 } from 'common.services';
 import {
@@ -55,8 +57,10 @@ export async function insertEditorAsset(
   activeBlock?: ActiveBlockT,
 ) {
   file = cloneDroppedFile(file);
+  const attempt = beginFileUploadAttempt('other', file);
 
   if (isFileNameTooLong(file.name)) {
+    attempt.reject('unknown');
     toast.error(i18n.t('upload.fileNameTooLong', { ns: 'editor' }), {
       description: i18n.t('upload.fileNameTooLongDesc', {
         ns: 'editor',
@@ -71,16 +75,17 @@ export async function insertEditorAsset(
   try {
     switch (type) {
       case 'image':
-        return insertImageFile(editor, file, token, activeBlock);
+        return insertImageFile(editor, file, token, activeBlock, attempt);
       case 'audio':
-        return insertAudioFile(editor, file, token, activeBlock);
+        return insertAudioFile(editor, file, token, activeBlock, attempt);
       case 'pdf':
-        return insertPdfFile(editor, file, token, activeBlock);
+        return insertPdfFile(editor, file, token, activeBlock, attempt);
       case 'presentation':
-        return insertPresentationFile(editor, file, token, activeBlock);
+        return insertPresentationFile(editor, file, token, activeBlock, attempt);
       case 'file':
-        return insertFileBlock(editor, file, token, activeBlock);
+        return insertFileBlock(editor, file, token, activeBlock, attempt);
       default:
+        attempt.reject('unsupported_type');
         toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'editor' }), {
           description: i18n.t('toast.fileCannotUpload', { ns: 'editor', name: file.name }),
         });
@@ -88,6 +93,7 @@ export async function insertEditorAsset(
     }
   } catch (err) {
     console.error(err);
+    rejectFileUploadFromError(attempt, err);
     trackFileSizeLimitFromUploadError(err, file, 'other');
     toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
     return false;

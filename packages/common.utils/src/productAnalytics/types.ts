@@ -151,6 +151,16 @@ export type ProductLimitFileCategory = 'image' | 'document' | 'other';
 
 export type ProductLimitSizeBucket = '0_5mb' | '5_30mb' | '30mb_plus';
 
+export type FileUploadSource = ProductLimitSource;
+
+export type FileUploadFileCategory = ProductLimitFileCategory;
+
+/** Корзины размера для воронки загрузки. Точный size в Umami не отправляем. */
+export type FileUploadSizeBucket = '0_1mb' | '1_5mb' | '5_30mb' | '30mb_plus';
+
+export type FileUploadRejectReason =
+  'file_too_large' | 'unsupported_type' | 'upload_error' | 'unknown';
+
 export type ProductLimitBlockedOn = 'client' | 'api';
 
 export type ProductLimitObjectKind = 'elements' | 'pdf' | 'file' | 'presentation' | 'audio';

@@ -3,7 +3,8 @@
 Полный реестр событий аналитики, сгруппированный по страницам приложения.
 
 > Воронка активации (новые snake_case события, `activation_flow_id`, `attempt_id`): см. [`docs/analytics/activation-events.md`](./analytics/activation-events.md).  
-> Семантика онбординга: [`docs/analytics/onboarding-events.md`](./analytics/onboarding-events.md).
+> Семантика онбординга: [`docs/analytics/onboarding-events.md`](./analytics/onboarding-events.md).  
+> Загрузка файлов (`file_upload_*`, лимиты размера): [`docs/analytics/file-upload-events.md`](./analytics/file-upload-events.md).
 
 ---
 
@@ -52,6 +53,8 @@
 | Событие          | Способ вызова                     | Описание                              |
 | ---------------- | --------------------------------- | ------------------------------------- |
 | `profile-logout` | `data-umami-event` — клик «Выйти» | Выход из аккаунта на странице профиля |
+
+Клиентский отказ при выборе аватара (не картинка / больше 5 МиБ) даёт outcome `file_upload_rejected` с `source=other`. Успешная загрузка аватара после кропа в эту воронку пока не входит. См. [file-upload-events.md](./analytics/file-upload-events.md).
 
 ---
 
@@ -263,6 +266,16 @@
 | `student-delete-confirm` | `data-umami-event` — клик «Удалить»  | Подтверждение удаления, свойство: `student-id`     |
 | `student-delete-cancel`  | `data-umami-event` — клик «Отменить» | Отмена удаления                                    |
 
+### Файлы кабинета
+
+Тот же модал, что в материалах (`UploadFilesModal` с `classroomId`).
+
+| Событие                  | Способ вызова                         | Описание                         |
+| ------------------------ | ------------------------------------- | -------------------------------- |
+| `classroom-files-upload` | `data-umami-event` — клик «Загрузить» | Открытие модалки загрузки файлов |
+
+Исход каждой попытки — `file_upload_*` с `source=classroom`. См. [file-upload-events.md](./analytics/file-upload-events.md).
+
 ---
 
 ## `/payments` — Оплаты
@@ -351,6 +364,19 @@
 | `material-create-board-menu-open` | `data-umami-event` — клик по триггеру выпадающего меню           | Открытие меню выбора режима доступа                                          |
 | `material-create-board`           | `data-umami-event` — клик по пункту в выпадающем меню            | Создание доски, свойство: `access-mode` (read_write / read_only / no_access) |
 
+### Файлы библиотеки
+
+| Событие                           | Способ вызова                                       | Описание                                |
+| --------------------------------- | --------------------------------------------------- | --------------------------------------- |
+| `materials-files-upload`          | `data-umami-event` — клик «Загрузить» в шапке       | Открытие модалки загрузки               |
+| `materials-files-upload-select`   | `data-umami-event` — клик выбора файлов в модалке   | Открытие системного пикера              |
+| `materials-files-upload-add`      | `data-umami-event` — клик «Добавить ещё»            | Добавить файлы в текущую очередь        |
+| `materials-files-upload-cancel`   | `data-umami-event` — клик «Отменить»                | Отмена очереди загрузки                 |
+| `materials-files-reset-all`       | `data-umami-event` — сброс фильтров                 | Сброс фильтров списка файлов            |
+| `materials-files-reset-all-empty` | `data-umami-event` — сброс фильтров в пустом списке | Сброс фильтров, когда ничего не найдено |
+
+Клики выше **не** равны попытке загрузки. После выбора файла: `file_upload_attempted` → `succeeded` / `rejected` (`source=materials`). См. [file-upload-events.md](./analytics/file-upload-events.md).
+
 ---
 
 ## `/schedule` — Расписание
@@ -429,6 +455,8 @@
 ## `/board/$boardId` — Доска
 
 **Модуль:** `modules.board`
+
+Загрузка картинки, PDF, аудио, презентации или файла на холст даёт `file_upload_*` с `source=board`. Отдельного `data-umami-event` на сам drop/picker нет. См. [file-upload-events.md](./analytics/file-upload-events.md).
 
 | Событие                   | Способ вызова                                                     | Описание                                                          |
 | ------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -521,7 +549,9 @@
 Программные события продуктовой аналитики (`trackProductEvent` из `common.utils`). Отправляются только в Umami после успешного действия или при выполнении meaningful-условий. Не пишутся в основную БД.
 
 > Существующие события остаются историческими UI/clickstream-событиями.
-> Product/outcome events используются для расчёта активности, активации и retention.
+> Product/outcome events используются для расчёта активности, активации, retention и ограничений загрузки.
+
+Воронка файлов (`file_upload_attempted` / `file_upload_succeeded` / `file_upload_rejected`): [`docs/analytics/file-upload-events.md`](./analytics/file-upload-events.md).
 
 ---
 
@@ -573,16 +603,18 @@ lesson_started ◄──── (только при успехе)         lesson
 
 ### Что умеет и чего не умеет эта аналитика
 
-| Вопрос                                             | Можно ответить? | Как                                                                       |
-| -------------------------------------------------- | --------------- | ------------------------------------------------------------------------- |
-| Сколько тьюторов провели урок за неделю?           | ✅              | `lesson_duration_reached`, `duration_min=15`, уникальные пользователи     |
-| Сколько занятий длилось 45+ мин?                   | ✅              | `lesson_duration_reached`, `duration_min=45`, количество событий          |
-| Какой % занятий используют доску?                  | ✅              | `board_used_meaningfully` / `lesson_duration_reached` (`duration_min=15`) |
-| Сколько студентов в среднем на групповом уроке?    | ✅              | среднее `students_count` при `lesson_type=group`                          |
-| Сколько занятий не состоялось из-за ошибки токена? | ✅              | `call_connection_failed`, `reason=token_error`                            |
-| Конкретная причина ошибки токена (401 vs 500)?     | ❌              | нет — нужны логи `conference-service`                                     |
-| Как долго студент пробыл в конкретном занятии?     | ❌              | нет `classroom_id` в событии и нет событий от студента                    |
-| Сколько занятий упало из-за разрыва LiveKit?       | ❌              | не трекается — нужно добавить                                             |
+| Вопрос                                                | Можно ответить? | Как                                                                       |
+| ----------------------------------------------------- | --------------- | ------------------------------------------------------------------------- |
+| Сколько тьюторов провели урок за неделю?              | ✅              | `lesson_duration_reached`, `duration_min=15`, уникальные пользователи     |
+| Сколько занятий длилось 45+ мин?                      | ✅              | `lesson_duration_reached`, `duration_min=45`, количество событий          |
+| Какой % занятий используют доску?                     | ✅              | `board_used_meaningfully` / `lesson_duration_reached` (`duration_min=15`) |
+| Сколько студентов в среднем на групповом уроке?       | ✅              | среднее `students_count` при `lesson_type=group`                          |
+| Сколько занятий не состоялось из-за ошибки токена?    | ✅              | `call_connection_failed`, `reason=token_error`                            |
+| Конкретная причина ошибки токена (401 vs 500)?        | ❌              | нет — нужны логи `conference-service`                                     |
+| Как долго студент пробыл в конкретном занятии?        | ❌              | нет `classroom_id` в событии и нет событий от студента                    |
+| Сколько занятий упало из-за разрыва LiveKit?          | ❌              | не трекается — нужно добавить                                             |
+| Сколько пользователей упёрлись в лимит размера файла? | ✅              | unique `file_upload_rejected`, `reason=file_too_large`                    |
+| В каком разделе чаще режут oversized-файлы?           | ✅              | то же событие, фильтр `source`                                            |
 
 ---
 

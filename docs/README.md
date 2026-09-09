@@ -6,4 +6,5 @@
 | [analytics/activation-events.md](./analytics/activation-events.md)     | События Umami для воронки активации репетитора                                    |
 | [analytics/onboarding-events.md](./analytics/onboarding-events.md)     | Семантика и дедуп событий онбординга                                              |
 | [analytics/invite-flow-v2.md](./analytics/invite-flow-v2.md)           | Новый сценарий приглашения ученика v2: `invite_tracking_id`, метрики, дата релиза |
+| [analytics/file-upload-events.md](./analytics/file-upload-events.md)   | Воронка загрузки файлов: `file_upload_attempted` / `succeeded` / `rejected`       |
 | [umami-events-svodnoe-opisanie.md](./umami-events-svodnoe-opisanie.md) | Сводный реестр всех Umami-событий по страницам                                    |

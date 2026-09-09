@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { myAssetStore } from '../../../features/imageStore';
 import i18n from 'i18next';
 import { assertBoardUploadAllowed } from '../../../utils/planUploadLimit';
+import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
 
 export async function insertFlipCardImage(
   editor: Editor,
@@ -13,10 +14,13 @@ export async function insertFlipCardImage(
 ) {
   if (!file.size) {
     toast.error(i18n.t('toast.fileEmpty', { ns: 'board' }));
+    beginFileUploadAttempt('board', file).reject('unknown');
     return;
   }
 
-  if (!assertBoardUploadAllowed(file, 'image')) {
+  const attempt = beginFileUploadAttempt('board', file);
+
+  if (!assertBoardUploadAllowed(file, 'image', attempt)) {
     return;
   }
 
@@ -24,6 +28,7 @@ export async function insertFlipCardImage(
   try {
     bitmap = await createImageBitmap(file);
   } catch (err) {
+    attempt.reject('upload_error');
     toast.error(i18n.t('toast.imageOpenError', { ns: 'board' }));
     throw err;
   }
@@ -72,8 +77,10 @@ export async function insertFlipCardImage(
         meta: {},
       },
     ]);
+    attempt.succeed();
   } catch (err) {
     console.error('Flip card image upload failed:', err);
+    rejectFileUploadFromError(attempt, err);
     toast.error(i18n.t('toast.imageUploadError', { ns: 'board' }));
     editor.deleteAssets([tempAssetId]);
   } finally {

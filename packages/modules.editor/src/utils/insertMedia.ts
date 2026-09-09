@@ -21,9 +21,13 @@ import { getAudioDuration } from './getAudioDuration';
 import { insertAtomBlock } from './insertAtomBlock';
 import { tryStartUpload } from 'common.subscription';
 import {
+  beginFileUploadAttempt,
+  rejectFileUploadFromError,
+  rejectFileUploadFromEvaluation,
   trackFileSizeLimitFromUploadError,
   trackProductLimitReached,
   trackUploadEvaluationLimit,
+  type FileUploadAttempt,
   type ProductLimitObjectKind,
 } from 'common.services';
 import { ActiveBlockT } from '../types';
@@ -34,10 +38,15 @@ function t(key: string, options?: Record<string, unknown>) {
   return i18n.t(key, { ns: 'editor', ...options });
 }
 
-function assertEditorUpload(file: File, kind: 'image' | 'other'): boolean {
+function assertEditorUpload(
+  file: File,
+  kind: 'image' | 'other',
+  attempt: FileUploadAttempt,
+): boolean {
   const result = tryStartUpload(file, kind);
   if (result.ok) return true;
   trackUploadEvaluationLimit(result, file, 'other');
+  rejectFileUploadFromEvaluation(attempt, result);
   if (result.reason === 'size') {
     toast.error(t('toast.fileTooLarge'), {
       description: i18n.t('limits.fileTooLarge', {
@@ -81,10 +90,12 @@ export async function insertImageFile(
   file: File,
   token: string,
   activeBlock?: ActiveBlockT,
+  attempt: FileUploadAttempt = beginFileUploadAttempt('other', file),
 ) {
   file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
 
   if (isFileNameTooLong(file.name)) {
+    attempt.reject('unknown');
     toast.error(t('upload.fileNameTooLong'), {
       description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
     });
@@ -94,6 +105,7 @@ export async function insertImageFile(
   try {
     const optimized = await optimizeImage(file);
     const src = await uploadFileIdRequest({ file: optimized, token });
+    attempt.succeed();
     return insertAtomBlock(
       editor,
       {
@@ -104,6 +116,7 @@ export async function insertImageFile(
     );
   } catch (err) {
     console.error(err);
+    rejectFileUploadFromError(attempt, err);
     trackFileSizeLimitFromUploadError(err, file, 'other');
     toast.error(t('toast.imageUploadError'));
     return false;
@@ -115,6 +128,7 @@ export async function insertAudioFile(
   file: File,
   token: string,
   activeBlock?: ActiveBlockT,
+  attempt: FileUploadAttempt = beginFileUploadAttempt('other', file),
 ) {
   const ext = getFileExtension(file.name);
   const looksLikeAudio =
@@ -122,51 +136,61 @@ export async function insertAudioFile(
     (ext !== null && ['mp3', 'ogg', 'wav', 'm4a'].includes(ext));
 
   if (!looksLikeAudio) {
+    attempt.reject('unsupported_type');
     toast.error(t('toast.unsupportedFormat'), { description: t('toast.audioFormatDesc') });
     return false;
   }
 
   if (!(await checkAudioMagicBytes(file))) {
+    attempt.reject('unsupported_type');
     toast.error(t('toast.audioInvalidFormat'), { description: t('toast.audioInvalidFormatDesc') });
     return false;
   }
 
   if (isFileNameTooLong(file.name)) {
+    attempt.reject('unknown');
     toast.error(t('upload.fileNameTooLong'), {
       description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
     });
     return false;
   }
 
-  if (!assertEditorUpload(file, 'other')) {
+  if (!assertEditorUpload(file, 'other', attempt)) {
     return false;
   }
 
   if (countNodes(editor, 'audio') >= MAX_AUDIO_BLOCKS) {
     trackEditorObjectLimit('audio');
+    attempt.reject('unknown');
     toast.error(t('toast.audioLimitTitle'), {
       description: t('toast.audioLimitDesc', { max: MAX_AUDIO_BLOCKS }),
     });
     return false;
   }
 
-  const duration = await getAudioDuration(file);
-  const src = await uploadFileIdRequest({ file, token });
-
-  return insertAtomBlock(
-    editor,
-    {
-      type: 'audio',
-      attrs: {
-        src,
-        fileName: file.name,
-        fileSize: file.size,
-        duration,
-        ...DEFAULT_AUDIO_ATTRS,
+  try {
+    const duration = await getAudioDuration(file);
+    const src = await uploadFileIdRequest({ file, token });
+    attempt.succeed();
+    return insertAtomBlock(
+      editor,
+      {
+        type: 'audio',
+        attrs: {
+          src,
+          fileName: file.name,
+          fileSize: file.size,
+          duration,
+          ...DEFAULT_AUDIO_ATTRS,
+        },
       },
-    },
-    activeBlock,
-  );
+      activeBlock,
+    );
+  } catch (err) {
+    rejectFileUploadFromError(attempt, err);
+    trackFileSizeLimitFromUploadError(err, file, 'other');
+    throw err;
+  }
 }
 
 export async function insertPdfFile(
@@ -174,8 +198,10 @@ export async function insertPdfFile(
   file: File,
   token: string,
   activeBlock?: ActiveBlockT,
+  attempt: FileUploadAttempt = beginFileUploadAttempt('other', file),
 ) {
   if (!isPdfFile(file)) {
+    attempt.reject('unsupported_type');
     toast.error(t('toast.unsupportedFormat'), { description: t('toast.pdfFormatDesc') });
     return false;
   }
@@ -183,35 +209,43 @@ export async function insertPdfFile(
   file = withPdfMimeType(file);
 
   if (isFileNameTooLong(file.name)) {
+    attempt.reject('unknown');
     toast.error(t('upload.fileNameTooLong'), {
       description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
     });
     return false;
   }
 
-  if (!assertEditorUpload(file, 'other')) {
+  if (!assertEditorUpload(file, 'other', attempt)) {
     return false;
   }
 
   if (countNodes(editor, 'pdf') >= MAX_PDF_BLOCKS) {
     trackEditorObjectLimit('pdf');
+    attempt.reject('unknown');
     toast.error(t('toast.pdfLimitTitle'), {
       description: t('toast.pdfLimitDesc', { max: MAX_PDF_BLOCKS }),
     });
     return false;
   }
 
-  const totalPages = await getPdfPageCount(file);
-  const src = await uploadFileIdRequest({ file, token });
-
-  return insertAtomBlock(
-    editor,
-    {
-      type: 'pdf',
-      attrs: { src, fileName: file.name, totalPages },
-    },
-    activeBlock,
-  );
+  try {
+    const totalPages = await getPdfPageCount(file);
+    const src = await uploadFileIdRequest({ file, token });
+    attempt.succeed();
+    return insertAtomBlock(
+      editor,
+      {
+        type: 'pdf',
+        attrs: { src, fileName: file.name, totalPages },
+      },
+      activeBlock,
+    );
+  } catch (err) {
+    rejectFileUploadFromError(attempt, err);
+    trackFileSizeLimitFromUploadError(err, file, 'other');
+    throw err;
+  }
 }
 
 export async function insertPresentationFile(
@@ -219,41 +253,51 @@ export async function insertPresentationFile(
   file: File,
   token: string,
   activeBlock?: ActiveBlockT,
+  attempt: FileUploadAttempt = beginFileUploadAttempt('other', file),
 ) {
   if (!isPresentationFile(file)) {
+    attempt.reject('unsupported_type');
     toast.error(t('toast.unsupportedFormat'), { description: t('toast.presentationFormatDesc') });
     return false;
   }
 
   if (isFileNameTooLong(file.name)) {
+    attempt.reject('unknown');
     toast.error(t('upload.fileNameTooLong'), {
       description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
     });
     return false;
   }
 
-  if (!assertEditorUpload(file, 'other')) {
+  if (!assertEditorUpload(file, 'other', attempt)) {
     return false;
   }
 
   if (countNodes(editor, 'presentation') >= MAX_PRESENTATION_BLOCKS) {
     trackEditorObjectLimit('presentation');
+    attempt.reject('unknown');
     toast.error(t('toast.presentationLimitTitle'), {
       description: t('toast.presentationLimitDesc', { max: MAX_PRESENTATION_BLOCKS }),
     });
     return false;
   }
 
-  const src = await uploadFileIdRequest({ file, token });
-
-  return insertAtomBlock(
-    editor,
-    {
-      type: 'presentation',
-      attrs: { src, fileName: file.name },
-    },
-    activeBlock,
-  );
+  try {
+    const src = await uploadFileIdRequest({ file, token });
+    attempt.succeed();
+    return insertAtomBlock(
+      editor,
+      {
+        type: 'presentation',
+        attrs: { src, fileName: file.name },
+      },
+      activeBlock,
+    );
+  } catch (err) {
+    rejectFileUploadFromError(attempt, err);
+    trackFileSizeLimitFromUploadError(err, file, 'other');
+    throw err;
+  }
 }
 
 export async function insertFileBlock(
@@ -261,41 +305,51 @@ export async function insertFileBlock(
   file: File,
   token: string,
   activeBlock?: ActiveBlockT,
+  attempt: FileUploadAttempt = beginFileUploadAttempt('other', file),
 ) {
   file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
 
   if (!isGenericFile(file)) {
+    attempt.reject('unsupported_type');
     toast.error(t('toast.unsupportedFormat'), { description: t('toast.fileFormatDesc') });
     return false;
   }
 
   if (isFileNameTooLong(file.name)) {
+    attempt.reject('unknown');
     toast.error(t('upload.fileNameTooLong'), {
       description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
     });
     return false;
   }
 
-  if (!assertEditorUpload(file, 'other')) {
+  if (!assertEditorUpload(file, 'other', attempt)) {
     return false;
   }
 
   if (countNodes(editor, 'file') >= MAX_FILE_BLOCKS) {
     trackEditorObjectLimit('file');
+    attempt.reject('unknown');
     toast.error(t('toast.fileLimitTitle'), {
       description: t('toast.fileLimitDesc', { max: MAX_FILE_BLOCKS }),
     });
     return false;
   }
 
-  const src = await uploadFileIdRequest({ file, token });
-
-  return insertAtomBlock(
-    editor,
-    {
-      type: 'file',
-      attrs: { src, fileName: file.name, fileSize: file.size },
-    },
-    activeBlock,
-  );
+  try {
+    const src = await uploadFileIdRequest({ file, token });
+    attempt.succeed();
+    return insertAtomBlock(
+      editor,
+      {
+        type: 'file',
+        attrs: { src, fileName: file.name, fileSize: file.size },
+      },
+      activeBlock,
+    );
+  } catch (err) {
+    rejectFileUploadFromError(attempt, err);
+    trackFileSizeLimitFromUploadError(err, file, 'other');
+    throw err;
+  }
 }

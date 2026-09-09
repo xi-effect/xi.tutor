@@ -9,7 +9,12 @@ import {
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'features.avatar.editor';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, useCurrentUser } from 'common.services';
+import {
+  beginFileUploadAttempt,
+  isFileNameTooLong,
+  MAX_FILENAME_LENGTH,
+  useCurrentUser,
+} from 'common.services';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
 import { useTranslation } from 'react-i18next';
@@ -58,16 +63,19 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     const file = event.target.files[0];
 
     if (!file.type.startsWith('image/')) {
+      beginFileUploadAttempt('other', file).reject('unsupported_type');
       toast(t('userPreview.uploadImage'));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
+      beginFileUploadAttempt('other', file).reject('file_too_large');
       toast(t('userPreview.fileTooLarge'));
       return;
     }
 
     if (isFileNameTooLong(file.name)) {
+      beginFileUploadAttempt('other', file).reject('unknown');
       toast(t('userPreview.fileNameTooLong', { max: MAX_FILENAME_LENGTH }));
       return;
     }

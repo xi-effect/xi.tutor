@@ -4,6 +4,7 @@ import { FileUploader } from '@xipkg/fileuploader';
 import { toast } from 'sonner';
 import { AvatarEditor } from 'features.avatar.editor';
 import { isFileNameTooLong, MAX_FILENAME_LENGTH } from 'common.services';
+import { beginFileUploadAttempt } from 'common.utils';
 import { AvatarPreview } from './AvatarPreview';
 import { readFile } from '../../utils';
 import { useWelcomeContext } from '../../hooks';
@@ -30,16 +31,19 @@ export const WelcomeUserAvatar = () => {
     const file = files[0];
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
+      beginFileUploadAttempt('other', file).reject('unsupported_type');
       handleError(t('avatar_format_error'), t('avatar_format_hint'));
       return;
     }
 
     if (file.size > 1 * 1024 * 1024) {
+      beginFileUploadAttempt('other', file).reject('file_too_large');
       handleError(t('avatar_size_error'), t('avatar_size_hint'));
       return;
     }
 
     if (isFileNameTooLong(file.name)) {
+      beginFileUploadAttempt('other', file).reject('unknown');
       handleError(t('avatar_name_error'), t('avatar_name_hint', { max: MAX_FILENAME_LENGTH }));
       return;
     }

@@ -14,6 +14,7 @@ import {
 } from '../constants/mimeTypes';
 import { toast } from 'sonner';
 import i18n from 'i18next';
+import { beginFileUploadAttempt } from 'common.utils';
 
 export type AssetType = 'img' | 'pdf' | 'file' | 'audio' | 'presentation';
 
@@ -93,6 +94,7 @@ export async function insertAsset(
   // Drop/paste: Safari может обнулить File после синхронного обработчика.
   file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
   if (isFileNameTooLong(file.name)) {
+    beginFileUploadAttempt('board', file).reject('unknown');
     toast.error(i18n.t('toast.fileNameTooLong', { ns: 'board' }), {
       description: i18n.t('toast.fileNameTooLongDesc', {
         ns: 'board',
@@ -121,6 +123,7 @@ export async function insertAsset(
       await insertPresentation(editor, file, token);
       break;
     default:
+      beginFileUploadAttempt('board', file).reject('unsupported_type');
       toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'board' }), {
         description: i18n.t('toast.fileCannotUpload', { ns: 'board', name: file.name }),
         duration: 5000,

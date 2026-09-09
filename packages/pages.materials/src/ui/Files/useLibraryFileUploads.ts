@@ -25,9 +25,13 @@ import {
   tryStartUpload,
 } from 'common.subscription';
 import {
+  beginFileUploadAttempt,
+  rejectFileUploadFromError,
+  rejectFileUploadFromEvaluation,
   trackFileSizeLimitFromUploadError,
   trackProductLimitReached,
   trackUploadEvaluationLimit,
+  type FileUploadAttempt,
 } from 'common.utils';
 
 export type LibraryUploadItem = {
@@ -59,6 +63,7 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
   const [items, setItems] = useState<LibraryUploadItem[]>([]);
   const itemsRef = useRef(items);
   const abortRef = useRef(new Map<string, AbortController>());
+  const attemptsRef = useRef(new Map<string, FileUploadAttempt>());
 
   itemsRef.current = items;
 
@@ -122,12 +127,21 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
           invalidateClassroomFiles(queryClient, classroomId);
         }
         showSuccess('files');
+        attemptsRef.current.get(id)?.succeed();
+        attemptsRef.current.delete(id);
       } catch (error) {
         abortRef.current.delete(id);
         if (controller.signal.aborted) {
+          attemptsRef.current.get(id)?.reject('unknown');
+          attemptsRef.current.delete(id);
           return;
         }
 
+        const attempt = attemptsRef.current.get(id);
+        if (attempt) {
+          rejectFileUploadFromError(attempt, error);
+          attemptsRef.current.delete(id);
+        }
         trackFileSizeLimitFromUploadError(error, file, classroomId ? 'classroom' : 'materials');
 
         setItems((current) =>
@@ -155,10 +169,19 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
     }
 
     abortAll();
+    attemptsRef.current.forEach((attempt) => attempt.reject('unknown'));
+    attemptsRef.current.clear();
     setItems([]);
   }, [abortAll, open]);
 
-  useEffect(() => () => abortAll(), [abortAll]);
+  useEffect(
+    () => () => {
+      abortAll();
+      attemptsRef.current.forEach((attempt) => attempt.reject('unknown'));
+      attemptsRef.current.clear();
+    },
+    [abortAll],
+  );
 
   const addFiles = useCallback(
     (files: File[]): AddLibraryUploadFilesResult => {
@@ -181,18 +204,25 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
           source,
           blocked_on: 'client',
         });
+        files.forEach((file) => {
+          beginFileUploadAttempt(source, file).reject('unknown');
+        });
         result.rejectedStorage = files.length;
         return result;
       }
 
       files.forEach((file) => {
+        const attempt = beginFileUploadAttempt(source, file);
+
         if (nextItems.length >= remaining) {
           result.rejectedLimit += 1;
+          attempt.reject('unknown');
           return;
         }
 
         if (isFileNameTooLong(file.name)) {
           result.rejectedTooLong.push(file.name);
+          attempt.reject('unknown');
           return;
         }
 
@@ -201,6 +231,7 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
         const evaluation = tryStartUpload(file, uploadKind);
         if (!evaluation.ok) {
           trackUploadEvaluationLimit(evaluation, file, source);
+          rejectFileUploadFromEvaluation(attempt, evaluation);
         }
 
         if (!evaluation.ok && evaluation.reason === 'storage') {
@@ -225,8 +256,10 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
           return;
         }
 
+        const id = createItemId();
+        attemptsRef.current.set(id, attempt);
         nextItems.push({
-          id: createItemId(),
+          id,
           file,
           kind,
           progress: 0,
@@ -253,6 +286,8 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
   const removeItem = useCallback(
     (id: string) => {
       abort(id);
+      attemptsRef.current.get(id)?.reject('unknown');
+      attemptsRef.current.delete(id);
       setItems((current) => current.filter((item) => item.id !== id));
     },
     [abort],
@@ -260,6 +295,8 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
 
   const cancelAll = useCallback(() => {
     abortAll();
+    attemptsRef.current.forEach((attempt) => attempt.reject('unknown'));
+    attemptsRef.current.clear();
     setItems([]);
   }, [abortAll]);
 
@@ -268,7 +305,11 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
       .filter((item) => item.status === 'uploading')
       .map((item) => item.id);
 
-    uploadingIds.forEach(abort);
+    uploadingIds.forEach((id) => {
+      abort(id);
+      attemptsRef.current.get(id)?.reject('unknown');
+      attemptsRef.current.delete(id);
+    });
     setItems((current) => current.filter((item) => item.status !== 'uploading'));
   }, [abort]);
 

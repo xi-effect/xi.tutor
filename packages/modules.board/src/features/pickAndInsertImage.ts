@@ -8,6 +8,7 @@ import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxImageBytes } from 'common.subscription';
+import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
 import i18n from 'i18next';
 
 export type InsertImagePlacement = {
@@ -37,10 +38,13 @@ export async function insertImage(
     toast.error(i18n.t('toast.fileEmpty', { ns: 'board' }), {
       description: i18n.t('toast.fileEmptyDesc', { ns: 'board' }),
     });
+    beginFileUploadAttempt('board', file).reject('unknown');
     return;
   }
 
-  if (!assertBoardUploadAllowed(file, 'image')) {
+  const attempt = beginFileUploadAttempt('board', file);
+
+  if (!assertBoardUploadAllowed(file, 'image', attempt)) {
     throw new Error(i18n.t('toast.fileTooLarge', { ns: 'board' }));
   }
 
@@ -48,6 +52,7 @@ export async function insertImage(
   try {
     bitmap = await createImageBitmap(file);
   } catch (err) {
+    attempt.reject('upload_error');
     toast.error(i18n.t('toast.imageOpenError', { ns: 'board' }), {
       description: i18n.t('toast.imageReadFailed', { ns: 'board' }),
       duration: 8000,
@@ -142,8 +147,10 @@ export async function insertImage(
           meta: {},
         },
       ]);
+      attempt.succeed();
     } catch (err) {
       console.error('Image upload failed:', err);
+      rejectFileUploadFromError(attempt, err);
       const { title, description } = getBoardUploadErrorToast(err, file, getMaxImageBytes(), {
         sizeDescKey: 'toast.imageSizeDesc',
         failedTitleKey: 'toast.imageUploadError',

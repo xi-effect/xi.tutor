@@ -53,6 +53,16 @@ export {
   trackProductLimitReached,
   trackUploadEvaluationLimit,
 } from './productLimitReached';
+export {
+  beginFileUploadAttempt,
+  getFileUploadRejectReasonFromError,
+  getFileUploadRejectReasonFromEvaluation,
+  getFileUploadSizeBucket,
+  rejectFileUploadFromError,
+  rejectFileUploadFromEvaluation,
+  type FileUploadAttempt,
+  type FileUploadAttemptInput,
+} from './fileUpload';
 export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
 export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
@@ -102,6 +112,10 @@ export type {
   ProductLimitSizeBucket,
   ProductLimitBlockedOn,
   ProductLimitObjectKind,
+  FileUploadSource,
+  FileUploadFileCategory,
+  FileUploadSizeBucket,
+  FileUploadRejectReason,
   SignupEntryPoint,
   SignupFailureReason,
   SignupValidationFailedField,
