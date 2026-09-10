@@ -123,7 +123,7 @@ export function LabelImageActivity({
   };
 
   const addHotspot = (event: MouseEvent<HTMLDivElement>) => {
-    if (mode !== 'edit') return;
+    if (mode !== 'edit' || !definition.imageSrc) return;
     if (didDragRef.current) {
       didDragRef.current = false;
       return;
@@ -151,13 +151,18 @@ export function LabelImageActivity({
     setDrag({ id: hotspotId, x: hotspot.x, y: hotspot.y });
   };
 
+  const canPlaceHotspot = mode === 'edit' && Boolean(definition.imageSrc);
+
   const surface = (
     <div
       ref={surfaceRef}
-      className="absolute inset-0"
+      className={cn(
+        'absolute inset-0',
+        mode === 'edit' && !definition.imageSrc && 'pointer-events-none',
+      )}
       data-board-control={mode === 'edit' ? '' : undefined}
       data-label-image-surface=""
-      onClick={mode === 'edit' ? addHotspot : undefined}
+      onClick={canPlaceHotspot ? addHotspot : undefined}
     >
       {mode === 'play' &&
         (definition.imageSrc ? (
@@ -174,6 +179,7 @@ export function LabelImageActivity({
             key={hotspot.id}
             className={cn(
               'absolute -translate-x-1/2 -translate-y-1/2',
+              mode === 'edit' && !definition.imageSrc && 'pointer-events-auto',
               mode === 'edit' && drag?.id === hotspot.id && 'z-10',
             )}
             style={{ left: `${pos.x * 100}%`, top: `${pos.y * 100}%` }}
