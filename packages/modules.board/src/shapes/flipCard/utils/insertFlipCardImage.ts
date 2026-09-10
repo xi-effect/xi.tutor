@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { myAssetStore } from '../../../features/imageStore';
 import i18n from 'i18next';
 import { assertBoardUploadAllowed } from '../../../utils/planUploadLimit';
+import { getMaxImageBytes } from 'common.subscription';
 import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
 
 export async function insertFlipCardImage(
@@ -80,7 +81,10 @@ export async function insertFlipCardImage(
     attempt.succeed();
   } catch (err) {
     console.error('Flip card image upload failed:', err);
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxImageBytes(),
+    });
     toast.error(i18n.t('toast.imageUploadError', { ns: 'board' }));
     editor.deleteAssets([tempAssetId]);
   } finally {

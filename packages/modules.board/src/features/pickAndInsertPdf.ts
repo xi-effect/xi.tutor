@@ -151,7 +151,10 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
       attempt.succeed();
     } catch (err) {
       console.error('[insertPdf] Upload failed:', err);
-      rejectFileUploadFromError(attempt, err);
+      rejectFileUploadFromError(attempt, err, {
+        fileSize: file.size,
+        maxBytes: getMaxFileBytes(),
+      });
       const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.pdfSizeDesc',
         failedTitleKey: 'toast.pdfUploadError',

@@ -676,13 +676,22 @@ export type ProductAnalyticsEventMap = {
     file_category: FileUploadFileCategory;
     size_bucket: FileUploadSizeBucket;
   };
-  file_upload_rejected: {
-    event_version?: number;
-    source: FileUploadSource;
-    reason: FileUploadRejectReason;
-    file_category: FileUploadFileCategory;
-    size_bucket: FileUploadSizeBucket;
-  };
+  file_upload_rejected:
+    | {
+        event_version?: number;
+        source: FileUploadSource;
+        reason: 'file_too_large';
+        file_category: FileUploadFileCategory;
+        file_name: string;
+        file_size: number;
+      }
+    | {
+        event_version?: number;
+        source: FileUploadSource;
+        reason: Exclude<FileUploadRejectReason, 'file_too_large'>;
+        file_category: FileUploadFileCategory;
+        size_bucket: FileUploadSizeBucket;
+      };
 
   feedback_prompt_shown: {
     event_version?: number;

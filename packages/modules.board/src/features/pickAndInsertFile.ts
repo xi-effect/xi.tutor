@@ -104,7 +104,10 @@ export async function insertFile(
     attempt.succeed();
     toast.success(i18n.t('toast.fileUploadSuccess', { ns: 'board' }), { duration: 5000 });
   } catch (err) {
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
     if (!editor.getShape(shapeId)) return;
     const isOffline = !navigator.onLine;
 

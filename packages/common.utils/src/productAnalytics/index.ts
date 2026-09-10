@@ -19,10 +19,13 @@ export {
 } from './feedbackComment';
 export {
   POST_LESSON_FEEDBACK_COOLDOWN_MS,
+  POST_LESSON_FEEDBACK_JITTER_MS,
+  POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
   POST_LESSON_FEEDBACK_STORAGE_PREFIX,
   beginCallFeedbackSession,
   clearPendingPostLessonFeedback,
   clearPostLessonFeedbackCooldown,
+  computeNextFeedbackEligibleAt,
   debugQueuePostLessonFeedback,
   endClassroomFeedbackWindow,
   getPostLessonFeedbackSession,
@@ -81,6 +84,8 @@ export {
 } from './productLimitReached';
 export {
   beginFileUploadAttempt,
+  getFileUploadErrorKind,
+  getFileUploadHttpStatus,
   getFileUploadRejectReasonFromError,
   getFileUploadRejectReasonFromEvaluation,
   getFileUploadSizeBucket,
@@ -88,6 +93,8 @@ export {
   rejectFileUploadFromEvaluation,
   type FileUploadAttempt,
   type FileUploadAttemptInput,
+  type FileUploadErrorContext,
+  type FileUploadErrorKind,
 } from './fileUpload';
 export {
   resetMathBankAnalyticsSession,

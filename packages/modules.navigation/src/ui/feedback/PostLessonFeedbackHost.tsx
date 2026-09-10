@@ -74,17 +74,26 @@ export const PostLessonFeedbackHost = () => {
     const inClassroom = pathname.includes('/classrooms/');
     const onBoard = isBoardPath(pathname);
 
+    const userId = user.id;
+    const queueFeedback = (endWindow = false) => {
+      window.setTimeout(() => {
+        tryQueuePostLessonFeedback(userId);
+        if (endWindow) {
+          endClassroomFeedbackWindow();
+        }
+      }, 0);
+    };
+
     if (wasInCallRef.current && !inCall) {
-      tryQueuePostLessonFeedback(user.id);
+      queueFeedback();
     }
 
     if (!inCall && wasOnBoardRef.current && !onBoard) {
-      tryQueuePostLessonFeedback(user.id);
+      queueFeedback();
     }
 
     if (!inCall && wasInClassroomRef.current && !inClassroom) {
-      tryQueuePostLessonFeedback(user.id);
-      endClassroomFeedbackWindow();
+      queueFeedback(true);
     }
 
     wasInCallRef.current = inCall;

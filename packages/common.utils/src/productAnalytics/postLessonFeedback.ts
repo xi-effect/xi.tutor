@@ -1,11 +1,16 @@
 import { pickFeedbackType } from './feedbackType';
 import type { ProductAnalyticsFeedbackType } from './types';
 
-export const POST_LESSON_FEEDBACK_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+export const POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS = 6 * DAY_MS;
+export const POST_LESSON_FEEDBACK_JITTER_MS = 1 * DAY_MS;
+/** Fallback для записей без nextEligibleAt (старый фиксированный cooldown). */
+export const POST_LESSON_FEEDBACK_COOLDOWN_MS = 7 * DAY_MS;
 export const POST_LESSON_FEEDBACK_STORAGE_PREFIX = 'sovlium.feedback.postLesson.v1.';
 
 export type PostLessonFeedbackPersisted = {
   lastPromptAt: number;
+  nextEligibleAt: number;
   lastType: ProductAnalyticsFeedbackType | null;
 };
 
@@ -43,28 +48,43 @@ const canUseStorage = (): boolean => {
   }
 };
 
+const emptyPersisted = (): PostLessonFeedbackPersisted => ({
+  lastPromptAt: 0,
+  nextEligibleAt: 0,
+  lastType: null,
+});
+
+export function computeNextFeedbackEligibleAt(shownAt: number, random = Math.random): number {
+  const jitterMs = Math.floor(random() * POST_LESSON_FEEDBACK_JITTER_MS);
+  return shownAt + POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS + jitterMs;
+}
+
 export function readPostLessonFeedbackPersisted(
   userId: string | number,
 ): PostLessonFeedbackPersisted {
   if (!canUseStorage()) {
-    return { lastPromptAt: 0, lastType: null };
+    return emptyPersisted();
   }
 
   try {
     const raw = window.localStorage.getItem(storageKey(userId));
-    if (!raw) return { lastPromptAt: 0, lastType: null };
+    if (!raw) return emptyPersisted();
 
     const parsed = JSON.parse(raw) as Partial<PostLessonFeedbackPersisted>;
     const lastPromptAt =
       typeof parsed.lastPromptAt === 'number' && Number.isFinite(parsed.lastPromptAt)
         ? parsed.lastPromptAt
         : 0;
+    const nextEligibleAt =
+      typeof parsed.nextEligibleAt === 'number' && Number.isFinite(parsed.nextEligibleAt)
+        ? parsed.nextEligibleAt
+        : 0;
     const lastType =
       parsed.lastType === 'call' || parsed.lastType === 'board' ? parsed.lastType : null;
 
-    return { lastPromptAt, lastType };
+    return { lastPromptAt, nextEligibleAt, lastType };
   } catch {
-    return { lastPromptAt: 0, lastType: null };
+    return emptyPersisted();
   }
 }
 
@@ -85,7 +105,10 @@ export function isPostLessonFeedbackCooldownActive(
   userId: string | number,
   now = Date.now(),
 ): boolean {
-  const { lastPromptAt } = readPostLessonFeedbackPersisted(userId);
+  const { lastPromptAt, nextEligibleAt } = readPostLessonFeedbackPersisted(userId);
+  if (nextEligibleAt > 0) {
+    return now < nextEligibleAt;
+  }
   if (!lastPromptAt) return false;
   return now - lastPromptAt < POST_LESSON_FEEDBACK_COOLDOWN_MS;
 }
@@ -115,13 +138,12 @@ export function markBoardFeedbackEligible(): void {
 
 export function beginCallFeedbackSession(): void {
   if (session.pendingType || session.promptShown) {
-    session = { ...session, callEligible: false };
-    emit();
     return;
   }
 
   session = {
     ...createSession(),
+    callEligible: session.callEligible,
     boardEligible: session.boardEligible,
   };
   emit();
@@ -143,7 +165,10 @@ export function clearPendingPostLessonFeedback(): void {
 
 /**
  * Ставит в очередь один toast после конца сессии. Cooldown пишется в момент постановки
- * (фактический показ), чтобы не чаще 1 раза за 7 дней.
+ * (фактический показ), чтобы не чаще 1 раза за 6–7 дней.
+ *
+ * Cooldown хранится в localStorage пользователя. Отдельного user-state API в бэкенде нет,
+ * поэтому между устройствами интервал сейчас не синхронизируется.
  */
 export function tryQueuePostLessonFeedback(
   userId: string | number,
@@ -159,9 +184,11 @@ export function tryQueuePostLessonFeedback(
   );
   if (!type) return null;
 
+  const lastPromptAt = Date.now();
   session = { ...session, promptShown: true, pendingType: type };
   writePostLessonFeedbackPersisted(userId, {
-    lastPromptAt: Date.now(),
+    lastPromptAt,
+    nextEligibleAt: computeNextFeedbackEligibleAt(lastPromptAt),
     lastType: type,
   });
   emit();

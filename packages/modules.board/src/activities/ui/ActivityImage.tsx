@@ -117,7 +117,10 @@ async function uploadPickedImage(file: File, token: string) {
     attempt.succeed();
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
-    rejectFileUploadFromError(attempt, error);
+    rejectFileUploadFromError(attempt, error, {
+      fileSize: next.size,
+      maxBytes: getMaxImageBytes(),
+    });
     const { title, description } = getBoardUploadErrorToast(error, next, getMaxImageBytes(), {
       sizeDescKey: 'toast.imageSizeDesc',
       failedTitleKey: 'toast.imageUploadFailed',

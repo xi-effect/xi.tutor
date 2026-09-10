@@ -155,11 +155,11 @@ export type ProductLimitFileCategory = 'image' | 'document' | 'other';
 
 export type ProductLimitSizeBucket = '0_5mb' | '5_30mb' | '30mb_plus';
 
-export type FileUploadSource = ProductLimitSource;
+export type FileUploadSource = 'materials' | 'classroom' | 'board' | 'profile_avatar' | 'other';
 
 export type FileUploadFileCategory = ProductLimitFileCategory;
 
-/** Корзины размера для воронки загрузки. Точный size в Umami не отправляем. */
+/** Корзины размера для attempted / succeeded. Для file_too_large шлём точный size. */
 export type FileUploadSizeBucket = '0_1mb' | '1_5mb' | '5_30mb' | '30mb_plus';
 
 export type FileUploadRejectReason =

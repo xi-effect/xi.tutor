@@ -139,7 +139,10 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
 
         const attempt = attemptsRef.current.get(id);
         if (attempt) {
-          rejectFileUploadFromError(attempt, error);
+          rejectFileUploadFromError(attempt, error, {
+            fileSize: file.size,
+            maxBytes: getLibraryUploadMaxBytes(getBrowserFileKind(file)),
+          });
           attemptsRef.current.delete(id);
         }
         trackFileSizeLimitFromUploadError(error, file, classroomId ? 'classroom' : 'materials');

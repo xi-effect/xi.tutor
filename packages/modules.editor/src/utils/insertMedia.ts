@@ -19,7 +19,7 @@ import { checkAudioMagicBytes } from './checkAudioMagicBytes';
 import { countNodes } from './countNodes';
 import { getAudioDuration } from './getAudioDuration';
 import { insertAtomBlock } from './insertAtomBlock';
-import { tryStartUpload } from 'common.subscription';
+import { tryStartUpload, getMaxFileBytes, getMaxImageBytes } from 'common.subscription';
 import {
   beginFileUploadAttempt,
   rejectFileUploadFromError,
@@ -102,6 +102,10 @@ export async function insertImageFile(
     return false;
   }
 
+  if (!assertEditorUpload(file, 'image', attempt)) {
+    return false;
+  }
+
   try {
     const optimized = await optimizeImage(file);
     const src = await uploadFileIdRequest({ file: optimized, token });
@@ -116,7 +120,10 @@ export async function insertImageFile(
     );
   } catch (err) {
     console.error(err);
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxImageBytes(),
+    });
     trackFileSizeLimitFromUploadError(err, file, 'other');
     toast.error(t('toast.imageUploadError'));
     return false;
@@ -187,7 +194,10 @@ export async function insertAudioFile(
       activeBlock,
     );
   } catch (err) {
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
     trackFileSizeLimitFromUploadError(err, file, 'other');
     throw err;
   }
@@ -242,7 +252,10 @@ export async function insertPdfFile(
       activeBlock,
     );
   } catch (err) {
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
     trackFileSizeLimitFromUploadError(err, file, 'other');
     throw err;
   }
@@ -294,7 +307,10 @@ export async function insertPresentationFile(
       activeBlock,
     );
   } catch (err) {
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
     trackFileSizeLimitFromUploadError(err, file, 'other');
     throw err;
   }
@@ -348,7 +364,10 @@ export async function insertFileBlock(
       activeBlock,
     );
   } catch (err) {
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
     trackFileSizeLimitFromUploadError(err, file, 'other');
     throw err;
   }

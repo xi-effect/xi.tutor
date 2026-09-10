@@ -3,10 +3,14 @@ import { pickFeedbackType } from '../feedbackType';
 import { prepareFeedbackComment, maskFeedbackPii } from '../feedbackComment';
 import {
   beginCallFeedbackSession,
+  computeNextFeedbackEligibleAt,
   debugQueuePostLessonFeedback,
   getPostLessonFeedbackSession,
+  isPostLessonFeedbackCooldownActive,
   markBoardFeedbackEligible,
   markCallFeedbackEligible,
+  POST_LESSON_FEEDBACK_JITTER_MS,
+  POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
   readPostLessonFeedbackPersisted,
   resetPostLessonFeedbackState,
   tryQueuePostLessonFeedback,
@@ -35,9 +39,17 @@ describe('pickFeedbackType', () => {
   });
 
   it('чередует типы, если eligible оба', () => {
-    expect(pickFeedbackType({ callEligible: true, boardEligible: true }, null)).toBe('call');
     expect(pickFeedbackType({ callEligible: true, boardEligible: true }, 'call')).toBe('board');
     expect(pickFeedbackType({ callEligible: true, boardEligible: true }, 'board')).toBe('call');
+  });
+
+  it('если прошлого типа нет, выбирает случайно', () => {
+    expect(pickFeedbackType({ callEligible: true, boardEligible: true }, null, () => 0.1)).toBe(
+      'call',
+    );
+    expect(pickFeedbackType({ callEligible: true, boardEligible: true }, null, () => 0.9)).toBe(
+      'board',
+    );
   });
 });
 
@@ -52,6 +64,21 @@ describe('prepareFeedbackComment', () => {
     expect(maskFeedbackPii('номер +7 999 123-45-67')).toBe('номер [phone]');
     expect(prepareFeedbackComment('email test@mail.ru и +79991234567')).toBe(
       'email [email] и [phone]',
+    );
+  });
+});
+
+describe('computeNextFeedbackEligibleAt', () => {
+  it('даёт 6 дней плюс jitter до суток', () => {
+    const shownAt = 1_000_000;
+    expect(computeNextFeedbackEligibleAt(shownAt, () => 0)).toBe(
+      shownAt + POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
+    );
+    expect(computeNextFeedbackEligibleAt(shownAt, () => 0.999999)).toBeGreaterThan(
+      shownAt + POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
+    );
+    expect(computeNextFeedbackEligibleAt(shownAt, () => 0.999999)).toBeLessThan(
+      shownAt + POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS + POST_LESSON_FEEDBACK_JITTER_MS,
     );
   });
 });
@@ -72,6 +99,10 @@ describe('tryQueuePostLessonFeedback', () => {
     expect(getPostLessonFeedbackSession().promptShown).toBe(true);
     expect(tryQueuePostLessonFeedback(1)).toBeNull();
 
+    const persisted = readPostLessonFeedbackPersisted(1);
+    expect(persisted.nextEligibleAt).toBeGreaterThan(persisted.lastPromptAt);
+    expect(isPostLessonFeedbackCooldownActive(1)).toBe(true);
+
     resetPostLessonFeedbackState();
     markCallFeedbackEligible();
     expect(tryQueuePostLessonFeedback(1)).toBeNull();
@@ -83,6 +114,7 @@ describe('tryQueuePostLessonFeedback', () => {
 
     writePostLessonFeedbackPersisted(2, {
       lastPromptAt: Date.now() - 8 * 24 * 60 * 60 * 1000,
+      nextEligibleAt: Date.now() - 60_000,
       lastType: 'call',
     });
     markCallFeedbackEligible();
@@ -96,6 +128,7 @@ describe('tryQueuePostLessonFeedback', () => {
 
     writePostLessonFeedbackPersisted(4, {
       lastPromptAt: Date.now(),
+      nextEligibleAt: Date.now() + POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
       lastType: 'call',
     });
 
@@ -105,7 +138,7 @@ describe('tryQueuePostLessonFeedback', () => {
     expect(readPostLessonFeedbackPersisted(4).lastPromptAt).toBeGreaterThan(0);
   });
 
-  it('новый звонок не сбрасывает уже показанный prompt', () => {
+  it('новый звонок не сбрасывает уже показанный prompt и не затирает callEligible', () => {
     const storage = memoryStorage();
     (globalThis as { window?: unknown }).window = { localStorage: storage };
 
@@ -114,5 +147,17 @@ describe('tryQueuePostLessonFeedback', () => {
     beginCallFeedbackSession();
     expect(getPostLessonFeedbackSession().pendingType).toBe('board');
     expect(getPostLessonFeedbackSession().promptShown).toBe(true);
+  });
+
+  it('reconnect звонка сохраняет уже заработанный callEligible', () => {
+    const storage = memoryStorage();
+    (globalThis as { window?: unknown }).window = { localStorage: storage };
+
+    markCallFeedbackEligible();
+    markBoardFeedbackEligible();
+    beginCallFeedbackSession();
+    expect(getPostLessonFeedbackSession().callEligible).toBe(true);
+    expect(getPostLessonFeedbackSession().boardEligible).toBe(true);
+    expect(tryQueuePostLessonFeedback(5)).toBeTruthy();
   });
 });
