@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MATH_GRADES, type MathTask } from '../src/model/schema.ts';
 import { taskToSearchDocument } from '../src/lib/search.ts';
@@ -14,16 +14,7 @@ const tasks = sourceTasks.map(refreshDerivedFields);
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(resolve(OUT, 'by_grade'), { recursive: true });
 
-// Full bank is useful for debugging/offline processing; the app should not fetch it by default.
-writeJson(resolve(OUT, 'tasks.json'), tasks);
-writeGzipJson(resolve(OUT, 'tasks.json.gz'), tasks);
-writeFileSync(
-  resolve(OUT, 'tasks.jsonl'),
-  `${tasks.map((task) => JSON.stringify(task)).join('\n')}\n`,
-);
-
 const searchDocuments = tasks.map(taskToSearchDocument);
-writeJson(resolve(OUT, 'search_documents.json'), searchDocuments);
 writeGzipJson(resolve(OUT, 'search_documents.json.gz'), searchDocuments);
 
 for (const grade of MATH_GRADES) {
@@ -124,6 +115,8 @@ const report = {
   withFigures: tasks.filter((task) => task.figure !== null).length,
   searchDocuments: searchDocuments.length,
 };
-writeJson(resolve(OUT, 'generation_report.json'), report, true);
+const artifactsDir = resolve(ROOT, 'artifacts/math-bank');
+mkdirSync(artifactsDir, { recursive: true });
+writeJson(resolve(artifactsDir, 'generation_report.json'), report, true);
 
 console.log(`Built ${tasks.length} math tasks into ${OUT}`);

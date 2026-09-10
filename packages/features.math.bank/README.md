@@ -14,7 +14,7 @@ pnpm --filter features.math.bank math-bank:build
 pnpm --filter features.math.bank math-bank:qa
 ```
 
-`math-bank:build` читает только `content/tasks.source.json.gz` и воспроизводимо создаёт runtime-файлы в `public/math-bank/`.
+`math-bank:build` читает только `content/tasks.source.json.gz` и воспроизводимо создаёт runtime-файлы в `public/math-bank/`. Полные дампы (`tasks.json` и т.п.) в git не хранятся.
 
 Повторно дописать исторические задачи в source (уже включены в этот релиз):
 

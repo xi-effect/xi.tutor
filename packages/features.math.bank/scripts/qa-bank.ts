@@ -75,9 +75,7 @@ if (unique(tasks.map((task) => canonicalizeForFingerprint(task.statement.text)))
 }
 
 if (existsSync(PUBLIC)) {
-  const searchDocs = JSON.parse(
-    readFileSync(resolve(PUBLIC, 'search_documents.json'), 'utf8'),
-  ) as unknown[];
+  const searchDocs = readGzipJson<unknown[]>(resolve(PUBLIC, 'search_documents.json.gz'));
   if (searchDocs.length !== tasks.length) {
     errors.push(`search corpus: ${searchDocs.length} != ${tasks.length}`);
   }

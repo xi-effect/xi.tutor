@@ -126,6 +126,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       minify: mode === 'production',
       outDir: 'build',
       sourcemap: mode === 'debug',
+      reportCompressedSize: false,
     },
     optimizeDeps: {
       rolldownOptions: {
