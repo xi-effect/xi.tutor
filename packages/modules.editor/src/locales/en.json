@@ -53,7 +53,8 @@
     "moveDown": "Move down",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "extractPage": "Extract as image"
+    "extractPage": "Extract as image",
+    "draw": "Draw"
   },
   "file": {
     "loading": "Loading...",

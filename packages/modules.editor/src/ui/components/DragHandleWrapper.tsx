@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { BlockMenu } from './BlockMenu';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActiveBlockT } from '../../types';
+import { useInterfaceStore } from '../../store/interfaceStore';
 
 function getEditorContentBox(editorDom: HTMLElement) {
   const rect = editorDom.getBoundingClientRect();
@@ -65,7 +66,16 @@ export const DragHandleWrapper = ({
 }: DragHandleWrapperPropsT) => {
   const { t } = useTranslation('editor');
   const activeBlockRef = useRef<{ pos: number; id: string | null } | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const setGlobalBlockMenuOpen = useInterfaceStore((s) => s.setBlockMenuOpen);
+
+  const setMenuOpen = useCallback(
+    (open: boolean) => {
+      setIsOpen(open);
+      setGlobalBlockMenuOpen(open);
+    },
+    [setGlobalBlockMenuOpen],
+  );
 
   const handleNodeChange = useCallback((data: ActiveBlockT) => {
     if (!data?.node || data?.pos === null) return;
@@ -159,7 +169,7 @@ export const DragHandleWrapper = ({
         <BlockMenu
           editor={editor}
           isReadOnly={isReadOnly}
-          open={menuOpen}
+          open={isOpen}
           setOpen={setMenuOpen}
           getActiveBlock={getActiveBlock}
         >
@@ -167,7 +177,7 @@ export const DragHandleWrapper = ({
             className="hover:bg-background-page active:bg-background-page group h-5 w-5 rounded p-0"
             variant="none"
           >
-            {menuOpen ? (
+            {isOpen ? (
               <Close size="sm" className="fill-icon-primary size-6" />
             ) : (
               <Plus size="sm" className="fill-icon-primary size-6" />

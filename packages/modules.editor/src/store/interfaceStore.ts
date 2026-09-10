@@ -11,6 +11,8 @@ type useInterfaceStoreT = {
   activeModal: EditorModalT;
   openModal: (modal: Exclude<EditorModalT, null>) => void;
   closeModal: () => void;
+  isBlockMenuOpen: boolean;
+  setBlockMenuOpen: (open: boolean) => void;
   cloudPickerOpen: boolean;
   insertAnchor: ActiveBlockT | undefined;
   openCloudPicker: (anchor?: ActiveBlockT) => void;
@@ -25,6 +27,8 @@ export const useInterfaceStore = create<useInterfaceStoreT>()((set) => ({
   activeModal: null,
   openModal: (modal) => set({ activeModal: modal }),
   closeModal: () => set({ activeModal: null }),
+  isBlockMenuOpen: false,
+  setBlockMenuOpen: (open) => set({ isBlockMenuOpen: open }),
   cloudPickerOpen: false,
   insertAnchor: undefined,
   openCloudPicker: (anchor) => set({ cloudPickerOpen: true, insertAnchor: anchor }),
