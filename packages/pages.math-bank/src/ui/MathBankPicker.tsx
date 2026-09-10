@@ -21,6 +21,7 @@ import { MathBankEmpty } from './MathBankEmpty';
 import { MathBankPickerRow } from './MathBankPickerRow';
 import { MathBankSearchField } from './MathBankSearchField';
 import { MathBankToolbar } from './MathBankToolbar';
+import { MathBankDisclaimer } from './MathBankDisclaimer';
 
 export type MathBankPickerProps = {
   open: boolean;
@@ -103,9 +104,12 @@ const MathBankPickerContent = ({
           )}
         >
           <div className="border-border-default flex shrink-0 items-center justify-between gap-3 border-b px-4 py-3">
-            <DrawerPrimitive.Title className="font-playfair text-text-primary m-0 text-xl font-medium">
-              {title}
-            </DrawerPrimitive.Title>
+            <div className="flex min-w-0 items-baseline gap-1.5">
+              <DrawerPrimitive.Title className="font-playfair text-text-primary m-0 text-xl leading-none font-medium">
+                {title}
+              </DrawerPrimitive.Title>
+              <MathBankDisclaimer className="translate-y-[-0.12em]" />
+            </div>
             <DrawerPrimitive.Description className="sr-only">
               {descriptionText}
             </DrawerPrimitive.Description>

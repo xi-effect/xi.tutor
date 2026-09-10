@@ -1,5 +1,10 @@
 {
   "title": "Task bank",
+  "disclaimer": {
+    "aria": "About the task bank and OGE/EGE labels",
+    "text": "Tasks are for learning and practice. OGE/EGE labels are for navigation and do not mean the material is an official FIPI exam item.",
+    "more": "More about how materials are used"
+  },
   "search": {
     "placeholder": "Search topics and statements"
   },

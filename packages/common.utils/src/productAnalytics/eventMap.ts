@@ -535,22 +535,21 @@ export type ProductAnalyticsEventMap = {
     event_version?: number;
     source: MathBankAnalyticsSource;
     session_id?: string;
-    query_length: number;
-    has_query: boolean;
-    has_filters: boolean;
-    grades_count: number;
-    topics_count: number;
-    difficulty_count: number;
-    exam: string;
-    exam_numbers_count: number;
-    types_count: number;
-    favorites_only: boolean;
+    query_length?: number;
+    grade?: number[];
+    topic?: string[];
+    difficulty?: string[];
+    exam?: string;
+    exam_task_numbers?: number[];
+    task_type?: string[];
+    favorites_only?: boolean;
   };
   math_task_open: {
     event_version?: number;
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
     task_type?: string;
@@ -561,6 +560,7 @@ export type ProductAnalyticsEventMap = {
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
     task_type?: string;
@@ -572,6 +572,7 @@ export type ProductAnalyticsEventMap = {
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
     task_type?: string;
@@ -583,6 +584,7 @@ export type ProductAnalyticsEventMap = {
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
     task_type?: string;
@@ -593,24 +595,33 @@ export type ProductAnalyticsEventMap = {
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
   };
   math_task_answer_open: {
     event_version?: number;
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
   };
   math_task_hint_open: {
     event_version?: number;
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
   };
   math_task_favorite_toggle: {
     event_version?: number;
@@ -624,16 +635,22 @@ export type ProductAnalyticsEventMap = {
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
   };
   math_task_report: {
     event_version?: number;
     source: MathBankAnalyticsSource;
     session_id?: string;
     task_id: string;
+    subject: string;
     grade: number;
     topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
     comment: string;
   };
 

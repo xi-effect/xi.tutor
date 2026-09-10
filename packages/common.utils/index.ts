@@ -67,6 +67,7 @@ export {
   rejectFileUploadFromError,
   rejectFileUploadFromEvaluation,
   toMathBankSearchProps,
+  hasMathBankSearchSignal,
   trackMathBankOpen,
   trackMathBankSearch,
   trackMathTaskAnswerOpen,

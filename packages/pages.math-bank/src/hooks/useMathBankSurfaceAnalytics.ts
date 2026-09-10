@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import {
-  toMathBankSearchProps,
+  hasMathBankSearchSignal,
   trackMathBankOpen,
   trackMathBankSearch,
   type MathBankAnalyticsSource,
@@ -58,8 +58,7 @@ export const useMathBankSurfaceAnalytics = (
     }
 
     const snapshot = filtersRef.current;
-    const props = toMathBankSearchProps(snapshot, source);
-    if (!props.has_query && !props.has_filters) {
+    if (!hasMathBankSearchSignal(snapshot)) {
       return;
     }
 

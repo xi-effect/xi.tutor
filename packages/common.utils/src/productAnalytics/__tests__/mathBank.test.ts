@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PRODUCT_ANALYTICS_EVENTS } from '../events';
 import {
+  hasMathBankSearchSignal,
   resetMathBankAnalyticsSession,
   toMathBankSearchProps,
   trackMathBankOpen,
@@ -52,7 +53,7 @@ const emptyFilters = {
 };
 
 describe('toMathBankSearchProps', () => {
-  it('не кладёт текст запроса, только длину и флаги фильтров', () => {
+  it('не кладёт текст запроса и пустые фильтры', () => {
     expect(
       toMathBankSearchProps(
         {
@@ -67,16 +68,19 @@ describe('toMathBankSearchProps', () => {
     ).toEqual({
       source: 'page',
       query_length: 20,
-      has_query: true,
-      has_filters: true,
-      grades_count: 1,
-      topics_count: 1,
-      difficulty_count: 0,
+      grade: [11],
+      topic: ['algebra.derivatives'],
       exam: 'EGE_PROFILE',
-      exam_numbers_count: 0,
-      types_count: 0,
-      favorites_only: false,
     });
+    expect(
+      JSON.stringify(toMathBankSearchProps({ ...emptyFilters, search: 'секрет' }, 'page')),
+    ).not.toContain('секрет');
+  });
+
+  it('для пустого поиска без фильтров не добавляет query_length и exam', () => {
+    expect(toMathBankSearchProps(emptyFilters, 'page')).toEqual({ source: 'page' });
+    expect(hasMathBankSearchSignal(emptyFilters)).toBe(false);
+    expect(hasMathBankSearchSignal({ ...emptyFilters, search: '  x  ' })).toBe(true);
   });
 });
 
@@ -101,6 +105,7 @@ describe('math bank session', () => {
       event_version: 1,
       source: 'board',
       task_id: 'task-1',
+      subject: 'mathematics',
       grade: 9,
       topic_id: 'algebra.linear',
       task_type: 'equation',

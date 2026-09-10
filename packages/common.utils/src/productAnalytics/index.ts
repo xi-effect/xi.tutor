@@ -91,6 +91,7 @@ export {
 } from './fileUpload';
 export {
   resetMathBankAnalyticsSession,
+  hasMathBankSearchSignal,
   toMathBankSearchProps,
   trackMathBankOpen,
   trackMathBankSearch,

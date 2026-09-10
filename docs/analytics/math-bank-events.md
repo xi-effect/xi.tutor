@@ -11,7 +11,7 @@
 Понять:
 
 - сколько репетиторов открывают банк (страница `/bank`, пикер на доске, пикер в заметке);
-- ищут ли они задания (длина запроса и активные фильтры, **без текста запроса**);
+- ищут ли они задания (длина запроса и **выбранные** фильтры, **без текста запроса**);
 - открывают ли карточку, ответ, решение, подсказки, другой вариант;
 - оставляют ли репорт по заданию;
 - добавляют ли в избранное;
@@ -24,7 +24,7 @@
 ```
 math_bank_open (source=page | board | editor)
         │
-        ├── math_bank_search (query_length + фильтры, без текста)
+        ├── math_bank_search (query_length + выбранные фильтры, без текста)
         ├── math_task_open
         │         ├── math_task_answer_open / solution_open / hint_open
         │         ├── math_task_copy
@@ -40,7 +40,7 @@ math_bank_open (source=page | board | editor)
 
 Общие поля: `event_version`, `source` (`page` / `board` / `editor`), `session_id` (если sessionStorage доступен).
 
-Текст условия, названия тем, полный поисковый запрос **не отправляются**. Тема — только `topic_id`.
+Текст условия, названия тем, полный поисковый запрос, заметки, содержимое доски и данные ученика **не отправляются**. Тема — идентификатор `topic` / `topic_id`, не человекочитаемое название.
 
 ### `math_bank_open`
 
@@ -48,19 +48,22 @@ math_bank_open (source=page | board | editor)
 
 ### `math_bank_search`
 
-После debounce, если есть запрос или хотя бы один фильтр. Не шлётся на пустой стартовый экран.
+После debounce, если есть запрос или хотя бы один фильтр. Не шлётся на пустой стартовый экран. Пустые массивы, `undefined` и `exam: none` не добавляются.
 
-| Поле                                                                                    | Смысл                                       |
-| --------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `query_length`                                                                          | Длина trim-запроса                          |
-| `has_query` / `has_filters`                                                             | Флаги                                       |
-| `grades_count`, `topics_count`, `difficulty_count`, `types_count`, `exam_numbers_count` | Сколько значений выбрано                    |
-| `exam`                                                                                  | `OGE` / `EGE_BASE` / `EGE_PROFILE` / `none` |
-| `favorites_only`                                                                        | Чип «Только избранное»                      |
+| Поле                | Смысл                                           |
+| ------------------- | ----------------------------------------------- |
+| `query_length`      | Длина trim-запроса, только если > 0             |
+| `grade`             | Выбранные классы (через запятую)                |
+| `topic`             | Выбранные `topic_id`                            |
+| `difficulty`        | Выбранные группы сложности                      |
+| `exam`              | `OGE` / `EGE_BASE` / `EGE_PROFILE`, если выбран |
+| `exam_task_numbers` | Номера КИМ, если выбраны                        |
+| `task_type`         | Выбранные типы                                  |
+| `favorites_only`    | Только если включён чип «Только избранное»      |
 
 ### `math_task_open`
 
-Открытие модалки задания на странице банка (`task_id`, `grade`, `topic_id`, `task_type`, `difficulty`).
+Открытие модалки задания (`task_id`, `subject=mathematics`, `grade`, `topic_id`, `task_type`, `difficulty`).
 
 ### `math_task_insert_board` / `math_task_insert_note`
 
@@ -96,6 +99,10 @@ math_bank_open (source=page | board | editor)
 | Откуда чаще открывают?           | То же, breakdown по `source`                                                                                     |
 | Доля сессий со вставкой на доску | unique `session_id` в `math_task_insert_board` / unique `session_id` в `math_bank_open` (`source=board` или все) |
 | Скорость до вставки              | медиана `time_to_insert_ms`                                                                                      |
-| Ищут ли с фильтрами?             | `math_bank_search` с `has_filters=true`                                                                          |
+| Ищут ли с фильтрами?             | `math_bank_search` с полями `grade` / `topic` / `exam` / …                                                       |
 
 Не смешивать `math-bank-task-open` (клик по карточке) с `math_task_open` (outcome открытия модалки).
+
+## Уведомление об обновлении Terms
+
+В приложении нет готового механизма announcements / what’s new / баннера юридических изменений. Новую модалку ради одного сообщения не делали: пользователи видят актуальные условия по ссылке из дисклеймера банка (`https://sovlium.ru/legal/terms#prava-na-servis`).

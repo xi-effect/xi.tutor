@@ -61,40 +61,44 @@ const startSession = (): MathBankSession => {
   return session;
 };
 
+const MATH_BANK_SUBJECT = 'mathematics';
+
 const taskProps = (task: MathBankTaskSnapshot) => ({
   task_id: task.id,
+  subject: MATH_BANK_SUBJECT,
   grade: task.grade,
   ...(task.topicId ? { topic_id: task.topicId } : {}),
   ...(task.taskType ? { task_type: task.taskType } : {}),
   ...(typeof task.difficulty === 'number' ? { difficulty: task.difficulty } : {}),
 });
 
+export const hasMathBankSearchSignal = (filters: MathBankSearchSnapshot) =>
+  filters.search.trim().length > 0 ||
+  filters.grades.length > 0 ||
+  filters.topics.length > 0 ||
+  filters.difficultyGroups.length > 0 ||
+  filters.exam !== null ||
+  filters.examTaskNumbers.length > 0 ||
+  filters.taskTypes.length > 0 ||
+  filters.favoritesOnly;
+
+/** Только длина запроса и выбранные фильтры. Текст запроса не входит в payload. */
 export const toMathBankSearchProps = (
   filters: MathBankSearchSnapshot,
   source: MathBankAnalyticsSource,
 ) => {
   const queryLength = filters.search.trim().length;
-  const hasFilters =
-    filters.grades.length > 0 ||
-    filters.topics.length > 0 ||
-    filters.difficultyGroups.length > 0 ||
-    filters.exam !== null ||
-    filters.examTaskNumbers.length > 0 ||
-    filters.taskTypes.length > 0 ||
-    filters.favoritesOnly;
 
   return {
     source,
-    query_length: queryLength,
-    has_query: queryLength > 0,
-    has_filters: hasFilters,
-    grades_count: filters.grades.length,
-    topics_count: filters.topics.length,
-    difficulty_count: filters.difficultyGroups.length,
-    exam: filters.exam ?? 'none',
-    exam_numbers_count: filters.examTaskNumbers.length,
-    types_count: filters.taskTypes.length,
-    favorites_only: filters.favoritesOnly,
+    ...(queryLength > 0 ? { query_length: queryLength } : {}),
+    ...(filters.grades.length > 0 ? { grade: filters.grades } : {}),
+    ...(filters.topics.length > 0 ? { topic: filters.topics } : {}),
+    ...(filters.difficultyGroups.length > 0 ? { difficulty: filters.difficultyGroups } : {}),
+    ...(filters.exam ? { exam: filters.exam } : {}),
+    ...(filters.examTaskNumbers.length > 0 ? { exam_task_numbers: filters.examTaskNumbers } : {}),
+    ...(filters.taskTypes.length > 0 ? { task_type: filters.taskTypes } : {}),
+    ...(filters.favoritesOnly ? { favorites_only: true } : {}),
   };
 };
 
@@ -191,9 +195,7 @@ export const trackMathTaskSolutionOpen = (
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_SOLUTION_OPEN, {
     event_version: 1,
     source,
-    task_id: task.id,
-    grade: task.grade,
-    ...(task.topicId ? { topic_id: task.topicId } : {}),
+    ...taskProps(task),
     ...(session ? { session_id: session.session_id } : {}),
   });
 };
@@ -206,9 +208,7 @@ export const trackMathTaskAnswerOpen = (
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_ANSWER_OPEN, {
     event_version: 1,
     source,
-    task_id: task.id,
-    grade: task.grade,
-    ...(task.topicId ? { topic_id: task.topicId } : {}),
+    ...taskProps(task),
     ...(session ? { session_id: session.session_id } : {}),
   });
 };
@@ -221,9 +221,7 @@ export const trackMathTaskHintOpen = (
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_HINT_OPEN, {
     event_version: 1,
     source,
-    task_id: task.id,
-    grade: task.grade,
-    ...(task.topicId ? { topic_id: task.topicId } : {}),
+    ...taskProps(task),
     ...(session ? { session_id: session.session_id } : {}),
   });
 };
@@ -251,9 +249,7 @@ export const trackMathTaskNextVariant = (
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_NEXT_VARIANT, {
     event_version: 1,
     source,
-    task_id: task.id,
-    grade: task.grade,
-    ...(task.topicId ? { topic_id: task.topicId } : {}),
+    ...taskProps(task),
     ...(session ? { session_id: session.session_id } : {}),
   });
 };
@@ -272,10 +268,8 @@ export const trackMathTaskReport = (
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_REPORT, {
     event_version: 1,
     source,
-    task_id: task.id,
-    grade: task.grade,
+    ...taskProps(task),
     comment: prepared,
-    ...(task.topicId ? { topic_id: task.topicId } : {}),
     ...(session ? { session_id: session.session_id } : {}),
   });
   return true;

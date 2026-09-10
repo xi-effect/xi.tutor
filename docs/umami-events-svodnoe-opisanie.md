@@ -657,7 +657,7 @@ lesson_started ◄──── (только при успехе)         lesson
 | В каком разделе чаще режут oversized-файлы?           | ✅              | то же событие, фильтр `source`                                             |
 | Сколько репетиторов открыли банк заданий?             | ✅              | unique visitors / count `math_bank_open`                                   |
 | Какая доля сессий банка закончилась вставкой?         | ✅              | unique `session_id` в `math_task_insert_board` (+ note) / `math_bank_open` |
-| Какой текст искали в банке?                           | ❌              | в Umami только `query_length` и флаги фильтров                             |
+| Какой текст искали в банке?                           | ❌              | в Umami только `query_length` и выбранные фильтры, без текста запроса      |
 
 ---
 
