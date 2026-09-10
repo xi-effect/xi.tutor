@@ -1,6 +1,7 @@
 /** Свободный текст разрешён только в явно указанных событиях. */
 export const ANALYTICS_ALLOWED_FREE_TEXT_FIELDS: Record<string, ReadonlySet<string>> = {
   feedback_submitted: new Set(['comment']),
+  math_task_report: new Set(['comment']),
 };
 
 /** Поля, которые нельзя передавать в Umami. */

@@ -70,6 +70,7 @@
     "pages.invites": "workspace:*",
     "pages.main": "workspace:*",
     "pages.materials": "workspace:*",
+    "pages.math-bank": "workspace:*",
     "pages.notes": "workspace:*",
     "pages.payments": "workspace:*",
     "pages.reset-password": "workspace:*",

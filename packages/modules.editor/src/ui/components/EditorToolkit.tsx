@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { BubbleMenuWrapper } from './BubbleMenuWrapper/BubbleMenuWrapper';
 import { DragHandleWrapper } from './DragHandleWrapper';
 import { Editor } from '@tiptap/core';
@@ -8,7 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { useYjsContext } from '../../hooks';
 import { insertLibraryFileToEditor } from '../../utils/insertLibraryFileToEditor';
+import { insertMathTaskToEditor } from '../../utils/insertMathTaskToEditor';
 import { normalizeSelectionAfterDrop } from '../../utils/normalizeSelectionAfterDrop';
+
+const MathBankPicker = lazy(() =>
+  import('pages.math-bank/picker').then((module) => ({ default: module.MathBankPicker })),
+);
 
 type EditorToolkitProps = {
   editor: Editor;
@@ -20,7 +25,20 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
   const [hasMountedDragHandle, setHasMountedDragHandle] = useState(false);
   const initialFixDone = React.useRef(false);
   const { storageItem } = useYjsContext();
-  const { cloudPickerOpen, closeCloudPicker, insertAnchor } = useInterfaceStore();
+  const {
+    cloudPickerOpen,
+    closeCloudPicker,
+    mathBankPickerOpen,
+    closeMathBankPicker,
+    insertAnchor,
+  } = useInterfaceStore();
+  const [mathBankPickerMounted, setMathBankPickerMounted] = useState(false);
+
+  useEffect(() => {
+    if (mathBankPickerOpen) {
+      setMathBankPickerMounted(true);
+    }
+  }, [mathBankPickerOpen]);
 
   const handleDragEnd = useCallback(() => {
     // Сначала нормализуем выделение в след. тике, потом снова показываем BubbleMenu.
@@ -79,6 +97,23 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
           }
         }}
       />
+      {mathBankPickerMounted ? (
+        <Suspense fallback={null}>
+          <MathBankPicker
+            open={mathBankPickerOpen}
+            onOpenChange={(open) => {
+              if (!open) closeMathBankPicker();
+            }}
+            addLabel={t('blockMenu.mathBankAddToNote')}
+            description={t('blockMenu.mathBankDescription')}
+            umamiPrefix="editor"
+            analyticsSource="editor"
+            onSelect={(task) => {
+              insertMathTaskToEditor(editor, task.statement, insertAnchor);
+            }}
+          />
+        </Suspense>
+      ) : null}
     </>
   );
 };

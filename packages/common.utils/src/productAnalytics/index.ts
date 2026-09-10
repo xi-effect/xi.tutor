@@ -89,6 +89,24 @@ export {
   type FileUploadAttempt,
   type FileUploadAttemptInput,
 } from './fileUpload';
+export {
+  resetMathBankAnalyticsSession,
+  toMathBankSearchProps,
+  trackMathBankOpen,
+  trackMathBankSearch,
+  trackMathTaskAnswerOpen,
+  trackMathTaskCopy,
+  trackMathTaskFavoriteToggle,
+  trackMathTaskHintOpen,
+  trackMathTaskInsertBoard,
+  trackMathTaskInsertNote,
+  trackMathTaskNextVariant,
+  trackMathTaskOpen,
+  trackMathTaskReport,
+  trackMathTaskSolutionOpen,
+  type MathBankSearchSnapshot,
+  type MathBankTaskSnapshot,
+} from './mathBank';
 export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
 export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
@@ -132,6 +150,8 @@ export type {
   ProductAnalyticsCallFailureReason,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsBoardTrigger,
+  MathBankAnalyticsSource,
+  MathBankFavoriteAction,
   ProductAnalyticsFeedbackScore,
   ProductAnalyticsFeedbackType,
   ProductLimitType,

@@ -26,6 +26,8 @@ import type {
   PermissionFailureReason,
   ProductAnalyticsActorRole,
   ProductAnalyticsBoardTrigger,
+  MathBankAnalyticsSource,
+  MathBankFavoriteAction,
   ProductLimitBlockedOn,
   ProductLimitFileCategory,
   ProductLimitObjectKind,
@@ -523,6 +525,117 @@ export type ProductAnalyticsEventMap = {
   math_toolbar_used: { action?: string };
   math_latex_mode_opened: { action?: string };
   math_virtual_keyboard_opened: { action?: string };
+
+  math_bank_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id: string;
+  };
+  math_bank_search: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    query_length: number;
+    has_query: boolean;
+    has_filters: boolean;
+    grades_count: number;
+    topics_count: number;
+    difficulty_count: number;
+    exam: string;
+    exam_numbers_count: number;
+    types_count: number;
+    favorites_only: boolean;
+  };
+  math_task_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_insert_board: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+    time_to_insert_ms?: number;
+  };
+  math_task_insert_note: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+    time_to_insert_ms?: number;
+  };
+  math_task_copy: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_solution_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+  };
+  math_task_answer_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+  };
+  math_task_hint_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+  };
+  math_task_favorite_toggle: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    action: MathBankFavoriteAction;
+  };
+  math_task_next_variant: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+  };
+  math_task_report: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    grade: number;
+    topic_id?: string;
+    comment: string;
+  };
 
   product_limit_reached: {
     event_version?: number;

@@ -43,7 +43,12 @@ function sanitizeUmamiPayload(
     if (isForbiddenField(eventName, key)) continue;
 
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-      if (eventName === 'feedback_submitted' && key === 'comment' && typeof value === 'string') {
+      if (
+        key === 'comment' &&
+        typeof value === 'string' &&
+        eventName &&
+        ANALYTICS_ALLOWED_FREE_TEXT_FIELDS[eventName]?.has('comment')
+      ) {
         const comment = prepareFeedbackComment(value);
         if (comment) result[key] = comment;
         continue;

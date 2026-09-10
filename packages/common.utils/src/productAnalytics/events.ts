@@ -91,6 +91,20 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   MATH_LATEX_MODE_OPENED: 'math_latex_mode_opened',
   MATH_VIRTUAL_KEYBOARD_OPENED: 'math_virtual_keyboard_opened',
 
+  // Math task bank
+  MATH_BANK_OPEN: 'math_bank_open',
+  MATH_BANK_SEARCH: 'math_bank_search',
+  MATH_TASK_OPEN: 'math_task_open',
+  MATH_TASK_INSERT_BOARD: 'math_task_insert_board',
+  MATH_TASK_INSERT_NOTE: 'math_task_insert_note',
+  MATH_TASK_COPY: 'math_task_copy',
+  MATH_TASK_SOLUTION_OPEN: 'math_task_solution_open',
+  MATH_TASK_ANSWER_OPEN: 'math_task_answer_open',
+  MATH_TASK_HINT_OPEN: 'math_task_hint_open',
+  MATH_TASK_FAVORITE_TOGGLE: 'math_task_favorite_toggle',
+  MATH_TASK_NEXT_VARIANT: 'math_task_next_variant',
+  MATH_TASK_REPORT: 'math_task_report',
+
   // Product limits (baseline before subscription)
   PRODUCT_LIMIT_REACHED: 'product_limit_reached',
 
