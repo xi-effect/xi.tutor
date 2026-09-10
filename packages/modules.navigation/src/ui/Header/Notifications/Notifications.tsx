@@ -16,7 +16,7 @@ import { CustomNotificationModal } from './CustomNotificationModal';
 import { openNotificationLink, navigateToNotification } from './notificationsNavigation';
 import { useNotificationsInfiniteScroll } from '../../../hooks';
 
-const MARK_VISIBLE_AS_READ_DELAY_MS = 1000;
+const MARK_VISIBLE_AS_READ_DELAY_MS = 1500;
 
 export const Notifications = () => {
   const navigate = useNavigate();
