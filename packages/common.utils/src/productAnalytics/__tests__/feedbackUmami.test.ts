@@ -39,4 +39,25 @@ describe('trackProductEvent feedback comment', () => {
     });
     expect(track.mock.calls[1]?.[1]).not.toHaveProperty('user_id');
   });
+
+  it('пропускает comment в math_task_report и маскирует PII', () => {
+    vi.stubEnv('VITE_ENABLE_PRODUCT_ANALYTICS', 'true');
+    const track = vi.fn();
+    (globalThis as { window?: { umami?: { track: typeof track } } }).window = {
+      umami: { track },
+    };
+
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_REPORT, {
+      source: 'page',
+      task_id: 'task-1',
+      grade: 8,
+      comment: 'ошибка в ответе, пишите tutor@mail.ru',
+    });
+
+    expect(track.mock.calls[0]?.[1]).toMatchObject({
+      task_id: 'task-1',
+      grade: 8,
+      comment: 'ошибка в ответе, пишите [email]',
+    });
+  });
 });

@@ -26,6 +26,7 @@ import {
   Task,
   File,
   Image,
+  BookOpened,
 } from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -80,7 +81,7 @@ export const BlockMenu = ({
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const { openModal, openCloudPicker } = useInterfaceStore();
+  const { openModal, openCloudPicker, openMathBankPicker } = useInterfaceStore();
   const { storageItem } = useYjsContext();
   const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
     editor,
@@ -99,6 +100,11 @@ export const BlockMenu = ({
 
   const pickFromCloud = () => {
     openCloudPicker(getActiveBlock());
+  };
+
+  const pickFromMathBank = () => {
+    void import('pages.math-bank/picker');
+    openMathBankPicker(getActiveBlock());
   };
 
   return (
@@ -145,6 +151,17 @@ export const BlockMenu = ({
           <Task size="sm" className="size-6" />
           <span>{t('blockMenu.taskList')}</span>
         </DropdownMenuItem>
+
+        {isTutor ? (
+          <DropdownMenuItem
+            className={menuItemClass}
+            onSelect={pickFromMathBank}
+            data-umami-event="editor-math-bank-open"
+          >
+            <BookOpened size="sm" className="size-6" />
+            <span>{t('blockMenu.fromMathBank')}</span>
+          </DropdownMenuItem>
+        ) : null}
 
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className={menuSubTriggerClass}>

@@ -66,6 +66,7 @@
     "pages.classrooms": "workspace:*",
     "pages.main": "workspace:*",
     "pages.materials": "workspace:*",
+    "pages.math-bank": "workspace:*",
     "pages.payments": "workspace:*",
     "pages.signin": "workspace:*",
     "pages.signup": "workspace:*",

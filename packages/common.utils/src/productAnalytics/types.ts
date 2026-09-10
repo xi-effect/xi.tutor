@@ -143,6 +143,10 @@ export type ProductAnalyticsDurationBucket = '5-15' | '15-30' | '30-45' | '45+';
 
 export type ProductAnalyticsBoardTrigger = 'duration' | 'objects' | 'collaboration';
 
+export type MathBankAnalyticsSource = 'page' | 'board' | 'editor';
+
+export type MathBankFavoriteAction = 'add' | 'remove';
+
 export type ProductLimitType = 'file_size' | 'storage' | 'board_objects' | 'classrooms' | 'other';
 
 export type ProductLimitSource = 'materials' | 'classroom' | 'board' | 'other';

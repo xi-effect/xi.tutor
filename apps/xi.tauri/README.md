@@ -288,8 +288,9 @@ self-hosted runner с `runs-on: [self-hosted, macOS]` в матрице.
 
 ### PR / main
 
-Полный `tauri build` на каждый PR не гоняем. Если меняются `apps/xi.tauri/**`
-или общий frontend, `main.yml` делает `pnpm --filter xi.tauri check-types`.
+В обычном пайплайне (`main.yml`) `xi.tauri` не проверяется и не собирается.
+Desktop-бандлы — только workflow **xi.tauri Desktop Release** (тег `xi.tauri-v*`
+или `workflow_dispatch`).
 
 ### UX обновления
 
