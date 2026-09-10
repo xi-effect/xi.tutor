@@ -19,7 +19,6 @@ import { shouldUseSystemNotifications, showSystemNotification } from './webNotif
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
 import { useSearchNotifications } from './useSearchNotifications';
-// import { NotificationsQueryKey } from '../../../common.api/src/notifications';
 
 // Очередь отметки уведомлений прочитанными, копим id и шлём пачками с паузой между ними
 const READ_QUEUE_BATCH_SIZE = 5;
