@@ -50,19 +50,15 @@ export const getMaxBytesForKind = (kind: UploadKind): number =>
   kind === 'image' ? getMaxImageBytes() : getMaxFileBytes();
 
 export const evaluateUpload = (file: File, kind: UploadKind): UploadEvaluation => {
-  if (!SUBSCRIPTION_BILLING_ENABLED) {
-    return { ok: true };
-  }
-
   const state = useSubscriptionStore.getState();
   const tariff = getTariff(state.planId);
   const maxBytes = kind === 'image' ? tariff.maxImageBytes : tariff.maxFileBytes;
 
-  if (isStorageQuotaReached()) {
+  if (SUBSCRIPTION_BILLING_ENABLED && isStorageQuotaReached()) {
     return { ok: false, reason: 'storage', planId: state.planId, maxBytes, kind };
   }
 
-  if (state.mock.forceOversizedFile || file.size > maxBytes) {
+  if ((SUBSCRIPTION_BILLING_ENABLED && state.mock.forceOversizedFile) || file.size > maxBytes) {
     return { ok: false, reason: 'size', planId: state.planId, maxBytes, kind };
   }
 

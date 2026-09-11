@@ -55,6 +55,7 @@
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "pages.materials": "workspace:*",
+    "pages.bank": "workspace:*",
     "file-type": "^19.0.0",
     "i18next": "24.2.2",
     "lowlight": "^3.3.0",

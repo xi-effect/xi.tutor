@@ -4,7 +4,8 @@
 
 > Воронка активации (новые snake_case события, `activation_flow_id`, `attempt_id`): см. [`docs/analytics/activation-events.md`](./analytics/activation-events.md).  
 > Семантика онбординга: [`docs/analytics/onboarding-events.md`](./analytics/onboarding-events.md).  
-> Загрузка файлов (`file_upload_*`, лимиты размера): [`docs/analytics/file-upload-events.md`](./analytics/file-upload-events.md).
+> Загрузка файлов (`file_upload_*`, лимиты размера): [`docs/analytics/file-upload-events.md`](./analytics/file-upload-events.md).  
+> Банк заданий (`math_bank_*`, `math_task_*`): [`docs/analytics/math-bank-events.md`](./analytics/math-bank-events.md).
 
 ---
 
@@ -24,16 +25,16 @@
 
 **Модуль:** `modules.navigation`
 
-| Событие                        | Способ вызова                                            | Описание                                                                                                                  |
-| ------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `navigation-{titleKey}`        | `data-umami-event` — клик по пункту бокового меню        | Переход по навигации, доп. свойство `url`. Значения `titleKey`: `home`, `schedule`, `classrooms`, `materials`, `payments` |
-| `navigation-mobile-{titleKey}` | `data-umami-event` — клик по пункту мобильного меню      | Переход по навигации, доп. свойство `url`                                                                                 |
-| `navigation-mobile-logo`       | `data-umami-event` — клик по логотипу в нижней панели    | Переход на главную (мобильная)                                                                                            |
-| `navigation-mobile-menu`       | `data-umami-event` — клик по кнопке меню в нижней панели | Открытие мобильного меню                                                                                                  |
-| `header-user-menu-open`        | `data-umami-event` — клик по аватару в шапке             | Открытие пользовательского меню, доп. свойство `device` (mobile)                                                          |
-| `header-profile-open`          | `data-umami-event` — клик «Профиль» в меню пользователя  | Открытие профиля, доп. свойство `device` (mobile)                                                                         |
-| `header-logout`                | `data-umami-event` — клик «Выйти» в меню пользователя    | Выход из аккаунта, доп. свойство `device` (mobile)                                                                        |
-| `header-pwa-install`           | `data-umami-event` — клик «Установить приложение»        | Установка PWA, доп. свойство `device` (mobile)                                                                            |
+| Событие                        | Способ вызова                                            | Описание                                                                                                                              |
+| ------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigation-{titleKey}`        | `data-umami-event` — клик по пункту бокового меню        | Переход по навигации, доп. свойство `url`. Значения `titleKey`: `home`, `schedule`, `classrooms`, `materials`, `mathBank`, `payments` |
+| `navigation-mobile-{titleKey}` | `data-umami-event` — клик по пункту мобильного меню      | Переход по навигации, доп. свойство `url`                                                                                             |
+| `navigation-mobile-logo`       | `data-umami-event` — клик по логотипу в нижней панели    | Переход на главную (мобильная)                                                                                                        |
+| `navigation-mobile-menu`       | `data-umami-event` — клик по кнопке меню в нижней панели | Открытие мобильного меню                                                                                                              |
+| `header-user-menu-open`        | `data-umami-event` — клик по аватару в шапке             | Открытие пользовательского меню, доп. свойство `device` (mobile)                                                                      |
+| `header-profile-open`          | `data-umami-event` — клик «Профиль» в меню пользователя  | Открытие профиля, доп. свойство `device` (mobile)                                                                                     |
+| `header-logout`                | `data-umami-event` — клик «Выйти» в меню пользователя    | Выход из аккаунта, доп. свойство `device` (mobile)                                                                                    |
+| `header-pwa-install`           | `data-umami-event` — клик «Установить приложение»        | Установка PWA, доп. свойство `device` (mobile)                                                                                        |
 
 ### Модалка поддержки
 
@@ -379,6 +380,37 @@
 
 ---
 
+## `/bank` — Банк заданий
+
+**Пакет:** `pages.math-bank`
+
+Раздел доступен репетитору. Поиск и фильтры работают на клиенте по gzip-индексу.
+
+| Событие                          | Способ вызова                                              | Описание                                    |
+| -------------------------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| `math-bank-grade-filter`         | `data-umami-event` — чип «Класс»                           | Открытие фильтра класса                     |
+| `math-bank-topic-filter`         | `data-umami-event` — чип «Тема»                            | Открытие фильтра темы                       |
+| `math-bank-difficulty-filter`    | `data-umami-event` — чип «Сложность»                       | Открытие фильтра сложности                  |
+| `math-bank-exam-filter`          | `data-umami-event` — чип «Экзамен»                         | Открытие фильтра экзамена                   |
+| `math-bank-type-filter`          | `data-umami-event` — чип «Тип»                             | Открытие фильтра типа                       |
+| `math-bank-favorites-filter`     | `data-umami-event` — чип «Только избранное»                | Переключение избранного                     |
+| `math-bank-reset-all`            | `data-umami-event` — «Сбросить все»                        | Сброс фильтров                              |
+| `math-bank-reset-all-empty`      | `data-umami-event` — сброс в пустом списке                 | Сброс фильтров, когда ничего не найдено     |
+| `math-bank-task-open`            | `data-umami-event` — клик по карточке                      | Открытие задания                            |
+| `math-bank-task-favorite-toggle` | `data-umami-event` — избранное на карточке или в модалке   | Добавить / убрать из избранного             |
+| `math-bank-task-copy`            | `data-umami-event` — иконка копирования в шапке модалки    | Копирование условия для вставки на доску    |
+| `math-bank-task-answer`          | `data-umami-event` — аккордеон «Ответ»                     | Показ / скрытие ответа                      |
+| `math-bank-task-solution`        | `data-umami-event` — аккордеон «Решение»                   | Показ / скрытие решения                     |
+| `math-bank-task-hint`            | `data-umami-event` — аккордеон «Подсказки»                 | Показ / скрытие подсказок                   |
+| `math-bank-task-next-variant`    | `data-umami-event` — иконка «Ещё вариант» в шапке модалки  | Другое задание той же группы                |
+| `math-bank-task-report`          | `data-umami-event` — иконка флага в шапке модалки          | Открытие формы репорта                      |
+| `editor-math-bank-open`          | `data-umami-event` — пункт «Из банка заданий» в меню блока | Открытие пикера банка в заметке             |
+| `editor-math-bank-task-add`      | `data-umami-event` — клик по заданию в пикере              | Вставка условия в заметку, свойство: `task` |
+
+Продуктовая воронка (`math_bank_open`, поиск без текста запроса, открытие карточки, вставка на доску/в заметку): [`docs/analytics/math-bank-events.md`](./analytics/math-bank-events.md). Клики в таблице выше **не** равны outcome-событиям.
+
+---
+
 ## `/schedule` — Расписание
 
 **Пакет:** `pages.calendar`, **Модуль:** `modules.calendar`
@@ -458,24 +490,30 @@
 
 Загрузка картинки, PDF, аудио, презентации или файла на холст даёт `file_upload_*` с `source=board`. Отдельного `data-umami-event` на сам drop/picker нет. См. [file-upload-events.md](./analytics/file-upload-events.md).
 
-| Событие                   | Способ вызова                                                     | Описание                                                          |
-| ------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `board-back`              | `data-umami-event` — клик по кнопке «Назад»                       | Возврат на предыдущую страницу                                    |
-| `board-edit-name`         | `data-umami-event` — клик по имени доски                          | Открытие модалки редактирования названия                          |
-| `board-timer-menu`        | `data-umami-event` — клик по иконке таймера                       | Открытие меню таймера                                             |
-| `board-toggle-focus-mode` | `data-umami-event` — клик по кнопке фокус-режима                  | Переключение фокус-режима, свойство: `state` (enter / exit)       |
-| `board-settings-menu`     | `data-umami-event` — клик по иконке настроек                      | Открытие выпадающего меню настроек                                |
-| `board-toggle-lock`       | `data-umami-event` — клик «Заблокировать / Разблокировать» в меню | Переключение блокировки доски, свойство: `state` (pause / resume) |
-| `board-download`          | `data-umami-event` — клик «Скачать» в меню                        | Скачивание доски                                                  |
-| `board-clear`             | `data-umami-event` — клик «Очистить» в меню                       | Очистка содержимого доски                                         |
-| `board-hotkeys-help`      | `data-umami-event` — пункт «Горячие клавиши»                      | Открытие справки по горячим клавишам                              |
-| `board-input-mode`        | `data-umami-event` — выбор режима ввода                           | Смена режима ввода, свойство: `mode`                              |
-| `board-import-json`       | `data-umami-event` — пункт «Импорт JSON»                          | Импорт доски из JSON                                              |
-| `board-toggle-debug-info` | `data-umami-event` — переключатель отладки                        | Показ/скрытие отладочной информации                               |
-| `board-lock-all`          | `data-umami-event` — «Заблокировать всё»                          | Блокировка всех слоёв                                             |
-| `board-lock-category`     | `data-umami-event` — блокировка категории                         | Блокировка категории, свойство: `category`                        |
-| `board-unlock-all`        | `data-umami-event` — «Разблокировать всё»                         | Разблокировка всех слоёв                                          |
-| `board-unlock-category`   | `data-umami-event` — разблокировка категории                      | Разблокировка категории, свойство: `category`                     |
+| Событие                      | Способ вызова                                                     | Описание                                                          |
+| ---------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `board-back`                 | `data-umami-event` — клик по кнопке «Назад»                       | Возврат на предыдущую страницу                                    |
+| `board-edit-name`            | `data-umami-event` — клик по имени доски                          | Открытие модалки редактирования названия                          |
+| `board-timer-menu`           | `data-umami-event` — клик по иконке таймера                       | Открытие меню таймера                                             |
+| `board-toggle-focus-mode`    | `data-umami-event` — клик по кнопке фокус-режима                  | Переключение фокус-режима, свойство: `state` (enter / exit)       |
+| `board-settings-menu`        | `data-umami-event` — клик по иконке настроек                      | Открытие выпадающего меню настроек                                |
+| `board-toggle-lock`          | `data-umami-event` — клик «Заблокировать / Разблокировать» в меню | Переключение блокировки доски, свойство: `state` (pause / resume) |
+| `board-download`             | `data-umami-event` — клик «Скачать» в меню                        | Скачивание доски                                                  |
+| `board-clear`                | `data-umami-event` — клик «Очистить» в меню                       | Очистка содержимого доски                                         |
+| `board-hotkeys-help`         | `data-umami-event` — пункт «Горячие клавиши»                      | Открытие справки по горячим клавишам                              |
+| `board-input-mode`           | `data-umami-event` — выбор режима ввода                           | Смена режима ввода, свойство: `mode`                              |
+| `board-import-json`          | `data-umami-event` — пункт «Импорт JSON»                          | Импорт доски из JSON                                              |
+| `board-toggle-debug-info`    | `data-umami-event` — переключатель отладки                        | Показ/скрытие отладочной информации                               |
+| `board-lock-all`             | `data-umami-event` — «Заблокировать всё»                          | Блокировка всех слоёв                                             |
+| `board-lock-category`        | `data-umami-event` — блокировка категории                         | Блокировка категории, свойство: `category`                        |
+| `board-unlock-all`           | `data-umami-event` — «Разблокировать всё»                         | Разблокировка всех слоёв                                          |
+| `board-unlock-category`      | `data-umami-event` — разблокировка категории                      | Разблокировка категории, свойство: `category`                     |
+| `board-asset-from-computer`  | `data-umami-event` — пункт «С компьютера» в меню файла            | Выбор файлов с компьютера для доски                               |
+| `board-asset-from-cloud`     | `data-umami-event` — пункт «Из облака» в меню файла               | Открытие пикера файлов из материалов                              |
+| `board-asset-from-math-bank` | `data-umami-event` — пункт «Из банка заданий» в меню файла        | Открытие пикера банка заданий                                     |
+| `board-math-bank-task-add`   | `data-umami-event` — клик по заданию в пикере                     | Вставка условия на доску, свойство: `task`                        |
+
+Вставка из пикера как outcome: `math_task_insert_board`. См. [math-bank-events.md](./analytics/math-bank-events.md).
 
 ### Таймер
 
@@ -553,6 +591,8 @@
 
 Воронка файлов (`file_upload_attempted` / `file_upload_succeeded` / `file_upload_rejected`): [`docs/analytics/file-upload-events.md`](./analytics/file-upload-events.md).
 
+Банк заданий (`math_bank_*` / `math_task_*`): [`docs/analytics/math-bank-events.md`](./analytics/math-bank-events.md).
+
 ---
 
 ### Воронка занятия и связи между событиями
@@ -603,18 +643,21 @@ lesson_started ◄──── (только при успехе)         lesson
 
 ### Что умеет и чего не умеет эта аналитика
 
-| Вопрос                                                | Можно ответить? | Как                                                                       |
-| ----------------------------------------------------- | --------------- | ------------------------------------------------------------------------- |
-| Сколько тьюторов провели урок за неделю?              | ✅              | `lesson_duration_reached`, `duration_min=15`, уникальные пользователи     |
-| Сколько занятий длилось 45+ мин?                      | ✅              | `lesson_duration_reached`, `duration_min=45`, количество событий          |
-| Какой % занятий используют доску?                     | ✅              | `board_used_meaningfully` / `lesson_duration_reached` (`duration_min=15`) |
-| Сколько студентов в среднем на групповом уроке?       | ✅              | среднее `students_count` при `lesson_type=group`                          |
-| Сколько занятий не состоялось из-за ошибки токена?    | ✅              | `call_connection_failed`, `reason=token_error`                            |
-| Конкретная причина ошибки токена (401 vs 500)?        | ❌              | нет — нужны логи `conference-service`                                     |
-| Как долго студент пробыл в конкретном занятии?        | ❌              | нет `classroom_id` в событии и нет событий от студента                    |
-| Сколько занятий упало из-за разрыва LiveKit?          | ❌              | не трекается — нужно добавить                                             |
-| Сколько пользователей упёрлись в лимит размера файла? | ✅              | unique `file_upload_rejected`, `reason=file_too_large`                    |
-| В каком разделе чаще режут oversized-файлы?           | ✅              | то же событие, фильтр `source`                                            |
+| Вопрос                                                | Можно ответить? | Как                                                                        |
+| ----------------------------------------------------- | --------------- | -------------------------------------------------------------------------- |
+| Сколько тьюторов провели урок за неделю?              | ✅              | `lesson_duration_reached`, `duration_min=15`, уникальные пользователи      |
+| Сколько занятий длилось 45+ мин?                      | ✅              | `lesson_duration_reached`, `duration_min=45`, количество событий           |
+| Какой % занятий используют доску?                     | ✅              | `board_used_meaningfully` / `lesson_duration_reached` (`duration_min=15`)  |
+| Сколько студентов в среднем на групповом уроке?       | ✅              | среднее `students_count` при `lesson_type=group`                           |
+| Сколько занятий не состоялось из-за ошибки токена?    | ✅              | `call_connection_failed`, `reason=token_error`                             |
+| Конкретная причина ошибки токена (401 vs 500)?        | ❌              | нет — нужны логи `conference-service`                                      |
+| Как долго студент пробыл в конкретном занятии?        | ❌              | нет `classroom_id` в событии и нет событий от студента                     |
+| Сколько занятий упало из-за разрыва LiveKit?          | ❌              | не трекается — нужно добавить                                              |
+| Сколько пользователей упёрлись в лимит размера файла? | ✅              | unique `file_upload_rejected`, `reason=file_too_large`                     |
+| В каком разделе чаще режут oversized-файлы?           | ✅              | то же событие, фильтр `source`                                             |
+| Сколько репетиторов открыли банк заданий?             | ✅              | unique visitors / count `math_bank_open`                                   |
+| Какая доля сессий банка закончилась вставкой?         | ✅              | unique `session_id` в `math_task_insert_board` (+ note) / `math_bank_open` |
+| Какой текст искали в банке?                           | ❌              | в Umami только `query_length` и выбранные фильтры, без текста запроса      |
 
 ---
 

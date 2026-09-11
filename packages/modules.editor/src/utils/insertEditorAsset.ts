@@ -19,6 +19,7 @@ import {
   type EditorMediaType,
 } from '../const/media';
 import { ActiveBlockT } from '../types';
+import { getMaxFileBytes } from 'common.subscription';
 import {
   insertAudioFile,
   insertFileBlock,
@@ -93,7 +94,10 @@ export async function insertEditorAsset(
     }
   } catch (err) {
     console.error(err);
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
     trackFileSizeLimitFromUploadError(err, file, 'other');
     toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
     return false;

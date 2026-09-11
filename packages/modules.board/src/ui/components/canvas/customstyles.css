@@ -93,6 +93,18 @@
   height: 100%;
 }
 
+/*
+ * Wrap-лейбл (стикер, карточка): превью .tl-text-content скрыто в режиме
+ * редактирования, а input — position:absolute и не задаёт ширину.
+ * Тогда .dr-text-label__inner с width:fit-content схлопывается, и
+ * overflow-wrap: break-word ломает набор по одной букве.
+ */
+.dr-text-label[data-textwrap='true'] > .dr-text-label__inner {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 .dr-text-label__inner > .tl-text-input {
   caret-color: currentColor;
 }

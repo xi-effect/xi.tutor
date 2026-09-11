@@ -12,11 +12,11 @@ describe('getFileUploadErrorKind', () => {
     );
   });
 
-  it('считает CORS/Network Error у крупного файла слишком большим', () => {
+  it('считает CORS/Network Error у файла сверх лимита слишком большим', () => {
     expect(
       getFileUploadErrorKind(
         { code: 'ERR_NETWORK', message: 'Network Error' },
-        { fileSize: 5 * 1024 * 1024, maxBytes: 5 * 1024 * 1024 },
+        { fileSize: 8 * 1024 * 1024, maxBytes: 5 * 1024 * 1024 },
       ),
     ).toBe('tooLarge');
   });

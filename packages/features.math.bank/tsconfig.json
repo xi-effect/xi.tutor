@@ -1,0 +1,9 @@
+{
+  "include": ["src/**/*", "index.ts", "scripts/**/*"],
+  "extends": ["common.typescript/tsconfig.app.json"],
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "exclude": ["dist", "build", "node_modules"]
+}

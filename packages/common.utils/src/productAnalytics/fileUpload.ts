@@ -11,6 +11,13 @@ import type {
 
 const MB = 1024 * 1024;
 
+export type FileUploadErrorKind = 'tooLarge' | 'unsupported' | 'failed';
+
+export type FileUploadErrorContext = {
+  fileSize?: number;
+  maxBytes?: number;
+};
+
 export type FileUploadAttemptInput = {
   type?: string;
   name?: string;
@@ -36,7 +43,10 @@ export const getFileUploadSizeBucket = (bytes: number): FileUploadSizeBucket => 
   return '30mb_plus';
 };
 
-const readHttpStatus = (error: unknown): number | undefined => {
+const readPositiveStatus = (value: unknown): number | undefined =>
+  typeof value === 'number' && value > 0 ? value : undefined;
+
+export const getFileUploadHttpStatus = (error: unknown): number | undefined => {
   if (typeof error !== 'object' || error === null) {
     return undefined;
   }
@@ -47,11 +57,42 @@ const readHttpStatus = (error: unknown): number | undefined => {
     status?: unknown;
   };
 
-  for (const value of [candidate.response?.status, candidate.request?.status, candidate.status]) {
-    if (typeof value === 'number' && value > 0) return value;
+  return (
+    readPositiveStatus(candidate.response?.status) ??
+    readPositiveStatus(candidate.request?.status) ??
+    readPositiveStatus(candidate.status)
+  );
+};
+
+const collectErrorText = (error: unknown): string => {
+  const parts: string[] = [];
+
+  if (error instanceof Error && error.message) {
+    parts.push(error.message);
   }
 
-  return undefined;
+  if (typeof error === 'object' && error !== null) {
+    const candidate = error as {
+      message?: unknown;
+      response?: { data?: unknown };
+    };
+
+    if (typeof candidate.message === 'string') {
+      parts.push(candidate.message);
+    }
+
+    const data = candidate.response?.data;
+    if (typeof data === 'string') {
+      parts.push(data);
+    } else if (typeof data === 'object' && data !== null) {
+      const detail = (data as { detail?: unknown; message?: unknown }).detail;
+      const message = (data as { detail?: unknown; message?: unknown }).message;
+      if (typeof detail === 'string') parts.push(detail);
+      if (typeof message === 'string') parts.push(message);
+    }
+  }
+
+  return parts.join(' ').toLowerCase();
 };
 
 const isAbortLikeUploadError = (error: unknown): boolean => {
@@ -68,18 +109,76 @@ const isAbortLikeUploadError = (error: unknown): boolean => {
   );
 };
 
-export const getFileUploadRejectReasonFromError = (error: unknown): FileUploadRejectReason => {
-  if (isAbortLikeUploadError(error)) return 'unknown';
-
-  const status = readHttpStatus(error);
-  if (status === 413) return 'file_too_large';
-  if (status === 415 || status === 422) return 'unsupported_type';
-
-  if (error instanceof Error) {
-    if (error.message.includes('413')) return 'file_too_large';
-    if (error.message.includes('415') || error.message.includes('422')) return 'unsupported_type';
+const isNetworkLikeUploadError = (error: unknown): boolean => {
+  if (typeof error !== 'object' || error === null) {
+    return false;
   }
 
+  const candidate = error as { code?: unknown; message?: unknown };
+  if (candidate.code === 'ERR_NETWORK' || candidate.code === 'ERR_BAD_RESPONSE') {
+    return true;
+  }
+
+  return candidate.message === 'Network Error';
+};
+
+const isKnownTooLargeText = (text: string): boolean =>
+  text.includes('413') ||
+  text.includes('payload too large') ||
+  text.includes('entity too large') ||
+  text.includes('file too large') ||
+  text.includes('слишком больш');
+
+const isKnownUnsupportedText = (text: string): boolean =>
+  text.includes('415') ||
+  text.includes('422') ||
+  text.includes('unsupported') ||
+  text.includes('неподдерживаем');
+
+export const getFileUploadErrorKind = (
+  error: unknown,
+  options?: FileUploadErrorContext,
+): FileUploadErrorKind => {
+  const status = getFileUploadHttpStatus(error);
+
+  if (status === 413) {
+    return 'tooLarge';
+  }
+
+  if (status === 415 || status === 422) {
+    return 'unsupported';
+  }
+
+  const text = collectErrorText(error);
+  if (isKnownTooLargeText(text)) {
+    return 'tooLarge';
+  }
+
+  if (isKnownUnsupportedText(text)) {
+    return 'unsupported';
+  }
+
+  const { fileSize, maxBytes } = options ?? {};
+  if (!isNetworkLikeUploadError(error) || typeof fileSize !== 'number') {
+    return 'failed';
+  }
+
+  if (typeof maxBytes === 'number' && maxBytes > 0 && fileSize >= maxBytes) {
+    return 'tooLarge';
+  }
+
+  return 'failed';
+};
+
+export const getFileUploadRejectReasonFromError = (
+  error: unknown,
+  options?: FileUploadErrorContext,
+): FileUploadRejectReason => {
+  if (isAbortLikeUploadError(error)) return 'unknown';
+
+  const kind = getFileUploadErrorKind(error, options);
+  if (kind === 'tooLarge') return 'file_too_large';
+  if (kind === 'unsupported') return 'unsupported_type';
   return 'upload_error';
 };
 
@@ -88,6 +187,13 @@ export const getFileUploadRejectReasonFromEvaluation = (
 ): FileUploadRejectReason | null => {
   if (result.ok) return null;
   return result.reason === 'size' ? 'file_too_large' : 'unknown';
+};
+
+const sanitizeFileName = (name?: string): string => {
+  const trimmed = (name ?? '').trim();
+  if (!trimmed) return 'unknown';
+  const base = trimmed.replace(/\\/g, '/').split('/').pop() ?? trimmed;
+  return base.slice(0, 255);
 };
 
 const buildBaseProps = (
@@ -119,10 +225,20 @@ export const beginFileUploadAttempt = (
     reject: (reason: FileUploadRejectReason) => {
       if (settled) return;
       settled = true;
-      const payload: ProductAnalyticsEventMap['file_upload_rejected'] = {
-        ...props,
-        reason,
-      };
+      const payload: ProductAnalyticsEventMap['file_upload_rejected'] =
+        reason === 'file_too_large'
+          ? {
+              event_version: props.event_version,
+              source: props.source,
+              file_category: props.file_category,
+              reason,
+              file_name: sanitizeFileName(file.name),
+              file_size: file.size,
+            }
+          : {
+              ...props,
+              reason,
+            };
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.FILE_UPLOAD_REJECTED, payload);
     },
   };
@@ -138,6 +254,10 @@ export const rejectFileUploadFromEvaluation = (
   return true;
 };
 
-export const rejectFileUploadFromError = (attempt: FileUploadAttempt, error: unknown): void => {
-  attempt.reject(getFileUploadRejectReasonFromError(error));
+export const rejectFileUploadFromError = (
+  attempt: FileUploadAttempt,
+  error: unknown,
+  options?: FileUploadErrorContext,
+): void => {
+  attempt.reject(getFileUploadRejectReasonFromError(error, options));
 };

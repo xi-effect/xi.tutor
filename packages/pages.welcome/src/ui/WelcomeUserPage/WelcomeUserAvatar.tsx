@@ -31,19 +31,19 @@ export const WelcomeUserAvatar = () => {
     const file = files[0];
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      beginFileUploadAttempt('other', file).reject('unsupported_type');
+      beginFileUploadAttempt('profile_avatar', file).reject('unsupported_type');
       handleError(t('avatar_format_error'), t('avatar_format_hint'));
       return;
     }
 
     if (file.size > 1 * 1024 * 1024) {
-      beginFileUploadAttempt('other', file).reject('file_too_large');
+      beginFileUploadAttempt('profile_avatar', file).reject('file_too_large');
       handleError(t('avatar_size_error'), t('avatar_size_hint'));
       return;
     }
 
     if (isFileNameTooLong(file.name)) {
-      beginFileUploadAttempt('other', file).reject('unknown');
+      beginFileUploadAttempt('profile_avatar', file).reject('unknown');
       handleError(t('avatar_name_error'), t('avatar_name_hint', { max: MAX_FILENAME_LENGTH }));
       return;
     }

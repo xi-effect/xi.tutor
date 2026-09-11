@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import type { Editor } from '@ibodr/draw';
 import {
   DropdownMenu,
@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Laptop, Materials } from '@xipkg/icons';
+import { Laptop, Materials, Task } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
 import { useCurrentUser, type RetryRequest } from 'common.services';
@@ -18,6 +18,15 @@ import { boardDropdownZClass, boardMenuItemClass, boardMenuSurfaceClass } from '
 import { pickAndInsertComputerFiles } from '../../../utils/pickAndInsertComputerFiles';
 import { insertLibraryFileToBoard } from '../../../utils/insertLibraryFileToBoard';
 import { CloudFilesDrawer } from './CloudFilesDrawer';
+import { insertMathTaskToBoard } from '../../../utils/insertMathTaskToBoard';
+
+const MathBankDrawer = lazy(() =>
+  import('./MathBankDrawer').then((module) => ({ default: module.MathBankDrawer })),
+);
+
+const preloadMathBankDrawer = () => {
+  void import('./MathBankDrawer');
+};
 
 type AssetUploadControlProps = {
   icon: React.ReactNode;
@@ -41,6 +50,13 @@ export const AssetUploadControl = ({
   const isTutor = user?.default_layout === 'tutor';
   const [menuOpen, setMenuOpen] = useState(false);
   const [cloudOpen, setCloudOpen] = useState(false);
+  const [mathBankOpen, setMathBankOpen] = useState(false);
+  const [mathBankMounted, setMathBankMounted] = useState(false);
+
+  const openMathBank = () => {
+    setMathBankMounted(true);
+    setMathBankOpen(true);
+  };
 
   const openComputerPicker = () => {
     pickAndInsertComputerFiles(editor, token, addToQueue);
@@ -52,6 +68,15 @@ export const AssetUploadControl = ({
     } catch (error) {
       console.error('Ошибка при вставке файла из облака:', error);
       toast.error(t('navbar.cloudInsertFailed'), { duration: 5000 });
+    }
+  };
+
+  const handleMathBankSelect = (task: { statement: string }) => {
+    try {
+      insertMathTaskToBoard(editor, task.statement);
+    } catch (error) {
+      console.error('Ошибка при вставке задания на доску:', error);
+      toast.error(t('navbar.mathBankInsertFailed'), { duration: 5000 });
     }
   };
 
@@ -83,7 +108,7 @@ export const AssetUploadControl = ({
           <NavbarButton
             icon={icon}
             title={title}
-            isActive={isActive || menuOpen || cloudOpen}
+            isActive={isActive || menuOpen || cloudOpen || mathBankOpen}
             data-board-tool="asset"
           />
         </DropdownMenuTrigger>
@@ -115,10 +140,31 @@ export const AssetUploadControl = ({
             <Materials className="fill-icon-secondary size-4 shrink-0" />
             {t('navbar.fromCloud')}
           </DropdownMenuItem>
+          <DropdownMenuItem
+            className={cn(boardMenuItemClass, 'cursor-pointer gap-2 rounded-lg px-3 py-2')}
+            onSelect={() => {
+              setMenuOpen(false);
+              openMathBank();
+            }}
+            onPointerEnter={preloadMathBankDrawer}
+            data-umami-event="board-asset-from-math-bank"
+          >
+            <Task className="fill-icon-secondary size-4 shrink-0" />
+            {t('navbar.fromMathBank')}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
       <CloudFilesDrawer open={cloudOpen} onOpenChange={setCloudOpen} onSelect={handleCloudSelect} />
+      {mathBankMounted ? (
+        <Suspense fallback={null}>
+          <MathBankDrawer
+            open={mathBankOpen}
+            onOpenChange={setMathBankOpen}
+            onSelect={handleMathBankSelect}
+          />
+        </Suspense>
+      ) : null}
     </>
   );
 };

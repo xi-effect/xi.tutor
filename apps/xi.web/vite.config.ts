@@ -12,6 +12,7 @@ import {
   readCallsDepsMode,
 } from './vite.calls-local.ts';
 import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
+import { mathBankAssetsPlugin } from './vite.math-bank.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,6 +27,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   const config = {
     plugins: [
       paddleOcrCjsInteropPlugin(),
+      mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
@@ -72,6 +74,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             '**/emoji/svg/**',
             // PaddleOCR собирается в hashed `assets/dist-*.js` (~24MB) — не кладём в precache.
             '**/assets/dist-*.js',
+            '**/math-bank/**',
+            '**/task-bank/**',
           ],
           maximumFileSizeToCacheInBytes: 32 * 1024 * 1024,
           navigateFallback: '/index.html',
@@ -103,6 +107,17 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 },
               },
             },
+            {
+              urlPattern: /\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'math-bank-assets',
+                expiration: {
+                  maxEntries: 40,
+                  maxAgeSeconds: 60 * 60 * 24 * 30,
+                },
+              },
+            },
           ],
         },
       }),
@@ -112,6 +127,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       minify: mode === 'production',
       outDir: 'build',
       sourcemap: mode === 'debug',
+      reportCompressedSize: false,
     },
     optimizeDeps: {
       rolldownOptions: {

@@ -96,7 +96,10 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
     attempt.succeed();
   } catch (err) {
     console.error('[insertPresentation] upload failed', err);
-    rejectFileUploadFromError(attempt, err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
 
     const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
       sizeDescKey: 'toast.presentationSizeDesc',

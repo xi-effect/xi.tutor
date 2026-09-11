@@ -117,7 +117,10 @@ async function uploadPickedImage(file: File, token: string) {
     attempt.succeed();
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
-    rejectFileUploadFromError(attempt, error);
+    rejectFileUploadFromError(attempt, error, {
+      fileSize: next.size,
+      maxBytes: getMaxImageBytes(),
+    });
     const { title, description } = getBoardUploadErrorToast(error, next, getMaxImageBytes(), {
       sizeDescKey: 'toast.imageSizeDesc',
       failedTitleKey: 'toast.imageUploadFailed',
@@ -222,37 +225,46 @@ export function ActivityImageField({
               type="button"
               data-board-control=""
               disabled={uploading}
-              className="text-text-secondary hover:bg-background-hover/40 flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 px-4 text-center text-xs transition-colors"
+              className="text-text-secondary hover:bg-background-hover/40 flex h-full min-h-40 w-full items-center justify-center px-4 text-center text-xs transition-colors"
               onPointerDown={stop}
               onClick={(event) => {
                 stop(event);
                 pick();
               }}
             >
-              <span className="bg-background-surface border-border-default flex size-10 items-center justify-center rounded-xl border shadow-sm">
-                <Image className={cn(boardIconClass, 'size-5')} />
-              </span>
               {uploading ? t('activity.imageUploading') : t('activity.imagePlaceholder')}
             </button>
           )}
-          {value ? (
-            <div
-              className="absolute top-2 right-2 z-10 flex items-center gap-1"
+          <div
+            className="absolute top-2 right-2 z-20 flex items-center gap-1"
+            data-board-control=""
+            onPointerDown={stop}
+            onClick={stop}
+          >
+            <button
+              type="button"
               data-board-control=""
-              onPointerDown={stop}
-              onClick={stop}
+              disabled={uploading}
+              title={
+                uploading
+                  ? t('activity.imageUploading')
+                  : value
+                    ? t('activity.changeImage')
+                    : t('activity.uploadImage')
+              }
+              aria-label={
+                uploading
+                  ? t('activity.imageUploading')
+                  : value
+                    ? t('activity.changeImage')
+                    : t('activity.uploadImage')
+              }
+              className={cn(coverToolbarButtonClass, uploading && 'opacity-50')}
+              onClick={pick}
             >
-              <button
-                type="button"
-                data-board-control=""
-                disabled={uploading}
-                title={uploading ? t('activity.imageUploading') : t('activity.changeImage')}
-                aria-label={uploading ? t('activity.imageUploading') : t('activity.changeImage')}
-                className={cn(coverToolbarButtonClass, uploading && 'opacity-50')}
-                onClick={pick}
-              >
-                <Image className={cn(boardIconClass, 'size-4')} />
-              </button>
+              <Image className={cn(boardIconClass, 'size-4')} />
+            </button>
+            {value ? (
               <button
                 type="button"
                 data-board-control=""
@@ -264,10 +276,10 @@ export function ActivityImageField({
               >
                 <Trash className={cn(boardIconClass, 'size-4')} />
               </button>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
           {children ? (
-            <div className={cn('absolute inset-0', !preview && 'pointer-events-none')}>
+            <div className={cn('absolute inset-0 z-10', !preview && 'pointer-events-none')}>
               {children}
             </div>
           ) : null}

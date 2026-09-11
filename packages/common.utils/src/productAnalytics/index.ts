@@ -19,10 +19,13 @@ export {
 } from './feedbackComment';
 export {
   POST_LESSON_FEEDBACK_COOLDOWN_MS,
+  POST_LESSON_FEEDBACK_JITTER_MS,
+  POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
   POST_LESSON_FEEDBACK_STORAGE_PREFIX,
   beginCallFeedbackSession,
   clearPendingPostLessonFeedback,
   clearPostLessonFeedbackCooldown,
+  computeNextFeedbackEligibleAt,
   debugQueuePostLessonFeedback,
   endClassroomFeedbackWindow,
   getPostLessonFeedbackSession,
@@ -81,6 +84,8 @@ export {
 } from './productLimitReached';
 export {
   beginFileUploadAttempt,
+  getFileUploadErrorKind,
+  getFileUploadHttpStatus,
   getFileUploadRejectReasonFromError,
   getFileUploadRejectReasonFromEvaluation,
   getFileUploadSizeBucket,
@@ -88,7 +93,28 @@ export {
   rejectFileUploadFromEvaluation,
   type FileUploadAttempt,
   type FileUploadAttemptInput,
+  type FileUploadErrorContext,
+  type FileUploadErrorKind,
 } from './fileUpload';
+export {
+  resetMathBankAnalyticsSession,
+  hasMathBankSearchSignal,
+  toMathBankSearchProps,
+  trackMathBankOpen,
+  trackMathBankSearch,
+  trackMathTaskAnswerOpen,
+  trackMathTaskCopy,
+  trackMathTaskFavoriteToggle,
+  trackMathTaskHintOpen,
+  trackMathTaskInsertBoard,
+  trackMathTaskInsertNote,
+  trackMathTaskNextVariant,
+  trackMathTaskOpen,
+  trackMathTaskReport,
+  trackMathTaskSolutionOpen,
+  type MathBankSearchSnapshot,
+  type MathBankTaskSnapshot,
+} from './mathBank';
 export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
 export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
@@ -132,6 +158,8 @@ export type {
   ProductAnalyticsCallFailureReason,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsBoardTrigger,
+  MathBankAnalyticsSource,
+  MathBankFavoriteAction,
   ProductAnalyticsFeedbackScore,
   ProductAnalyticsFeedbackType,
   ProductLimitType,

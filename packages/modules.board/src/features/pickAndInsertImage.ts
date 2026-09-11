@@ -150,7 +150,10 @@ export async function insertImage(
       attempt.succeed();
     } catch (err) {
       console.error('Image upload failed:', err);
-      rejectFileUploadFromError(attempt, err);
+      rejectFileUploadFromError(attempt, err, {
+        fileSize: file.size,
+        maxBytes: getMaxImageBytes(),
+      });
       const { title, description } = getBoardUploadErrorToast(err, file, getMaxImageBytes(), {
         sizeDescKey: 'toast.imageSizeDesc',
         failedTitleKey: 'toast.imageUploadError',

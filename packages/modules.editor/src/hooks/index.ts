@@ -6,3 +6,6 @@ export { useKeyboardInset } from './useKeyboardInset';
 export { useActiveBlockKey, type ActiveBlockKey } from './useActiveBlockKey';
 export { useProtectedImage } from './useProtectedImage';
 export { useNodeActiveBlock } from './useNodeActiveBlock';
+export { useDrawingToggle, useDrawingTool } from './useDrawing';
+export { useDrawingLayer } from './useDrawingLayer';
+export { useNodeAttribute } from './useNodeAttribute';

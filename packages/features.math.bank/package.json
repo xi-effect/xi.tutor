@@ -1,0 +1,40 @@
+{
+  "name": "features.math.bank",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "math-bank:build": "tsx scripts/build-bank.ts",
+    "math-bank:qa": "tsx scripts/qa-schema.ts && tsx scripts/qa-bank.ts",
+    "math-bank:append-historical": "tsx scripts/append-historical-tasks.ts",
+    "math-bank:check": "pnpm math-bank:build && pnpm math-bank:qa",
+    "russian-bank:build": "tsx scripts/build-russian-bank.ts",
+    "russian-bank:qa": "tsx scripts/qa-russian-bank.ts",
+    "russian-bank:check": "pnpm russian-bank:build && pnpm russian-bank:qa"
+  },
+  "dependencies": {
+    "minisearch": "^7.1.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/node": "^20.3.1",
+    "@xipkg/eslint": "4.6.0",
+    "@xipkg/typescript": "latest",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "tsx": "^4.20.5",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0",
+    "zod": "^4.3.6"
+  },
+  "description": "Task bank: mathematics and russian schemas, search and runtime loaders",
+  "author": "xi.effect"
+}

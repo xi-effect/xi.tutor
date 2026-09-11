@@ -1,0 +1,138 @@
+{
+  "release": "math-bank-21000-2026-09-10",
+  "baseTasks": 9000,
+  "addedTasks": 12000,
+  "totalTasks": 21000,
+  "newIdRange": [
+    "math-ru-09001",
+    "math-ru-21000"
+  ],
+  "oldTasksParsedDeepEqual": true,
+  "runtimeOldTasksParsedDeepEqual": true,
+  "byGrade": {
+    "5": 2320,
+    "6": 2730,
+    "7": 3145,
+    "8": 3350,
+    "9": 3650,
+    "10": 2700,
+    "11": 3105
+  },
+  "addedByGrade": {
+    "5": 1200,
+    "6": 1500,
+    "7": 1800,
+    "8": 1900,
+    "9": 2100,
+    "10": 1600,
+    "11": 1900
+  },
+  "byDifficulty": {
+    "1": 1015,
+    "2": 4271,
+    "3": 5423,
+    "4": 5567,
+    "5": 4724
+  },
+  "addedByDifficulty": {
+    "3": 3883,
+    "4": 4291,
+    "5": 3826
+  },
+  "generatorFamilies": 360,
+  "withFigures": 3466,
+  "files": {
+    "HISTORICAL_EXPANSION.md": {
+      "sha256": "fbc69eb1f83ada908ae914a81d13916933b3a918e901180f427c55da008a8a5c",
+      "bytes": 1089
+    },
+    "PATCH_MANIFEST.md": {
+      "sha256": "5d4a62636b7921d6c44ced2e15b7fd00aebc83d549ca13b6cc1465a2fc9b51e0",
+      "bytes": 2097
+    },
+    "QA_REPORT.md": {
+      "sha256": "cfe9c350a86ce408fbcdda4b8b59fa55a3fccc677b9d4f422d236000dfc2e75d",
+      "bytes": 2051
+    },
+    "content/historical_provenance.json.gz": {
+      "sha256": "6c00695b59d52073068b29379f64b7046df99d0a1e9c5e49235ff1910bee895c",
+      "bytes": 3664
+    },
+    "content/sample_historical_tasks.json": {
+      "sha256": "845f7fae96c320629d93c812ad373ab8af274a7fcd4f061d0bfe91c47e9f4bf7",
+      "bytes": 264661
+    },
+    "content/tasks.source.json.gz": {
+      "sha256": "298b5017f66a6724ed1e1b869f5edd8024966879de615187710b7a6a62d3dbdc",
+      "bytes": 2465723
+    },
+    "public/math-bank/by_grade/grade-10.json.gz": {
+      "sha256": "7df9f5a4b9785a992b5a643251e759b081d7460866a8cbf90a733f1f74da8435",
+      "bytes": 306665
+    },
+    "public/math-bank/by_grade/grade-11.json.gz": {
+      "sha256": "2e3837b4f7804e7d75fa5856f8237adff85423e6bf800c54560310bae250f60c",
+      "bytes": 431598
+    },
+    "public/math-bank/by_grade/grade-5.json.gz": {
+      "sha256": "219c6cb3527da9d03b3c5981f7fb8d48adae1179a12bc0f4f2343d64fefb8393",
+      "bytes": 247646
+    },
+    "public/math-bank/by_grade/grade-6.json.gz": {
+      "sha256": "70381e0d0c38a3b615520b2cad950ed8943390ac09ca8891b7ae4ced424ed8f3",
+      "bytes": 284328
+    },
+    "public/math-bank/by_grade/grade-7.json.gz": {
+      "sha256": "1bb2729659d317dfe31ceaef6ae720c5169c87f085e15ec35fcac56f7ebf797b",
+      "bytes": 309564
+    },
+    "public/math-bank/by_grade/grade-8.json.gz": {
+      "sha256": "3d07ee229e11cb138175afe20bea3b7639fbde65f7c8f7a996b970b1a619c332",
+      "bytes": 353136
+    },
+    "public/math-bank/by_grade/grade-9.json.gz": {
+      "sha256": "f723cb41247b9162654aeba5bba07c05a98617693deaea7b29372ac88c61c5ad",
+      "bytes": 555912
+    },
+    "public/math-bank/catalog.json": {
+      "sha256": "9de05d910beda5ba5ccc45a4e21be06944a3a518be01455d73bd92a4da74d62d",
+      "bytes": 71468
+    },
+    "public/math-bank/exam_index_2026.json": {
+      "sha256": "8f9bec17df39a060de6f5dfd4f0e951d746f64f853833f895a2b5ccc39cc1312",
+      "bytes": 5688
+    },
+    "public/math-bank/generation_report.json": {
+      "sha256": "964981d3c166d651dce501106c6122315fc73aa3bbc0df023dc79832a2be54ad",
+      "bytes": 1285
+    },
+    "public/math-bank/search_documents.json": {
+      "sha256": "4aa5ef75e61701517a850f2b7fc0d776909b30bcabf05603cfb5c8888e5c7e58",
+      "bytes": 16275018
+    },
+    "public/math-bank/search_documents.json.gz": {
+      "sha256": "94d11a85f303c7635c70ba9f438850d8ca2d0b2ce849904242efa752d83fb7c9",
+      "bytes": 350903
+    },
+    "public/math-bank/tasks.json": {
+      "sha256": "07a852b88798781fdc0ca9eed92cd3eba2970666df6b5ad27d151a49381391c6",
+      "bytes": 69238161
+    },
+    "public/math-bank/tasks.json.gz": {
+      "sha256": "a77c6b9ae6dced416d6f66a7d337b11f7835515b7f121848f5c8fced24ddb16a",
+      "bytes": 2481514
+    },
+    "public/math-bank/tasks.jsonl": {
+      "sha256": "57f731a1e5bcf34961a02e75e5055318d5fa38cac25f751691be420f0e597cd0",
+      "bytes": 69238160
+    },
+    "scripts/append-historical-tasks.ts": {
+      "sha256": "ac58546a1296e35ab9de16591160bb041e7e102777dd8e14c053d1867ef0da52",
+      "bytes": 93648
+    },
+    "src/features/math-bank/generation/historical/catalog.ts": {
+      "sha256": "38a737e9dc1b5636519d0020d875d6c8a637359fb63ae6a02b60ce8ea7ae9ae9",
+      "bytes": 38195
+    }
+  }
+}

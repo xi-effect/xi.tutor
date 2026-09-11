@@ -11,10 +11,15 @@ type useInterfaceStoreT = {
   activeModal: EditorModalT;
   openModal: (modal: Exclude<EditorModalT, null>) => void;
   closeModal: () => void;
+  isBlockMenuOpen: boolean;
+  setBlockMenuOpen: (open: boolean) => void;
   cloudPickerOpen: boolean;
+  mathBankPickerOpen: boolean;
   insertAnchor: ActiveBlockT | undefined;
   openCloudPicker: (anchor?: ActiveBlockT) => void;
   closeCloudPicker: () => void;
+  openMathBankPicker: (anchor?: ActiveBlockT) => void;
+  closeMathBankPicker: () => void;
 };
 
 export const useInterfaceStore = create<useInterfaceStoreT>()((set) => ({
@@ -25,8 +30,15 @@ export const useInterfaceStore = create<useInterfaceStoreT>()((set) => ({
   activeModal: null,
   openModal: (modal) => set({ activeModal: modal }),
   closeModal: () => set({ activeModal: null }),
+  isBlockMenuOpen: false,
+  setBlockMenuOpen: (open) => set({ isBlockMenuOpen: open }),
   cloudPickerOpen: false,
+  mathBankPickerOpen: false,
   insertAnchor: undefined,
-  openCloudPicker: (anchor) => set({ cloudPickerOpen: true, insertAnchor: anchor }),
+  openCloudPicker: (anchor) =>
+    set({ cloudPickerOpen: true, mathBankPickerOpen: false, insertAnchor: anchor }),
   closeCloudPicker: () => set({ cloudPickerOpen: false, insertAnchor: undefined }),
+  openMathBankPicker: (anchor) =>
+    set({ mathBankPickerOpen: true, cloudPickerOpen: false, insertAnchor: anchor }),
+  closeMathBankPicker: () => set({ mathBankPickerOpen: false, insertAnchor: undefined }),
 }));

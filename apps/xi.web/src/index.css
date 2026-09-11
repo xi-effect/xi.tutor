@@ -134,6 +134,7 @@
 @source "../../../packages/features.group.manage/src";
 @source "../../../packages/features.group.invite/src";
 @source "../../../packages/pages.calendar/src";
+@source "../../../packages/pages.bank/src";
 @source "../../../packages/features.lesson.cancel/src";
 @source "../../../packages/features.invoice.card/src";
 @source "../../../packages/features.lesson.info/src";

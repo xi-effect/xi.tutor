@@ -4,6 +4,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 import type { IncomingMessage } from 'node:http';
+import { mathBankAssetsPlugin } from '../xi.web/vite.math-bank.ts';
 
 /**
  * Rewrite `Set-Cookie` headers coming back from the production backend so they
@@ -73,6 +74,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       }),
       react(),
       tailwindcss(),
+      mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
     ],
     build: {
       target: esbuildTarget,

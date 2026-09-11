@@ -127,7 +127,10 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
       attempt.succeed();
     } catch (err) {
       console.error('[insertAudio] Upload failed:', err);
-      rejectFileUploadFromError(attempt, err);
+      rejectFileUploadFromError(attempt, err, {
+        fileSize: file.size,
+        maxBytes: getMaxFileBytes(),
+      });
       const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.audioSizeDesc',
         failedTitleKey: 'toast.audioUploadError',

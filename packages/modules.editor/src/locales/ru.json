@@ -11,6 +11,9 @@
     "image": "Изображение",
     "fromComputer": "С устройства",
     "fromCloud": "Из облака",
+    "fromMathBank": "Из банка заданий",
+    "mathBankAddToNote": "Добавить в заметку",
+    "mathBankDescription": "Выберите задание из банка, чтобы добавить условие в заметку",
     "fromLink": "По ссылке",
     "cloudAddToNote": "Добавить в заметку",
     "cloudFilesDescription": "Выберите файл из библиотеки материалов, чтобы добавить его в заметку",
@@ -53,7 +56,8 @@
     "moveDown": "Ниже",
     "duplicate": "Дублировать",
     "delete": "Удалить",
-    "extractPage": "Извлечь как изображение"
+    "extractPage": "Извлечь как изображение",
+    "draw": "Рисовать"
   },
   "file": {
     "loading": "Загрузка...",

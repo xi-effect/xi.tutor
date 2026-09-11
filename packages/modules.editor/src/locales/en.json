@@ -11,6 +11,9 @@
     "image": "Image",
     "fromComputer": "From device",
     "fromCloud": "From cloud",
+    "fromMathBank": "From task bank",
+    "mathBankAddToNote": "Add to note",
+    "mathBankDescription": "Pick a task from the bank to add its statement to the note",
     "fromLink": "From link",
     "cloudAddToNote": "Add to note",
     "cloudFilesDescription": "Pick a file from your materials library to add it to the note",
@@ -53,7 +56,8 @@
     "moveDown": "Move down",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "extractPage": "Extract as image"
+    "extractPage": "Extract as image",
+    "draw": "Draw"
   },
   "file": {
     "loading": "Loading...",

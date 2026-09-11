@@ -8,7 +8,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Code, File, Image, Laptop, Link as LinkIcon, Materials } from '@xipkg/icons';
+import { Code, File, Image, Laptop, Link as LinkIcon, Materials, BookOpened } from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
@@ -63,7 +63,7 @@ export const BlockMenu = ({
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const { openModal, openCloudPicker } = useInterfaceStore();
+  const { openModal, openCloudPicker, openMathBankPicker } = useInterfaceStore();
   const { storageItem } = useYjsContext();
   const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
     editor,
@@ -91,6 +91,11 @@ export const BlockMenu = ({
     openCloudPicker(getActiveBlock());
   };
 
+  const pickFromMathBank = () => {
+    void import('pages.bank/picker');
+    openMathBankPicker(getActiveBlock());
+  };
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -107,6 +112,17 @@ export const BlockMenu = ({
             <span>{t(labelKey)}</span>
           </DropdownMenuItem>
         ))}
+
+        {isTutor ? (
+          <DropdownMenuItem
+            className={menuItemClass}
+            onSelect={pickFromMathBank}
+            data-umami-event="editor-math-bank-open"
+          >
+            <BookOpened size="sm" className="size-6" />
+            <span>{t('blockMenu.fromMathBank')}</span>
+          </DropdownMenuItem>
+        ) : null}
 
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className={menuSubTriggerClass}>
