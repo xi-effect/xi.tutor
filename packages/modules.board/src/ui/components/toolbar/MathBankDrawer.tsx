@@ -1,5 +1,5 @@
 import type { MathTaskSearchDocument } from 'features.math.bank';
-import { MathBankPicker } from 'pages.math-bank/picker';
+import { MathBankPicker } from 'pages.bank/picker';
 import { useTranslation } from 'react-i18next';
 import { boardChromeZClass, boardDropdownZClass } from '../../boardTheme';
 

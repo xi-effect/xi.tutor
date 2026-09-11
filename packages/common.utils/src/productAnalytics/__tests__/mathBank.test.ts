@@ -99,6 +99,7 @@ describe('math bank session', () => {
     expect(trackMock).toHaveBeenNthCalledWith(1, PRODUCT_ANALYTICS_EVENTS.MATH_BANK_OPEN, {
       event_version: 1,
       source: 'board',
+      subject: 'mathematics',
       session_id: expect.any(String),
     });
     expect(trackMock).toHaveBeenNthCalledWith(2, PRODUCT_ANALYTICS_EVENTS.MATH_TASK_INSERT_BOARD, {

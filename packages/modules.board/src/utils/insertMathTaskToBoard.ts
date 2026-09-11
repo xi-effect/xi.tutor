@@ -5,7 +5,7 @@ import {
   DefaultSizeStyle,
   type Editor,
 } from '@ibodr/draw';
-import { statementToBoardRichText } from 'pages.math-bank/latex';
+import { statementToBoardRichText } from 'pages.bank/latex';
 
 const TASK_TEXT_WIDTH = 520;
 

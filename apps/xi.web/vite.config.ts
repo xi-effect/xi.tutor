@@ -75,6 +75,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             // PaddleOCR собирается в hashed `assets/dist-*.js` (~24MB) — не кладём в precache.
             '**/assets/dist-*.js',
             '**/math-bank/**',
+            '**/task-bank/**',
           ],
           maximumFileSizeToCacheInBytes: 32 * 1024 * 1024,
           navigateFallback: '/index.html',
@@ -107,12 +108,12 @@ export default defineConfig(({ mode }: ConfigEnv) => {
               },
             },
             {
-              urlPattern: /\/math-bank\/.+\.(?:json|gz)$/,
+              urlPattern: /\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'math-bank-assets',
                 expiration: {
-                  maxEntries: 20,
+                  maxEntries: 40,
                   maxAgeSeconds: 60 * 60 * 24 * 30,
                 },
               },

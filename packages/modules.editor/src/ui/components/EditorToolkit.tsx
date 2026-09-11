@@ -12,7 +12,7 @@ import { insertMathTaskToEditor } from '../../utils/insertMathTaskToEditor';
 import { normalizeSelectionAfterDrop } from '../../utils/normalizeSelectionAfterDrop';
 
 const MathBankPicker = lazy(() =>
-  import('pages.math-bank/picker').then((module) => ({ default: module.MathBankPicker })),
+  import('pages.bank/picker').then((module) => ({ default: module.MathBankPicker })),
 );
 
 type EditorToolkitProps = {

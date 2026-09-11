@@ -1,8 +1,16 @@
 import { z } from 'zod';
 
-export { MATH_BANK_BASE_URL, MATH_DIFFICULTIES, MATH_GRADES } from './constants';
+export {
+  BANK_BASE_URL,
+  BANK_SUBJECTS,
+  MATH_BANK_BASE_URL,
+  MATH_DIFFICULTIES,
+  MATH_GRADES,
+  RUSSIAN_BANK_BASE_URL,
+  type BankSubject,
+} from './constants';
 
-export const examKindSchema = z.enum(['OGE', 'EGE_BASE', 'EGE_PROFILE']);
+export const examKindSchema = z.enum(['OGE', 'EGE_BASE', 'EGE_PROFILE', 'EGE']);
 export const examRelationSchema = z.enum(['direct', 'foundation', 'adjacent']);
 export const gradeSchema = z.union([
   z.literal(5),

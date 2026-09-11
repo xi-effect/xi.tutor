@@ -1,5 +1,5 @@
 import type { Editor, JSONContent } from '@tiptap/core';
-import { statementToReadableText } from 'pages.math-bank/latex';
+import { statementToReadableText } from 'pages.bank/latex';
 import type { ActiveBlockT } from '../types';
 import { getCurrentBlock } from './getCurrentBlock';
 

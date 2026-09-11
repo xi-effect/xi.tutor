@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
-import { MathBankPage } from 'pages.math-bank';
+import { MathBankPage } from 'pages.bank';
 
 const Bank = () => {
   return <MathBankPage />;

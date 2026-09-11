@@ -530,11 +530,13 @@ export type ProductAnalyticsEventMap = {
     event_version?: number;
     source: MathBankAnalyticsSource;
     session_id: string;
+    subject?: string;
   };
   math_bank_search: {
     event_version?: number;
     source: MathBankAnalyticsSource;
     session_id?: string;
+    subject?: string;
     query_length?: number;
     grade?: number[];
     topic?: string[];

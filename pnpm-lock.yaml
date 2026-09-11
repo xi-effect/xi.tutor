@@ -162,6 +162,9 @@ importers:
       modules.navigation:
         specifier: workspace:*
         version: link:../../packages/modules.navigation
+      pages.bank:
+        specifier: workspace:*
+        version: link:../../packages/pages.bank
       pages.calendar:
         specifier: workspace:*
         version: link:../../packages/pages.calendar
@@ -186,9 +189,6 @@ importers:
       pages.materials:
         specifier: workspace:*
         version: link:../../packages/pages.materials
-      pages.math-bank:
-        specifier: workspace:*
-        version: link:../../packages/pages.math-bank
       pages.notes:
         specifier: workspace:*
         version: link:../../packages/pages.notes
@@ -427,6 +427,9 @@ importers:
       motion:
         specifier: ^13.1.1
         version: 13.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      pages.bank:
+        specifier: workspace:*
+        version: link:../../packages/pages.bank
       pages.calendar:
         specifier: workspace:*
         version: link:../../packages/pages.calendar
@@ -451,9 +454,6 @@ importers:
       pages.materials:
         specifier: workspace:*
         version: link:../../packages/pages.materials
-      pages.math-bank:
-        specifier: workspace:*
-        version: link:../../packages/pages.math-bank
       pages.notes:
         specifier: workspace:*
         version: link:../../packages/pages.notes
@@ -3949,12 +3949,12 @@ importers:
       nanoid:
         specifier: ^5.1.5
         version: 5.1.5
+      pages.bank:
+        specifier: workspace:*
+        version: link:../pages.bank
       pages.materials:
         specifier: workspace:*
         version: link:../pages.materials
-      pages.math-bank:
-        specifier: workspace:*
-        version: link:../pages.math-bank
       pdfjs-dist:
         specifier: ^4.10.38
         version: 4.10.38
@@ -4432,12 +4432,12 @@ importers:
       nanoid:
         specifier: 5.1.5
         version: 5.1.5
+      pages.bank:
+        specifier: workspace:*
+        version: link:../pages.bank
       pages.materials:
         specifier: workspace:*
         version: link:../pages.materials
-      pages.math-bank:
-        specifier: workspace:*
-        version: link:../pages.math-bank
       pdfjs-dist:
         specifier: ^4.10.38
         version: 4.10.38
@@ -4876,6 +4876,121 @@ importers:
       sonner:
         specifier: ^2.0.7
         version: 2.0.8(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.39.5
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.43
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.7(@types/react@19.2.18)
+      '@xipkg/eslint':
+        specifier: 4.6.0
+        version: 4.6.0(jiti@2.7.0)(turbo@2.10.12)
+      '@xipkg/tailwind':
+        specifier: 1.0.0
+        version: 1.0.0
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: workspace:*
+        version: link:../common.eslint
+      common.typescript:
+        specifier: workspace:*
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.39.5(jiti@2.7.0)
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.39.5(jiti@2.7.0))
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+
+  packages/pages.bank:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: 5.73.3
+        version: 5.73.3(react@19.2.8)
+      '@xipkg/button':
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.18)(react@19.2.8)
+      '@xipkg/dropdown':
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/icons':
+        specifier: 3.1.7
+        version: 3.1.7(react@19.2.8)
+      '@xipkg/modal':
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/popover':
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/tooltip':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/utils':
+        specifier: 1.8.0
+        version: 1.8.0(react@19.2.8)
+      common.api:
+        specifier: workspace:*
+        version: link:../common.api
+      common.services:
+        specifier: workspace:*
+        version: link:../common.services
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
+      features.math.bank:
+        specifier: workspace:*
+        version: link:../features.math.bank
+      i18next:
+        specifier: 24.2.2
+        version: 24.2.2(typescript@5.7.3)
+      katex:
+        specifier: ^0.18.7
+        version: 0.18.7
+      motion:
+        specifier: ^13.1.1
+        version: 13.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: '19'
+        version: 19.2.8
+      react-i18next:
+        specifier: 15.4.1
+        version: 15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.8(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      vaul:
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      zustand:
+        specifier: ^5.0.3
+        version: 5.0.15(@types/react@19.2.18)(immer@11.1.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -5934,121 +6049,6 @@ importers:
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-    devDependencies:
-      '@eslint/js':
-        specifier: ^9.19.0
-        version: 9.39.5
-      '@types/node':
-        specifier: ^20.3.1
-        version: 20.19.43
-      '@types/react':
-        specifier: ^19.0.2
-        version: 19.2.18
-      '@types/react-dom':
-        specifier: ^19.0.2
-        version: 19.2.7(@types/react@19.2.18)
-      '@xipkg/eslint':
-        specifier: 4.6.0
-        version: 4.6.0(jiti@2.7.0)(turbo@2.10.12)
-      '@xipkg/tailwind':
-        specifier: 1.0.0
-        version: 1.0.0
-      '@xipkg/typescript':
-        specifier: latest
-        version: 0.2.0
-      common.eslint:
-        specifier: workspace:*
-        version: link:../common.eslint
-      common.typescript:
-        specifier: workspace:*
-        version: link:../common.typescript
-      eslint:
-        specifier: ^9.19.0
-        version: 9.39.5(jiti@2.7.0)
-      eslint-plugin-react-hooks:
-        specifier: ^5.0.0
-        version: 5.2.0(eslint@9.39.5(jiti@2.7.0))
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.18
-        version: 0.4.18(eslint@9.39.5(jiti@2.7.0))
-      globals:
-        specifier: ^15.14.0
-        version: 15.15.0
-      typescript:
-        specifier: ~5.7.2
-        version: 5.7.3
-      typescript-eslint:
-        specifier: ^8.22.0
-        version: 8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
-
-  packages/pages.math-bank:
-    dependencies:
-      '@tanstack/react-query':
-        specifier: 5.73.3
-        version: 5.73.3(react@19.2.8)
-      '@xipkg/button':
-        specifier: 4.3.0
-        version: 4.3.0(@types/react@19.2.18)(react@19.2.8)
-      '@xipkg/dropdown':
-        specifier: 3.1.0
-        version: 3.1.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/gridvirtualizer':
-        specifier: 1.0.2
-        version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/icons':
-        specifier: 3.1.7
-        version: 3.1.7(react@19.2.8)
-      '@xipkg/modal':
-        specifier: 4.6.0
-        version: 4.6.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/popover':
-        specifier: ^4.0.0
-        version: 4.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/tooltip':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/utils':
-        specifier: 1.8.0
-        version: 1.8.0(react@19.2.8)
-      common.api:
-        specifier: workspace:*
-        version: link:../common.api
-      common.services:
-        specifier: workspace:*
-        version: link:../common.services
-      common.ui:
-        specifier: workspace:*
-        version: link:../common.ui
-      common.utils:
-        specifier: workspace:*
-        version: link:../common.utils
-      features.math.bank:
-        specifier: workspace:*
-        version: link:../features.math.bank
-      i18next:
-        specifier: 24.2.2
-        version: 24.2.2(typescript@5.7.3)
-      katex:
-        specifier: ^0.18.7
-        version: 0.18.7
-      motion:
-        specifier: ^13.1.1
-        version: 13.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react:
-        specifier: '19'
-        version: 19.2.8
-      react-i18next:
-        specifier: 15.4.1
-        version: 15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      sonner:
-        specifier: ^2.0.7
-        version: 2.0.8(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      vaul:
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      zustand:
-        specifier: ^5.0.3
-        version: 5.0.15(@types/react@19.2.18)(immer@11.1.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0

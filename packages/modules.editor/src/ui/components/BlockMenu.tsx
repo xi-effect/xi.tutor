@@ -103,7 +103,7 @@ export const BlockMenu = ({
   };
 
   const pickFromMathBank = () => {
-    void import('pages.math-bank/picker');
+    void import('pages.bank/picker');
     openMathBankPicker(getActiveBlock());
   };
 

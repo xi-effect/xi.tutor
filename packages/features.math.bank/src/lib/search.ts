@@ -1,5 +1,7 @@
 import MiniSearch from 'minisearch';
-import type { ExamKind, MathTask, MathTaskExamMapping, MathTaskType } from '../model/schema';
+import type { BankSubject } from '../model/constants';
+import type { ExamKind, MathTask, MathTaskExamMapping } from '../model/schema';
+import type { RussianTask } from '../model/russian';
 import { normalizeSearchText } from './normalize';
 
 export type SearchFilters = {
@@ -7,7 +9,7 @@ export type SearchFilters = {
   topicIds?: string[];
   topics?: string[];
   difficulty?: number[];
-  taskTypes?: MathTaskType[];
+  taskTypes?: string[];
   exam?: ExamKind;
   examYear?: number;
   examTaskNumbers?: number[];
@@ -17,13 +19,14 @@ export type SearchFilters = {
 /** Lightweight object shipped in search_documents.json.gz. */
 export type MathTaskSearchDocument = {
   id: string;
+  subject?: BankSubject;
   statement: string;
   grade: number;
   difficulty: number;
   topicId: string;
   topic: string;
   subtopic: string;
-  taskType?: MathTaskType;
+  taskType?: string;
   skills: string[];
   tags: string[];
   aliases: string[];
@@ -46,10 +49,27 @@ type IndexedDocument = {
 
 export const taskToSearchDocument = (task: MathTask): MathTaskSearchDocument => ({
   id: task.id,
+  subject: 'mathematics',
   statement: task.statement.text,
   grade: task.grade,
   difficulty: task.difficulty,
   topicId: task.topicId,
+  topic: task.topic,
+  subtopic: task.subtopic,
+  taskType: task.taskType,
+  skills: task.skills,
+  tags: task.tags,
+  aliases: task.search.aliases,
+  examMappings: task.examMappings,
+});
+
+export const russianTaskToSearchDocument = (task: RussianTask): MathTaskSearchDocument => ({
+  id: task.id,
+  subject: 'russian',
+  statement: task.statement,
+  grade: task.grade,
+  difficulty: task.difficulty,
+  topicId: task.topic,
   topic: task.topic,
   subtopic: task.subtopic,
   taskType: task.taskType,

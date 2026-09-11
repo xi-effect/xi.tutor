@@ -43,7 +43,7 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
                   className="data-placeholder:text-text-disabled text-text-primary"
                 />
               </SelectTrigger>
-              <SelectContent className="w-full">
+              <SelectContent className="max-h-[min(300px,var(--radix-select-content-available-height))] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)] overflow-y-auto">
                 {selectableClassrooms.map((classroom) => (
                   <SelectItem
                     key={classroom.id}

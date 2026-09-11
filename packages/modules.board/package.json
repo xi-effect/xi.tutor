@@ -73,7 +73,7 @@
     "motion": "^13.1.1",
     "nanoid": "^5.1.5",
     "pages.materials": "workspace:*",
-    "pages.math-bank": "workspace:*",
+    "pages.bank": "workspace:*",
     "pdfjs-dist": "^4.10.38",
     "pica": "9.0.1",
     "pptxviewjs": "1.1.9",

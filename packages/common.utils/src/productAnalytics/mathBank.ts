@@ -28,6 +28,7 @@ export type MathBankTaskSnapshot = {
   topicId?: string;
   taskType?: string;
   difficulty?: number;
+  subject?: string;
 };
 
 type StoredSession = MathBankSession | null;
@@ -61,11 +62,9 @@ const startSession = (): MathBankSession => {
   return session;
 };
 
-const MATH_BANK_SUBJECT = 'mathematics';
-
 const taskProps = (task: MathBankTaskSnapshot) => ({
   task_id: task.id,
-  subject: MATH_BANK_SUBJECT,
+  subject: task.subject ?? 'mathematics',
   grade: task.grade,
   ...(task.topicId ? { topic_id: task.topicId } : {}),
   ...(task.taskType ? { task_type: task.taskType } : {}),
@@ -111,11 +110,12 @@ export const resetMathBankAnalyticsSession = () => {
   }
 };
 
-export const trackMathBankOpen = (source: MathBankAnalyticsSource) => {
+export const trackMathBankOpen = (source: MathBankAnalyticsSource, subject = 'mathematics') => {
   const session = startSession();
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_BANK_OPEN, {
     event_version: 1,
     source,
+    subject,
     session_id: session.session_id,
   });
 };
@@ -123,10 +123,12 @@ export const trackMathBankOpen = (source: MathBankAnalyticsSource) => {
 export const trackMathBankSearch = (
   filters: MathBankSearchSnapshot,
   source: MathBankAnalyticsSource,
+  subject = 'mathematics',
 ) => {
   const session = readSession();
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_BANK_SEARCH, {
     event_version: 1,
+    subject,
     ...toMathBankSearchProps(filters, source),
     ...(session ? { session_id: session.session_id } : {}),
   });

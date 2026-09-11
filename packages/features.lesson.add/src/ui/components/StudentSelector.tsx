@@ -42,7 +42,7 @@ export const StudentSelector = ({
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent className="max-h-[300px] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)]">
+      <SelectContent className="max-h-[min(300px,var(--radix-select-content-available-height))] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)] overflow-y-auto">
         {selectableClassrooms.map((classroom) => (
           <SelectItem
             key={classroom.id}

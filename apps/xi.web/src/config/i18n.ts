@@ -87,7 +87,7 @@ const loadTranslations = async () => {
     import('pages.classroom/locales'),
     import('pages.classrooms/locales'),
     import('pages.materials/locales'),
-    import('pages.math-bank/locales'),
+    import('pages.bank/locales'),
     import('pages.payments/locales'),
     import('modules.board/locales'),
     import('@xipkg/calls/locales'),
