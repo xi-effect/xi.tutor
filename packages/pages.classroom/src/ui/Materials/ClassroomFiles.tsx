@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { Plus } from '@xipkg/icons';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import {
@@ -28,7 +29,8 @@ import { useTranslation } from 'react-i18next';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
-import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../galleryShadowClass';
+import { useFitViewportHeight } from './useFitViewportHeight';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 type ClassroomFilesProps = {
   classroomId: string;
@@ -57,6 +59,7 @@ export const ClassroomFiles = ({
   const uploadOpen = onUploadOpenChange ? Boolean(uploadOpenProp) : internalUploadOpen;
   const setUploadOpen = onUploadOpenChange ?? setInternalUploadOpen;
   const listRef = useRef<HTMLDivElement>(null);
+  const fitHeight = useFitViewportHeight(listRef, isMobile);
   const detachMutation = useDetachClassroomFile();
   const filtersActive = hasActiveFilesFilters(filters);
 
@@ -166,66 +169,69 @@ export const ClassroomFiles = ({
     <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2">
       {header}
 
-      <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className={cn('pr-3 pb-5 sm:pr-6 sm:pb-8 md:pr-8', isMobile && 'pb-20')}>
-          <div className={galleryShadowPadClass}>
-            {!files.length && !filtersActive ? (
-              <EmptyDataState
-                title={t('files.emptyTitle')}
-                description={t('files.emptyDescription')}
-              />
-            ) : !files.length ? (
-              <FilesFilteredEmpty onReset={() => setFilters(DEFAULT_FILES_FILTERS)} />
-            ) : (
-              <>
-                <div
-                  className={cn(
-                    'grid gap-5',
-                    isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
-                  )}
-                >
-                  {files.map((file) => (
-                    <FileCard
-                      key={file.id}
-                      file={file}
-                      className="h-44 w-full"
-                      readOnly={!canUploadFiles}
-                      onRemoveFromClassroom={canRevokeFiles ? handleDetach : undefined}
-                      onPreview={(nextFile) => {
-                        window.setTimeout(() => setPreviewFile(nextFile), 0);
-                      }}
-                    />
-                  ))}
-                </div>
-                <FilePreviewModal
-                  file={currentPreviewFile}
-                  files={files}
+      {/* Скролл-контейнер = parentRef виртуализатора и пагинации по скроллу:
+          GridVirtualizer — его прямой ребёнок с padding-top: 0. На планшетах/мобильных
+          высоту считаем явно (fitHeight): flex-1 не вычитает fixed нижнюю панель. */}
+      <div
+        ref={listRef}
+        className={cn(
+          'min-h-0 flex-1 overflow-y-auto overscroll-contain pr-3 pb-5 pl-2 sm:pr-6 sm:pb-8 md:pr-8',
+        )}
+        style={fitHeight != null ? { height: fitHeight, flex: 'none' } : undefined}
+      >
+        {!files.length && !filtersActive ? (
+          <EmptyDataState title={t('files.emptyTitle')} description={t('files.emptyDescription')} />
+        ) : !files.length ? (
+          <FilesFilteredEmpty onReset={() => setFilters(DEFAULT_FILES_FILTERS)} />
+        ) : (
+          <>
+            <GridVirtualizer
+              parentRef={listRef}
+              items={files}
+              defaultRowHeight={176}
+              minItemWidth={300}
+              gap={20}
+              maxColumns={4}
+              isSingleColumn={isMobile}
+              renderItem={(file) => (
+                <FileCard
+                  file={file}
+                  className="w-full"
                   readOnly={!canUploadFiles}
-                  hideLibraryActions
-                  contentSource={{ type: 'classroom', classroomId, isTutor }}
-                  deleteLabel={tMaterials('files.removeFromClassroom.confirm')}
-                  deleteTitle={tMaterials('files.removeFromClassroom.title')}
-                  deleteDescription={
-                    currentPreviewFile
-                      ? tMaterials('files.removeFromClassroom.description', {
-                          name: currentPreviewFile.name,
-                        })
-                      : undefined
-                  }
-                  onDeleteFile={
-                    canRevokeFiles
-                      ? (fileId) => detachMutation.mutate({ classroomId, fileId })
-                      : undefined
-                  }
-                  onFileChange={setPreviewFile}
-                  onOpenChange={(open) => {
-                    if (!open) setPreviewFile(null);
+                  onRemoveFromClassroom={canRevokeFiles ? handleDetach : undefined}
+                  onPreview={(nextFile) => {
+                    window.setTimeout(() => setPreviewFile(nextFile), 0);
                   }}
                 />
-              </>
-            )}
-          </div>
-        </div>
+              )}
+            />
+            <FilePreviewModal
+              file={currentPreviewFile}
+              files={files}
+              readOnly={!canUploadFiles}
+              hideLibraryActions
+              contentSource={{ type: 'classroom', classroomId, isTutor }}
+              deleteLabel={tMaterials('files.removeFromClassroom.confirm')}
+              deleteTitle={tMaterials('files.removeFromClassroom.title')}
+              deleteDescription={
+                currentPreviewFile
+                  ? tMaterials('files.removeFromClassroom.description', {
+                      name: currentPreviewFile.name,
+                    })
+                  : undefined
+              }
+              onDeleteFile={
+                canRevokeFiles
+                  ? (fileId) => detachMutation.mutate({ classroomId, fileId })
+                  : undefined
+              }
+              onFileChange={setPreviewFile}
+              onOpenChange={(open) => {
+                if (!open) setPreviewFile(null);
+              }}
+            />
+          </>
+        )}
       </div>
     </div>
   );

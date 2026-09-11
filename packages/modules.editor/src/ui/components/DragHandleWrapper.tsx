@@ -3,10 +3,12 @@ import { Move, Close, Plus } from '@xipkg/icons';
 
 import DragHandle from '@tiptap/extension-drag-handle-react';
 import { Button } from '@xipkg/button';
+import { useMediaQuery } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { BlockMenu } from './BlockMenu';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActiveBlockT } from '../../types';
+import { EDITOR_MOBILE_MEDIA_QUERY } from '../../const/breakpoints';
 
 function getEditorContentBox(editorDom: HTMLElement) {
   const rect = editorDom.getBoundingClientRect();
@@ -64,6 +66,7 @@ export const DragHandleWrapper = ({
   isReadOnly,
 }: DragHandleWrapperPropsT) => {
   const { t } = useTranslation('editor');
+  const isMobile = useMediaQuery(EDITOR_MOBILE_MEDIA_QUERY);
   const activeBlockRef = useRef<{ pos: number; id: string | null } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -143,6 +146,12 @@ export const DragHandleWrapper = ({
         }),
     };
   }, [editor]);
+
+  // На мобильных/планшетах управление блоками — целиком в NotesEditorToolbar.
+  // DragHandle на тач технически реагирует, но появляется только по тапу и
+  // остаётся незаметным для пользователя — команда решила не показывать его
+  // на этих ширинах вовсе, а не просто прятать «+»/приглушать ручку.
+  if (isMobile) return null;
 
   return (
     <DragHandle

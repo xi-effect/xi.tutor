@@ -9,7 +9,7 @@
     "taskList": "Checklist",
     "file": "File",
     "image": "Image",
-    "fromComputer": "From computer",
+    "fromComputer": "From device",
     "fromCloud": "From cloud",
     "fromLink": "From link",
     "cloudAddToNote": "Add to note",
@@ -124,6 +124,9 @@
   },
   "dragHandle": {
     "dragBlock": "Drag block"
+  },
+  "mobileToolbar": {
+    "hideKeyboard": "Hide keyboard"
   },
   "status": {
     "initializing": "Initializing editor...",

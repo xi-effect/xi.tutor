@@ -9,7 +9,7 @@
     "taskList": "Чекбоксы",
     "file": "Файл",
     "image": "Изображение",
-    "fromComputer": "С компьютера",
+    "fromComputer": "С устройства",
     "fromCloud": "Из облака",
     "fromLink": "По ссылке",
     "cloudAddToNote": "Добавить в заметку",
@@ -124,6 +124,9 @@
   },
   "dragHandle": {
     "dragBlock": "Перетащить блок"
+  },
+  "mobileToolbar": {
+    "hideKeyboard": "Скрыть клавиатуру"
   },
   "status": {
     "initializing": "Инициализация редактора...",

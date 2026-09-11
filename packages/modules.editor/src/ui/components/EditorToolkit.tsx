@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
+import { useMediaQuery } from '@xipkg/utils';
 import { BubbleMenuWrapper } from './BubbleMenuWrapper/BubbleMenuWrapper';
 import { DragHandleWrapper } from './DragHandleWrapper';
+import { MobileEditorControls } from './MobileEditorControls';
 import { Editor } from '@tiptap/core';
 import { ImageLinkModal } from './ImageLinkModal';
 import { CloudFilesPicker } from 'pages.materials';
@@ -9,6 +11,7 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { useYjsContext } from '../../hooks';
 import { insertLibraryFileToEditor } from '../../utils/insertLibraryFileToEditor';
 import { normalizeSelectionAfterDrop } from '../../utils/normalizeSelectionAfterDrop';
+import { EDITOR_MOBILE_MEDIA_QUERY } from '../../const/breakpoints';
 
 type EditorToolkitProps = {
   editor: Editor;
@@ -17,6 +20,7 @@ type EditorToolkitProps = {
 
 export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly }) => {
   const { t } = useTranslation('editor');
+  const isMobile = useMediaQuery(EDITOR_MOBILE_MEDIA_QUERY);
   const [hasMountedDragHandle, setHasMountedDragHandle] = useState(false);
   const initialFixDone = React.useRef(false);
   const { storageItem } = useYjsContext();
@@ -61,6 +65,7 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
           <DragHandleWrapper editor={editor} onDragEnd={handleDragEnd} isReadOnly={isReadOnly} />
         </div>
       )}
+      {isMobile && canShowToolbar && <MobileEditorControls editor={editor} />}
       <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />
       <ImageLinkModal />
       <CloudFilesPicker

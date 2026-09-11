@@ -72,31 +72,29 @@ export const Header = () => {
   );
 
   return (
-    <div className="bg-background-surface border-border-default sticky top-0 z-10 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
-      <div className="flex w-full items-center justify-between">
-        <div className="relative flex w-full items-center justify-center">
-          <Button
-            variant="none"
-            onClick={handleBack}
-            type="button"
-            className="absolute top-0 left-0 h-10 w-10 p-2"
-          >
-            <ArrowLeft size="s" className="fill-icon-primary size-6" />
-          </Button>
-          <div className="w-full max-w-4xl pl-29">
-            {isLoading ? (
-              <Skeleton variant="text" className="h-6 w-full" />
-            ) : (
-              <EditableTitle
-                title={material.name ?? ''}
-                materialId={materialIdValue}
-                isTutor={isTutor && !isClassroomPaused}
-              />
-            )}
-          </div>
-          <div className="absolute inset-y-0 right-0 flex items-center">
-            <CollaboratorAvatars collaborators={collaboratorsWithAvatars} currentUserId={user.id} />
-          </div>
+    <div className="bg-background-surface border-border-default sticky top-0 z-10 flex h-[56px] min-h-[56px] w-full items-center rounded-2xl border px-2">
+      <div className="relative flex h-full w-full items-center justify-center">
+        <Button
+          variant="none"
+          onClick={handleBack}
+          type="button"
+          className="absolute top-1/2 left-0 h-10 w-10 -translate-y-1/2 p-2"
+        >
+          <ArrowLeft size="s" className="fill-icon-primary size-6" />
+        </Button>
+        <div className="w-full max-w-4xl px-12 sm:px-29">
+          {isLoading ? (
+            <Skeleton variant="text" className="h-6 w-full" />
+          ) : (
+            <EditableTitle
+              title={material.name ?? ''}
+              materialId={materialIdValue}
+              isTutor={isTutor && !isClassroomPaused}
+            />
+          )}
+        </div>
+        <div className="absolute inset-y-0 right-0 flex items-center">
+          <CollaboratorAvatars collaborators={collaboratorsWithAvatars} currentUserId={user.id} />
         </div>
       </div>
     </div>
