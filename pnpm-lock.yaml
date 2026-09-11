@@ -3782,8 +3782,8 @@ importers:
   packages/modules.board:
     dependencies:
       '@hocuspocus/provider':
-        specifier: 3.4.4
-        version: 3.4.4(y-protocols@1.0.7(yjs@13.6.32))(yjs@13.6.32)
+        specifier: 4.7.0
+        version: 4.7.0(y-protocols@1.0.7(yjs@13.6.32))(yjs@13.6.32)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.9.1(@standard-schema/spec@1.1.0)(ajv@8.20.0)(react-hook-form@7.87.0(react@19.2.8))(zod@4.5.4)
@@ -4310,8 +4310,8 @@ importers:
         specifier: 0.27.8
         version: 0.27.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hocuspocus/provider':
-        specifier: 3.4.4
-        version: 3.4.4(y-protocols@1.0.7(yjs@13.6.32))(yjs@13.6.32)
+        specifier: 4.7.0
+        version: 4.7.0(y-protocols@1.0.7(yjs@13.6.32))(yjs@13.6.32)
       '@tanstack/react-router':
         specifier: ^1.166.6
         version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -7812,11 +7812,11 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@hocuspocus/common@3.4.4':
-    resolution: {integrity: sha512-RykIJ0tsHHMP4Xk+4UCbc7SO5LgGxGUSTdbh6anJEsaALAyqinf1Nn5HYuMjLPolAmsar1v++m9zufR09NLpXA==}
+  '@hocuspocus/common@4.7.0':
+    resolution: {integrity: sha512-KyS6dXoIcWsd+v3gwd6nnZW04M77df5XstPNkOwqoDxwuncygobEN7xsf0x2PmdvlQdQyRaLm2SF4r1GZZGRnA==}
 
-  '@hocuspocus/provider@3.4.4':
-    resolution: {integrity: sha512-KbsMAfdYcIJD8eMU/5QnpXcSOvIWAcCNI33FSRSaKCIpYBFtAwkYIwWnZJmPZ8a1BMAtqQc+uvy9+UQf7GHnGQ==}
+  '@hocuspocus/provider@4.7.0':
+    resolution: {integrity: sha512-BOAqoj6g4EZQ9pTwIiR7bNl1QkMAnrr8EY69jMcdhSLFtTrsKaE8hsDIEncPFnGq+khWRFCAPEJSM7F9HC7fvQ==}
     peerDependencies:
       y-protocols: ^1.0.6
       yjs: ^13.6.8
@@ -14915,21 +14915,17 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@hocuspocus/common@3.4.4':
+  '@hocuspocus/common@4.7.0':
     dependencies:
       lib0: 0.2.117
 
-  '@hocuspocus/provider@3.4.4(y-protocols@1.0.7(yjs@13.6.32))(yjs@13.6.32)':
+  '@hocuspocus/provider@4.7.0(y-protocols@1.0.7(yjs@13.6.32))(yjs@13.6.32)':
     dependencies:
-      '@hocuspocus/common': 3.4.4
+      '@hocuspocus/common': 4.7.0
       '@lifeomic/attempt': 3.1.0
       lib0: 0.2.117
-      ws: 8.21.3
       y-protocols: 1.0.7(yjs@13.6.32)
       yjs: 13.6.32
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   '@hookform/resolvers@5.2.2(react-hook-form@7.73.1(react@19.2.8))':
     dependencies:

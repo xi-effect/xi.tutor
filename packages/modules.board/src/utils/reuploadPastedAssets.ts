@@ -7,6 +7,7 @@ import type { DrContent, Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { uploadFileIdRequest } from 'common.services';
 import { resolveAssetUrl, getCachedBlobUrl } from './resolveAssetUrl';
 import { getRegisteredTokens } from './tokenRegistry';
+import { isInlineAssetSrc } from './storedFileSrc';
 /**
  * Описание одной "единицы работы" для фоновой докачки. Снимок props/meta
  * берётся ДО putContentOntoCurrentPage, чтобы избежать гонки чтения из
@@ -107,12 +108,8 @@ export function preparePastedContent(
  * по каким-то причинам upload не удался и в документе остался `data:`/`blob:`,
  * подменяем на `meta.originalSrc` из снимка paste (обычный file-id), чтобы не
  * оставлять мегабайты base64 в Yjs и не сохранять мёртвые blob:-URL навсегда.
- * Это не «гарантия отображения» (ссылка может быть без токена), но гарантия
- * против «залипания» тяжёлого inline в CRDT.
  *
- * Абсолютная гарантия «вообще никогда не писать data: в синхронизируемое
- * хранилище» достигается только другим дизайном: временный preview вне записи
- * ассета (как у tldraw `createTemporaryAssetPreview`) до успешного upload.
+ * Preview живёт вне store (`editor.createTemporaryAssetPreview`) до успешного upload.
  *
  * Параллельность ограничена 5 запросами, чтобы не упереться в HTTP/1.1-лимит
  * браузера (6 коннектов на хост) и не перегружать бэкенд.
@@ -203,10 +200,6 @@ function reconcilePasteInlineSources(editor: Editor, tasks: PasteUploadTask[]): 
       });
     }
   }
-}
-
-function isInlineAssetSrc(src: string): boolean {
-  return src.startsWith('data:') || src.startsWith('blob:');
 }
 
 async function resolveAndUploadOne(

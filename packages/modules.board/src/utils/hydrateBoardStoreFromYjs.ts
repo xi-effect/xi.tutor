@@ -13,6 +13,7 @@ import {
   isDocumentRecord,
   normalizeRecordForYjsPersistence,
 } from './yjsStoreRecords';
+import { pruneBoardRecordsForPersistence } from './boardAssetHygiene';
 
 type HydrateBoardStoreArgs = {
   store: DrStore;
@@ -101,6 +102,7 @@ export function hydrateBoardStoreFromYjs({
       normalizeRecordForYjsPersistence(record),
     ]),
   ) as Record<string, DrRecord>;
+  migratedStore = pruneBoardRecordsForPersistence(migratedStore);
 
   const shouldWriteBack = prepared.wasLegacy || recordsNeedWriteBack(records, migratedStore);
 
