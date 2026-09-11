@@ -2162,8 +2162,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.8)
@@ -2374,8 +2374,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/switcher':
         specifier: ^4.1.0
         version: 4.1.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -2774,8 +2774,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/switcher-animate':
         specifier: 1.1.0
         version: 1.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -3141,8 +3141,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: ^2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.8)
@@ -3866,8 +3866,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: ^2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/slider':
         specifier: 2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4068,8 +4068,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/toggle':
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4385,8 +4385,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: ^2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/slider':
         specifier: 2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4799,8 +4799,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/slider':
         specifier: 2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -5125,6 +5125,9 @@ importers:
       '@xipkg/form':
         specifier: 4.3.0
         version: 4.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.7
         version: 3.1.7(react@19.2.8)
@@ -5138,8 +5141,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: ^2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/switcher-animate':
         specifier: 1.1.0
         version: 1.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -5285,6 +5288,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.11(@types/node@20.19.43)(vite@8.2.2(@types/node@20.19.43)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13))
 
   packages/pages.classrooms:
     dependencies:
@@ -5322,8 +5328,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/select':
-        specifier: ^2.3.0
-        version: 2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^3.0.0
+        version: 3.0.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/switcher-animate':
         specifier: 1.1.0
         version: 1.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -10823,11 +10829,6 @@ packages:
 
   '@xipkg/scrollarea@2.3.0':
     resolution: {integrity: sha512-kJxcWR/Ips52b7X0h32+6rHM+4lV1lYpruJt6jJWDcTTNshtVfFZKiXDZ3oij6tRw/vQAvWprRBmgN9CWZcEeA==}
-    peerDependencies:
-      react: ^19
-
-  '@xipkg/select@2.3.0':
-    resolution: {integrity: sha512-8cl6ZwBcchOcBhP9Xn3v7NboCndqtc3skiXOG3HJve3rh5HQwvQGDWri9WYJPcAnv2j63iBU9ziclyGdvd1ylA==}
     peerDependencies:
       react: ^19
 
@@ -18156,18 +18157,6 @@ snapshots:
   '@xipkg/scrollarea@2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@radix-ui/react-scroll-area': 1.2.18(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/utils': 1.8.0(react@19.2.8)
-      class-variance-authority: 0.7.1
-      react: 19.2.8
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
-
-  '@xipkg/select@2.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
-    dependencies:
-      '@radix-ui/react-select': 2.3.7(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/icons': 2.7.2(react@19.2.8)
       '@xipkg/utils': 1.8.0(react@19.2.8)
       class-variance-authority: 0.7.1
       react: 19.2.8

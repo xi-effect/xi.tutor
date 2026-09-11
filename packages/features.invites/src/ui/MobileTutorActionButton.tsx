@@ -178,7 +178,7 @@ export const MobileTutorActionButton = ({
       </div>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} modal>
-        <DrawerContent className="bottom-16 max-h-[calc(100dvh-64px)] w-full overflow-y-auto">
+        <DrawerContent className="bottom-0 max-h-dvh w-full overflow-y-auto">
           <div className="flex flex-col gap-4 pb-8">
             <DrawerTitle className="text-m-base text-text-primary font-medium">
               {drawerTitle}
