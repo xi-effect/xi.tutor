@@ -37,15 +37,15 @@ export async function insertFlipCardImage(
   bitmap.close();
 
   const tempAssetId = `asset:${nanoid()}` as DrAssetId;
-  const previewUrl = URL.createObjectURL(file);
 
+  editor.createTemporaryAssetPreview(tempAssetId, file);
   editor.createAssets([
     {
       id: tempAssetId,
       type: 'image',
       typeName: 'asset',
       props: {
-        src: previewUrl,
+        src: '',
         w,
         h,
         mimeType: file.type,
@@ -69,6 +69,8 @@ export async function insertFlipCardImage(
 
     const { src } = await myAssetStore(token).upload(uploadAsset, file);
 
+    if (!editor.getAsset(tempAssetId)) return;
+
     editor.updateAssets([
       {
         id: tempAssetId,
@@ -87,7 +89,5 @@ export async function insertFlipCardImage(
     });
     toast.error(i18n.t('toast.imageUploadError', { ns: 'board' }));
     editor.deleteAssets([tempAssetId]);
-  } finally {
-    setTimeout(() => URL.revokeObjectURL(previewUrl), 0);
   }
 }

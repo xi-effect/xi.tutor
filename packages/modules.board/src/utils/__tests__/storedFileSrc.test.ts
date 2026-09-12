@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { extractFileIdFromUrl } from '../resolveAssetUrl';
-import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../storedFileSrc';
+import { isDisplayableAssetUrl, isInlineAssetSrc, normalizeStoredFileSrc } from '../storedFileSrc';
 
 describe('normalizeStoredFileSrc', () => {
-  it('оставляет пустую строку, data: и blob:', () => {
+  it('оставляет пустую строку и снимает data:/blob:', () => {
     expect(normalizeStoredFileSrc('')).toBe('');
-    expect(normalizeStoredFileSrc('data:image/png;base64,abc')).toBe('data:image/png;base64,abc');
-    expect(normalizeStoredFileSrc('blob:https://app.local/1')).toBe('blob:https://app.local/1');
+    expect(normalizeStoredFileSrc('data:image/png;base64,abc')).toBe('');
+    expect(normalizeStoredFileSrc('blob:https://app.local/1')).toBe('');
   });
 
   it('достаёт id из legacy storage URL', () => {
@@ -23,6 +23,15 @@ describe('normalizeStoredFileSrc', () => {
 
   it('оставляет уже нормализованный UUID', () => {
     expect(normalizeStoredFileSrc('abc-file-id')).toBe('abc-file-id');
+  });
+});
+
+describe('isInlineAssetSrc', () => {
+  it('отличает data:/blob: от file id', () => {
+    expect(isInlineAssetSrc('data:image/png;base64,abc')).toBe(true);
+    expect(isInlineAssetSrc('blob:https://app.local/1')).toBe(true);
+    expect(isInlineAssetSrc('file-id')).toBe(false);
+    expect(isInlineAssetSrc('')).toBe(false);
   });
 });
 

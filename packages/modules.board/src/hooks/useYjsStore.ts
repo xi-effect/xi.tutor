@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import {
   HocuspocusProvider,
   HocuspocusProviderWebsocket,
@@ -241,6 +239,9 @@ function getOrCreateShared(
     document: yDoc,
     token: () => entry.storageToken,
     forceSyncInterval: 20_000,
+    // v4: клиент и сервер выкатываются вместе. Нужен, чтобы два провайдера
+    // с одним document name могли жить на одном WebSocket (иначе attach() бросит).
+    sessionAwareness: true,
     websocketProvider,
   });
 
@@ -430,12 +431,11 @@ export function useYjsStore({
     };
 
     const handleAuthenticated = ({ scope }: onAuthenticatedParameters) => {
-      const s = String(scope).toLowerCase();
-      setServerReadonly(s === 'read-only' || s === 'readonly' || s === 'read_only');
+      setServerReadonly(scope === 'readonly');
     };
 
-    provider.on('authenticationFailed', handleAuthFailed as any);
-    provider.on('authenticated', handleAuthenticated as any);
+    provider.on('authenticationFailed', handleAuthFailed);
+    provider.on('authenticated', handleAuthenticated);
 
     const handleStatus = ({ status }: onStatusParameters) => {
       if (status === WebSocketStatus.Disconnected) {
@@ -447,8 +447,8 @@ export function useYjsStore({
       }
     };
 
-    provider.on('status', handleStatus as any);
-    unsubs.push(() => provider.off('status', handleStatus as any));
+    provider.on('status', handleStatus);
+    unsubs.push(() => provider.off('status', handleStatus));
 
     /**
      * `synced` может прийти несколько раз (реконнект). Слушатели вешаем один раз на mount
@@ -889,8 +889,8 @@ export function useYjsStore({
       flushPersist();
     });
 
-    provider.on('synced', handleSynced as any);
-    unsubs.push(() => provider.off('synced', handleSynced as any));
+    provider.on('synced', handleSynced);
+    unsubs.push(() => provider.off('synced', handleSynced));
 
     const hydrateFromCache = () => {
       if (sharedEntry.yjsDocumentHydrated) return true;
@@ -935,8 +935,8 @@ export function useYjsStore({
 
       unsubs.forEach((fn) => fn());
 
-      provider.off('authenticationFailed', handleAuthFailed as any);
-      provider.off('authenticated', handleAuthenticated as any);
+      provider.off('authenticationFailed', handleAuthFailed);
+      provider.off('authenticated', handleAuthenticated);
 
       // ВАЖНО: НЕТ provider.detach() здесь!
       // detach/destroy делаем только когда refs упадет в 0 (releaseShared).

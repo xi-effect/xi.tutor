@@ -11,10 +11,11 @@
  *
  * НЕ писать в Yjs / `editor.updateAssets` / `editor.updateShape`:
  *   - `getFileUrl(fileId)` — полный URL привязывает документ к одному окружению;
- *   - внешние http(s)-ссылки (кроме legacy-миграции ниже).
+ *   - внешние http(s)-ссылки (кроме legacy-миграции ниже);
+ *   - `data:` / `blob:` — локальный preview живёт вне store
+ *     (`editor.createTemporaryAssetPreview`) до успешного upload.
  *
- * Допустимые исключения (временные, не целевое состояние в CRDT):
- *   - `data:` / `blob:` — локальный preview до завершения upload;
+ * Допустимое временное значение в store:
  *   - пустая строка `''` — маркер «загрузка в процессе» у image asset.
  *
  * Legacy: старые комнаты могли содержать полный URL — при гидрации и перед
@@ -26,13 +27,24 @@
 
 import { extractFileIdFromUrl } from './resolveAssetUrl';
 
+/** Inline preview, который нельзя класть в Yjs. */
+export function isInlineAssetSrc(src: string | null | undefined): boolean {
+  return Boolean(src && (src.startsWith('data:') || src.startsWith('blob:')));
+}
+
 /**
- * Приводит `props.src` к формату для персиста: id файла или временный inline.
+ * Приводит `props.src` к формату для персиста: id файла или пустая строка.
+ * `data:` / `blob:` снимаются — preview должен жить в `createTemporaryAssetPreview`.
  * Legacy full URL (`.../content-service/files/{id}/` или `.../storage-service/v2/files/{id}/`) → bare id.
  */
 export function normalizeStoredFileSrc(src: string): string {
+  return persistableAssetSrc(src);
+}
+
+/** File id / пустая строка / без изменений; `data:` и `blob:` → `''`. */
+export function persistableAssetSrc(src: string): string {
   if (!src) return src;
-  if (src.startsWith('data:') || src.startsWith('blob:')) return src;
+  if (isInlineAssetSrc(src)) return '';
 
   const legacyId = extractFileIdFromUrl(src);
   return legacyId ?? src;

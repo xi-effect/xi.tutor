@@ -1,6 +1,7 @@
 import type { DrRecord, DrStore } from '@ibodr/draw';
 import type { YKeyValue } from 'y-utility/y-keyvalue';
-import { normalizeStoredFileSrc } from './storedFileSrc';
+import { stripInlineAssetSrc } from './boardAssetHygiene';
+import { persistableAssetSrc } from './storedFileSrc';
 
 /** YKeyValue.delete снимает только первое вхождение ключа — чистим все дубликаты. */
 export function deleteYjsRecordFully(yStore: YKeyValue<DrRecord>, id: string) {
@@ -15,11 +16,12 @@ export function isDocumentRecord(store: DrStore, record: DrRecord): boolean {
 
 /** Нормализует props.src перед записью в Yjs — контракт в utils/storedFileSrc.ts */
 export function normalizeRecordForYjsPersistence(record: DrRecord): DrRecord {
-  const props = (record as { props?: { src?: unknown } }).props;
-  if (!props?.src || typeof props.src !== 'string') return record;
+  const stripped = stripInlineAssetSrc(record);
+  const props = (stripped as { props?: { src?: unknown } }).props;
+  if (!props?.src || typeof props.src !== 'string') return stripped;
 
-  const normalizedSrc = normalizeStoredFileSrc(props.src);
-  if (normalizedSrc === props.src) return record;
+  const normalizedSrc = persistableAssetSrc(props.src);
+  if (normalizedSrc === props.src) return stripped;
 
-  return { ...record, props: { ...props, src: normalizedSrc } } as DrRecord;
+  return { ...stripped, props: { ...props, src: normalizedSrc } } as DrRecord;
 }

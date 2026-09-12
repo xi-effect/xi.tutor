@@ -10,6 +10,10 @@ import { isEditableTarget } from '../utils/isEditableTarget';
 import { looksLikeMarkup, readPasteClipboardSnapshot } from '../utils/pasteClipboard';
 import { getCachedDataUrl, resolveAssetAsDataUrl } from '../utils/resolveAssetUrl';
 import { reconstructPastedMath, pastedMathToRichHtml } from '../shapes/text/utils/clipboardMath';
+import {
+  attachTemporaryPreviewsFromContent,
+  stripInlineSourcesFromContent,
+} from '../utils/boardAssetHygiene';
 
 /** Лимит размера картинки (в байтах) для встраивания в clipboard как data:URL.
  *  Сверх него остаётся fallback на sourceToken — слишком большой clipboard
@@ -272,7 +276,11 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
         ? preparePastedContent(content, editor!, tokenRef.current)
         : [];
 
+      await attachTemporaryPreviewsFromContent(editor!, content);
+      stripInlineSourcesFromContent(content);
+
       // 2) Мгновенная вставка: shape'ы появляются на доске сразу.
+      //    Inline data:/blob: уже сняты — preview в createTemporaryAssetPreview.
       //    На той же доске id из clipboard уже есть в store — preserveIds:true
       //    не создаёт копии, а смещает существующие фигуры. Для cross-board
       //    preserveIds:true сохраняет id, чтобы uploadPastedAssetsInBackground
