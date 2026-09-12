@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { useSearch } from '@tanstack/react-router';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { UseFormSetError } from 'react-hook-form';
@@ -22,7 +23,7 @@ import { Check, Eyeoff, Eyeon } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 
 import { useFormSchema, type FormData } from '../model';
-import { useSignupForm } from '../hooks';
+import { isOutlookEmail, useSignupForm } from '../hooks';
 import { AuthFlowShell, LinkTanstack } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -57,6 +58,21 @@ export const SignUpPage = () => {
   const formSchema = useFormSchema();
   const { onSignupForm, isPending } = useSignupForm();
   const getUrlWithParams = useGetUrlWithParams();
+  const outlookWarningEmailRef = useRef<string | null>(null);
+
+  const warnIfOutlookEmail = (email: string) => {
+    if (!isOutlookEmail(email)) {
+      return;
+    }
+
+    const normalized = email.trim().toLowerCase();
+    if (outlookWarningEmailRef.current === normalized) {
+      return;
+    }
+
+    outlookWarningEmailRef.current = normalized;
+    toast.warning(t('outlook_delivery_warning'), { id: 'signup-outlook-delivery' });
+  };
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -113,6 +129,7 @@ export const SignUpPage = () => {
   }, [entryPoint, hasInvite, search.redirect, search.invite, search.from]);
 
   const onSubmit = (data: FormData) => {
+    warnIfOutlookEmail(data.email);
     onSignupForm(
       {
         ...data,
@@ -255,6 +272,10 @@ export const SignUpPage = () => {
                       }
                       afterClassName={isSuccess ? 'pointer-events-none' : undefined}
                       {...field}
+                      onBlur={(event) => {
+                        field.onBlur();
+                        warnIfOutlookEmail(event.target.value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="pt-0" />

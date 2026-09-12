@@ -18,6 +18,13 @@ export type SignupErrorUi = {
   setError: (message: string) => void;
 };
 
+const OUTLOOK_EMAIL_RE = /@(?:outlook|hotmail|live|msn)\.[a-z0-9.-]+$/i;
+
+/** Microsoft-потребительские домены: Outlook / Hotmail / Live / MSN. */
+export function isOutlookEmail(email: string): boolean {
+  return OUTLOOK_EMAIL_RE.test(email.trim().toLowerCase());
+}
+
 /** Куда вести после успешной регистрации. */
 export function getSignupSuccessNavigation(search: SignupSearch) {
   return {
