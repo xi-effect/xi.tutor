@@ -1,0 +1,10 @@
+{
+  "extends": "../../packages/common.typescript/tsconfig.node.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["ES2023"],
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src/**/*.ts"]
+}

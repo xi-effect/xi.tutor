@@ -31,6 +31,6 @@
     "typescript-eslint": "^8.22.0",
     "vitest": "^4.1.10"
   },
-  "description": "WebAPI adapters for browser and Tauri (desktop/mobile) runtimes",
+  "description": "WebAPI adapters for browser, Electron and Tauri (desktop/mobile) runtimes",
   "author": "xi.effect"
 }

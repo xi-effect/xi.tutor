@@ -1,0 +1,34 @@
+{
+  "name": "xi.electron",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Electron desktop shell for Sovlium. Reuses apps/xi.web as the renderer.",
+  "author": "xi.effect",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build:main": "node scripts/build-main.mjs",
+    "build": "node scripts/ensure-web-bundle.mjs && node scripts/build-main.mjs && electron-builder --publish never",
+    "build:macos": "node scripts/ensure-web-bundle.mjs && node scripts/build-main.mjs && electron-builder --mac --publish never",
+    "build:windows": "node scripts/ensure-web-bundle.mjs && node scripts/build-main.mjs && electron-builder --win --x64 --publish never",
+    "lint": "eslint .",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/node": "^20.3.1",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
+    "electron": "^38.2.0",
+    "electron-builder": "^26.0.12",
+    "esbuild": "^0.25.9",
+    "eslint": "^9.19.0",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0"
+  }
+}

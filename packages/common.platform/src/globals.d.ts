@@ -1,3 +1,5 @@
+import type { SovliumDesktopAPI } from './electron-api';
+
 export {};
 
 declare global {
@@ -5,6 +7,9 @@ declare global {
     __SOVLIUM_NATIVE__?: boolean;
     /** Compile-time OS of the shell (`ios` / `android` / `macos` / …). */
     __SOVLIUM_NATIVE_OS__?: string;
+    __SOVLIUM_ELECTRON__?: boolean;
+    __SOVLIUM_ELECTRON_SURFACE__?: 'main' | 'conference';
     __TAURI_INTERNALS__?: unknown;
+    sovliumDesktop?: SovliumDesktopAPI;
   }
 }

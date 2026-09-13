@@ -1,7 +1,7 @@
-import { isNativeShell } from './detect';
+import { isTauriShell } from './detect';
 
 export async function writeText(text: string): Promise<void> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const { writeText: writeNative } = await import('@tauri-apps/plugin-clipboard-manager');
       await writeNative(text);
@@ -20,7 +20,7 @@ export async function writeText(text: string): Promise<void> {
 }
 
 export async function readText(): Promise<string> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const { readText: readNative } = await import('@tauri-apps/plugin-clipboard-manager');
       return await readNative();
@@ -37,7 +37,7 @@ export async function readText(): Promise<string> {
 }
 
 export async function writeHtmlAndText(html: string, plain: string): Promise<void> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const { writeHtml } = await import('@tauri-apps/plugin-clipboard-manager');
       await writeHtml(html, plain);

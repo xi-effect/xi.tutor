@@ -7,6 +7,7 @@ import { ThemeProvider } from 'common.theme';
 import { Toaster } from 'sonner';
 import { router } from '../router';
 import { AuthSocketBridge } from './AuthSocketBridge';
+import { ElectronDeepLinkHost } from './ElectronDeepLinkHost';
 
 /** Маршруты с доской — тосты не должны перекрывать DrawZoomPanel (right/bottom). */
 const isBoardRoute = (pathname: string) =>
@@ -103,7 +104,12 @@ const RouterWithAuthContext = () => {
     });
   }, [auth.isAuthenticated, queryClient]);
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  return (
+    <>
+      <ElectronDeepLinkHost />
+      <RouterProvider router={router} context={{ auth }} />
+    </>
+  );
 };
 
 export const RouterWithAuth = () => {

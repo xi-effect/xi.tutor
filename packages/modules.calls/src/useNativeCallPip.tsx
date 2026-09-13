@@ -8,7 +8,13 @@
 
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { useCallStore } from '@xipkg/calls-store';
-import { isDesktopNative, onMainWindowFocusChanged, isMainWindowMinimized } from 'common.platform';
+import {
+  enterCallPip,
+  isDesktopNative,
+  isElectronShell,
+  onMainWindowFocusChanged,
+  isMainWindowMinimized,
+} from 'common.platform';
 
 const PIP_REQUEST = 'sovlium:call-pip-request';
 const PIP_CLOSE = 'sovlium:call-pip-close';
@@ -125,7 +131,13 @@ function NativeCallPipButton(): ReactElement | null {
   return (
     <button
       type="button"
-      onClick={() => dispatch(PIP_REQUEST)}
+      onClick={() => {
+        if (isElectronShell()) {
+          void enterCallPip({ width: 380, height: 280 });
+          return;
+        }
+        dispatch(PIP_REQUEST);
+      }}
       className={
         compact
           ? 'bg-background-surface/95 text-text-primary border-border-default hover:bg-background-hover fixed top-3 left-1/2 z-200 flex -translate-x-1/2 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium shadow-lg'

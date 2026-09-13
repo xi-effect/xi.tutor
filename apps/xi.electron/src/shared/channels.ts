@@ -1,0 +1,42 @@
+export const IPC = {
+  appGetInfo: 'sovlium:app:get-info',
+  appGetPlatform: 'sovlium:app:get-platform',
+  windowMinimize: 'sovlium:window:minimize',
+  windowMaximize: 'sovlium:window:maximize',
+  windowClose: 'sovlium:window:close',
+  windowFocus: 'sovlium:window:focus',
+  windowUnminimize: 'sovlium:window:unminimize',
+  windowIsMinimized: 'sovlium:window:is-minimized',
+  windowSetTitle: 'sovlium:window:set-title',
+  conferenceStart: 'sovlium:conference:start',
+  conferenceLeave: 'sovlium:conference:leave',
+  conferenceSetSlotBounds: 'sovlium:conference:set-slot-bounds',
+  conferenceEnterFloating: 'sovlium:conference:enter-floating',
+  conferenceExitFloating: 'sovlium:conference:exit-floating',
+  conferenceResizeFloating: 'sovlium:conference:resize-floating',
+  conferenceGetState: 'sovlium:conference:get-state',
+  conferenceEnded: 'sovlium:conference:ended',
+  screenShareOpenControls: 'sovlium:share:open-controls',
+  screenShareCloseControls: 'sovlium:share:close-controls',
+  screenShareFocusMain: 'sovlium:share:focus-main',
+  screenShareRequestStop: 'sovlium:share:request-stop',
+  filesSave: 'sovlium:files:save',
+  externalOpenUrl: 'sovlium:external:open-url',
+  permissionsStatus: 'sovlium:permissions:status',
+  permissionsRequest: 'sovlium:permissions:request',
+  themeGet: 'sovlium:theme:get',
+  themeSet: 'sovlium:theme:set',
+} as const;
+
+export type IpcChannel = (typeof IPC)[keyof typeof IPC];
+
+export const EVENTS = {
+  conferenceState: 'sovlium:event:conference-state',
+  windowFocus: 'sovlium:event:window-focus',
+  deepLink: 'sovlium:event:deep-link',
+  shareOverlayStop: 'share-overlay-stop',
+  shareAnnotation: 'share-annotate-stroke',
+  callPipRestored: 'call-pip-restored',
+} as const;
+
+export type EventChannel = (typeof EVENTS)[keyof typeof EVENTS];

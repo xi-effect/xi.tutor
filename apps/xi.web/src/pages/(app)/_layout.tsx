@@ -4,7 +4,14 @@ import { applyUserLanguage, LoadingScreen } from 'common.ui';
 import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
-import { CallsShell, CompactView, useCallStore, useUmamiActivityHeartbeat } from 'modules.calls';
+import {
+  CallsShell,
+  CompactView,
+  ElectronConferenceSlot,
+  useCallStore,
+  useUmamiActivityHeartbeat,
+} from 'modules.calls';
+import { isElectronMainSurface } from 'common.platform';
 import { useCurrentUser, useSyncRoleFromSearch, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';
@@ -58,6 +65,16 @@ function LayoutContent() {
   ) : (
     <Outlet />
   );
+
+  if (isElectronMainSurface()) {
+    return (
+      <Navigation>
+        <ElectronConferenceSlot>
+          <Outlet />
+        </ElectronConferenceSlot>
+      </Navigation>
+    );
+  }
 
   return <Navigation>{outlet}</Navigation>;
 }

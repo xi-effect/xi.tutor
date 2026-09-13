@@ -36,6 +36,7 @@ import { Route as appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport } from 
 import { Route as appLayoutClassroomsClassroomIdNotesNoteIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/notes/$noteId'
 import { Route as appLayoutMaterialsMaterialIdBoardIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/board/index'
 import { Route as appLayoutMaterialsMaterialIdNoteIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/note/index'
+import { Route as desktopConferenceClassroomIdRouteImport } from './pages/desktop/conference/$classroomId'
 
 const appLayoutRoute = appLayoutRouteImport.update({
   id: '/(app)/_layout',
@@ -180,9 +181,16 @@ const appLayoutMaterialsMaterialIdNoteIndexRoute =
     path: '/materials/$materialId/note/',
     getParentRoute: () => appLayoutRoute,
   } as any)
+const desktopConferenceClassroomIdRoute =
+  desktopConferenceClassroomIdRouteImport.update({
+    id: '/desktop/conference/$classroomId',
+    path: '/desktop/conference/$classroomId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
+  '/desktop/conference/$classroomId': typeof desktopConferenceClassroomIdRoute
   '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
@@ -209,6 +217,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
+  '/desktop/conference/$classroomId': typeof desktopConferenceClassroomIdRoute
   '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
@@ -239,6 +248,7 @@ export interface FileRoutesById {
   '/(auth)/_layout': typeof authLayoutRouteWithChildren
   '/(common)/_layout': typeof commonLayoutRouteWithChildren
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
+  '/desktop/conference/$classroomId': typeof desktopConferenceClassroomIdRoute
   '/(app)/_layout/': typeof appLayoutIndexRoute
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/deployments/$deploymentId/enable'
+    | '/desktop/conference/$classroomId'
     | '/'
     | '/board/$boardId'
     | '/call/$callId'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/deployments/$deploymentId/enable'
+    | '/desktop/conference/$classroomId'
     | '/'
     | '/board/$boardId'
     | '/call/$callId'
@@ -322,6 +334,7 @@ export interface FileRouteTypes {
     | '/(auth)/_layout'
     | '/(common)/_layout'
     | '/deployments/$deploymentId/enable'
+    | '/desktop/conference/$classroomId'
     | '/(app)/_layout/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
@@ -352,6 +365,7 @@ export interface RootRouteChildren {
   authLayoutRoute: typeof authLayoutRouteWithChildren
   commonLayoutRoute: typeof commonLayoutRouteWithChildren
   DeploymentsDeploymentIdEnableRoute: typeof DeploymentsDeploymentIdEnableRoute
+  desktopConferenceClassroomIdRoute: typeof desktopConferenceClassroomIdRoute
   commonWelcomeEmailIndexRoute: typeof commonWelcomeEmailIndexRoute
   commonWelcomeRoleIndexRoute: typeof commonWelcomeRoleIndexRoute
   commonWelcomeSocialsIndexRoute: typeof commonWelcomeSocialsIndexRoute
@@ -393,6 +407,13 @@ declare module '@tanstack/react-router' {
       path: '/deployments/$deploymentId/enable'
       fullPath: '/deployments/$deploymentId/enable'
       preLoaderRoute: typeof DeploymentsDeploymentIdEnableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/desktop/conference/$classroomId': {
+      id: '/desktop/conference/$classroomId'
+      path: '/desktop/conference/$classroomId'
+      fullPath: '/desktop/conference/$classroomId'
+      preLoaderRoute: typeof desktopConferenceClassroomIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout/bank/': {
@@ -630,6 +651,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLayoutRoute: authLayoutRouteWithChildren,
   commonLayoutRoute: commonLayoutRouteWithChildren,
   DeploymentsDeploymentIdEnableRoute: DeploymentsDeploymentIdEnableRoute,
+  desktopConferenceClassroomIdRoute: desktopConferenceClassroomIdRoute,
   commonWelcomeEmailIndexRoute: commonWelcomeEmailIndexRoute,
   commonWelcomeRoleIndexRoute: commonWelcomeRoleIndexRoute,
   commonWelcomeSocialsIndexRoute: commonWelcomeSocialsIndexRoute,

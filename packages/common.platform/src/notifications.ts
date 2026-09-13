@@ -1,4 +1,4 @@
-import { isDesktopNative, isNativeShell } from './detect';
+import { isDesktopNative, isNativeShell, isTauriShell } from './detect';
 
 export type NotificationPermissionState = NotificationPermission;
 
@@ -30,7 +30,7 @@ function mapPluginPermission(status: string, granted: boolean): NotificationPerm
 }
 
 export async function refreshNotificationPermission(): Promise<NotificationPermissionState> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const plugin = await import('@tauri-apps/plugin-notification');
       const granted = await plugin.isPermissionGranted();
@@ -61,7 +61,7 @@ export async function refreshNotificationPermission(): Promise<NotificationPermi
 }
 
 export async function requestNotificationPermission(): Promise<NotificationPermissionState> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const plugin = await import('@tauri-apps/plugin-notification');
       let granted = await plugin.isPermissionGranted();
@@ -102,7 +102,7 @@ const pendingByTag = new Map<string, ShowNotificationOptions>();
 let actionListenerInstalled = false;
 
 async function ensureNotificationActionListener(): Promise<void> {
-  if (actionListenerInstalled || !isNativeShell()) return;
+  if (actionListenerInstalled || !isTauriShell()) return;
   actionListenerInstalled = true;
   try {
     const { onAction } = await import('@tauri-apps/plugin-notification');
@@ -129,7 +129,7 @@ export async function showNotification(options: ShowNotificationOptions): Promis
   const permission = await refreshNotificationPermission();
   if (permission !== 'granted') return false;
 
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       await ensureNotificationActionListener();
       const plugin = await import('@tauri-apps/plugin-notification');

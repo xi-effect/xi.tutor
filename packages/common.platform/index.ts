@@ -1,13 +1,26 @@
+import './src/electron-api';
+
 export {
   isNativeShell,
   isDesktopNative,
   isMobileNative,
   isTabletNative,
+  isElectronShell,
+  isTauriShell,
+  isElectronMainSurface,
+  isElectronConferenceSurface,
+  getElectronSurface,
+  getNativeRuntime,
   getRuntimeKind,
   getNativeOs,
   type RuntimeKind,
+  type NativeRuntime,
   type NativeOs,
+  type ElectronSurface,
 } from './src/detect';
+
+export { getSovliumDesktop } from './src/electron';
+export type { SovliumDesktopAPI, ConferenceState, SlotBounds } from './src/electron-api';
 
 export {
   getAppInfo,

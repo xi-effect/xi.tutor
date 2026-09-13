@@ -18,6 +18,10 @@
     "tauri:ios:build": "pnpm --filter xi.tauri ios:build",
     "tauri:android:dev": "pnpm --filter xi.tauri android:dev",
     "tauri:android:build": "pnpm --filter xi.tauri android:build",
+    "electron:dev": "pnpm --filter xi.electron dev",
+    "electron:build": "pnpm --filter xi.electron build",
+    "electron:build:macos": "pnpm --filter xi.electron build:macos",
+    "electron:build:windows": "pnpm --filter xi.electron build:windows",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:e2e": "pnpm --filter xi.web test:e2e",
@@ -51,7 +55,8 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "core-js",
-      "rolldown"
+      "rolldown",
+      "electron"
     ],
     "overrides": {
       "@tiptap/core": "3.30.1",
