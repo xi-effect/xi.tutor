@@ -17,7 +17,10 @@ describe('trackProductEvent feedback comment', () => {
 
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.FEEDBACK_PROMPT_SHOWN, {
       feedback_type: 'call',
+      eligibility: 'call_only',
+      usage_duration_bucket: '15_30m',
       source: 'post_lesson',
+      event_version: 2,
       comment: 'не должно уйти',
     } as never);
 

@@ -11,11 +11,12 @@ import {
   PRODUCT_ANALYTICS_EVENTS,
   beginCallFeedbackSession,
   createAttemptId,
+  flushCallFeedbackUsage,
   getDurationBucket,
   getProductAnalyticsRole,
   mapPermissionError,
-  markCallFeedbackEligible,
   measureDurationMs,
+  startCallFeedbackUsage,
   trackProductEvent,
   type CallFailureReason,
   type ProductAnalyticsLessonType,
@@ -116,10 +117,6 @@ export const ProductCallAnalyticsTracker = () => {
         state.duration5Reached = true;
       }
 
-      if (threshold === 15) {
-        markCallFeedbackEligible();
-      }
-
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_DURATION_REACHED, {
         lesson_id: lessonId,
         actor_role: actorRole,
@@ -144,9 +141,6 @@ export const ProductCallAnalyticsTracker = () => {
     if (state.lessonFinishedSent || !state.connectedAt) return;
 
     const elapsedMinutes = getElapsedMinutes();
-    if (elapsedMinutes >= 15) {
-      markCallFeedbackEligible();
-    }
     if (elapsedMinutes < MIN_LESSON_FINISH_MINUTES && !state.duration5Reached) return;
 
     syncUsageFlags();
@@ -236,6 +230,7 @@ export const ProductCallAnalyticsTracker = () => {
 
   useEffect(() => {
     if (!token) {
+      flushCallFeedbackUsage();
       resetCallSessionAnalyticsState();
     }
   }, [token]);
@@ -245,6 +240,10 @@ export const ProductCallAnalyticsTracker = () => {
 
     const state = getCallSessionAnalyticsState();
     state.inLessonMediaContext = true;
+
+    if (role === 'tutor') {
+      startCallFeedbackUsage();
+    }
 
     if (!wasConnectedRef.current) {
       wasConnectedRef.current = true;
@@ -282,6 +281,18 @@ export const ProductCallAnalyticsTracker = () => {
       }
     };
   }, [connectionState, role, actorRole, activeClassroom, activeBoardId, isScreenShareEnabled]);
+
+  useEffect(() => {
+    if (connectionState !== 'connected') {
+      flushCallFeedbackUsage();
+    }
+
+    return () => {
+      if (connectionState === 'connected') {
+        flushCallFeedbackUsage();
+      }
+    };
+  }, [connectionState]);
 
   useEffect(() => {
     if (connectionState === 'disconnected' && wasConnectedRef.current) {

@@ -2,10 +2,12 @@ import type { PRODUCT_ANALYTICS_EVENTS } from './events';
 import type {
   ActivationHelpReason,
   ActivationHelpScreen,
+  ProductAnalyticsFeedbackEligibility,
   ProductAnalyticsFeedbackPromptSource,
   ProductAnalyticsFeedbackScore,
   ProductAnalyticsFeedbackSupportSource,
   ProductAnalyticsFeedbackType,
+  ProductAnalyticsFeedbackUsageDurationBucket,
   CallFailureReason,
   CommonActivationProperties,
   EmailConfirmationFailureReason,
@@ -698,6 +700,8 @@ export type ProductAnalyticsEventMap = {
   feedback_prompt_shown: {
     event_version?: number;
     feedback_type: ProductAnalyticsFeedbackType;
+    eligibility: ProductAnalyticsFeedbackEligibility;
+    usage_duration_bucket: ProductAnalyticsFeedbackUsageDurationBucket;
     source: ProductAnalyticsFeedbackPromptSource;
   };
   feedback_prompt_opened: {

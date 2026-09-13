@@ -5,8 +5,9 @@ import type { Awareness } from 'y-protocols/awareness';
 import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  flushBoardFeedbackUsage,
   getProductAnalyticsRole,
-  markBoardFeedbackEligible,
+  noteBoardFeedbackActivity,
   trackProductEvent,
   type ProductAnalyticsBoardTrigger,
   type ProductAnalyticsSource,
@@ -50,6 +51,7 @@ export const useProductBoardAnalytics = ({
   const { data: user } = useCurrentUser();
 
   const role = getProductAnalyticsRole(user?.default_layout);
+  const isTutor = user?.default_layout === 'tutor';
   const source = useMemo(
     () =>
       resolveBoardSource({
@@ -76,10 +78,6 @@ export const useProductBoardAnalytics = ({
       source,
       trigger,
     });
-
-    if (source === 'call' || source === 'classroom') {
-      markBoardFeedbackEligible();
-    }
   };
 
   const evaluateMeaningfulUsage = () => {
@@ -142,6 +140,36 @@ export const useProductBoardAnalytics = ({
 
     return unsubscribe;
   }, [editor, enabled]);
+
+  useEffect(() => {
+    if (!enabled || !isTutor) return;
+    if (source !== 'call' && source !== 'classroom') return;
+    if (!editor) return;
+
+    const unsubscribe = editor.store.listen(
+      () => {
+        if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+          return;
+        }
+        noteBoardFeedbackActivity();
+      },
+      { scope: 'document', source: 'user' },
+    );
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        flushBoardFeedbackUsage();
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      unsubscribe();
+      flushBoardFeedbackUsage();
+    };
+  }, [editor, enabled, isTutor, source]);
 
   useEffect(() => {
     if (!enabled || !awareness) return;
