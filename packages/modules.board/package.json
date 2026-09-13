@@ -16,7 +16,7 @@
     "parse-ydoc": "node scripts/parse-board-ydoc.mjs"
   },
   "dependencies": {
-    "@hocuspocus/provider": "3.4.4",
+    "@hocuspocus/provider": "4.7.0",
     "@hookform/resolvers": "^5.2.2",
     "@ibodr/draw": "^0.2.2",
     "@ibodr/schema": "^0.2.2",

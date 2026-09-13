@@ -20,4 +20,32 @@ describe('normalizeRecordForYjsPersistence', () => {
       props: { src: id },
     });
   });
+
+  it('снимает data: в пользу meta.originalSrc', () => {
+    const record = {
+      id: 'asset:1',
+      typeName: 'asset',
+      props: { src: 'data:image/png;base64,abc' },
+      meta: { originalSrc: 'file-id-1' },
+    };
+
+    expect(normalizeRecordForYjsPersistence(record as never)).toEqual({
+      ...record,
+      props: { src: 'file-id-1' },
+    });
+  });
+
+  it('обнуляет data:/blob: без originalSrc', () => {
+    const record = {
+      id: 'asset:1',
+      typeName: 'asset',
+      props: { src: 'blob:https://app.local/1' },
+      meta: {},
+    };
+
+    expect(normalizeRecordForYjsPersistence(record as never)).toEqual({
+      ...record,
+      props: { src: '' },
+    });
+  });
 });
