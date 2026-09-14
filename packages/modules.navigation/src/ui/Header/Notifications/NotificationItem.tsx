@@ -1,6 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { Check } from '@xipkg/icons';
-import { Button } from '@xipkg/button';
 import { DropdownMenuItem } from '@xipkg/dropdown';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
@@ -33,8 +30,6 @@ export const NotificationItem = ({
   onOpenCustomModal: (payload: CustomNotificationModalPayload) => void;
   asDropdownItem?: boolean;
 }) => {
-  const { t } = useTranslation('navigation');
-
   // Обработчик клика по уведомлению - переход на целевую страницу или открытие модалки
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -54,15 +49,6 @@ export const NotificationItem = ({
     const url = generateNotificationAction(notification);
     if (url) {
       onNavigate(url);
-    }
-  };
-
-  // Обработчик клика по кнопке прочтения - только пометить как прочитанное
-  const handleMarkAsRead = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (!notification.is_read) {
-      await onMarkAsRead(notification.id);
     }
   };
 
@@ -111,26 +97,6 @@ export const NotificationItem = ({
           </Tooltip>
         </TooltipProvider>
       </div>
-
-      {!notification.is_read && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="none"
-                size="sm"
-                className="group/button bg-background-surface hover:bg-action-primary-background-default h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                onClick={handleMarkAsRead}
-              >
-                <Check className="group-hover/button:fill-action-primary-text fill-icon-primary h-3 w-3" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>{t('markAsRead')}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
     </>
   );
 

@@ -4,6 +4,7 @@ import { getAxiosInstance } from 'common.config';
 import { handleError } from '..';
 
 type UseMarkNotificationAsReadOptions = {
+  skipCacheInvalidation?: boolean;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
 };
@@ -35,13 +36,15 @@ export const useMarkNotificationAsRead = (options?: UseMarkNotificationAsReadOpt
       }
     },
     onSuccess: () => {
-      // Инвалидируем запросы для обновления списка и счетчика
-      queryClient.invalidateQueries({
-        queryKey: [NotificationsQueryKey.SearchNotifications],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [NotificationsQueryKey.GetUnreadCount],
-      });
+      if (!options?.skipCacheInvalidation) {
+        // Инвалидируем запросы для обновления списка и счетчика
+        queryClient.invalidateQueries({
+          queryKey: [NotificationsQueryKey.SearchNotifications],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [NotificationsQueryKey.GetUnreadCount],
+        });
+      }
       // Вызываем пользовательский колбэк, если он передан
       options?.onSuccess?.();
     },

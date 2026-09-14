@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { SidebarMenuButton, SidebarMenuItem, useSidebar } from '@xipkg/sidebar';
-
 import { NotificationBadge } from './NotificationBadge';
 
 export const NotificationsDropdown = ({
@@ -59,7 +58,8 @@ export const NotificationsDropdown = ({
         side="top"
         alignOffset={0}
         sideOffset={8}
-        className="flex w-[268px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
+        collisionPadding={16}
+        className="flex max-h-[var(--radix-dropdown-menu-content-available-height)] w-[268px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
       >
         <DropdownMenuLabel className="text-s-base text-text-primary flex h-[48px] items-center p-3 font-semibold">
           {t('notifications')}
