@@ -35,6 +35,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
 import {
+  SUBSCRIPTION_BILLING_ENABLED,
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   useSubscriptionStore,
@@ -163,7 +164,8 @@ export const SettingsDropdown = () => {
   const shownWarningToastRef = useRef(false);
   const shownLimitToastRef = useRef(false);
 
-  const effectiveCount = boardAtLimit ? BOARD_ELEMENTS_LIMIT : elementsCount;
+  const effectiveCount =
+    SUBSCRIPTION_BILLING_ENABLED && boardAtLimit ? BOARD_ELEMENTS_LIMIT : elementsCount;
   const progressPercent = Math.min((effectiveCount / BOARD_ELEMENTS_LIMIT) * 100, 100);
   const isWarningZone = effectiveCount >= BOARD_ELEMENTS_WARNING_THRESHOLD;
   const isLimitReached = effectiveCount >= BOARD_ELEMENTS_LIMIT;
