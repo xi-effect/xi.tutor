@@ -124,7 +124,11 @@ export const PostLessonFeedbackHost = () => {
     trackOnce(`feedback_prompt_shown:${promptKey}`, () => {
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.FEEDBACK_PROMPT_SHOWN, {
         feedback_type: pendingType,
+        eligibility:
+          session.pendingEligibility ?? (pendingType === 'call' ? 'call_only' : 'board_only'),
+        usage_duration_bucket: session.pendingUsageDurationBucket ?? '15_30m',
         source: 'post_lesson',
+        event_version: 2,
       });
     });
 
@@ -185,7 +189,17 @@ export const PostLessonFeedbackHost = () => {
         },
       },
     );
-  }, [inCall, isTutor, modalOpen, pendingType, session.previewNonce, t, user]);
+  }, [
+    inCall,
+    isTutor,
+    modalOpen,
+    pendingType,
+    session.pendingEligibility,
+    session.pendingUsageDurationBucket,
+    session.previewNonce,
+    t,
+    user,
+  ]);
 
   useEffect(() => {
     window.__sovliumFeedback = {

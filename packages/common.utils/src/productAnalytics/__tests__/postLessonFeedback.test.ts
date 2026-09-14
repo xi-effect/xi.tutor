@@ -5,14 +5,18 @@ import {
   beginCallFeedbackSession,
   computeNextFeedbackEligibleAt,
   debugQueuePostLessonFeedback,
+  flushBoardFeedbackUsage,
+  flushCallFeedbackUsage,
   getPostLessonFeedbackSession,
   isPostLessonFeedbackCooldownActive,
   markBoardFeedbackEligible,
   markCallFeedbackEligible,
+  noteBoardFeedbackActivity,
   POST_LESSON_FEEDBACK_JITTER_MS,
   POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
   readPostLessonFeedbackPersisted,
   resetPostLessonFeedbackState,
+  startCallFeedbackUsage,
   tryQueuePostLessonFeedback,
   writePostLessonFeedbackPersisted,
 } from '../postLessonFeedback';
@@ -159,5 +163,134 @@ describe('tryQueuePostLessonFeedback', () => {
     expect(getPostLessonFeedbackSession().callEligible).toBe(true);
     expect(getPostLessonFeedbackSession().boardEligible).toBe(true);
     expect(tryQueuePostLessonFeedback(5)).toBeTruthy();
+  });
+});
+
+describe('feedback usage eligibility', () => {
+  afterEach(() => {
+    resetPostLessonFeedbackState();
+  });
+
+  const withStorage = () => {
+    const storage = memoryStorage();
+    (globalThis as { window?: unknown }).window = { localStorage: storage };
+    return storage;
+  };
+
+  const simulateBoardActive = (startMs: number, durationMs: number, stepMs = 30_000) => {
+    noteBoardFeedbackActivity(startMs);
+    for (let at = startMs + stepMs; at <= startMs + durationMs; at += stepMs) {
+      noteBoardFeedbackActivity(at);
+    }
+  };
+
+  it('Call 45 мин, board 0 → call и корзина 45_60m', () => {
+    withStorage();
+    startCallFeedbackUsage(0);
+    flushCallFeedbackUsage(45 * 60_000);
+
+    expect(tryQueuePostLessonFeedback(10, 45 * 60_000)).toBe('call');
+    const session = getPostLessonFeedbackSession();
+    expect(session.pendingEligibility).toBe('call_only');
+    expect(session.pendingUsageDurationBucket).toBe('45_60m');
+  });
+
+  it('Call 5 мин, board active 25 мин → board', () => {
+    withStorage();
+    startCallFeedbackUsage(0);
+    flushCallFeedbackUsage(5 * 60_000);
+
+    simulateBoardActive(0, 25 * 60_000);
+
+    expect(tryQueuePostLessonFeedback(11, 25 * 60_000)).toBe('board');
+    const session = getPostLessonFeedbackSession();
+    expect(session.callEligible).toBe(false);
+    expect(session.pendingEligibility).toBe('board_only');
+    expect(session.pendingUsageDurationBucket).toBe('15_30m');
+  });
+
+  it('Call 50 мин, board active 35 мин → eligible both, показывается один тип', () => {
+    withStorage();
+    startCallFeedbackUsage(0);
+    flushCallFeedbackUsage(50 * 60_000);
+
+    simulateBoardActive(0, 35 * 60_000);
+
+    writePostLessonFeedbackPersisted(12, {
+      lastPromptAt: 1,
+      nextEligibleAt: 1,
+      lastType: 'call',
+    });
+
+    expect(tryQueuePostLessonFeedback(12, 50 * 60_000)).toBe('board');
+    const session = getPostLessonFeedbackSession();
+    expect(session.pendingEligibility).toBe('both');
+    expect(session.pendingUsageDurationBucket).toBe('30_45m');
+  });
+
+  it('Call 10 мин, board active 14 мин → feedback не показывается', () => {
+    withStorage();
+    startCallFeedbackUsage(0);
+    flushCallFeedbackUsage(10 * 60_000);
+
+    simulateBoardActive(0, 14 * 60_000);
+
+    expect(tryQueuePostLessonFeedback(13, 14 * 60_000)).toBeNull();
+    expect(getPostLessonFeedbackSession().pendingType).toBeNull();
+  });
+
+  it('Board открыта 60 мин, активность только 6 мин → board feedback не показывается', () => {
+    withStorage();
+    simulateBoardActive(0, 6 * 60_000);
+    flushBoardFeedbackUsage(60 * 60_000);
+
+    expect(getPostLessonFeedbackSession().boardActiveMs).toBe(6 * 60_000);
+    expect(tryQueuePostLessonFeedback(14, 60 * 60_000)).toBeNull();
+  });
+
+  it('Call 8 мин + reconnect + 10 мин → 18 мин → call eligible', () => {
+    withStorage();
+    startCallFeedbackUsage(0);
+    flushCallFeedbackUsage(8 * 60_000);
+    startCallFeedbackUsage(9 * 60_000);
+    flushCallFeedbackUsage(19 * 60_000);
+
+    expect(getPostLessonFeedbackSession().callConnectedMs).toBe(18 * 60_000);
+    expect(tryQueuePostLessonFeedback(15, 19 * 60_000)).toBe('call');
+    expect(getPostLessonFeedbackSession().pendingEligibility).toBe('call_only');
+    expect(getPostLessonFeedbackSession().pendingUsageDurationBucket).toBe('15_30m');
+  });
+
+  it('не считает connected-время до старта и после disconnect', () => {
+    withStorage();
+    flushCallFeedbackUsage(10 * 60_000);
+    startCallFeedbackUsage(10 * 60_000);
+    flushCallFeedbackUsage(20 * 60_000);
+
+    expect(getPostLessonFeedbackSession().callConnectedMs).toBe(10 * 60_000);
+    expect(tryQueuePostLessonFeedback(16, 40 * 60_000)).toBeNull();
+  });
+
+  it('idle > 2 минут между действиями на доске не суммируется', () => {
+    withStorage();
+    noteBoardFeedbackActivity(0);
+    noteBoardFeedbackActivity(3 * 60_000);
+    noteBoardFeedbackActivity(6 * 60_000);
+    noteBoardFeedbackActivity(20 * 60_000);
+
+    expect(getPostLessonFeedbackSession().boardActiveMs).toBe(0);
+    expect(tryQueuePostLessonFeedback(17, 20 * 60_000)).toBeNull();
+  });
+
+  it('reconnect звонка сохраняет накопленное connected-время', () => {
+    withStorage();
+    startCallFeedbackUsage(0);
+    flushCallFeedbackUsage(16 * 60_000);
+    beginCallFeedbackSession();
+    startCallFeedbackUsage(20 * 60_000);
+    flushCallFeedbackUsage(22 * 60_000);
+
+    expect(getPostLessonFeedbackSession().callConnectedMs).toBe(18 * 60_000);
+    expect(getPostLessonFeedbackSession().callEligible).toBe(true);
   });
 });

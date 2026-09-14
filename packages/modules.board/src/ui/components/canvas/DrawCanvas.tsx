@@ -44,6 +44,7 @@ import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToo
 import { boardTextOptions } from '../../../shapes/text/boardTextOptions';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { registerBoardElementLimit } from '../../../utils/boardElementLimit';
+import { registerBoardAssetHygiene } from '../../../utils/boardAssetHygiene';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
@@ -464,6 +465,8 @@ export const DrawCanvas = ({
                 if (editor.getCurrentToolId() !== 'eraser') return;
                 if (!isShapeErasable(shape.type)) return false;
               });
+
+              registerBoardAssetHygiene(editor);
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 const dropped = files.map(cloneDroppedFile);

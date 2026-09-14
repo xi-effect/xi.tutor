@@ -20,7 +20,7 @@ export type InsertImagePlacement = {
 };
 
 /**
- * Вставка изображения с мгновенным preview и последующей загрузкой
+ * Вставка изображения с мгновенным preview вне store и последующей загрузкой
  * @param placement — опционально: позиция (x, y) и размер (w, h) на доске
  */
 export async function insertImage(
@@ -63,10 +63,8 @@ export async function insertImage(
   const { width: w, height: h } = bitmap;
   bitmap.close();
 
-  // Создаём shape + asset с временным blob URL (без FileReader)
   const tempAssetId = `asset:${nanoid()}` as DrAssetId;
   const shapeId = `shape:${nanoid()}` as DrShapeId;
-  const previewUrl = URL.createObjectURL(file);
 
   const position = placement
     ? { x: placement.x, y: placement.y }
@@ -74,13 +72,14 @@ export async function insertImage(
   const shapeW = placement ? placement.w : w;
   const shapeH = placement ? placement.h : h;
 
+  editor.createTemporaryAssetPreview(tempAssetId, file);
   editor.createAssets([
     {
       id: tempAssetId,
       type: 'image',
       typeName: 'asset',
       props: {
-        src: previewUrl, // локальный preview
+        src: '',
         w,
         h,
         mimeType: file.type,
@@ -130,6 +129,11 @@ export async function insertImage(
       const { src } = await myAssetStore(token).upload(uploadAsset, file);
       await waitForResolvedAssetUrl(src, token);
 
+      if (!editor.getAsset(tempAssetId) || !editor.getShape(shapeId)) {
+        if (editor.getAsset(tempAssetId)) editor.deleteAssets([tempAssetId]);
+        return;
+      }
+
       // Контракт персиста: только storage file id — см. utils/storedFileSrc.ts
       editor.updateAssets([
         {
@@ -165,9 +169,6 @@ export async function insertImage(
       });
       editor.deleteShapes([shapeId]);
       editor.deleteAssets([tempAssetId]);
-    } finally {
-      // Даём <img> перейти с preview на резолвнутый blob, иначе серый «Не удалось загрузить».
-      setTimeout(() => URL.revokeObjectURL(previewUrl), 2_000);
     }
   })();
 }

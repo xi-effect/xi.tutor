@@ -1,4 +1,3 @@
-import { SUBSCRIPTION_BILLING_ENABLED } from 'common.subscription';
 import { ArrowRight, Check } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useEffect, useState } from 'react';
@@ -114,35 +113,33 @@ export const SettingsMobileDrawer = ({
     >
       {view === 'root' && (
         <div className="flex flex-col gap-3">
-          {SUBSCRIPTION_BILLING_ENABLED ? (
-            <div className="border-border-default bg-background-surface rounded-xl border px-4 py-3">
-              <div className="mb-1 flex items-center justify-between text-xs">
-                <span className="text-text-primary">{t('settings.boardFill')}</span>
-                <span
-                  className={cn(
-                    'text-text-primary font-medium',
-                    isWarningZone && !isLimitReached && 'text-tag-orange-accent',
-                    isLimitReached && 'text-text-danger',
-                  )}
-                >
-                  {elementsCount} / {elementsLimit}
-                </span>
-              </div>
-              <div className="bg-background-subtle h-2 w-full overflow-hidden rounded-full">
-                <div
-                  className={cn(
-                    'h-full rounded-full transition-all',
-                    isLimitReached
-                      ? 'bg-status-error-accent'
-                      : isWarningZone
-                        ? 'bg-tag-orange-accent'
-                        : 'bg-action-primary-background-default',
-                  )}
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
+          <div className="border-border-default bg-background-surface rounded-xl border px-4 py-3">
+            <div className="mb-1 flex items-center justify-between text-xs">
+              <span className="text-text-primary">{t('settings.boardFill')}</span>
+              <span
+                className={cn(
+                  'text-text-primary font-medium',
+                  isWarningZone && !isLimitReached && 'text-tag-orange-accent',
+                  isLimitReached && 'text-text-danger',
+                )}
+              >
+                {elementsCount} / {elementsLimit}
+              </span>
             </div>
-          ) : null}
+            <div className="bg-background-subtle h-2 w-full overflow-hidden rounded-full">
+              <div
+                className={cn(
+                  'h-full rounded-full transition-all',
+                  isLimitReached
+                    ? 'bg-status-error-accent'
+                    : isWarningZone
+                      ? 'bg-tag-orange-accent'
+                      : 'bg-action-primary-background-default',
+                )}
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
 
           <button type="button" className={boardDrawerRowClass} onClick={onOpenHotkeys}>
             <span>{t('settings.hotkeys')}</span>

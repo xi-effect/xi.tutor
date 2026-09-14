@@ -175,6 +175,11 @@ export type ProductAnalyticsFeedbackScore = 1 | 2 | 3 | 4 | 5;
 
 export type ProductAnalyticsFeedbackPromptSource = 'post_lesson';
 
+export type ProductAnalyticsFeedbackEligibility = 'call_only' | 'board_only' | 'both';
+
+export type ProductAnalyticsFeedbackUsageDurationBucket =
+  '15_30m' | '30_45m' | '45_60m' | '60m_plus';
+
 export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
 
 export type UmamiPrimitive = string | number | boolean;

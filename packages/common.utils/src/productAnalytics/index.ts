@@ -13,6 +13,14 @@ export {
 } from './lesson';
 export { pickFeedbackType } from './feedbackType';
 export {
+  accrueActiveUsageMs,
+  FEEDBACK_ELIGIBLE_USAGE_MS,
+  BOARD_FEEDBACK_IDLE_MS,
+  getFeedbackPromptEligibility,
+  getFeedbackUsageDurationBucket,
+  getShownFeedbackUsageMs,
+} from './feedbackUsage';
+export {
   prepareFeedbackComment,
   maskFeedbackPii,
   FEEDBACK_COMMENT_MAX_LENGTH,
@@ -28,12 +36,16 @@ export {
   computeNextFeedbackEligibleAt,
   debugQueuePostLessonFeedback,
   endClassroomFeedbackWindow,
+  flushBoardFeedbackUsage,
+  flushCallFeedbackUsage,
   getPostLessonFeedbackSession,
   isPostLessonFeedbackCooldownActive,
   markBoardFeedbackEligible,
   markCallFeedbackEligible,
+  noteBoardFeedbackActivity,
   readPostLessonFeedbackPersisted,
   resetPostLessonFeedbackState,
+  startCallFeedbackUsage,
   subscribePostLessonFeedback,
   tryQueuePostLessonFeedback,
   writePostLessonFeedbackPersisted,
@@ -162,6 +174,8 @@ export type {
   MathBankFavoriteAction,
   ProductAnalyticsFeedbackScore,
   ProductAnalyticsFeedbackType,
+  ProductAnalyticsFeedbackEligibility,
+  ProductAnalyticsFeedbackUsageDurationBucket,
   ProductLimitType,
   ProductLimitSource,
   ProductLimitFileCategory,

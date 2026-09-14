@@ -1,5 +1,16 @@
 import { pickFeedbackType } from './feedbackType';
-import type { ProductAnalyticsFeedbackType } from './types';
+import {
+  accrueActiveUsageMs,
+  FEEDBACK_ELIGIBLE_USAGE_MS,
+  getFeedbackPromptEligibility,
+  getFeedbackUsageDurationBucket,
+  getShownFeedbackUsageMs,
+} from './feedbackUsage';
+import type {
+  ProductAnalyticsFeedbackEligibility,
+  ProductAnalyticsFeedbackType,
+  ProductAnalyticsFeedbackUsageDurationBucket,
+} from './types';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 export const POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS = 6 * DAY_MS;
@@ -17,16 +28,28 @@ export type PostLessonFeedbackPersisted = {
 export type PostLessonFeedbackSession = {
   callEligible: boolean;
   boardEligible: boolean;
+  callConnectedMs: number;
+  boardActiveMs: number;
+  callConnectedStartedAt: number | null;
+  boardLastActionAt: number | null;
   promptShown: boolean;
   pendingType: ProductAnalyticsFeedbackType | null;
+  pendingEligibility: ProductAnalyticsFeedbackEligibility | null;
+  pendingUsageDurationBucket: ProductAnalyticsFeedbackUsageDurationBucket | null;
   previewNonce: number;
 };
 
 const createSession = (): PostLessonFeedbackSession => ({
   callEligible: false,
   boardEligible: false,
+  callConnectedMs: 0,
+  boardActiveMs: 0,
+  callConnectedStartedAt: null,
+  boardLastActionAt: null,
   promptShown: false,
   pendingType: null,
+  pendingEligibility: null,
+  pendingUsageDurationBucket: null,
   previewNonce: 0,
 });
 
@@ -52,6 +75,18 @@ const emptyPersisted = (): PostLessonFeedbackPersisted => ({
   lastPromptAt: 0,
   nextEligibleAt: 0,
   lastType: null,
+});
+
+const isEligibleMs = (durationMs: number): boolean => durationMs >= FEEDBACK_ELIGIBLE_USAGE_MS;
+
+const keepUsageAcrossCallStart = (next: PostLessonFeedbackSession): PostLessonFeedbackSession => ({
+  ...next,
+  callEligible: session.callEligible,
+  boardEligible: session.boardEligible,
+  callConnectedMs: session.callConnectedMs,
+  boardActiveMs: session.boardActiveMs,
+  callConnectedStartedAt: session.callConnectedStartedAt,
+  boardLastActionAt: session.boardLastActionAt,
 });
 
 export function computeNextFeedbackEligibleAt(shownAt: number, random = Math.random): number {
@@ -125,15 +160,74 @@ export function subscribePostLessonFeedback(listener: () => void): () => void {
 }
 
 export function markCallFeedbackEligible(): void {
-  if (session.callEligible) return;
-  session = { ...session, callEligible: true };
+  const callConnectedMs = Math.max(session.callConnectedMs, FEEDBACK_ELIGIBLE_USAGE_MS);
+  if (session.callEligible && session.callConnectedMs === callConnectedMs) return;
+  session = { ...session, callEligible: true, callConnectedMs };
   emit();
 }
 
 export function markBoardFeedbackEligible(): void {
-  if (session.boardEligible) return;
-  session = { ...session, boardEligible: true };
+  const boardActiveMs = Math.max(session.boardActiveMs, FEEDBACK_ELIGIBLE_USAGE_MS);
+  if (session.boardEligible && session.boardActiveMs === boardActiveMs) return;
+  session = { ...session, boardEligible: true, boardActiveMs };
   emit();
+}
+
+export function startCallFeedbackUsage(now = Date.now()): void {
+  if (session.callConnectedStartedAt != null) return;
+  session = { ...session, callConnectedStartedAt: now };
+}
+
+export function flushCallFeedbackUsage(now = Date.now()): void {
+  const startedAt = session.callConnectedStartedAt;
+  if (startedAt == null) return;
+
+  const delta = Math.max(0, now - startedAt);
+  const callConnectedMs = session.callConnectedMs + delta;
+  const becameEligible = !session.callEligible && isEligibleMs(callConnectedMs);
+
+  session = {
+    ...session,
+    callConnectedMs,
+    callConnectedStartedAt: null,
+    callEligible: session.callEligible || isEligibleMs(callConnectedMs),
+  };
+
+  if (becameEligible) emit();
+}
+
+export function noteBoardFeedbackActivity(now = Date.now()): void {
+  const lastActionAt = session.boardLastActionAt;
+  const delta = lastActionAt == null ? 0 : accrueActiveUsageMs(now - lastActionAt);
+  const boardActiveMs = session.boardActiveMs + delta;
+  const becameEligible = !session.boardEligible && isEligibleMs(boardActiveMs);
+
+  session = {
+    ...session,
+    boardActiveMs,
+    boardLastActionAt: now,
+    boardEligible: session.boardEligible || isEligibleMs(boardActiveMs),
+  };
+
+  if (becameEligible) emit();
+}
+
+export function flushBoardFeedbackUsage(now = Date.now()): void {
+  const lastActionAt = session.boardLastActionAt;
+  if (lastActionAt == null) return;
+
+  const delta = accrueActiveUsageMs(now - lastActionAt);
+  const boardActiveMs = session.boardActiveMs + delta;
+  const becameEligible = !session.boardEligible && isEligibleMs(boardActiveMs);
+
+  session = {
+    ...session,
+    boardActiveMs,
+    boardLastActionAt: null,
+    boardEligible: session.boardEligible || isEligibleMs(boardActiveMs),
+  };
+
+  if (becameEligible) emit();
 }
 
 export function beginCallFeedbackSession(): void {
@@ -141,25 +235,35 @@ export function beginCallFeedbackSession(): void {
     return;
   }
 
-  session = {
-    ...createSession(),
-    callEligible: session.callEligible,
-    boardEligible: session.boardEligible,
-  };
+  session = keepUsageAcrossCallStart(createSession());
   emit();
 }
 
 /** Сброс окна, если репетитор вышел из кабинета и toast уже не в очереди. */
 export function endClassroomFeedbackWindow(): void {
   if (session.pendingType || session.promptShown) return;
-  if (!session.callEligible && !session.boardEligible) return;
+  if (
+    !session.callEligible &&
+    !session.boardEligible &&
+    session.callConnectedMs === 0 &&
+    session.boardActiveMs === 0 &&
+    session.callConnectedStartedAt == null &&
+    session.boardLastActionAt == null
+  ) {
+    return;
+  }
   session = createSession();
   emit();
 }
 
 export function clearPendingPostLessonFeedback(): void {
   if (!session.pendingType) return;
-  session = { ...session, pendingType: null };
+  session = {
+    ...session,
+    pendingType: null,
+    pendingEligibility: null,
+    pendingUsageDurationBucket: null,
+  };
   emit();
 }
 
@@ -172,10 +276,14 @@ export function clearPendingPostLessonFeedback(): void {
  */
 export function tryQueuePostLessonFeedback(
   userId: string | number,
+  now = Date.now(),
 ): ProductAnalyticsFeedbackType | null {
+  flushCallFeedbackUsage(now);
+  flushBoardFeedbackUsage(now);
+
   if (session.promptShown || session.pendingType) return null;
   if (!session.callEligible && !session.boardEligible) return null;
-  if (isPostLessonFeedbackCooldownActive(userId)) return null;
+  if (isPostLessonFeedbackCooldownActive(userId, now)) return null;
 
   const persisted = readPostLessonFeedbackPersisted(userId);
   const type = pickFeedbackType(
@@ -184,8 +292,22 @@ export function tryQueuePostLessonFeedback(
   );
   if (!type) return null;
 
-  const lastPromptAt = Date.now();
-  session = { ...session, promptShown: true, pendingType: type };
+  const eligibility = getFeedbackPromptEligibility(session.callEligible, session.boardEligible);
+  const usageMs = getShownFeedbackUsageMs(type, session);
+  const usageDurationBucket =
+    getFeedbackUsageDurationBucket(usageMs) ??
+    getFeedbackUsageDurationBucket(FEEDBACK_ELIGIBLE_USAGE_MS);
+
+  if (!eligibility || !usageDurationBucket) return null;
+
+  const lastPromptAt = now;
+  session = {
+    ...session,
+    promptShown: true,
+    pendingType: type,
+    pendingEligibility: eligibility,
+    pendingUsageDurationBucket: usageDurationBucket,
+  };
   writePostLessonFeedbackPersisted(userId, {
     lastPromptAt,
     nextEligibleAt: computeNextFeedbackEligibleAt(lastPromptAt),
@@ -201,10 +323,15 @@ export function debugQueuePostLessonFeedback(
 ): ProductAnalyticsFeedbackType {
   const feedbackType = type === 'board' ? 'board' : 'call';
   session = {
+    ...createSession(),
     callEligible: feedbackType === 'call',
     boardEligible: feedbackType === 'board',
+    callConnectedMs: feedbackType === 'call' ? FEEDBACK_ELIGIBLE_USAGE_MS : 0,
+    boardActiveMs: feedbackType === 'board' ? FEEDBACK_ELIGIBLE_USAGE_MS : 0,
     promptShown: false,
     pendingType: feedbackType,
+    pendingEligibility: feedbackType === 'call' ? 'call_only' : 'board_only',
+    pendingUsageDurationBucket: '15_30m',
     previewNonce: session.previewNonce + 1,
   };
   emit();

@@ -41,9 +41,10 @@ export const isStorageQuotaReached = (): boolean => {
 };
 
 export const isBoardElementsLimitReached = (currentCount: number): boolean => {
-  if (!SUBSCRIPTION_BILLING_ENABLED) return false;
   const state = useSubscriptionStore.getState();
-  return state.mock.boardAtLimit || currentCount >= getTariff(state.planId).maxBoardElements;
+  const atLimitByCount = currentCount >= getTariff(state.planId).maxBoardElements;
+  if (!SUBSCRIPTION_BILLING_ENABLED) return atLimitByCount;
+  return state.mock.boardAtLimit || atLimitByCount;
 };
 
 export const getMaxBytesForKind = (kind: UploadKind): number =>

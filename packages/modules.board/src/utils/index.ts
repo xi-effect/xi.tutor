@@ -27,7 +27,9 @@ export {
 } from './boardDocCache';
 export {
   isDisplayableAssetUrl,
+  isInlineAssetSrc,
   normalizeStoredFileSrc,
+  persistableAssetSrc,
   warnIfPersistingFullStorageUrl,
 } from './storedFileSrc';
 export { isShapeErasable } from './isShapeErasable';

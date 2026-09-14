@@ -2,6 +2,7 @@ import type { DrShapeId, Editor } from '@ibodr/draw';
 import i18n from 'i18next';
 import { toast } from 'sonner';
 import {
+  SUBSCRIPTION_BILLING_ENABLED,
   getBoardElementsLimit,
   isBoardElementsLimitReached,
   useSubscriptionUiStore,
@@ -39,10 +40,14 @@ export const registerBoardElementLimit = (editor: Editor) => {
     toast.error(i18n.t('settings.limitReachedTitle', { ns: 'board' }), {
       description: i18n.t('settings.limitReachedDesc', { ns: 'board', limit }),
       duration: 4000,
-      action: {
-        label: i18n.t('limits.viewPro', { ns: 'subscription' }),
-        onClick: () => useSubscriptionUiStore.getState().openCompare(true),
-      },
+      ...(SUBSCRIPTION_BILLING_ENABLED
+        ? {
+            action: {
+              label: i18n.t('limits.viewPro', { ns: 'subscription' }),
+              onClick: () => useSubscriptionUiStore.getState().openCompare(true),
+            },
+          }
+        : {}),
     });
   });
 };
