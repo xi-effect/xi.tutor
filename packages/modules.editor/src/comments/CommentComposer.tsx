@@ -8,15 +8,9 @@ import { CommentMessageInput } from './CommentMessageInput';
 import { useTranslation } from 'react-i18next';
 
 type CommentComposerProps = {
-  left: number;
   top: number;
   authorId: string;
   authorName: string;
-  /**
-   * `region` — черновик комментария к области: маркер(аватар) позиционируется не
-   * в точке клика,а «свисает» на правом нижнем углу протянутой рамки.
-   */
-  variant?: 'point' | 'region';
   onSubmit: (text: string) => void;
   onCancel: () => void;
 };
@@ -26,27 +20,22 @@ type CommentComposerProps = {
  * Popover отвечает за умный флип попапа с учётом границ вьюпорта.
  */
 export const CommentComposer = ({
-  left,
   top,
   authorId,
   authorName,
-  variant = 'point',
   onSubmit,
   onCancel,
 }: CommentComposerProps) => {
-  const { t } = useTranslation('board');
-  const isRegion = variant === 'region';
+  const { t } = useTranslation('editor');
 
   return (
     <Popover open modal={false}>
       <PopoverAnchor asChild>
         <div
           data-comment-ui
-          className="border-border-focus bg-background-surface pointer-events-none absolute z-30 flex size-8 items-center justify-center rounded-full border-2 shadow-md"
+          className="border-border-focus bg-background-surface pointer-events-none absolute right-5 z-30 flex size-8 items-center justify-center rounded-full border-2 shadow-md md:right-30"
           style={{
-            left,
             top,
-            transform: isRegion ? 'translate(8px, -100%)' : 'translate(-50%, -100%)',
           }}
         >
           <Avatar size="s">
@@ -61,8 +50,8 @@ export const CommentComposer = ({
         </div>
       </PopoverAnchor>
       <PopoverContent
-        side={isRegion ? 'right' : 'top'}
-        align="start"
+        side="bottom"
+        align="end"
         sideOffset={10}
         collisionPadding={12}
         data-comment-ui

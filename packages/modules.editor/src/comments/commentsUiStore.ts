@@ -21,7 +21,7 @@ export const useCommentsUiStore = create<CommentsUiState>((set) => ({
   openThreadId: null,
   openThread: (id) => set({ openThreadId: id, draftRange: null }),
 
-  commentsVisible: true,
+  commentsVisible: false,
   setCommentsVisible: (value) =>
     set((state) => ({
       commentsVisible: value,

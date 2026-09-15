@@ -21,7 +21,7 @@ export const CommentMessageInput = ({
   onSubmit,
   onCancel,
 }: CommentMessageInputProps) => {
-  const { t } = useTranslation('board');
+  const { t } = useTranslation('editor');
   const [value, setValue] = useState('');
 
   const handleSubmit = () => {
@@ -54,7 +54,7 @@ export const CommentMessageInput = ({
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="min-h-16 resize-none text-sm"
+        className="min-h-16 min-w-auto resize-none text-sm"
       />
       <div className="flex justify-end gap-2">
         {onCancel && (

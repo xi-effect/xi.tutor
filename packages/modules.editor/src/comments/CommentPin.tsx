@@ -13,11 +13,10 @@ import { generateUserColor } from '../utils/userColor';
 
 type CommentPinProps = {
   thread: EditorCommentThread;
-  left: number;
   top: number;
 };
 
-export const CommentPin = ({ thread, left, top }: CommentPinProps) => {
+export const CommentPin = ({ thread, top }: CommentPinProps) => {
   const { commentMessagesMap } = useYjsContext();
   const openThreadId = useCommentsUiStore((s) => s.openThreadId);
   const openThread = useCommentsUiStore((s) => s.openThread);
@@ -36,18 +35,17 @@ export const CommentPin = ({ thread, left, top }: CommentPinProps) => {
         <button
           type="button"
           data-comment-ui
-          // TODO: clear styles
           className={cn(
-            'pointer-events-auto absolute z-30 flex size-8 items-center justify-center rounded-full border-2 shadow-md transition-transform select-none hover:z-31 hover:scale-110',
+            'pointer-events-auto absolute right-5 z-30 md:right-30',
+            'flex size-8 items-center justify-center rounded-full',
+            'border-2 shadow-md',
+            'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
             thread.resolved
               ? 'border-border-control bg-action-secondary-background-pressed opacity-70'
               : 'border-border-focus bg-background-surface',
-            'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
           )}
           style={{
-            left,
             top,
-            transform: 'translate(-50%, -100%)',
             borderColor: thread.resolved ? undefined : color,
           }}
           data-umami-event="editor-comment-open"
@@ -61,9 +59,11 @@ export const CommentPin = ({ thread, left, top }: CommentPinProps) => {
             />
             <AvatarFallback size="s">{lastAuthorName.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
+
           {isUnread && (
             <span className="border-border-default bg-action-primary-background-default absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2" />
           )}
+
           {thread.resolved && (
             <span className="bg-status-success-accent absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full">
               <Check className="size-2.5 fill-white" />
@@ -73,10 +73,10 @@ export const CommentPin = ({ thread, left, top }: CommentPinProps) => {
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        side="top"
+        side="bottom"
         sideOffset={10}
         data-comment-ui
-        className="w-auto rounded-xl p-3"
+        className="mr-1 w-auto rounded-xl p-3"
       >
         <CommentThreadPanel threadId={thread.id} onClose={() => openThread(null)} />
       </PopoverContent>

@@ -77,7 +77,7 @@ export const CommentThreadPanel = ({
 
   return (
     <div
-      className="flex w-80 flex-col gap-3"
+      className="flex w-50 flex-col gap-3"
       onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >
@@ -152,17 +152,19 @@ export const CommentThreadPanel = ({
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-text-primary truncate text-sm font-medium">
-                    {message.authorName}
-                  </span>
-                  <span className="text-text-disabled shrink-0 text-xs">
-                    {formatMessageTime(message.createdAt)}
-                  </span>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-text-primary truncate text-sm font-medium">
+                      {message.authorName}
+                    </span>
+                    <span className="text-text-disabled shrink-0 text-xs">
+                      {formatMessageTime(message.createdAt)}
+                    </span>
+                  </div>
                   {isOwnMessage && (
                     <button
                       type="button"
-                      className="hover:bg-status-info-background ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                      className="hover:bg-status-info-background shrink-0 rounded bg-transparent p-2 opacity-100 transition-opacity group-hover:opacity-100 pointer-fine:opacity-0"
                       title={t('comments.deleteMessage')}
                       onClick={() => handleDeleteMessage(message.id)}
                     >

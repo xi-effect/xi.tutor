@@ -30,7 +30,15 @@ export const CommentsOverlay = () => {
   if (!rect) return null;
 
   const threads = getAllCommentThreads(commentThreadsMap);
-  const draftCoords = draftRange ? editor.view.coordsAtPos(draftRange.to) : null;
+
+  /** Вертикальная середина диапазона from..to относительно контейнера. */
+  const selectionMidY = (from: number, to: number): number => {
+    const fromCoords = editor.view.coordsAtPos(from);
+    const toCoords = editor.view.coordsAtPos(to);
+    return (fromCoords.top + toCoords.top) / 2 - rect.top;
+  };
+
+  const draftMidY = draftRange ? selectionMidY(draftRange.from, draftRange.to) : null;
 
   const handleSubmitDraft = (text: string) => {
     if (!draftRange || !author) return;
@@ -51,22 +59,15 @@ export const CommentsOverlay = () => {
       {threads.map((thread) => {
         const range = getThreadMarkRange(editor, thread.id);
         if (!range) return null;
-        const coords = editor.view.coordsAtPos(range.to);
 
         return (
-          <CommentPin
-            key={thread.id}
-            thread={thread}
-            left={coords.left - rect.left}
-            top={coords.top - rect.top}
-          />
+          <CommentPin key={thread.id} thread={thread} top={selectionMidY(range.from, range.to)} />
         );
       })}
 
-      {draftCoords && author && (
+      {draftMidY !== null && author && (
         <CommentComposer
-          left={draftCoords.left - rect.left}
-          top={draftCoords.top - rect.top}
+          top={draftMidY}
           authorId={author.authorId}
           authorName={author.authorName}
           onSubmit={handleSubmitDraft}

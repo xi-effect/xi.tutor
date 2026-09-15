@@ -136,5 +136,25 @@
     "placeholder": "Start typing here…",
     "participant": "Participant",
     "accessError": "Access error to the collaborative editing server"
+  },
+  "comments": {
+    "title": "Comments",
+    "show": "Show comments",
+    "hide": "Hide comments",
+    "inDocument": "In document",
+    "empty": "No comments yet",
+    "comment": "Comment",
+    "resolved": "Resolved",
+    "copyLink": "Copy link",
+    "markResolved": "Mark as resolved",
+    "reopen": "Reopen",
+    "deleteComment": "Delete comment",
+    "close": "Close",
+    "deleteMessage": "Delete message",
+    "replyPlaceholder": "Reply…",
+    "reply": "Reply",
+    "writePlaceholder": "Write a comment…",
+    "send": "Send",
+    "cancel": "Cancel"
   }
 }

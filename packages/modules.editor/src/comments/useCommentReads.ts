@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import type * as Y from 'yjs';
 import { useYjsContext } from '../hooks';
-import type { DrCommentMessage } from './commentRecords';
+import type { EditorCommentMessage } from './commentRecords';
 
 function useCurrentUserId(): string | undefined {
   const { data: currentUser } = useCurrentUser();
@@ -32,7 +32,7 @@ function computeIsUnread(
   commentReadsMap: Y.Map<number>,
   userId: string | undefined,
   threadId: string,
-  messages: DrCommentMessage[],
+  messages: EditorCommentMessage[],
 ): boolean {
   if (!userId) return false;
 
@@ -47,7 +47,7 @@ function computeIsUnread(
 }
 
 /** Тред непрочитан, если есть чужие сообщения новее последней отметки прочтения текущего пользователя. */
-export function useThreadUnread(threadId: string, messages: DrCommentMessage[]): boolean {
+export function useThreadUnread(threadId: string, messages: EditorCommentMessage[]): boolean {
   const { commentReadsMap } = useYjsContext();
   const userId = useCurrentUserId();
   useCommentReadsVersion(threadId);
@@ -61,7 +61,7 @@ export function useThreadUnread(threadId: string, messages: DrCommentMessage[]):
  */
 export function useCommentUnreadChecker(): (
   threadId: string,
-  messages: DrCommentMessage[],
+  messages: EditorCommentMessage[],
 ) => boolean {
   const { commentReadsMap } = useYjsContext();
   const userId = useCurrentUserId();
@@ -74,7 +74,7 @@ export function useCommentUnreadChecker(): (
   }, [commentReadsMap]);
 
   return useCallback(
-    (threadId: string, messages: DrCommentMessage[]) =>
+    (threadId: string, messages: EditorCommentMessage[]) =>
       computeIsUnread(commentReadsMap, userId, threadId, messages),
     [commentReadsMap, userId],
   );
