@@ -7,3 +7,4 @@ export { useNodeActiveBlock } from './useNodeActiveBlock';
 export { useDrawingToggle, useDrawingTool } from './useDrawing';
 export { useDrawingLayer } from './useDrawingLayer';
 export { useNodeAttribute } from './useNodeAttribute';
+export { useCopyEditorDeepLink } from './useEditorDeepLinkFocus';

@@ -28,7 +28,8 @@
     "italic": "Italic",
     "underline": "Underline",
     "strike": "Strikethrough",
-    "link": "Link"
+    "link": "Link",
+    "comment": "Comment"
   },
   "image": {
     "download": "Download",

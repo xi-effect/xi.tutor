@@ -315,6 +315,20 @@
   border-radius: 0.5rem;
 }
 
+.editor-comment-mark {
+  /* TODO: use custom color token */
+  background-color: color-mix(in srgb, var(--comment-color, #6b7280) 30%, transparent);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.editor-comment-mark:hover {
+  /* TODO: use custom color token */
+
+  background-color: color-mix(in srgb, var(--comment-color, #6b7280) 50%, transparent);
+}
+
 /* Стили для мобильных устройств */
 @media (max-width: 768px) {
   .xi-editor .ProseMirror h1 {

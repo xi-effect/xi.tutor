@@ -18,6 +18,7 @@ import {
 import { generateUserColor } from '../utils/userColor';
 import { useCollaborators } from './useCollaborators';
 import { TCollaborator } from '../types';
+import { EditorCommentMessage, EditorCommentThread } from '../comments/commentRecords';
 
 type UseYjsStoreArgs = {
   hostUrl: string;
@@ -25,6 +26,32 @@ type UseYjsStoreArgs = {
   storageToken: string;
   storageItem: ContentYDocItem;
   forceReadOnly?: boolean;
+};
+
+export type ExtendedStoreStatus = {
+  error?: Error;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  isReadonly: boolean;
+  forceReadonly: boolean;
+  toggleReadonly: () => void;
+  /** ID своего presence (для фильтрации в списке коллабораторов). null до первой синхронизации. */
+  myPresenceId: string | null;
+
+  /** Y.Map для хранения текущей страницы PDF по ключу `${shapeId}:${userId}` */
+  pdfPagesMap: Y.Map<number>;
+  /** Y.Map для синхронного воспроизведения аудио: `${shapeId}:playing|time|ts` → number */
+  audioSyncMap: Y.Map<number>;
+  /** Hocuspocus-провайдер (awareness — эфемерное состояние, не в персисте Y.Doc) */
+  provider: HocuspocusProvider;
+  /** Токен для доступа к файлам */
+  token: string;
+  /** Y.Map тредов комментариев редактора: id → метаданные (author, resolved и т.п.) */
+  commentThreadsMap: Y.Map<EditorCommentThread>;
+  /** Y.Map сообщений комментариев редактора: id → сообщение */
+  commentMessagesMap: Y.Map<EditorCommentMessage>;
 };
 
 export type UseCollaborativeTiptapReturn = {
@@ -39,6 +66,9 @@ export type UseCollaborativeTiptapReturn = {
   storageToken: string;
   storageItem: ContentYDocItem;
   audioSyncMap: Y.Map<number>;
+  commentReadsMap: Y.Map<number>;
+  commentThreadsMap: Y.Map<EditorCommentThread>;
+  commentMessagesMap: Y.Map<EditorCommentMessage>;
 };
 
 export function useYjsStore({
@@ -78,6 +108,9 @@ export function useYjsStore({
   });
 
   const audioSyncMap = ydoc.getMap<number>('audioSync');
+  const commentReadsMap = ydoc.getMap<number>('commentReads');
+  const commentThreadsMap = ydoc.getMap<EditorCommentThread>('commentThreads');
+  const commentMessagesMap = ydoc.getMap<EditorCommentMessage>('commentMessages');
 
   const { awareness } = provider;
   const { setCollaboratorsIfChanged, reset } = useCollaborators();
@@ -269,6 +302,9 @@ export function useYjsStore({
       storageToken,
       storageItem,
       audioSyncMap,
+      commentReadsMap,
+      commentMessagesMap,
+      commentThreadsMap,
     }),
     [
       editor,
@@ -282,6 +318,9 @@ export function useYjsStore({
       storageToken,
       storageItem,
       audioSyncMap,
+      commentReadsMap,
+      commentMessagesMap,
+      commentThreadsMap,
     ],
   );
 }
