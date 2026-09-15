@@ -9,7 +9,6 @@ import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
-import { LibraryTagsUiProvider } from './Files/tags/LibraryTagsUiContext';
 import { useLibraryTags } from './Files/tags/useLibraryTags';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { cn, useMediaQuery } from '@xipkg/utils';
@@ -236,9 +235,7 @@ const MaterialsPageContent = () => {
 export const MaterialsPage = () => {
   return (
     <MaterialsDuplicateProvider>
-      <LibraryTagsUiProvider>
-        <MaterialsPageContent />
-      </LibraryTagsUiProvider>
+      <MaterialsPageContent />
     </MaterialsDuplicateProvider>
   );
 };

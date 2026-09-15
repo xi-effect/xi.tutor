@@ -18,7 +18,6 @@ import {
 } from './filePreviewFullscreenStore';
 import { ShareFileModal } from '../ShareFileModal';
 import { RenameFileModal } from '../RenameFileModal';
-import { useLibraryTagsManage } from '../tags/libraryTagsUiStore';
 import { formatMediaTime } from './formatMediaTime';
 import { canPreviewFullscreen, getExtensionLabel, getFilePreviewKind } from './getFilePreviewKind';
 import { ImagePreview } from './ImagePreview';
@@ -93,7 +92,6 @@ export const FilePreviewModal = ({
   const [shareOpen, setShareOpen] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
-  const { manageOpen } = useLibraryTagsManage();
   const [renderError, setRenderError] = useState(false);
   const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
   const [audioDuration, setAudioDuration] = useState<number | null>(null);
@@ -170,8 +168,7 @@ export const FilePreviewModal = ({
         deleteOpen ||
         shareOpen ||
         renameOpen ||
-        tagsOpen ||
-        manageOpen
+        tagsOpen
       ) {
         return;
       }
@@ -191,7 +188,7 @@ export const FilePreviewModal = ({
     deleteOpen,
     goToSibling,
     isFullscreen,
-    manageOpen,
+
     onFileChange,
     open,
     renameOpen,
@@ -252,7 +249,7 @@ export const FilePreviewModal = ({
 
   const stageClass =
     previewKind === 'audio' && !effectiveFullscreen ? undefined : PREVIEW_STAGE_CLASS;
-  const overlayOpen = shareOpen || renameOpen || tagsOpen || manageOpen;
+  const overlayOpen = shareOpen || renameOpen || tagsOpen;
 
   return (
     <>

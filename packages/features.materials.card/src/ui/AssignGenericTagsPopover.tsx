@@ -1,13 +1,8 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Check, Search, Settings } from '@xipkg/icons';
+import { Check, Search } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import {
-  type TagSchema,
-  filterGenericTags,
-  useGenericTags,
-  useLibraryTagsManage,
-} from 'common.services';
+import { type TagSchema, filterGenericTags, useGenericTags } from 'common.services';
 import { TagDot } from 'common.ui';
 
 export type AssignGenericTagsPopoverLabels = {
@@ -16,7 +11,6 @@ export type AssignGenericTagsPopoverLabels = {
   loading: string;
   none: string;
   empty: string;
-  manage: string;
 };
 
 export type AssignGenericTagsPopoverProps = {
@@ -65,7 +59,6 @@ export const AssignGenericTagsPopover = ({
 }: AssignGenericTagsPopoverProps) => {
   const [search, setSearch] = useState('');
   const [draftIds, setDraftIds] = useState(tagIds);
-  const { openManage } = useLibraryTagsManage();
   const { tags: catalog, isLoading: isCatalogLoading } = useGenericTags();
   const query = search.trim();
 
@@ -220,24 +213,6 @@ export const AssignGenericTagsPopover = ({
               );
             })
           )}
-        </div>
-
-        <div className="border-border-default mt-3 shrink-0 border-t pt-3">
-          <button
-            type="button"
-            className={cn(
-              'text-text-link flex h-10 w-full cursor-pointer appearance-none items-center gap-2 rounded-lg border-0 bg-transparent px-1 text-sm font-medium shadow-none outline-none',
-              'hover:bg-status-info-background focus-visible:bg-status-info-background',
-              '[&_svg]:fill-icon-brand',
-            )}
-            onClick={() => {
-              closePopover();
-              openManage();
-            }}
-          >
-            <Settings className="fill-icon-brand size-4" />
-            {labels.manage}
-          </button>
         </div>
       </PopoverContent>
     </Popover>

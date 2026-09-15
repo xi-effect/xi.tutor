@@ -13,7 +13,7 @@ import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 import { isClassroomOnPause } from 'common.api';
-import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pages.materials';
+import { FilesTagsFilter, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
@@ -167,8 +167,4 @@ const ClassroomMaterialsGallery = ({
   );
 };
 
-export const Materials = (props: MaterialsProps) => (
-  <LibraryTagsUiProvider>
-    <ClassroomMaterialsGallery {...props} />
-  </LibraryTagsUiProvider>
-);
+export const Materials = (props: MaterialsProps) => <ClassroomMaterialsGallery {...props} />;

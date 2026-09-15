@@ -37,12 +37,11 @@ export const AssignFileTagsPopover = ({
       onOpenChange={onOpenChange}
       onChange={(nextIds) => setTags.mutate({ fileId: file.id, tagIds: nextIds })}
       labels={{
-        title: t('files.assignTags.title'),
-        searchPlaceholder: t('files.tags.searchPlaceholder'),
-        loading: t('files.tags.loading'),
-        none: t('files.assignTags.none'),
-        empty: t('files.tags.empty'),
-        manage: t('files.assignTags.manage'),
+        title: t('tags.title'),
+        searchPlaceholder: t('tags.searchPlaceholder'),
+        loading: t('tags.loading'),
+        none: t('assignTags.none'),
+        empty: t('tags.empty'),
       }}
     >
       {children}
