@@ -8,26 +8,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import {
-  Copy,
-  H1,
-  H2,
-  H3,
-  Text,
-  Trash,
-  Laptop,
-  Materials,
-  Link as LinkIcon,
-  ArrowUp,
-  ArrowBottom,
-  Code,
-  Ul,
-  Ol,
-  Task,
-  File,
-  Image,
-  BookOpened,
-} from '@xipkg/icons';
+import { Code, File, Image, Laptop, Link as LinkIcon, Materials, BookOpened } from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
@@ -37,6 +18,7 @@ import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { ActiveBlockT } from '../../types';
 import { pickAndInsertComputerFiles } from '../../utils/pickAndInsertComputerFiles';
+import { BLOCK_OP_ACTIONS, INSERT_BLOCK_ACTIONS, type BlockOpKey } from '../../config/blockActions';
 
 const menuItemClass =
   'text-text-primary hover:bg-background-page focus:text-text-primary fill-icon-primary [&_svg]:fill-icon-primary h-7 gap-2 rounded p-1 text-sm';
@@ -88,6 +70,13 @@ export const BlockMenu = ({
     getActiveBlock,
   );
 
+  const opHandlers: Record<BlockOpKey, () => void> = {
+    duplicate,
+    moveUp,
+    moveDown,
+    delete: remove,
+  };
+
   const shouldShow = editor && !isReadOnly && editor.isEditable !== false;
 
   if (!shouldShow) {
@@ -117,40 +106,12 @@ export const BlockMenu = ({
         onCloseAutoFocus={(e) => e.preventDefault()}
         className={menuContentClass}
       >
-        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('paragraph')}>
-          <Text size="sm" className="size-6" />
-          <span>{t('blockMenu.text')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading1')}>
-          <H1 size="sm" className="size-6" />
-          <span>{t('blockMenu.heading1')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading2')}>
-          <H2 size="sm" className="size-6" />
-          <span>{t('blockMenu.heading2')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading3')}>
-          <H3 size="sm" className="size-6" />
-          <span>{t('blockMenu.heading3')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('bulletList')}>
-          <Ul size="sm" className="size-6" />
-          <span>{t('blockMenu.bulletList')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('orderedList')}>
-          <Ol size="sm" className="size-6" />
-          <span>{t('blockMenu.orderedList')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('taskList')}>
-          <Task size="sm" className="size-6" />
-          <span>{t('blockMenu.taskList')}</span>
-        </DropdownMenuItem>
+        {INSERT_BLOCK_ACTIONS.map(({ type, labelKey, Icon }) => (
+          <DropdownMenuItem key={type} className={menuItemClass} onSelect={() => insertBlock(type)}>
+            <Icon size="sm" className="size-6" />
+            <span>{t(labelKey)}</span>
+          </DropdownMenuItem>
+        ))}
 
         {isTutor ? (
           <DropdownMenuItem
@@ -215,41 +176,22 @@ export const BlockMenu = ({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className={menuItemClass} onSelect={duplicate}>
-          <Copy size="sm" className="size-6" />
-          <span className="text-sm">{t('blockMenu.duplicate')}</span>
-          <span className="text-xxs-base text-text-muted ml-auto">
-            {isMac ? '⌘+⇧+C' : 'Ctrl+Shift+C'}
-          </span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          className="hover:bg-background-page h-7 gap-2 rounded p-1"
-          onSelect={deferAction(moveUp)}
-        >
-          <ArrowUp size="sm" className="size-6" />
-          <span className="text-sm">{t('blockMenu.moveUp')}</span>
-          <span className="text-xxs-base text-text-muted ml-auto">
-            {isMac ? '⌘+⇧+↑' : 'Ctrl+Shift+↑'}
-          </span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          className="hover:bg-background-page h-7 gap-2 rounded p-1"
-          onSelect={deferAction(moveDown)}
-        >
-          <ArrowBottom size="sm" className="size-6" />
-          <span className="text-sm">{t('blockMenu.moveDown')}</span>
-          <span className="text-xxs-base text-text-muted ml-auto">
-            {isMac ? '⌘+⇧+↓' : 'Ctrl+Shift+↓'}
-          </span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem className={menuItemClass} onSelect={remove}>
-          <Trash size="sm" className="size-6" />
-          <span className="text-sm">{t('blockMenu.delete')}</span>
-          <span className="text-xxs-base text-text-muted ml-auto">{isMac ? '⌘+⌫' : 'Del'}</span>
-        </DropdownMenuItem>
+        {BLOCK_OP_ACTIONS.map(({ key, labelKey, Icon, shortcut }) => {
+          const handler = opHandlers[key];
+          return (
+            <DropdownMenuItem
+              key={key}
+              className={menuItemClass}
+              onSelect={key === 'moveUp' || key === 'moveDown' ? deferAction(handler) : handler}
+            >
+              <Icon size="sm" className="size-6" />
+              <span>{t(labelKey)}</span>
+              <span className="text-xxs-base text-text-muted ml-auto">
+                {isMac ? shortcut.mac : shortcut.other}
+              </span>
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );
