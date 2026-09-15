@@ -73,50 +73,6 @@
       "audio": "Audio",
       "uncategorized": "Other"
     },
-    "tags": {
-      "chip": "Tags",
-      "chipCount": "Tags · {{count}}",
-      "searchPlaceholder": "Find a tag",
-      "empty": "Tags not found",
-      "none": "No tags yet",
-      "hint": "Start typing a tag name",
-      "loading": "Loading..."
-    },
-    "tagManage": {
-      "title": "Tag management",
-      "description": "Create and edit tags for materials",
-      "create": "Create tag",
-      "empty": "No tags yet",
-      "edit": "Edit",
-      "delete": "Delete",
-      "actions": "Tag actions",
-      "close": "Close"
-    },
-    "tagForm": {
-      "createTitle": "Create tag",
-      "editTitle": "Edit tag",
-      "name": "Name",
-      "color": "Color",
-      "cancel": "Cancel",
-      "create": "Create",
-      "save": "Save",
-      "saving": "Saving...",
-      "tooLong": "Name cannot be longer than {{max}} characters",
-      "duplicate": "A tag with this name already exists",
-      "limit": "You can create at most 100 tags",
-      "close": "Close"
-    },
-    "tagDelete": {
-      "title": "Delete tag “{{name}}”?",
-      "description": "The tag will be removed from all materials. The materials themselves will stay unchanged",
-      "confirm": "Delete",
-      "cancel": "Cancel"
-    },
-    "assignTags": {
-      "title": "Edit tags",
-      "none": "No tags yet",
-      "manage": "Tag management"
-    },
     "meta": "Uploaded {{date}} · {{size}}",
     "today": "today",
     "filteredEmptyTitle": "Nothing found",
@@ -223,5 +179,13 @@
   "fileCard": {
     "copy": "Copy",
     "delete": "Delete"
+  },
+  "tags": {
+    "title": "Edit tags",
+    "searchPlaceholder": "Find a tag",
+    "empty": "No tags found",
+    "none": "No tags yet",
+    "loading": "Loading...",
+    "manage": "Manage tags"
   }
 }

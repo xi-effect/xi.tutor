@@ -1,4 +1,14 @@
-import { Account, Exit, Key, Palette, Notification, File, Music, SoundOn } from '@xipkg/icons';
+import {
+  Account,
+  Exit,
+  Key,
+  Palette,
+  Notification,
+  File,
+  Music,
+  SoundOn,
+  Flag,
+} from '@xipkg/icons';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
@@ -25,6 +35,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
   // Извлекаем информацию о профиле из параметра iid
   const profileType = search.profile || '';
 
+  console.log(profileType);
+
   const isActive = profileType === item.query;
 
   // Рендерим соответствующую иконку в зависимости от индекса элемента
@@ -48,6 +60,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <SoundOn className={iconClasses} key="sound-and-video-icon" />;
       case 'effects':
         return <Music className={iconClasses} key="music-icon" />;
+      case 'tags':
+        return <Flag className={iconClasses} key="flag-icon" />;
       case 'report':
         return <File className={iconClasses} key="report-icon" />;
       default:
@@ -120,6 +134,10 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
       {
         name: t('menu.effects'),
         query: 'effects',
+      },
+      {
+        name: t('menu.tags'),
+        query: 'tags',
       },
       {
         name: t('menu.report'),

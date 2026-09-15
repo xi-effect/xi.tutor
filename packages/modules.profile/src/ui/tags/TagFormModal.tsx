@@ -36,7 +36,7 @@ type TagFormModalProps = {
 };
 
 export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => {
-  const { t } = useTranslation('materials');
+  const { t } = useTranslation('profile');
   const nameId = useId();
   const colorGroupId = useId();
   const { tags, createTag, updateTag, canCreateMore, isCreating, isUpdating } = useLibraryTags();
@@ -128,14 +128,14 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
         >
           <div className={modalHeaderRowClass}>
             <ModalTitle className={modalTitleClass}>
-              {isEdit ? t('files.tagForm.editTitle') : t('files.tagForm.createTitle')}
+              {isEdit ? t('tags.tagForm.editTitle') : t('tags.tagForm.createTitle')}
             </ModalTitle>
-            <ModalCloseIcon onClick={handleClose} aria-label={t('files.tagForm.close')} />
+            <ModalCloseIcon onClick={handleClose} aria-label={t('tags.tagForm.close')} />
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-text-secondary text-xs leading-4" htmlFor={nameId}>
-              {t('files.tagForm.name')}
+              {t('tags.tagForm.name')}
             </label>
             <Input
               id={nameId}
@@ -149,18 +149,18 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
             />
             <p className="text-text-danger min-h-4 text-xs leading-4">
               {isAtLimit
-                ? t('files.tagForm.limit')
+                ? t('tags.tagForm.limit')
                 : isTooLong
-                  ? t('files.tagForm.tooLong', { max: MAX_TAG_NAME_LENGTH })
+                  ? t('tags.tagForm.tooLong', { max: MAX_TAG_NAME_LENGTH })
                   : isDuplicate
-                    ? t('files.tagForm.duplicate')
+                    ? t('tags.tagForm.duplicate')
                     : null}
             </p>
           </div>
 
           <div className="flex flex-col gap-3">
             <p className="text-text-secondary text-xs leading-4" id={colorGroupId}>
-              {t('files.tagForm.color')}
+              {t('tags.tagForm.color')}
             </p>
             <div
               role="radiogroup"
@@ -202,7 +202,7 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
               disabled={isBusy}
               data-umami-event="materials-tag-form-cancel"
             >
-              {t('files.tagForm.cancel')}
+              {t('tags.tagForm.cancel')}
             </Button>
             <Button
               type="submit"
@@ -213,10 +213,10 @@ export const TagFormModal = ({ open, tag, onOpenChange }: TagFormModalProps) => 
               data-umami-event={isEdit ? 'materials-tag-form-save' : 'materials-tag-form-create'}
             >
               {isBusy
-                ? t('files.tagForm.saving')
+                ? t('tags.tagForm.saving')
                 : isEdit
-                  ? t('files.tagForm.save')
-                  : t('files.tagForm.create')}
+                  ? t('tags.tagForm.save')
+                  : t('tags.tagForm.create')}
             </Button>
           </div>
         </form>

@@ -18,7 +18,6 @@ import { FilesFilteredEmpty } from '../FilesFilteredEmpty';
 import { FilesTagsFilter } from '../FilesTagsFilter';
 import { FilesTypeFilter } from '../FilesTypeFilter';
 import { FilesUploaderFilter } from '../FilesUploaderFilter';
-import { LibraryTagsUiProvider } from '../tags/LibraryTagsUiContext';
 import { CloudFileRow } from './CloudFileRow';
 
 export type CloudFilesPickerProps = {
@@ -252,9 +251,7 @@ const CloudFilesPickerContent = ({
 };
 
 export const CloudFilesPicker = (props: CloudFilesPickerProps) => (
-  <LibraryTagsUiProvider>
-    <div className={props.chromeClassName}>
-      <CloudFilesPickerContent {...props} />
-    </div>
-  </LibraryTagsUiProvider>
+  <div className={props.chromeClassName}>
+    <CloudFilesPickerContent {...props} />
+  </div>
 );

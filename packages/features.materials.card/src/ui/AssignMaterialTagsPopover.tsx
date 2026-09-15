@@ -38,7 +38,6 @@ export const AssignMaterialTagsPopover = ({
         loading: t('tags.loading'),
         none: t('tags.none'),
         empty: t('tags.empty'),
-        manage: t('tags.manage'),
       }}
     >
       {children}

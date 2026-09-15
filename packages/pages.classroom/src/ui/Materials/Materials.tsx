@@ -12,7 +12,7 @@ import { MaterialsCard } from 'features.materials.card';
 import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
-import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pages.materials';
+import { FilesTagsFilter, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
@@ -151,8 +151,4 @@ const ClassroomMaterialsGallery = () => {
   );
 };
 
-export const Materials = () => (
-  <LibraryTagsUiProvider>
-    <ClassroomMaterialsGallery />
-  </LibraryTagsUiProvider>
-);
+export const Materials = () => <ClassroomMaterialsGallery />;
