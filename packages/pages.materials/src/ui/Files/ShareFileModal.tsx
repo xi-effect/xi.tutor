@@ -6,7 +6,11 @@ import { Input } from '@xipkg/input';
 import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
 import { getClassroomDisplayName, type FileKind, type LibraryFile } from 'common.api';
-import { useGetLibraryFileClassroomIds, useShareLibraryFileToClassroom } from 'common.services';
+import {
+  useAllTutorClassrooms,
+  useGetLibraryFileClassroomIds,
+  useShareLibraryFileToClassroom,
+} from 'common.services';
 import { matchesSearchQuery } from 'common.utils';
 import {
   ModalCloseIcon,
@@ -19,13 +23,12 @@ import {
   modalTitleClass,
 } from 'common.ui';
 import { toast } from 'sonner';
-import { useAllTutorClassrooms } from '../../hooks';
 import { getLibraryFileDisplayName } from '../../utils';
 import {
   getClassroomAvatarTone,
   getClassroomInitials,
   getGroupEnrollmentsCount,
-  isClassroomArchived,
+  isClassroomFileShareLocked,
   isConflictError,
 } from './shareClassroom';
 
@@ -105,7 +108,7 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
   const selectedClassroom = classrooms.find((classroom) => classroom.id === selectedId);
   const canShare =
     selectedClassroom != null &&
-    !isClassroomArchived(selectedClassroom) &&
+    !isClassroomFileShareLocked(selectedClassroom) &&
     !knownAlreadyAddedIds.has(selectedClassroom.id) &&
     !shareMutation.isPending;
 
@@ -212,7 +215,7 @@ export const ShareFileModal = ({ file, open, onOpenChange }: ShareFileModalProps
             ) : (
               filteredClassrooms.map((classroom) => {
                 const name = getClassroomDisplayName(classroom) || t('scope.unnamedClassroom');
-                const archived = isClassroomArchived(classroom);
+                const archived = isClassroomFileShareLocked(classroom);
                 const alreadyAdded = knownAlreadyAddedIds.has(classroom.id);
                 const disabled = archived || alreadyAdded;
                 const selected = selectedId === classroom.id && !disabled;

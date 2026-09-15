@@ -8,6 +8,7 @@ import {
   useCurrentUser,
   useGetParticipantsByStudent,
   useGetParticipantsByTutor,
+  useIsClassroomOnPause,
 } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useTranslation } from 'react-i18next';
@@ -75,6 +76,7 @@ export const StartLessonButton = ({
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isClassroomPaused = useIsClassroomOnPause(classroomId);
 
   // Ленивая загрузка запросов — только когда карточка попала в viewport
   const cardRef = useRef<HTMLDivElement>(null);
@@ -283,6 +285,10 @@ export const StartLessonButton = ({
         : !isCallActive && isTimeRestricted
           ? t('tooltip.beforeStart')
           : null;
+
+  if (isClassroomPaused && !isCallActive) {
+    return <div ref={cardRef} className="hidden" />;
+  }
 
   if (tooltipText) {
     return (

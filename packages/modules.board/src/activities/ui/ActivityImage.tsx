@@ -2,17 +2,23 @@ import {
   useEffect,
   useRef,
   useState,
+  type DragEvent,
   type MouseEvent,
   type ReactNode,
   type SyntheticEvent,
 } from 'react';
 import { Button } from '@xipkg/button';
-import { Image } from '@xipkg/icons';
+import { Image, Trash } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
 import { boardDropdownZClass, boardIconClass, boardMenuSurfaceClass } from '../../ui/boardTheme';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'common.services';
+import {
+  collectDroppedFiles,
+  isFileNameTooLong,
+  MAX_FILENAME_LENGTH,
+  uploadFileIdRequest,
+} from 'common.services';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
@@ -22,8 +28,12 @@ import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/store
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
 import { getBoardUploadErrorToast } from '../../utils/boardUploadError';
+import { assertBoardUploadAllowed } from '../../utils/planUploadLimit';
+import { getMaxImageBytes } from 'common.subscription';
+import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
 
-const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024;
+const coverToolbarButtonClass =
+  'bg-background-surface/95 text-text-primary hover:bg-background-hover border-border-default flex size-8 shrink-0 items-center justify-center rounded-lg border shadow-sm backdrop-blur-sm';
 
 export function useActivityImageSrc(src?: string) {
   const { token } = useYjsContext();
@@ -76,21 +86,20 @@ function boardToast(key: string, options?: Record<string, unknown>) {
 
 async function uploadPickedImage(file: File, token: string) {
   const next = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
+  const attempt = beginFileUploadAttempt('board', next);
 
   if (!next.size) {
+    attempt.reject('unknown');
     toast.error(boardToast('toast.fileEmpty'), { description: boardToast('toast.fileEmptyDesc') });
     throw new Error('empty');
   }
 
-  if (next.size > MAX_IMAGE_SIZE_BYTES) {
-    const description = boardToast('toast.imageSizeDesc', {
-      size: (next.size / 1024 / 1024).toFixed(2),
-    });
-    toast.error(boardToast('toast.imageUploadFailed'), { description, duration: 5000 });
-    throw new Error(description);
+  if (!assertBoardUploadAllowed(next, 'image', attempt)) {
+    throw new Error('too-large');
   }
 
   if (isFileNameTooLong(next.name)) {
+    attempt.reject('unknown');
     toast.error(boardToast('toast.fileNameTooLong'), {
       description: boardToast('toast.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
     });
@@ -98,15 +107,21 @@ async function uploadPickedImage(file: File, token: string) {
   }
 
   if (checkAssetType(next) !== 'img') {
+    attempt.reject('unsupported_type');
     toast.error(boardToast('toast.imageUploadFailed'));
     throw new Error('type');
   }
 
   try {
     const fileId = await uploadFileIdRequest({ file: next, token });
+    attempt.succeed();
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
-    const { title, description } = getBoardUploadErrorToast(error, next, MAX_IMAGE_SIZE_BYTES, {
+    rejectFileUploadFromError(attempt, error, {
+      fileSize: next.size,
+      maxBytes: getMaxImageBytes(),
+    });
+    const { title, description } = getBoardUploadErrorToast(error, next, getMaxImageBytes(), {
       sizeDescKey: 'toast.imageSizeDesc',
       failedTitleKey: 'toast.imageUploadFailed',
       failedDescKey: 'toast.imageUploadFailed',
@@ -133,6 +148,8 @@ export function ActivityImageField({
 }) {
   const { t } = useTranslation('board');
   const { token } = useYjsContext();
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
   const editor = useEditor();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -147,7 +164,7 @@ export function ActivityImageField({
     if (!file) return;
     setUploading(true);
     try {
-      const fileId = await uploadPickedImage(file, token);
+      const fileId = await uploadPickedImage(file, tokenRef.current);
       onChange(fileId);
     } catch (error) {
       console.error(error);
@@ -160,6 +177,20 @@ export function ActivityImageField({
   const stop = (event: SyntheticEvent) => {
     editor.markEventAsHandled(event);
     event.stopPropagation();
+  };
+
+  const onDragOverFiles = (event: DragEvent<HTMLElement>) => {
+    if (!event.dataTransfer.types.includes('Files')) return;
+    event.preventDefault();
+    stop(event);
+  };
+
+  const onDropFiles = (event: DragEvent<HTMLElement>) => {
+    const files = collectDroppedFiles(event.dataTransfer);
+    if (!files.length) return;
+    event.preventDefault();
+    stop(event);
+    void onFile(files[0]);
   };
 
   const input = (
@@ -181,53 +212,77 @@ export function ActivityImageField({
       <div className={cn('flex min-h-40 flex-1 flex-col gap-2', className)}>
         {input}
         <div
-          className="flex shrink-0 items-center gap-1"
-          data-board-control=""
-          onPointerDown={stop}
-          onClick={stop}
-        >
-          <Button
-            type="button"
-            variant="secondary"
-            size="s"
-            className="h-8 min-h-8 px-3 text-xs"
-            data-board-control=""
-            disabled={uploading}
-            onClick={pick}
-          >
-            {uploading
-              ? t('activity.imageUploading')
-              : value
-                ? t('activity.changeImage')
-                : t('activity.uploadImage')}
-          </Button>
-          {value ? (
-            <Button
-              type="button"
-              variant="ghost"
-              size="s"
-              className="h-8 min-h-8 px-3 text-xs"
-              data-board-control=""
-              disabled={uploading}
-              onClick={() => onChange('')}
-            >
-              {t('activity.removeImage')}
-            </Button>
-          ) : null}
-        </div>
-        <div
           className="bg-background-subtle relative min-h-40 flex-1 overflow-hidden rounded-xl"
           data-board-control={onSurfaceClick ? '' : undefined}
           onClick={onSurfaceClick}
+          onDragOver={onDragOverFiles}
+          onDrop={onDropFiles}
         >
           {preview ? (
             <img src={preview} alt="" draggable={false} className="h-full w-full object-contain" />
           ) : (
-            <div className="text-text-secondary flex h-full min-h-40 items-center justify-center px-4 text-center text-xs">
+            <button
+              type="button"
+              data-board-control=""
+              disabled={uploading}
+              className="text-text-secondary hover:bg-background-hover/40 flex h-full min-h-40 w-full items-center justify-center px-4 text-center text-xs transition-colors"
+              onPointerDown={stop}
+              onClick={(event) => {
+                stop(event);
+                pick();
+              }}
+            >
               {uploading ? t('activity.imageUploading') : t('activity.imagePlaceholder')}
-            </div>
+            </button>
           )}
-          {children}
+          <div
+            className="absolute top-2 right-2 z-20 flex items-center gap-1"
+            data-board-control=""
+            onPointerDown={stop}
+            onClick={stop}
+          >
+            <button
+              type="button"
+              data-board-control=""
+              disabled={uploading}
+              title={
+                uploading
+                  ? t('activity.imageUploading')
+                  : value
+                    ? t('activity.changeImage')
+                    : t('activity.uploadImage')
+              }
+              aria-label={
+                uploading
+                  ? t('activity.imageUploading')
+                  : value
+                    ? t('activity.changeImage')
+                    : t('activity.uploadImage')
+              }
+              className={cn(coverToolbarButtonClass, uploading && 'opacity-50')}
+              onClick={pick}
+            >
+              <Image className={cn(boardIconClass, 'size-4')} />
+            </button>
+            {value ? (
+              <button
+                type="button"
+                data-board-control=""
+                disabled={uploading}
+                title={t('activity.removeImage')}
+                aria-label={t('activity.removeImage')}
+                className={cn(coverToolbarButtonClass, uploading && 'opacity-50')}
+                onClick={() => onChange('')}
+              >
+                <Trash className={cn(boardIconClass, 'size-4')} />
+              </button>
+            ) : null}
+          </div>
+          {children ? (
+            <div className={cn('absolute inset-0 z-10', !preview && 'pointer-events-none')}>
+              {children}
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -238,6 +293,8 @@ export function ActivityImageField({
       className={cn('flex flex-col gap-1', className)}
       data-board-control=""
       onPointerDown={stop}
+      onDragOver={onDragOverFiles}
+      onDrop={onDropFiles}
     >
       {input}
       {preview ? (

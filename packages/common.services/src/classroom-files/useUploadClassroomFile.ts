@@ -7,7 +7,9 @@ import {
 import { type LibraryFile, classroomFilesApiConfig, ClassroomFilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError, showSuccess } from '../utils';
+import { prepareContentUpload } from '../files/prepareContentUpload';
 import { assertValidFileName } from '../files/validateFileName';
+import { createFileUploadHttpError } from '../files/createFileUploadHttpError';
 
 export type UploadClassroomFileVars = {
   classroomId: string;
@@ -29,12 +31,13 @@ export async function uploadClassroomFileRequest({
   signal,
   onUploadProgress,
 }: UploadClassroomFileVars): Promise<LibraryFile> {
-  assertValidFileName(file);
+  const prepared = prepareContentUpload(file);
+  assertValidFileName(prepared.file);
 
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = classroomFilesApiConfig[ClassroomFilesQueryKey.UploadClassroomFile];
   const formData = new FormData();
-  formData.append('upload', file);
+  formData.append('upload', prepared.file);
 
   const response = await axiosInst<LibraryFile>({
     method,
@@ -42,7 +45,7 @@ export async function uploadClassroomFileRequest({
     data: formData,
     signal,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': false,
     },
     onUploadProgress: (event) => {
       if (!onUploadProgress || !event.total) {
@@ -52,8 +55,20 @@ export async function uploadClassroomFileRequest({
     },
   });
 
+  if (response.status === 415 || response.status === 422) {
+    throw createFileUploadHttpError(
+      response.status,
+      'Неподдерживаемый формат файла. Пожалуйста, выберите другой файл.',
+      response,
+    );
+  }
+
   if (response.status !== 200 && response.status !== 201) {
-    throw new Error(`Classroom file upload failed: ${response.status}`);
+    throw createFileUploadHttpError(
+      response.status,
+      `Classroom file upload failed: ${response.status}`,
+      response,
+    );
   }
 
   if (!isLibraryFile(response.data)) {

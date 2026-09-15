@@ -4,6 +4,7 @@ import {
   applySignupSuccessSideEffects,
   getSignupSuccessNavigation,
   handleSignupError,
+  isOutlookEmail,
 } from '../signupFormLogic';
 
 const axiosError = (status: number, detail?: string) => {
@@ -17,6 +18,23 @@ const axiosError = (status: number, detail?: string) => {
   };
   return error;
 };
+
+describe('isOutlookEmail', () => {
+  it('распознаёт потребительские домены Microsoft', () => {
+    expect(isOutlookEmail('user@outlook.com')).toBe(true);
+    expect(isOutlookEmail('  User@Outlook.RU ')).toBe(true);
+    expect(isOutlookEmail('user@hotmail.com')).toBe(true);
+    expect(isOutlookEmail('user@live.com')).toBe(true);
+    expect(isOutlookEmail('user@msn.com')).toBe(true);
+  });
+
+  it('не срабатывает на другие почты', () => {
+    expect(isOutlookEmail('user@gmail.com')).toBe(false);
+    expect(isOutlookEmail('user@notoutlook.com')).toBe(false);
+    expect(isOutlookEmail('outlook.com')).toBe(false);
+    expect(isOutlookEmail('')).toBe(false);
+  });
+});
 
 describe('getSignupSuccessNavigation', () => {
   it('ведёт на /welcome/email с search', () => {

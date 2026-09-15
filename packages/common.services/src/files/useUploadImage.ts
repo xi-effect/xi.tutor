@@ -6,7 +6,7 @@ import { uploadFileIdRequest, uploadFileRequest, type UploadFileVars } from './u
 
 export type UploadImageVars = UploadFileVars;
 
-/** @deprecated Use uploadFileRequest — backend determines file kind. */
+/** @deprecated Use uploadFileRequest — бэкенд сам определяет kind. */
 export async function uploadImageRequest(vars: UploadImageVars): Promise<string> {
   return uploadFileIdRequest(vars);
 }

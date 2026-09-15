@@ -1,6 +1,5 @@
 import { Button } from '@xipkg/button';
 // import { patch } from 'pkg.utils';
-import { useMediaQuery } from '@xipkg/utils';
 import {
   Form,
   FormControl,
@@ -33,7 +32,6 @@ export const PersonalData = () => {
     [t],
   );
 
-  const isMobile = useMediaQuery('(max-width: 719px)');
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -64,12 +62,7 @@ export const PersonalData = () => {
 
   return (
     <>
-      {!isMobile && (
-        <span className="dark:text-text-primary text-3xl font-semibold">
-          {t('personalData.title')}
-        </span>
-      )}
-      <UserPreview className="mt-4" />
+      <UserPreview />
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}

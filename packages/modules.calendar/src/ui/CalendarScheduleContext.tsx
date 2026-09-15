@@ -64,7 +64,7 @@ export const CalendarScheduleProvider = ({ children }: { children: ReactNode }) 
 
   useLayoutEffect(() => {
     if (userHasNavigatedRef.current) return;
-    syncWeekStartForVisibleCount(visibleCount);
+    syncWeekStartForVisibleCount();
   }, [visibleCount, syncWeekStartForVisibleCount]);
 
   const goToPrevWithNav = useCallback(

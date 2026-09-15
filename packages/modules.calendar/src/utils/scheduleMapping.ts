@@ -1,8 +1,8 @@
 import type { ScheduleItem } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
+import { addDays, startOfDay } from 'date-fns';
 import { toLocalISOString } from './dateTimezone';
 import { getScheduleItemRowKey } from './getScheduleItemRowKey';
-import { startOfDay } from 'date-fns';
 
 /**
  * Маппит ScheduleItem (из API расписания) → ICalendarEvent для отображения в календаре/виджетах.
@@ -44,21 +44,23 @@ export const mapScheduleItemsToCalendarEvents = (items: ScheduleItem[]): ICalend
   items.map(mapScheduleItemToCalendarEvent);
 
 /**
- * Диапазон [startOfFirst, endOfLast + 1ms] в ISO для query params `happens_after` / `happens_before`.
- * Всегда включает сегодня — нужно для корректного поиска ближайшего занятия вне видимого окна.
+ * Диапазон вокруг видимого окна для `happens_after` / `happens_before`.
+ * Небольшой запас, чтобы соседние дни/неделя уже были в ответе, пока уходит следующий запрос.
  */
+export const SCHEDULE_QUERY_PAST_PAD_DAYS = 7;
+export const SCHEDULE_QUERY_FUTURE_PAD_DAYS = 14;
+
 export const getScheduleQueryRange = (
   days: Date[],
 ): { happensAfter: string; happensBefore: string } => {
   const today = startOfDay(new Date());
   const firstVisible = startOfDay(days[0] ?? today);
   const lastVisible = startOfDay(days[days.length - 1] ?? firstVisible);
-  const happensAfter = new Date(Math.min(firstVisible.getTime(), today.getTime()));
+  const happensAfter = addDays(firstVisible, -SCHEDULE_QUERY_PAST_PAD_DAYS);
   happensAfter.setHours(0, 0, 0, 0);
-  const happensBefore = new Date(Math.max(lastVisible.getTime(), today.getTime()));
+  const happensBefore = addDays(lastVisible, SCHEDULE_QUERY_FUTURE_PAD_DAYS);
   happensBefore.setHours(23, 59, 59, 999);
   return {
-    // Отправляем в timezone пользователя: бэкенд принимает timestamp с любым offset
     happensAfter: toLocalISOString(happensAfter),
     happensBefore: toLocalISOString(new Date(happensBefore.getTime() + 1)),
   };

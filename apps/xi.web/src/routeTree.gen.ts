@@ -14,6 +14,7 @@ import { Route as authLayoutRouteImport } from './pages/(auth)/_layout'
 import { Route as commonLayoutRouteImport } from './pages/(common)/_layout'
 import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index'
 import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deployments/$deploymentId.enable'
+import { Route as appLayoutBankIndexRouteImport } from './pages/(app)/_layout/bank/index'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
@@ -59,6 +60,11 @@ const DeploymentsDeploymentIdEnableRoute =
     path: '/deployments/$deploymentId/enable',
     getParentRoute: () => rootRouteImport,
   } as any)
+const appLayoutBankIndexRoute = appLayoutBankIndexRouteImport.update({
+  id: '/bank/',
+  path: '/bank/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
 const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
   id: '/board/$boardId',
   path: '/board/$boardId',
@@ -181,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/bank/': typeof appLayoutBankIndexRoute
   '/call/': typeof appLayoutCallIndexRoute
   '/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/materials/': typeof appLayoutMaterialsIndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/bank': typeof appLayoutBankIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
   '/(common)/_layout/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/(app)/_layout/bank/': typeof appLayoutBankIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
@@ -262,6 +271,7 @@ export interface FileRouteTypes {
     | '/board/$boardId'
     | '/call/$callId'
     | '/invite/$inviteId'
+    | '/bank/'
     | '/call/'
     | '/classrooms/'
     | '/materials/'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/board/$boardId'
     | '/call/$callId'
     | '/invite/$inviteId'
+    | '/bank'
     | '/call'
     | '/classrooms'
     | '/materials'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
     | '/(common)/_layout/invite/$inviteId'
+    | '/(app)/_layout/bank/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
     | '/(app)/_layout/materials/'
@@ -382,6 +394,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/deployments/$deploymentId/enable'
       preLoaderRoute: typeof DeploymentsDeploymentIdEnableRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/(app)/_layout/bank/': {
+      id: '/(app)/_layout/bank/'
+      path: '/bank'
+      fullPath: '/bank/'
+      preLoaderRoute: typeof appLayoutBankIndexRouteImport
+      parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/board/$boardId': {
       id: '/(app)/_layout/board/$boardId'
@@ -537,6 +556,7 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute
+  appLayoutBankIndexRoute: typeof appLayoutBankIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
@@ -553,6 +573,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
+  appLayoutBankIndexRoute: appLayoutBankIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,

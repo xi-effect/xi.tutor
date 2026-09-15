@@ -3,6 +3,7 @@ import { useInfiniteQuery } from '../../hooks';
 import { useTranslation } from 'react-i18next';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { MaterialsGallerySkeleton } from '../MaterialsGallerySkeleton';
+import { FilesFilteredEmpty } from '../Files/FilesFilteredEmpty';
 import { MaterialsCard } from 'features.materials.card';
 import { useMaterialsDuplicate } from '../../provider';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
@@ -14,10 +15,19 @@ type NotesProps = {
   parentRef: RefObject<HTMLDivElement | null>;
   scopeFilter: MaterialScopeFilterT;
   classroomIds: number[];
+  search?: string;
   tagIds?: number[];
+  onResetFilters: () => void;
 };
 
-export const Notes = ({ parentRef, scopeFilter, classroomIds, tagIds = [] }: NotesProps) => {
+export const Notes = ({
+  parentRef,
+  scopeFilter,
+  classroomIds,
+  search = '',
+  tagIds = [],
+  onResetFilters,
+}: NotesProps) => {
   const { t } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -27,6 +37,7 @@ export const Notes = ({ parentRef, scopeFilter, classroomIds, tagIds = [] }: Not
     scopeFilter,
     classroomIds,
     tagIds,
+    search,
   );
   const { openModal } = useMaterialsDuplicate();
 
@@ -37,6 +48,10 @@ export const Notes = ({ parentRef, scopeFilter, classroomIds, tagIds = [] }: Not
   }
 
   if (notFoundItems) {
+    if (search.trim() || tagIds.length > 0) {
+      return <FilesFilteredEmpty onReset={onResetFilters} />;
+    }
+
     return (
       <MaterialsTabEmptyState
         title={t('empty.notesTitle')}

@@ -45,6 +45,14 @@ coverage
 # Turbo
 .turbo
 
+# Generated math-bank debug dumps (runtime uses gzip + catalog only)
+/packages/features.math.bank/artifacts/
+/packages/features.math.bank/public/math-bank/tasks.json
+/packages/features.math.bank/public/math-bank/tasks.jsonl
+/packages/features.math.bank/public/math-bank/tasks.json.gz
+/packages/features.math.bank/public/math-bank/search_documents.json
+/packages/features.math.bank/public/math-bank/generation_report.json
+
 # Vercel
 .vercel
 

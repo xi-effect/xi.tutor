@@ -27,10 +27,13 @@ export {
 } from './boardDocCache';
 export {
   isDisplayableAssetUrl,
+  isInlineAssetSrc,
   normalizeStoredFileSrc,
+  persistableAssetSrc,
   warnIfPersistingFullStorageUrl,
 } from './storedFileSrc';
 export { isShapeErasable } from './isShapeErasable';
+export { applyDrawStrokeClosePreference } from './applyDrawStrokeClosePreference';
 export { resetInflatedDrawScale } from './resetInflatedDrawScale';
 export {
   buildBoardDeepLink,

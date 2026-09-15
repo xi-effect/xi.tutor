@@ -1,4 +1,4 @@
-import type { ClassroomT, GroupClassroomT } from 'common.api';
+import { isClassroomInactive, type ClassroomT, type GroupClassroomT } from 'common.api';
 
 const AVATAR_TONES = [
   'bg-tag-violet-background',
@@ -46,6 +46,9 @@ export const getGroupEnrollmentsCount = (classroom: ClassroomT): number | undefi
 
 export const isClassroomArchived = (classroom: ClassroomT): boolean =>
   classroom.status === 'finished' || classroom.status === 'locked';
+
+export const isClassroomFileShareLocked = (classroom: ClassroomT): boolean =>
+  isClassroomInactive(classroom.status);
 
 export const isConflictError = (error: unknown): boolean => {
   if (typeof error !== 'object' || error === null || !('response' in error)) {

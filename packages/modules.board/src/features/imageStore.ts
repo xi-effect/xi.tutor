@@ -1,4 +1,4 @@
-import { uploadFileIdRequest } from 'common.services';
+import { prepareContentUpload, uploadFileIdRequest } from 'common.services';
 import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
@@ -6,6 +6,7 @@ import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
 import i18n from 'i18next';
+import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 
 export type DrAssetContextT = {
   screenScale: number;
@@ -31,7 +32,6 @@ export type DrAssetStoreT = {
   resolve?(asset: DrAsset, ctx: DrAssetContextT): Promise<string | null> | string | null;
 };
 
-const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 const MAX_IMAGE_SIDE = 4096; // макс. сторона в пикселях
 
 /** Узнать размеры изображения (без тяжёлых операций) */
@@ -107,6 +107,7 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
       const token = holder.get() || (await holder.whenReady());
+      file = prepareContentUpload(file).file;
       const assetType = checkAssetType(file) || 'file';
 
       if (!file.type.startsWith('image/')) {
@@ -131,17 +132,8 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
         throw new Error(message);
       }
 
-      // Проверка размера по оригиналу (макс. 1 MiB)
-      if (file.size > MAX_IMAGE_SIZE_BYTES) {
-        const message = i18n.t('toast.imageSizeDesc', {
-          ns: 'board',
-          size: (file.size / 1024 / 1024).toFixed(2),
-        });
-        toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
-          description: message,
-          duration: 5000,
-        });
-        throw new Error(message);
+      if (!assertBoardUploadAllowed(file, 'image')) {
+        throw new Error(i18n.t('toast.fileTooLarge', { ns: 'board' }));
       }
 
       // Проверка сторон (макс. 4096×4096)

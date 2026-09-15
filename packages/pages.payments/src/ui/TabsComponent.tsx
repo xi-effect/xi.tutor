@@ -52,8 +52,15 @@ export const TabsComponent = React.memo(
     }, [isTutor, activeTab, onTabChange]);
 
     return (
-      <Tabs.Root value={activeTab} onValueChange={onTabChange}>
-        <Tabs.Content value="invoices">
+      <Tabs.Root
+        className="flex h-full min-h-0 flex-col"
+        value={activeTab}
+        onValueChange={onTabChange}
+      >
+        <Tabs.Content
+          value="invoices"
+          className="flex min-h-0 flex-1 flex-col outline-none data-[state=inactive]:hidden"
+        >
           <VirtualizedPaymentsTable
             data={items}
             columns={defaultColumns}
@@ -67,7 +74,10 @@ export const TabsComponent = React.memo(
         </Tabs.Content>
 
         {isTutor && (
-          <Tabs.Content value="templates">
+          <Tabs.Content
+            value="templates"
+            className="flex min-h-0 flex-1 flex-col outline-none data-[state=inactive]:hidden"
+          >
             <TemplatesGrid />
           </Tabs.Content>
         )}

@@ -6,6 +6,8 @@ import { SidebarProvider } from '@xipkg/sidebar';
 import { useFocusModeStore, useSupportModalStore } from 'common.ui';
 import { useLocation } from '@tanstack/react-router';
 import { SupportModal } from './SupportModal';
+import { PostLessonFeedbackHost } from './feedback/PostLessonFeedbackHost';
+import { SubscriptionHost } from 'features.subscription';
 import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
 import { MobileBottomBar } from './MobileBottomBar';
@@ -34,7 +36,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         ? 'w-full h-screen min-h-0 overflow-hidden'
         : 'h-screen min-h-0 overflow-hidden'
       : isMobile
-        ? 'w-full'
+        ? 'h-dvh min-h-0 w-full overflow-hidden'
         : 'h-screen min-h-0 overflow-hidden';
 
   // paddingBottom через style: динамический `pb-[${n}px]` Tailwind JIT не генерирует.
@@ -83,6 +85,8 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       {isMobile && !hideMobileNav && <MobileBottomBar />}
 
       <SupportModal open={isSupportOpen} onOpenChange={setSupportOpen} />
+      <PostLessonFeedbackHost />
+      <SubscriptionHost />
     </>
   );
 };

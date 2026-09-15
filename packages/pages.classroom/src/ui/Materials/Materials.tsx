@@ -12,6 +12,7 @@ import { MaterialsCard } from 'features.materials.card';
 import { MaterialsAdd } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
+import { isClassroomOnPause } from 'common.api';
 import { FilesTagsFilter, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
@@ -21,6 +22,11 @@ import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../gallery
 
 type MaterialTypeTab = 'boards' | 'notes' | 'files';
 
+type MaterialsProps = {
+  filesUploadOpen?: boolean;
+  onFilesUploadOpenChange?: (open: boolean) => void;
+};
+
 const isMaterialTypeTab = (tab: unknown): tab is MaterialTypeTab =>
   tab === 'boards' || tab === 'notes' || tab === 'files';
 
@@ -29,7 +35,10 @@ const isYDocMaterial = (
 ): material is ClassroomMaterialsT & { content_kind: YDocContentKind } =>
   material.content_kind === 'note' || material.content_kind === 'board';
 
-const ClassroomMaterialsGallery = () => {
+const ClassroomMaterialsGallery = ({
+  filesUploadOpen,
+  onFilesUploadOpenChange,
+}: MaterialsProps) => {
   const { t } = useTranslation('classroom');
   const { t: tMaterials } = useTranslation('materials');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -49,6 +58,7 @@ const ClassroomMaterialsGallery = () => {
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isPaused = isClassroomOnPause(classroom?.status);
   const roleReady = !isUserLoading && user != null;
   const documentsEnabled = Boolean(classroomId) && roleReady && activeTab !== 'files';
 
@@ -86,7 +96,7 @@ const ClassroomMaterialsGallery = () => {
           </Button>
         ) : null}
       </div>
-      {isTutor && !isMobile ? (
+      {isTutor && !isMobile && !isPaused ? (
         <div className="ml-auto shrink-0">
           <MaterialsAdd kind={activeTab === 'notes' ? 'note' : 'board'} />
         </div>
@@ -95,7 +105,13 @@ const ClassroomMaterialsGallery = () => {
   );
 
   if (activeTab === 'files') {
-    return <ClassroomFiles classroomId={classroomId} />;
+    return (
+      <ClassroomFiles
+        classroomId={classroomId}
+        uploadOpen={filesUploadOpen}
+        onUploadOpenChange={onFilesUploadOpenChange}
+      />
+    );
   }
 
   return (
@@ -112,7 +128,7 @@ const ClassroomMaterialsGallery = () => {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10">
+        <div className={cn('pr-3 pb-5 sm:pr-6 sm:pb-8 md:pr-8', isMobile && 'pb-20')}>
           <div className={galleryShadowPadClass}>
             {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
               <ErrorState />
@@ -151,4 +167,4 @@ const ClassroomMaterialsGallery = () => {
   );
 };
 
-export const Materials = () => <ClassroomMaterialsGallery />;
+export const Materials = (props: MaterialsProps) => <ClassroomMaterialsGallery {...props} />;

@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useMemo, useState } from 'react';
+import { RefObject, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
@@ -8,12 +8,7 @@ import { FilesFilteredEmpty } from './FilesFilteredEmpty';
 import { FilePreviewModal } from './preview';
 import { MaterialsGallerySkeleton } from '../MaterialsGallerySkeleton';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
-import {
-  filterLibraryFiles,
-  hasActiveFilesFilters,
-  hasClientFilesFilters,
-  toLibraryFileSearchFilters,
-} from '../../utils';
+import { hasActiveFilesFilters, toLibraryFileSearchFilters } from '../../utils';
 import { useParentScrollPagination } from '../../hooks';
 import type { FilesFiltersT } from '../../types';
 
@@ -31,8 +26,6 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   const { files, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSearchLibraryFiles({ filters: searchFilters });
 
-  const filteredFiles = useMemo(() => filterLibraryFiles(files, filters), [files, filters]);
-
   const currentPreviewFile = useMemo(() => {
     if (!previewFile) {
       return null;
@@ -42,22 +35,14 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
   }, [files, previewFile]);
 
   const filtersActive = hasActiveFilesFilters(filters);
-  const clientFiltersActive = hasClientFilesFilters(filters);
 
   useParentScrollPagination({
     parentRef,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    itemsCount: filteredFiles.length,
+    itemsCount: files.length,
   });
-
-  useEffect(() => {
-    if (!clientFiltersActive || isFetchingNextPage || !hasNextPage || filteredFiles.length > 0) {
-      return;
-    }
-    fetchNextPage();
-  }, [clientFiltersActive, fetchNextPage, filteredFiles.length, hasNextPage, isFetchingNextPage]);
 
   if (isLoading) {
     return <MaterialsGallerySkeleton />;
@@ -76,7 +61,7 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
     );
   }
 
-  if (!filteredFiles.length) {
+  if (!files.length) {
     return <FilesFilteredEmpty onReset={onResetFilters} />;
   }
 
@@ -84,7 +69,7 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
     <>
       <GridVirtualizer
         parentRef={parentRef}
-        items={filteredFiles}
+        items={files}
         defaultRowHeight={176}
         minItemWidth={300}
         gap={20}
@@ -102,7 +87,7 @@ export const Files = ({ parentRef, filters, onResetFilters }: FilesProps) => {
       />
       <FilePreviewModal
         file={currentPreviewFile}
-        files={filteredFiles}
+        files={files}
         onFileChange={setPreviewFile}
         onOpenChange={(open) => {
           if (!open) setPreviewFile(null);

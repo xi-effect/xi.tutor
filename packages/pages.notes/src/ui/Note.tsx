@@ -6,6 +6,7 @@ import {
   useGetClassroomStorageItem,
   useGetClassroomStorageItemStudent,
   useGetStorageItem,
+  useIsClassroomOnPause,
 } from 'common.services';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 
@@ -18,7 +19,7 @@ const NoteContent = () => {
     <div className="bg-background-page flex h-full min-h-[calc(100dvh)] flex-col overflow-auto px-5 pt-3.5 pb-5">
       <Header />
       <div className="flex w-full justify-center pt-4 pb-8">
-        <div className="w-full max-w-4xl pl-16">
+        <div className="w-full max-w-4xl md:pl-16">
           <TiptapEditor />
         </div>
       </div>
@@ -30,6 +31,7 @@ export const Note = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isClassroomPaused = useIsClassroomOnPause(classroomId);
 
   const getStorageItem = classroomId
     ? isTutor
@@ -58,7 +60,7 @@ export const Note = () => {
   }
 
   return (
-    <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
+    <YjsProvider key={storageItem.ydoc_id} data={storageItem} forceReadOnly={isClassroomPaused}>
       <NoteContent />
     </YjsProvider>
   );

@@ -60,6 +60,7 @@ export const useHotkeys = () => {
         if (deferToLabelEditOnType) return;
         event.preventDefault();
         const { pencilColor, pencilThickness, pencilOpacity } = useDrawStore.getState();
+        applyStoreStylesForShape('pen');
         setColor(pencilColor);
         setThickness(pencilThickness);
         setOpacity(pencilOpacity);

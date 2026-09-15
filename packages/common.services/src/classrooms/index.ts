@@ -1,4 +1,5 @@
 export { useFetchClassrooms } from './useFetchClassrooms';
+export { useAllTutorClassrooms } from './useAllTutorClassrooms';
 export { useGetClassroom } from './useGetClassroom';
 export { useGetClassroomStudent } from './useGetClassroomStudent';
 export { useFetchClassroomsByStudent } from './useFetchClassroomsByStudent';
@@ -6,3 +7,4 @@ export { useDeleteClassroom } from './useDeleteClassroom';
 export { useUpdateIndividualClassroom } from './useUpdateIndividualClassroom';
 export { useUpdateGroupClassroom } from './useUpdateGroupClassroom';
 export { useUpdateClassroomStatus } from './useUpdateClassroomStatus';
+export { useIsClassroomInactive, useIsClassroomOnPause } from './useIsClassroomOnPause';

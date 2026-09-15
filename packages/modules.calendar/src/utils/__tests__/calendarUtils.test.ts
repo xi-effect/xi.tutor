@@ -6,6 +6,7 @@ import {
   getWeekStartForCenteredDate,
   getWeekStartForVisibleWindow,
   isPastDay,
+  isCalendarEventInPast,
   isWeekend,
   parseDateTime,
 } from '../calendarUtils';
@@ -13,9 +14,9 @@ import {
 describe('calendarUtils window helpers', () => {
   const anchor = new Date(2026, 6, 31); // 31 июля 2026, пятница
 
-  it('getWeekStartForVisibleWindow ставит anchor последним днём', () => {
-    const start = getWeekStartForVisibleWindow(anchor, 5);
-    expect(formatDate(start)).toBe('27.07.2026');
+  it('getWeekStartForVisibleWindow ставит anchor первым днём', () => {
+    const start = getWeekStartForVisibleWindow(anchor);
+    expect(formatDate(start)).toBe('31.07.2026');
   });
 
   it('getWeekStartForCenteredDate центрирует anchor', () => {
@@ -30,6 +31,32 @@ describe('calendarUtils day checks', () => {
     expect(isWeekend(new Date(2026, 3, 20))).toBe(false); // пн
     expect(isPastDay(new Date(2026, 3, 20), new Date(2026, 3, 21))).toBe(true);
     expect(isPastDay(new Date(2026, 3, 21), new Date(2026, 3, 21))).toBe(false);
+  });
+
+  it('isCalendarEventInPast по окончанию слота', () => {
+    const now = new Date(2026, 3, 21, 15, 0, 0);
+    expect(
+      isCalendarEventInPast(
+        { start: new Date(2026, 3, 21, 13, 0, 0), end: new Date(2026, 3, 21, 14, 0, 0) },
+        now,
+      ),
+    ).toBe(true);
+    expect(
+      isCalendarEventInPast(
+        { start: new Date(2026, 3, 21, 16, 0, 0), end: new Date(2026, 3, 21, 17, 0, 0) },
+        now,
+      ),
+    ).toBe(false);
+    expect(
+      isCalendarEventInPast(
+        {
+          start: new Date(2026, 3, 20),
+          end: new Date(2026, 3, 20),
+          isAllDay: true,
+        },
+        now,
+      ),
+    ).toBe(true);
   });
 });
 

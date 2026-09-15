@@ -1,6 +1,8 @@
 import { filesApiConfig, FilesQueryKey, type FileResponse } from 'common.api';
 import { getAxiosInstance } from 'common.config';
+import { prepareContentUpload } from './prepareContentUpload';
 import { assertValidFileName } from './validateFileName';
+import { createFileUploadHttpError } from './createFileUploadHttpError';
 
 export type UploadFileVars = {
   file: File;
@@ -17,18 +19,23 @@ export async function uploadFileRequest({
 }: UploadFileVars): Promise<FileResponse> {
   assertValidFileName(file);
 
+  const prepared = prepareContentUpload(file);
+  assertValidFileName(prepared.file);
+
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = filesApiConfig[FilesQueryKey.UploadFile];
   const formData = new FormData();
-  formData.append('upload', file);
+  formData.append('upload', prepared.file);
 
   const response = await axiosInst({
     method,
     url: getUrl(),
     data: formData,
     signal,
+    validateStatus: (status) => status < 500,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      // false: axios не подставляет application/json и не сериализует FormData в JSON.
+      'Content-Type': false,
       ...(token ? { 'x-content-token': token } : {}),
     },
     onUploadProgress: (event) => {
@@ -41,10 +48,20 @@ export async function uploadFileRequest({
   });
 
   if (response.status === 415 || response.status === 422) {
-    throw new Error('Неподдерживаемый формат файла. Пожалуйста, выберите другой файл.');
+    throw createFileUploadHttpError(
+      response.status,
+      'Неподдерживаемый формат файла. Пожалуйста, выберите другой файл.',
+      response,
+    );
   }
 
-  if (response.status !== 201) throw new Error(`File upload failed: ${response.status}`);
+  if (response.status !== 201) {
+    throw createFileUploadHttpError(
+      response.status,
+      `File upload failed: ${response.status}`,
+      response,
+    );
+  }
   return response.data as FileResponse;
 }
 

@@ -4,7 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { createFormSchema, type FormData, type FormInput } from '../model/formSchema';
-import { useFetchClassrooms, useCreateClassroomEvent } from 'common.services';
+import { useAllTutorClassrooms, useCreateClassroomEvent } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import type { ProductAnalyticsLessonType, ProductAnalyticsSource } from 'common.utils';
 import { buildCreateClassroomEventRequest } from '../utils/buildCreateClassroomEventRequest';
 
@@ -39,7 +40,7 @@ const resolveLessonType = (
 
 export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormOptions = {}) => {
   const { t } = useTranslation('lessonAdd');
-  const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
+  const { classrooms, isLoading: isClassroomsLoading } = useAllTutorClassrooms();
   const { fixedClassroomId, onSubmit: externalSubmit, analyticsSource = 'unknown' } = options;
   const createEvent = useCreateClassroomEvent();
   const formSchema = useMemo(() => createFormSchema(t), [t]);
@@ -59,6 +60,10 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
     }
 
     const classroomId = Number(data.studentId);
+    const selected = classrooms.find((item) => item.id === classroomId);
+    if (isClassroomOnPause(selected?.status)) {
+      return;
+    }
     const body = buildCreateClassroomEventRequest(data);
 
     await createEvent.mutateAsync({
@@ -66,7 +71,7 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
       body,
       analytics: {
         source: analyticsSource,
-        lesson_type: resolveLessonType(classrooms ?? [], classroomId),
+        lesson_type: resolveLessonType(classrooms, classroomId),
         is_recurring: data.repeatMode !== 'none',
         has_description: Boolean(data.description?.trim()),
       },
@@ -78,13 +83,18 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
     reset(getDefaultValues(initialDate, fixedClassroomId));
   };
 
+  const selectableClassrooms = useMemo(
+    () => classrooms.filter((classroom) => !isClassroomOnPause(classroom.status)),
+    [classrooms],
+  );
+
   return {
     form,
     control,
     handleSubmit,
     onSubmit,
     handleClearForm,
-    classrooms: classrooms ?? [],
+    classrooms: selectableClassrooms,
     isClassroomsLoading,
   };
 };

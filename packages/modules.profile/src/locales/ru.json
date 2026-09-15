@@ -1,19 +1,30 @@
 {
-  "settingsTitle": "Настройки пользователя",
+  "settingsTitle": "Настройки",
   "menu": {
     "personalInfo": "Личные данные",
+    "subscription": "Тариф и подписка",
     "personalisation": "Персонализация",
+    "schedule": "Расписание",
     "security": "Безопасность",
     "notifications": "Уведомления",
     "soundAndVideo": "Звук и видео",
     "tags": "Теги",
     "effects": "Эффекты",
+    "board": "Доска",
     "report": "Отчёт",
     "logout": "Выйти",
     "logoutConfirmTitle": "Выйти из аккаунта?",
     "logoutConfirmDescription": "Вы выйдете из аккаунта и вернётесь на экран входа",
     "logoutConfirmCancel": "Отменить",
-    "logoutConfirmAction": "Выйти"
+    "logoutConfirmAction": "Выйти",
+    "back": "Назад",
+    "close": "Закрыть"
+  },
+  "role": {
+    "label": "Роль",
+    "tutor": "Репетитор",
+    "student": "Ученик",
+    "changed": "Теперь вы {{role}}"
   },
   "personalData": {
     "title": "Личные данные",
@@ -41,10 +52,21 @@
     "support": "поддержку",
     "language": "Язык интерфейса",
     "languageRu": "Русский",
-    "languageEn": "English",
-    "schedule": "Расписание",
+    "languageEn": "English"
+  },
+  "schedule": {
+    "title": "Расписание",
+    "view": "Отображение",
     "showAllDays": "Показывать все 7 дней",
-    "showAllDaysHint": "Все дни недели (Пн–Вс) с горизонтальной прокруткой"
+    "showAllDaysHint": "Все дни недели (Пн–Вс) с горизонтальной прокруткой",
+    "workingHours": "Период занятий",
+    "period": "Рабочее время",
+    "periodHint": "Подсказки времени при создании и переносе занятий",
+    "lessonDuration": "Длительность занятия",
+    "typicalDuration": "Обычная длительность",
+    "lessonDurationHint": "Окна в расписании, куда помещается хотя бы одно такое занятие, подсвечиваются зелёным",
+    "from": "С",
+    "to": "До"
   },
   "security": {
     "title": "Безопасность",
@@ -178,7 +200,12 @@
       "manage": "Управление тегами"
     }
   },
-
+  "board": {
+    "title": "Доска",
+    "pencil": "Карандаш",
+    "autoCloseDrawShapes": "Замыкать линии карандаша",
+    "autoCloseDrawShapesHint": "Если линия почти замкнулась, карандаш превратит её в фигуру с заливкой. На планшете со стилусом это часто срабатывает случайно"
+  },
   "report": {
     "title": "Отчёт",
     "whatIsThis": "Что это такое?",

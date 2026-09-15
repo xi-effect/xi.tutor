@@ -85,6 +85,40 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   BOARD_OPENED: 'board_opened',
   BOARD_USED_MEANINGFULLY: 'board_used_meaningfully',
   BOARD_MIRO_PASTE: 'board_miro_paste',
+  MATH_ELEMENT_CREATED: 'math_element_created',
+  MATH_ELEMENT_EDITED: 'math_element_edited',
+  MATH_TOOLBAR_USED: 'math_toolbar_used',
+  MATH_LATEX_MODE_OPENED: 'math_latex_mode_opened',
+  MATH_VIRTUAL_KEYBOARD_OPENED: 'math_virtual_keyboard_opened',
+
+  // Math task bank
+  MATH_BANK_OPEN: 'math_bank_open',
+  MATH_BANK_SEARCH: 'math_bank_search',
+  MATH_TASK_OPEN: 'math_task_open',
+  MATH_TASK_INSERT_BOARD: 'math_task_insert_board',
+  MATH_TASK_INSERT_NOTE: 'math_task_insert_note',
+  MATH_TASK_COPY: 'math_task_copy',
+  MATH_TASK_SOLUTION_OPEN: 'math_task_solution_open',
+  MATH_TASK_ANSWER_OPEN: 'math_task_answer_open',
+  MATH_TASK_HINT_OPEN: 'math_task_hint_open',
+  MATH_TASK_FAVORITE_TOGGLE: 'math_task_favorite_toggle',
+  MATH_TASK_NEXT_VARIANT: 'math_task_next_variant',
+  MATH_TASK_REPORT: 'math_task_report',
+
+  // Product limits (baseline before subscription)
+  PRODUCT_LIMIT_REACHED: 'product_limit_reached',
+
+  // File upload funnel
+  FILE_UPLOAD_ATTEMPTED: 'file_upload_attempted',
+  FILE_UPLOAD_SUCCEEDED: 'file_upload_succeeded',
+  FILE_UPLOAD_REJECTED: 'file_upload_rejected',
+
+  // Post-lesson feedback
+  FEEDBACK_PROMPT_SHOWN: 'feedback_prompt_shown',
+  FEEDBACK_PROMPT_OPENED: 'feedback_prompt_opened',
+  FEEDBACK_PROMPT_DISMISSED: 'feedback_prompt_dismissed',
+  FEEDBACK_SUBMITTED: 'feedback_submitted',
+  FEEDBACK_SUPPORT_CLICKED: 'feedback_support_clicked',
 
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',

@@ -18,6 +18,11 @@ describe('createFormSchema (signin)', () => {
     expect(schema.safeParse({ ...valid, email: 'bad' }).success).toBe(false);
   });
 
+  it('нормализует регистр и пробелы в email', () => {
+    const parsed = schema.parse({ ...valid, email: '  Ivan@Example.COM ' });
+    expect(parsed.email).toBe('ivan@example.com');
+  });
+
   it('ограничивает длину пароля 6..64', () => {
     expect(schema.safeParse({ ...valid, password: '12345' }).success).toBe(false);
     expect(schema.safeParse({ ...valid, password: 'a'.repeat(65) }).success).toBe(false);

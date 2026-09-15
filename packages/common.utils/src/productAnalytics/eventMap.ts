@@ -2,6 +2,12 @@ import type { PRODUCT_ANALYTICS_EVENTS } from './events';
 import type {
   ActivationHelpReason,
   ActivationHelpScreen,
+  ProductAnalyticsFeedbackEligibility,
+  ProductAnalyticsFeedbackPromptSource,
+  ProductAnalyticsFeedbackScore,
+  ProductAnalyticsFeedbackSupportSource,
+  ProductAnalyticsFeedbackType,
+  ProductAnalyticsFeedbackUsageDurationBucket,
   CallFailureReason,
   CommonActivationProperties,
   EmailConfirmationFailureReason,
@@ -22,6 +28,18 @@ import type {
   PermissionFailureReason,
   ProductAnalyticsActorRole,
   ProductAnalyticsBoardTrigger,
+  MathBankAnalyticsSource,
+  MathBankFavoriteAction,
+  ProductLimitBlockedOn,
+  ProductLimitFileCategory,
+  ProductLimitObjectKind,
+  ProductLimitSizeBucket,
+  ProductLimitSource,
+  ProductLimitType,
+  FileUploadFileCategory,
+  FileUploadRejectReason,
+  FileUploadSizeBucket,
+  FileUploadSource,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsInviteKind,
   ProductAnalyticsLessonType,
@@ -503,6 +521,222 @@ export type ProductAnalyticsEventMap = {
     shape_count?: number;
     widget_types?: string;
     miro_host?: string;
+  };
+  math_element_created: { action?: string };
+  math_element_edited: { action?: string };
+  math_toolbar_used: { action?: string };
+  math_latex_mode_opened: { action?: string };
+  math_virtual_keyboard_opened: { action?: string };
+
+  math_bank_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id: string;
+    subject?: string;
+  };
+  math_bank_search: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    subject?: string;
+    query_length?: number;
+    grade?: number[];
+    topic?: string[];
+    difficulty?: string[];
+    exam?: string;
+    exam_task_numbers?: number[];
+    task_type?: string[];
+    favorites_only?: boolean;
+  };
+  math_task_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_insert_board: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+    time_to_insert_ms?: number;
+  };
+  math_task_insert_note: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+    time_to_insert_ms?: number;
+  };
+  math_task_copy: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_solution_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_answer_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_hint_open: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_favorite_toggle: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    action: MathBankFavoriteAction;
+  };
+  math_task_next_variant: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+  };
+  math_task_report: {
+    event_version?: number;
+    source: MathBankAnalyticsSource;
+    session_id?: string;
+    task_id: string;
+    subject: string;
+    grade: number;
+    topic_id?: string;
+    task_type?: string;
+    difficulty?: number;
+    comment: string;
+  };
+
+  product_limit_reached: {
+    event_version?: number;
+    limit_type: ProductLimitType;
+    source: ProductLimitSource;
+    file_category?: ProductLimitFileCategory;
+    size_bucket?: ProductLimitSizeBucket;
+    object_kind?: ProductLimitObjectKind;
+    blocked_on?: ProductLimitBlockedOn;
+  };
+
+  file_upload_attempted: {
+    event_version?: number;
+    source: FileUploadSource;
+    file_category: FileUploadFileCategory;
+    size_bucket: FileUploadSizeBucket;
+  };
+  file_upload_succeeded: {
+    event_version?: number;
+    source: FileUploadSource;
+    file_category: FileUploadFileCategory;
+    size_bucket: FileUploadSizeBucket;
+  };
+  file_upload_rejected:
+    | {
+        event_version?: number;
+        source: FileUploadSource;
+        reason: 'file_too_large';
+        file_category: FileUploadFileCategory;
+        file_name: string;
+        file_size: number;
+      }
+    | {
+        event_version?: number;
+        source: FileUploadSource;
+        reason: Exclude<FileUploadRejectReason, 'file_too_large'>;
+        file_category: FileUploadFileCategory;
+        size_bucket: FileUploadSizeBucket;
+      };
+
+  feedback_prompt_shown: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    eligibility: ProductAnalyticsFeedbackEligibility;
+    usage_duration_bucket: ProductAnalyticsFeedbackUsageDurationBucket;
+    source: ProductAnalyticsFeedbackPromptSource;
+  };
+  feedback_prompt_opened: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    source: ProductAnalyticsFeedbackPromptSource;
+  };
+  feedback_prompt_dismissed: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    source: ProductAnalyticsFeedbackPromptSource;
+  };
+  feedback_submitted:
+    | {
+        event_version?: number;
+        feedback_type: 'call';
+        connection_quality: ProductAnalyticsFeedbackScore;
+        stability: ProductAnalyticsFeedbackScore;
+        media_quality: ProductAnalyticsFeedbackScore;
+        comment?: string;
+        source: ProductAnalyticsFeedbackPromptSource;
+      }
+    | {
+        event_version?: number;
+        feedback_type: 'board';
+        usability: ProductAnalyticsFeedbackScore;
+        stability: ProductAnalyticsFeedbackScore;
+        responsiveness: ProductAnalyticsFeedbackScore;
+        comment?: string;
+        source: ProductAnalyticsFeedbackPromptSource;
+      };
+  feedback_support_clicked: {
+    event_version?: number;
+    feedback_type: ProductAnalyticsFeedbackType;
+    source: ProductAnalyticsFeedbackSupportSource;
   };
 
   activation_help_opened: BaseProps & {

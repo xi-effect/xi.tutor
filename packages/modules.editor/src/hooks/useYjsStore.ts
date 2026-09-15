@@ -1,15 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useCallback, useState } from 'react';
+import { useEffect, useMemo, useCallback, useState, useRef } from 'react';
 import * as Y from 'yjs';
 import { useEditor, Editor } from '@tiptap/react';
 import i18n from 'i18next';
 import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
+import { createEditorFileDropProps } from '../utils/editorFileDrop';
 import { toast } from 'sonner';
 import { useCurrentUser } from 'common.services';
 import { ContentYDocItem } from 'common.types';
 import {
   HocuspocusProvider,
+  HocuspocusProviderWebsocket,
   type onAuthenticatedParameters,
   type onAuthenticationFailedParameters,
   type onSyncedParameters,
@@ -23,6 +24,7 @@ type UseYjsStoreArgs = {
   ydocId: string;
   storageToken: string;
   storageItem: ContentYDocItem;
+  forceReadOnly?: boolean;
 };
 
 export type UseCollaborativeTiptapReturn = {
@@ -44,27 +46,35 @@ export function useYjsStore({
   ydocId,
   storageToken,
   storageItem,
+  forceReadOnly = false,
 }: UseYjsStoreArgs): UseCollaborativeTiptapReturn {
+  const storageTokenRef = useRef(storageToken);
+  storageTokenRef.current = storageToken;
+  const releaseTimerRef = useRef<number | null>(null);
+
   /* ==========================================================
    * 1. Provider + Y.Doc через useState — React гарантирует
    *    стабильность state через StrictMode remount.
    *    Пересоздание при смене документа — через key prop.
    * ========================================================== */
-  const [{ provider, ydoc }] = useState(() => {
+  const [{ provider, websocketProvider, ydoc }] = useState(() => {
     const ydoc = new Y.Doc();
-
-    // autoConnect: false передаётся в HocuspocusProviderWebsocket — не подключаться в конструкторе,
-    // только в useEffect (иначе при StrictMode — предупреждение "WebSocket is closed before the connection is established").
-    const provider = new HocuspocusProvider({
+    const websocketProvider = new HocuspocusProviderWebsocket({
       url: hostUrl,
+      autoConnect: false,
+    });
+    const provider = new HocuspocusProvider({
       name: ydocId,
       document: ydoc,
-      token: storageToken,
+      token: () => storageTokenRef.current,
       forceSyncInterval: 20_000,
-      autoConnect: false,
-    } as any);
+      // v4: клиент и сервер выкатываются вместе. Нужен, чтобы два провайдера
+      // с одним document name могли жить на одном WebSocket (иначе attach() бросит).
+      sessionAwareness: true,
+      websocketProvider,
+    });
 
-    return { provider, ydoc };
+    return { provider, websocketProvider, ydoc };
   });
 
   const audioSyncMap = ydoc.getMap<number>('audioSync');
@@ -104,21 +114,26 @@ export function useYjsStore({
   );
 
   /* ==========================================================
-   * 5. Provider lifecycle: connect, events, cleanup
+   * 5. Provider lifecycle: attach/connect, events, cleanup
    * ========================================================== */
   useEffect(() => {
+    if (releaseTimerRef.current != null) {
+      window.clearTimeout(releaseTimerRef.current);
+      releaseTimerRef.current = null;
+    }
+
+    provider.attach();
+
     // Отложенный connect: при StrictMode cleanup успевает отменить таймер,
-    // и мы не вызываем disconnect() до установки соединения.
+    // и мы не закрываем сокет до установки соединения.
     const connectTimeoutId = window.setTimeout(() => {
-      provider.connect();
+      void websocketProvider.connect();
     }, 0);
 
-    // Awareness
     if (awareness) {
       awareness.setLocalStateField('user', userData);
     }
 
-    // Auth events
     const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
       setHasSyncError(true);
       if (reason === 'permission-denied') {
@@ -135,9 +150,9 @@ export function useYjsStore({
       if (state) setIsSynced(true);
     };
 
-    provider.on('authenticationFailed', handleAuthFailed as any);
-    provider.on('authenticated', handleAuthenticated as any);
-    provider.on('synced', handleSynced as any);
+    provider.on('authenticationFailed', handleAuthFailed);
+    provider.on('authenticated', handleAuthenticated);
+    provider.on('synced', handleSynced);
 
     if (provider.synced) {
       setIsSynced(true);
@@ -145,20 +160,27 @@ export function useYjsStore({
 
     return () => {
       window.clearTimeout(connectTimeoutId);
-      provider.off('authenticationFailed', handleAuthFailed as any);
-      provider.off('authenticated', handleAuthenticated as any);
-      provider.off('synced', handleSynced as any);
+      provider.off('authenticationFailed', handleAuthFailed);
+      provider.off('authenticated', handleAuthenticated);
+      provider.off('synced', handleSynced);
 
-      // Только disconnect — provider принадлежит useState и будет
-      // переиспользован при StrictMode-ремаунте.
-      // destroy() вызовется при unmount через key-prop remount.
-      try {
-        provider.disconnect();
-      } catch {
-        // ignore
-      }
+      // destroy откладываем: StrictMode mount→cleanup→mount не должен рвать сокет.
+      // Реальный unmount (смена key / уход со страницы) успеет уничтожить провайдер.
+      releaseTimerRef.current = window.setTimeout(() => {
+        releaseTimerRef.current = null;
+        try {
+          provider.destroy();
+        } catch {
+          // ignore
+        }
+        try {
+          websocketProvider.destroy();
+        } catch {
+          // ignore
+        }
+      }, 250);
     };
-  }, [provider, awareness, userData]);
+  }, [provider, websocketProvider, awareness, userData]);
 
   useEffect(() => {
     if (!awareness) return;
@@ -183,14 +205,30 @@ export function useYjsStore({
    * 6. Editor — extensions в deps: при загрузке currentUser
    *    userData обновляется, пересоздаём редактор с правильным именем/цветом для курсора.
    * ========================================================== */
+  const editorRef = useRef<Editor | null>(null);
+
+  const fileDropProps = useMemo(
+    () =>
+      createEditorFileDropProps({
+        getEditor: () => editorRef.current,
+        getToken: () => storageTokenRef.current,
+      }),
+    [],
+  );
+
   const editor = useEditor(
     {
       extensions,
       editable: true,
-      editorProps,
+      editorProps: {
+        ...editorProps,
+        ...fileDropProps,
+      },
     },
-    [extensions],
+    [extensions, fileDropProps],
   );
+
+  editorRef.current = editor ?? null;
 
   /* ==========================================================
    * 7. Обновление editable на основе serverReadonly
@@ -198,11 +236,11 @@ export function useYjsStore({
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
 
-    const isEditable = !serverReadonly;
+    const isEditable = !forceReadOnly && !serverReadonly;
     if (editor.isEditable !== isEditable) {
       editor.setEditable(isEditable);
     }
-  }, [editor, serverReadonly]);
+  }, [editor, serverReadonly, forceReadOnly]);
 
   /* ==========================================================
    * 8. Undo / Redo
@@ -212,7 +250,7 @@ export function useYjsStore({
 
   const canUndo = !!editor;
   const canRedo = !!editor;
-  const isReadOnly = serverReadonly || (editor ? !editor.isEditable : false);
+  const isReadOnly = forceReadOnly || serverReadonly || (editor ? !editor.isEditable : false);
 
   /* ==========================================================
    * 9. Мемоизированное возвращаемое значение — предотвращает

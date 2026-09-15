@@ -17,6 +17,8 @@
     "inviteToGroupDescription": "Send a group invite link",
     "createInvoice": "Create invoice",
     "createInvoiceDescription": "Issue an invoice for a completed lesson",
+    "uploadFiles": "Upload files",
+    "uploadFilesDescription": "Add files to the classroom",
     "deleteClassroom": "Delete classroom",
     "deleteClassroomDescription": "The classroom and all related data will be deleted",
     "deleting": "Deleting...",
@@ -105,6 +107,11 @@
     "nextLessonToday": "Today {{start}}–{{end}}",
     "nextLessonTomorrow": "Tomorrow {{start}}–{{end}}",
     "nextLessonOnDate": "{{date}} {{start}}–{{end}}"
+  },
+  "pausedBanner": {
+    "title": "Classroom is view-only",
+    "description": "Until the classroom is set to Studying, you cannot change details, lessons, materials, or calls. You can still browse existing items, revoke file access, and hide materials from the student. Change the status to edit again.",
+    "changeStatus": "Change status"
   },
   "descriptionModal": {
     "title": "Edit description",

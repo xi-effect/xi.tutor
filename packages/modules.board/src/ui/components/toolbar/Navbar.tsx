@@ -66,7 +66,8 @@ export const Navbar = track(
       recentEmojis,
       addRecentEmoji,
     } = useDrawStore();
-    const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
+    const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
+      useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
     const editor = useEditor();
@@ -137,6 +138,7 @@ export const Navbar = track(
       }
 
       if (toolName === 'pen') {
+        applyStoreStylesForShape('pen');
         setColor(pencilColor);
         setThickness(pencilThickness);
         setOpacity(pencilOpacity);

@@ -40,9 +40,7 @@ export const useImageProcessing = ({
           method: 'PUT',
           url: `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
           data: form,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+          headers: {},
         });
       },
       onSuccess: () => {

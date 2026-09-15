@@ -1,4 +1,5 @@
 import { matchingTargets, sameIdSet } from '../model/matching';
+import { normalizeMultipleChoiceDefinition } from '../model/multipleChoice';
 import type { ActivityAttempt, ActivityDefinition, ValidationResult } from '../model/types';
 import { answersMatch } from './text';
 
@@ -63,23 +64,34 @@ export function evaluateActivity(
       return result(byItem);
     }
     case 'multiple-choice': {
-      const byItem: Record<string, boolean> = {};
-      for (const option of definition.options) {
-        const selected = Boolean(attempt.selected[option.id]);
-        byItem[option.id] = option.correct ? selected : !selected;
+      const normalized = normalizeMultipleChoiceDefinition(definition);
+      const selectedIds = normalized.options
+        .filter((option) => attempt.selected[option.id])
+        .map((option) => option.id);
+      const correctIds = normalized.options
+        .filter((option) => option.correct)
+        .map((option) => option.id);
+
+      if (correctIds.length === 0) {
+        return { correct: 0, total: 1, byItem: {} };
       }
-      if (!definition.multiple) {
-        const selectedIds = definition.options
-          .filter((option) => attempt.selected[option.id])
-          .map((option) => option.id);
-        const correctIds = definition.options
-          .filter((option) => option.correct)
-          .map((option) => option.id);
+
+      if (!normalized.multiple) {
+        const correctId = correctIds[0]!;
+        const ok = selectedIds.length === 1 && selectedIds[0] === correctId;
         return {
-          correct: selectedIds.length === 1 && selectedIds[0] === correctIds[0] ? 1 : 0,
+          correct: ok ? 1 : 0,
           total: 1,
-          byItem: { question: selectedIds.length === 1 && selectedIds[0] === correctIds[0] },
+          byItem: { question: ok },
         };
+      }
+
+      // Несколько ответов: считаем только отмеченные правильные и ошибочно выбранные.
+      const byItem: Record<string, boolean> = {};
+      for (const option of normalized.options) {
+        const selected = Boolean(attempt.selected[option.id]);
+        if (!option.correct && !selected) continue;
+        byItem[option.id] = option.correct ? selected : false;
       }
       return result(byItem);
     }

@@ -4,11 +4,11 @@ import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
 import { useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { useRetryFileQueue } from 'common.services';
+import { cloneDroppedFile, useRetryFileQueue } from 'common.services';
 import {
   useLockedShapeSelection,
   useDrawClipboard,
@@ -32,15 +32,39 @@ import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
+import 'katex/dist/katex.min.css';
 import './customstyles.css';
-import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
+import {
+  applyDrawStrokeClosePreference,
+  isShapeErasable,
+  isEditableTarget,
+  resetInflatedDrawScale,
+} from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
+import { boardTextOptions } from '../../../shapes/text/boardTextOptions';
 import { insertAsset } from '../../../utils/uploadAsset';
+import { registerBoardElementLimit } from '../../../utils/boardElementLimit';
+import { registerBoardAssetHygiene } from '../../../utils/boardAssetHygiene';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
-import { useDrawStore, useFollowUserStore } from '../../../store';
+import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
+
+async function waitForBoardUploadToken(
+  tokenRef: MutableRefObject<string>,
+  timeoutMs = 15_000,
+): Promise<string> {
+  if (tokenRef.current) return tokenRef.current;
+
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    if (tokenRef.current) return tokenRef.current;
+  }
+
+  return tokenRef.current;
+}
 
 export const DrawCanvas = ({
   token,
@@ -98,6 +122,15 @@ export const DrawCanvas = ({
   useBoardDeepLinkFocus({ editor, ready: isBoardStoreReady(status) });
   useBoardBackgroundSync(editor);
   const { addToQueue } = useRetryFileQueue();
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
+  const addToQueueRef = useRef(addToQueue);
+  addToQueueRef.current = addToQueue;
+
+  useEffect(() => {
+    if (!editor) return;
+    return registerBoardElementLimit(editor);
+  }, [editor]);
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -394,14 +427,24 @@ export const DrawCanvas = ({
               editor.user.updateUserPreferences({ isDynamicSizeMode: false });
               resetInflatedDrawScale(editor);
               editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
+                let next = shape;
                 if (shape.type === 'draw' && shape.props.scale !== 1) {
-                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                  next = { ...shape, props: { ...shape.props, scale: 1 } };
                 }
                 if (shape.type === 'highlight' && shape.props.scale !== 1) {
-                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                  next = { ...shape, props: { ...shape.props, scale: 1 } };
                 }
-                return shape;
+                return applyDrawStrokeClosePreference(
+                  next,
+                  useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
+                );
               });
+              editor.sideEffects.registerBeforeChangeHandler('shape', (_, next) =>
+                applyDrawStrokeClosePreference(
+                  next,
+                  useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
+                ),
+              );
 
               const inputMode = useDrawStore.getState().inputMode;
               if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });
@@ -423,10 +466,19 @@ export const DrawCanvas = ({
                 if (!isShapeErasable(shape.type)) return false;
               });
 
+              registerBoardAssetHygiene(editor);
+
               editor.registerExternalContentHandler('files', async ({ files }) => {
-                for (const file of files) {
+                const dropped = files.map(cloneDroppedFile);
+                const uploadToken = await waitForBoardUploadToken(tokenRef);
+                if (!uploadToken) {
+                  console.error('Ошибка при загрузке файла: нет content token');
+                  return;
+                }
+
+                for (const file of dropped) {
                   try {
-                    await insertAsset(editor, file, token, addToQueue);
+                    await insertAsset(editor, file, uploadToken, addToQueueRef.current);
                   } catch (error) {
                     console.error('Ошибка при загрузке файла:', error);
                   }
@@ -481,6 +533,7 @@ export const DrawCanvas = ({
               iconOffset: { x: -16, y: 2 },
             }}
             {...props}
+            textOptions={boardTextOptions}
           >
             <Header />
             {!isReadonly && (

@@ -15,6 +15,7 @@ import { FilesTagsFilter } from './Files/FilesTagsFilter';
 import { UploadFilesModal } from './Files/UploadFilesModal';
 import { MaterialsClassroomFilter } from './MaterialsClassroomFilter';
 import { MaterialsScopeFilter } from './MaterialsScopeFilter';
+import { MaterialsSearchField } from './MaterialsSearchField';
 import type { FilesFiltersT, FilesTagOptionT, MaterialScopeFilterT, MaterialsTabT } from '../types';
 
 interface HeaderProps {
@@ -27,8 +28,11 @@ interface HeaderProps {
   filesFilters: FilesFiltersT;
   onFilesFiltersChange: (filters: FilesFiltersT) => void;
   onResetFilesFilters: () => void;
+  materialSearch: string;
+  onMaterialSearchChange: (search: string) => void;
   materialTags: FilesTagOptionT[];
   onMaterialTagsChange: (tags: FilesTagOptionT[]) => void;
+  onResetMaterialsFilters: () => void;
 }
 
 export const Header = ({
@@ -41,8 +45,11 @@ export const Header = ({
   filesFilters,
   onFilesFiltersChange,
   onResetFilesFilters,
+  materialSearch,
+  onMaterialSearchChange,
   materialTags,
   onMaterialTagsChange,
+  onResetMaterialsFilters,
 }: HeaderProps) => {
   const { t } = useTranslation('materials');
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -104,12 +111,32 @@ export const Header = ({
           onReset={onResetFilesFilters}
         />
       ) : (
-        <div className="flex w-full shrink-0 flex-wrap items-start gap-2">
-          <MaterialsScopeFilter value={scopeFilter} onChange={onScopeChange} />
-          {scopeFilter === 'classroom' ? (
-            <MaterialsClassroomFilter value={classroomIds} onChange={onClassroomChange} />
-          ) : null}
-          <FilesTagsFilter value={materialTags} onChange={onMaterialTagsChange} />
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+          <MaterialsSearchField
+            value={materialSearch}
+            onChange={onMaterialSearchChange}
+            placeholder={
+              activeTab === 'boards' ? t('search.placeholderBoards') : t('search.placeholderNotes')
+            }
+          />
+          <div className="flex w-full shrink-0 flex-wrap items-start gap-2 sm:w-auto">
+            <MaterialsScopeFilter value={scopeFilter} onChange={onScopeChange} />
+            {scopeFilter === 'classroom' ? (
+              <MaterialsClassroomFilter value={classroomIds} onChange={onClassroomChange} />
+            ) : null}
+            <FilesTagsFilter value={materialTags} onChange={onMaterialTagsChange} />
+            {materialSearch.trim() || materialTags.length > 0 ? (
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-s-base text-text-link hover:text-text-link h-auto px-2 py-1 font-medium"
+                onClick={onResetMaterialsFilters}
+                data-umami-event="materials-reset-all"
+              >
+                {t('files.resetAll')}
+              </Button>
+            ) : null}
+          </div>
         </div>
       )}
       <UploadFilesModal open={uploadOpen} onOpenChange={setUploadOpen} />

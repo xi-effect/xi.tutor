@@ -36,6 +36,13 @@ describe('time picker slots', () => {
     expect(getTimePickerMinutes(20, '19:00')).toEqual([0, 15, 30, 45]);
   });
 
+  it('ограничивает подсказки периодом занятий', () => {
+    const range = { from: '09:00', to: '21:00' };
+    expect(getTimePickerHours(undefined, undefined, range)[0]).toBe(9);
+    expect(getTimePickerHours(undefined, undefined, range).at(-1)).toBe(21);
+    expect(getTimePickerMinutes(21, undefined, undefined, range)).toEqual([0]);
+  });
+
   it('синхронизирует конец, если он пустой или невалидный', () => {
     expect(resolveSyncedEndTime('19:00', '')).toBe('20:00');
     expect(resolveSyncedEndTime('19:00', '21:30')).toBeUndefined();

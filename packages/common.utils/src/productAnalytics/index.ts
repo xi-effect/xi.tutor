@@ -11,6 +11,47 @@ export {
   getReachedDurationThresholds,
   type LessonDurationThresholdMin,
 } from './lesson';
+export { pickFeedbackType } from './feedbackType';
+export {
+  accrueActiveUsageMs,
+  FEEDBACK_ELIGIBLE_USAGE_MS,
+  BOARD_FEEDBACK_IDLE_MS,
+  getFeedbackPromptEligibility,
+  getFeedbackUsageDurationBucket,
+  getShownFeedbackUsageMs,
+} from './feedbackUsage';
+export {
+  prepareFeedbackComment,
+  maskFeedbackPii,
+  FEEDBACK_COMMENT_MAX_LENGTH,
+} from './feedbackComment';
+export {
+  POST_LESSON_FEEDBACK_COOLDOWN_MS,
+  POST_LESSON_FEEDBACK_JITTER_MS,
+  POST_LESSON_FEEDBACK_MIN_COOLDOWN_MS,
+  POST_LESSON_FEEDBACK_STORAGE_PREFIX,
+  beginCallFeedbackSession,
+  clearPendingPostLessonFeedback,
+  clearPostLessonFeedbackCooldown,
+  computeNextFeedbackEligibleAt,
+  debugQueuePostLessonFeedback,
+  endClassroomFeedbackWindow,
+  flushBoardFeedbackUsage,
+  flushCallFeedbackUsage,
+  getPostLessonFeedbackSession,
+  isPostLessonFeedbackCooldownActive,
+  markBoardFeedbackEligible,
+  markCallFeedbackEligible,
+  noteBoardFeedbackActivity,
+  readPostLessonFeedbackPersisted,
+  resetPostLessonFeedbackState,
+  startCallFeedbackUsage,
+  subscribePostLessonFeedback,
+  tryQueuePostLessonFeedback,
+  writePostLessonFeedbackPersisted,
+  type PostLessonFeedbackPersisted,
+  type PostLessonFeedbackSession,
+} from './postLessonFeedback';
 export { inferProductAnalyticsSourceFromPathname } from './inferSource';
 export { inferSignupEntryPoint } from './inferSignupEntryPoint';
 export { inferEmailConfirmationSource } from './inferEmailConfirmationSource';
@@ -42,6 +83,50 @@ export {
 export { createAttemptId, measureDurationMs, nowMs } from './attemptId';
 export { nextSignupAttemptNumber, nextEmailResendAttemptNumber } from './attemptCounters';
 export { trackOnce, resetTrackOnceKeys } from './once';
+export {
+  getFileCategoryFromFile,
+  getFileSizeBucket,
+  resetProductLimitReachedDedupe,
+  trackBoardObjectsLimitReached,
+  trackClassroomLimitReached,
+  trackFileSizeLimitFromUploadError,
+  trackFileSizeLimitReached,
+  trackProductLimitReached,
+  trackUploadEvaluationLimit,
+} from './productLimitReached';
+export {
+  beginFileUploadAttempt,
+  getFileUploadErrorKind,
+  getFileUploadHttpStatus,
+  getFileUploadRejectReasonFromError,
+  getFileUploadRejectReasonFromEvaluation,
+  getFileUploadSizeBucket,
+  rejectFileUploadFromError,
+  rejectFileUploadFromEvaluation,
+  type FileUploadAttempt,
+  type FileUploadAttemptInput,
+  type FileUploadErrorContext,
+  type FileUploadErrorKind,
+} from './fileUpload';
+export {
+  resetMathBankAnalyticsSession,
+  hasMathBankSearchSignal,
+  toMathBankSearchProps,
+  trackMathBankOpen,
+  trackMathBankSearch,
+  trackMathTaskAnswerOpen,
+  trackMathTaskCopy,
+  trackMathTaskFavoriteToggle,
+  trackMathTaskHintOpen,
+  trackMathTaskInsertBoard,
+  trackMathTaskInsertNote,
+  trackMathTaskNextVariant,
+  trackMathTaskOpen,
+  trackMathTaskReport,
+  trackMathTaskSolutionOpen,
+  type MathBankSearchSnapshot,
+  type MathBankTaskSnapshot,
+} from './mathBank';
 export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
 export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
@@ -85,6 +170,22 @@ export type {
   ProductAnalyticsCallFailureReason,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsBoardTrigger,
+  MathBankAnalyticsSource,
+  MathBankFavoriteAction,
+  ProductAnalyticsFeedbackScore,
+  ProductAnalyticsFeedbackType,
+  ProductAnalyticsFeedbackEligibility,
+  ProductAnalyticsFeedbackUsageDurationBucket,
+  ProductLimitType,
+  ProductLimitSource,
+  ProductLimitFileCategory,
+  ProductLimitSizeBucket,
+  ProductLimitBlockedOn,
+  ProductLimitObjectKind,
+  FileUploadSource,
+  FileUploadFileCategory,
+  FileUploadSizeBucket,
+  FileUploadRejectReason,
   SignupEntryPoint,
   SignupFailureReason,
   SignupValidationFailedField,

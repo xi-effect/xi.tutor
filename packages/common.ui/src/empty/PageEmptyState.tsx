@@ -17,6 +17,8 @@ type PageEmptyStateProps = {
   actions?: ReactNode;
   illustration: ReactNode;
   className?: string;
+  /** Узкая колонка (мобильный день расписания): без min-h 560px и с меньшей иллюстрацией. */
+  compact?: boolean;
 };
 
 /**
@@ -29,14 +31,21 @@ export const PageEmptyState: FC<PageEmptyStateProps> = ({
   actions,
   illustration,
   className,
+  compact = false,
 }) => (
   <div
     className={cn(
-      'box-border flex h-full min-h-[min(560px,calc(100dvh-200px))] w-full flex-col items-center justify-center overflow-hidden px-6 py-10',
+      'box-border flex h-full w-full flex-col items-center justify-center overflow-hidden px-6',
+      compact ? 'min-h-0 py-4' : 'min-h-[min(560px,calc(100dvh-200px))] py-10',
       className,
     )}
   >
-    <div className="flex w-full max-w-md flex-col items-center gap-8 sm:gap-10">
+    <div
+      className={cn(
+        'flex w-full max-w-md flex-col items-center',
+        compact ? 'gap-4' : 'gap-8 sm:gap-10',
+      )}
+    >
       <div className="flex w-full flex-col items-center gap-2 text-center">
         <p className="text-l-base text-text-primary font-semibold">{title}</p>
         {description ? (
@@ -45,7 +54,10 @@ export const PageEmptyState: FC<PageEmptyStateProps> = ({
         {actions ? <div className="mt-2 flex flex-wrap justify-center gap-2">{actions}</div> : null}
       </div>
       <div
-        className="flex h-[220px] w-full max-w-[340px] shrink-0 items-center justify-center"
+        className={cn(
+          'flex w-full shrink-0 items-center justify-center',
+          compact ? 'h-[140px] max-w-[220px]' : 'h-[220px] max-w-[340px]',
+        )}
         aria-hidden
       >
         {illustration}

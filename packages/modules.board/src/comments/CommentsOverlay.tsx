@@ -1,10 +1,14 @@
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { track, useEditor } from '@ibodr/draw';
 import { CommentComposer } from './CommentComposer';
 import { CommentPin } from './CommentPin';
+import { CommentPlacementLayer } from './CommentPlacementLayer';
+import { CommentRegionBox } from './CommentRegionBox';
+import { CommentRegionResizeHandle } from './CommentRegionResizeHandle';
 import {
   createCommentThreadAt,
   getAllCommentThreads,
+  getCommentThreadPageBounds,
   getCommentThreadPagePoint,
 } from './commentQueries';
 import { useCommentsUiStore } from './commentsUiStore';
@@ -17,10 +21,13 @@ export const CommentsOverlay = track(function CommentsOverlay() {
   const author = useCommentAuthor();
   const isPlacing = useCommentsUiStore((s) => s.isPlacing);
   const draftPoint = useCommentsUiStore((s) => s.draftPoint);
+  const draftRegion = useCommentsUiStore((s) => s.draftRegion);
   const setPlacing = useCommentsUiStore((s) => s.setPlacing);
   const setDraftPoint = useCommentsUiStore((s) => s.setDraftPoint);
   const openThreadId = useCommentsUiStore((s) => s.openThreadId);
   const openThread = useCommentsUiStore((s) => s.openThread);
+  const hoveredThreadId = useCommentsUiStore((s) => s.hoveredThreadId);
+  const regionDrag = useCommentsUiStore((s) => s.regionDrag);
   const commentsVisible = useCommentsUiStore((s) => s.commentsVisible);
 
   useCloseOnOutsideClick(!!openThreadId, () => openThread(null));
@@ -43,6 +50,7 @@ export const CommentsOverlay = track(function CommentsOverlay() {
 
   const container = editor.getContainer();
   const rect = container.getBoundingClientRect();
+  const zoom = editor.getZoomLevel();
 
   const threads = getAllCommentThreads(editor.store).filter(
     (t) => t.pageId === editor.getCurrentPageId(),
@@ -50,31 +58,82 @@ export const CommentsOverlay = track(function CommentsOverlay() {
 
   const draftScreenPoint = draftPoint ? editor.pageToScreen(draftPoint) : null;
 
+  const handleSubmitDraft = (text: string) => {
+    if (!draftPoint || !author) return;
+
+    const thread = createCommentThreadAt(
+      editor,
+      draftPoint,
+      text,
+      author,
+      draftRegion ?? undefined,
+    );
+    setDraftPoint(null);
+    openThread(thread.id);
+  };
+
   return (
     <>
       {isPlacing && (
-        <div
-          className="pointer-events-auto absolute inset-0 z-40 cursor-crosshair"
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            const pagePoint = editor.screenToPage({ x: e.clientX, y: e.clientY });
-            setDraftPoint({ x: pagePoint.x, y: pagePoint.y });
-          }}
+        <CommentPlacementLayer
+          onPoint={(point) => setDraftPoint(point)}
+          onRegion={(pinPoint, size) => setDraftPoint(pinPoint, size)}
         />
       )}
 
       {threads.map((thread) => {
+        // Позицию пина считаем один раз и переиспользуем для рамки области того же треда.
         const pagePoint = getCommentThreadPagePoint(editor, thread);
         const screenPoint = editor.pageToScreen(pagePoint);
+        const pinLeft = screenPoint.x - rect.left;
+        const pinTop = screenPoint.y - rect.top;
+
+        const isResizing = regionDrag?.threadId === thread.id;
+        const showRegion =
+          openThreadId === thread.id || hoveredThreadId === thread.id || isResizing;
+
+        let regionUi = null;
+        if (showRegion) {
+          const bounds = getCommentThreadPageBounds(editor, thread, pagePoint);
+          if (bounds) {
+            // При resize берём живой прямоугольник из regionDrag (двигаться может любой угол).
+            const live = isResizing ? regionDrag! : bounds;
+            const topLeft = editor.pageToScreen({ x: live.x, y: live.y });
+            const boxLeft = topLeft.x - rect.left;
+            const boxTop = topLeft.y - rect.top;
+
+            regionUi = (
+              <>
+                <CommentRegionBox
+                  left={boxLeft}
+                  top={boxTop}
+                  width={live.w * zoom}
+                  height={live.h * zoom}
+                />
+                {(openThreadId === thread.id || isResizing) && (
+                  <CommentRegionResizeHandle thread={thread} left={boxLeft} top={boxTop} />
+                )}
+              </>
+            );
+          }
+        }
+
         return (
-          <CommentPin
-            key={thread.id}
-            thread={thread}
-            left={screenPoint.x - rect.left}
-            top={screenPoint.y - rect.top}
-          />
+          <Fragment key={thread.id}>
+            {regionUi}
+            <CommentPin thread={thread} left={pinLeft} top={pinTop} />
+          </Fragment>
         );
       })}
+
+      {draftPoint && draftRegion && draftScreenPoint && (
+        <CommentRegionBox
+          left={draftScreenPoint.x - rect.left - draftRegion.w * zoom}
+          top={draftScreenPoint.y - rect.top - draftRegion.h * zoom}
+          width={draftRegion.w * zoom}
+          height={draftRegion.h * zoom}
+        />
+      )}
 
       {draftScreenPoint && author && (
         <CommentComposer
@@ -82,12 +141,8 @@ export const CommentsOverlay = track(function CommentsOverlay() {
           top={draftScreenPoint.y - rect.top}
           authorId={author.authorId}
           authorName={author.authorName}
-          onSubmit={(text) => {
-            if (!draftPoint) return;
-            const thread = createCommentThreadAt(editor, draftPoint, text, author);
-            setDraftPoint(null);
-            openThread(thread.id);
-          }}
+          variant={draftRegion ? 'region' : 'point'}
+          onSubmit={handleSubmitDraft}
           onCancel={() => setDraftPoint(null)}
         />
       )}

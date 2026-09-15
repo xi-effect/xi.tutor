@@ -19,6 +19,7 @@ import {
   FilesFiltersT,
   type FilesTagOptionT,
 } from '../types';
+import { useDebouncedValue } from '../hooks';
 
 const getTabFromUrl = (): MaterialsTabT => {
   if (typeof window === 'undefined') {
@@ -83,9 +84,12 @@ const MaterialsPageContent = () => {
     getScopeFromUrl() === 'classroom' ? getClassroomIdsFromUrl() : [],
   );
   const [filesFilters, setFilesFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
+  const [materialSearch, setMaterialSearch] = useState('');
   const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const debouncedMaterialSearch = useDebouncedValue(materialSearch);
+  const debouncedFilesSearch = useDebouncedValue(filesFilters.search);
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -138,6 +142,11 @@ const MaterialsPageContent = () => {
     setFilesFilters(DEFAULT_FILES_FILTERS);
   };
 
+  const handleResetMaterialsFilters = () => {
+    setMaterialSearch('');
+    setMaterialTags([]);
+  };
+
   const handleScopeChange = (scope: MaterialScopeFilterT) => {
     replaceSearchParams({
       scope,
@@ -163,7 +172,7 @@ const MaterialsPageContent = () => {
       <div
         className={cn(
           'bg-background-page flex flex-col gap-4',
-          isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+          isMobile ? 'h-full min-h-0 overflow-hidden' : 'h-screen',
         )}
       >
         <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
@@ -177,16 +186,19 @@ const MaterialsPageContent = () => {
             filesFilters={filesFilters}
             onFilesFiltersChange={setFilesFilters}
             onResetFilesFilters={handleResetFilesFilters}
+            materialSearch={materialSearch}
+            onMaterialSearchChange={setMaterialSearch}
             materialTags={materialTags}
             onMaterialTagsChange={setMaterialTags}
+            onResetMaterialsFilters={handleResetMaterialsFilters}
           />
         </div>
 
         <div
           ref={parentRef}
           className={cn(
-            'h-full overflow-y-auto px-5 pb-5 sm:mt-4 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
-            !isMobile && 'flex-1',
+            'min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-5 sm:mt-4 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
+            isMobile && 'pb-20',
           )}
         >
           <TabsComponent
@@ -194,9 +206,11 @@ const MaterialsPageContent = () => {
             scopeFilter={scopeFilter}
             classroomIds={classroomIds}
             parentRef={parentRef}
-            filesFilters={filesFilters}
+            filesFilters={{ ...filesFilters, search: debouncedFilesSearch }}
             onResetFilesFilters={handleResetFilesFilters}
+            materialSearch={debouncedMaterialSearch}
             materialTagIds={materialTags.map((tag) => tag.id)}
+            onResetMaterialsFilters={handleResetMaterialsFilters}
           />
         </div>
       </div>

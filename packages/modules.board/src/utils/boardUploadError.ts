@@ -1,4 +1,5 @@
 import { getFileUploadErrorKind } from 'common.services';
+import { trackFileSizeLimitFromUploadError } from 'common.utils';
 import i18n from 'i18next';
 
 const tBoard = (key: string, options?: Record<string, unknown>) =>
@@ -15,6 +16,7 @@ export const getBoardUploadErrorToast = (
     formatDescKey?: string;
   },
 ): { title: string; description: string } => {
+  trackFileSizeLimitFromUploadError(error, file, 'board');
   const kind = getFileUploadErrorKind(error, { fileSize: file.size, maxBytes });
   const size = (file.size / 1024 / 1024).toFixed(2);
 

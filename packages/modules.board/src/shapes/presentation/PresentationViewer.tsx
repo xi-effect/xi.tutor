@@ -39,13 +39,21 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
 
     const width = container.clientWidth;
     const height = container.clientHeight;
+    if (width < 1 || height < 1) {
+      return;
+    }
 
     canvas.width = Math.floor(width * window.devicePixelRatio);
     canvas.height = Math.floor(height * window.devicePixelRatio);
 
-    await viewer.render(canvas, {
-      quality: 'high',
-    });
+    try {
+      await viewer.render(canvas, {
+        quality: 'high',
+      });
+    } catch (err) {
+      console.error(err);
+      return;
+    }
 
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
@@ -101,13 +109,13 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
           canvas: canvasRef.current,
         });
 
-        viewerRef.current = viewer;
-
         await viewer.loadFile(buffer);
 
         if (cancelled) {
           return;
         }
+
+        viewerRef.current = viewer;
 
         setTotalSlides(viewer.getSlideCount());
 

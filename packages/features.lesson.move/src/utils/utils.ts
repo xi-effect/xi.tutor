@@ -68,25 +68,55 @@ const validSlotMinutesAfter = (minTime: string, maxDurationMinutes: number): num
   return slots;
 };
 
+export type TimePickerRange = {
+  from: string;
+  to: string;
+};
+
+const getRangeMinutes = (range?: TimePickerRange | null): { fromM: number; toM: number } | null => {
+  if (!range || !parseTimeParts(range.from) || !parseTimeParts(range.to)) return null;
+  const fromM = timeToMinutes(range.from);
+  const toM = timeToMinutes(range.to);
+  if (fromM >= toM) return null;
+  return { fromM, toM };
+};
+
+const isWithinRange = (total: number, range: { fromM: number; toM: number } | null) =>
+  range == null || (total >= range.fromM && total <= range.toM);
+
 /** Часы для дропдауна. Для конца занятия — по порядку от времени начала, с учётом лимита длительности. */
 export const getTimePickerHours = (
   minTime?: string,
   maxDurationMinutes: number = MAX_LESSON_DURATION_MINUTES,
+  range?: TimePickerRange | null,
 ): number[] => {
+  const bounds = getRangeMinutes(range);
+
   if (!minTime || !parseTimeParts(minTime)) {
-    return Array.from({ length: 24 }, (_, i) => i);
+    if (!bounds) {
+      return Array.from({ length: 24 }, (_, i) => i);
+    }
+    const startHour = Math.floor(bounds.fromM / 60);
+    const endHour = Math.floor(bounds.toM / 60);
+    return Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i);
   }
 
-  const hours: number[] = [];
-  const seen = new Set<number>();
-  for (const total of validSlotMinutesAfter(minTime, maxDurationMinutes)) {
-    const hour = Math.floor(total / 60);
-    if (!seen.has(hour)) {
-      seen.add(hour);
-      hours.push(hour);
+  const collectHours = (applyRange: boolean) => {
+    const hours: number[] = [];
+    const seen = new Set<number>();
+    for (const total of validSlotMinutesAfter(minTime, maxDurationMinutes)) {
+      if (applyRange && !isWithinRange(total, bounds)) continue;
+      const hour = Math.floor(total / 60);
+      if (!seen.has(hour)) {
+        seen.add(hour);
+        hours.push(hour);
+      }
     }
-  }
-  return hours;
+    return hours;
+  };
+
+  const hours = collectHours(true);
+  return hours.length > 0 ? hours : collectHours(false);
 };
 
 /** Минуты 00/15/30/45, допустимые для выбранного часа относительно времени начала. */
@@ -94,17 +124,28 @@ export const getTimePickerMinutes = (
   hour: number,
   minTime?: string,
   maxDurationMinutes: number = MAX_LESSON_DURATION_MINUTES,
+  range?: TimePickerRange | null,
 ): number[] => {
   const steps = [...TIME_MINUTE_STEPS];
-  if (!minTime || !parseTimeParts(minTime)) return steps;
+  const bounds = getRangeMinutes(range);
+
+  if (!minTime || !parseTimeParts(minTime)) {
+    if (!bounds) return steps;
+    return steps.filter((minutes) => isWithinRange(hour * 60 + minutes, bounds));
+  }
 
   const startM = timeToMinutes(minTime);
-  return steps.filter((minutes) => {
-    const candidate = hour * 60 + minutes;
-    let duration = candidate - startM;
-    if (duration <= 0) duration += MINUTES_PER_DAY;
-    return duration > 0 && duration <= maxDurationMinutes;
-  });
+  const collectMinutes = (applyRange: boolean) =>
+    steps.filter((minutes) => {
+      const candidate = hour * 60 + minutes;
+      let duration = candidate - startM;
+      if (duration <= 0) duration += MINUTES_PER_DAY;
+      if (!(duration > 0 && duration <= maxDurationMinutes)) return false;
+      return !applyRange || isWithinRange(candidate, bounds);
+    });
+
+  const minutes = collectMinutes(true);
+  return minutes.length > 0 ? minutes : collectMinutes(false);
 };
 
 /**

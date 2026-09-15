@@ -23,10 +23,14 @@ type ScheduleMobileViewProps = {
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   hideLessonCardClassroomAndSubject?: boolean;
+  /** В кабинете: без заголовка «Расписание», компактная шапка */
+  embedded?: boolean;
   /** Синхронизация дня с диплинком (moment `getTime()`) */
   mobileScheduleAnchorTs?: number | null;
   openLessonInstanceId?: string | null;
   onOpenLessonInstanceConsumed?: () => void;
+  /** Текущая неделя ленты — чтобы API подгружал занятия по мере свайпа */
+  onQueryWeekChange?: (weekStart: Date) => void;
 };
 
 /** Мобильный вид расписания в стиле iOS Calendar: карусель недель + свайп по дням */
@@ -35,9 +39,11 @@ export const ScheduleMobileView = ({
   onLessonReschedule,
   onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
+  embedded = false,
   mobileScheduleAnchorTs,
   openLessonInstanceId,
   onOpenLessonInstanceConsumed,
+  onQueryWeekChange,
 }: ScheduleMobileViewProps) => {
   const { t, i18n } = useTranslation('calendar');
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
@@ -59,9 +65,18 @@ export const ScheduleMobileView = ({
     setSelectedDate(startOfDay(anchor));
   }, [mobileScheduleAnchorTs]);
 
+  useEffect(() => {
+    onQueryWeekChange?.(weekStart);
+  }, [weekStart, onQueryWeekChange]);
+
   const slideDays = useMemo(
-    () => getWeeksRangeDays(weekStart, DAY_SWIPER_WEEKS_BEFORE, DAY_SWIPER_WEEKS_AFTER),
-    [weekStart],
+    () =>
+      getWeeksRangeDays(
+        startOfWeek(new Date(), { weekStartsOn: 1 }),
+        DAY_SWIPER_WEEKS_BEFORE,
+        DAY_SWIPER_WEEKS_AFTER,
+      ),
+    [],
   );
 
   const monthLabel = useMemo(
@@ -91,14 +106,30 @@ export const ScheduleMobileView = ({
 
   return (
     <div className={cn('bg-background-page flex h-full min-h-0 flex-col overflow-hidden')}>
-      <div className="bg-background-page shrink-0 px-5 pt-5 pb-3">
-        <div className="bg-background-surface flex h-[184px] flex-col rounded-[20px] p-4">
-          <div className="flex h-[32px] flex-row items-center justify-between gap-2">
-            <span className="font-playfair text-text-primary text-2xl font-medium">
-              {t('schedule')}
-            </span>
-            <span className="text-s-base text-text-secondary">{monthLabel}</span>
-          </div>
+      <div
+        className={cn(
+          'bg-background-page shrink-0',
+          embedded ? 'px-0 pt-0 pr-5 pb-3' : 'px-5 pt-5 pb-3',
+        )}
+      >
+        <div
+          className={cn(
+            'bg-background-surface flex flex-col rounded-[20px] p-4',
+            embedded ? 'gap-2' : 'h-[184px]',
+          )}
+        >
+          {embedded ? (
+            <div className="flex h-6 flex-row items-center justify-end">
+              <span className="text-s-base text-text-secondary">{monthLabel}</span>
+            </div>
+          ) : (
+            <div className="flex h-[32px] flex-row items-center justify-between gap-2">
+              <span className="font-playfair text-text-primary text-2xl font-medium">
+                {t('schedule')}
+              </span>
+              <span className="text-s-base text-text-secondary">{monthLabel}</span>
+            </div>
+          )}
           <ScheduleWeekCarousel
             weekStart={weekStart}
             selectedDate={selectedDate}

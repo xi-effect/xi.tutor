@@ -1,19 +1,30 @@
 {
-  "settingsTitle": "User settings",
+  "settingsTitle": "Settings",
   "menu": {
     "personalInfo": "Personal data",
+    "subscription": "Plan and subscription",
     "personalisation": "Customization",
+    "schedule": "Schedule",
     "security": "Security",
     "notifications": "Notifications",
     "soundAndVideo": "Sound and video",
     "tags": "Tags",
     "effects": "Effects",
+    "board": "Board",
     "report": "Report",
     "logout": "Log out",
     "logoutConfirmTitle": "Sign out?",
     "logoutConfirmDescription": "You will be signed out and returned to the login screen",
     "logoutConfirmCancel": "Cancel",
-    "logoutConfirmAction": "Sign out"
+    "logoutConfirmAction": "Sign out",
+    "back": "Back",
+    "close": "Close"
+  },
+  "role": {
+    "label": "Role",
+    "tutor": "Tutor",
+    "student": "Student",
+    "changed": "You are now a {{role}}"
   },
   "personalData": {
     "title": "Personal data",
@@ -41,10 +52,21 @@
     "support": "support",
     "language": "Interface language",
     "languageRu": "Русский",
-    "languageEn": "English",
-    "schedule": "Schedule",
+    "languageEn": "English"
+  },
+  "schedule": {
+    "title": "Schedule",
+    "view": "Display",
     "showAllDays": "Show all 7 days",
-    "showAllDaysHint": "All weekdays (Mon–Sun) with horizontal scrolling"
+    "showAllDaysHint": "All weekdays (Mon–Sun) with horizontal scrolling",
+    "workingHours": "Lesson hours",
+    "period": "Working hours",
+    "periodHint": "Time suggestions when creating or rescheduling a lesson",
+    "lessonDuration": "Lesson duration",
+    "typicalDuration": "Usual duration",
+    "lessonDurationHint": "Schedule gaps that can fit at least one such lesson are highlighted in green",
+    "from": "From",
+    "to": "To"
   },
   "security": {
     "title": "Security",
@@ -176,7 +198,12 @@
       "title": "Edit tags",
       "none": "No tags yet",
       "manage": "Tag management"
-    }
+    },
+  "board": {
+    "title": "Board",
+    "pencil": "Pencil",
+    "autoCloseDrawShapes": "Close pencil strokes into shapes",
+    "autoCloseDrawShapesHint": "If a stroke almost closes, the pencil turns it into a filled shape. On a tablet with a stylus this often happens by accident"
   },
   "report": {
     "title": "Report",

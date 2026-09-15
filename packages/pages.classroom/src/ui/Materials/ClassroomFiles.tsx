@@ -5,9 +5,11 @@ import { cn, useMediaQuery } from '@xipkg/utils';
 import {
   useCurrentUser,
   useDetachClassroomFile,
+  useGetClassroom,
   useGetClassroomFiles,
   type LibraryFile,
 } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import {
   FileCard,
   FilePreviewModal,
@@ -17,7 +19,6 @@ import {
   FilesUploaderFilter,
   DEFAULT_FILES_FILTERS,
   UploadFilesModal,
-  filterLibraryFiles,
   hasActiveFilesFilters,
   toLibraryFileSearchFilters,
   useParentScrollPagination,
@@ -31,18 +32,30 @@ import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../gallery
 
 type ClassroomFilesProps = {
   classroomId: string;
+  uploadOpen?: boolean;
+  onUploadOpenChange?: (open: boolean) => void;
 };
 
-export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
+export const ClassroomFiles = ({
+  classroomId,
+  uploadOpen: uploadOpenProp,
+  onUploadOpenChange,
+}: ClassroomFilesProps) => {
   const { t } = useTranslation('classroom');
   const { t: tMaterials } = useTranslation('materials');
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const { data: classroom } = useGetClassroom(Number(classroomId), !isTutor);
+  const isPaused = isClassroomOnPause(classroom?.status);
+  const canUploadFiles = isTutor && !isPaused;
+  const canRevokeFiles = isTutor;
   const roleReady = !isUserLoading && user != null;
   const [filters, setFilters] = useState<FilesFiltersT>(DEFAULT_FILES_FILTERS);
   const [previewFile, setPreviewFile] = useState<LibraryFile | null>(null);
-  const [uploadOpen, setUploadOpen] = useState(false);
+  const [internalUploadOpen, setInternalUploadOpen] = useState(false);
+  const uploadOpen = onUploadOpenChange ? Boolean(uploadOpenProp) : internalUploadOpen;
+  const setUploadOpen = onUploadOpenChange ?? setInternalUploadOpen;
   const listRef = useRef<HTMLDivElement>(null);
   const detachMutation = useDetachClassroomFile();
   const filtersActive = hasActiveFilesFilters(filters);
@@ -54,8 +67,6 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
       disabled: !classroomId || !roleReady,
       filters: toLibraryFileSearchFilters(filters),
     });
-
-  const filteredFiles = useMemo(() => filterLibraryFiles(files, filters), [files, filters]);
 
   const currentPreviewFile = useMemo(() => {
     if (!previewFile) return null;
@@ -71,7 +82,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    itemsCount: filteredFiles.length,
+    itemsCount: files.length,
   });
 
   const header = (
@@ -108,11 +119,11 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                 </Button>
               ) : null}
             </div>
-            {isTutor ? (
+            {canUploadFiles ? (
               <Button
                 type="button"
                 variant="primary"
-                className="text-text-on-accent ml-auto h-8! gap-2 rounded-[10px] px-4 font-medium"
+                className="text-text-on-accent ml-auto hidden h-8! gap-2 rounded-[10px] px-4 font-medium min-[961px]:inline-flex"
                 onClick={() => setUploadOpen(true)}
                 data-umami-event="classroom-files-upload"
               >
@@ -123,7 +134,7 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
           </div>
         </div>
       </div>
-      {isTutor ? (
+      {canUploadFiles ? (
         <UploadFilesModal
           open={uploadOpen}
           onOpenChange={setUploadOpen}
@@ -156,14 +167,14 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
       {header}
 
       <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className="pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10">
+        <div className={cn('pr-3 pb-5 sm:pr-6 sm:pb-8 md:pr-8', isMobile && 'pb-20')}>
           <div className={galleryShadowPadClass}>
             {!files.length && !filtersActive ? (
               <EmptyDataState
                 title={t('files.emptyTitle')}
                 description={t('files.emptyDescription')}
               />
-            ) : !filteredFiles.length ? (
+            ) : !files.length ? (
               <FilesFilteredEmpty onReset={() => setFilters(DEFAULT_FILES_FILTERS)} />
             ) : (
               <>
@@ -173,13 +184,13 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                     isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
                   )}
                 >
-                  {filteredFiles.map((file) => (
+                  {files.map((file) => (
                     <FileCard
                       key={file.id}
                       file={file}
                       className="h-44 w-full"
-                      readOnly={!isTutor}
-                      onRemoveFromClassroom={isTutor ? handleDetach : undefined}
+                      readOnly={!canUploadFiles}
+                      onRemoveFromClassroom={canRevokeFiles ? handleDetach : undefined}
                       onPreview={(nextFile) => {
                         window.setTimeout(() => setPreviewFile(nextFile), 0);
                       }}
@@ -188,8 +199,8 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                 </div>
                 <FilePreviewModal
                   file={currentPreviewFile}
-                  files={filteredFiles}
-                  readOnly={!isTutor}
+                  files={files}
+                  readOnly={!canUploadFiles}
                   hideLibraryActions
                   contentSource={{ type: 'classroom', classroomId, isTutor }}
                   deleteLabel={tMaterials('files.removeFromClassroom.confirm')}
@@ -202,7 +213,9 @@ export const ClassroomFiles = ({ classroomId }: ClassroomFilesProps) => {
                       : undefined
                   }
                   onDeleteFile={
-                    isTutor ? (fileId) => detachMutation.mutate({ classroomId, fileId }) : undefined
+                    canRevokeFiles
+                      ? (fileId) => detachMutation.mutate({ classroomId, fileId })
+                      : undefined
                   }
                   onFileChange={setPreviewFile}
                   onOpenChange={(open) => {

@@ -48,8 +48,7 @@ export const buildCreateClassroomEventRequest = (
   }
 
   const weeklyBitmask = buildWeeklyBitmask(data.repeatDays, data.startDate);
-  const activePeriodDays =
-    data.repeatEnds === 'never' ? null : getActivePeriodDays(data.startDate, data.repeatUntil);
+  const activePeriodDays = getActivePeriodDays(data.startDate, data.repeatUntil);
 
   return {
     kind: 'repeating',

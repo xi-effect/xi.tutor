@@ -1,3 +1,3 @@
 export * from './useInfiniteQuery';
-export * from './useAllTutorClassrooms';
+export * from './useDebouncedValue';
 export * from './useParentScrollPagination';

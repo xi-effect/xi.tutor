@@ -18,6 +18,7 @@ type YjsProviderProps = {
   initialYjsUpdate?: Uint8Array;
   cacheBoardId?: string;
   cacheUserId?: string;
+  forceReadonly?: boolean;
 };
 
 type LocalYjsPreviewState = {
@@ -44,6 +45,7 @@ export const YjsProvider = ({
   initialYjsUpdate,
   cacheBoardId,
   cacheUserId,
+  forceReadonly = false,
 }: YjsProviderProps) => {
   const localDumpUrl = import.meta.env.VITE_BOARD_LOCAL_YDOC_URL as string | undefined;
   const localDumpYdocIdEnv = import.meta.env.VITE_BOARD_LOCAL_YDOC_ID as string | undefined;
@@ -139,8 +141,18 @@ export const YjsProvider = ({
       localYjsPreview: Boolean(localDump) || isDemo,
       cacheBoardId,
       cacheUserId,
+      forceReadonly,
     };
-  }, [storageToken, ydocId, isDemo, localDump, cacheUpdate, cacheBoardId, cacheUserId]);
+  }, [
+    storageToken,
+    ydocId,
+    isDemo,
+    localDump,
+    cacheUpdate,
+    cacheBoardId,
+    cacheUserId,
+    forceReadonly,
+  ]);
 
   if (useLocalDump && !localDump && !localDumpError) {
     return <LoadingScreen />;

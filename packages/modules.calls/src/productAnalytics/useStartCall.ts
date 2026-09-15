@@ -3,7 +3,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useStartCall as useStartCallBase } from '@xipkg/calls-hooks';
 import { useCallsNavigation } from '@xipkg/calls-providers';
 import type { StartCallDataT } from '@xipkg/calls-types';
-import { ClassroomsQueryKey, type ClassroomTutorResponseSchema } from 'common.api';
+import {
+  ClassroomsQueryKey,
+  StudentQueryKey,
+  type ClassroomTutorResponseSchema,
+  isClassroomOnPause,
+} from 'common.api';
 import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -46,6 +51,20 @@ export const useStartCall = () => {
 
   const startCall = useCallback(
     async (data: StartCallDataT, options?: StartCallOptions) => {
+      const classroomId = Number(data.classroom_id);
+      const classroom =
+        queryClient.getQueryData<ClassroomTutorResponseSchema>([
+          ClassroomsQueryKey.GetClassroom,
+          classroomId,
+        ]) ??
+        queryClient.getQueryData<ClassroomTutorResponseSchema>([
+          StudentQueryKey.GetClassroom,
+          classroomId,
+        ]);
+
+      if (isClassroomOnPause(classroom?.status)) {
+        return;
+      }
       const role = getProductAnalyticsRole(user?.default_layout);
       const actorRole = role === 'student' ? 'student' : 'tutor';
       const source =

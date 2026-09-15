@@ -22,10 +22,12 @@ export interface FileCursor {
 }
 
 export const FILE_FILTER_MAX_KINDS = 5;
+export const SEARCH_FILTER_MAX_LENGTH = 100;
 
 export interface FileFilters {
   kinds?: FileKind[] | null;
   is_uploaded_by_owner?: boolean | null;
+  search?: string | null;
   tag_ids?: number[] | null;
 }
 
@@ -37,6 +39,12 @@ export interface FileSearchRequest {
 
 export const LIBRARY_FILES_DEFAULT_LIMIT = 24;
 export const LIBRARY_FILES_MAX_LIMIT = 99;
+export const LIBRARY_FILE_NAME_MIN_LENGTH = 1;
+export const LIBRARY_FILE_NAME_MAX_LENGTH = 100;
+
+export interface LibraryFilePatch {
+  name: string;
+}
 
 export interface LibraryReadFileHeaders {
   'if-none-match'?: string;
@@ -61,6 +69,15 @@ enum LibraryFilesQueryKey {
 function normalizeLibraryFilesLimit(limit?: number): number {
   const value = limit ?? LIBRARY_FILES_DEFAULT_LIMIT;
   return Math.min(Math.max(value, 1), LIBRARY_FILES_MAX_LIMIT);
+}
+
+function normalizeSearchFilter(search?: string | null): string | undefined {
+  const value = search?.trim() ?? '';
+  if (!value) {
+    return undefined;
+  }
+
+  return value.slice(0, SEARCH_FILTER_MAX_LENGTH);
 }
 
 function normalizeFileFilters(filters?: FileFilters | null): FileFilters {
@@ -91,11 +108,29 @@ function normalizeFileFilters(filters?: FileFilters | null): FileFilters {
     next.tag_ids = tagIds;
   }
 
+  const search = normalizeSearchFilter(filters?.search);
+  if (search) {
+    next.search = search;
+  }
+
   return next;
 }
 
 function getFileTagIds(file?: Pick<LibraryFile, 'tag_ids'> | null): number[] {
   return normalizeTagIds(file?.tag_ids, TAG_FILE_ASSIGN_MAX_COUNT) ?? [];
+}
+
+function normalizeLibraryFileName(name: string): string {
+  return name.trim().slice(0, LIBRARY_FILE_NAME_MAX_LENGTH);
+}
+
+function buildLibraryFilePatch(name: string): LibraryFilePatch {
+  const next = normalizeLibraryFileName(name);
+  if (next.length < LIBRARY_FILE_NAME_MIN_LENGTH) {
+    throw new Error('File name is required');
+  }
+
+  return { name: next };
 }
 
 function buildFileSearchRequest(
@@ -171,6 +206,7 @@ const libraryFilesQueryKeys = {
       normalized.kinds?.join(',') ?? '',
       normalized.is_uploaded_by_owner ?? null,
       normalized.tag_ids?.join(',') ?? '',
+      normalized.search ?? '',
     ];
   },
   meta: (fileId: string): string[] => [LibraryFilesQueryKey.GetLibraryFileMeta, fileId],
@@ -188,7 +224,10 @@ export {
   getLibraryFileUrl,
   normalizeLibraryFilesLimit,
   normalizeFileFilters,
+  normalizeSearchFilter,
   buildFileSearchRequest,
   getNextLibraryFilesCursor,
   getFileTagIds,
+  normalizeLibraryFileName,
+  buildLibraryFilePatch,
 };

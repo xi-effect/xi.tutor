@@ -1,6 +1,5 @@
 import { Badge } from '@xipkg/badge';
-import { Calendar, Flag, Palette } from '@xipkg/icons';
-import { useMediaQuery } from '@xipkg/utils';
+import { Flag, Palette } from '@xipkg/icons';
 import {
   Select,
   SelectContent,
@@ -9,24 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@xipkg/select';
-import { Toggle } from '@xipkg/toggle';
 import { useTheme, type ThemeItemT, type ThemeT } from 'common.theme';
 import { useSupportModalStore } from 'common.ui';
 import { type AppLanguage } from 'common.ui/language';
-import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProfileLanguage } from '../../hooks';
-
-const SCHEDULE_VIEW_MODE_KEY = 'xi_schedule_view_mode';
-const SCHEDULE_VIEW_MODE_CHANGE_EVENT = 'xi:schedule-view-mode-change';
-
-const readScheduleViewMode = (): boolean => {
-  try {
-    return localStorage.getItem(SCHEDULE_VIEW_MODE_KEY) === 'full-week';
-  } catch {
-    return false;
-  }
-};
 
 const ThemeOptionLabel = ({ item, label }: { item: ThemeItemT; label: string }) => (
   <span className="flex items-center gap-2">
@@ -44,7 +30,6 @@ const ThemeOptionLabel = ({ item, label }: { item: ThemeItemT; label: string }) 
 
 export const Customization = () => {
   const { t } = useTranslation('profile');
-  const isMobile = useMediaQuery('(max-width: 719px)');
 
   const { theme, setTheme, themes } = useTheme();
   const { language, setLanguage } = useProfileLanguage();
@@ -53,26 +38,9 @@ export const Customization = () => {
   const themeLabel = (value: ThemeT) =>
     value === 'dark' ? t('customization.themeDark') : t('customization.themeLight');
 
-  const [isFullWeek, setIsFullWeekState] = useState<boolean>(readScheduleViewMode);
-
-  const handleFullWeekToggle = useCallback((checked: boolean) => {
-    try {
-      localStorage.setItem(SCHEDULE_VIEW_MODE_KEY, checked ? 'full-week' : 'auto');
-    } catch {
-      // ignore
-    }
-    window.dispatchEvent(new CustomEvent(SCHEDULE_VIEW_MODE_CHANGE_EVENT));
-    setIsFullWeekState(checked);
-  }, []);
-
   return (
     <>
-      {!isMobile && (
-        <span className="dark:text-text-primary text-3xl font-semibold">
-          {t('customization.title')}
-        </span>
-      )}
-      <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
+      <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
         <div className="flex w-full flex-col p-3">
           <span className="dark:text-text-primary text-xl font-semibold">
             {t('customization.appearance')}
@@ -157,37 +125,6 @@ export const Customization = () => {
           </p>
         </div>
       </div>
-
-      {!isMobile && (
-        <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
-          <div className="flex w-full flex-col p-3">
-            <span className="dark:text-text-primary text-xl font-semibold">
-              {t('customization.schedule')}
-            </span>
-          </div>
-          <div className="mt-2 flex w-full flex-col gap-3 p-3">
-            <div className="flex w-full flex-row items-center justify-between gap-4">
-              <div className="flex flex-row gap-4">
-                <Calendar className="fill-icon-brand" />
-                <div className="flex flex-col gap-0.5">
-                  <span className="dark:text-text-primary text-base leading-[24px] font-semibold">
-                    {t('customization.showAllDays')}
-                  </span>
-                  <span className="text-text-secondary text-s-base">
-                    {t('customization.showAllDaysHint')}
-                  </span>
-                </div>
-              </div>
-              <Toggle
-                checked={isFullWeek}
-                size="s"
-                onCheckedChange={handleFullWeekToggle}
-                className="shrink-0"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

@@ -6,6 +6,7 @@ import { textFormatterElements } from './textFormatterElements';
 import { NavbarButton } from '../../ui/components/shared';
 import { boardTextToolbarClass } from '../../ui/boardTheme';
 import { LinkNavbarButton } from './LinkNavbarButton';
+import { MathFormatToolbar } from './MathFormatToolbar';
 import { useToggleFormat } from './hooks';
 import { ActiveFormatesMapT, MarkFormatT } from './types';
 import { hasFormat } from './utils/textEditorUtils';
@@ -30,6 +31,8 @@ export const TextEditorToolbarWithContext = () => {
         underline: hasFormat(ctx.editor, 'underline'),
         highlight: hasFormat(ctx.editor, 'highlight'),
         link: hasFormat(ctx.editor, 'link'),
+        superscript: hasFormat(ctx.editor, 'superscript'),
+        subscript: hasFormat(ctx.editor, 'subscript'),
 
         // Node types
         bulletList: hasFormat(ctx.editor, 'bulletList'),
@@ -98,6 +101,13 @@ export const TextEditorToolbarWithContext = () => {
           onKeyDown={setLinkHandler}
           onClick={toggleLinkHandler}
           isActive={!!editorState?.link}
+        />
+        <MathFormatToolbar
+          textEditor={textEditor}
+          isSuperscript={!!editorState?.superscript}
+          isSubscript={!!editorState?.subscript}
+          onToggleSuperscript={toggleFormat('superscript')}
+          onToggleSubscript={toggleFormat('subscript')}
         />
       </div>
     </DefaultRichTextToolbar>

@@ -10,6 +10,7 @@ import {
 } from '../../ui/boardTheme';
 import { textFormatterElements } from './textFormatterElements';
 import { LinkNavbarButton } from './LinkNavbarButton';
+import { MathFormatToolbar } from './MathFormatToolbar';
 import { useActiveStatuses } from './hooks';
 import { useEffect, useState } from 'react';
 import { setBulletList, toggleMarkType, unsetBulletList } from './utils/richTextUtils';
@@ -151,6 +152,13 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
           onKeyDown={setLinkToRichTextHandler}
           onClick={toggleLinkHandler}
           isActive={activeStatuses['link']}
+        />
+        <MathFormatToolbar
+          textEditor={editor.getRichTextEditor()}
+          isSuperscript={activeStatuses.superscript}
+          isSubscript={activeStatuses.subscript}
+          onToggleSuperscript={() => toggleFormatHandler('superscript')}
+          onToggleSubscript={() => toggleFormatHandler('subscript')}
         />
       </PopoverContent>
     </Popover>

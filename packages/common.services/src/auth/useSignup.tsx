@@ -3,6 +3,7 @@ import { authApiConfig, AuthQueryKey } from 'common.api';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
 import { SignupData } from 'common.types';
+import { normalizeEmail } from 'common.utils';
 
 export const useSignup = () => {
   const signup = useCallback(async (userData: SignupData) => {
@@ -11,7 +12,10 @@ export const useSignup = () => {
       const response = await axiosInst({
         method: authApiConfig[AuthQueryKey.Signup].method,
         url: authApiConfig[AuthQueryKey.Signup].getUrl(),
-        data: userData,
+        data: {
+          ...userData,
+          email: normalizeEmail(userData.email),
+        },
         headers: {
           'Content-Type': 'application/json',
           'X-Testing': !env.VITE_ENABLE_X_TESTING ? 'false' : env.VITE_ENABLE_X_TESTING,

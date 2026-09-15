@@ -6,7 +6,9 @@ import { Clock } from '@xipkg/icons';
 import { PopoverAnchor } from '@radix-ui/react-popover';
 import { Popover, PopoverContent } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
+import { useScheduleWorkingHours } from 'common.ui';
 import {
+  MAX_LESSON_DURATION_MINUTES,
   formatTimeParts,
   getTimePickerHours,
   getTimePickerMinutes,
@@ -51,12 +53,19 @@ export const TimeInput: FC<TimeInputProps> = ({
   const hourListRef = useRef<HTMLDivElement>(null);
   const minuteListRef = useRef<HTMLDivElement>(null);
 
+  const { workingHours } = useScheduleWorkingHours();
   const parsed = parseTimeParts(value);
-  const hours = useMemo(() => getTimePickerHours(minTime), [minTime]);
+  const hours = useMemo(
+    () => getTimePickerHours(minTime, MAX_LESSON_DURATION_MINUTES, workingHours),
+    [minTime, workingHours],
+  );
   const selectedHour = parsed && hours.includes(parsed.hours) ? parsed.hours : hours[0];
   const minutes = useMemo(
-    () => (selectedHour == null ? [] : getTimePickerMinutes(selectedHour, minTime)),
-    [selectedHour, minTime],
+    () =>
+      selectedHour == null
+        ? []
+        : getTimePickerMinutes(selectedHour, minTime, MAX_LESSON_DURATION_MINUTES, workingHours),
+    [selectedHour, minTime, workingHours],
   );
   const selectedMinute = parsed && minutes.includes(parsed.minutes) ? parsed.minutes : minutes[0];
 
@@ -74,7 +83,12 @@ export const TimeInput: FC<TimeInputProps> = ({
   };
 
   const handleHourSelect = (hour: number) => {
-    const nextMinutes = getTimePickerMinutes(hour, minTime);
+    const nextMinutes = getTimePickerMinutes(
+      hour,
+      minTime,
+      MAX_LESSON_DURATION_MINUTES,
+      workingHours,
+    );
     const minutesValue =
       parsed && nextMinutes.includes(parsed.minutes) ? parsed.minutes : nextMinutes[0];
     if (minutesValue == null) return;

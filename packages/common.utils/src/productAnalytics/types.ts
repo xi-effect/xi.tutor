@@ -143,6 +143,45 @@ export type ProductAnalyticsDurationBucket = '5-15' | '15-30' | '30-45' | '45+';
 
 export type ProductAnalyticsBoardTrigger = 'duration' | 'objects' | 'collaboration';
 
+export type MathBankAnalyticsSource = 'page' | 'board' | 'editor';
+
+export type MathBankFavoriteAction = 'add' | 'remove';
+
+export type ProductLimitType = 'file_size' | 'storage' | 'board_objects' | 'classrooms' | 'other';
+
+export type ProductLimitSource = 'materials' | 'classroom' | 'board' | 'other';
+
+export type ProductLimitFileCategory = 'image' | 'document' | 'other';
+
+export type ProductLimitSizeBucket = '0_5mb' | '5_30mb' | '30mb_plus';
+
+export type FileUploadSource = 'materials' | 'classroom' | 'board' | 'profile_avatar' | 'other';
+
+export type FileUploadFileCategory = ProductLimitFileCategory;
+
+/** Корзины размера для attempted / succeeded. Для file_too_large шлём точный size. */
+export type FileUploadSizeBucket = '0_1mb' | '1_5mb' | '5_30mb' | '30mb_plus';
+
+export type FileUploadRejectReason =
+  'file_too_large' | 'unsupported_type' | 'upload_error' | 'unknown';
+
+export type ProductLimitBlockedOn = 'client' | 'api';
+
+export type ProductLimitObjectKind = 'elements' | 'pdf' | 'file' | 'presentation' | 'audio';
+
+export type ProductAnalyticsFeedbackType = 'call' | 'board';
+
+export type ProductAnalyticsFeedbackScore = 1 | 2 | 3 | 4 | 5;
+
+export type ProductAnalyticsFeedbackPromptSource = 'post_lesson';
+
+export type ProductAnalyticsFeedbackEligibility = 'call_only' | 'board_only' | 'both';
+
+export type ProductAnalyticsFeedbackUsageDurationBucket =
+  '15_30m' | '30_45m' | '45_60m' | '60m_plus';
+
+export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
+
 export type UmamiPrimitive = string | number | boolean;
 export type UmamiEventPayload = Record<
   string,

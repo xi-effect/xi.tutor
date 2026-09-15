@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { PaymentApproveButton, PaymentApproveModal } from '.';
 import { PaymentApproveActionPropsT } from '../types';
+import { useIsClassroomOnPause } from 'common.services';
 
 export const PaymentApproveAction = ({ payment, isTutor, type }: PaymentApproveActionPropsT) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isClassroomPaused = useIsClassroomOnPause(payment?.classroom_id);
 
   const handleModalState = () => setIsOpen((prev) => !prev);
 
-  if (!payment) return null;
+  if (!payment || isClassroomPaused) return null;
 
   return (
     <>

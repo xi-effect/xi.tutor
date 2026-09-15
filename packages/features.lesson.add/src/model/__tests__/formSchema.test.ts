@@ -104,26 +104,21 @@ describe('createFormSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('для repeating + дата окончания требует дату не раньше начала', () => {
+  it('для repeating пустая дата окончания означает серию без конца', () => {
     const withoutUntil = schema.safeParse({
       ...validBase,
       repeatMode: 'weekly',
       repeatDays: [0],
-      repeatEnds: 'date',
       repeatUntil: null,
     });
-    expect(withoutUntil.success).toBe(false);
-    if (!withoutUntil.success) {
-      expect(
-        withoutUntil.error.issues.some((i) => i.message === 'validation.repeatUntilRequired'),
-      ).toBe(true);
-    }
+    expect(withoutUntil.success).toBe(true);
+  });
 
+  it('для repeating дата окончания не может быть раньше начала', () => {
     const beforeStart = schema.safeParse({
       ...validBase,
       repeatMode: 'weekly',
       repeatDays: [0],
-      repeatEnds: 'date',
       repeatUntil: new Date('2026-04-20T00:00:00'),
     });
     expect(beforeStart.success).toBe(false);
@@ -137,7 +132,6 @@ describe('createFormSchema', () => {
       ...validBase,
       repeatMode: 'weekly',
       repeatDays: [0],
-      repeatEnds: 'date',
       repeatUntil: new Date('2026-04-21T18:00:00'),
     });
     expect(sameDay.success).toBe(true);

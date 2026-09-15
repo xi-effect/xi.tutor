@@ -83,11 +83,12 @@ export const CalendarModule = ({
 
   if (isMobile) {
     return (
-      <div className="flex h-[calc(100dvh-64px)] min-h-0 flex-col">
+      <div className="flex h-full min-h-0 flex-col">
         <ScheduleMobileView
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={onLessonReschedule}
           onSaveLesson={onSaveLesson}
+          onQueryWeekChange={goToWeekStart}
         />
       </div>
     );

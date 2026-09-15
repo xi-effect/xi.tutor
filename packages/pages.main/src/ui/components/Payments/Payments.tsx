@@ -172,7 +172,7 @@ export const Payments = () => {
               type="button"
               variant="none"
               className={emptyActionButtonClass}
-              onClick={handleMore}
+              onClick={openPaymentsHelp}
               data-umami-event="payments-empty-more"
             >
               {t('payments.moreAboutFinance')}

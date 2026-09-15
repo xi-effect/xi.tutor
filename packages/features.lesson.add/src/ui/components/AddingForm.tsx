@@ -191,13 +191,45 @@ export const AddingForm: FC<AddingFormProps> = ({
                   {t('form.date')}
                 </FormLabel>
                 <FormControl>
-                  <InputDate {...field} />
+                  <InputDate
+                    value={field.value}
+                    onChange={(date) => {
+                      if (date) field.onChange(date);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="w-full" />
+          {repeatMode !== 'none' ? (
+            <FormField
+              control={control}
+              name="repeatUntil"
+              render={({ field }) => (
+                <FormItem className="flex w-full flex-col">
+                  <FormLabel className="text-text-primary text-[14px] font-normal">
+                    {t('form.repeatUntil')}
+                  </FormLabel>
+                  <FormControl>
+                    <InputDate
+                      value={field.value}
+                      onChange={(date) => {
+                        field.onChange(date);
+                        form.setValue('repeatEnds', date ? 'date' : 'never');
+                      }}
+                      minDate={startDate}
+                      allowEmpty
+                      placeholder={t('form.repeatUntilPlaceholder')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <div className="w-full" />
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -266,7 +298,13 @@ export const AddingForm: FC<AddingFormProps> = ({
                   <Toggle
                     id="repeat-mode"
                     checked={field.value !== 'none'}
-                    onCheckedChange={(checked) => field.onChange(checked ? 'custom' : 'none')}
+                    onCheckedChange={(checked) => {
+                      field.onChange(checked ? 'custom' : 'none');
+                      if (!checked) {
+                        form.setValue('repeatUntil', null);
+                        form.setValue('repeatEnds', 'never');
+                      }
+                    }}
                     size="s"
                   />
                 </FormControl>
@@ -323,75 +361,6 @@ export const AddingForm: FC<AddingFormProps> = ({
                         </button>
                       );
                     })}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
-        {repeatMode !== 'none' && (
-          <FormField
-            control={control}
-            name="repeatEnds"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-2">
-                <FormLabel className="text-text-primary text-[14px] font-normal">
-                  {t('form.repeatEnds')}
-                </FormLabel>
-                <FormControl>
-                  <div role="radiogroup" className="flex flex-col gap-3">
-                    <label className="flex cursor-pointer items-center gap-2">
-                      <input
-                        type="radio"
-                        name="repeatEnds"
-                        checked={field.value === 'never'}
-                        onChange={() => {
-                          field.onChange('never');
-                          form.setValue('repeatUntil', null);
-                        }}
-                        className="accent-action-primary-background-default h-4 w-4"
-                      />
-                      <span className="text-text-primary text-sm">{t('form.repeatEndsNever')}</span>
-                    </label>
-                    <div className="flex flex-col gap-2">
-                      <label className="flex cursor-pointer items-center gap-2">
-                        <input
-                          type="radio"
-                          name="repeatEnds"
-                          checked={field.value === 'date'}
-                          onChange={() => {
-                            field.onChange('date');
-                            if (form.getValues('repeatUntil') == null) {
-                              form.setValue('repeatUntil', startDate);
-                            }
-                          }}
-                          className="accent-action-primary-background-default h-4 w-4"
-                        />
-                        <span className="text-text-primary text-sm">
-                          {t('form.repeatEndsUntilDate')}
-                        </span>
-                      </label>
-                      {field.value === 'date' ? (
-                        <FormField
-                          control={control}
-                          name="repeatUntil"
-                          render={({ field: untilField }) => (
-                            <FormItem>
-                              <FormControl>
-                                <InputDate
-                                  value={untilField.value ?? startDate}
-                                  onChange={untilField.onChange}
-                                  minDate={startDate}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ) : null}
-                    </div>
                   </div>
                 </FormControl>
                 <FormMessage />

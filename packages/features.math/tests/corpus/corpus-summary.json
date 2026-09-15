@@ -1,0 +1,55 @@
+{
+  "version": "0.3.0",
+  "total": 1000,
+  "regression": 599,
+  "coverage": 401,
+  "byPrimaryGrade": {
+    "5": 238,
+    "6": 217,
+    "7": 286,
+    "8": 51,
+    "9": 98,
+    "10": 83,
+    "11": 27
+  },
+  "byCourse": {
+    "algebra": 229,
+    "algebra_analysis": 81,
+    "mathematics": 455,
+    "probability_statistics": 60,
+    "geometry": 175
+  },
+  "byExpected": {
+    "function_graph": 104,
+    "coordinate_points": 53,
+    "number_line": 96,
+    "fraction_model": 86,
+    "percent_bar": 84,
+    "ratio": 36,
+    "sequence": 48,
+    "probability_tree": 28,
+    "geometry": 122,
+    "formula": 48,
+    "motion_diagram": 28,
+    "work_diagram": 16,
+    "mixture_diagram": 16,
+    "unit_circle": 16,
+    "derivative_graph": 25,
+    "statistics_chart": 40,
+    "set_diagram": 16,
+    "solid_geometry": 29,
+    "vector_diagram": 16,
+    "advanced_math": 24,
+    "factor_tree": 20,
+    "unit_scale": 8,
+    "scale_diagram": 8,
+    "quantity_table": 8,
+    "proportion_diagram": 8,
+    "percent_model": 17
+  },
+  "byExam": {
+    "oge": 266,
+    "ege_basic": 217,
+    "ege_profile": 312
+  }
+}

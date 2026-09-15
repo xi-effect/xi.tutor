@@ -3,6 +3,7 @@
   "username": "Username",
   "username_hint": "Lowercase Latin letters, numbers, “_” or “.”",
   "email": "Email",
+  "outlook_delivery_warning": "Emails to Outlook may not be delivered",
   "password": "Password",
   "sign_up": "Create account",
   "sign_up_loading": "Creating account…",

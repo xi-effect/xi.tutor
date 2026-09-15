@@ -6,6 +6,8 @@ type NavigationDrawerContentProps = React.ComponentProps<typeof DrawerPrimitive.
 
 /**
  * Drawer на уровне @xipkg/modal (z-50). UI доски изолирован в z-0 и не перекрывает меню.
+ * overflow не вешать на Content — vaul считает высоту и translateY от этого узла.
+ * pb-16 поднимает пункты над нижней панелью (64px).
  */
 export function NavigationDrawerContent({
   className,
@@ -19,7 +21,7 @@ export function NavigationDrawerContent({
       />
       <DrawerPrimitive.Content
         className={cn(
-          'bg-background-surface fixed inset-x-0 bottom-0 flex h-auto flex-col gap-4 rounded-t-4xl p-4 pt-0',
+          'bg-background-surface fixed inset-x-0 bottom-0 flex h-auto flex-col gap-4 rounded-t-4xl px-4 pt-0 pb-16',
           NAV_DRAWER_Z_CLASS,
           className,
         )}

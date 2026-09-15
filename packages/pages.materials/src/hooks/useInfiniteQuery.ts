@@ -9,6 +9,7 @@ import {
   buildAnyMaterialFilters,
   PERSONAL_MATERIAL_SCOPE,
   serializeMaterialScope,
+  serializeMaterialSearch,
   serializeMaterialTagIds,
 } from 'common.services';
 
@@ -18,9 +19,11 @@ export const useInfiniteQuery = (
   scopeFilter: MaterialScopeFilterT = 'personal',
   classroomIds: number[] = [],
   tagIds: number[] = [],
+  search = '',
 ) => {
   const filters = buildAnyMaterialFilters({
     content_kind: kind,
+    search,
     scope:
       scopeFilter === 'personal'
         ? PERSONAL_MATERIAL_SCOPE
@@ -40,6 +43,7 @@ export const useInfiniteQuery = (
         kind,
         serializeMaterialScope(filters.scope),
         serializeMaterialTagIds(filters.tag_ids),
+        serializeMaterialSearch(filters.search),
       ],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();

@@ -16,9 +16,8 @@
     "endPlaceholder": "19:00 Конец",
     "repeat": "Повторение",
     "repeatHint": "Повторять занятие каждую неделю в выбранные дни:",
-    "repeatEnds": "Повторять",
-    "repeatEndsNever": "Без даты окончания",
-    "repeatEndsUntilDate": "До даты"
+    "repeatUntil": "До даты",
+    "repeatUntilPlaceholder": "Без даты окончания"
   },
   "weekdays_short": "Пн,Вт,Ср,Чт,Пт,Сб,Вс",
   "studentSelector": {
@@ -40,7 +39,6 @@
     "endAfterStart": "Время окончания должно быть позже начала",
     "maxDuration": "Максимальная длительность занятия — 12 часов",
     "repeatDaysRequired": "Выберите хотя бы один день недели",
-    "repeatUntilRequired": "Укажите дату окончания повторений",
     "repeatUntilBeforeStart": "Дата окончания не может быть раньше даты начала"
   },
   "hours_one": "{{count}} час",

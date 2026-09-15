@@ -6,6 +6,7 @@ import {
   useGetClassroomStorageItem,
   useGetClassroomStorageItemStudent,
   useGetStorageItem,
+  useIsClassroomOnPause,
 } from 'common.services';
 import { useCachedBoardDoc } from '../hooks/useCachedBoardDoc';
 import { DEMO_STORAGE_TOKEN } from '../utils/yjsConstants';
@@ -27,6 +28,7 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isClassroomPaused = useIsClassroomOnPause(classroomId);
 
   const getStorageItem = (() => {
     if (classroomId) {
@@ -92,6 +94,7 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
       initialYjsUpdate={cachedDoc?.yjsUpdate}
       cacheBoardId={materialIdValue}
       cacheUserId={cacheUserId}
+      forceReadonly={isClassroomPaused}
     >
       <DrawCanvas token={canvasToken} />
     </YjsProvider>

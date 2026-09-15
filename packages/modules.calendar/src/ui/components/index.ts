@@ -5,6 +5,8 @@ export { ScheduleWeekCarousel } from './ScheduleWeekCarousel';
 export { ScheduleDaySwiper } from './ScheduleDaySwiper';
 export { ScheduleMobileView } from './ScheduleMobileView';
 export { DayLessonRow } from './DayLessonRow';
+export { DayLessonFeed } from './DayLessonFeed';
 export { DayLessonsPanel } from './DayLessonsPanel';
+export { ScheduleFreeSlot } from './ScheduleFreeSlot';
 export { NearestLessonCard } from './NearestLessonCard';
 export { StartLessonButton, type StartLessonButtonProps } from 'features.lesson.start';

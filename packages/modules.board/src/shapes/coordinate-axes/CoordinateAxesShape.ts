@@ -18,6 +18,7 @@ export type CoordinateAxesShapeProps = {
   showGrid?: boolean;
   showLabels: boolean;
   equation: string;
+  extraEquations?: string;
   color: typeof DefaultColorStyle.defaultValue;
   plotColor: typeof PlotColorStyle.defaultValue;
   size: typeof DefaultSizeStyle.defaultValue;
@@ -49,6 +50,7 @@ export const coordinateAxesShapeProps = {
   showGrid: T.boolean.optional(),
   showLabels: T.boolean,
   equation: T.string,
+  extraEquations: T.string.optional(),
   color: DefaultColorStyle,
   plotColor: plotColorValidator,
   size: DefaultSizeStyle,

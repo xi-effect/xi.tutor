@@ -16,8 +16,17 @@ import {
 } from 'common.ui';
 import { toast } from 'sonner';
 import { getLibraryFileDisplayName } from '../../utils';
+import { collectDroppedFiles } from 'common.services';
 import { LIBRARY_UPLOAD_MAX_FILES } from './libraryUpload';
 import { useLibraryFileUploads, type LibraryUploadItem } from './useLibraryFileUploads';
+import {
+  formatBytes,
+  isStorageQuotaReached,
+  requestStorageLimitDialog,
+  usePlanLimits,
+} from 'common.subscription';
+import { trackProductLimitReached } from 'common.utils';
+import { getAppLanguage } from 'common.ui';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -39,11 +48,13 @@ type UploadFilesModalProps = {
   classroomId?: string;
 };
 
-const collectDroppedFiles = (event: DragEvent<HTMLElement>): File[] =>
-  Array.from(event.dataTransfer.files ?? []);
+const collectDroppedFilesFromEvent = (event: DragEvent<HTMLElement>): File[] =>
+  collectDroppedFiles(event.dataTransfer);
 
 export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFilesModalProps) => {
   const { t } = useTranslation('materials');
+  const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
+  const tariff = usePlanLimits();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -95,6 +106,16 @@ export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFile
   };
 
   const openPicker = () => {
+    if (isStorageQuotaReached()) {
+      requestStorageLimitDialog();
+      trackProductLimitReached({
+        limit_type: 'storage',
+        source: classroomId ? 'classroom' : 'materials',
+        blocked_on: 'client',
+      });
+      return;
+    }
+
     if (!canAddMore) {
       toast.error(t('files.uploadModal.maxFiles', { max: LIBRARY_UPLOAD_MAX_FILES }));
       return;
@@ -118,7 +139,7 @@ export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFile
   const handleDrop = (event: DragEvent<HTMLElement>) => {
     event.preventDefault();
     setIsDragging(false);
-    handleFiles(collectDroppedFiles(event));
+    handleFiles(collectDroppedFilesFromEvent(event));
   };
 
   return (
@@ -242,7 +263,10 @@ export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFile
 
           {items.length === 0 ? (
             <p className="text-text-secondary w-full text-center text-xs leading-4">
-              {t('files.uploadModal.limitsEmpty')}
+              {t('files.uploadModal.limitsEmpty', {
+                image: formatBytes(tariff.maxImageBytes, locale),
+                other: formatBytes(tariff.maxFileBytes, locale),
+              })}
             </p>
           ) : (
             <div className="flex w-full flex-col items-center gap-1">
@@ -250,7 +274,10 @@ export const UploadFilesModal = ({ open, onOpenChange, classroomId }: UploadFile
                 {t('files.uploadModal.limitsCount', { max: LIBRARY_UPLOAD_MAX_FILES })}
               </p>
               <p className="text-text-muted text-xxs-base-size w-full text-center leading-4">
-                {t('files.uploadModal.limitsSize')}
+                {t('files.uploadModal.limitsSize', {
+                  image: formatBytes(tariff.maxImageBytes, locale),
+                  other: formatBytes(tariff.maxFileBytes, locale),
+                })}
               </p>
             </div>
           )}
@@ -322,6 +349,9 @@ const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
                 : `${item.progress}%`}
           </p>
         </div>
+        {isError && item.errorMessage ? (
+          <p className="text-status-error-text text-xs leading-4">{item.errorMessage}</p>
+        ) : null}
         {isDone || isError ? null : (
           <div className="bg-border-default dark:bg-background-page h-1.5 w-full overflow-hidden rounded-[3px]">
             <div

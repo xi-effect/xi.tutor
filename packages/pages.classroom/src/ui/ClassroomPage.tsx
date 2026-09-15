@@ -31,7 +31,7 @@ export const ClassroomPage = () => {
       <div
         className={cn(
           'bg-background-page flex flex-col gap-4',
-          isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+          isMobile ? 'h-full min-h-0 overflow-hidden' : 'h-screen',
         )}
       >
         <Header />

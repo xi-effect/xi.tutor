@@ -70,6 +70,7 @@ const serializeFileFiltersKey = (filters?: FileFilters | null): (string | boolea
     normalized.kinds?.join(',') ?? '',
     normalized.is_uploaded_by_owner ?? null,
     normalized.tag_ids?.join(',') ?? '',
+    normalized.search ?? '',
   ];
 };
 

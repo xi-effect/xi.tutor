@@ -5,8 +5,11 @@ import { PersonalData } from '../personal-data';
 import { Notifications } from '../notifications';
 import { SoundAndVideo } from '../sound-and-video';
 import { Effects } from '../effects';
+import { Board } from '../board';
 import { TechnicalReport } from '../report';
 import { Tags } from '../tags';
+import { Schedule } from '../schedule';
+import { SubscriptionSettings } from 'features.subscription';
 
 type ComponentMapT = {
   [key: string]: ReactElement;
@@ -15,12 +18,15 @@ type ComponentMapT = {
 const componentMap: ComponentMapT = {
   personalInfo: <PersonalData />,
   personalisation: <Customization />,
+  schedule: <Schedule />,
   security: <Secure />,
   notifications: <Notifications />,
   soundAndVideo: <SoundAndVideo />,
   effects: <Effects />,
   tags: <Tags />,
+  board: <Board />,
   report: <TechnicalReport />,
+  subscription: <SubscriptionSettings />,
 };
 
 type ContentPropsT = {

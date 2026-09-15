@@ -1,15 +1,16 @@
 import { Button } from '@xipkg/button';
-import { ArrowBottom, ArrowUp } from '@xipkg/icons';
+import { ArrowBottom, ArrowUp, Trash } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
 import type { ActivityAttempt, CheckStatus, OrderingDefinition } from '../../model/types';
 import { activityCardClass, activityStatusBorderClass } from '../activityUi';
 import { ActivityInputField } from '../activityFields';
-import { ActivityImage, ActivityImageField } from '../ActivityImage';
+import { ActivityImage, ActivityImageIconButton } from '../ActivityImage';
 import { itemStatus } from '../../primitives/itemStatus';
 import { cn } from '@xipkg/utils';
 import { motion } from 'motion/react';
 import { ActivityMotionList, activityItemTransition } from '../activityUiMotion';
+import { boardIconClass } from '../../../ui/boardTheme';
 
 type Props = {
   definition: OrderingDefinition;
@@ -42,22 +43,20 @@ export function OrderingActivity({
       <div className="flex flex-col gap-2 p-3">
         <p className="text-text-secondary text-xs">{t('activity.orderingHint')}</p>
         {definition.items.map((item, index) => (
-          <div key={item.id} className="flex flex-col gap-1">
-            <div className="flex gap-1">
-              <span className="text-text-secondary w-4 text-xs">{index + 1}</span>
-              <ActivityInputField
-                value={item.text}
-                onChange={(event) =>
-                  onDefinition({
-                    ...definition,
-                    items: definition.items.map((entry) =>
-                      entry.id === item.id ? { ...entry, text: event.target.value } : entry,
-                    ),
-                  })
-                }
-              />
-            </div>
-            <ActivityImageField
+          <div key={item.id} className="flex items-center gap-1">
+            <span className="text-text-secondary w-4 shrink-0 text-xs">{index + 1}</span>
+            <ActivityInputField
+              value={item.text}
+              onChange={(event) =>
+                onDefinition({
+                  ...definition,
+                  items: definition.items.map((entry) =>
+                    entry.id === item.id ? { ...entry, text: event.target.value } : entry,
+                  ),
+                })
+              }
+            />
+            <ActivityImageIconButton
               value={item.imageSrc}
               onChange={(imageSrc) =>
                 onDefinition({
@@ -68,6 +67,24 @@ export function OrderingActivity({
                 })
               }
             />
+            <button
+              type="button"
+              data-board-control=""
+              disabled={definition.items.length <= 1}
+              title={t('activity.removeItem')}
+              aria-label={t('activity.removeItem')}
+              className="text-text-secondary hover:bg-background-hover hover:text-text-primary flex size-7 shrink-0 items-center justify-center rounded-lg p-0 disabled:opacity-30"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={() => {
+                if (definition.items.length <= 1) return;
+                onDefinition({
+                  ...definition,
+                  items: definition.items.filter((entry) => entry.id !== item.id),
+                });
+              }}
+            >
+              <Trash className={cn('size-4', boardIconClass)} />
+            </button>
           </div>
         ))}
         <Button

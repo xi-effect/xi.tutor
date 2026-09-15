@@ -57,15 +57,15 @@ export interface ReadFileHeaders extends ContentTokenHeaders {
 
 enum FilesQueryKey {
   UploadFile = 'UploadFile',
-  /** @deprecated Use UploadFile — kind is determined by the backend. */
+  /** @deprecated Use UploadFile — kind определяет бэкенд по содержимому. */
   UploadImage = 'UploadImage',
-  /** @deprecated Use UploadFile — kind is determined by the backend. */
+  /** @deprecated Use UploadFile — kind определяет бэкенд по содержимому. */
   UploadAudio = 'UploadAudio',
-  /** @deprecated Use UploadFile — kind is determined by the backend. */
+  /** @deprecated Use UploadFile — kind определяет бэкенд по содержимому. */
   UploadDocument = 'UploadDocument',
-  /** @deprecated Use UploadFile — kind is determined by the backend. */
+  /** @deprecated Use UploadFile — kind определяет бэкенд по содержимому. */
   UploadPresentation = 'UploadPresentation',
-  /** @deprecated Use UploadFile — kind is determined by the backend. */
+  /** @deprecated Use UploadFile — kind определяет бэкенд по содержимому. */
   UploadAttachment = 'UploadAttachment',
   GetFile = 'GetFile',
   GetFileMeta = 'GetFileMeta',

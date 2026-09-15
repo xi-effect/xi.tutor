@@ -20,6 +20,7 @@ export const NavbarButton = forwardRef<HTMLButtonElement, NavbarButtonPropsT>(
         'size-12 sm:size-6 lg:size-8',
         boardIconClass,
         isActive ? 'bg-status-info-background' : 'hover:bg-status-info-background bg-transparent',
+        'disabled:pointer-events-none disabled:opacity-40',
         className,
       )}
       {...props}

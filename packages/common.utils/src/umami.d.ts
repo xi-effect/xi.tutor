@@ -10,6 +10,10 @@ declare global {
         (uniqueId: string, data?: Record<string, unknown>): void;
       };
     };
+    __sovliumFeedback?: {
+      show: (type?: 'call' | 'board') => 'call' | 'board';
+      resetCooldown: () => void;
+    };
   }
 }
 

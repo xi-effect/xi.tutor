@@ -145,9 +145,9 @@ export const MovingLessonModal = ({
         >
           <Close className="fill-icon-primary h-5 w-5" />
         </ModalCloseButton>
-        <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 items-start gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
-          <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 items-stretch gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
+          <div className="hidden h-full min-h-0 min-w-0 flex-col overflow-hidden md:flex">
+            <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
               <DayLessonsPanel
                 scheduleHeadingTitle={t('schedule')}
                 selectedDate={selectedDate}

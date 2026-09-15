@@ -4,7 +4,7 @@ import { Button } from '@xipkg/button';
 import { Add } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { EmptySchedule } from 'common.ui';
-import { DayLessonListMetaProvider, DayLessonRow, findNearestLessonIndex } from 'modules.calendar';
+import { DayLessonFeed, DayLessonListMetaProvider, findNearestLessonIndex } from 'modules.calendar';
 import type { ChangeLessonFormData, ScheduleLessonRow } from 'modules.calendar';
 import { cn } from '@xipkg/utils';
 import { galleryShadowPadClass } from '../galleryShadowClass';
@@ -120,18 +120,15 @@ export const AllLessons = ({
         ) : (
           <ScrollArea className="h-auto max-h-full min-h-0 w-full">
             <div className={cn('mr-2 flex flex-col gap-3 pr-0 pb-2', galleryShadowPadClass)}>
-              {lessons.map((lesson, index) => (
-                <DayLessonRow
-                  key={lesson.id}
-                  lesson={lesson}
-                  lessonDay={dayDate}
-                  variant="card"
-                  showActions={showLessonActions}
-                  isNearestLesson={nearestIndex >= 0 && index === nearestIndex}
-                  onReschedule={onReschedule}
-                  onSaveLesson={onSaveLesson}
-                />
-              ))}
+              <DayLessonFeed
+                lessons={lessons}
+                dayDate={dayDate}
+                variant="card"
+                nearestIndex={nearestIndex}
+                showActions={showLessonActions}
+                onReschedule={onReschedule}
+                onSaveLesson={onSaveLesson}
+              />
             </div>
           </ScrollArea>
         )}

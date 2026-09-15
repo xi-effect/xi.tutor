@@ -13,6 +13,7 @@ import {
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import {
   MovingLessonModal,
   type RepeatedVirtualRescheduleTarget,
@@ -101,6 +102,7 @@ export const Calendar = () => {
     pendingAnchorDate,
     acknowledgePendingLessonOpen,
     mobileScheduleAnchorTs,
+    goToWeekStart,
   } = useClassroomSchedule();
 
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
@@ -108,6 +110,7 @@ export const Calendar = () => {
   const setEvents = useSetEvents();
   const addEvent = useAddEvent();
   const setEventsLoading = useSetEventsLoading();
+  const hasLoadedScheduleRef = useRef(false);
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const numericClassroomId = Number(classroomId);
@@ -131,6 +134,7 @@ export const Calendar = () => {
   const updateClassroomEvent = useUpdateClassroomEvent();
 
   const classroom = isTutor ? tutorQuery.data : studentQuery.data;
+  const isPaused = isClassroomOnPause(classroom?.status);
   const isError = isTutor ? tutorQuery.isError : studentQuery.isError;
   const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
 
@@ -155,8 +159,8 @@ export const Calendar = () => {
   };
 
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
-    onReschedule: isTutor ? handleLessonReschedule : undefined,
-    onSaveLesson: isTutor ? handleLessonSave : undefined,
+    onReschedule: isTutor && !isPaused ? handleLessonReschedule : undefined,
+    onSaveLesson: isTutor && !isPaused ? handleLessonSave : undefined,
   });
 
   // Переключение недели — в ClassroomScheduleProvider (useLayoutEffect + goToDay)
@@ -170,9 +174,11 @@ export const Calendar = () => {
     acknowledgePendingLessonOpen();
   }, [pendingEventToOpen, addEvent, openLessonInfo, acknowledgePendingLessonOpen]);
 
+  if (scheduleQuery.data) hasLoadedScheduleRef.current = true;
+
   useEffect(() => {
-    setEventsLoading(scheduleQuery.isLoading || scheduleQuery.isFetching);
-  }, [scheduleQuery.isFetching, scheduleQuery.isLoading, setEventsLoading]);
+    setEventsLoading(scheduleQuery.isLoading && !hasLoadedScheduleRef.current);
+  }, [scheduleQuery.isLoading, setEventsLoading]);
 
   useEffect(() => {
     if (scheduleQuery.data) {
@@ -224,11 +230,13 @@ export const Calendar = () => {
         <div className="flex h-full min-h-0 min-w-0 flex-col">
           <ScheduleMobileView
             key={numericClassroomId}
-            onAddLessonClick={onAddLessonClick}
-            onLessonReschedule={isTutor ? handleLessonReschedule : undefined}
-            onSaveLesson={isTutor ? handleLessonSave : undefined}
+            onAddLessonClick={isPaused ? undefined : onAddLessonClick}
+            onLessonReschedule={isTutor && !isPaused ? handleLessonReschedule : undefined}
+            onSaveLesson={isTutor && !isPaused ? handleLessonSave : undefined}
             hideLessonCardClassroomAndSubject
+            embedded
             mobileScheduleAnchorTs={mobileScheduleAnchorTs}
+            onQueryWeekChange={goToWeekStart}
           />
         </div>
       ) : (
@@ -236,7 +244,7 @@ export const Calendar = () => {
           <div className={galleryShadowHeaderInsetClass}>
             <div className="flex min-w-0 flex-row flex-wrap items-center gap-3">
               <CalendarScheduleToolbar />
-              {isTutor ? (
+              {isTutor && !isPaused ? (
                 <Button
                   type="button"
                   variant="primary"
@@ -251,12 +259,12 @@ export const Calendar = () => {
             </div>
           </div>
           <CalendarScheduleKanban
-            onLessonReschedule={isTutor ? handleLessonReschedule : undefined}
-            onSaveLesson={isTutor ? handleLessonSave : undefined}
+            onLessonReschedule={isTutor && !isPaused ? handleLessonReschedule : undefined}
+            onSaveLesson={isTutor && !isPaused ? handleLessonSave : undefined}
           />
         </div>
       )}
-      {isTutor && moveEvent != null ? (
+      {isTutor && !isPaused && moveEvent != null ? (
         <MovingLessonModal
           key={moveEvent.id}
           open

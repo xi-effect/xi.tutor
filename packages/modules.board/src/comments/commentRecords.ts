@@ -8,9 +8,17 @@ import { idValidator } from '@ibodr/schema';
  */
 export interface DrCommentThread extends BaseRecord<'comment_thread', RecordId<DrCommentThread>> {
   pageId: string;
-  /** Точка на странице — фолбэк-позиция, если shapeId не задан (или фигура удалена) */
+  /** Точка на странице — фолбэк-позиция, если shapeId не задан (или фигура удалена).
+   * Для комментария к области это правый нижний угол выделения (там же стоит пин). */
   x: number;
   y: number;
+  /**
+   * Размер выделенной области в координатах страницы.
+   * Не заданы для обычного точечного пина — тогда рамка не рисуется.
+   * Левый верхний угол области = (x - w, y - h).
+   */
+  w?: number;
+  h?: number;
   /** Фигура, к которой прикреплён пин (null — пин привязан к точке страницы) */
   shapeId: string | null;
   /** Смещение в локальных координатах фигуры (валидно только вместе с shapeId) */
@@ -47,6 +55,8 @@ const commentThreadValidator = T.object({
   pageId: T.string,
   x: T.number,
   y: T.number,
+  w: T.number.optional(),
+  h: T.number.optional(),
   shapeId: T.string.nullable(),
   offsetX: T.number.nullable(),
   offsetY: T.number.nullable(),
@@ -90,6 +100,9 @@ type NewCommentThreadInput = {
   pageId: string;
   x: number;
   y: number;
+  /** Размер выделенной области (комментарий к области). Оба значения задаются вместе. */
+  w?: number;
+  h?: number;
   shapeId: string | null;
   offsetX: number | null;
   offsetY: number | null;
@@ -98,7 +111,7 @@ type NewCommentThreadInput = {
 };
 
 export function createCommentThreadRecord(input: NewCommentThreadInput): DrCommentThread {
-  return {
+  const thread: DrCommentThread = {
     id: createCommentThreadId(),
     typeName: 'comment_thread',
     pageId: input.pageId,
@@ -112,6 +125,20 @@ export function createCommentThreadRecord(input: NewCommentThreadInput): DrComme
     authorId: input.authorId,
     authorName: input.authorName,
   };
+
+  // Область пишем только если оба измерения — конечные положительные числа; иначе тред
+  // остаётся точечным (строгий валидатор `T.number` всё равно отверг бы NaN/Infinity на put).
+  if (
+    Number.isFinite(input.w) &&
+    Number.isFinite(input.h) &&
+    (input.w as number) > 0 &&
+    (input.h as number) > 0
+  ) {
+    thread.w = input.w;
+    thread.h = input.h;
+  }
+
+  return thread;
 }
 
 type NewCommentMessageInput = {

@@ -34,6 +34,12 @@ import { useBoardBackgroundState } from '../../../hooks/useBoardBackground';
 import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
+import {
+  SUBSCRIPTION_BILLING_ENABLED,
+  getBoardElementsLimit,
+  getBoardElementsWarningThreshold,
+  useSubscriptionStore,
+} from 'common.subscription';
 import { useEditor } from '@ibodr/draw';
 import { useCommentsUiStore } from '../../../comments';
 import { useDrawStore, useEraserSettingsStore } from '../../../store';
@@ -127,16 +133,17 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
   );
 };
 
-const BOARD_ELEMENTS_LIMIT = 4000;
-const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
-
 export const SettingsDropdown = () => {
   const { t } = useTranslation('board');
   const isMobile = useBoardIsMobile();
   const editor = useEditor();
+  const boardAtLimit = useSubscriptionStore((s) => s.mock.boardAtLimit);
+  const BOARD_ELEMENTS_LIMIT = getBoardElementsLimit();
+  const BOARD_ELEMENTS_WARNING_THRESHOLD = getBoardElementsWarningThreshold();
   const { inputMode, setInputMode } = useDrawStore();
   const {
     isReadonly,
+    forceReadonly,
     saveCanvas,
     clearBoard,
     lockShapes,
@@ -157,9 +164,11 @@ export const SettingsDropdown = () => {
   const shownWarningToastRef = useRef(false);
   const shownLimitToastRef = useRef(false);
 
-  const progressPercent = Math.min((elementsCount / BOARD_ELEMENTS_LIMIT) * 100, 100);
-  const isWarningZone = elementsCount >= BOARD_ELEMENTS_WARNING_THRESHOLD;
-  const isLimitReached = elementsCount >= BOARD_ELEMENTS_LIMIT;
+  const effectiveCount =
+    SUBSCRIPTION_BILLING_ENABLED && boardAtLimit ? BOARD_ELEMENTS_LIMIT : elementsCount;
+  const progressPercent = Math.min((effectiveCount / BOARD_ELEMENTS_LIMIT) * 100, 100);
+  const isWarningZone = effectiveCount >= BOARD_ELEMENTS_WARNING_THRESHOLD;
+  const isLimitReached = effectiveCount >= BOARD_ELEMENTS_LIMIT;
 
   const { settings, toggleCategory, toggleAll } = useEraserSettingsStore();
   const { background, setBackgroundType, setBackgroundColor } = useBoardBackgroundState();
@@ -198,7 +207,7 @@ export const SettingsDropdown = () => {
   }, [editor]);
 
   useEffect(() => {
-    if (elementsCount >= BOARD_ELEMENTS_LIMIT) {
+    if (effectiveCount >= BOARD_ELEMENTS_LIMIT) {
       if (!shownLimitToastRef.current) {
         toast.error(t('settings.limitReachedTitle'), {
           description: t('settings.limitReachedDesc', { limit: BOARD_ELEMENTS_LIMIT }),
@@ -210,11 +219,11 @@ export const SettingsDropdown = () => {
       return;
     }
 
-    if (elementsCount >= BOARD_ELEMENTS_WARNING_THRESHOLD) {
+    if (effectiveCount >= BOARD_ELEMENTS_WARNING_THRESHOLD) {
       if (!shownWarningToastRef.current) {
         toast.info(t('settings.almostFullTitle'), {
           description: t('settings.almostFullDesc', {
-            count: elementsCount,
+            count: effectiveCount,
             limit: BOARD_ELEMENTS_LIMIT,
           }),
           duration: 6000,
@@ -227,7 +236,7 @@ export const SettingsDropdown = () => {
 
     shownWarningToastRef.current = false;
     shownLimitToastRef.current = false;
-  }, [elementsCount, t]);
+  }, [effectiveCount, BOARD_ELEMENTS_LIMIT, BOARD_ELEMENTS_WARNING_THRESHOLD, t]);
 
   const settingsTrigger = (
     <Button
@@ -248,7 +257,8 @@ export const SettingsDropdown = () => {
           <SettingsMobileDrawer
             open={dropdownOpen}
             onOpenChange={setDropdownOpen}
-            elementsCount={elementsCount}
+            elementsCount={effectiveCount}
+            elementsLimit={BOARD_ELEMENTS_LIMIT}
             progressPercent={progressPercent}
             isWarningZone={isWarningZone}
             isLimitReached={isLimitReached}
@@ -263,6 +273,7 @@ export const SettingsDropdown = () => {
             }}
             onToggleReadonly={toggleReadonly}
             isReadonly={isReadonly}
+            canToggleReadonly={!forceReadonly}
             isTutor={isTutor}
             showImportOption={showImportOption}
             hasEditor={!!editor}
@@ -306,7 +317,7 @@ export const SettingsDropdown = () => {
                     isLimitReached && 'text-text-danger',
                   )}
                 >
-                  {elementsCount} / {BOARD_ELEMENTS_LIMIT}
+                  {effectiveCount} / {BOARD_ELEMENTS_LIMIT}
                 </span>
               </div>
               <div className="bg-background-subtle h-2 w-full overflow-hidden rounded-full">
@@ -564,7 +575,9 @@ export const SettingsDropdown = () => {
                 </DropdownMenuSub>
               )}
 
-              {isTutor && <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />}
+              {isTutor && !forceReadonly && (
+                <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />
+              )}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

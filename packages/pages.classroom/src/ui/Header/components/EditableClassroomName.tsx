@@ -147,7 +147,7 @@ export const EditableClassroomName = ({
           <Button
             type="button"
             variant="none"
-            className="hover:bg-status-info-background flex size-8 shrink-0 translate-y-1 items-center justify-center rounded-xl p-0 opacity-0 transition-opacity group-hover:opacity-100 focus:bg-transparent focus-visible:opacity-100"
+            className="hover:bg-status-info-background flex size-8 shrink-0 translate-y-1 items-center justify-center rounded-xl p-0 opacity-100 transition-opacity focus:bg-transparent focus-visible:opacity-100 min-[961px]:opacity-0 min-[961px]:group-hover:opacity-100"
             onClick={startEditing}
             aria-label={t('header.editNameAria')}
             data-umami-event="classroom-edit-name"
