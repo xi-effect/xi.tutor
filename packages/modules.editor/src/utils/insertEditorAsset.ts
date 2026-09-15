@@ -98,7 +98,7 @@ export async function insertEditorAsset(
       fileSize: file.size,
       maxBytes: getMaxFileBytes(),
     });
-    trackFileSizeLimitFromUploadError(err, file, 'other');
+    trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
     toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
     return false;
   }

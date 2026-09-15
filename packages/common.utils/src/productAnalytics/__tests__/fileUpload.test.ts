@@ -14,6 +14,7 @@ vi.mock('../umami', () => ({
 import { trackProductEvent } from '../umami';
 
 const trackMock = vi.mocked(trackProductEvent);
+const MB = 1024 * 1024;
 
 afterEach(() => {
   trackMock.mockClear();
@@ -22,12 +23,22 @@ afterEach(() => {
 describe('getFileUploadSizeBucket', () => {
   it('кладёт размер только в безопасные корзины из ТЗ', () => {
     expect(getFileUploadSizeBucket(0)).toBe('0_1mb');
-    expect(getFileUploadSizeBucket(1024 * 1024)).toBe('0_1mb');
-    expect(getFileUploadSizeBucket(1024 * 1024 + 1)).toBe('1_5mb');
-    expect(getFileUploadSizeBucket(5 * 1024 * 1024)).toBe('1_5mb');
-    expect(getFileUploadSizeBucket(5 * 1024 * 1024 + 1)).toBe('5_30mb');
-    expect(getFileUploadSizeBucket(30 * 1024 * 1024)).toBe('5_30mb');
-    expect(getFileUploadSizeBucket(30 * 1024 * 1024 + 1)).toBe('30mb_plus');
+    expect(getFileUploadSizeBucket(MB)).toBe('0_1mb');
+    expect(getFileUploadSizeBucket(MB + 1)).toBe('1_2mb');
+    expect(getFileUploadSizeBucket(2 * MB)).toBe('1_2mb');
+    expect(getFileUploadSizeBucket(2 * MB + 1)).toBe('2_5mb');
+    expect(getFileUploadSizeBucket(5 * MB)).toBe('2_5mb');
+    expect(getFileUploadSizeBucket(5 * MB + 1)).toBe('5_10mb');
+    expect(getFileUploadSizeBucket(10 * MB)).toBe('5_10mb');
+    expect(getFileUploadSizeBucket(10 * MB + 1)).toBe('10_20mb');
+    expect(getFileUploadSizeBucket(20 * MB)).toBe('10_20mb');
+    expect(getFileUploadSizeBucket(20 * MB + 1)).toBe('20_30mb');
+    expect(getFileUploadSizeBucket(30 * MB)).toBe('20_30mb');
+    expect(getFileUploadSizeBucket(30 * MB + 1)).toBe('30_50mb');
+    expect(getFileUploadSizeBucket(50 * MB)).toBe('30_50mb');
+    expect(getFileUploadSizeBucket(50 * MB + 1)).toBe('50_100mb');
+    expect(getFileUploadSizeBucket(100 * MB)).toBe('50_100mb');
+    expect(getFileUploadSizeBucket(100 * MB + 1)).toBe('100mb_plus');
   });
 });
 
@@ -63,16 +74,16 @@ describe('getFileUploadRejectReasonFromError', () => {
     expect(
       getFileUploadRejectReasonFromError(
         { code: 'ERR_NETWORK', message: 'Network Error' },
-        { fileSize: 8 * 1024 * 1024, maxBytes: 5 * 1024 * 1024 },
+        { fileSize: 8 * MB, maxBytes: 5 * MB },
       ),
     ).toBe('file_too_large');
   });
 });
 
 describe('beginFileUploadAttempt', () => {
-  it('для oversized-файла даёт attempted → rejected file_too_large один раз', () => {
-    const file = { type: 'application/pdf', name: 'secret.pdf', size: 8 * 1024 * 1024 };
-    const attempt = beginFileUploadAttempt('materials', file);
+  it('для oversized-файла даёт attempted → rejected file_too_large с bucket и степенью превышения', () => {
+    const file = { type: 'application/pdf', name: 'secret.pdf', size: 8 * MB };
+    const attempt = beginFileUploadAttempt('materials', file, { maxBytes: 5 * MB });
 
     attempt.reject('file_too_large');
     attempt.reject('file_too_large');
@@ -83,15 +94,15 @@ describe('beginFileUploadAttempt', () => {
       event_version: 1,
       source: 'materials',
       file_category: 'document',
-      size_bucket: '5_30mb',
+      size_bucket: '5_10mb',
     });
     expect(trackMock).toHaveBeenNthCalledWith(2, PRODUCT_ANALYTICS_EVENTS.FILE_UPLOAD_REJECTED, {
       event_version: 1,
       source: 'materials',
       file_category: 'document',
+      size_bucket: '5_10mb',
       reason: 'file_too_large',
-      file_name: 'secret.pdf',
-      file_size: 8 * 1024 * 1024,
+      limit_exceeded_by: '50_100_percent',
     });
   });
 
@@ -111,22 +122,28 @@ describe('beginFileUploadAttempt', () => {
     });
   });
 
-  it('мапит client size evaluation в file_too_large', () => {
+  it('мапит client size evaluation в file_too_large относительно реального лимита', () => {
     const attempt = beginFileUploadAttempt('classroom', {
       type: 'image/jpeg',
       name: 'a.jpg',
-      size: 2 * 1024 * 1024,
+      size: 2 * MB,
     });
 
-    expect(rejectFileUploadFromEvaluation(attempt, { ok: false, reason: 'size' })).toBe(true);
+    expect(
+      rejectFileUploadFromEvaluation(attempt, {
+        ok: false,
+        reason: 'size',
+        maxBytes: MB,
+      }),
+    ).toBe(true);
 
     expect(trackMock).toHaveBeenLastCalledWith(PRODUCT_ANALYTICS_EVENTS.FILE_UPLOAD_REJECTED, {
       event_version: 1,
       source: 'classroom',
       file_category: 'image',
+      size_bucket: '1_2mb',
       reason: 'file_too_large',
-      file_name: 'a.jpg',
-      file_size: 2 * 1024 * 1024,
+      limit_exceeded_by: '50_100_percent',
     });
   });
 

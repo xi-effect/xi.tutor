@@ -124,7 +124,7 @@ export async function insertImageFile(
       fileSize: file.size,
       maxBytes: getMaxImageBytes(),
     });
-    trackFileSizeLimitFromUploadError(err, file, 'other');
+    trackFileSizeLimitFromUploadError(err, file, 'other', getMaxImageBytes());
     toast.error(t('toast.imageUploadError'));
     return false;
   }
@@ -198,7 +198,7 @@ export async function insertAudioFile(
       fileSize: file.size,
       maxBytes: getMaxFileBytes(),
     });
-    trackFileSizeLimitFromUploadError(err, file, 'other');
+    trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
     throw err;
   }
 }
@@ -256,7 +256,7 @@ export async function insertPdfFile(
       fileSize: file.size,
       maxBytes: getMaxFileBytes(),
     });
-    trackFileSizeLimitFromUploadError(err, file, 'other');
+    trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
     throw err;
   }
 }
@@ -311,7 +311,7 @@ export async function insertPresentationFile(
       fileSize: file.size,
       maxBytes: getMaxFileBytes(),
     });
-    trackFileSizeLimitFromUploadError(err, file, 'other');
+    trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
     throw err;
   }
 }
@@ -368,7 +368,7 @@ export async function insertFileBlock(
       fileSize: file.size,
       maxBytes: getMaxFileBytes(),
     });
-    trackFileSizeLimitFromUploadError(err, file, 'other');
+    trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
     throw err;
   }
 }

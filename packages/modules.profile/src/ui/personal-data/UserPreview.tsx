@@ -69,7 +69,9 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      beginFileUploadAttempt('profile_avatar', file).reject('file_too_large');
+      beginFileUploadAttempt('profile_avatar', file, { maxBytes: 5 * 1024 * 1024 }).reject(
+        'file_too_large',
+      );
       toast(t('userPreview.fileTooLarge'));
       return;
     }
