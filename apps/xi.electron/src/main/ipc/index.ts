@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import fs from 'node:fs/promises';
-import { IPC } from '../../shared/channels';
+import { EVENTS, IPC } from '../../shared/channels';
 import type { MediaPermissionKind, SlotBounds } from '../../shared/types';
 import type { ConferenceController } from '../conference/controller';
 import { PRODUCT_NAME } from '../../shared/constants';
@@ -10,10 +10,22 @@ import { getShellTheme, setShellTheme } from '../theme';
 import {
   broadcastShareOverlayStop,
   hideShareOverlayWindow,
-  showShareOverlayWindow,
 } from '../windows/share-overlay-window';
 import { showMainWindow } from '../windows/main-window';
-import { asNumber, asRecord, asString, assertTrustedSender } from './validate';
+import { asBoolean, asNumber, asRecord, asString, assertTrustedSender } from './validate';
+import {
+  getNativeNotificationPermission,
+  requestNativeNotificationPermission,
+  showNativeNotification,
+} from '../notifications';
+import {
+  readClipboardHtml,
+  readClipboardText,
+  writeClipboardHtml,
+  writeClipboardText,
+} from '../clipboard';
+import { setDisplaySleepBlocked } from '../power';
+import { sendToRenderer } from '../send';
 
 function nativeOs(): 'macos' | 'windows' | 'linux' | 'unknown' {
   if (process.platform === 'darwin') return 'macos';
@@ -135,7 +147,8 @@ export function registerIpc(options: {
   });
 
   handle(IPC.screenShareOpenControls, async () => {
-    showShareOverlayWindow();
+    // Electron: a second always-on-top overlay with content protection looks
+    // like the macOS desktop/Dock bleeding through the call window.
   });
 
   handle(IPC.screenShareCloseControls, async () => {
@@ -181,5 +194,41 @@ export function registerIpc(options: {
   handle(IPC.themeSet, async (_event, theme) => {
     const next = asString(theme) === 'dark' ? 'dark' : 'light';
     setShellTheme(next);
+  });
+
+  handle(IPC.notificationsStatus, async () => getNativeNotificationPermission());
+
+  handle(IPC.notificationsRequest, async () => requestNativeNotificationPermission());
+
+  handle(IPC.notificationsShow, async (_event, input) => {
+    const record = asRecord(input);
+    const title = asString(record.title);
+    const body = asString(record.body);
+    if (!title && !body) return false;
+    return showNativeNotification(
+      { title, body, url: asString(record.url) || undefined },
+      (url) => {
+        const window = getMainWindow();
+        showMainWindow(window);
+        sendToRenderer(window?.webContents, EVENTS.notificationClick, url);
+      },
+    );
+  });
+
+  handle(IPC.clipboardWriteText, async (_event, text) => {
+    writeClipboardText(asString(text));
+  });
+
+  handle(IPC.clipboardReadText, async () => readClipboardText());
+
+  handle(IPC.clipboardWriteHtml, async (_event, input) => {
+    const record = asRecord(input);
+    writeClipboardHtml(asString(record.html), asString(record.text));
+  });
+
+  handle(IPC.clipboardReadHtml, async () => readClipboardHtml());
+
+  handle(IPC.powerSetDisplaySleepBlocked, async (_event, enabled) => {
+    setDisplaySleepBlocked(asBoolean(enabled));
   });
 }

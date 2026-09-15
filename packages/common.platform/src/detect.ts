@@ -46,10 +46,21 @@ export function isTauriShell(): boolean {
   return getNativeRuntime() === 'tauri';
 }
 
+const ELECTRON_CONFERENCE_PATH = '/desktop/conference/';
+
+function locationPathname(): string {
+  const g = host();
+  const location = g?.location;
+  if (!location || typeof location !== 'object') return '';
+  const pathname = (location as { pathname?: unknown }).pathname;
+  return typeof pathname === 'string' ? pathname : '';
+}
+
 export function getElectronSurface(): ElectronSurface | null {
   if (!isElectronShell()) return null;
-  const raw = host()?.__SOVLIUM_ELECTRON_SURFACE__;
-  if (raw === 'conference' || raw === 'main') return raw;
+  // Pathname only: sessionStorage and additionalArguments are shared across
+  // persist:sovlium views, so a query/argv flag would flip the main window too.
+  if (locationPathname().startsWith(ELECTRON_CONFERENCE_PATH)) return 'conference';
   return 'main';
 }
 

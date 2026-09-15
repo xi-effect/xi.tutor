@@ -10,17 +10,21 @@ import {
 import { EVENTS } from '../shared/channels';
 import { registerIpc } from './ipc';
 import { configureSovliumSession } from './session';
+import { sendToRenderer } from './send';
 import { initUpdater } from './updater';
 import { createMainWindow, showMainWindow } from './windows/main-window';
+import { setDisplaySleepBlocked } from './power';
 
 export class SovliumDesktopApp {
   private mainWindow: BrowserWindow | null = null;
-  private quitting = false;
   private readonly conference = new ConferenceController(() => this.mainWindow);
 
   async start(): Promise<void> {
     const gotLock = app.requestSingleInstanceLock();
     if (!gotLock) {
+      console.error(
+        '[xi.electron] another Sovlium instance is already running. Close it and try again.',
+      );
       app.quit();
       return;
     }
@@ -30,7 +34,6 @@ export class SovliumDesktopApp {
     }
 
     registerDeepLinkProtocol();
-    configureSovliumSession();
     registerIpc({
       getMainWindow: () => this.mainWindow,
       conference: this.conference,
@@ -47,11 +50,10 @@ export class SovliumDesktopApp {
       dispatchDeepLink(this.mainWindow, url);
     });
 
-    app.on('before-quit', () => {
-      this.quitting = true;
-    });
-
     await app.whenReady();
+    // protocol.handle() is only allowed after ready. Calling it earlier
+    // kills the packaged app with no window and no visible error.
+    configureSovliumSession();
     this.mainWindow = createMainWindow();
     this.attachMainWindow(this.mainWindow);
 
@@ -63,7 +65,7 @@ export class SovliumDesktopApp {
         if (bootLink.startsWith('sovlium://')) {
           dispatchDeepLink(current, bootLink);
         } else {
-          current.webContents.send(EVENTS.deepLink, bootLink);
+          sendToRenderer(current.webContents, EVENTS.deepLink, bootLink);
         }
       });
     }
@@ -86,31 +88,23 @@ export class SovliumDesktopApp {
     window.webContents.on('enter-html-full-screen', () => this.conference.handleMainResize());
     window.webContents.on('leave-html-full-screen', () => this.conference.handleMainResize());
     window.webContents.on('focus', () => {
-      window.webContents.send(EVENTS.windowFocus, true);
+      sendToRenderer(window.webContents, EVENTS.windowFocus, true);
     });
     window.on('blur', () => {
-      window.webContents.send(EVENTS.windowFocus, false);
+      sendToRenderer(window.webContents, EVENTS.windowFocus, false);
     });
     window.on('focus', () => {
-      window.webContents.send(EVENTS.windowFocus, true);
+      sendToRenderer(window.webContents, EVENTS.windowFocus, true);
     });
 
-    window.on('close', (event) => {
-      if (this.quitting || !this.conference.isActive()) {
-        return;
-      }
-      event.preventDefault();
-      if (!this.conference.isFloating()) {
-        void this.conference.enterFloatingMode();
-      }
-      window.hide();
+    window.on('close', () => {
+      void this.conference.leave();
     });
 
     window.on('closed', () => {
       this.mainWindow = null;
-      if (!this.conference.isActive()) {
-        app.quit();
-      }
+      setDisplaySleepBlocked(false);
+      app.quit();
     });
   }
 }

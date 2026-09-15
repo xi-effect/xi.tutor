@@ -2,7 +2,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 import { getSovliumDesktop, isElectronConferenceSurface, isElectronShell } from 'common.platform';
-import { CallsShell, useCallStore, useStartCall } from 'modules.calls';
+import {
+  CallsShell,
+  useCallStore,
+  useStartCall,
+} from 'modules.calls';
 import { useCurrentUser } from 'common.services';
 import { Suspense, lazy, useEffect, useRef } from 'react';
 import { z } from 'zod';

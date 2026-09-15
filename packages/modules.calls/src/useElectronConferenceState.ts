@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getSovliumDesktop, isElectronMainSurface, type ConferenceState } from 'common.platform';
+import { getSovliumDesktop, type ConferenceState } from 'common.platform';
 
 const EMPTY_STATE: ConferenceState = {
   active: false,
@@ -12,7 +12,6 @@ export function useElectronConferenceState(): ConferenceState {
   const [state, setState] = useState<ConferenceState>(EMPTY_STATE);
 
   useEffect(() => {
-    if (!isElectronMainSurface()) return;
     const desktop = getSovliumDesktop();
     if (!desktop) return;
 

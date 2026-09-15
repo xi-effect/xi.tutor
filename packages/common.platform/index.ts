@@ -51,6 +51,8 @@ export { writeText, readText, writeHtmlAndText, readHtml } from './src/clipboard
 
 export { saveBlob, pickFiles, type SaveBlobOptions, type PickFilesOptions } from './src/files';
 
+export { setDisplaySleepBlocked } from './src/power';
+
 export {
   queryMediaPermission,
   requestMediaPermission,

@@ -1,4 +1,6 @@
-import { isDesktopNative, isNativeShell, isTauriShell } from './detect';
+import { isDesktopNative, isElectronShell, isNativeShell, isTauriShell } from './detect';
+import { getSovliumDesktop } from './electron';
+import { focusAppWindow } from './window';
 
 export type NotificationPermissionState = NotificationPermission;
 
@@ -15,6 +17,10 @@ export function isNotificationSupported(): boolean {
 }
 
 export function getNotificationPermission(): NotificationPermissionState {
+  if (isElectronShell()) {
+    if (!isNotificationSupported()) return 'denied';
+    return cacheHydrated ? cachedPermission : 'default';
+  }
   if (!cacheHydrated && webNotificationAvailable()) {
     cachedPermission = Notification.permission;
     cacheHydrated = true;
@@ -30,6 +36,17 @@ function mapPluginPermission(status: string, granted: boolean): NotificationPerm
 }
 
 export async function refreshNotificationPermission(): Promise<NotificationPermissionState> {
+  if (isElectronShell()) {
+    try {
+      const status = await getSovliumDesktop()?.notifications.status();
+      cachedPermission = status === 'denied' ? 'denied' : status === 'granted' ? 'granted' : 'default';
+      cacheHydrated = true;
+      return cachedPermission;
+    } catch (err) {
+      console.warn('[common.platform] electron notification status failed', err);
+    }
+  }
+
   if (isTauriShell()) {
     try {
       const plugin = await import('@tauri-apps/plugin-notification');
@@ -61,6 +78,17 @@ export async function refreshNotificationPermission(): Promise<NotificationPermi
 }
 
 export async function requestNotificationPermission(): Promise<NotificationPermissionState> {
+  if (isElectronShell()) {
+    try {
+      const status = await getSovliumDesktop()?.notifications.request();
+      cachedPermission = status === 'denied' ? 'denied' : status === 'granted' ? 'granted' : 'default';
+      cacheHydrated = true;
+      return cachedPermission;
+    } catch (err) {
+      console.warn('[common.platform] electron notification request failed', err);
+    }
+  }
+
   if (isTauriShell()) {
     try {
       const plugin = await import('@tauri-apps/plugin-notification');
@@ -111,9 +139,7 @@ async function ensureNotificationActionListener(): Promise<void> {
       const tag = extra?.tag;
       const pending = tag ? pendingByTag.get(tag) : undefined;
       const url = extra?.url ?? pending?.url;
-      void import('./window').then(({ focusAppWindow }) => {
-        void focusAppWindow();
-      });
+      void focusAppWindow();
       if (url && pending?.onNavigate) {
         pending.onNavigate(url);
       }
@@ -128,6 +154,19 @@ export async function showNotification(options: ShowNotificationOptions): Promis
   const { title, body, url, onNavigate, icon } = options;
   const permission = await refreshNotificationPermission();
   if (permission !== 'granted') return false;
+
+  if (isElectronShell()) {
+    try {
+      const shown = await getSovliumDesktop()?.notifications.show({
+        title,
+        body,
+        url: url ?? undefined,
+      });
+      if (shown) return true;
+    } catch (err) {
+      console.warn('[common.platform] electron notification failed, falling back', err);
+    }
+  }
 
   if (isTauriShell()) {
     try {

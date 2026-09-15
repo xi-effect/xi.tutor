@@ -1,18 +1,12 @@
 import { BrowserWindow, WebContentsView, type Rectangle } from 'electron';
-import { COMPACT_CONFERENCE, FLOATING_CONFERENCE } from '../../shared/constants';
+import { FLOATING_CONFERENCE } from '../../shared/constants';
 import { EVENTS } from '../../shared/channels';
 import type { ConferenceState, SlotBounds } from '../../shared/types';
 import { getAppOrigin, getDevRendererUrl, getRemoteRendererUrl, isBundledWebMode } from '../config';
 import { installNavigationGuard } from '../navigation';
+import { sendToRenderer } from '../send';
 import { createWebPreferences, showMainWindow } from '../windows/main-window';
-import { createFloatingConferenceWindow } from '../windows/conference-window';
-
-function clampSize(width: number, height: number): { width: number; height: number } {
-  return {
-    width: Math.max(FLOATING_CONFERENCE.minWidth, Math.round(width)),
-    height: Math.max(FLOATING_CONFERENCE.minHeight, Math.round(height)),
-  };
-}
+import { enterCallPip, isCallPipActive, leaveCallPip, resizeCallPip, setCallPipClosedListener } from '../call-pip';
 
 export class ConferenceController {
   private view: WebContentsView | null = null;
@@ -21,14 +15,20 @@ export class ConferenceController {
   private slot: SlotBounds | null = null;
   private presentation: ConferenceState['presentation'] = 'hidden';
 
-  constructor(private readonly getMainWindow: () => BrowserWindow | null) {}
+  constructor(private readonly getMainWindow: () => BrowserWindow | null) {
+    setCallPipClosedListener(() => {
+      this.broadcast();
+      this.emitPipRestored();
+    });
+  }
 
   getState(): ConferenceState {
+    const pip = isCallPipActive();
     return {
       active: Boolean(this.view),
       classroomId: this.classroomId,
-      presentation: this.presentation,
-      floating: this.presentation === 'floating',
+      presentation: pip ? 'floating' : this.presentation,
+      floating: pip,
     };
   }
 
@@ -37,21 +37,19 @@ export class ConferenceController {
   }
 
   isFloating(): boolean {
-    return this.presentation === 'floating';
+    return isCallPipActive();
   }
 
   private broadcast(): void {
     const state = this.getState();
     for (const window of BrowserWindow.getAllWindows()) {
-      if (!window.isDestroyed()) {
-        window.webContents.send(EVENTS.conferenceState, state);
-      }
+      sendToRenderer(window.webContents, EVENTS.conferenceState, state);
     }
-    this.view?.webContents.send(EVENTS.conferenceState, state);
+    sendToRenderer(this.view?.webContents, EVENTS.conferenceState, state);
   }
 
   private conferenceUrl(classroomId: string): string {
-    const path = `/desktop/conference/${encodeURIComponent(classroomId)}`;
+    const path = `/desktop/conference/${encodeURIComponent(classroomId)}?sovlium_surface=conference`;
     const remote = getRemoteRendererUrl();
     if (remote) return `${remote}${path}`;
     if (isBundledWebMode()) return `${getAppOrigin()}${path}`;
@@ -93,20 +91,18 @@ export class ConferenceController {
     const view = this.view;
     if (!main || main.isDestroyed() || !view || this.presentation !== 'inline') return;
     const zoom = main.webContents.zoomFactor || 1;
-    const bounds = this.slot ?? {
-      x: Math.max(16, main.getContentSize()[0] - COMPACT_CONFERENCE.width - 16),
-      y: Math.max(16, main.getContentSize()[1] - COMPACT_CONFERENCE.height - 16),
-      width: COMPACT_CONFERENCE.width,
-      height: COMPACT_CONFERENCE.height,
-    };
+    if (!this.slot || this.slot.width < 8 || this.slot.height < 8) {
+      view.setVisible(false);
+      return;
+    }
     const next: Rectangle = {
-      x: Math.round(bounds.x * zoom),
-      y: Math.round(bounds.y * zoom),
-      width: Math.max(1, Math.round(bounds.width * zoom)),
-      height: Math.max(1, Math.round(bounds.height * zoom)),
+      x: Math.round(this.slot.x * zoom),
+      y: Math.round(this.slot.y * zoom),
+      width: Math.max(1, Math.round(this.slot.width * zoom)),
+      height: Math.max(1, Math.round(this.slot.height * zoom)),
     };
     view.setBounds(next);
-    view.setVisible(next.width > 4 && next.height > 4);
+    view.setVisible(true);
   }
 
   async start(classroomId: string): Promise<ConferenceState> {
@@ -156,72 +152,47 @@ export class ConferenceController {
     width: number;
     height: number;
   }): Promise<{ width: number; height: number }> {
-    const view = this.ensureView();
-    if (!this.classroomId) throw new Error('conference is not active');
-
-    this.detach();
-    if (!this.floating || this.floating.isDestroyed()) {
-      this.floating = createFloatingConferenceWindow();
-      this.floating.setBackgroundColor('#111318');
-      this.floating.on('resize', () => {
-        if (!this.floating || this.floating.isDestroyed() || !this.view) return;
-        const [width, height] = this.floating.getContentSize();
-        this.view.setBounds({ x: 0, y: 0, width, height });
-      });
-      this.floating.on('closed', () => {
-        this.floating = null;
-        if (this.view && this.presentation === 'floating') {
-          this.attachToMain();
-          this.broadcast();
-          this.emitPipRestored();
-        }
-      });
+    const main = this.getMainWindow();
+    if (!main || main.isDestroyed()) {
+      return {
+        width: size?.width ?? FLOATING_CONFERENCE.width,
+        height: size?.height ?? FLOATING_CONFERENCE.height,
+      };
     }
-
-    const next = clampSize(
-      size?.width ?? FLOATING_CONFERENCE.width,
-      size?.height ?? FLOATING_CONFERENCE.height,
-    );
-    this.floating.setSize(next.width, next.height);
-    this.floating.contentView.addChildView(view);
-    view.setBounds({ x: 0, y: 0, width: next.width, height: next.height });
-    view.setVisible(true);
-    this.presentation = 'floating';
-    this.floating.show();
-    this.floating.focus();
+    const next = enterCallPip(size);
     this.broadcast();
     return next;
   }
 
   async exitFloatingMode(): Promise<void> {
+    if (isCallPipActive()) {
+      leaveCallPip();
+    }
     if (!this.view) return;
     this.attachToMain();
     this.broadcast();
-    this.emitPipRestored();
   }
 
   async resizeFloating(size: {
     width: number;
     height: number;
   }): Promise<{ width: number; height: number }> {
-    if (!this.floating || this.floating.isDestroyed() || this.presentation !== 'floating') {
-      return size;
-    }
-    const next = clampSize(size.width, size.height);
-    this.floating.setSize(next.width, next.height);
-    this.view?.setBounds({ x: 0, y: 0, width: next.width, height: next.height });
-    return next;
+    if (!isCallPipActive()) return size;
+    return resizeCallPip(size);
   }
 
   async leave(): Promise<void> {
+    if (isCallPipActive()) {
+      leaveCallPip();
+    }
     await this.destroy();
     this.broadcast();
   }
 
   private emitPipRestored(): void {
     const main = this.getMainWindow();
-    main?.webContents.send(EVENTS.callPipRestored);
-    this.view?.webContents.send(EVENTS.callPipRestored);
+    sendToRenderer(main?.webContents, EVENTS.callPipRestored);
+    sendToRenderer(this.view?.webContents, EVENTS.callPipRestored);
   }
 
   async destroy(): Promise<void> {

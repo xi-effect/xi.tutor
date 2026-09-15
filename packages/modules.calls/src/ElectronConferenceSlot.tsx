@@ -24,8 +24,8 @@ export function ElectronConferenceSlot({ children }: ElectronConferenceSlotProps
   const location = useLocation();
   const state = useElectronConferenceState();
   const slotRef = useRef<HTMLDivElement>(null);
-  const full = location.pathname.includes('/call/');
-  const visible = state.active && !state.floating;
+  const onCallPage = location.pathname.includes('/call/');
+  const visible = state.active && onCallPage;
 
   useEffect(() => {
     if (!isElectronMainSurface()) return;
@@ -48,7 +48,7 @@ export function ElectronConferenceSlot({ children }: ElectronConferenceSlotProps
       window.removeEventListener('resize', report);
       document.removeEventListener('scroll', report, true);
     };
-  }, [visible, full, state.classroomId]);
+  }, [visible, state.classroomId]);
 
   return (
     <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
@@ -57,11 +57,7 @@ export function ElectronConferenceSlot({ children }: ElectronConferenceSlotProps
         <div
           ref={slotRef}
           aria-hidden
-          className={
-            full
-              ? 'bg-background-page pointer-events-none absolute inset-0 z-40'
-              : 'bg-background-page pointer-events-none fixed right-4 bottom-4 z-40 h-[240px] w-[380px] overflow-hidden rounded-xl shadow-lg'
-          }
+          className="bg-background-page pointer-events-none absolute inset-0 z-40"
         />
       ) : null}
     </div>

@@ -124,6 +124,36 @@ describe('detect', () => {
     expect(getNativeRuntime()).toBe('electron');
   });
 
+  it('считает conference surface только на /desktop/conference/', () => {
+    vi.stubGlobal('window', {
+      __SOVLIUM_NATIVE__: true,
+      __SOVLIUM_ELECTRON__: true,
+      __SOVLIUM_ELECTRON_SURFACE__: 'conference',
+      sovliumDesktop: {},
+      location: { pathname: '/desktop/conference/42', search: '?sovlium_surface=conference' },
+    });
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' });
+
+    expect(isElectronConferenceSurface()).toBe(true);
+    expect(isElectronMainSurface()).toBe(false);
+    expect(getElectronSurface()).toBe('conference');
+  });
+
+  it('не считает главное окно conference из-за query или preload', () => {
+    vi.stubGlobal('window', {
+      __SOVLIUM_NATIVE__: true,
+      __SOVLIUM_ELECTRON__: true,
+      __SOVLIUM_ELECTRON_SURFACE__: 'conference',
+      sovliumDesktop: {},
+      location: { pathname: '/classrooms/42', search: '?sovlium_surface=conference' },
+    });
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' });
+
+    expect(isElectronConferenceSurface()).toBe(false);
+    expect(isElectronMainSurface()).toBe(true);
+    expect(getElectronSurface()).toBe('main');
+  });
+
   it('не считает Electron оболочку Tauri', () => {
     vi.stubGlobal('window', { __TAURI_INTERNALS__: {} });
     vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' });

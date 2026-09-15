@@ -12,14 +12,11 @@ export const DEFAULT_WINDOW = {
   minHeight: 640,
 } as const;
 
-export const COMPACT_CONFERENCE = {
-  width: 380,
-  height: 240,
-} as const;
-
 export const FLOATING_CONFERENCE = {
   width: 380,
-  height: 280,
+  height: 316,
   minWidth: 280,
-  minHeight: 160,
+  minHeight: 196,
 } as const;
+
+export const PIP_CHROME_HEIGHT = 36;

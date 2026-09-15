@@ -72,6 +72,23 @@ const api: SovliumDesktopAPI = {
   files: {
     save: (request) => ipcRenderer.invoke(IPC.filesSave, request),
   },
+  notifications: {
+    status: () => ipcRenderer.invoke(IPC.notificationsStatus),
+    request: () => ipcRenderer.invoke(IPC.notificationsRequest),
+    show: (input) => ipcRenderer.invoke(IPC.notificationsShow, input),
+    onClicked: (handler) =>
+      subscribe(EVENTS.notificationClick, (payload) => handler(String(payload ?? ''))),
+  },
+  clipboard: {
+    writeText: (text) => ipcRenderer.invoke(IPC.clipboardWriteText, text),
+    readText: () => ipcRenderer.invoke(IPC.clipboardReadText),
+    writeHtml: (html, text) => ipcRenderer.invoke(IPC.clipboardWriteHtml, { html, text }),
+    readHtml: () => ipcRenderer.invoke(IPC.clipboardReadHtml),
+  },
+  power: {
+    setDisplaySleepBlocked: (enabled) =>
+      ipcRenderer.invoke(IPC.powerSetDisplaySleepBlocked, enabled),
+  },
   external: {
     openUrl: (url: string) => ipcRenderer.invoke(IPC.externalOpenUrl, url),
   },

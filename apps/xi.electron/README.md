@@ -115,12 +115,13 @@ SOVLIUM_ELECTRON_REMOTE_URL=https://app.sovlium.ru pnpm electron:dev
 ```bash
 pnpm electron:build
 pnpm electron:build:macos
+pnpm electron:build:macos:universal
 pnpm electron:build:windows
 ```
 
 Сначала собирается `xi.web` в режиме `electron` (`vite build --mode electron`): minify и code splitting как в production, **без** PWA Service Worker.
 
-macOS: `.app` + `.dmg`, universal (arm64 + x64), если tooling позволяет.  
+macOS по умолчанию — текущая архитектура (на Apple Silicon это arm64: `.app` + `.dmg`). Universal (arm64 + x64) почти удваивает размер из‑за двух копий Chromium: `pnpm electron:build:macos:universal`.  
 Windows: NSIS `.exe` x64, uninstall, AppUserModelId `ru.sovlium.electron.dev`.  
 Linux на первом этапе не собирается.
 

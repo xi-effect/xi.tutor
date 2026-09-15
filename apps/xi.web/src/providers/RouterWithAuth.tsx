@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from 'common.auth';
 import { NetworkProvider, NotificationsProvider } from 'common.services';
 import { ThemeProvider } from 'common.theme';
 import { Toaster } from 'sonner';
+import { TooltipProvider } from '@xipkg/tooltip';
 import { router } from '../router';
 import { AuthSocketBridge } from './AuthSocketBridge';
 import { ElectronDeepLinkHost } from './ElectronDeepLinkHost';
@@ -118,11 +119,13 @@ export const RouterWithAuth = () => {
       <AuthProvider>
         <AuthSocketBridge>
           <ThemeProvider>
-            <NetworkProvider>
-              <NotificationsProvider>
-                <RouterWithAuthContext />
-              </NotificationsProvider>
-            </NetworkProvider>
+            <TooltipProvider delayDuration={200}>
+              <NetworkProvider>
+                <NotificationsProvider>
+                  <RouterWithAuthContext />
+                </NotificationsProvider>
+              </NetworkProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </AuthSocketBridge>
       </AuthProvider>

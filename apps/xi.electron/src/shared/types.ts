@@ -31,6 +31,7 @@ export interface SaveFileRequest {
 export type MediaPermissionKind = 'camera' | 'microphone' | 'screen';
 export type MediaPermissionStatus = 'granted' | 'denied' | 'prompt' | 'unsupported';
 export type ShellTheme = 'light' | 'dark';
+export type DesktopNotificationPermission = 'granted' | 'denied' | 'default';
 
 export interface SovliumDesktopAPI {
   app: {
@@ -75,6 +76,21 @@ export interface SovliumDesktopAPI {
   };
   files: {
     save(request: SaveFileRequest): Promise<boolean>;
+  };
+  notifications: {
+    status(): Promise<DesktopNotificationPermission>;
+    request(): Promise<DesktopNotificationPermission>;
+    show(input: { title: string; body: string; url?: string }): Promise<boolean>;
+    onClicked(handler: (url: string) => void): () => void;
+  };
+  clipboard: {
+    writeText(text: string): Promise<void>;
+    readText(): Promise<string>;
+    writeHtml(html: string, text: string): Promise<void>;
+    readHtml(): Promise<string>;
+  };
+  power: {
+    setDisplaySleepBlocked(enabled: boolean): Promise<void>;
   };
   external: {
     openUrl(url: string): Promise<void>;

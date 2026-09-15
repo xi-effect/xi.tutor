@@ -7,7 +7,7 @@ const watch = process.argv.includes('--watch');
 
 const common = {
   bundle: true,
-  sourcemap: true,
+  sourcemap: watch,
   absWorkingDir: root,
   logLevel: 'info',
 };

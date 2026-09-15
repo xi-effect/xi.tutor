@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { getSovliumDesktop, isElectronMainSurface } from 'common.platform';
+import { navigateFromNotification } from 'common.services';
 import { router } from '../router';
 
 function toRoute(path: string): { to: string; params?: Record<string, string> } | null {
@@ -21,7 +22,7 @@ export function ElectronDeepLinkHost() {
     if (!isElectronMainSurface()) return;
     const desktop = getSovliumDesktop();
     if (!desktop) return;
-    return desktop.events.onDeepLink((path) => {
+    const stopDeepLink = desktop.events.onDeepLink((path) => {
       const route = toRoute(path);
       if (!route) return;
       void router.navigate({
@@ -29,6 +30,14 @@ export function ElectronDeepLinkHost() {
         params: route.params,
       });
     });
+    const stopNotificationClick = desktop.notifications.onClicked((url) => {
+      if (!url) return;
+      navigateFromNotification(url);
+    });
+    return () => {
+      stopDeepLink();
+      stopNotificationClick();
+    };
   }, []);
 
   return null;

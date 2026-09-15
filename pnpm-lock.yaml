@@ -75,7 +75,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/common.typescript
       electron:
-        specifier: ^38.2.0
+        specifier: 38.8.6
         version: 38.8.6
       electron-builder:
         specifier: ^26.0.12

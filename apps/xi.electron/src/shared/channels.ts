@@ -26,6 +26,14 @@ export const IPC = {
   permissionsRequest: 'sovlium:permissions:request',
   themeGet: 'sovlium:theme:get',
   themeSet: 'sovlium:theme:set',
+  notificationsStatus: 'sovlium:notifications:status',
+  notificationsRequest: 'sovlium:notifications:request',
+  notificationsShow: 'sovlium:notifications:show',
+  clipboardWriteText: 'sovlium:clipboard:write-text',
+  clipboardReadText: 'sovlium:clipboard:read-text',
+  clipboardWriteHtml: 'sovlium:clipboard:write-html',
+  clipboardReadHtml: 'sovlium:clipboard:read-html',
+  powerSetDisplaySleepBlocked: 'sovlium:power:set-display-sleep-blocked',
 } as const;
 
 export type IpcChannel = (typeof IPC)[keyof typeof IPC];
@@ -37,6 +45,7 @@ export const EVENTS = {
   shareOverlayStop: 'share-overlay-stop',
   shareAnnotation: 'share-annotate-stroke',
   callPipRestored: 'call-pip-restored',
+  notificationClick: 'sovlium:event:notification-click',
 } as const;
 
 export type EventChannel = (typeof EVENTS)[keyof typeof EVENTS];

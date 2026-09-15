@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
-import { isElectronMainSurface } from 'common.platform';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import { Suspense, lazy } from 'react';
 import { z } from 'zod';
@@ -53,10 +52,6 @@ function CallPage() {
 
   if (isUserLoading || classroomQuery.isLoading) {
     return <LoadingScreen />;
-  }
-
-  if (isElectronMainSurface()) {
-    return <div className="bg-background-page h-full min-h-0 w-full flex-1" />;
   }
 
   return (

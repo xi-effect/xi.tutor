@@ -10,7 +10,7 @@ import {
   isClassroomOnPause,
 } from 'common.api';
 import { useCurrentUser } from 'common.services';
-import { getSovliumDesktop, isElectronMainSurface } from 'common.platform';
+import { isElectronConferenceSurface } from 'common.platform';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   createAttemptId,
@@ -79,15 +79,10 @@ export const useStartCall = () => {
       const attemptId = createAttemptId();
       beginNewConnectAttempt(attemptId);
 
-      if (isElectronMainSurface()) {
-        const desktop = getSovliumDesktop();
-        if (!desktop) {
-          throw new Error('Electron desktop API is not available');
-        }
-        await desktop.conference.start({ classroomId: data.classroom_id });
-        navigation.navigateToCall(data.classroom_id);
-      } else {
-        await startCallBase(data);
+      await startCallBase(data);
+
+      if (isElectronConferenceSurface()) {
+        return;
       }
 
       if (role === 'tutor') {

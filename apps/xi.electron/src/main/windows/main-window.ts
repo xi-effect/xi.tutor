@@ -60,6 +60,22 @@ export function createMainWindow(): BrowserWindow {
 
   installWindowNavigationGuard(window);
 
+  let loadAttempts = 0;
+  window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+    console.error('[xi.electron] renderer failed to load', {
+      errorCode,
+      errorDescription,
+      validatedURL,
+    });
+    const retryable = errorCode === -102 || errorCode === -106 || errorCode === -118;
+    if (isDev() && retryable && loadAttempts < 30 && !window.isDestroyed()) {
+      loadAttempts += 1;
+      setTimeout(() => {
+        if (!window.isDestroyed()) loadRenderer(window);
+      }, 500);
+    }
+  });
+
   const persist = () => {
     const bounds = window.getNormalBounds();
     saveWindowState({

@@ -1,5 +1,6 @@
 import { BrowserWindow, screen, session } from 'electron';
 import { EVENTS } from '../../shared/channels';
+import { sendToRenderer } from '../send';
 
 let overlay: BrowserWindow | null = null;
 
@@ -73,9 +74,7 @@ function positionOverlay(window: BrowserWindow): void {
 
 export function broadcastShareOverlayStop(): void {
   for (const window of BrowserWindow.getAllWindows()) {
-    if (!window.isDestroyed()) {
-      window.webContents.send(EVENTS.shareOverlayStop);
-    }
+    sendToRenderer(window.webContents, EVENTS.shareOverlayStop);
   }
 }
 
@@ -112,6 +111,7 @@ export function showShareOverlayWindow(): BrowserWindow {
 
   overlay.setAlwaysOnTop(true, 'screen-saver');
   overlay.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  overlay.setContentProtection(true);
   overlay.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   overlay.webContents.on('will-navigate', (event, url) => {
     event.preventDefault();

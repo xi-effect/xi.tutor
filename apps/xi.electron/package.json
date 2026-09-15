@@ -11,6 +11,7 @@
     "build:main": "node scripts/build-main.mjs",
     "build": "node scripts/ensure-web-bundle.mjs && node scripts/build-main.mjs && electron-builder --publish never",
     "build:macos": "node scripts/ensure-web-bundle.mjs && node scripts/build-main.mjs && electron-builder --mac --publish never",
+    "build:macos:universal": "node scripts/ensure-web-bundle.mjs && node scripts/build-main.mjs && electron-builder --mac --universal --publish never",
     "build:windows": "node scripts/ensure-web-bundle.mjs && node scripts/build-main.mjs && electron-builder --win --x64 --publish never",
     "lint": "eslint .",
     "check-types": "tsc --noEmit"
@@ -23,7 +24,7 @@
     "@types/node": "^20.3.1",
     "common.eslint": "workspace:*",
     "common.typescript": "workspace:*",
-    "electron": "^38.2.0",
+    "electron": "38.8.6",
     "electron-builder": "^26.0.12",
     "esbuild": "^0.25.9",
     "eslint": "^9.19.0",

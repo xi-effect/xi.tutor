@@ -2,6 +2,7 @@ import { app, type BrowserWindow } from 'electron';
 import { DEEP_LINK_SCHEME } from '../shared/constants';
 import { EVENTS } from '../shared/channels';
 import { toDeepLinkPath } from './security';
+import { sendToRenderer } from './send';
 import { showMainWindow } from './windows/main-window';
 
 let pending: string | null = null;
@@ -20,7 +21,7 @@ export function dispatchDeepLink(window: BrowserWindow | null, url: string): voi
     return;
   }
   showMainWindow(window);
-  window.webContents.send(EVENTS.deepLink, path);
+  sendToRenderer(window.webContents, EVENTS.deepLink, path);
 }
 
 export function registerDeepLinkProtocol(): void {

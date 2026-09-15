@@ -1,4 +1,4 @@
-import { session, type Session } from 'electron';
+import { BrowserWindow, session, type Session } from 'electron';
 import { PARTITION } from '../shared/constants';
 import { isBundledWebMode } from './config';
 import { createAppOriginHandler } from './protocol';
@@ -13,9 +13,21 @@ export function getSovliumSession(): Session {
   return cached;
 }
 
+function installDownloadHandler(ses: Session): void {
+  ses.on('will-download', (_event, item, webContents) => {
+    const filename = item.getFilename() || 'download';
+    const window = BrowserWindow.fromWebContents(webContents);
+    item.setSaveDialogOptions({
+      defaultPath: filename,
+      title: window ? undefined : 'Сохранить файл',
+    });
+  });
+}
+
 export function configureSovliumSession(): Session {
   const ses = getSovliumSession();
   installPermissionHandlers(ses);
+  installDownloadHandler(ses);
 
   if (isBundledWebMode()) {
     const bundle = resolveWebBundle();
