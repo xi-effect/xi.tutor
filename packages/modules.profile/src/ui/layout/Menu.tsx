@@ -41,8 +41,6 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
   // Извлекаем информацию о профиле из параметра iid
   const profileType = search.profile || '';
 
-  console.log(profileType);
-
   const isActive = profileType === item.query;
 
   // Рендерим соответствующую иконку в зависимости от индекса элемента
@@ -161,10 +159,14 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
         name: t('menu.effects'),
         query: 'effects',
       },
-      {
-        name: t('menu.tags'),
-        query: 'tags',
-      },
+      ...(isTutor
+        ? [
+            {
+              name: t('menu.tags'),
+              query: 'tags',
+            },
+          ]
+        : []),
       {
         name: t('menu.board'),
         query: 'board',
