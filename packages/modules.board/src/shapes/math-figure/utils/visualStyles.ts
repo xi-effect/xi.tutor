@@ -22,6 +22,7 @@ export const MATH_FIGURE_LABEL_DY = {
 } as const;
 
 const STROKE_WIDTH: Partial<Record<TSize, number>> = {
+  xs: 1,
   s: 1.5,
   m: 2,
   l: 2.5,

@@ -18,8 +18,8 @@
   "dependencies": {
     "@hocuspocus/provider": "4.7.0",
     "@hookform/resolvers": "^5.2.2",
-    "@ibodr/draw": "^0.2.2",
-    "@ibodr/schema": "^0.2.2",
+    "@ibodr/draw": "^0.2.3",
+    "@ibodr/schema": "^0.2.3",
     "@paddleocr/paddleocr-js": "^0.4.2",
     "@radix-ui/react-context-menu": "^2.2.6",
     "@radix-ui/react-popover": "^1.1.6",
