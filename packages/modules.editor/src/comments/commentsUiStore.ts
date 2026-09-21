@@ -9,7 +9,6 @@ interface CommentsUiState {
   /** id открытого (просматриваемого) треда — попап у пина. */
   openThreadId: string | null;
   openThread: (id: string | null) => void;
-  /** Видимость пинов комментариев в редакторе — переключается из меню «ещё». */
   commentsVisible: boolean;
   setCommentsVisible: (value: boolean) => void;
 }
@@ -21,7 +20,7 @@ export const useCommentsUiStore = create<CommentsUiState>((set) => ({
   openThreadId: null,
   openThread: (id) => set({ openThreadId: id, draftRange: null }),
 
-  commentsVisible: false,
+  commentsVisible: true,
   setCommentsVisible: (value) =>
     set((state) => ({
       commentsVisible: value,

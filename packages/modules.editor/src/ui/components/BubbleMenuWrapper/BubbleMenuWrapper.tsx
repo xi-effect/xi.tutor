@@ -70,10 +70,7 @@ export const BubbleMenuWrapper = ({ editor, isReadOnly }: BubbleMenuProps) => {
       <BubbleButton ariaLabel={t('bubbleMenu.link')} type="link" isActive={activeStates.link}>
         <LinkIcon />
       </BubbleButton>
-      <CommentPlaceButton
-        editor={editor}
-        // className="hover:bg-status-info-background flex h-8 w-8 items-center justify-center rounded-lg"
-      />
+      <CommentPlaceButton editor={editor} />
     </BubbleMenu>
   );
 };

@@ -8,3 +8,4 @@ export { useDrawingToggle, useDrawingTool } from './useDrawing';
 export { useDrawingLayer } from './useDrawingLayer';
 export { useNodeAttribute } from './useNodeAttribute';
 export { useCopyEditorDeepLink } from './useEditorDeepLinkFocus';
+export { useEditorLayoutVersion } from './useEditorLayoutVersion';

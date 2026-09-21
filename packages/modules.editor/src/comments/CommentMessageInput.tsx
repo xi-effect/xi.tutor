@@ -3,7 +3,6 @@ import { Button } from '@xipkg/button';
 import { Textarea } from '@xipkg/textarea';
 import { Send } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-// import { stopEvent } from '../shapes/audio/constants';
 import { useTranslation } from 'react-i18next';
 
 type CommentMessageInputProps = {

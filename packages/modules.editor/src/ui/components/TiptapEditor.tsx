@@ -28,7 +28,7 @@ export const TiptapEditor = () => {
 
   return (
     <div className="xi-editor relative w-full min-w-0 p-4 pr-15 md:pr-40">
-      {/* Тоггл видимости комментариев — правый верхний угол заметки */}
+      {/* Тоггл комментариев в правом верхнем углу заметки */}
       <Button
         variant="none"
         data-comment-ui

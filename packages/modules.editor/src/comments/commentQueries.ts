@@ -30,14 +30,22 @@ export function getThreadMarkRange(
   editor: Editor,
   threadId: string,
 ): { from: number; to: number } | null {
-  let range: { from: number; to: number } | null = null;
+  let from = Infinity;
+  let to = -Infinity;
+
   editor.state.doc.descendants((node, pos) => {
-    if (range) return false;
-    const mark = node.marks.find((m) => m.type.name === 'comment' && m.attrs.threadId === threadId);
-    if (mark) range = { from: pos, to: pos + node.nodeSize };
+    if (!node.isText) return true;
+    const hasMark = node.marks.some(
+      (m) => m.type.name === 'comment' && m.attrs.threadId === threadId,
+    );
+    if (hasMark) {
+      from = Math.min(from, pos);
+      to = Math.max(to, pos + node.nodeSize);
+    }
     return true;
   });
-  return range;
+
+  return from === Infinity ? null : { from, to };
 }
 
 export function createCommentThreadAt(

@@ -22,7 +22,7 @@ export const CommentMark = Mark.create({
         renderHTML: (attrs) => ({ 'data-comment-thread-id': attrs.threadId }),
       },
       color: {
-        default: 'brand-80', //TODO: change to custom token
+        default: 'brand-80',
         parseHTML: (el) => el.getAttribute('data-comment-color'),
         renderHTML: (attrs) => ({
           'data-comment-color': attrs.color,

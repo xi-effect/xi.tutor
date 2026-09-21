@@ -17,7 +17,7 @@ type CommentPinProps = {
 };
 
 export const CommentPin = ({ thread, top }: CommentPinProps) => {
-  const { commentMessagesMap } = useYjsContext();
+  const { commentMessagesMap, editor } = useYjsContext();
   const openThreadId = useCommentsUiStore((s) => s.openThreadId);
   const openThread = useCommentsUiStore((s) => s.openThread);
   const color = generateUserColor(thread.authorId);
@@ -40,6 +40,7 @@ export const CommentPin = ({ thread, top }: CommentPinProps) => {
             'flex size-8 items-center justify-center rounded-full',
             'border-2 shadow-md',
             'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+            '-translate-y-1/2',
             thread.resolved
               ? 'border-border-control bg-action-secondary-background-pressed opacity-70'
               : 'border-border-focus bg-background-surface',
@@ -77,6 +78,10 @@ export const CommentPin = ({ thread, top }: CommentPinProps) => {
         sideOffset={10}
         data-comment-ui
         className="mr-1 w-auto rounded-xl p-3"
+        onOpenAutoFocus={(e) => {
+          if (editor?.isFocused) e.preventDefault();
+        }}
+        onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <CommentThreadPanel threadId={thread.id} onClose={() => openThread(null)} />
       </PopoverContent>

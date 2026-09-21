@@ -2,7 +2,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { PopoverAnchor } from '@radix-ui/react-popover';
 import { Popover, PopoverContent } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-// import { boardDropdownZClass, boardMenuSurfaceClass } from '../ui/boardTheme';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import { CommentMessageInput } from './CommentMessageInput';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +58,6 @@ export const CommentComposer = ({
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         className={cn('w-80 rounded-xl p-3 shadow-md')}
-        // boardMenuSurfaceClass, boardDropdownZClass,
       >
         <CommentMessageInput
           placeholder={t('comments.writePlaceholder')}
