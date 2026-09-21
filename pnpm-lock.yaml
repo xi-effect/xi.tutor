@@ -4307,6 +4307,9 @@ importers:
       '@floating-ui/core':
         specifier: 1.7.0
         version: 1.7.0
+      '@floating-ui/dom':
+        specifier: 1.8.0
+        version: 1.8.0
       '@floating-ui/react':
         specifier: 0.27.8
         version: 0.27.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

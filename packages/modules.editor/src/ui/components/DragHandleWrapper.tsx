@@ -1,15 +1,20 @@
 import { Editor } from '@tiptap/core';
-import { Move, Close, Plus } from '@xipkg/icons';
+import { Add, Close, Move } from '@xipkg/icons';
 
 import DragHandle from '@tiptap/extension-drag-handle-react';
-import { Button } from '@xipkg/button';
 import { useMediaQuery } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
-import { BlockMenu } from './BlockMenu';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { BlockMenu, type BlockMenuMode } from './BlockMenu';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActiveBlockT } from '../../types';
 import { EDITOR_MOBILE_MEDIA_QUERY } from '../../const/breakpoints';
 import { useInterfaceStore } from '../../store/interfaceStore';
+import { setDragHandleLocked } from '../../utils/setDragHandleLocked';
+import {
+  getDragHandleElement,
+  getFirstBlockAnchor,
+  positionDragHandle,
+} from '../../utils/positionDragHandle';
 
 function getEditorContentBox(editorDom: HTMLElement) {
   const rect = editorDom.getBoundingClientRect();
@@ -53,6 +58,12 @@ function snapToEditorGutter(editor: Editor) {
   };
 }
 
+const handleButtonClass = 'drag-handle-btn';
+const handleIconClass = 'drag-handle-icon';
+
+/** Без edge detection: иначе при движении к ручке цель прыгает с пункта на весь список. */
+const NESTED_DRAG_OPTIONS = { edgeDetection: 'none' as const };
+
 type DragHandleWrapperPropsT = {
   editor: Editor;
   onDragStart?: () => void;
@@ -69,22 +80,44 @@ export const DragHandleWrapper = ({
   const { t } = useTranslation('editor');
   const isMobile = useMediaQuery(EDITOR_MOBILE_MEDIA_QUERY);
   const activeBlockRef = useRef<{ pos: number; id: string | null } | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const openMenuRef = useRef<BlockMenuMode | null>(null);
+  const ignoreGripClickRef = useRef(false);
+  const isHoveringRef = useRef(false);
+  const [openMenu, setOpenMenu] = useState<BlockMenuMode | null>(null);
+  const [isHandleReady, setIsHandleReady] = useState(false);
   const setGlobalBlockMenuOpen = useInterfaceStore((s) => s.setBlockMenuOpen);
 
+  openMenuRef.current = openMenu;
+
   const setMenuOpen = useCallback(
-    (open: boolean) => {
-      setIsOpen(open);
-      setGlobalBlockMenuOpen(open);
+    (menu: BlockMenuMode) => (open: boolean) => {
+      const next = open ? menu : null;
+      setOpenMenu(next);
+      setGlobalBlockMenuOpen(Boolean(next));
+      setDragHandleLocked(editor, Boolean(next));
     },
-    [setGlobalBlockMenuOpen],
+    [editor, setGlobalBlockMenuOpen],
   );
 
+  const closeMenu = useCallback(() => {
+    setOpenMenu(null);
+    setGlobalBlockMenuOpen(false);
+    setDragHandleLocked(editor, false);
+  }, [editor, setGlobalBlockMenuOpen]);
+
+  useEffect(() => {
+    return () => {
+      setGlobalBlockMenuOpen(false);
+      setDragHandleLocked(editor, false);
+    };
+  }, [editor, setGlobalBlockMenuOpen]);
+
   const handleNodeChange = useCallback((data: ActiveBlockT) => {
-    if (!data?.node || data?.pos === null) return;
+    if (!data?.node || data?.pos === null || data.pos < 0) return;
 
     const id = data.node.attrs?.['id'] ?? data.node.attrs?.id ?? null;
 
+    isHoveringRef.current = true;
     activeBlockRef.current = { pos: data.pos, id };
   }, []);
 
@@ -157,50 +190,158 @@ export const DragHandleWrapper = ({
     };
   }, [editor]);
 
+  const parkOnFirstBlock = useCallback(() => {
+    if (editor.isDestroyed) return;
+    if (getDragHandleElement(editor)?.dataset.dragging === 'true') return;
+
+    const first = getFirstBlockAnchor(editor);
+    if (!first) return;
+
+    activeBlockRef.current = first;
+    positionDragHandle(editor, getReferencedVirtualElement, computePositionConfig);
+  }, [computePositionConfig, editor, getReferencedVirtualElement]);
+
+  const lockHandleForPlus = useCallback(() => {
+    setDragHandleLocked(editor, true);
+  }, [editor]);
+
+  const unlockHandleIfMenuClosed = useCallback(() => {
+    requestAnimationFrame(() => {
+      if (!openMenuRef.current) setDragHandleLocked(editor, false);
+    });
+  }, [editor]);
+
+  const handleDragStart = useCallback(() => {
+    ignoreGripClickRef.current = true;
+    closeMenu();
+    onDragStart?.();
+  }, [closeMenu, onDragStart]);
+
+  const handleDragEnd = useCallback(() => {
+    window.setTimeout(() => {
+      ignoreGripClickRef.current = false;
+    }, 0);
+    onDragEnd();
+  }, [onDragEnd]);
+
+  const handleGripClick = useCallback(() => {
+    if (ignoreGripClickRef.current) {
+      ignoreGripClickRef.current = false;
+      return;
+    }
+    setMenuOpen('ops')(openMenuRef.current !== 'ops');
+  }, [setMenuOpen]);
+
+  useEffect(() => {
+    if (isMobile) return;
+
+    const parkIfIdle = () => {
+      if (isHoveringRef.current || openMenuRef.current) return;
+      parkOnFirstBlock();
+    };
+
+    const frame = window.requestAnimationFrame(() => {
+      parkIfIdle();
+      window.requestAnimationFrame(() => setIsHandleReady(true));
+    });
+
+    editor.on('update', parkIfIdle);
+
+    const root = editor.view.dom.closest('.xi-editor');
+    const onMouseLeave = () => {
+      if (openMenuRef.current) return;
+      isHoveringRef.current = false;
+      parkOnFirstBlock();
+    };
+    root?.addEventListener('mouseleave', onMouseLeave);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      editor.off('update', parkIfIdle);
+      root?.removeEventListener('mouseleave', onMouseLeave);
+    };
+  }, [editor, isMobile, parkOnFirstBlock]);
+
   // На мобильных/планшетах управление блоками — целиком в NotesEditorToolbar.
   // DragHandle на тач технически реагирует, но появляется только по тапу и
   // остаётся незаметным для пользователя — команда решила не показывать его
   // на этих ширинах вовсе, а не просто прятать «+»/приглушать ручку.
   if (isMobile) return null;
 
+  const isInsertOpen = openMenu === 'insert';
+  const isOpsOpen = openMenu === 'ops';
+
   return (
     <DragHandle
       editor={editor}
-      className="drag-handle"
+      className={['drag-handle', isHandleReady && 'is-ready', openMenu && 'is-menu-open']
+        .filter(Boolean)
+        .join(' ')}
       computePositionConfig={computePositionConfig}
       getReferencedVirtualElement={getReferencedVirtualElement}
-      onElementDragStart={onDragStart}
-      onElementDragEnd={onDragEnd}
-      nested
+      onElementDragStart={handleDragStart}
+      onElementDragEnd={handleDragEnd}
+      nested={NESTED_DRAG_OPTIONS}
       onNodeChange={handleNodeChange}
     >
-      <div className="pointer-events-auto mr-1 flex items-center gap-2">
+      <div className="drag-handle-controls">
         <BlockMenu
           editor={editor}
           isReadOnly={isReadOnly}
-          open={isOpen}
-          setOpen={setMenuOpen}
+          open={isInsertOpen}
+          setOpen={setMenuOpen('insert')}
           getActiveBlock={getActiveBlock}
+          mode="insert"
         >
-          <Button
-            className="hover:bg-background-page active:bg-background-page group h-5 w-5 rounded p-0"
-            variant="none"
+          <button
+            type="button"
+            draggable={false}
+            className={`${handleButtonClass} cursor-pointer`}
+            aria-label={t('dragHandle.addBlock')}
+            title={t('dragHandle.addBlock')}
+            onPointerDown={lockHandleForPlus}
+            onPointerUp={unlockHandleIfMenuClosed}
+            onPointerCancel={unlockHandleIfMenuClosed}
           >
-            {isOpen ? (
-              <Close size="sm" className="fill-icon-primary size-6" />
+            {isInsertOpen ? (
+              <Close className={handleIconClass} />
             ) : (
-              <Plus size="sm" className="fill-icon-primary size-6" />
+              <Add className={handleIconClass} />
             )}
-          </Button>
+          </button>
         </BlockMenu>
 
-        <Button
-          className="hover:bg-background-page active:bg-background-page group h-5 w-5 cursor-grab rounded p-0 active:cursor-grabbing"
-          variant="none"
-          title={t('dragHandle.dragBlock')}
-        >
-          <Move size="sm" className="fill-icon-primary size-6" />
-        </Button>
+        {/*
+          Grip нельзя делать DropdownMenuTrigger: Radix на pointerdown
+          вызывает preventDefault и блокирует HTML5-drag. Якорь меню
+          совпадает с кнопкой, клики и drag идут на саму кнопку.
+        */}
+        <div className="drag-handle-grip">
+          <button
+            type="button"
+            className={`${handleButtonClass} cursor-grab active:cursor-grabbing`}
+            data-drag-grip=""
+            aria-label={t('dragHandle.blockActions')}
+            title={t('dragHandle.blockActions')}
+            aria-expanded={isOpsOpen}
+            aria-haspopup="menu"
+            onClick={handleGripClick}
+          >
+            <Move className={handleIconClass} />
+          </button>
+          <div className="pointer-events-none absolute inset-0">
+            <BlockMenu
+              editor={editor}
+              isReadOnly={isReadOnly}
+              open={isOpsOpen}
+              setOpen={setMenuOpen('ops')}
+              getActiveBlock={getActiveBlock}
+              mode="ops"
+            >
+              <span className="block h-full w-full" aria-hidden />
+            </BlockMenu>
+          </div>
+        </div>
       </div>
     </DragHandle>
   );

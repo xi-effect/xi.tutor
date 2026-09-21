@@ -5,7 +5,7 @@
 
 /* Базовый цвет текста и отступ под ручку блока */
 .xi-editor .ProseMirror {
-  --editor-gutter: 2.5rem;
+  --editor-gutter: 3.5rem;
   --editor-marker: 1.25rem;
   color: var(--xi-text-primary);
   padding-left: var(--editor-gutter);
@@ -39,6 +39,7 @@
   font-weight: 700;
   line-height: 1.2;
   margin: 1.5rem 0 0.5rem 0;
+  scroll-margin-top: 5rem;
 }
 
 .xi-editor .ProseMirror h2 {
@@ -46,6 +47,7 @@
   font-weight: 600;
   line-height: 1.3;
   margin: 1.25rem 0 0.5rem 0;
+  scroll-margin-top: 5rem;
 }
 
 .xi-editor .ProseMirror h3 {
@@ -53,6 +55,7 @@
   font-weight: 600;
   line-height: 1.4;
   margin: 1rem 0 0.5rem 0;
+  scroll-margin-top: 5rem;
 }
 
 /* Стили для параграфов */
@@ -209,24 +212,77 @@
 
 /* --- Drag handle (Notion-style): позиция задаётся плагином через floating-ui --- */
 .xi-editor .drag-handle {
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  --drag-handle-size: 1.75rem;
+  --drag-handle-icon: 1.25rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-width: 1.25rem;
-  min-height: 1.25rem;
-  cursor: grab;
-  border-radius: 0.25rem;
-}
-
-.ProseMirror:hover + div .drag-handle,
-.xi-editor .drag-handle:hover,
-.xi-editor .drag-handle[data-dragging='true'] {
+  justify-content: flex-end;
+  height: var(--drag-handle-size);
+  cursor: default;
   opacity: 1;
+  visibility: visible !important;
 }
 
-.xi-editor .drag-handle:active {
+.xi-editor .drag-handle-controls {
+  display: flex;
+  height: var(--drag-handle-size);
+  align-items: center;
+  pointer-events: auto;
+}
+
+.xi-editor .drag-handle-grip {
+  position: relative;
+  display: flex;
+  width: var(--drag-handle-size);
+  height: var(--drag-handle-size);
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.xi-editor .drag-handle-btn {
+  box-sizing: border-box;
+  display: flex !important;
+  width: var(--drag-handle-size) !important;
+  height: var(--drag-handle-size) !important;
+  margin: 0;
+  padding: 0 !important;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--xi-icon-secondary);
+  line-height: 0;
+  appearance: none;
+}
+
+.xi-editor .drag-handle-btn:hover,
+.xi-editor .drag-handle-btn[data-state='open'] {
+  background: var(--xi-background-subtle);
+  color: var(--xi-icon-primary);
+}
+
+.xi-editor .drag-handle svg,
+.xi-editor .drag-handle-icon {
+  display: block;
+  width: var(--drag-handle-icon) !important;
+  height: var(--drag-handle-icon) !important;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+/* Как в Tiptap Notion-like: ручка плавно едет по top между блоками */
+.xi-editor .drag-handle.is-ready:not([data-dragging='true']) {
+  transition: top 0.2s ease-out;
+}
+
+.xi-editor .drag-handle:not([data-dragging='true']) {
+  pointer-events: auto !important;
+}
+
+.xi-editor .drag-handle [data-drag-grip]:active {
   cursor: grabbing;
 }
 
@@ -313,6 +369,86 @@
     monospace;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
+}
+
+/* Оглавление у правого края страницы, как в Tiptap Notion-like */
+.xi-editor .document-outline {
+  position: fixed;
+  z-index: 5;
+  display: flex;
+  width: 1.75rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+  padding: 0;
+}
+
+.xi-editor .document-outline-item {
+  position: relative;
+  box-sizing: border-box;
+  display: block;
+  height: 0.625rem;
+  margin: 0;
+  padding: 0.2rem 0;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.xi-editor .document-outline-item[data-level='1'] {
+  width: 1.25rem;
+}
+
+.xi-editor .document-outline-item[data-level='2'] {
+  width: 0.875rem;
+}
+
+.xi-editor .document-outline-item[data-level='3'] {
+  width: 0.625rem;
+}
+
+.xi-editor .document-outline-item::after {
+  content: '';
+  display: block;
+  height: 2px;
+  width: 100%;
+  border-radius: 1px;
+  background: var(--xi-icon-secondary);
+  opacity: 0.55;
+}
+
+.xi-editor .document-outline-item[data-active='true']::after,
+.xi-editor .document-outline-item:hover::after {
+  background: var(--xi-text-primary);
+  opacity: 1;
+}
+
+.xi-editor .document-outline-tooltip {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.5rem);
+  z-index: 6;
+  display: none;
+  max-width: 14rem;
+  padding: 0.2rem 0.45rem;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  background: var(--xi-background-surface);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 12%);
+  color: var(--xi-text-primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.xi-editor .document-outline-item:hover .document-outline-tooltip,
+.xi-editor .document-outline-item:focus-visible .document-outline-tooltip {
+  display: block;
 }
 
 /* Стили для мобильных устройств */

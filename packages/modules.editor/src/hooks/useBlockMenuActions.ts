@@ -3,6 +3,7 @@ import { Editor } from '@tiptap/react';
 import { ActiveBlockT, BlockTypeT } from '../types';
 import { moveBlock } from '../utils/moveBlock';
 import { getCurrentBlock } from '../utils/getCurrentBlock';
+import { insertContentRelativeToBlock } from '../utils/insertContentRelativeToBlock';
 
 const TEXT_BLOCKS = ['paragraph', 'heading'];
 
@@ -66,16 +67,10 @@ const createBlock = (
   type: BlockTypeT,
   activeBlock: ActiveBlockT | undefined,
 ) => {
-  if (!editor || !editor.isEditable || !type || !activeBlock) return;
-
-  const currentBlock = getCurrentBlock(editor, activeBlock);
-
-  if (!currentBlock?.node) return;
+  if (!editor || !editor.isEditable || !type) return;
 
   const config = NODE_TYPES_MAP[type];
   if (!config) return;
-
-  const insertPos = currentBlock.pos + currentBlock.node.nodeSize;
 
   const content =
     'content' in config && config.content
@@ -84,7 +79,7 @@ const createBlock = (
 
   if (!content) return;
 
-  editor.chain().focus().insertContentAt(insertPos, content).run();
+  insertContentRelativeToBlock(editor, content, getCurrentBlock(editor, activeBlock));
 };
 
 const downloadImage = (src: string) => {
@@ -103,20 +98,14 @@ export const useBlockMenuActions = (
     (src: string, alt?: string) => {
       if (!editor || !editor.isEditable) return;
 
-      const activeBlock = getCurrentBlock(editor, getActiveBlock?.());
-
-      if (!activeBlock?.node) return;
-
-      const insertPos = activeBlock.pos + activeBlock.node.nodeSize;
-
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(insertPos, {
+      insertContentRelativeToBlock(
+        editor,
+        {
           type: 'image',
           attrs: { src, alt },
-        })
-        .run();
+        },
+        getCurrentBlock(editor, getActiveBlock?.()),
+      );
     },
     [editor, getActiveBlock],
   );
@@ -161,21 +150,15 @@ export const useBlockMenuActions = (
     (codeText: string = '', language: string = 'plaintext') => {
       if (!editor || !editor.isEditable) return;
 
-      // Вставляем после текущего блока; если позицию не удалось определить — в конец
-      const activeBlock = getCurrentBlock(editor, getActiveBlock?.());
-      const insertPos = activeBlock?.node
-        ? activeBlock.pos + activeBlock.node.nodeSize
-        : editor.state.doc.content.size;
-
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(insertPos, {
+      insertContentRelativeToBlock(
+        editor,
+        {
           type: 'codeBlock',
           attrs: { language: language || 'plaintext' },
           content: codeText ? [{ type: 'text', text: codeText }] : [],
-        })
-        .run();
+        },
+        getCurrentBlock(editor, getActiveBlock?.()),
+      );
     },
     [editor, getActiveBlock],
   );

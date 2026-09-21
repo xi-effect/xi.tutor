@@ -82,7 +82,7 @@ export const Header = () => {
         >
           <ArrowLeft size="s" className="fill-icon-primary size-6" />
         </Button>
-        <div className="w-full max-w-4xl px-12 sm:px-29">
+        <div className="w-full max-w-4xl px-12 sm:pr-29 sm:pl-34">
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-full" />
           ) : (

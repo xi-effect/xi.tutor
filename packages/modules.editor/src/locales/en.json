@@ -18,6 +18,7 @@
     "cloudAddToNote": "Add to note",
     "cloudFilesDescription": "Pick a file from your materials library to add it to the note",
     "insertCode": "Insert code",
+    "insertHint": "Choose a block type — it will appear below the current one",
     "duplicate": "Duplicate",
     "moveUp": "Move up",
     "moveDown": "Move down",
@@ -127,7 +128,14 @@
     "copied": "Code copied to clipboard"
   },
   "dragHandle": {
+    "addBlock": "Add block",
+    "blockActions": "Drag or block actions",
     "dragBlock": "Drag block"
+  },
+  "outline": {
+    "title": "Table of contents",
+    "emptyHeading": "Heading",
+    "goTo": "Go to “{{heading}}”"
   },
   "mobileToolbar": {
     "hideKeyboard": "Hide keyboard"
