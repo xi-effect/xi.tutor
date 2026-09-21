@@ -14,10 +14,6 @@ type CommentComposerProps = {
   onCancel: () => void;
 };
 
-/**
- * Попап первого сообщения нового треда — появляется по клику в режиме «поставить комментарий».
- * Popover отвечает за умный флип попапа с учётом границ вьюпорта.
- */
 export const CommentComposer = ({
   top,
   authorId,

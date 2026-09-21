@@ -25,7 +25,6 @@ export const TiptapEditor = () => {
 
   return (
     <div className="xi-editor relative w-full min-w-0 p-4 pr-15 md:pr-40">
-      {/* Тоггл комментариев в правом верхнем углу заметки */}
       <CommentToggleButton t={t} />
       <EditorContent editor={editor} className="max-w-none focus:outline-none" />
       <EditorToolkit editor={editor} isReadOnly={isReadOnly} />

@@ -26,6 +26,8 @@ export const CommentPlaceButton = ({ editor }: CommentPlaceButtonProps) => {
       variant="none"
       data-umami-event="editor-comment-place"
       onMouseDown={handleMouseDown}
+      onClick={handleMouseDown}
+      onPointerDown={handleMouseDown}
       aria-label={t('bubbleMenu.comment')}
     >
       <Chat />
