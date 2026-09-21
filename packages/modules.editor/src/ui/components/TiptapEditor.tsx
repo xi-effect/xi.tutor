@@ -33,7 +33,7 @@ export const TiptapEditor = () => {
         variant="none"
         data-comment-ui
         className={cn(
-          'absolute top-1 right-6 z-30 flex size-7 items-center justify-center rounded-lg p-0 transition-colors md:right-30',
+          'absolute top-1 right-6 z-10 flex size-7 items-center justify-center rounded-lg p-0 transition-colors md:right-30',
         )}
         title={commentsVisible ? t('comments.hide') : t('comments.show')}
         onClick={() => setCommentsVisible(!commentsVisible)}

@@ -37,7 +37,9 @@ export const WelcomeUserAvatar = () => {
     }
 
     if (file.size > 1 * 1024 * 1024) {
-      beginFileUploadAttempt('profile_avatar', file).reject('file_too_large');
+      beginFileUploadAttempt('profile_avatar', file, { maxBytes: 1 * 1024 * 1024 }).reject(
+        'file_too_large',
+      );
       handleError(t('avatar_size_error'), t('avatar_size_hint'));
       return;
     }

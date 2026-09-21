@@ -36,7 +36,7 @@ export const CommentPin = ({ thread, top }: CommentPinProps) => {
           type="button"
           data-comment-ui
           className={cn(
-            'pointer-events-auto absolute right-5 z-30 md:right-30',
+            'pointer-events-auto absolute right-5 z-10 md:right-30',
             'flex size-8 items-center justify-center rounded-full',
             'border-2 shadow-md',
             'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
@@ -77,7 +77,7 @@ export const CommentPin = ({ thread, top }: CommentPinProps) => {
         side="bottom"
         sideOffset={10}
         data-comment-ui
-        className="mr-1 w-auto rounded-xl p-3"
+        className="z-10 mr-1 w-auto rounded-xl p-3"
         onOpenAutoFocus={(e) => {
           if (editor?.isFocused) e.preventDefault();
         }}

@@ -2,9 +2,10 @@ import { PRODUCT_ANALYTICS_EVENTS } from './events';
 import type { ProductAnalyticsEventMap } from './eventMap';
 import { trackProductEvent } from './umami';
 import type {
+  FileSizeBucket,
+  LimitExceededBy,
   ProductLimitFileCategory,
   ProductLimitObjectKind,
-  ProductLimitSizeBucket,
   ProductLimitSource,
 } from './types';
 
@@ -53,14 +54,37 @@ const buildDedupeKey = (properties: ProductLimitReachedProps): string =>
     properties.source,
     properties.file_category ?? '',
     properties.size_bucket ?? '',
+    properties.limit_exceeded_by ?? '',
     properties.object_kind ?? '',
     properties.blocked_on ?? '',
   ].join('|');
 
-export const getFileSizeBucket = (bytes: number): ProductLimitSizeBucket => {
-  if (bytes <= 5 * MB) return '0_5mb';
-  if (bytes <= 30 * MB) return '5_30mb';
-  return '30mb_plus';
+export const getFileSizeBucket = (bytes: number): FileSizeBucket => {
+  if (bytes <= 1 * MB) return '0_1mb';
+  if (bytes <= 2 * MB) return '1_2mb';
+  if (bytes <= 5 * MB) return '2_5mb';
+  if (bytes <= 10 * MB) return '5_10mb';
+  if (bytes <= 20 * MB) return '10_20mb';
+  if (bytes <= 30 * MB) return '20_30mb';
+  if (bytes <= 50 * MB) return '30_50mb';
+  if (bytes <= 100 * MB) return '50_100mb';
+  return '100mb_plus';
+};
+
+export const getLimitExceededBy = (
+  fileBytes: number,
+  limitBytes?: number,
+): LimitExceededBy | undefined => {
+  if (typeof limitBytes !== 'number' || !(limitBytes > 0) || !(fileBytes > limitBytes)) {
+    return undefined;
+  }
+
+  const ratio = fileBytes / limitBytes;
+  if (ratio <= 1.25) return 'up_to_25_percent';
+  if (ratio <= 1.5) return '25_50_percent';
+  if (ratio <= 2) return '50_100_percent';
+  if (ratio <= 3) return '2x_3x';
+  return '3x_plus';
 };
 
 export const getFileCategoryFromFile = (file: {
@@ -134,22 +158,28 @@ export const trackFileSizeLimitReached = (
   source: ProductLimitSource,
   file: { type?: string; name?: string; size: number },
   blockedOn: 'client' | 'api',
-): boolean =>
-  trackProductLimitReached({
+  maxBytes?: number,
+): boolean => {
+  const limitExceededBy = getLimitExceededBy(file.size, maxBytes);
+
+  return trackProductLimitReached({
     limit_type: 'file_size',
     source,
     file_category: getFileCategoryFromFile(file),
     size_bucket: getFileSizeBucket(file.size),
+    ...(limitExceededBy ? { limit_exceeded_by: limitExceededBy } : {}),
     blocked_on: blockedOn,
   });
+};
 
 export const trackFileSizeLimitFromUploadError = (
   error: unknown,
   file: { type?: string; name?: string; size: number },
   source: ProductLimitSource,
+  maxBytes?: number,
 ): boolean => {
   if (!isHttpPayloadTooLarge(error)) return false;
-  return trackFileSizeLimitReached(source, file, 'api');
+  return trackFileSizeLimitReached(source, file, 'api', maxBytes);
 };
 
 export const trackBoardObjectsLimitReached = (
@@ -164,7 +194,7 @@ export const trackBoardObjectsLimitReached = (
   });
 
 export const trackUploadEvaluationLimit = (
-  result: { ok: true } | { ok: false; reason: 'storage' | 'size' },
+  result: { ok: true } | { ok: false; reason: 'storage' | 'size'; maxBytes?: number },
   file: { type?: string; name?: string; size: number },
   source: ProductLimitSource,
 ): boolean => {
@@ -176,7 +206,7 @@ export const trackUploadEvaluationLimit = (
       blocked_on: 'client',
     });
   }
-  return trackFileSizeLimitReached(source, file, 'client');
+  return trackFileSizeLimitReached(source, file, 'client', result.maxBytes);
 };
 
 export const trackClassroomLimitReached = (source: ProductLimitSource = 'other'): boolean =>

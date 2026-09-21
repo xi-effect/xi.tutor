@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { Button } from '@xipkg/button';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useParams, useSearch } from '@tanstack/react-router';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import {
@@ -18,7 +19,8 @@ import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
 import { ClassroomFiles } from './ClassroomFiles';
-import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../galleryShadowClass';
+import { useFitViewportHeight } from './useFitViewportHeight';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 type MaterialTypeTab = 'boards' | 'notes' | 'files';
 
@@ -44,6 +46,8 @@ const ClassroomMaterialsGallery = ({
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const parentRef = useRef<HTMLDivElement>(null);
+  const fitHeight = useFitViewportHeight(parentRef, isMobile);
   const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const tagIds = materialTags.map((tag) => tag.id);
 
@@ -80,6 +84,8 @@ const ClassroomMaterialsGallery = ({
     isLoading: isMaterialsLoading,
     isError: isMaterialsError,
   } = isTutor ? tutorList : studentList;
+
+  const ydocMaterials = useMemo(() => materials?.filter(isYDocMaterial) ?? [], [materials]);
 
   const toolbar: ReactNode = (
     <div className="flex min-w-0 flex-1 flex-row flex-wrap items-center gap-3">
@@ -127,41 +133,43 @@ const ClassroomMaterialsGallery = ({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-        <div className={cn('pr-3 pb-5 sm:pr-6 sm:pb-8 md:pr-8', isMobile && 'pb-20')}>
-          <div className={galleryShadowPadClass}>
-            {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
-              <ErrorState />
-            ) : isClassroomLoading || isMaterialsLoading || !roleReady ? (
-              <LoadingState />
-            ) : !materials?.length ? (
-              <EmptyDataState
-                title={activeTab === 'boards' ? t('materials.noBoards') : t('materials.noNotes')}
-                description={
-                  activeTab === 'boards'
-                    ? t('materials.noBoardsDescription')
-                    : t('materials.noNotesDescription')
-                }
-              />
-            ) : (
-              <div
-                className={cn(
-                  'grid gap-5',
-                  isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
-                )}
-              >
-                {materials.filter(isYDocMaterial).map((material) => (
-                  <MaterialsCard
-                    key={material.id}
-                    {...material}
-                    layout="gallery"
-                    className="h-44 w-full"
-                  />
-                ))}
-              </div>
+      {/* Скролл-контейнер = parentRef виртуализатора: GridVirtualizer должен быть его
+          прямым ребёнком с padding-top: 0. На планшетах/мобильных высоту считаем явно
+          (fitHeight), т.к. flex-1 не вычитает fixed нижнюю панель. */}
+      <div
+        ref={parentRef}
+        className={cn(
+          'min-h-0 flex-1 overflow-y-auto overscroll-contain pr-3 pb-5 pl-2 sm:pr-6 sm:pb-8 md:pr-8',
+        )}
+        style={fitHeight != null ? { height: fitHeight, flex: 'none' } : undefined}
+      >
+        {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
+          <ErrorState />
+        ) : isClassroomLoading || isMaterialsLoading || !roleReady ? (
+          <LoadingState />
+        ) : ydocMaterials.length === 0 ? (
+          <EmptyDataState
+            title={activeTab === 'boards' ? t('materials.noBoards') : t('materials.noNotes')}
+            description={
+              activeTab === 'boards'
+                ? t('materials.noBoardsDescription')
+                : t('materials.noNotesDescription')
+            }
+          />
+        ) : (
+          <GridVirtualizer
+            parentRef={parentRef}
+            items={ydocMaterials}
+            defaultRowHeight={176}
+            minItemWidth={300}
+            gap={20}
+            maxColumns={4}
+            isSingleColumn={isMobile}
+            renderItem={(material) => (
+              <MaterialsCard {...material} layout="gallery" className="w-full" />
             )}
-          </div>
-        </div>
+          />
+        )}
       </div>
     </div>
   );

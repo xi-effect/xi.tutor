@@ -145,7 +145,12 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
           });
           attemptsRef.current.delete(id);
         }
-        trackFileSizeLimitFromUploadError(error, file, classroomId ? 'classroom' : 'materials');
+        trackFileSizeLimitFromUploadError(
+          error,
+          file,
+          classroomId ? 'classroom' : 'materials',
+          getLibraryUploadMaxBytes(getBrowserFileKind(file)),
+        );
 
         setItems((current) =>
           current.map((item) =>

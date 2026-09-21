@@ -26,7 +26,7 @@
     "@xipkg/inputmask": "2.3.0",
     "@xipkg/modal": "4.6.0",
     "@xipkg/popover": "^4.0.0",
-    "@xipkg/select": "2.3.0",
+    "@xipkg/select": "3.0.0",
     "@xipkg/switcher-animate": "1.1.0",
     "@xipkg/userprofile": "4.2.0",
     "@xipkg/utils": "1.8.0",

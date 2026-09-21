@@ -153,14 +153,27 @@ export type ProductLimitSource = 'materials' | 'classroom' | 'board' | 'other';
 
 export type ProductLimitFileCategory = 'image' | 'document' | 'other';
 
-export type ProductLimitSizeBucket = '0_5mb' | '5_30mb' | '30mb_plus';
+export type FileSizeBucket =
+  | '0_1mb'
+  | '1_2mb'
+  | '2_5mb'
+  | '5_10mb'
+  | '10_20mb'
+  | '20_30mb'
+  | '30_50mb'
+  | '50_100mb'
+  | '100mb_plus';
+
+export type ProductLimitSizeBucket = FileSizeBucket;
 
 export type FileUploadSource = 'materials' | 'classroom' | 'board' | 'profile_avatar' | 'other';
 
 export type FileUploadFileCategory = ProductLimitFileCategory;
 
-/** Корзины размера для attempted / succeeded. Для file_too_large шлём точный size. */
-export type FileUploadSizeBucket = '0_1mb' | '1_5mb' | '5_30mb' | '30mb_plus';
+export type FileUploadSizeBucket = FileSizeBucket;
+
+export type LimitExceededBy =
+  'up_to_25_percent' | '25_50_percent' | '50_100_percent' | '2x_3x' | '3x_plus';
 
 export type FileUploadRejectReason =
   'file_too_large' | 'unsupported_type' | 'upload_error' | 'unknown';

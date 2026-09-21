@@ -45,12 +45,12 @@ file_upload_attempted
 
 **Когда:** пользователь выбрал файл, система начала его обрабатывать (валидация на клиенте или запрос).
 
-| Поле            | Тип    | Значения                                      |
-| --------------- | ------ | --------------------------------------------- |
-| `source`        | string | `materials` / `classroom` / `board` / `other` |
-| `file_category` | string | `image` / `document` / `other`                |
-| `size_bucket`   | string | `0_1mb` / `1_5mb` / `5_30mb` / `30mb_plus`    |
-| `event_version` | number | `1`                                           |
+| Поле            | Тип    | Значения                                                         |
+| --------------- | ------ | ---------------------------------------------------------------- |
+| `source`        | string | `materials` / `classroom` / `board` / `profile_avatar` / `other` |
+| `file_category` | string | `image` / `document` / `other`                                   |
+| `size_bucket`   | string | см. [size_bucket](#size_bucket)                                  |
+| `event_version` | number | `1`                                                              |
 
 ### `file_upload_succeeded`
 
@@ -62,13 +62,14 @@ file_upload_attempted
 
 **Когда:** загрузка не состоялась из‑за ограничения или валидации — в том числе если frontend отсёк файл **до** API.
 
-| Поле            | Тип    | Значения                                                           |
-| --------------- | ------ | ------------------------------------------------------------------ |
-| `source`        | string | как у `attempted`                                                  |
-| `reason`        | string | `file_too_large` / `unsupported_type` / `upload_error` / `unknown` |
-| `file_category` | string | как у `attempted`                                                  |
-| `size_bucket`   | string | как у `attempted`                                                  |
-| `event_version` | number | `1`                                                                |
+| Поле                | Тип    | Значения                                                           |
+| ------------------- | ------ | ------------------------------------------------------------------ |
+| `source`            | string | как у `attempted`                                                  |
+| `reason`            | string | `file_too_large` / `unsupported_type` / `upload_error` / `unknown` |
+| `file_category`     | string | как у `attempted`                                                  |
+| `size_bucket`       | string | как у `attempted` — в том числе при `file_too_large`               |
+| `limit_exceeded_by` | string | только при `reason=file_too_large`, см. ниже                       |
+| `event_version`     | number | `1`                                                                |
 
 Особенно важно: файл больше текущего допустимого размера, клиент блокирует до запроса → всё равно `attempted` → `rejected` с `reason=file_too_large`.
 
@@ -76,12 +77,13 @@ file_upload_attempted
 
 ### `source`
 
-| Значение    | Где                                                                                            |
-| ----------- | ---------------------------------------------------------------------------------------------- |
-| `materials` | Библиотека файлов на `/materials`                                                              |
-| `classroom` | Файлы кабинета (тот же модал загрузки, с `classroomId`)                                        |
-| `board`     | Доска: picker, drop, картинка / PDF / аудио / презентация / файл, flip-card, картинка activity |
-| `other`     | Редактор заметки; отказ клиента при выборе аватара (профиль / онбординг)                       |
+| Значение         | Где                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------- |
+| `materials`      | Библиотека файлов на `/materials`                                                              |
+| `classroom`      | Файлы кабинета (тот же модал загрузки, с `classroomId`)                                        |
+| `board`          | Доска: picker, drop, картинка / PDF / аудио / презентация / файл, flip-card, картинка activity |
+| `profile_avatar` | Клиентский отказ при выборе аватара (профиль / онбординг)                                      |
+| `other`          | Редактор заметки                                                                               |
 
 ### `file_category`
 
@@ -95,16 +97,33 @@ file_upload_attempted
 
 ### `size_bucket`
 
-Точный размер **не** отправляем. Корзины:
+Точный размер **не** отправляем. Одна сетка для `file_upload_*` и `product_limit_reached`:
 
-| Корзина     | Байты         |
-| ----------- | ------------- |
-| `0_1mb`     | ≤ 1 МиБ       |
-| `1_5mb`     | ≤ 5 МиБ       |
-| `5_30mb`    | ≤ 30 МиБ      |
-| `30mb_plus` | больше 30 МиБ |
+| Корзина      | Байты          |
+| ------------ | -------------- |
+| `0_1mb`      | ≤ 1 МиБ        |
+| `1_2mb`      | ≤ 2 МиБ        |
+| `2_5mb`      | ≤ 5 МиБ        |
+| `5_10mb`     | ≤ 10 МиБ       |
+| `10_20mb`    | ≤ 20 МиБ       |
+| `20_30mb`    | ≤ 30 МиБ       |
+| `30_50mb`    | ≤ 50 МиБ       |
+| `50_100mb`   | ≤ 100 МиБ      |
+| `100mb_plus` | больше 100 МиБ |
 
-Не путать с корзинами `product_limit_reached` (`0_5mb` / `5_30mb` / `30mb_plus`) — там старая сетка.
+### `limit_exceeded_by`
+
+Только для `file_upload_rejected` с `reason=file_too_large` и для `product_limit_reached` с `limit_type=file_size`. Считается как `file.size / текущий лимит` того же решения, что и UI (`evaluateUpload` / `getMaxImageBytes` / `getMaxFileBytes` / лимит аватара на экране). Лимиты тарифов в analytics-конфиг **не** копируются.
+
+| Значение           | Насколько файл больше лимита |
+| ------------------ | ---------------------------- |
+| `up_to_25_percent` | до 1.25× включительно        |
+| `25_50_percent`    | до 1.5× включительно         |
+| `50_100_percent`   | до 2× включительно           |
+| `2x_3x`            | до 3× включительно           |
+| `3x_plus`          | больше 3×                    |
+
+Поле не шлётся, если лимит неизвестен или файл не больше лимита (например 413 при размере ≤ лимита приложения).
 
 ### `reason`
 
@@ -153,6 +172,9 @@ Network Error **не** мапится в `file_too_large` (в отличие о�
 | Где происходило                                                | фильтр `source`                                                                      |
 | Image vs остальные                                             | `file_category`                                                                      |
 | Распределение по размеру                                       | `size_bucket` на `attempted` или на `rejected`                                       |
+| Насколько обычно превышают лимит                               | `limit_exceeded_by` на `file_upload_rejected` (`file_too_large`)                     |
+| Сколько превышают лимит совсем немного                         | unique / count, `limit_exceeded_by=up_to_25_percent`                                 |
+| Сколько грузят файлы в 2–3+ раза больше лимита                 | `limit_exceeded_by` = `2x_3x` или `3x_plus`                                          |
 | Повторные попытки после лимита                                 | count `file_upload_rejected` (`file_too_large`) / unique visitors по тому же событию |
 
 Не смешивать `materials-files-upload-select` (клик «выбрать файлы») с `file_upload_attempted` (файл уже выбран и обрабатывается).
