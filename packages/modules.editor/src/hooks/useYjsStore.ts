@@ -245,11 +245,39 @@ export function useYjsStore({
   /* ==========================================================
    * 8. Undo / Redo
    * ========================================================== */
-  const undo = useCallback(() => editor?.commands.undo(), [editor]);
-  const redo = useCallback(() => editor?.commands.redo(), [editor]);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
-  const canUndo = !!editor;
-  const canRedo = !!editor;
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) {
+      setCanUndo(false);
+      setCanRedo(false);
+      return;
+    }
+
+    const syncHistory = () => {
+      setCanUndo(editor.can().undo());
+      setCanRedo(editor.can().redo());
+    };
+
+    syncHistory();
+    editor.on('transaction', syncHistory);
+
+    return () => {
+      editor.off('transaction', syncHistory);
+    };
+  }, [editor]);
+
+  const undo = useCallback(() => {
+    if (!editor || editor.isDestroyed || !editor.isEditable) return;
+    editor.commands.undo();
+  }, [editor]);
+
+  const redo = useCallback(() => {
+    if (!editor || editor.isDestroyed || !editor.isEditable) return;
+    editor.commands.redo();
+  }, [editor]);
+
   const isReadOnly = forceReadOnly || serverReadonly || (editor ? !editor.isEditable : false);
 
   /* ==========================================================

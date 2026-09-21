@@ -5,5 +5,7 @@
     "max": "Title is too long"
   },
   "collaborators": "Participants in the note",
-  "you": "You"
+  "you": "You",
+  "undo": "Undo",
+  "redo": "Redo"
 }
