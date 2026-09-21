@@ -1,21 +1,18 @@
 import { EditorContent } from '@tiptap/react';
-import { Chat } from '@xipkg/icons';
-import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { EditorToolkit } from './EditorToolkit';
 import { EditorLoading, EditorSyncError } from './EditorLoading';
 import { useYjsContext } from '../../hooks/useYjsContext';
+import { CommentToggleButton } from '../../comments';
 
 import '../editor.css';
-import { CommentsOverlay, useCommentsUiStore } from '../../comments';
+import { CommentsOverlay } from '../../comments';
 import { useEditorDeepLinkFocus } from '../../hooks/useEditorDeepLinkFocus';
-import { Button } from '@xipkg/button';
 
 export const TiptapEditor = () => {
   const { t } = useTranslation('editor');
   const { editor, isReadOnly, isSynced, hasSyncError, commentThreadsMap } = useYjsContext();
-  const commentsVisible = useCommentsUiStore((s) => s.commentsVisible);
-  const setCommentsVisible = useCommentsUiStore((s) => s.setCommentsVisible);
+
   useEditorDeepLinkFocus({ editor, commentThreadsMap, ready: isSynced });
 
   if (hasSyncError) {
@@ -29,17 +26,7 @@ export const TiptapEditor = () => {
   return (
     <div className="xi-editor relative w-full min-w-0 p-4 pr-15 md:pr-40">
       {/* Тоггл комментариев в правом верхнем углу заметки */}
-      <Button
-        variant="none"
-        data-comment-ui
-        className={cn(
-          'absolute top-1 right-6 z-10 flex size-7 items-center justify-center rounded-lg p-0 transition-colors md:right-30',
-        )}
-        title={commentsVisible ? t('comments.hide') : t('comments.show')}
-        onClick={() => setCommentsVisible(!commentsVisible)}
-      >
-        <Chat className="size-4" />
-      </Button>
+      <CommentToggleButton t={t} />
       <EditorContent editor={editor} className="max-w-none focus:outline-none" />
       <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
       <CommentsOverlay />

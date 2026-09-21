@@ -44,7 +44,7 @@ export const DrawingToolbar = ({
   }, [isOpacityOpen]);
 
   return (
-    <div className="bg-background-surface border-border-default absolute -right-10 bottom-0 z-10 flex flex-col items-center gap-1 rounded-lg border p-1 py-2 shadow-md">
+    <div className="bg-background-surface border-border-default absolute top-0 -right-10 z-10 flex flex-col items-center gap-1 rounded-lg border p-1 py-2 shadow-md">
       <div className="pointer-events-auto relative" ref={opacityRef}>
         <Button
           variant="none"
