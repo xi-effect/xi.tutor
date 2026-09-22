@@ -384,6 +384,8 @@
 
 .editor-comment-mark.active {
   background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 65%, transparent);
+}
+
 /* Оглавление у правого края страницы, как в Tiptap Notion-like */
 .xi-editor .document-outline {
   position: fixed;
