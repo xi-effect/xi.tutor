@@ -133,7 +133,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
               />
             </div>
 
-            <div className="flex max-h-80 min-h-16 flex-col overflow-y-auto">
+            <div className="flex max-h-80 min-h-16 min-w-0 flex-col overflow-x-hidden overflow-y-auto">
               {tags.length === 0 && !search.trim() ? (
                 <p className="text-s-base text-text-secondary py-6 text-center">
                   {isLoading ? t('files.tags.loading') : t('files.tagManage.empty')}
@@ -148,10 +148,13 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
                   return (
                     <div
                       key={tag.id}
-                      className="border-border-default flex h-12 shrink-0 items-center gap-3 border-b last:border-b-0"
+                      className="border-border-default flex h-12 min-w-0 shrink-0 items-center gap-3 border-b last:border-b-0"
                     >
                       <TagDot color={tag.color} />
-                      <p className="text-text-primary min-w-0 flex-1 truncate text-base leading-5">
+                      <p
+                        className="text-text-primary min-w-0 flex-1 truncate text-base leading-5"
+                        title={tag.name}
+                      >
                         {tag.name}
                       </p>
                       {canManage ? (
