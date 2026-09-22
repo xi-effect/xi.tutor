@@ -43,7 +43,6 @@ export const CommentThreadPanel = ({
   const author = useCommentAuthor();
   const markRead = useMarkCommentThreadRead();
   const copyDeepLink = useCopyEditorDeepLink({ commentId: threadId });
-
   const thread = commentThreadsMap.get(threadId);
   const messages = getThreadMessages(commentMessagesMap, threadId);
 
@@ -52,6 +51,8 @@ export const CommentThreadPanel = ({
   }, [threadId, messages.length, markRead]);
 
   if (!thread || !editor) return null;
+
+  const isReadOnly = !editor.isEditable;
 
   const handleReply = (text: string) => {
     console.log(author);
@@ -97,23 +98,25 @@ export const CommentThreadPanel = ({
             >
               <Link className="fill-icon-secondary size-4" />
             </Button>
-            <Button
-              variant="none"
-              className={cn(
-                'hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent',
-                thread.resolved &&
-                  'bg-status-success-background hover:bg-status-success-background',
-              )}
-              title={thread.resolved ? t('comments.reopen') : t('comments.markResolved')}
-              onClick={handleToggleResolved}
-            >
-              <Check
+            {!isReadOnly && (
+              <Button
+                variant="none"
                 className={cn(
-                  'size-4',
-                  thread.resolved ? 'fill-status-success-text' : 'fill-icon-secondary',
+                  'hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent',
+                  thread.resolved &&
+                    'bg-status-success-background hover:bg-status-success-background',
                 )}
-              />
-            </Button>
+                title={thread.resolved ? t('comments.reopen') : t('comments.markResolved')}
+                onClick={handleToggleResolved}
+              >
+                <Check
+                  className={cn(
+                    'size-4',
+                    thread.resolved ? 'fill-status-success-text' : 'fill-icon-secondary',
+                  )}
+                />
+              </Button>
+            )}
             {isOwnThread && (
               <Button
                 variant="none"
@@ -184,11 +187,13 @@ export const CommentThreadPanel = ({
         })}
       </div>
 
-      <CommentMessageInput
-        placeholder={t('comments.replyPlaceholder')}
-        submitLabel={t('comments.reply')}
-        onSubmit={handleReply}
-      />
+      {!isReadOnly && (
+        <CommentMessageInput
+          placeholder={t('comments.replyPlaceholder')}
+          submitLabel={t('comments.reply')}
+          onSubmit={handleReply}
+        />
+      )}
     </div>
   );
 };

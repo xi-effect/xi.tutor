@@ -34,6 +34,7 @@ export const CommentPin = ({ thread, top, right = 0 }: CommentPinProps) => {
   const lastMessage = messages[messages.length - 1];
   const lastAuthorId = lastMessage?.authorId ?? thread.authorId;
   const lastAuthorName = lastMessage?.authorName ?? thread.authorName;
+  const isReadOnly = !editor?.isEditable;
 
   return (
     <Popover
@@ -74,7 +75,7 @@ export const CommentPin = ({ thread, top, right = 0 }: CommentPinProps) => {
             <AvatarFallback size="s">{lastAuthorName.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
 
-          {isUnread && (
+          {isUnread && !isReadOnly && (
             <span className="border-border-default bg-action-primary-background-default absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2" />
           )}
 
