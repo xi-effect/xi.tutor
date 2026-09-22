@@ -6,7 +6,7 @@ import { TextSelection } from '@tiptap/pm/state';
 import { useTranslation } from 'react-i18next';
 import { BubbleButton } from './BubbleButton';
 import { useEditorActive } from '../../../hooks';
-import { CommentPlaceButton } from '../../../comments';
+import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
 
 interface BubbleMenuProps {
   editor: Editor;
@@ -42,7 +42,12 @@ export const BubbleMenuWrapper = ({ editor, isReadOnly }: BubbleMenuProps) => {
     <BubbleMenu
       editor={editor}
       className="border-border-default bg-background-surface flex gap-1 rounded-lg border p-2 shadow-lg"
-      shouldShow={({ state }) => isValidTextSelectionForBubbleMenu(state)}
+      shouldShow={({ state }) => {
+        // пока открыт черновик комментария или панель треда — меню скрыто
+        const { draftRange, openThreadId } = useCommentsUiStore.getState();
+        if (draftRange || openThreadId) return false;
+        return isValidTextSelectionForBubbleMenu(state);
+      }}
       options={{
         placement: 'top',
       }}

@@ -2,7 +2,6 @@ import type { Editor } from '@tiptap/react';
 import type * as Y from 'yjs';
 import {
   createEditorCommentMessageId,
-  createEditorCommentThreadId,
   type EditorCommentMessage,
   type EditorCommentThread,
 } from './commentRecords';
@@ -50,15 +49,16 @@ export function getThreadMarkRange(
 
 export function createCommentThreadAt(
   editor: Editor,
+  threadId: string,
   threadsMap: Y.Map<EditorCommentThread>,
   messagesMap: Y.Map<EditorCommentMessage>,
   range: { from: number; to: number },
   text: string,
   author: NewCommentAuthor,
 ): EditorCommentThread {
-  const threadId = createEditorCommentThreadId();
   const color = generateUserColor(author.authorId);
   editor.chain().setTextSelection(range).setComment(threadId, color).run();
+  editor.commands.setTextSelection(range.to);
 
   const thread: EditorCommentThread = {
     id: threadId,
@@ -133,4 +133,19 @@ export function deleteCommentMessage(
     editor.commands.unsetComment(threadId);
     threadsMap.delete(threadId);
   }
+}
+
+export function applyDraftCommentMark(
+  editor: Editor,
+  range: { from: number; to: number },
+  threadId: string,
+  authorId: string,
+): void {
+  const color = generateUserColor(authorId);
+  editor.chain().setTextSelection(range).setComment(threadId, color).run();
+}
+
+export function cancelDraftComment(editor: Editor, threadId: string): void {
+  editor.commands.unsetComment(threadId);
+  editor.commands.setTextSelection(editor.state.selection.to);
 }

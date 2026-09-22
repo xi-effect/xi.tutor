@@ -3,7 +3,10 @@ import type { SyntheticEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Chat } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
-import { useCommentsUiStore } from './commentsUiStore';
+import { useCommentsUiStore } from '../commentsUiStore';
+import { useCommentAuthor } from '../hooks/useCommentAuthor';
+import { createEditorCommentThreadId } from '../commentRecords';
+import { applyDraftCommentMark } from '../commentQueries';
 
 type CommentPlaceButtonProps = {
   editor: Editor;
@@ -11,13 +14,17 @@ type CommentPlaceButtonProps = {
 
 export const CommentPlaceButton = ({ editor }: CommentPlaceButtonProps) => {
   const { t } = useTranslation('editor');
+  const author = useCommentAuthor();
 
   const handleMouseDown = (e: SyntheticEvent) => {
     // preventDefault — иначе клик по кнопке в BubbleMenu снимает selection раньше,
     // чем мы успеваем его прочитать
     e.preventDefault();
+    if (!author) return;
     const { from, to } = editor.state.selection;
-    useCommentsUiStore.getState().setDraftRange({ from, to });
+    const threadId = createEditorCommentThreadId();
+    applyDraftCommentMark(editor, { from, to }, threadId, author.authorId);
+    useCommentsUiStore.getState().setDraftRange({ threadId, from, to });
   };
 
   return (

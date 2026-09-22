@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { PopoverAnchor } from '@radix-ui/react-popover';
 import { Popover, PopoverContent } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { getCommentAuthorAvatarUrl } from './commentAvatar';
+import { getCommentAuthorAvatarUrl } from '../utils/commentAvatar';
 import { CommentMessageInput } from './CommentMessageInput';
 import { useTranslation } from 'react-i18next';
 

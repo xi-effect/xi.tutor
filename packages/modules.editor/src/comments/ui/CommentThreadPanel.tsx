@@ -5,8 +5,8 @@ import { Check, Close, Link, Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { getDateLocale } from 'common.ui';
-import { useCopyEditorDeepLink, useYjsContext } from '../hooks';
-import { getCommentAuthorAvatarUrl } from './commentAvatar';
+import { useCopyEditorDeepLink, useYjsContext } from '../../hooks';
+import { getCommentAuthorAvatarUrl } from '../utils/commentAvatar';
 import { CommentMessageInput } from './CommentMessageInput';
 import {
   addCommentReply,
@@ -14,9 +14,9 @@ import {
   deleteCommentThread,
   getThreadMessages,
   setCommentThreadResolved,
-} from './commentQueries';
-import { useCommentAuthor } from './useCommentAuthor';
-import { useMarkCommentThreadRead } from './useCommentReads';
+} from '../commentQueries';
+import { useCommentAuthor } from '../hooks/useCommentAuthor';
+import { useMarkCommentThreadRead } from '../hooks/useCommentReads';
 
 type CommentThreadPanelProps = {
   threadId: string;
@@ -135,7 +135,7 @@ export const CommentThreadPanel = ({
         </div>
       )}
 
-      <div className="flex max-h-72 flex-col gap-3 overflow-y-auto">
+      <div className="flex max-h-72 flex-col gap-3 overflow-x-hidden overflow-y-auto">
         {messages.map((message) => {
           const isOwnMessage = author?.authorId === message.authorId;
           return (
@@ -151,26 +151,28 @@ export const CommentThreadPanel = ({
                   {message.authorName.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
+              <div className="min-w-0 flex-1 pr-1">
+                <div className="flex items-start gap-1">
+                  <div className="flex max-w-[95%] flex-col">
                     <span className="text-text-primary truncate text-sm font-medium">
                       {message.authorName}
                     </span>
-                    <span className="text-text-disabled shrink-0 text-xs">
-                      {formatMessageTime(message.createdAt)}
-                    </span>
+                    <div className="flex gap-1">
+                      <span className="text-text-disabled shrink-0 text-xs">
+                        {formatMessageTime(message.createdAt)}
+                      </span>
+                      {isOwnMessage && (
+                        <button
+                          type="button"
+                          className="hover:bg-status-info-background shrink-0 rounded bg-transparent px-1 opacity-100 transition-opacity group-hover:opacity-100 pointer-fine:opacity-0"
+                          title={t('comments.deleteMessage')}
+                          onClick={() => handleDeleteMessage(message.id)}
+                        >
+                          <Trash className="fill-icon-disabled size-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  {isOwnMessage && (
-                    <button
-                      type="button"
-                      className="hover:bg-status-info-background shrink-0 rounded bg-transparent p-2 opacity-100 transition-opacity group-hover:opacity-100 pointer-fine:opacity-0"
-                      title={t('comments.deleteMessage')}
-                      onClick={() => handleDeleteMessage(message.id)}
-                    >
-                      <Trash className="fill-icon-disabled size-3.5" />
-                    </button>
-                  )}
                 </div>
                 <p className="text-text-primary text-sm wrap-break-word whitespace-pre-wrap">
                   {message.text}

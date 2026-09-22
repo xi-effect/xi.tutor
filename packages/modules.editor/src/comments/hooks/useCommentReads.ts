@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import type * as Y from 'yjs';
-import { useYjsContext } from '../hooks';
-import type { EditorCommentMessage } from './commentRecords';
+import { useYjsContext } from '../../hooks';
+import type { EditorCommentMessage } from '../commentRecords';
 
 function useCurrentUserId(): string | undefined {
   const { data: currentUser } = useCurrentUser();

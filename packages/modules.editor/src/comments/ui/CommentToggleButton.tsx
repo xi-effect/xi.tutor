@@ -1,7 +1,7 @@
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { Chat } from '@xipkg/icons';
-import { useCommentsUiStore } from './commentsUiStore';
+import { useCommentsUiStore } from '../commentsUiStore';
 
 export const CommentToggleButton = ({ t }: { t: (key: string) => string }) => {
   const commentsVisible = useCommentsUiStore((s) => s.commentsVisible);

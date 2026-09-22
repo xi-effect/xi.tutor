@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 
-type DraftRange = { from: number; to: number } | null;
+type DraftComment = { threadId: string; from: number; to: number } | null;
 
 interface CommentsUiState {
-  /** Диапазон текста для ещё не созданного треда — открыта форма первого сообщения. */
-  draftRange: DraftRange;
-  setDraftRange: (range: DraftRange) => void;
-  /** id открытого (просматриваемого) треда — попап у пина. */
+  draftRange: DraftComment;
+  setDraftRange: (range: DraftComment) => void;
   openThreadId: string | null;
-  openThread: (id: string | null) => void;
+  openThread: (id: string | null, options?: { focusReply?: boolean }) => void;
+  focusReplyOnOpen: boolean;
+  consumeFocusReplyOnOpen: () => void;
   commentsVisible: boolean;
   setCommentsVisible: (value: boolean) => void;
 }
@@ -18,7 +18,11 @@ export const useCommentsUiStore = create<CommentsUiState>((set) => ({
   setDraftRange: (range) => set({ draftRange: range, openThreadId: null }),
 
   openThreadId: null,
-  openThread: (id) => set({ openThreadId: id, draftRange: null }),
+  openThread: (id, options) =>
+    set({ openThreadId: id, draftRange: null, focusReplyOnOpen: !!options?.focusReply }),
+
+  focusReplyOnOpen: false,
+  consumeFocusReplyOnOpen: () => set({ focusReplyOnOpen: false }),
 
   commentsVisible: true,
   setCommentsVisible: (value) =>

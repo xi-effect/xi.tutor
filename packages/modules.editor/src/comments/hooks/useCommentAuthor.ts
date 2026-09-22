@@ -1,5 +1,5 @@
 import { useCurrentUser } from 'common.services';
-import type { NewCommentAuthor } from './commentQueries';
+import type { NewCommentAuthor } from '../commentQueries';
 import i18n from 'i18next';
 
 /** Данные автора для новых комментариев/ответов — снимок имени на момент отправки. */

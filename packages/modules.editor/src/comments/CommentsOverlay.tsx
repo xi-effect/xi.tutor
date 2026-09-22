@@ -1,12 +1,17 @@
 import { useYjsContext } from '../hooks/useYjsContext';
-import { useCommentAuthor } from './useCommentAuthor';
+import { useCommentAuthor } from './hooks/useCommentAuthor';
 import { useShallow } from 'zustand/shallow';
 import { useCommentsUiStore } from './commentsUiStore';
-import { useCloseOnOutsideClick } from './useCloseOnOutsideClick';
-import { useYMapVersion } from './useYMapVersion';
-import { CommentComposer } from './CommentComposer';
-import { CommentPin } from './CommentPin';
-import { createCommentThreadAt, getAllCommentThreads, getThreadMarkRange } from './commentQueries';
+import { useCloseOnOutsideClick } from './hooks/useCloseOnOutsideClick';
+import { useYMapVersion } from './hooks/useYMapVersion';
+import { CommentComposer } from './ui/CommentComposer';
+import { CommentPin } from './ui/CommentPin';
+import {
+  createCommentThreadAt,
+  getAllCommentThreads,
+  getThreadMarkRange,
+  cancelDraftComment,
+} from './commentQueries';
 import { useEditorLayoutVersion } from '../hooks';
 import { useEffect, useState } from 'react';
 
@@ -21,13 +26,17 @@ export const CommentsOverlay = () => {
     })),
   );
   const { setDraftRange, openThread } = useCommentsUiStore.getState();
+  const cancelDraft = () => {
+    if (draftRange && editor) cancelDraftComment(editor, draftRange.threadId);
+    setDraftRange(null);
+  };
 
   // Ре-рендер при любых изменениях тредов/сообщений (свои и чужие правки через Yjs).
   useYMapVersion(commentThreadsMap);
   useYMapVersion(commentMessagesMap);
 
   useCloseOnOutsideClick(!!openThreadId, () => openThread(null));
-  useCloseOnOutsideClick(!!draftRange, () => setDraftRange(null));
+  useCloseOnOutsideClick(!!draftRange, cancelDraft);
 
   const [container, setContainer] = useState<HTMLElement | null>(null);
 
@@ -70,6 +79,7 @@ export const CommentsOverlay = () => {
         .marks()
         .find((m) => m.type.name === 'comment');
       if (!mark) return;
+      if (!commentThreadsMap.has(mark.attrs.threadId)) return;
 
       // setTimeout: иначе useCloseOnOutsideClick закроет тред тем же кликом
       setTimeout(() => openThread(mark.attrs.threadId), 0);
@@ -77,7 +87,7 @@ export const CommentsOverlay = () => {
 
     dom.addEventListener('click', onClick);
     return () => dom.removeEventListener('click', onClick);
-  }, [editor, openThread]);
+  }, [editor, openThread, commentThreadsMap]);
 
   if (!container || !editor || !commentsVisible) return null;
 
@@ -99,6 +109,7 @@ export const CommentsOverlay = () => {
     if (!draftRange || !author) return;
     const thread = createCommentThreadAt(
       editor,
+      draftRange.threadId,
       commentThreadsMap,
       commentMessagesMap,
       draftRange,
@@ -125,7 +136,7 @@ export const CommentsOverlay = () => {
           authorId={author.authorId}
           authorName={author.authorName}
           onSubmit={handleSubmitDraft}
-          onCancel={() => setDraftRange(null)}
+          onCancel={cancelDraft}
         />
       )}
     </>

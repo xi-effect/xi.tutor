@@ -120,7 +120,9 @@
     "fileFormatDesc": "Выберите файл в одном из форматов: DOC, XLS, PPT, TXT, CSV, видео или OpenDocument.",
     "fileSizeDesc": "Размер файла не должен превышать 5 MiB (сейчас {{size}} MiB).",
     "fileLimitTitle": "Лимит файлов",
-    "fileLimitDesc": "В заметке может быть не более {{max}} файлов."
+    "fileLimitDesc": "В заметке может быть не более {{max}} файлов.",
+    "linkCopied": "Ссылка скопирована",
+    "linkCopyFailed": "Не удалось скопировать ссылку"
   },
   "codeBlock": {
     "copy": "Копировать",

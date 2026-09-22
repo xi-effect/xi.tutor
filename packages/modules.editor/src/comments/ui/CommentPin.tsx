@@ -2,14 +2,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Check } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { useYjsContext } from '../hooks';
-import { getCommentAuthorAvatarUrl } from './commentAvatar';
-import { getThreadMessages } from './commentQueries';
-import { useCommentsUiStore } from './commentsUiStore';
+import { useYjsContext } from '../../hooks';
+import { getCommentAuthorAvatarUrl } from '../utils/commentAvatar';
+import { getThreadMessages } from '../commentQueries';
+import { useCommentsUiStore } from '../commentsUiStore';
 import { CommentThreadPanel } from './CommentThreadPanel';
-import { useThreadUnread } from './useCommentReads';
-import type { EditorCommentThread } from './commentRecords';
-import { generateUserColor } from '../utils/userColor';
+import { useThreadUnread } from '../hooks/useCommentReads';
+import type { EditorCommentThread } from '../commentRecords';
+import { generateUserColor } from '../../utils/userColor';
+import { useShallow } from 'zustand/react/shallow';
 
 type CommentPinProps = {
   thread: EditorCommentThread;
@@ -18,8 +19,13 @@ type CommentPinProps = {
 
 export const CommentPin = ({ thread, top }: CommentPinProps) => {
   const { commentMessagesMap, editor } = useYjsContext();
-  const openThreadId = useCommentsUiStore((s) => s.openThreadId);
-  const openThread = useCommentsUiStore((s) => s.openThread);
+  const { openThread } = useCommentsUiStore.getState();
+  const { openThreadId, focusReplyOnOpen } = useCommentsUiStore(
+    useShallow((s) => ({
+      openThreadId: s.openThreadId,
+      focusReplyOnOpen: s.focusReplyOnOpen,
+    })),
+  );
   const color = generateUserColor(thread.authorId);
 
   const messages = getThreadMessages(commentMessagesMap, thread.id);
@@ -79,7 +85,7 @@ export const CommentPin = ({ thread, top }: CommentPinProps) => {
         data-comment-ui
         className="z-10 mr-1 w-auto rounded-xl p-3"
         onOpenAutoFocus={(e) => {
-          if (editor?.isFocused) e.preventDefault();
+          if (!focusReplyOnOpen || editor?.isFocused) e.preventDefault();
         }}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
