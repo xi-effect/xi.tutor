@@ -53,7 +53,7 @@ export const CommentComposer = ({
         onOpenAutoFocus={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
-        className={cn('w-80 rounded-xl p-3 shadow-md')}
+        className={cn('w-70 rounded-xl p-3 shadow-md md:w-90')}
       >
         <CommentMessageInput
           placeholder={t('comments.writePlaceholder')}

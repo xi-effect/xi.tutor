@@ -68,7 +68,6 @@ export function focusEditorComment(
   if (!range) return false;
 
   setCommentsVisible(true);
-  editor.chain().focus().setTextSelection(range).scrollIntoView().run();
   openThread(threadId);
   return true;
 }

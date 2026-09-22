@@ -326,6 +326,10 @@
   background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 50%, transparent);
 }
 
+.editor-comment-mark.active {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 65%, transparent);
+}
+
 /* Стили для мобильных устройств */
 @media (max-width: 768px) {
   .xi-editor .ProseMirror h1 {

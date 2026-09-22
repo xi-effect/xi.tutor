@@ -15,9 +15,10 @@ import { useShallow } from 'zustand/react/shallow';
 type CommentPinProps = {
   thread: EditorCommentThread;
   top: number;
+  right?: number;
 };
 
-export const CommentPin = ({ thread, top }: CommentPinProps) => {
+export const CommentPin = ({ thread, top, right = 0 }: CommentPinProps) => {
   const { commentMessagesMap, editor } = useYjsContext();
   const { openThread } = useCommentsUiStore.getState();
   const { openThreadId, focusReplyOnOpen } = useCommentsUiStore(
@@ -27,7 +28,6 @@ export const CommentPin = ({ thread, top }: CommentPinProps) => {
     })),
   );
   const color = generateUserColor(thread.authorId);
-
   const messages = getThreadMessages(commentMessagesMap, thread.id);
   const isUnread = useThreadUnread(thread.id, messages);
   const isOpen = openThreadId === thread.id;
@@ -36,23 +36,30 @@ export const CommentPin = ({ thread, top }: CommentPinProps) => {
   const lastAuthorName = lastMessage?.authorName ?? thread.authorName;
 
   return (
-    <Popover open={isOpen} onOpenChange={(open) => openThread(open ? thread.id : null)}>
+    <Popover
+      open={isOpen}
+      onOpenChange={(open) => {
+        openThread(open ? thread.id : null);
+      }}
+    >
       <PopoverTrigger asChild>
         <button
           type="button"
           data-comment-ui
           className={cn(
-            'pointer-events-auto absolute right-5 z-10 md:right-30',
+            'pointer-events-auto absolute right-5 md:right-30',
             'flex size-8 items-center justify-center rounded-full',
             'border-2 shadow-md',
             'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-            '-translate-y-1/2',
+            'hover:scale-105',
             thread.resolved
               ? 'border-border-control bg-action-secondary-background-pressed opacity-70'
-              : 'border-border-focus bg-background-surface',
+              : 'bg-background-surface',
+            isOpen ? 'z-30' : 'z-10',
           )}
           style={{
             top,
+            transform: `translate(${right}px, -50%)`,
             borderColor: thread.resolved ? undefined : color,
           }}
           data-umami-event="editor-comment-open"
