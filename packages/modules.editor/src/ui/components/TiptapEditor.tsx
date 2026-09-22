@@ -1,5 +1,6 @@
 import { EditorContent } from '@tiptap/react';
 import { useTranslation } from 'react-i18next';
+import { DocumentOutline } from './DocumentOutline';
 import { EditorToolkit } from './EditorToolkit';
 import { EditorLoading, EditorSyncError } from './EditorLoading';
 import { useYjsContext } from '../../hooks/useYjsContext';
@@ -27,6 +28,7 @@ export const TiptapEditor = () => {
     <div className="xi-editor relative w-full min-w-0 p-4 pr-15 md:pr-40">
       <CommentToggleButton t={t} />
       <EditorContent editor={editor} className="max-w-none focus:outline-none" />
+      <DocumentOutline editor={editor} />
       <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
       <CommentsOverlay />
     </div>
