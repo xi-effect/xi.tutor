@@ -1,13 +1,17 @@
 import { memo, useCallback, useMemo, type SyntheticEvent } from 'react';
 import { Editor } from '@tiptap/core';
 import { Button } from '@xipkg/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@xipkg/dropdown';
 import { ChevronBottom, Code, File, Image } from '@xipkg/icons';
+import { Activity } from 'modules.board/activities';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { useActiveBlockKey, useBlockMenuActions, useYjsContext } from '../../hooks';
 import { getTopLevelBlock } from '../../utils/getCurrentBlock';
 import { pickAndInsertComputerFiles } from '../../utils/pickAndInsertComputerFiles';
+import { insertActivityBlock } from '../../utils/insertActivityBlock';
 import { ActiveBlockT, BlockTypeT } from '../../types';
+import { ActivityKindMenuItems } from './ActivityKindMenuItems';
 import {
   BLOCK_OP_ACTIONS,
   INSERT_BLOCK_ACTIONS,
@@ -26,6 +30,8 @@ const TOOLBAR_BOTTOM_GAP_PX = 8;
 
 const iconClass = 'fill-icon-primary size-6 shrink-0';
 
+const ExerciseIcon: IconComponent = ({ className }) => <Activity className={className} />;
+
 /**
  * Тап по кнопке тулбара не должен уводить фокус из редактора (иначе закроется
  * клавиатура и панель размонтируется). Оба обработчика намеренно: pointerdown
@@ -34,7 +40,9 @@ const iconClass = 'fill-icon-primary size-6 shrink-0';
  * кнопке, чтобы не мешать горизонтальному скроллу ленты.
  */
 const keepEditorFocus = (event: SyntheticEvent<HTMLDivElement>) => {
-  if ((event.target as HTMLElement).closest('button')) event.preventDefault();
+  const target = event.target as HTMLElement;
+  if (target.closest('[data-activity-trigger]')) return;
+  if (target.closest('button')) event.preventDefault();
 };
 
 const toolbarButtonClass =
@@ -158,6 +166,23 @@ export const NotesEditorToolbar = ({ editor, bottom }: NotesEditorToolbarPropsT)
           isActive={activeBlockKey === 'code'}
           onClick={handleCodeClick}
         />
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="none"
+              aria-label={t('blockMenu.exercise')}
+              data-activity-trigger=""
+              className={toolbarButtonClass}
+            >
+              <ExerciseIcon className={iconClass} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align="start" className="w-56">
+            <ActivityKindMenuItems
+              onSelect={(kind) => insertActivityBlock(editor, kind, getActiveBlock())}
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
         <ToolbarIconButton label={t('blockMenu.image')} Icon={Image} onClick={handleImageClick} />
         <ToolbarIconButton label={t('blockMenu.file')} Icon={File} onClick={handleFileClick} />
 

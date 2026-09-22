@@ -18,12 +18,16 @@
     "cloudAddToNote": "Add to note",
     "cloudFilesDescription": "Pick a file from your materials library to add it to the note",
     "insertCode": "Insert code",
+    "exercise": "Exercise",
     "insertHint": "Choose a block type — it will appear below the current one",
     "duplicate": "Duplicate",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "delete": "Delete"
   },
+  "noteMenu": "Note menu",
+  "noteActivitiesScope": "Controls for every exercise",
+  "noteActivitiesEmpty": "This note has no exercises",
   "bubbleMenu": {
     "bold": "Bold",
     "italic": "Italic",

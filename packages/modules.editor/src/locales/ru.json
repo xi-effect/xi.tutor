@@ -18,12 +18,16 @@
     "cloudAddToNote": "Добавить в заметку",
     "cloudFilesDescription": "Выберите файл из библиотеки материалов, чтобы добавить его в заметку",
     "insertCode": "Вставить код",
+    "exercise": "Упражнение",
     "insertHint": "Выберите тип блока — он появится ниже текущего",
     "duplicate": "Дублировать",
     "moveUp": "Переместить вверх",
     "moveDown": "Переместить вниз",
     "delete": "Удалить"
   },
+  "noteMenu": "Меню заметки",
+  "noteActivitiesScope": "Управление всеми упражнениями",
+  "noteActivitiesEmpty": "В заметке нет упражнений",
   "bubbleMenu": {
     "bold": "Жирный",
     "italic": "Курсив",

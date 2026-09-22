@@ -71,14 +71,37 @@
 
 .xi-editor .node-audio,
 .xi-editor .node-pdf,
-.xi-editor .node-presentation {
+.xi-editor .node-presentation,
+.xi-editor .node-activity {
   display: block;
+  width: 100%;
+}
+
+.xi-editor .node-activity,
+.xi-editor .node-activity * {
+  user-select: none;
+}
+
+.xi-editor .node-activity *::selection {
+  background: transparent;
+}
+
+.xi-editor .node-activity input,
+.xi-editor .node-activity textarea {
+  user-select: text;
+}
+
+.xi-editor .node-activity input::selection,
+.xi-editor .node-activity textarea::selection {
+  background: highlight;
 }
 
 .xi-editor .ProseMirror .node-audio.ProseMirror-selectednode,
 .xi-editor .ProseMirror .node-pdf.ProseMirror-selectednode,
-.xi-editor .ProseMirror .node-presentation.ProseMirror-selectednode {
+.xi-editor .ProseMirror .node-presentation.ProseMirror-selectednode,
+.xi-editor .ProseMirror .node-activity.ProseMirror-selectednode {
   display: block;
+  width: 100%;
 }
 
 /* Списки: маркер в фиксированной колонке, текст на одной линии с абзацами */

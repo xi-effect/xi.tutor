@@ -4433,6 +4433,9 @@ importers:
       lowlight:
         specifier: ^3.3.0
         version: 3.3.0
+      modules.board:
+        specifier: workspace:*
+        version: link:../modules.board
       nanoid:
         specifier: 5.1.5
         version: 5.1.5

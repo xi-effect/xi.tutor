@@ -10,6 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Code, File, Image, Laptop, Link as LinkIcon, Materials, BookOpened } from '@xipkg/icons';
+import { Activity } from 'modules.board/activities';
+import { insertActivityBlock } from '../../utils/insertActivityBlock';
+import { ActivityKindMenuItems } from './ActivityKindMenuItems';
 import { Fragment, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
@@ -128,6 +131,21 @@ export const BlockMenu = ({
                 <span>{t(labelKey)}</span>
               </DropdownMenuItem>
             ))}
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger
+                className={menuSubTriggerClass}
+                data-umami-event="editor-activity-open"
+              >
+                <Activity className="size-6" />
+                <span>{t('blockMenu.exercise')}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className={menuContentClass}>
+                <ActivityKindMenuItems
+                  onSelect={(kind) => insertActivityBlock(editor, kind, getActiveBlock())}
+                />
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
 
             {isTutor ? (
               <DropdownMenuItem

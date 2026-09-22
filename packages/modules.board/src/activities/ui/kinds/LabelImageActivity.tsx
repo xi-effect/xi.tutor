@@ -1,7 +1,6 @@
 import { Button } from '@xipkg/button';
 import { Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useEditor } from '@ibodr/draw';
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
@@ -11,6 +10,7 @@ import { ActivityInputField } from '../activityFields';
 import { ActivityImage, ActivityImageField } from '../ActivityImage';
 import { itemStatus } from '../../primitives/itemStatus';
 import { ActivityMotionList } from '../activityUiMotion';
+import { useActivityEventGuard } from '../activityHostContext';
 import { motion } from 'motion/react';
 import { boardIconClass } from '../../../ui/boardTheme';
 
@@ -49,7 +49,7 @@ export function LabelImageActivity({
   interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
-  const editor = useEditor();
+  const { stop, markNative } = useActivityEventGuard();
   const locked = checkStatus === 'revealed' || interactLocked;
   const surfaceRef = useRef<HTMLDivElement>(null);
   const definitionRef = useRef(definition);
@@ -74,7 +74,7 @@ export function LabelImageActivity({
     const hotspotId = drag.id;
 
     const onMove = (event: globalThis.PointerEvent) => {
-      editor.markEventAsHandled(event);
+      markNative(event);
       const surface = surfaceRef.current;
       if (!surface) return;
       if (
@@ -90,7 +90,7 @@ export function LabelImageActivity({
     };
 
     const onUp = (event: globalThis.PointerEvent) => {
-      editor.markEventAsHandled(event);
+      markNative(event);
       const surface = surfaceRef.current;
       setDrag(null);
       if (!surface) return;
@@ -110,7 +110,7 @@ export function LabelImageActivity({
       window.removeEventListener('pointermove', onMove, true);
       window.removeEventListener('pointerup', onUp, true);
     };
-  }, [drag?.id, editor, onDefinition]);
+  }, [drag?.id, markNative, onDefinition]);
 
   const addHotspotAt = (x: number, y: number) => {
     onDefinition({
@@ -141,8 +141,7 @@ export function LabelImageActivity({
 
   const startDrag = (hotspotId: string, event: PointerEvent<HTMLElement>) => {
     if (mode !== 'edit' || event.button !== 0) return;
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
+    stop(event);
     event.preventDefault();
     const hotspot = definition.hotspots.find((entry) => entry.id === hotspotId);
     if (!hotspot) return;

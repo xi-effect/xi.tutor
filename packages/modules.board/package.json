@@ -6,7 +6,8 @@
     ".": "./index.ts",
     "./warmup": "./src/warmup/index.ts",
     "./locales": "./src/locales/index.ts",
-    "./preferences": "./src/store/useBoardPreferencesStore.ts"
+    "./preferences": "./src/store/useBoardPreferencesStore.ts",
+    "./activities": "./src/activities/document.ts"
   },
   "license": "MIT",
   "scripts": {
