@@ -55,7 +55,6 @@ export const CommentThreadPanel = ({
   const isReadOnly = !editor.isEditable;
 
   const handleReply = (text: string) => {
-    console.log(author);
     if (!author) return;
     addCommentReply(commentMessagesMap, threadId, text, author);
   };

@@ -95,10 +95,8 @@ export function addCommentReply(
     authorName: author.authorName,
     createdAt: Date.now(),
   };
-  console.log(message);
+
   messagesMap.set(message.id, message);
-  console.log(messagesMap);
-  //TODO: fix sending replay for student in view-only note
 }
 
 export function setCommentThreadResolved(
