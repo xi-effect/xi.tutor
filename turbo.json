@@ -13,6 +13,11 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["build"]
     },
+    "build:electron": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["build"]
+    },
     "xi.tauri#build": {
       "dependsOn": ["^build", "xi.tauri#build:frontend"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "src-tauri/**"],
@@ -28,6 +33,19 @@
         "APPLE_TEAM_ID",
         "WINDOWS_CERTIFICATE",
         "WINDOWS_CERTIFICATE_PASSWORD"
+      ]
+    },
+    "xi.electron#build": {
+      "dependsOn": ["^build", "xi.web#build:electron"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**", "scripts/**", "electron-builder.yml", "resources/**"],
+      "outputs": ["out/**", "release/**"],
+      "env": [
+        "CSC_LINK",
+        "CSC_KEY_PASSWORD",
+        "APPLE_ID",
+        "APPLE_APP_SPECIFIC_PASSWORD",
+        "APPLE_TEAM_ID",
+        "SOVLIUM_ELECTRON_UPDATE_FEED"
       ]
     },
     "lint": {

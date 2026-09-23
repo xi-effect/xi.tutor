@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { Editor } from '@tiptap/react';
+import { saveBlob } from 'common.platform';
 import { ActiveBlockT, BlockTypeT } from '../types';
 import { moveBlock } from '../utils/moveBlock';
 import { getCurrentBlock } from '../utils/getCurrentBlock';
@@ -83,11 +84,19 @@ const createBlock = (
 };
 
 const downloadImage = (src: string) => {
-  const link = document.createElement('a');
-  link.setAttribute('target', '_blank');
-  link.href = src;
-  link.download = 'image.png';
-  link.click();
+  void (async () => {
+    try {
+      const response = await fetch(src);
+      const blob = await response.blob();
+      await saveBlob(blob, { fileName: 'image.png' });
+    } catch {
+      const link = document.createElement('a');
+      link.setAttribute('target', '_blank');
+      link.href = src;
+      link.download = 'image.png';
+      link.click();
+    }
+  })();
 };
 
 export const useBlockMenuActions = (

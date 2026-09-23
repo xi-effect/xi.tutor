@@ -29,14 +29,13 @@ function ensureStyles(): void {
   style.id = STYLE_ID;
   style.textContent = `
     html[data-native-call-pip] #root {
-      overflow: hidden;
+      visibility: hidden !important;
+      pointer-events: none !important;
     }
-    /* The native window is transparent while floating, so the page must stop
-       painting its own opaque background or the rounded corners stay square.
-       Beats the inline background the theme bridge writes on <html>. */
     html[data-native-call-pip],
     html[data-native-call-pip] body {
-      background: transparent !important;
+      background: #111318 !important;
+      overflow: hidden !important;
     }
     #${HOST_ID} {
       position: fixed;
@@ -44,11 +43,18 @@ function ensureStyles(): void {
       z-index: 2147483646;
       display: flex;
       flex-direction: column;
-      background: var(--color-background-page, var(--xi-gray-0, #111318));
+      background: #111318;
       color: inherit;
       overflow: hidden;
-      /* Matches PIP_CORNER_RADIUS in call_pip.rs. */
       border-radius: 12px;
+    }
+    #${HOST_ID} .sovlium-native-call-pip__body {
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+    }
+    #${HOST_ID} .sovlium-native-call-pip__body > * {
+      height: 100% !important;
     }
     #${HOST_ID} .sovlium-native-call-pip__chrome {
       position: absolute;
@@ -61,10 +67,9 @@ function ensureStyles(): void {
       align-items: center;
       justify-content: flex-end;
       padding: 0 6px;
-      /* Tauri starts the native drag from a real mousedown, so the strip has to
-         be hit-testable: with pointer-events none the window cannot be moved. */
       pointer-events: auto;
       cursor: grab;
+      -webkit-app-region: drag;
       background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent);
       opacity: 0;
       transition: opacity 120ms ease;
@@ -87,8 +92,7 @@ function ensureStyles(): void {
       pointer-events: none;
     }
     #${HOST_ID} .sovlium-native-call-pip__chrome button {
-      pointer-events: auto;
-      appearance: none;
+      -webkit-app-region: no-drag;
       border: 0;
       border-radius: 8px;
       width: 22px;
@@ -98,11 +102,6 @@ function ensureStyles(): void {
       cursor: pointer;
       background: rgba(0, 0, 0, 0.45);
       color: #fff;
-    }
-    #${HOST_ID} .sovlium-native-call-pip__body {
-      flex: 1;
-      min-height: 0;
-      height: 100%;
     }
   `;
   document.head.appendChild(style);

@@ -1,5 +1,7 @@
 export type RuntimeKind = 'web' | 'desktop' | 'mobile';
+export type NativeRuntime = 'browser' | 'tauri' | 'electron';
 export type NativeOs = 'macos' | 'windows' | 'linux' | 'ios' | 'android' | 'unknown';
+export type ElectronSurface = 'main' | 'conference';
 
 const NATIVE_OS_VALUES = new Set<NativeOs>(['macos', 'windows', 'linux', 'ios', 'android']);
 
@@ -28,9 +30,51 @@ function injectedNativeOs(): NativeOs | null {
   return NATIVE_OS_VALUES.has(raw as NativeOs) ? (raw as NativeOs) : null;
 }
 
+export function getNativeRuntime(): NativeRuntime {
+  const g = host();
+  if (!g) return 'browser';
+  if (g.__SOVLIUM_ELECTRON__ || g.sovliumDesktop) return 'electron';
+  if (g.__TAURI_INTERNALS__) return 'tauri';
+  return 'browser';
+}
+
+export function isElectronShell(): boolean {
+  return getNativeRuntime() === 'electron';
+}
+
+export function isTauriShell(): boolean {
+  return getNativeRuntime() === 'tauri';
+}
+
+const ELECTRON_CONFERENCE_PATH = '/desktop/conference/';
+
+function locationPathname(): string {
+  const g = host();
+  const location = g?.location;
+  if (!location || typeof location !== 'object') return '';
+  const pathname = (location as { pathname?: unknown }).pathname;
+  return typeof pathname === 'string' ? pathname : '';
+}
+
+export function getElectronSurface(): ElectronSurface | null {
+  if (!isElectronShell()) return null;
+  // Pathname only: sessionStorage and additionalArguments are shared across
+  // persist:sovlium views, so a query/argv flag would flip the main window too.
+  if (locationPathname().startsWith(ELECTRON_CONFERENCE_PATH)) return 'conference';
+  return 'main';
+}
+
+export function isElectronMainSurface(): boolean {
+  return getElectronSurface() === 'main';
+}
+
+export function isElectronConferenceSurface(): boolean {
+  return getElectronSurface() === 'conference';
+}
+
 /**
  * True when the UI runs inside the Sovlium native shell (local bundle or
- * remote `*.sovlium.ru` loaded in the Tauri WebView).
+ * remote `*.sovlium.ru` loaded in Tauri / Electron).
  *
  * Production navigates to the web origin, so `__SOVLIUM_NATIVE__`
  * (injected by the shell) is the reliable signal — not the document origin.
@@ -38,7 +82,9 @@ function injectedNativeOs(): NativeOs | null {
 export function isNativeShell(): boolean {
   const g = host();
   if (!g) return false;
-  return Boolean(g.__SOVLIUM_NATIVE__ || g.__TAURI_INTERNALS__);
+  return Boolean(
+    g.__SOVLIUM_NATIVE__ || g.__SOVLIUM_ELECTRON__ || g.sovliumDesktop || g.__TAURI_INTERNALS__,
+  );
 }
 
 /**

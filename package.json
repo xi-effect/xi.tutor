@@ -18,6 +18,13 @@
     "tauri:ios:build": "pnpm --filter xi.tauri ios:build",
     "tauri:android:dev": "pnpm --filter xi.tauri android:dev",
     "tauri:android:build": "pnpm --filter xi.tauri android:build",
+    "electron:dev": "pnpm --filter xi.electron dev",
+    "electron:build": "pnpm --filter xi.electron build",
+    "electron:build:macos": "pnpm --filter xi.electron build:macos",
+    "electron:build:macos:universal": "pnpm --filter xi.electron build:macos:universal",
+    "electron:build:windows": "pnpm --filter xi.electron build:windows",
+    "electron:publish:windows": "pnpm --filter xi.electron build:publish:windows",
+    "electron:publish:macos": "pnpm --filter xi.electron build:publish:macos",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:e2e": "pnpm --filter xi.web test:e2e",
@@ -51,7 +58,8 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "core-js",
-      "rolldown"
+      "rolldown",
+      "electron"
     ],
     "overrides": {
       "brace-expansion@1>balanced-match": "1.0.2",

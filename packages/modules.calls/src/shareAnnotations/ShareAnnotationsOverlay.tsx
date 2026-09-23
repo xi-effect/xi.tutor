@@ -1,8 +1,5 @@
 /**
  * Renders annotations drawn by a remote screen sharer on top of their video.
- *
- * The screen-share tile lives in `@xipkg/calls-ui`, so the canvas is attached
- * imperatively to the `<video>` element that carries the matching track.
  */
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -14,44 +11,9 @@ import type { AnnotationStroke } from 'common.platform';
 import { ANNOTATION_TOPIC, decodeAnnotation, reduceStrokes } from './protocol';
 import { containBox, drawAnnotations } from './drawAnnotations';
 import { useLocalAnnotations } from './localAnnotations';
+import { useVideoElement } from './videoElement';
 
 type StrokesByIdentity = Record<string, AnnotationStroke[]>;
-
-function findVideoElement(mediaStreamTrackId: string): HTMLVideoElement | null {
-  const videos = document.querySelectorAll('video');
-  for (const video of videos) {
-    const stream = video.srcObject;
-    if (!(stream instanceof MediaStream)) continue;
-    if (stream.getVideoTracks().some((track) => track.id === mediaStreamTrackId)) {
-      return video;
-    }
-  }
-  return null;
-}
-
-function useVideoElement(mediaStreamTrackId: string | undefined): HTMLVideoElement | null {
-  const [element, setElement] = useState<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    if (!mediaStreamTrackId) {
-      setElement(null);
-      return;
-    }
-    // The tile can remount on layout changes (grid <-> focus, pin, carousel),
-    // so the element is re-resolved instead of being captured once.
-    const resolve = () => {
-      setElement((current) => {
-        const next = findVideoElement(mediaStreamTrackId);
-        return next === current ? current : next;
-      });
-    };
-    resolve();
-    const interval = window.setInterval(resolve, 500);
-    return () => window.clearInterval(interval);
-  }, [mediaStreamTrackId]);
-
-  return element;
-}
 
 type LayerProps = {
   video: HTMLVideoElement;

@@ -18,7 +18,12 @@ node_modules
 /apps/xi.tauri/.env.local
 /apps/xi.tauri/.env.development.local
 /apps/xi.tauri/.env.test.local
-/apps/xi.tauri/.env.production.local
+/apps/xi.electron/.env.local
+/apps/xi.electron/.env.development.local
+/apps/xi.electron/.env.test.local
+/apps/xi.electron/.env.production.local
+/apps/xi.electron/out/
+/apps/xi.electron/release/
 
 # Tauri build artifacts
 /apps/xi.tauri/src-tauri/target/

@@ -10,6 +10,7 @@ import {
   isClassroomOnPause,
 } from 'common.api';
 import { useCurrentUser } from 'common.services';
+import { isElectronConferenceSurface } from 'common.platform';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   createAttemptId,
@@ -80,6 +81,10 @@ export const useStartCall = () => {
 
       await startCallBase(data);
 
+      if (isElectronConferenceSurface()) {
+        return;
+      }
+
       if (role === 'tutor') {
         if (!state.lessonStartedSent) {
           state.lessonStartedSent = true;
@@ -105,7 +110,7 @@ export const useStartCall = () => {
         });
       }
     },
-    [navigation.pathname, queryClient, startCallBase, user?.default_layout],
+    [navigation, queryClient, startCallBase, user?.default_layout],
   );
 
   return { startCall, isLoading, error };

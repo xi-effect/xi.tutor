@@ -1,0 +1,73 @@
+appId: ru.sovlium.electron.dev
+productName: Sovlium
+copyright: Copyright © Sovlium
+asar: true
+directories:
+  output: release
+  buildResources: resources
+files:
+  - out/**/*
+  - package.json
+extraResources:
+  - from: ../xi.web/build
+    to: web
+extraMetadata:
+  main: out/main/index.js
+npmRebuild: false
+electronLanguages:
+  - en
+  - ru
+mac:
+  category: public.app-category.education
+  icon: resources/icons/icon.icns
+  # TODO: after the Apple Developer certificate is available, set the signing
+  # identity, turn hardenedRuntime back on, and enable notarization.
+  identity: null
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  notarize: false
+  entitlements: resources/entitlements.mac.plist
+  entitlementsInherit: resources/entitlements.mac.plist
+  extendInfo:
+    NSCameraUsageDescription: Sovlium uses the camera for video lessons.
+    NSMicrophoneUsageDescription: Sovlium uses the microphone for video lessons.
+    NSScreenCaptureUsageDescription: Sovlium captures the screen when you share it in a lesson.
+    NSUserNotificationsUsageDescription: Sovlium shows lesson and message notifications.
+    CFBundleURLTypes:
+      - CFBundleURLName: Sovlium
+        CFBundleURLSchemes:
+          - sovlium
+  target:
+    - target: dmg
+      arch:
+        - arm64
+        - x64
+    - target: zip
+      arch:
+        - arm64
+        - x64
+dmg:
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+win:
+  icon: resources/icons/icon.ico
+  # TODO: remove after Windows code signing is configured.
+  verifyUpdateCodeSignature: false
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: ${productName}-Setup-${version}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  shortcutName: Sovlium
+  uninstallDisplayName: Sovlium
+  artifactName: ${productName}-Setup-${version}.${ext}
+publish:
+  provider: github
+  owner: xi-effect
+  repo: xi.tutor
+  releaseType: draft
+  tagNamePrefix: electron-v

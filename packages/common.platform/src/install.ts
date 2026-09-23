@@ -1,7 +1,8 @@
 import { installNativeMediaAdapters } from './media';
 import { refreshNotificationPermission } from './notifications';
-import { isDesktopNative } from './detect';
+import { isDesktopNative, isElectronShell } from './detect';
 import { installNativeDocumentPipShim } from './documentPipShim';
+import { installElectronCallOverlayShim } from './electronCallOverlay';
 
 let installed = false;
 
@@ -17,7 +18,9 @@ export function installNativeWebApiBridges(): void {
   if (installed) return;
   installed = true;
   installNativeMediaAdapters();
-  if (isDesktopNative()) {
+  if (isElectronShell()) {
+    installElectronCallOverlayShim();
+  } else if (isDesktopNative()) {
     installNativeDocumentPipShim();
   }
   void refreshNotificationPermission();

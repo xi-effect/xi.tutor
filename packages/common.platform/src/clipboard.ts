@@ -1,7 +1,29 @@
-import { isNativeShell } from './detect';
+import { isElectronShell, isTauriShell } from './detect';
+import { getSovliumDesktop } from './electron';
+
+async function writeTextElectron(text: string): Promise<boolean> {
+  if (!isElectronShell()) return false;
+  try {
+    await getSovliumDesktop()?.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    console.warn('[common.platform] electron clipboard write failed', err);
+    return false;
+  }
+}
+
+async function readTextElectron(): Promise<string | null> {
+  if (!isElectronShell()) return null;
+  try {
+    return (await getSovliumDesktop()?.clipboard.readText()) ?? '';
+  } catch (err) {
+    console.warn('[common.platform] electron clipboard read failed', err);
+    return null;
+  }
+}
 
 export async function writeText(text: string): Promise<void> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const { writeText: writeNative } = await import('@tauri-apps/plugin-clipboard-manager');
       await writeNative(text);
@@ -12,15 +34,21 @@ export async function writeText(text: string): Promise<void> {
   }
 
   if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch (err) {
+      if (await writeTextElectron(text)) return;
+      throw err;
+    }
   }
 
+  if (await writeTextElectron(text)) return;
   throw new Error('Clipboard write is not available');
 }
 
 export async function readText(): Promise<string> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const { readText: readNative } = await import('@tauri-apps/plugin-clipboard-manager');
       return await readNative();
@@ -30,14 +58,20 @@ export async function readText(): Promise<string> {
   }
 
   if (typeof navigator !== 'undefined' && navigator.clipboard?.readText) {
-    return navigator.clipboard.readText();
+    try {
+      return await navigator.clipboard.readText();
+    } catch (err) {
+      const fallback = await readTextElectron();
+      if (fallback != null) return fallback;
+      console.warn('[common.platform] clipboard read failed', err);
+    }
   }
 
-  return '';
+  return (await readTextElectron()) ?? '';
 }
 
 export async function writeHtmlAndText(html: string, plain: string): Promise<void> {
-  if (isNativeShell()) {
+  if (isTauriShell()) {
     try {
       const { writeHtml } = await import('@tauri-apps/plugin-clipboard-manager');
       await writeHtml(html, plain);
@@ -66,7 +100,15 @@ export async function writeHtmlAndText(html: string, plain: string): Promise<voi
       return;
     }
   } catch (err) {
-    console.warn('[common.platform] HTML clipboard write failed, using text', err);
+    console.warn('[common.platform] HTML clipboard write failed, using native/text', err);
+    if (isElectronShell()) {
+      try {
+        await getSovliumDesktop()?.clipboard.writeHtml(html, plain);
+        return;
+      } catch (nativeErr) {
+        console.warn('[common.platform] electron HTML clipboard write failed', nativeErr);
+      }
+    }
   }
   await writeText(plain || html);
 }
@@ -83,7 +125,15 @@ export async function readHtml(): Promise<string> {
       }
     }
   } catch (err) {
-    console.warn('[common.platform] HTML clipboard read failed, using text', err);
+    console.warn('[common.platform] HTML clipboard read failed, using native/text', err);
+    if (isElectronShell()) {
+      try {
+        const html = await getSovliumDesktop()?.clipboard.readHtml();
+        if (html) return html;
+      } catch (nativeErr) {
+        console.warn('[common.platform] electron HTML clipboard read failed', nativeErr);
+      }
+    }
   }
   return readText();
 }
