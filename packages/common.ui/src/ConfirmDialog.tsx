@@ -61,11 +61,13 @@ export const ConfirmDialog = ({
       >
         <ModalBody className={modalBodyClass}>
           <div className={modalHeaderRowClass}>
-            <ModalTitle className={modalTitleClass}>{title}</ModalTitle>
+            <ModalTitle className={`${modalTitleClass} break-all`} title={title}>
+              {title}
+            </ModalTitle>
             <ModalCloseIcon onClick={() => onOpenChange(false)} disabled={isPending} />
           </div>
 
-          <ModalDescription className={`${modalDescriptionClass} line-clamp-3`}>
+          <ModalDescription className={`${modalDescriptionClass} line-clamp-3 break-all`}>
             {description}
           </ModalDescription>
 

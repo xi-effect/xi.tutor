@@ -16,7 +16,7 @@ export const getBoardUploadErrorToast = (
     formatDescKey?: string;
   },
 ): { title: string; description: string } => {
-  trackFileSizeLimitFromUploadError(error, file, 'board');
+  trackFileSizeLimitFromUploadError(error, file, 'board', maxBytes);
   const kind = getFileUploadErrorKind(error, { fileSize: file.size, maxBytes });
   const size = (file.size / 1024 / 1024).toFixed(2);
 

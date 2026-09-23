@@ -1,8 +1,10 @@
+import { useCallback } from 'react';
 import { Editor } from '@tiptap/react';
 import { saveBlob } from 'common.platform';
 import { ActiveBlockT, BlockTypeT } from '../types';
 import { moveBlock } from '../utils/moveBlock';
 import { getCurrentBlock } from '../utils/getCurrentBlock';
+import { insertContentRelativeToBlock } from '../utils/insertContentRelativeToBlock';
 
 const TEXT_BLOCKS = ['paragraph', 'heading'];
 
@@ -59,141 +61,137 @@ const NODE_TYPES_MAP = {
   },
 };
 
+// Модульного уровня (не замыкают состояние хука) — не нуждаются в useCallback,
+// ссылка стабильна сама по себе.
+const createBlock = (
+  editor: Editor | null,
+  type: BlockTypeT,
+  activeBlock: ActiveBlockT | undefined,
+) => {
+  if (!editor || !editor.isEditable || !type) return;
+
+  const config = NODE_TYPES_MAP[type];
+  if (!config) return;
+
+  const content =
+    'content' in config && config.content
+      ? { type: config.type, attrs: config.attrs, content: config.content }
+      : editor.schema.nodes[config.type]?.createAndFill(config.attrs)?.toJSON();
+
+  if (!content) return;
+
+  insertContentRelativeToBlock(editor, content, getCurrentBlock(editor, activeBlock));
+};
+
+const downloadImage = (src: string) => {
+  void (async () => {
+    try {
+      const response = await fetch(src);
+      const blob = await response.blob();
+      await saveBlob(blob, { fileName: 'image.png' });
+    } catch {
+      const link = document.createElement('a');
+      link.setAttribute('target', '_blank');
+      link.href = src;
+      link.download = 'image.png';
+      link.click();
+    }
+  })();
+};
+
 export const useBlockMenuActions = (
   editor: Editor | null,
   getActiveBlock?: () => ActiveBlockT | undefined,
 ) => {
-  const insertImage = (src: string, alt?: string) => {
-    if (!editor || !editor.isEditable) return;
+  const insertImage = useCallback(
+    (src: string, alt?: string) => {
+      if (!editor || !editor.isEditable) return;
 
-    const activeBlock = getCurrentBlock(editor, getActiveBlock?.());
+      insertContentRelativeToBlock(
+        editor,
+        {
+          type: 'image',
+          attrs: { src, alt },
+        },
+        getCurrentBlock(editor, getActiveBlock?.()),
+      );
+    },
+    [editor, getActiveBlock],
+  );
 
-    if (!activeBlock?.node) return;
+  const changeType = useCallback(
+    (type?: BlockTypeT) => {
+      if (!editor || !editor.isEditable || !type || !getActiveBlock) return;
 
-    const insertPos = activeBlock.pos + activeBlock.node.nodeSize;
+      const activeBlock = getActiveBlock();
 
-    editor
-      .chain()
-      .focus()
-      .insertContentAt(insertPos, {
-        type: 'image',
-        attrs: { src, alt },
-      })
-      .run();
-  };
+      if (!activeBlock || !activeBlock.node) return;
 
-  const createBlock = (
-    editor: Editor | null,
-    type: BlockTypeT,
-    activeBlock: ActiveBlockT | undefined,
-  ) => {
-    if (!editor || !editor.isEditable || !type || !activeBlock) return;
+      const config = NODE_TYPES_MAP[type];
+      if (!config) return;
 
-    const currentBlock = getCurrentBlock(editor, activeBlock);
+      const nodeType = editor.schema.nodes[config.type];
+      if (!nodeType) return;
 
-    if (!currentBlock?.node) return;
+      const currentType = activeBlock.node?.type.name || '';
+      if (!TEXT_BLOCKS.includes(currentType)) return;
 
-    const config = NODE_TYPES_MAP[type];
-    if (!config) return;
-
-    const insertPos = currentBlock.pos + currentBlock.node.nodeSize;
-
-    const content =
-      'content' in config && config.content
-        ? { type: config.type, attrs: config.attrs, content: config.content }
-        : editor.schema.nodes[config.type]?.createAndFill(config.attrs)?.toJSON();
-
-    if (!content) return;
-
-    editor.chain().focus().insertContentAt(insertPos, content).run();
-  };
-
-  const downloadImage = (src: string) => {
-    void (async () => {
-      try {
-        const response = await fetch(src);
-        const blob = await response.blob();
-        await saveBlob(blob, { fileName: 'image.png' });
-      } catch {
-        const link = document.createElement('a');
-        link.setAttribute('target', '_blank');
-        link.href = src;
-        link.download = 'image.png';
-        link.click();
-      }
-    })();
-  };
-
-  const changeType = (type?: BlockTypeT) => {
-    if (!editor || !editor.isEditable || !type || !getActiveBlock) return;
-
-    const activeBlock = getActiveBlock();
-
-    if (!activeBlock || !activeBlock.node) return;
-
-    const config = NODE_TYPES_MAP[type];
-    if (!config) return;
-
-    const nodeType = editor.schema.nodes[config.type];
-    if (!nodeType) return;
-
-    const currentType = activeBlock.node?.type.name || '';
-    if (!TEXT_BLOCKS.includes(currentType)) return;
-
-    editor.commands.command(({ tr, dispatch }) => {
-      tr.setNodeMarkup(activeBlock.pos, nodeType, config.attrs);
-      dispatch?.(tr);
-      return true;
-    });
-  };
+      editor.commands.command(({ tr, dispatch }) => {
+        tr.setNodeMarkup(activeBlock.pos, nodeType, config.attrs);
+        dispatch?.(tr);
+        return true;
+      });
+    },
+    [editor, getActiveBlock],
+  );
 
   // В момент вызова получаем свежую позицию
-  const insertBlock = (type: BlockTypeT) => {
-    if (!getActiveBlock) return;
-    const activeBlock = getActiveBlock();
-    return createBlock(editor, type, activeBlock);
-  };
+  const insertBlock = useCallback(
+    (type: BlockTypeT) => {
+      if (!getActiveBlock) return;
+      const activeBlock = getActiveBlock();
+      return createBlock(editor, type, activeBlock);
+    },
+    [editor, getActiveBlock],
+  );
 
-  const insertCode = (codeText: string = '', language: string = 'plaintext') => {
-    if (!editor || !editor.isEditable) return;
+  const insertCode = useCallback(
+    (codeText: string = '', language: string = 'plaintext') => {
+      if (!editor || !editor.isEditable) return;
 
-    const endPos = editor.state.doc.content.size;
-    editor
-      .chain()
-      .focus()
-      .insertContentAt(endPos, {
-        type: 'codeBlock',
-        attrs: { language: language || 'plaintext' },
-        content: codeText ? [{ type: 'text', text: codeText }] : [],
-      })
-      .run();
-    return;
-  };
+      insertContentRelativeToBlock(
+        editor,
+        {
+          type: 'codeBlock',
+          attrs: { language: language || 'plaintext' },
+          content: codeText ? [{ type: 'text', text: codeText }] : [],
+        },
+        getCurrentBlock(editor, getActiveBlock?.()),
+      );
+    },
+    [editor, getActiveBlock],
+  );
 
   // В момент вызова получаем свежую позицию
-  const moveUp = () => {
+  const moveUp = useCallback(() => {
     if (!getActiveBlock) return;
-    const activeBlock = getActiveBlock();
-    return moveBlock(editor, 'up', activeBlock);
-  };
+    return moveBlock(editor, 'up', getActiveBlock());
+  }, [editor, getActiveBlock]);
 
-  const moveDown = () => {
+  const moveDown = useCallback(() => {
     if (!getActiveBlock) return;
-    const activeBlock = getActiveBlock();
-    return moveBlock(editor, 'down', activeBlock);
-  };
+    return moveBlock(editor, 'down', getActiveBlock());
+  }, [editor, getActiveBlock]);
 
-  const duplicate = () => {
+  const duplicate = useCallback(() => {
     if (!getActiveBlock) return;
-    const activeBlock = getActiveBlock();
-    return duplicateBlock(editor, activeBlock);
-  };
+    return duplicateBlock(editor, getActiveBlock());
+  }, [editor, getActiveBlock]);
 
-  const remove = () => {
+  const remove = useCallback(() => {
     if (!getActiveBlock) return;
-    const activeBlock = getActiveBlock();
-    return removeBlock(editor, activeBlock);
-  };
+    return removeBlock(editor, getActiveBlock());
+  }, [editor, getActiveBlock]);
 
   return {
     duplicate,

@@ -132,7 +132,7 @@ export function OrderingActivity({
             whileHover={locked ? undefined : { scale: 1.01 }}
             className={cn(
               activityCardClass,
-              'flex items-center gap-2',
+              'flex w-full items-center gap-2',
               activityStatusBorderClass[itemStatus(checkStatus, byItem, id)],
             )}
           >

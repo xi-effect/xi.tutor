@@ -4,6 +4,7 @@ import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useTranslation } from 'react-i18next';
 import { getClassroomDisplayName, type ClassroomT, isClassroomOnPause } from 'common.api';
+import { ClassroomSelectOption } from 'common.ui';
 
 type StudentSelectorProps = {
   value: string;
@@ -47,9 +48,10 @@ export const StudentSelector = ({
           <SelectItem
             key={classroom.id}
             value={classroom.id.toString()}
-            className="dark:text-text-primary max-w-full min-w-0 truncate"
+            textValue={getClassroomDisplayName(classroom)}
+            className="dark:text-text-primary max-w-full min-w-0"
           >
-            {getClassroomDisplayName(classroom)}
+            <ClassroomSelectOption classroom={classroom} />
           </SelectItem>
         ))}
       </SelectContent>

@@ -55,7 +55,7 @@
 | ---------------- | --------------------------------- | ------------------------------------- |
 | `profile-logout` | `data-umami-event` — клик «Выйти» | Выход из аккаунта на странице профиля |
 
-Клиентский отказ при выборе аватара (не картинка / больше 5 МиБ) даёт outcome `file_upload_rejected` с `source=other`. Успешная загрузка аватара после кропа в эту воронку пока не входит. См. [file-upload-events.md](./analytics/file-upload-events.md).
+Клиентский отказ при выборе аватара (не картинка / больше лимита экрана) даёт outcome `file_upload_rejected` с `source=profile_avatar`. Успешная загрузка аватара после кропа в эту воронку пока не входит. См. [file-upload-events.md](./analytics/file-upload-events.md).
 
 ---
 
@@ -654,6 +654,8 @@ lesson_started ◄──── (только при успехе)         lesson
 | Как долго студент пробыл в конкретном занятии?        | ❌              | нет `classroom_id` в событии и нет событий от студента                     |
 | Сколько занятий упало из-за разрыва LiveKit?          | ❌              | не трекается — нужно добавить                                              |
 | Сколько пользователей упёрлись в лимит размера файла? | ✅              | unique `file_upload_rejected`, `reason=file_too_large`                     |
+| Файлы какого диапазона пытаются загрузить?            | ✅              | `size_bucket` на `file_upload_rejected` / `product_limit_reached`          |
+| Насколько обычно превышают разрешённый лимит?         | ✅              | `limit_exceeded_by` на тех же событиях                                     |
 | В каком разделе чаще режут oversized-файлы?           | ✅              | то же событие, фильтр `source`                                             |
 | Сколько репетиторов открыли банк заданий?             | ✅              | unique visitors / count `math_bank_open`                                   |
 | Какая доля сессий банка закончилась вставкой?         | ✅              | unique `session_id` в `math_task_insert_board` (+ note) / `math_bank_open` |

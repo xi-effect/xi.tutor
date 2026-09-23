@@ -9,7 +9,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsc --watch",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@xipkg/actionbutton": "1.1.0",
@@ -19,11 +21,12 @@
     "@xipkg/drawer": "0.2.0",
     "@xipkg/dropdown": "3.1.0",
     "@xipkg/form": "4.3.0",
+    "@xipkg/gridvirtualizer": "1.0.2",
     "@xipkg/icons": "3.1.7",
     "@xipkg/input": "2.3.0",
     "@xipkg/link": "^2.1.0",
     "@xipkg/scrollarea": "2.3.0",
-    "@xipkg/select": "^2.3.0",
+    "@xipkg/select": "^3.0.0",
     "@xipkg/switcher-animate": "1.1.0",
     "@xipkg/tabs": "2.2.0",
     "@xipkg/tooltip": "2.2.0",
@@ -71,7 +74,8 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.22.0"
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "react": "19",

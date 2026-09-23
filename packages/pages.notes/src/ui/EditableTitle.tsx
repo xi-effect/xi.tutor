@@ -110,7 +110,7 @@ export const EditableTitle = ({
   return (
     <h3
       className={cn(
-        'text-text-primary text-[16px] font-semibold break-all select-none sm:text-[28px]',
+        'text-text-primary truncate text-[16px] font-semibold select-none sm:text-[28px]',
         isTutor && 'cursor-pointer',
         className,
       )}

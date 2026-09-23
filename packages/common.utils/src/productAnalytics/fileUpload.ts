@@ -1,6 +1,10 @@
 import { PRODUCT_ANALYTICS_EVENTS } from './events';
 import type { ProductAnalyticsEventMap } from './eventMap';
-import { getFileCategoryFromFile } from './productLimitReached';
+import {
+  getFileCategoryFromFile,
+  getFileSizeBucket,
+  getLimitExceededBy,
+} from './productLimitReached';
 import { trackProductEvent } from './umami';
 import type {
   FileUploadFileCategory,
@@ -8,8 +12,6 @@ import type {
   FileUploadSizeBucket,
   FileUploadSource,
 } from './types';
-
-const MB = 1024 * 1024;
 
 export type FileUploadErrorKind = 'tooLarge' | 'unsupported' | 'failed';
 
@@ -24,9 +26,13 @@ export type FileUploadAttemptInput = {
   size: number;
 };
 
+export type FileUploadAttemptContext = {
+  maxBytes?: number;
+};
+
 export type FileUploadAttempt = {
   succeed: () => void;
-  reject: (reason: FileUploadRejectReason) => void;
+  reject: (reason: FileUploadRejectReason, options?: FileUploadAttemptContext) => void;
 };
 
 type FileUploadBaseProps = {
@@ -36,12 +42,7 @@ type FileUploadBaseProps = {
   size_bucket: FileUploadSizeBucket;
 };
 
-export const getFileUploadSizeBucket = (bytes: number): FileUploadSizeBucket => {
-  if (bytes <= 1 * MB) return '0_1mb';
-  if (bytes <= 5 * MB) return '1_5mb';
-  if (bytes <= 30 * MB) return '5_30mb';
-  return '30mb_plus';
-};
+export const getFileUploadSizeBucket = getFileSizeBucket;
 
 const readPositiveStatus = (value: unknown): number | undefined =>
   typeof value === 'number' && value > 0 ? value : undefined;
@@ -183,17 +184,10 @@ export const getFileUploadRejectReasonFromError = (
 };
 
 export const getFileUploadRejectReasonFromEvaluation = (
-  result: { ok: true } | { ok: false; reason: 'storage' | 'size' },
+  result: { ok: true } | { ok: false; reason: 'storage' | 'size'; maxBytes?: number },
 ): FileUploadRejectReason | null => {
   if (result.ok) return null;
   return result.reason === 'size' ? 'file_too_large' : 'unknown';
-};
-
-const sanitizeFileName = (name?: string): string => {
-  const trimmed = (name ?? '').trim();
-  if (!trimmed) return 'unknown';
-  const base = trimmed.replace(/\\/g, '/').split('/').pop() ?? trimmed;
-  return base.slice(0, 255);
 };
 
 const buildBaseProps = (
@@ -203,12 +197,13 @@ const buildBaseProps = (
   event_version: 1,
   source,
   file_category: getFileCategoryFromFile(file),
-  size_bucket: getFileUploadSizeBucket(file.size),
+  size_bucket: getFileSizeBucket(file.size),
 });
 
 export const beginFileUploadAttempt = (
   source: FileUploadSource,
   file: FileUploadAttemptInput,
+  context?: FileUploadAttemptContext,
 ): FileUploadAttempt => {
   const props = buildBaseProps(source, file);
 
@@ -222,18 +217,18 @@ export const beginFileUploadAttempt = (
       settled = true;
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.FILE_UPLOAD_SUCCEEDED, props);
     },
-    reject: (reason: FileUploadRejectReason) => {
+    reject: (reason: FileUploadRejectReason, options?: FileUploadAttemptContext) => {
       if (settled) return;
       settled = true;
+      const maxBytes = options?.maxBytes ?? context?.maxBytes;
+      const limitExceededBy =
+        reason === 'file_too_large' ? getLimitExceededBy(file.size, maxBytes) : undefined;
       const payload: ProductAnalyticsEventMap['file_upload_rejected'] =
         reason === 'file_too_large'
           ? {
-              event_version: props.event_version,
-              source: props.source,
-              file_category: props.file_category,
+              ...props,
               reason,
-              file_name: sanitizeFileName(file.name),
-              file_size: file.size,
+              ...(limitExceededBy ? { limit_exceeded_by: limitExceededBy } : {}),
             }
           : {
               ...props,
@@ -246,11 +241,11 @@ export const beginFileUploadAttempt = (
 
 export const rejectFileUploadFromEvaluation = (
   attempt: FileUploadAttempt,
-  result: { ok: true } | { ok: false; reason: 'storage' | 'size' },
+  result: { ok: true } | { ok: false; reason: 'storage' | 'size'; maxBytes?: number },
 ): boolean => {
   const reason = getFileUploadRejectReasonFromEvaluation(result);
   if (!reason) return false;
-  attempt.reject(reason);
+  attempt.reject(reason, 'maxBytes' in result ? { maxBytes: result.maxBytes } : undefined);
   return true;
 };
 
@@ -259,5 +254,7 @@ export const rejectFileUploadFromError = (
   error: unknown,
   options?: FileUploadErrorContext,
 ): void => {
-  attempt.reject(getFileUploadRejectReasonFromError(error, options));
+  attempt.reject(getFileUploadRejectReasonFromError(error, options), {
+    maxBytes: options?.maxBytes,
+  });
 };

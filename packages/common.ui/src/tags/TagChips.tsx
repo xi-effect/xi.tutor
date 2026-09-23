@@ -37,7 +37,7 @@ const OverflowChipTooltip = ({ tags }: { tags: TagChipsItem[] }) => (
         side="top"
         align="start"
         sideOffset={6}
-        className="z-100 max-w-64 p-2 font-normal"
+        className="z-100 max-w-64 min-w-0 overflow-hidden p-2 font-normal"
       >
         <div className="flex flex-wrap content-start items-center gap-1">
           {tags.map((tag) => (

@@ -1,7 +1,7 @@
 import { DrThemeColors, getColorValue, type DrColorStyle } from '@ibodr/draw';
 import { TFill, TSize } from '../../types';
 
-const SIZE_IN_PIXELS: Partial<Record<TSize, number>> = { xl: 20, l: 16, m: 10 };
+const SIZE_IN_PIXELS: Partial<Record<TSize, number>> = { xl: 20, l: 16, m: 10, s: 6, xs: 4 };
 
 export const getFillColor = (colors: DrThemeColors, fill: TFill, color: DrColorStyle): string => {
   if (fill === 'solid') return getColorValue(colors, color, 'solid');

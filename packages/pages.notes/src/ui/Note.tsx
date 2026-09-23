@@ -16,10 +16,10 @@ const NoteContent = () => {
   if (!isSynced && !hasSyncError) return <LoadingScreen />;
 
   return (
-    <div className="bg-background-page flex h-full min-h-[calc(100dvh)] flex-col overflow-auto px-5 pt-3.5 pb-5">
+    <div className="bg-background-page flex h-full min-h-0 flex-col overflow-auto px-5 pt-3.5 pb-5">
       <Header />
-      <div className="flex w-full justify-center pt-4 pb-8">
-        <div className="w-full max-w-4xl md:pl-16">
+      <div className="flex w-full flex-1 justify-center pt-4 pb-8">
+        <div className="w-full max-w-4xl sm:pl-16">
           <TiptapEditor />
         </div>
       </div>

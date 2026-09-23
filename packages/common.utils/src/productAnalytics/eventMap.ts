@@ -40,6 +40,7 @@ import type {
   FileUploadRejectReason,
   FileUploadSizeBucket,
   FileUploadSource,
+  LimitExceededBy,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsInviteKind,
   ProductAnalyticsLessonType,
@@ -664,6 +665,7 @@ export type ProductAnalyticsEventMap = {
     source: ProductLimitSource;
     file_category?: ProductLimitFileCategory;
     size_bucket?: ProductLimitSizeBucket;
+    limit_exceeded_by?: LimitExceededBy;
     object_kind?: ProductLimitObjectKind;
     blocked_on?: ProductLimitBlockedOn;
   };
@@ -686,8 +688,8 @@ export type ProductAnalyticsEventMap = {
         source: FileUploadSource;
         reason: 'file_too_large';
         file_category: FileUploadFileCategory;
-        file_name: string;
-        file_size: number;
+        size_bucket: FileUploadSizeBucket;
+        limit_exceeded_by?: LimitExceededBy;
       }
     | {
         event_version?: number;

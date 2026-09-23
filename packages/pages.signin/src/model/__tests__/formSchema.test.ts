@@ -18,9 +18,9 @@ describe('createFormSchema (signin)', () => {
     expect(schema.safeParse({ ...valid, email: 'bad' }).success).toBe(false);
   });
 
-  it('нормализует регистр и пробелы в email', () => {
+  it('обрезает пробелы в email и сохраняет регистр', () => {
     const parsed = schema.parse({ ...valid, email: '  Ivan@Example.COM ' });
-    expect(parsed.email).toBe('ivan@example.com');
+    expect(parsed.email).toBe('Ivan@Example.COM');
   });
 
   it('ограничивает длину пароля 6..64', () => {

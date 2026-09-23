@@ -4,6 +4,7 @@ export { TiptapEditor } from './ui/components/TiptapEditor';
 export { useInterfaceStore } from './store/interfaceStore';
 export { useYjsContext } from './hooks/useYjsContext';
 export { useCollaborators } from './hooks/useCollaborators';
+export { NoteActivitiesMenu } from './ui/components/NoteActivitiesMenu';
 
 export { isUrl, isImageUrl } from './utils/isUrl';
 export { normalizeTokens } from './utils/normalizeTokens';

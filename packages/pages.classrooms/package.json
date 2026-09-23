@@ -23,7 +23,7 @@
     "@xipkg/link": "^2.1.0",
     "@xipkg/modal": "4.6.0",
     "@xipkg/scrollarea": "2.3.0",
-    "@xipkg/select": "^2.3.0",
+    "@xipkg/select": "^3.0.0",
     "@xipkg/switcher-animate": "1.1.0",
     "@xipkg/tooltip": "2.2.0",
     "@xipkg/userprofile": "4.2.0",
