@@ -9,7 +9,7 @@ import {
 
 const atom = `
   <entry>
-    <link href="https://github.com/xi-effect/xi.tutor/releases/tag/xi.tauri-v0.9.0"/>
+    <link href="https://github.com/xi-effect/xi.tutor/releases/tag/v0.9.0"/>
   </entry>
   <entry>
     <link href="https://github.com/xi-effect/xi.tutor/releases/tag/electron-v0.1.0"/>
@@ -23,14 +23,14 @@ const atom = `
 `;
 
 describe('electron release feed', () => {
-  it('picks the newest stable electron tag and skips Tauri releases', () => {
+  it('picks the newest stable electron tag and skips other releases', () => {
     assert.equal(pickLatestElectronReleaseTag(atom), 'electron-v0.1.1');
   });
 
   it('returns null when the feed has no electron release', () => {
     assert.equal(
       pickLatestElectronReleaseTag(
-        '<link href="https://github.com/xi-effect/xi.tutor/releases/tag/xi.tauri-v1.0.0"/>',
+        '<link href="https://github.com/xi-effect/xi.tutor/releases/tag/v1.0.0"/>',
       ),
       null,
     );

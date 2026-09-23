@@ -261,7 +261,6 @@ export function installNativeMediaAdapters(): void {
     mediaDevices.getUserMedia = (async (constraints?: MediaStreamConstraints) => {
       // Electron: Chromium already triggers TCC via getUserMedia. Asking the OS
       // again on the main process (especially in parallel) can freeze the app.
-      // Tauri / mobile still need an explicit preflight before capture.
       if (!isElectronShell()) {
         try {
           if (constraints?.video) await requestMediaPermission('camera');

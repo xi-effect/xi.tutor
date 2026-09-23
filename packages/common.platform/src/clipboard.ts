@@ -1,4 +1,4 @@
-import { isElectronShell, isTauriShell } from './detect';
+import { isElectronShell } from './detect';
 import { getSovliumDesktop } from './electron';
 
 async function writeTextElectron(text: string): Promise<boolean> {
@@ -23,16 +23,6 @@ async function readTextElectron(): Promise<string | null> {
 }
 
 export async function writeText(text: string): Promise<void> {
-  if (isTauriShell()) {
-    try {
-      const { writeText: writeNative } = await import('@tauri-apps/plugin-clipboard-manager');
-      await writeNative(text);
-      return;
-    } catch (err) {
-      console.warn('[common.platform] native clipboard write failed, falling back', err);
-    }
-  }
-
   if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
     try {
       await navigator.clipboard.writeText(text);
@@ -48,15 +38,6 @@ export async function writeText(text: string): Promise<void> {
 }
 
 export async function readText(): Promise<string> {
-  if (isTauriShell()) {
-    try {
-      const { readText: readNative } = await import('@tauri-apps/plugin-clipboard-manager');
-      return await readNative();
-    } catch (err) {
-      console.warn('[common.platform] native clipboard read failed, falling back', err);
-    }
-  }
-
   if (typeof navigator !== 'undefined' && navigator.clipboard?.readText) {
     try {
       return await navigator.clipboard.readText();
@@ -71,18 +52,6 @@ export async function readText(): Promise<string> {
 }
 
 export async function writeHtmlAndText(html: string, plain: string): Promise<void> {
-  if (isTauriShell()) {
-    try {
-      const { writeHtml } = await import('@tauri-apps/plugin-clipboard-manager');
-      await writeHtml(html, plain);
-      return;
-    } catch (err) {
-      console.warn('[common.platform] native HTML clipboard write failed, using text', err);
-      await writeText(plain || html);
-      return;
-    }
-  }
-
   try {
     if (
       typeof navigator !== 'undefined' &&

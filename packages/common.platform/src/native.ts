@@ -1,4 +1,4 @@
-import { isElectronShell, isNativeShell, isTauriShell } from './detect';
+import { isElectronShell, isNativeShell } from './detect';
 import { getSovliumDesktop } from './electron';
 import type { CallPipSize } from './callPip';
 import type { MediaPermissionKind } from './media';
@@ -50,10 +50,6 @@ export async function invokeCommand<T>(
   if (isElectronShell()) {
     return invokeElectron<T>(command, args);
   }
-  if (isTauriShell()) {
-    const { invoke } = await import('@tauri-apps/api/core');
-    return invoke<T>(command, args);
-  }
   throw new Error(`[common.platform] ${command} is only available in the native shell`);
 }
 
@@ -74,13 +70,6 @@ export async function listenCommand<T>(
       return desktop.events.subscribe(event, () => handler(undefined as T));
     }
     return desktop.events.subscribe(event, (payload) => handler(payload as T));
-  }
-  if (isTauriShell()) {
-    const { listen } = await import('@tauri-apps/api/event');
-    const unlisten = await listen<T>(event, (e) => {
-      handler(e.payload);
-    });
-    return unlisten;
   }
   return () => undefined;
 }

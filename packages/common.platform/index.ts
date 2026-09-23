@@ -6,7 +6,6 @@ export {
   isMobileNative,
   isTabletNative,
   isElectronShell,
-  isTauriShell,
   isElectronMainSurface,
   isElectronConferenceSurface,
   getElectronSurface,

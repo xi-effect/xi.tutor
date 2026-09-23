@@ -80,8 +80,8 @@ async function resolveLatestTag(): Promise<string | null> {
 /**
  * Packaged-app updater.
  *
- * The repository also publishes Tauri releases, so `/releases/latest` is not
- * the Electron feed. The newest `electron-v*` tag is resolved from the public
+ * `/releases/latest` is not used as the Electron feed. The newest
+ * `electron-v*` tag is resolved from the public
  * GitHub releases list, then electron-updater reads `latest.yml` /
  * `latest-mac.yml` from that GitHub Release.
  *

@@ -1,4 +1,4 @@
-import { isDesktopNative, isElectronShell, isNativeShell, isTauriShell } from './detect';
+import { isDesktopNative, isElectronShell, isNativeShell } from './detect';
 import { getSovliumDesktop } from './electron';
 
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tg:', 'telegram:']);
@@ -40,11 +40,6 @@ export async function openUrl(url: string): Promise<void> {
             await desktop.external.openUrl(href);
             return;
           }
-        }
-        if (isTauriShell()) {
-          const { openUrl: openWithOs } = await import('@tauri-apps/plugin-opener');
-          await openWithOs(href);
-          return;
         }
       }
     } catch (err) {

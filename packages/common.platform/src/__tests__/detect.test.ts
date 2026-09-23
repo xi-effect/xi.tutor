@@ -11,7 +11,6 @@ import {
   isMobileNative,
   isNativeShell,
   isTabletNative,
-  isTauriShell,
 } from '../detect';
 
 describe('detect', () => {
@@ -39,7 +38,7 @@ describe('detect', () => {
   });
 
   it('распознаёт Windows desktop', () => {
-    vi.stubGlobal('window', { __TAURI_INTERNALS__: {} });
+    vi.stubGlobal('window', { __SOVLIUM_NATIVE__: true });
     vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' });
 
     expect(isDesktopNative()).toBe(true);
@@ -116,7 +115,6 @@ describe('detect', () => {
     vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' });
 
     expect(isElectronShell()).toBe(true);
-    expect(isTauriShell()).toBe(false);
     expect(isDesktopNative()).toBe(true);
     expect(isElectronMainSurface()).toBe(true);
     expect(isElectronConferenceSurface()).toBe(false);
@@ -152,14 +150,5 @@ describe('detect', () => {
     expect(isElectronConferenceSurface()).toBe(false);
     expect(isElectronMainSurface()).toBe(true);
     expect(getElectronSurface()).toBe('main');
-  });
-
-  it('не считает Electron оболочку Tauri', () => {
-    vi.stubGlobal('window', { __TAURI_INTERNALS__: {} });
-    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' });
-
-    expect(isTauriShell()).toBe(true);
-    expect(isElectronShell()).toBe(false);
-    expect(getNativeRuntime()).toBe('tauri');
   });
 });

@@ -6,7 +6,7 @@
  * full mode gets a button in the call header next to «Вид».
  *
  * Electron opens CompactView's PiP in a separate always-on-top popup window
- * (Discord-like pop-out). Tauri still uses the Document PiP shim on the main window.
+ * (Discord-like pop-out).
  */
 
 import { useEffect, useRef, useState, type ReactElement } from 'react';

@@ -1,5 +1,5 @@
 export type RuntimeKind = 'web' | 'desktop' | 'mobile';
-export type NativeRuntime = 'browser' | 'tauri' | 'electron';
+export type NativeRuntime = 'browser' | 'electron';
 export type NativeOs = 'macos' | 'windows' | 'linux' | 'ios' | 'android' | 'unknown';
 export type ElectronSurface = 'main' | 'conference';
 
@@ -34,16 +34,11 @@ export function getNativeRuntime(): NativeRuntime {
   const g = host();
   if (!g) return 'browser';
   if (g.__SOVLIUM_ELECTRON__ || g.sovliumDesktop) return 'electron';
-  if (g.__TAURI_INTERNALS__) return 'tauri';
   return 'browser';
 }
 
 export function isElectronShell(): boolean {
   return getNativeRuntime() === 'electron';
-}
-
-export function isTauriShell(): boolean {
-  return getNativeRuntime() === 'tauri';
 }
 
 const ELECTRON_CONFERENCE_PATH = '/desktop/conference/';
@@ -74,7 +69,7 @@ export function isElectronConferenceSurface(): boolean {
 
 /**
  * True when the UI runs inside the Sovlium native shell (local bundle or
- * remote `*.sovlium.ru` loaded in Tauri / Electron).
+ * remote `*.sovlium.ru` loaded in Electron).
  *
  * Production navigates to the web origin, so `__SOVLIUM_NATIVE__`
  * (injected by the shell) is the reliable signal — not the document origin.
@@ -82,9 +77,7 @@ export function isElectronConferenceSurface(): boolean {
 export function isNativeShell(): boolean {
   const g = host();
   if (!g) return false;
-  return Boolean(
-    g.__SOVLIUM_NATIVE__ || g.__SOVLIUM_ELECTRON__ || g.sovliumDesktop || g.__TAURI_INTERNALS__,
-  );
+  return Boolean(g.__SOVLIUM_NATIVE__ || g.__SOVLIUM_ELECTRON__ || g.sovliumDesktop);
 }
 
 /**

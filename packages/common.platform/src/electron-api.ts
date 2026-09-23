@@ -198,7 +198,6 @@ declare global {
     __SOVLIUM_NATIVE_OS__?: string;
     __SOVLIUM_ELECTRON__?: boolean;
     __SOVLIUM_ELECTRON_SURFACE__?: 'main' | 'conference';
-    __TAURI_INTERNALS__?: unknown;
     sovliumDesktop?: SovliumDesktopAPI;
   }
 }

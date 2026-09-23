@@ -18,7 +18,7 @@ function compareStable(left: string, right: string): number {
   return 0;
 }
 
-/** Newest stable `electron-vX.Y.Z` tag. Tauri tags and prereleases are ignored. */
+/** Newest stable `electron-vX.Y.Z` tag. Other tags and prereleases are ignored. */
 export function pickLatestElectronTag(tags: Iterable<string>): string | null {
   const versions = new Map<string, string>();
   for (const tag of tags) {

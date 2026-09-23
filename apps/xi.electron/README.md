@@ -9,32 +9,13 @@ Desktop-оболочка Sovlium на Electron для **macOS** и **Windows**. 
                        │
              ┌─────────┴─────────┐
              │                   │
-           Browser            Native shells
-                                  │
-                         ┌────────┴────────┐
-                         │                 │
-                     Electron           Tauri
-                     desktop            mobile
-                  macOS / Windows     iOS / Android
+           Browser            Electron
+                           macOS / Windows
 ```
-
-`apps/xi.tauri` не удаляется и не ломается. Electron добавляется параллельно.
 
 ## Зачем Electron
 
-Tauri desktop остаётся в репозитории, но для macOS/Windows нужна оболочка с полноценным Chromium: `WebContentsView`, перенос одного LiveKit-контекста между окнами, системный screen capture и cookie-origin `https://app.sovlium.ru` при локальном frontend.
-
-Отличие от Tauri:
-
-|                   | Electron                                                  | Tauri desktop                              |
-| ----------------- | --------------------------------------------------------- | ------------------------------------------ |
-| Runtime           | Chromium                                                  | WKWebView / WebView2                       |
-| Frontend          | bundled `xi.web`                                          | свой Vite-shell с alias на `xi.web`        |
-| Production origin | `https://app.sovlium.ru` через protocol interception      | remote `*.sovlium.ru` или `tauri://`       |
-| Плавающий звонок  | тот же `WebContentsView` переносится в always-on-top окно | главное окно сжимается (Document PiP shim) |
-| Identifier        | `ru.sovlium.electron.dev` (параллельная разработка)       | `ru.sovlium.app`                           |
-
-Перед реальной миграцией desktop отдельно решить, наследует ли Electron `ru.sovlium.app`.
+Для macOS/Windows нужна оболочка с полноценным Chromium: `WebContentsView`, перенос одного LiveKit-контекста между окнами, системный screen capture и cookie-origin `https://app.sovlium.ru` при локальном frontend.
 
 ## Архитектура
 
@@ -153,7 +134,7 @@ pnpm electron:publish:macos
 
 Только packaged main process (`app.isPackaged`). В dev updater не стартует.
 
-Лента — GitHub Releases этого репозитория, теги `electron-v*`. Tauri-релизы в том же репозитории не используются. `latest.yml` / `latest-mac.yml` создаёт electron-builder.
+Лента — GitHub Releases этого репозитория, теги `electron-v*`. `latest.yml` / `latest-mac.yml` создаёт electron-builder.
 
 - **Windows:** проверка, фоновое скачивание, в `xi.web` кнопка «Перезапустить и обновить» → `quitAndInstall()`. Принудительного перезапуска нет. Проверка подписи обновления выключена, пока нет сертификата (`verifyUpdateCodeSignature: false`).
 - **macOS:** только «Доступна новая версия» и открытие страницы GitHub Release. Автоустановка выключена, пока приложение не подписано и не нотаризовано.
@@ -169,4 +150,4 @@ Renderer видит только `window.sovliumDesktop`. Каждый кана�
 - `window.__SOVLIUM_ELECTRON__`
 - `window.__SOVLIUM_ELECTRON_SURFACE__` — `main` | `conference`
 
-`common.platform` определяет runtime централизованно: `browser` | `tauri` | `electron`. Tauri API импортируются только при `runtime === tauri`.
+`common.platform` определяет runtime централизованно: `browser` | `electron`.

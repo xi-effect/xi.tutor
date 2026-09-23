@@ -1,5 +1,5 @@
 /**
- * Syncs LiveKit local screen-share state with the Tauri always-on-top overlay.
+ * Syncs LiveKit local screen-share state with the desktop always-on-top overlay.
  *
  * No-op outside the native desktop shell. Safe to mount in the browser web app.
  */
