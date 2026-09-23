@@ -19,6 +19,9 @@ import { BoardCallStorageWarmup } from './boardWarmup/BoardCallStorageWarmup';
 import { NativeShareOverlayBridge } from './useNativeShareOverlay';
 import { ShareAnnotationPublisher } from './shareAnnotations/useShareAnnotationPublisher';
 import { ShareAnnotationsOverlay } from './shareAnnotations/ShareAnnotationsOverlay';
+import { ElectronShareAnnotations } from './shareAnnotations/ElectronShareAnnotations';
+import { ElectronShareSourcePicker } from './shareAnnotations/ElectronShareSourcePicker';
+import { RemoteControlViewer } from './remoteControl/RemoteControlViewer';
 import { ElectronCallKeepAwake } from './ElectronCallKeepAwake';
 import { ElectronPermissionsHydrate } from './ElectronPermissionsHydrate';
 import { LiveKitDeadRoomGuard } from './LiveKitDeadRoomGuard';
@@ -83,6 +86,9 @@ const CallsShellProviders = ({ children }: CallsShellPropsT) => {
             <NativeShareOverlayBridge />
             <ShareAnnotationPublisher />
             <ShareAnnotationsOverlay />
+            <ElectronShareAnnotations />
+            <ElectronShareSourcePicker />
+            <RemoteControlViewer />
             <BoardCallStorageWarmup />
             <CallsShellInit />
             {children}

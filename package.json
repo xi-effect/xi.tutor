@@ -23,6 +23,8 @@
     "electron:build:macos": "pnpm --filter xi.electron build:macos",
     "electron:build:macos:universal": "pnpm --filter xi.electron build:macos:universal",
     "electron:build:windows": "pnpm --filter xi.electron build:windows",
+    "electron:publish:windows": "pnpm --filter xi.electron build:publish:windows",
+    "electron:publish:macos": "pnpm --filter xi.electron build:publish:macos",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:e2e": "pnpm --filter xi.web test:e2e",

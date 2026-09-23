@@ -4,12 +4,7 @@ import { applyUserLanguage, LoadingScreen } from 'common.ui';
 import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
-import {
-  CallsShell,
-  CompactView,
-  useCallStore,
-  useUmamiActivityHeartbeat,
-} from 'modules.calls';
+import { CallsShell, CompactView, useCallStore, useUmamiActivityHeartbeat } from 'modules.calls';
 import { useCurrentUser, useSyncRoleFromSearch, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';

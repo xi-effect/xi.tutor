@@ -1,5 +1,15 @@
-import { shell, type BrowserWindow, type WebContents } from 'electron';
+import { BrowserWindow, shell, type WebContents } from 'electron';
 import { isAllowedNavigation, isSafeExternalUrl } from './security';
+import {
+  callOverlayWindowOpen,
+  configureCallOverlayWindow,
+  isCallOverlayRequest,
+} from './call-pip';
+import {
+  configureShareAnnotationsWindow,
+  isShareAnnotationsWindow,
+  shareAnnotationsWindowOpen,
+} from './share-annotations';
 
 export async function openExternalUrl(url: string): Promise<void> {
   if (!isSafeExternalUrl(url)) {
@@ -9,11 +19,21 @@ export async function openExternalUrl(url: string): Promise<void> {
 }
 
 export function installNavigationGuard(contents: WebContents): void {
-  contents.setWindowOpenHandler(({ url }) => {
-    void openExternalUrl(url).catch((error) => {
-      console.warn('[xi.electron] blocked window.open', url, error);
+  contents.setWindowOpenHandler((details) => {
+    const popup = callOverlayWindowOpen(details) ?? shareAnnotationsWindowOpen(details);
+    if (popup) return popup;
+    void openExternalUrl(details.url).catch((error) => {
+      console.warn('[xi.electron] blocked window.open', details.url, error);
     });
     return { action: 'deny' };
+  });
+
+  contents.on('did-create-window', (window, details) => {
+    if (isCallOverlayRequest(details)) {
+      configureCallOverlayWindow(window);
+    } else if (isShareAnnotationsWindow(details)) {
+      configureShareAnnotationsWindow(window, details, BrowserWindow.fromWebContents(contents));
+    }
   });
 
   contents.on('will-navigate', (event, url) => {

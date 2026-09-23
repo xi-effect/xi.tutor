@@ -4,7 +4,9 @@ import { useCallStore } from '@xipkg/calls-store';
 
 function isDeadLiveKitRoomError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
-  return message.includes('requested room does not exist') || message.includes('room does not exist');
+  return (
+    message.includes('requested room does not exist') || message.includes('room does not exist')
+  );
 }
 
 /**

@@ -20,8 +20,12 @@ electronLanguages:
 mac:
   category: public.app-category.education
   icon: resources/icons/icon.icns
-  hardenedRuntime: true
+  # TODO: after the Apple Developer certificate is available, set the signing
+  # identity, turn hardenedRuntime back on, and enable notarization.
+  identity: null
+  hardenedRuntime: false
   gatekeeperAssess: false
+  notarize: false
   entitlements: resources/entitlements.mac.plist
   entitlementsInherit: resources/entitlements.mac.plist
   extendInfo:
@@ -34,17 +38,25 @@ mac:
         CFBundleURLSchemes:
           - sovlium
   target:
-    - dmg
-    - dir
+    - target: dmg
+      arch:
+        - arm64
+        - x64
+    - target: zip
+      arch:
+        - arm64
+        - x64
 dmg:
   artifactName: ${productName}-${version}-mac-${arch}.${ext}
 win:
   icon: resources/icons/icon.ico
+  # TODO: remove after Windows code signing is configured.
+  verifyUpdateCodeSignature: false
   target:
     - target: nsis
       arch:
         - x64
-  artifactName: ${productName}-${version}-windows-${arch}.${ext}
+  artifactName: ${productName}-Setup-${version}.${ext}
 nsis:
   oneClick: false
   perMachine: false
@@ -53,4 +65,9 @@ nsis:
   shortcutName: Sovlium
   uninstallDisplayName: Sovlium
   artifactName: ${productName}-Setup-${version}.${ext}
-publish: null
+publish:
+  provider: github
+  owner: xi-effect
+  repo: xi.tutor
+  releaseType: draft
+  tagNamePrefix: electron-v

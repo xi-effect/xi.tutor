@@ -26,13 +26,13 @@ Tauri desktop остаётся в репозитории, но для macOS/Wind
 
 Отличие от Tauri:
 
-| | Electron | Tauri desktop |
-| --- | --- | --- |
-| Runtime | Chromium | WKWebView / WebView2 |
-| Frontend | bundled `xi.web` | свой Vite-shell с alias на `xi.web` |
-| Production origin | `https://app.sovlium.ru` через protocol interception | remote `*.sovlium.ru` или `tauri://` |
-| Плавающий звонок | тот же `WebContentsView` переносится в always-on-top окно | главное окно сжимается (Document PiP shim) |
-| Identifier | `ru.sovlium.electron.dev` (параллельная разработка) | `ru.sovlium.app` |
+|                   | Electron                                                  | Tauri desktop                              |
+| ----------------- | --------------------------------------------------------- | ------------------------------------------ |
+| Runtime           | Chromium                                                  | WKWebView / WebView2                       |
+| Frontend          | bundled `xi.web`                                          | свой Vite-shell с alias на `xi.web`        |
+| Production origin | `https://app.sovlium.ru` через protocol interception      | remote `*.sovlium.ru` или `tauri://`       |
+| Плавающий звонок  | тот же `WebContentsView` переносится в always-on-top окно | главное окно сжимается (Document PiP shim) |
+| Identifier        | `ru.sovlium.electron.dev` (параллельная разработка)       | `ru.sovlium.app`                           |
 
 Перед реальной миграцией desktop отдельно решить, наследует ли Electron `ru.sovlium.app`.
 
@@ -87,7 +87,7 @@ Loader не завязан на один каталог:
 Все sovlium renderer используют одну session:
 
 ```ts
-session.fromPartition('persist:sovlium')
+session.fromPartition('persist:sovlium');
 ```
 
 signin → `Set-Cookie` от `api.sovlium.ru` → Chromium Session → REST, Socket.IO, другие окна, перезапуск. HttpOnly cookie не читаются из JS и не гоняются через IPC.
@@ -121,11 +121,18 @@ pnpm electron:build:windows
 
 Сначала собирается `xi.web` в режиме `electron` (`vite build --mode electron`): minify и code splitting как в production, **без** PWA Service Worker.
 
-macOS по умолчанию — текущая архитектура (на Apple Silicon это arm64: `.app` + `.dmg`). Universal (arm64 + x64) почти удваивает размер из‑за двух копий Chromium: `pnpm electron:build:macos:universal`.  
-Windows: NSIS `.exe` x64, uninstall, AppUserModelId `ru.sovlium.electron.dev`.  
+macOS: DMG и ZIP, arm64 и x64. Universal по-прежнему отдельно: `pnpm electron:build:macos:universal`.  
+Windows: NSIS `.exe` x64 (`Sovlium-Setup-<version>.exe`), uninstall, AppUserModelId `ru.sovlium.electron.dev`.  
 Linux на первом этапе не собирается.
 
-Signing / notarization через env (`CSC_LINK`, `APPLE_ID`, …). Секреты в репозиторий не кладутся.
+Публикация в GitHub Releases `xi-effect/xi.tutor` (draft, тег `electron-vX.Y.Z`):
+
+```bash
+pnpm electron:publish:windows
+pnpm electron:publish:macos
+```
+
+Обычно это делает `.github/workflows/electron-release.yml` после `git push origin electron-vX.Y.Z`. Версия тега должна совпадать с `apps/xi.electron/package.json`. Signing / notarization пока выключены.
 
 ## Conference WebContentsView
 
@@ -144,8 +151,12 @@ Signing / notarization через env (`CSC_LINK`, `APPLE_ID`, …). Секре�
 
 ## Updater
 
-- **Web bundle:** abstraction `resolveWebBundle()`, без download до появления signed feed.
-- **Electron shell:** `electron-updater` подключается только если задан `SOVLIUM_ELECTRON_UPDATE_FEED`. Endpoint Tauri `releases.sovlium.ru/desktop` **не используется**.
+Только packaged main process (`app.isPackaged`). В dev updater не стартует.
+
+Лента — GitHub Releases этого репозитория, теги `electron-v*`. Tauri-релизы в том же репозитории не используются. `latest.yml` / `latest-mac.yml` создаёт electron-builder.
+
+- **Windows:** проверка, фоновое скачивание, в `xi.web` кнопка «Перезапустить и обновить» → `quitAndInstall()`. Принудительного перезапуска нет. Проверка подписи обновления выключена, пока нет сертификата (`verifyUpdateCodeSignature: false`).
+- **macOS:** только «Доступна новая версия» и открытие страницы GitHub Release. Автоустановка выключена, пока приложение не подписано и не нотаризовано.
 
 ## IPC
 

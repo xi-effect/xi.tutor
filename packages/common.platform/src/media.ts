@@ -1,5 +1,6 @@
 import { isDesktopNative, isElectronShell, isMobileNative, isNativeShell } from './detect';
 import { invokeCommand } from './native';
+import { chooseShareSource } from './shareSourcePicker';
 
 export type MediaPermissionKind = 'camera' | 'microphone' | 'screen';
 export type MediaPermissionStatus = 'granted' | 'denied' | 'prompt' | 'unsupported';
@@ -12,7 +13,8 @@ function mapNativeStatus(value: string | undefined): MediaPermissionStatus {
 }
 
 async function queryWebPermission(kind: 'camera' | 'microphone'): Promise<MediaPermissionStatus> {
-  const query = originalPermissionsQuery ?? navigator.permissions?.query?.bind(navigator.permissions);
+  const query =
+    originalPermissionsQuery ?? navigator.permissions?.query?.bind(navigator.permissions);
   if (typeof navigator === 'undefined' || typeof query !== 'function') {
     return 'unsupported';
   }
@@ -100,6 +102,33 @@ export async function getDisplayMedia(options?: DisplayMediaStreamOptions): Prom
 }
 
 let mediaAdaptersInstalled = false;
+
+function constraintSize(value: ConstrainULong | undefined): number | undefined {
+  if (typeof value === 'number') return value;
+  if (!value || typeof value !== 'object') return undefined;
+  return value.exact ?? value.ideal ?? value.max;
+}
+
+/**
+ * LiveKit asks for `ideal` 1920×1080. On a 16:10 display Chromium's
+ * ScreenCaptureKit capturer then shrinks the picture inside the frame and
+ * pads the rest with black. `max` limits keep the display's own aspect ratio.
+ */
+export function fitDisplayVideo(
+  video: DisplayMediaStreamOptions['video'],
+): DisplayMediaStreamOptions['video'] {
+  if (!video || typeof video !== 'object') return video;
+  const { width, height, ...rest } = video;
+  delete rest.aspectRatio;
+  const maxWidth = constraintSize(width);
+  const maxHeight = constraintSize(height);
+  if (maxWidth === undefined && maxHeight === undefined) return video;
+  return {
+    ...rest,
+    ...(maxWidth !== undefined ? { width: { max: maxWidth } } : {}),
+    ...(maxHeight !== undefined ? { height: { max: maxHeight } } : {}),
+  };
+}
 
 const captureGranted: Record<'camera' | 'microphone', boolean> = {
   camera: false,
@@ -248,7 +277,11 @@ export function installNativeMediaAdapters(): void {
     }) as typeof mediaDevices.getUserMedia;
   }
 
-  if (isElectronShell() && typeof mediaDevices.enumerateDevices === 'function' && originalGetUserMedia) {
+  if (
+    isElectronShell() &&
+    typeof mediaDevices.enumerateDevices === 'function' &&
+    originalGetUserMedia
+  ) {
     originalEnumerateDevices = mediaDevices.enumerateDevices.bind(mediaDevices);
     mediaDevices.enumerateDevices = (async () => {
       const listed = await originalEnumerateDevices!();
@@ -280,6 +313,10 @@ export function installNativeMediaAdapters(): void {
     originalGetDisplayMedia = mediaDevices.getDisplayMedia.bind(mediaDevices);
     mediaDevices.getDisplayMedia = (async (options?: DisplayMediaStreamOptions) => {
       if (isElectronShell()) {
+        if (!(await chooseShareSource())) {
+          throw new DOMException('Screen share was cancelled', 'NotAllowedError');
+        }
+        options = { ...options, video: fitDisplayVideo(options?.video) };
         try {
           return await originalGetDisplayMedia!({
             ...options,
@@ -308,8 +345,7 @@ export function installNativeMediaAdapters(): void {
         monitorTypeSurfaces: 'include',
       } as DisplayMediaStreamOptions);
       const settings = stream.getVideoTracks()[0]?.getSettings() as
-        | (MediaTrackSettings & { displaySurface?: string })
-        | undefined;
+        (MediaTrackSettings & { displaySurface?: string }) | undefined;
       console.info('[common.platform] display capture surface:', settings?.displaySurface);
       return stream;
     }) as typeof mediaDevices.getDisplayMedia;

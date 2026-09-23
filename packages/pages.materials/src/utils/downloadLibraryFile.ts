@@ -1,4 +1,9 @@
-import { getClassroomFileRequest, getLibraryFileRequest, handleError, saveBlob } from 'common.services';
+import {
+  getClassroomFileRequest,
+  getLibraryFileRequest,
+  handleError,
+  saveBlob,
+} from 'common.services';
 import type { FileContentSource } from '../ui/Files/preview/useLibraryFileBlob';
 
 export const downloadLibraryFile = async (

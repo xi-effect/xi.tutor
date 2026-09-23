@@ -1,7 +1,10 @@
-import type { IpcMainInvokeEvent } from 'electron';
+import type { IpcMainEvent, IpcMainInvokeEvent } from 'electron';
 import { isTrustedRendererUrl } from '../security';
 
-export function assertTrustedSender(event: IpcMainInvokeEvent, channel: string): void {
+export function assertTrustedSender(
+  event: IpcMainInvokeEvent | IpcMainEvent,
+  channel: string,
+): void {
   const url = event.senderFrame?.url ?? event.sender.getURL();
   if (!isTrustedRendererUrl(url)) {
     throw new Error(`[xi.electron] blocked IPC ${channel} from ${url || 'unknown'}`);

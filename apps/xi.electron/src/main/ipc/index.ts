@@ -7,11 +7,21 @@ import { PRODUCT_NAME } from '../../shared/constants';
 import { openExternalUrl } from '../navigation';
 import { getMediaPermissionStatus, requestMediaPermission } from '../permissions';
 import { getShellTheme, setShellTheme } from '../theme';
-import {
-  broadcastShareOverlayStop,
-  hideShareOverlayWindow,
-} from '../windows/share-overlay-window';
+import { broadcastShareOverlayStop, hideShareOverlayWindow } from '../windows/share-overlay-window';
 import { showMainWindow } from '../windows/main-window';
+import {
+  layoutShareAnnotations,
+  setShareAnnotationDrawing,
+  setShareToolbarSize,
+} from '../share-annotations';
+import { listShareSources, selectShareSource } from '../share-sources';
+import {
+  injectRemoteInput,
+  parseRemoteInput,
+  remoteControlStatus,
+  requestRemoteControlAccess,
+  setRemoteControlActive,
+} from '../remote-control';
 import { asBoolean, asNumber, asRecord, asString, assertTrustedSender } from './validate';
 import {
   getNativeNotificationPermission,
@@ -26,6 +36,7 @@ import {
 } from '../clipboard';
 import { setDisplaySleepBlocked } from '../power';
 import { sendToRenderer } from '../send';
+import { getUpdaterState, installDownloadedUpdate, openUpdateRelease } from '../updater';
 
 function nativeOs(): 'macos' | 'windows' | 'linux' | 'unknown' {
   if (process.platform === 'darwin') return 'macos';
@@ -163,6 +174,51 @@ export function registerIpc(options: {
     broadcastShareOverlayStop();
   });
 
+  handle(IPC.screenShareListSources, async () => listShareSources());
+
+  handle(IPC.screenShareSelectSource, async (_event, id) => {
+    selectShareSource(asString(id) || null);
+  });
+
+  handle(IPC.screenShareLayoutAnnotations, async (event, capture) => {
+    const record = capture === null || capture === undefined ? null : asRecord(capture);
+    const width = record ? asNumber(record.width) : 0;
+    const height = record ? asNumber(record.height) : 0;
+    layoutShareAnnotations(
+      width > 0 && height > 0 ? { width, height } : null,
+      BrowserWindow.fromWebContents(event.sender),
+    );
+  });
+
+  handle(IPC.screenShareSetAnnotationDrawing, async (_event, enabled) => {
+    setShareAnnotationDrawing(asBoolean(enabled));
+  });
+
+  handle(IPC.screenShareSetToolbarHeight, async (_event, size) => {
+    const record = asRecord(size);
+    setShareToolbarSize(asNumber(record.width), asNumber(record.height));
+  });
+
+  handle(IPC.remoteControlStatus, async () => remoteControlStatus());
+
+  handle(IPC.remoteControlRequestAccess, async () => requestRemoteControlAccess());
+
+  handle(IPC.remoteControlSetActive, async (_event, enabled) => {
+    setRemoteControlActive(asBoolean(enabled));
+  });
+
+  // Fire-and-forget: pointer moves arrive at display refresh rate.
+  ipcMain.on(IPC.remoteControlInput, (event, payload) => {
+    try {
+      assertTrustedSender(event, IPC.remoteControlInput);
+    } catch (error) {
+      console.warn(error);
+      return;
+    }
+    const input = parseRemoteInput(payload);
+    if (input) injectRemoteInput(input);
+  });
+
   handle(IPC.filesSave, async (event, input) => {
     const record = asRecord(input);
     const defaultName = asString(record.defaultName, 'download');
@@ -231,4 +287,10 @@ export function registerIpc(options: {
   handle(IPC.powerSetDisplaySleepBlocked, async (_event, enabled) => {
     setDisplaySleepBlocked(asBoolean(enabled));
   });
+
+  handle(IPC.updaterGetState, async () => getUpdaterState());
+
+  handle(IPC.updaterInstall, async () => installDownloadedUpdate());
+
+  handle(IPC.updaterOpenRelease, async () => openUpdateRelease());
 }

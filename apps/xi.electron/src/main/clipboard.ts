@@ -11,7 +11,12 @@ export function readClipboardText(): string {
 export function writeClipboardHtml(html: string, text: string): void {
   clipboard.write({
     html,
-    text: text || html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
+    text:
+      text ||
+      html
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim(),
   });
 }
 

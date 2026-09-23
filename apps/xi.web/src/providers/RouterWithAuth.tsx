@@ -9,6 +9,7 @@ import { TooltipProvider } from '@xipkg/tooltip';
 import { router } from '../router';
 import { AuthSocketBridge } from './AuthSocketBridge';
 import { ElectronDeepLinkHost } from './ElectronDeepLinkHost';
+import { ElectronUpdateHost } from './ElectronUpdateHost';
 
 /** Маршруты с доской — тосты не должны перекрывать DrawZoomPanel (right/bottom). */
 const isBoardRoute = (pathname: string) =>
@@ -108,6 +109,7 @@ const RouterWithAuthContext = () => {
   return (
     <>
       <ElectronDeepLinkHost />
+      <ElectronUpdateHost />
       <RouterProvider router={router} context={{ auth }} />
     </>
   );

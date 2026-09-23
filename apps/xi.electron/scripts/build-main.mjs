@@ -19,7 +19,7 @@ const mainOptions = {
   platform: 'node',
   format: 'esm',
   target: 'node20',
-  external: ['electron', 'electron-updater'],
+  external: ['electron', 'electron-updater', 'electron-log', '@jitsi/robotjs'],
   banner: {
     js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);",
   },

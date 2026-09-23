@@ -1,7 +1,9 @@
-import { desktopCapturer, systemPreferences, type Session } from 'electron';
+import { systemPreferences, type Session } from 'electron';
 import type { MediaPermissionKind, MediaPermissionStatus } from '../shared/types';
 import { isSovliumHost, isTrustedRendererOrigin, parseUrl } from './security';
 import { isDev } from './config';
+import { rememberSharedDisplay } from './share-annotations';
+import { resolveShareSource } from './share-sources';
 
 const MEDIA_PERMISSIONS = new Set([
   'media',
@@ -122,28 +124,22 @@ export function installPermissionHandlers(ses: Session): void {
     return allowPermission(permission, requestingOrigin);
   });
 
-  // Electron does not complete getDisplayMedia without this handler.
-  // useSystemPicker: on macOS 15+ the native ScreenCaptureKit picker is used and
-  // this callback is skipped. Empty callback({}) used to grant the default
-  // display (Finder/Dock in the call tile). Only pass a concrete source here.
-  ses.setDisplayMediaRequestHandler(
-    async (_request, callback) => {
-      try {
-        const sources = await desktopCapturer.getSources({
-          types: ['screen', 'window'],
-          thumbnailSize: { width: 0, height: 0 },
-        });
-        const source = sources[0];
-        if (!source) {
-          callback({});
-          return;
-        }
-        callback({ video: source });
-      } catch (error) {
-        console.warn('[xi.electron] display media handler failed', error);
+  // Electron does not complete getDisplayMedia without this handler. The source
+  // comes from the in-app picker (share-sources.ts), not the macOS system picker.
+  // Only pass a concrete source: an empty callback({}) used to grant the default
+  // display (Finder/Dock in the call tile).
+  ses.setDisplayMediaRequestHandler(async (_request, callback) => {
+    try {
+      const source = await resolveShareSource();
+      if (!source) {
         callback({});
+        return;
       }
-    },
-    { useSystemPicker: true },
-  );
+      rememberSharedDisplay(source.id.startsWith('screen:') ? source.display_id : undefined);
+      callback({ video: source });
+    } catch (error) {
+      console.warn('[xi.electron] display media handler failed', error);
+      callback({});
+    }
+  });
 }

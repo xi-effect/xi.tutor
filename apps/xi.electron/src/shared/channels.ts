@@ -20,6 +20,15 @@ export const IPC = {
   screenShareCloseControls: 'sovlium:share:close-controls',
   screenShareFocusMain: 'sovlium:share:focus-main',
   screenShareRequestStop: 'sovlium:share:request-stop',
+  screenShareListSources: 'sovlium:share:list-sources',
+  screenShareSelectSource: 'sovlium:share:select-source',
+  screenShareLayoutAnnotations: 'sovlium:share:layout-annotations',
+  screenShareSetAnnotationDrawing: 'sovlium:share:set-annotation-drawing',
+  screenShareSetToolbarHeight: 'sovlium:share:set-toolbar-height',
+  remoteControlStatus: 'sovlium:remote-control:status',
+  remoteControlRequestAccess: 'sovlium:remote-control:request-access',
+  remoteControlSetActive: 'sovlium:remote-control:set-active',
+  remoteControlInput: 'sovlium:remote-control:input',
   filesSave: 'sovlium:files:save',
   externalOpenUrl: 'sovlium:external:open-url',
   permissionsStatus: 'sovlium:permissions:status',
@@ -34,6 +43,9 @@ export const IPC = {
   clipboardWriteHtml: 'sovlium:clipboard:write-html',
   clipboardReadHtml: 'sovlium:clipboard:read-html',
   powerSetDisplaySleepBlocked: 'sovlium:power:set-display-sleep-blocked',
+  updaterGetState: 'sovlium:updater:get-state',
+  updaterInstall: 'sovlium:updater:install',
+  updaterOpenRelease: 'sovlium:updater:open-release',
 } as const;
 
 export type IpcChannel = (typeof IPC)[keyof typeof IPC];
@@ -46,6 +58,7 @@ export const EVENTS = {
   shareAnnotation: 'share-annotate-stroke',
   callPipRestored: 'call-pip-restored',
   notificationClick: 'sovlium:event:notification-click',
+  updaterState: 'sovlium:event:updater-state',
 } as const;
 
 export type EventChannel = (typeof EVENTS)[keyof typeof EVENTS];

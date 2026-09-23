@@ -1,10 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { EVENTS, IPC } from '../shared/channels';
-import type {
-  ConferenceState,
-  MediaPermissionKind,
-  SlotBounds,
-  SovliumDesktopAPI,
+import {
+  UPDATER_STATUSES,
+  type ConferenceState,
+  type MediaPermissionKind,
+  type SlotBounds,
+  type SovliumDesktopAPI,
+  type UpdaterState,
+  type UpdaterStatus,
 } from '../shared/types';
 
 function nativeOs(): 'macos' | 'windows' | 'linux' | 'unknown' {
@@ -18,6 +21,41 @@ function surface(): 'main' | 'conference' {
   const arg = process.argv.find((value) => value.startsWith('--sovlium-surface='));
   const value = arg?.slice('--sovlium-surface='.length);
   return value === 'conference' ? 'conference' : 'main';
+}
+
+function readUpdaterState(payload: unknown): UpdaterState {
+  const record =
+    payload !== null && typeof payload === 'object' ? (payload as Record<string, unknown>) : {};
+  const status = UPDATER_STATUSES.includes(record.status as UpdaterStatus)
+    ? (record.status as UpdaterStatus)
+    : 'error';
+  const version =
+    typeof record.version === 'string' && /^\d+\.\d+\.\d+$/.test(record.version)
+      ? record.version
+      : null;
+  const percent =
+    typeof record.percent === 'number' && Number.isFinite(record.percent)
+      ? Math.max(0, Math.min(100, Math.round(record.percent)))
+      : null;
+  const releaseUrl =
+    typeof record.releaseUrl === 'string' &&
+    /^https:\/\/github\.com\/xi-effect\/xi\.tutor\/releases\/tag\/electron-v\d+\.\d+\.\d+$/.test(
+      record.releaseUrl,
+    )
+      ? record.releaseUrl
+      : null;
+  const message =
+    status === 'error' && typeof record.message === 'string'
+      ? record.message.replace(/\s+/g, ' ').slice(0, 180)
+      : null;
+  return {
+    status,
+    version,
+    percent,
+    releaseUrl,
+    canInstall: record.canInstall === true && status === 'downloaded',
+    message,
+  };
 }
 
 function subscribe(channel: string, handler: (payload: unknown) => void): () => void {
@@ -68,6 +106,18 @@ const api: SovliumDesktopAPI = {
     requestStop: () => ipcRenderer.invoke(IPC.screenShareRequestStop),
     onStop: (handler) => subscribe(EVENTS.shareOverlayStop, () => handler()),
     onAnnotation: (handler) => subscribe(EVENTS.shareAnnotation, handler),
+    listSources: () => ipcRenderer.invoke(IPC.screenShareListSources),
+    selectSource: (id) => ipcRenderer.invoke(IPC.screenShareSelectSource, id),
+    layoutAnnotations: (capture) => ipcRenderer.invoke(IPC.screenShareLayoutAnnotations, capture),
+    setAnnotationDrawing: (enabled) =>
+      ipcRenderer.invoke(IPC.screenShareSetAnnotationDrawing, enabled),
+    setToolbarSize: (size) => ipcRenderer.invoke(IPC.screenShareSetToolbarHeight, size),
+  },
+  remoteControl: {
+    status: () => ipcRenderer.invoke(IPC.remoteControlStatus),
+    requestAccess: () => ipcRenderer.invoke(IPC.remoteControlRequestAccess),
+    setActive: (enabled) => ipcRenderer.invoke(IPC.remoteControlSetActive, enabled),
+    input: (event) => ipcRenderer.send(IPC.remoteControlInput, event),
   },
   files: {
     save: (request) => ipcRenderer.invoke(IPC.filesSave, request),
@@ -99,6 +149,13 @@ const api: SovliumDesktopAPI = {
   theme: {
     get: () => ipcRenderer.invoke(IPC.themeGet),
     set: (theme) => ipcRenderer.invoke(IPC.themeSet, theme),
+  },
+  updater: {
+    getState: async () => readUpdaterState(await ipcRenderer.invoke(IPC.updaterGetState)),
+    onState: (handler) =>
+      subscribe(EVENTS.updaterState, (payload) => handler(readUpdaterState(payload))),
+    install: () => ipcRenderer.invoke(IPC.updaterInstall),
+    openRelease: () => ipcRenderer.invoke(IPC.updaterOpenRelease),
   },
   events: {
     subscribe,

@@ -48,8 +48,3 @@ export function getResourcesDir(): string {
 export function getAllowedDevOrigins(): string[] {
   return ['http://localhost:5173', 'http://127.0.0.1:5173'];
 }
-
-export function getUpdateFeedUrl(): string | null {
-  const raw = process.env.SOVLIUM_ELECTRON_UPDATE_FEED?.trim();
-  return raw || null;
-}

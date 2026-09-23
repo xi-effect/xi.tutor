@@ -6,8 +6,6 @@ import { getAppOrigin, getDevRendererUrl, getRemoteRendererUrl, isBundledWebMode
 import { installNavigationGuard } from '../navigation';
 import { sendToRenderer } from '../send';
 import { createWebPreferences, showMainWindow } from '../windows/main-window';
-import { enterCallPip, isCallPipActive, leaveCallPip, resizeCallPip, setCallPipClosedListener } from '../call-pip';
-
 export class ConferenceController {
   private view: WebContentsView | null = null;
   private floating: BrowserWindow | null = null;
@@ -15,20 +13,14 @@ export class ConferenceController {
   private slot: SlotBounds | null = null;
   private presentation: ConferenceState['presentation'] = 'hidden';
 
-  constructor(private readonly getMainWindow: () => BrowserWindow | null) {
-    setCallPipClosedListener(() => {
-      this.broadcast();
-      this.emitPipRestored();
-    });
-  }
+  constructor(private readonly getMainWindow: () => BrowserWindow | null) {}
 
   getState(): ConferenceState {
-    const pip = isCallPipActive();
     return {
       active: Boolean(this.view),
       classroomId: this.classroomId,
-      presentation: pip ? 'floating' : this.presentation,
-      floating: pip,
+      presentation: this.presentation,
+      floating: false,
     };
   }
 
@@ -37,7 +29,7 @@ export class ConferenceController {
   }
 
   isFloating(): boolean {
-    return isCallPipActive();
+    return false;
   }
 
   private broadcast(): void {
@@ -148,26 +140,18 @@ export class ConferenceController {
     this.applySlotBounds();
   }
 
+  /** The call overlay is a renderer `window.open` popup (see call-pip.ts); main windows never shrink. */
   async enterFloatingMode(size?: {
     width: number;
     height: number;
   }): Promise<{ width: number; height: number }> {
-    const main = this.getMainWindow();
-    if (!main || main.isDestroyed()) {
-      return {
-        width: size?.width ?? FLOATING_CONFERENCE.width,
-        height: size?.height ?? FLOATING_CONFERENCE.height,
-      };
-    }
-    const next = enterCallPip(size);
-    this.broadcast();
-    return next;
+    return {
+      width: size?.width ?? FLOATING_CONFERENCE.width,
+      height: size?.height ?? FLOATING_CONFERENCE.height,
+    };
   }
 
   async exitFloatingMode(): Promise<void> {
-    if (isCallPipActive()) {
-      leaveCallPip();
-    }
     if (!this.view) return;
     this.attachToMain();
     this.broadcast();
@@ -177,22 +161,12 @@ export class ConferenceController {
     width: number;
     height: number;
   }): Promise<{ width: number; height: number }> {
-    if (!isCallPipActive()) return size;
-    return resizeCallPip(size);
+    return size;
   }
 
   async leave(): Promise<void> {
-    if (isCallPipActive()) {
-      leaveCallPip();
-    }
     await this.destroy();
     this.broadcast();
-  }
-
-  private emitPipRestored(): void {
-    const main = this.getMainWindow();
-    sendToRenderer(main?.webContents, EVENTS.callPipRestored);
-    sendToRenderer(this.view?.webContents, EVENTS.callPipRestored);
   }
 
   async destroy(): Promise<void> {

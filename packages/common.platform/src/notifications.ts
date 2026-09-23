@@ -39,7 +39,8 @@ export async function refreshNotificationPermission(): Promise<NotificationPermi
   if (isElectronShell()) {
     try {
       const status = await getSovliumDesktop()?.notifications.status();
-      cachedPermission = status === 'denied' ? 'denied' : status === 'granted' ? 'granted' : 'default';
+      cachedPermission =
+        status === 'denied' ? 'denied' : status === 'granted' ? 'granted' : 'default';
       cacheHydrated = true;
       return cachedPermission;
     } catch (err) {
@@ -81,7 +82,8 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   if (isElectronShell()) {
     try {
       const status = await getSovliumDesktop()?.notifications.request();
-      cachedPermission = status === 'denied' ? 'denied' : status === 'granted' ? 'granted' : 'default';
+      cachedPermission =
+        status === 'denied' ? 'denied' : status === 'granted' ? 'granted' : 'default';
       cacheHydrated = true;
       return cachedPermission;
     } catch (err) {

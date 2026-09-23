@@ -20,7 +20,13 @@ export {
 } from './src/detect';
 
 export { getSovliumDesktop } from './src/electron';
-export type { SovliumDesktopAPI, ConferenceState, SlotBounds } from './src/electron-api';
+export type {
+  SovliumDesktopAPI,
+  ConferenceState,
+  SlotBounds,
+  UpdaterState,
+  UpdaterStatus,
+} from './src/electron-api';
 
 export {
   getAppInfo,
@@ -87,6 +93,42 @@ export {
   CALL_PIP_RESTORED_EVENT,
   type CallPipSize,
 } from './src/callPip';
+
+export {
+  isElectronCallOverlayOpen,
+  closeElectronCallOverlay,
+  CALL_OVERLAY_CHANGE_EVENT,
+} from './src/electronCallOverlay';
+
+export {
+  registerShareSourcePicker,
+  getLastShareSource,
+  SHARE_SOURCE_CHANGE_EVENT,
+  type ShareSource,
+  type ShareSourcePicker,
+} from './src/shareSourcePicker';
+
+export {
+  getRemoteControlStatus,
+  requestRemoteControlAccess,
+  setRemoteControlActive,
+  sendRemoteInput,
+  type RemoteControlStatus,
+  type RemoteInput,
+  type RemoteModifiers,
+  type RemoteMouseButton,
+  type RemoteOrigin,
+} from './src/remoteControl';
+
+export {
+  layoutShareAnnotations,
+  setShareAnnotationDrawing,
+  setShareToolbarSize,
+  SHARE_ANNOTATION_CANVAS_FRAME_NAME,
+  SHARE_ANNOTATION_TOOLBAR_FRAME_NAME,
+  SHARE_ANNOTATION_TOOLBAR_SIZE,
+  type ShareCaptureSize,
+} from './src/electronShareAnnotations';
 
 export { installNativeWebApiBridges, installDesktopWebApiBridges } from './src/install';
 

@@ -4,6 +4,10 @@ import { SovliumDesktopApp } from './app';
 
 app.setName('Sovlium');
 
+// Chromium otherwise drops notification and call sounds until a click in this
+// window, so they stay silent in the shell while the site plays them.
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 if (!app.isPackaged) {
   app.setPath('userData', path.join(app.getPath('appData'), 'Sovlium-dev'));
 }
@@ -17,7 +21,7 @@ void desktop.start().catch(async (error) => {
     }
     dialog.showErrorBox(
       'Sovlium',
-      error instanceof Error ? error.stack ?? error.message : String(error),
+      error instanceof Error ? (error.stack ?? error.message) : String(error),
     );
   } catch {
     // ignore — still quit below
