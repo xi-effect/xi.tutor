@@ -33,7 +33,8 @@
     "italic": "Italic",
     "underline": "Underline",
     "strike": "Strikethrough",
-    "link": "Link"
+    "link": "Link",
+    "comment": "Comment"
   },
   "image": {
     "download": "Download",
@@ -124,7 +125,9 @@
     "fileFormatDesc": "Choose a file in one of these formats: DOC, XLS, PPT, TXT, CSV, video, or OpenDocument.",
     "fileSizeDesc": "File must be at most 5 MiB (currently {{size}} MiB).",
     "fileLimitTitle": "File limit",
-    "fileLimitDesc": "A note can contain at most {{max}} files."
+    "fileLimitDesc": "A note can contain at most {{max}} files.",
+    "linkCopied": "Link copied",
+    "linkCopyFailed": "Failed to copy link"
   },
   "codeBlock": {
     "copy": "Copy",
@@ -150,5 +153,25 @@
     "placeholder": "Start typing here…",
     "participant": "Participant",
     "accessError": "Access error to the collaborative editing server"
+  },
+  "comments": {
+    "title": "Comments",
+    "show": "Show comments",
+    "hide": "Hide comments",
+    "inDocument": "In document",
+    "empty": "No comments yet",
+    "comment": "Comment",
+    "resolved": "Resolved",
+    "copyLink": "Copy link",
+    "markResolved": "Mark as resolved",
+    "reopen": "Reopen",
+    "deleteComment": "Delete comment",
+    "close": "Close",
+    "deleteMessage": "Delete message",
+    "replyPlaceholder": "Reply…",
+    "reply": "Reply",
+    "writePlaceholder": "Write a comment…",
+    "send": "Send",
+    "cancel": "Cancel"
   }
 }

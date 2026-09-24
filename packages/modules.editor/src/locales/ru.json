@@ -33,7 +33,8 @@
     "italic": "Курсив",
     "underline": "Подчеркивание",
     "strike": "Зачеркивание",
-    "link": "Ссылка"
+    "link": "Ссылка",
+    "comment": "Комментарий"
   },
   "image": {
     "download": "Скачать",
@@ -124,7 +125,9 @@
     "fileFormatDesc": "Выберите файл в одном из форматов: DOC, XLS, PPT, TXT, CSV, видео или OpenDocument.",
     "fileSizeDesc": "Размер файла не должен превышать 5 MiB (сейчас {{size}} MiB).",
     "fileLimitTitle": "Лимит файлов",
-    "fileLimitDesc": "В заметке может быть не более {{max}} файлов."
+    "fileLimitDesc": "В заметке может быть не более {{max}} файлов.",
+    "linkCopied": "Ссылка скопирована",
+    "linkCopyFailed": "Не удалось скопировать ссылку"
   },
   "codeBlock": {
     "copy": "Копировать",
@@ -150,5 +153,25 @@
     "placeholder": "Начните писать здесь…",
     "participant": "Участник",
     "accessError": "Ошибка доступа к серверу совместного редактирования"
+  },
+  "comments": {
+    "title": "Комментарии",
+    "show": "Показать комментарии",
+    "hide": "Скрыть комментарии",
+    "inDocument": "В документе",
+    "empty": "Комментариев пока нет",
+    "comment": "Комментарий",
+    "resolved": "Решён",
+    "copyLink": "Скопировать ссылку",
+    "markResolved": "Отметить как решённый",
+    "reopen": "Открыть снова",
+    "deleteComment": "Удалить комментарий",
+    "close": "Закрыть",
+    "deleteMessage": "Удалить сообщение",
+    "replyPlaceholder": "Ответить…",
+    "reply": "Ответить",
+    "writePlaceholder": "Написать комментарий…",
+    "send": "Отправить",
+    "cancel": "Отмена"
   }
 }

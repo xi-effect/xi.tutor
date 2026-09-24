@@ -394,6 +394,21 @@
   border-radius: 0.5rem;
 }
 
+.editor-comment-mark {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 30%, transparent);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.editor-comment-mark:hover {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 50%, transparent);
+}
+
+.editor-comment-mark.active {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 65%, transparent);
+}
+
 /* Оглавление у правого края страницы, как в Tiptap Notion-like */
 .xi-editor .document-outline {
   position: fixed;
