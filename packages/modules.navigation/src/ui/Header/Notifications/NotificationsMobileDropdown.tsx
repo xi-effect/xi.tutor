@@ -8,7 +8,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-
 import { NotificationBadge } from './NotificationBadge';
 
 export const NotificationsMobileDropdown = ({

@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@xipkg/button';
 import { useSocketEvent } from 'common.sockets';
 import { NotificationT, NotificationsStateT, RecipientNotificationResponse } from 'common.types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useCurrentUser } from '../user';
 import { notificationConfigs } from './notificationConfig';
@@ -20,10 +20,28 @@ import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
 import { useSearchNotifications } from './useSearchNotifications';
 
+// Очередь отметки уведомлений прочитанными, копим id и шлём пачками с паузой между ними
+const READ_QUEUE_BATCH_SIZE = 5;
+const READ_QUEUE_INITIAL_DELAY_MS = 200;
+const READ_QUEUE_BATCH_INTERVAL_MS = 900; // пауза между последующими пачками
+const READ_QUEUE_MAX_ATTEMPTS = 5;
+const READ_QUEUE_RETRY_BASE_DELAY_MS = 1000;
+
+// Определяем, стоит ли отправлять снова (ошибка соединения/5xx/timeout — да, 4xx — нет)
+const isRetryableError = (error: unknown): boolean => {
+  const status = (error as { response?: { status?: number } })?.response?.status;
+  if (status == null) return true;
+  return status >= 500;
+};
+
 export const useNotifications = () => {
   const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
   const [shouldLoadNotifications, setShouldLoadNotifications] = useState(false);
   const queryClient = useQueryClient();
+  const pendingReadIdsRef = useRef<Set<string>>(new Set());
+  const readAttemptsRef = useRef<Map<string, number>>(new Map());
+  const readQueueRequestInFlightRef = useRef(false);
+  const readQueueTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Проверяем, находимся ли мы на страницах внутри (app)
   // Используем window.location.pathname, так как NotificationsProvider находится вне RouterProvider
@@ -64,7 +82,9 @@ export const useNotifications = () => {
     refetch: refetchCount,
   } = useGetUnreadCount({ enabled: isAuthenticated && isInApp });
 
-  const { markAsRead: markAsReadMutation } = useMarkNotificationAsRead();
+  const { markAsRead: markAsReadMutation } = useMarkNotificationAsRead({
+    skipCacheInvalidation: true,
+  });
 
   // Трансформирует уведомление из формата API (если нужно) в наш формат
   const transformNotification = useCallback(
@@ -220,6 +240,82 @@ export const useNotifications = () => {
     return [...uniqueSocketNotifications, ...apiNotifications];
   }, [apiNotifications, socketNotifications]);
 
+  // Отправляет одну пачку из очереди и планирует следующую, если в очереди остались элементы
+  const flushReadQueue = useCallback(() => {
+    readQueueTimerRef.current = null;
+
+    if (pendingReadIdsRef.current.size === 0 || readQueueRequestInFlightRef.current) {
+      return;
+    }
+
+    readQueueRequestInFlightRef.current = true;
+
+    const batchIds = Array.from(pendingReadIdsRef.current).slice(0, READ_QUEUE_BATCH_SIZE);
+    batchIds.forEach((id) => pendingReadIdsRef.current.delete(id));
+    const succeededIds: string[] = [];
+    let hasRetryScheduled = false;
+
+    Promise.allSettled(
+      batchIds.map(async (id) => {
+        try {
+          await markAsReadMutation.mutateAsync(id);
+          succeededIds.push(id);
+          readAttemptsRef.current.delete(id);
+        } catch (error) {
+          const attempts = (readAttemptsRef.current.get(id) ?? 0) + 1;
+
+          if (isRetryableError(error) && attempts < READ_QUEUE_MAX_ATTEMPTS) {
+            // Временная ошибка — возвращаем id обратно в очередь для повторной попытки
+            readAttemptsRef.current.set(id, attempts);
+            pendingReadIdsRef.current.add(id);
+            hasRetryScheduled = true;
+          } else {
+            readAttemptsRef.current.delete(id);
+            setSocketNotifications((prev) =>
+              prev.map((n) => (n.id === id ? { ...n, is_read: false } : n)),
+            );
+          }
+        }
+      }),
+    ).finally(() => {
+      readQueueRequestInFlightRef.current = false;
+      if (succeededIds.length > 0) {
+        refetchCount();
+        refetchNotifications(); // один реальный рефетч списка на всю пачку
+      }
+
+      if (pendingReadIdsRef.current.size > 0) {
+        // При наличии ретраев в этой пачке — берём больший интервал (backoff),
+        // иначе обычный интервал между пачками
+        const delay = hasRetryScheduled
+          ? READ_QUEUE_RETRY_BASE_DELAY_MS
+          : READ_QUEUE_BATCH_INTERVAL_MS;
+        readQueueTimerRef.current = setTimeout(flushReadQueue, delay);
+      }
+    });
+  }, [markAsReadMutation, refetchCount, refetchNotifications]);
+
+  // Кладёт id в очередь и запускает таймер отправки, если он ещё не запущен
+  const enqueueMarkAsRead = useCallback(
+    (id: string) => {
+      if (pendingReadIdsRef.current.has(id)) return;
+      pendingReadIdsRef.current.add(id);
+      if (!readQueueTimerRef.current && !readQueueRequestInFlightRef.current) {
+        readQueueTimerRef.current = setTimeout(flushReadQueue, READ_QUEUE_INITIAL_DELAY_MS);
+      }
+    },
+    [flushReadQueue],
+  );
+
+  // Останавливаем очередь при размонтировании провайдера
+  useEffect(() => {
+    return () => {
+      if (readQueueTimerRef.current) {
+        clearTimeout(readQueueTimerRef.current);
+      }
+    };
+  }, []);
+
   // Загрузить начальные уведомления (обновление списка)
   const loadInitialNotifications = useCallback(() => {
     setSocketNotifications([]);
@@ -229,9 +325,6 @@ export const useNotifications = () => {
   // Отметить уведомление как прочитанное
   const markAsRead = useCallback(
     async (id: string) => {
-      // Находим уведомление для ревалидации кеша
-      const notification = allNotifications.find((n) => n.id === id);
-
       // Оптимистично обновляем локальное состояние
       setSocketNotifications((prev) =>
         prev.map((notification) =>
@@ -239,50 +332,27 @@ export const useNotifications = () => {
         ),
       );
 
-      try {
-        await markAsReadMutation.mutateAsync(id);
-
-        // Ревалидируем кеш связанных данных на основе конфига уведомления
-        if (notification) {
-          const invalidationKeys = getNotificationInvalidationKeys(notification);
-          invalidationKeys.forEach((key) => {
-            queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? [...key] : [key] });
-          });
-        }
-
-        // Обновляем счетчик и список после успешной отметки
-        refetchCount();
-        refetchNotifications();
-      } catch (error) {
-        // Откатываем оптимистичное обновление при ошибке
-        setSocketNotifications((prev) =>
-          prev.map((notification) =>
-            notification.id === id ? { ...notification, is_read: false } : notification,
-          ),
-        );
-        console.error('Ошибка при отметке уведомления как прочитанного:', error);
-      }
+      enqueueMarkAsRead(id);
     },
-    [markAsReadMutation, refetchCount, refetchNotifications, allNotifications, queryClient],
+    [enqueueMarkAsRead],
   );
 
-  // Отметить все уведомления как прочитанные (локально, API для этого нет)
+  // Отметить все уведомления как прочитанные (локально, API для этого еще нет)
   const markAllAsRead = useCallback(async () => {
     const unreadNotifications = allNotifications.filter((n) => !n.is_read);
+    if (unreadNotifications.length === 0) return;
 
-    // Помечаем все непрочитанные уведомления как прочитанные
-    for (const notification of unreadNotifications) {
-      try {
-        await markAsReadMutation.mutateAsync(notification.id);
-      } catch (error) {
-        console.error(`Ошибка при отметке уведомления ${notification.id}:`, error);
-      }
-    }
+    const unreadIds = new Set(unreadNotifications.map((n) => n.id));
 
-    // Обновляем счетчик и список
-    refetchCount();
-    refetchNotifications();
-  }, [allNotifications, markAsReadMutation, refetchCount, refetchNotifications]);
+    // Оптимистично помечаем всё видимое прочитанным разом
+    setSocketNotifications((prev) =>
+      prev.map((notification) =>
+        unreadIds.has(notification.id) ? { ...notification, is_read: true } : notification,
+      ),
+    );
+
+    unreadNotifications.forEach((n) => enqueueMarkAsRead(n.id));
+  }, [allNotifications, enqueueMarkAsRead]);
 
   // Удалить уведомление (локально, API для этого нет в новом контракте)
   const deleteNotification = useCallback(
