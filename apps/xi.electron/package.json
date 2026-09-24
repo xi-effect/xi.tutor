@@ -1,7 +1,7 @@
 {
   "name": "xi.electron",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Electron desktop shell for Sovlium. Reuses apps/xi.web as the renderer.",
   "author": "xi.effect",

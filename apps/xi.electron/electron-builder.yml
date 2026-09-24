@@ -20,9 +20,11 @@ electronLanguages:
 mac:
   category: public.app-category.education
   icon: resources/icons/icon.icns
+  # Ad-hoc signature: an unsigned bundle downloaded from the internet is
+  # reported by Gatekeeper as "damaged" on Apple Silicon.
   # TODO: after the Apple Developer certificate is available, set the signing
   # identity, turn hardenedRuntime back on, and enable notarization.
-  identity: null
+  identity: '-'
   hardenedRuntime: false
   gatekeeperAssess: false
   notarize: false

@@ -113,7 +113,9 @@ pnpm electron:publish:windows
 pnpm electron:publish:macos
 ```
 
-Обычно это делает `.github/workflows/electron-release.yml` после `git push origin electron-vX.Y.Z`. Версия тега должна совпадать с `apps/xi.electron/package.json`. Signing / notarization пока выключены.
+Обычно это делает `.github/workflows/electron-release.yml` после `git push origin electron-vX.Y.Z`. Версия тега должна совпадать с `apps/xi.electron/package.json`.
+
+Подпись macOS пока ad-hoc (`mac.identity: '-'`), без Developer ID и нотаризации. Без подписи вообще Gatekeeper называет скачанное приложение «повреждённым». С ad-hoc подписью при первом запуске macOS пишет, что не может проверить разработчика. Открыть: «Системные настройки» → «Конфиденциальность и безопасность» → «Всё равно открыть». Или через терминал: `xattr -dr com.apple.quarantine /Applications/Sovlium.app`.
 
 ## Conference WebContentsView
 
