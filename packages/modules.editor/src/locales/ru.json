@@ -33,7 +33,12 @@
     "italic": "Курсив",
     "underline": "Подчеркивание",
     "strike": "Зачеркивание",
-    "link": "Ссылка"
+    "link": "Ссылка",
+    "align": "Выравнивание",
+    "alignLeft": "По левому краю",
+    "alignCenter": "По центру",
+    "alignRight": "По правому краю",
+    "alignJustify": "По ширине"
   },
   "image": {
     "download": "Скачать",

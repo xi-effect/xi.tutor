@@ -33,6 +33,12 @@
   height: 0;
 }
 
+.xi-editor .ProseMirror p.is-editor-empty[style*='text-align']::before {
+  float: none;
+  width: 100%;
+  text-align: inherit;
+}
+
 /* Стили для заголовков */
 .xi-editor .ProseMirror h1 {
   font-size: 2rem;

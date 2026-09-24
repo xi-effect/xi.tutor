@@ -12,6 +12,7 @@ import { pickAndInsertComputerFiles } from '../../utils/pickAndInsertComputerFil
 import { insertActivityBlock } from '../../utils/insertActivityBlock';
 import { ActiveBlockT, BlockTypeT } from '../../types';
 import { ActivityKindMenuItems } from './ActivityKindMenuItems';
+import { TextAlignMenu } from './TextAlignControl';
 import {
   BLOCK_OP_ACTIONS,
   INSERT_BLOCK_ACTIONS,
@@ -185,6 +186,10 @@ export const NotesEditorToolbar = ({ editor, bottom }: NotesEditorToolbarPropsT)
         </DropdownMenu>
         <ToolbarIconButton label={t('blockMenu.image')} Icon={Image} onClick={handleImageClick} />
         <ToolbarIconButton label={t('blockMenu.file')} Icon={File} onClick={handleFileClick} />
+
+        {activeBlockKey != null && activeBlockKey !== 'code' ? (
+          <TextAlignMenu editor={editor} variant="toolbar" />
+        ) : null}
 
         <span className="bg-border-default h-4 w-px shrink-0" />
 

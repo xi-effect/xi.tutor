@@ -23,6 +23,7 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { ActiveBlockT } from '../../types';
 import { pickAndInsertComputerFiles } from '../../utils/pickAndInsertComputerFiles';
 import { BLOCK_OP_ACTIONS, INSERT_BLOCK_ACTIONS, type BlockOpKey } from '../../config/blockActions';
+import { BlockTextAlign, isAlignableTextBlock } from './TextAlignControl';
 
 const menuItemClass =
   'text-text-primary hover:bg-background-page focus:text-text-primary fill-icon-primary [&_svg]:fill-icon-primary h-7 gap-2 rounded p-1 text-sm';
@@ -91,6 +92,8 @@ export const BlockMenu = ({
   if (!shouldShow) {
     return null;
   }
+
+  const alignBlock = mode === 'ops' ? getActiveBlock() : undefined;
 
   const pickFromComputer = (fileMode: 'image' | 'file') => {
     pickAndInsertComputerFiles(editor, storageItem.content_token, getActiveBlock(), fileMode);
@@ -215,25 +218,37 @@ export const BlockMenu = ({
             </DropdownMenuItem>
           </>
         ) : (
-          BLOCK_OP_ACTIONS.map(({ key, labelKey, Icon, shortcut }) => {
-            const handler = opHandlers[key];
+          <>
+            {isAlignableTextBlock(alignBlock?.node) ? (
+              <>
+                <div className="flex gap-0.5">
+                  <BlockTextAlign editor={editor} block={alignBlock} />
+                </div>
+                <DropdownMenuSeparator />
+              </>
+            ) : null}
+            {BLOCK_OP_ACTIONS.map(({ key, labelKey, Icon, shortcut }) => {
+              const handler = opHandlers[key];
 
-            return (
-              <Fragment key={key}>
-                {key === 'delete' ? <DropdownMenuSeparator /> : null}
-                <DropdownMenuItem
-                  className={menuItemClass}
-                  onSelect={key === 'moveUp' || key === 'moveDown' ? deferAction(handler) : handler}
-                >
-                  <Icon size="sm" className="size-6" />
-                  <span>{t(labelKey)}</span>
-                  <span className="text-xxs-base text-text-muted ml-auto">
-                    {isMac ? shortcut.mac : shortcut.other}
-                  </span>
-                </DropdownMenuItem>
-              </Fragment>
-            );
-          })
+              return (
+                <Fragment key={key}>
+                  {key === 'delete' ? <DropdownMenuSeparator /> : null}
+                  <DropdownMenuItem
+                    className={menuItemClass}
+                    onSelect={
+                      key === 'moveUp' || key === 'moveDown' ? deferAction(handler) : handler
+                    }
+                  >
+                    <Icon size="sm" className="size-6" />
+                    <span>{t(labelKey)}</span>
+                    <span className="text-xxs-base text-text-muted ml-auto">
+                      {isMac ? shortcut.mac : shortcut.other}
+                    </span>
+                  </DropdownMenuItem>
+                </Fragment>
+              );
+            })}
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

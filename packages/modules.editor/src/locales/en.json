@@ -33,7 +33,12 @@
     "italic": "Italic",
     "underline": "Underline",
     "strike": "Strikethrough",
-    "link": "Link"
+    "link": "Link",
+    "align": "Alignment",
+    "alignLeft": "Align left",
+    "alignCenter": "Align center",
+    "alignRight": "Align right",
+    "alignJustify": "Justify"
   },
   "image": {
     "download": "Download",
