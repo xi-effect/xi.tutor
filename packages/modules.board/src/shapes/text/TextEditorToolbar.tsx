@@ -1,5 +1,6 @@
 import { Edit, Ul } from '@xipkg/icons';
-import { Editor, useValue } from '@ibodr/draw';
+import { Editor, useValue, type DrNoteShape } from '@ibodr/draw';
+import { StickerTextFormatControls } from '../sticker/StickerTextFormatControls';
 import { Button } from '@xipkg/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { NavbarButton } from '../../ui/components/shared';
@@ -18,6 +19,10 @@ import { getShapesWithRichText } from './utils/shapeUtils';
 import { MarkFormatT, ShapeTypesWithRichTextT } from './types';
 import { normalizeLink } from './utils/linkUtils';
 
+function isNestedTextMenu(target: EventTarget | null) {
+  return target instanceof Element && !!target.closest('[role="menu"], [role="listbox"]');
+}
+
 export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
   const [link, setLink] = useState('');
   const [open, setOpen] = useState(false);
@@ -26,6 +31,7 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
   // Если кликнуть с одного richText на другой, то toolbar не будет размонтирован, а перенесется на другой richText
   // Для обновления активных статусов отслеживаем выделенные фигуры
   const selectedShapes = useValue('selectedShapes', () => editor.getSelectedShapes(), [editor]);
+  const notes = selectedShapes.filter((shape): shape is DrNoteShape => shape.type === 'note');
 
   useEffect(() => {
     updateActiveStatuses();
@@ -125,8 +131,15 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
         side="top"
         align="center"
         sideOffset={8}
-        className={`${boardTextToolbarClass} w-full`}
+        className={`${boardTextToolbarClass} w-auto items-center`}
+        onPointerDownOutside={(event) => {
+          if (isNestedTextMenu(event.target)) event.preventDefault();
+        }}
+        onFocusOutside={(event) => {
+          if (isNestedTextMenu(event.target)) event.preventDefault();
+        }}
       >
+        <StickerTextFormatControls editor={editor} notes={notes} />
         {textFormatterElements.map((element) => {
           return (
             <NavbarButton

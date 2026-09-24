@@ -34,7 +34,7 @@
     "@xipkg/calls-types": "^0.1.44",
     "@xipkg/calls-ui": "^0.1.44",
     "@xipkg/calls-utils": "^0.1.44",
-    "@xipkg/icons": "3.1.7"
+    "@xipkg/icons": "3.1.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

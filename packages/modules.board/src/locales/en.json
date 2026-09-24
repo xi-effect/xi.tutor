@@ -198,7 +198,13 @@
     "allowControl": "Allow control",
     "axisColor": "Axis color",
     "style": "Style",
-    "flipCardAddImage": "Add image"
+    "flipCardAddImage": "Add image",
+    "stickerAlign": "Text alignment",
+    "stickerAlignLeft": "Align left",
+    "stickerAlignCenter": "Align center",
+    "stickerAlignRight": "Align right",
+    "stickerAlignJustify": "Justify",
+    "stickerFontSize": "Text size"
   },
   "visualize": {
     "action": "Visualize",

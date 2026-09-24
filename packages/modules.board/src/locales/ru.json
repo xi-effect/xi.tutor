@@ -198,7 +198,13 @@
     "allowControl": "Разрешить управление",
     "axisColor": "Цвет осей",
     "style": "Стиль",
-    "flipCardAddImage": "Добавить изображение"
+    "flipCardAddImage": "Добавить изображение",
+    "stickerAlign": "Выравнивание текста",
+    "stickerAlignLeft": "По левому краю",
+    "stickerAlignCenter": "По центру",
+    "stickerAlignRight": "По правому краю",
+    "stickerAlignJustify": "По ширине",
+    "stickerFontSize": "Размер текста"
   },
   "visualize": {
     "action": "Визуализировать",
