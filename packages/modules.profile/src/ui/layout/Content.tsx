@@ -8,6 +8,7 @@ import { Effects } from '../effects';
 import { Board } from '../board';
 import { TechnicalReport } from '../report';
 import { Schedule } from '../schedule';
+import { SubscriptionSettings } from 'features.subscription';
 
 type ComponentMapT = {
   [key: string]: ReactElement;
@@ -23,6 +24,7 @@ const componentMap: ComponentMapT = {
   effects: <Effects />,
   board: <Board />,
   report: <TechnicalReport />,
+  subscription: <SubscriptionSettings />,
 };
 
 type ContentPropsT = {

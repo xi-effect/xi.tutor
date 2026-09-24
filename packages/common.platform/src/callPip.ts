@@ -1,8 +1,7 @@
 /**
  * Native always-on-top call window (Zoom-like mini meeting).
  *
- * Chrome Document PiP is not available in the Tauri WebView; the shell instead
- * shrinks the main window and pins it above other applications.
+ * Electron moves the conference `WebContentsView` into a floating window.
  */
 
 import { isDesktopNative } from './detect';

@@ -21,6 +21,12 @@ pnpm run dev
 
 > Запустится xi.web на http://localhost:5173/, а также все пакеты перейдут в режим HMR.
 
+Desktop (Electron, macOS / Windows) поверх того же `xi.web`:
+
+```bash
+pnpm electron:dev
+```
+
 ## Авторизация при локальной разработки
 
 Из-за особенностей локальной разработки авторизация работает некорректно, чтобы это исправить нужно:
@@ -63,7 +69,7 @@ pnpm run format-check
 - Husky - инструмент вызова прекоммит хуков в git, позволяет прогонять eslint и prettier перед созданием коммита в репозитории
 - CommilLint – линтер наименования коммитов
 
-Приложения (apps/xi.web):
+Приложения (apps/xi.web, apps/xi.electron):
 
 - TypeScript v5 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/typescript))
 - React v19 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/react))
@@ -105,7 +111,8 @@ pnpm run format-check
 ```
 xi.tutor/
 ├── apps/                       # Приложения
-│   └── xi.web/                 # Основное фронтенд-приложение
+│   ├── xi.web/                 # Web (браузер / PWA)
+│   └── xi.electron/            # Desktop-оболочка macOS / Windows
 ├── packages/                   # Переиспользуемые пакеты
 │   ├── common.*                # Общие компоненты и утилиты
 │   │   ├── common.api/         # API клиенты и интеграции

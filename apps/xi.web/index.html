@@ -10,7 +10,7 @@
         window.__beforeInstallPrompt = e;
       });
     </script>
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta
@@ -35,7 +35,7 @@
           }
         } catch (e) {}
 
-        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__TAURI_INTERNALS__);
+        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__SOVLIUM_ELECTRON__);
         var injected = document.documentElement.getAttribute('data-theme');
         var preference =
           chosen && (stored === 'light' || stored === 'dark')
@@ -58,13 +58,42 @@
   </head>
   <body class="overflow-hidden">
     <div id="root"></div>
+    <script>
+      // Если entry-чанк 404 (протухший index.html после деплоя), JS приложения
+      // не стартует и installStaleChunkReload не успевает. Ключ совпадает с
+      // STALE_CHUNK_RELOAD_KEY в common.utils.
+      (function () {
+        var key = 'stale-chunk-reload-at';
+        var cooldownMs = 15000;
+        var reloadOnce = function () {
+          try {
+            var now = Date.now();
+            var last = Number(sessionStorage.getItem(key) || 0);
+            if (last > 0 && now - last < cooldownMs) return;
+            sessionStorage.setItem(key, String(now));
+          } catch (e) {
+            return;
+          }
+          window.location.reload();
+        };
+        window.addEventListener(
+          'error',
+          function (event) {
+            var el = event.target;
+            if (!el || el.tagName !== 'SCRIPT' || el.type !== 'module' || !el.src) return;
+            reloadOnce();
+          },
+          true,
+        );
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Yandex.Metrika: browser only. Skip inside Tauri / native shell
-         (__TAURI_INTERNALS__ or __SOVLIUM_NATIVE__ injected by xi.tauri). -->
+    <!-- Yandex.Metrika: browser only. Skip inside Electron / native shell
+         (__SOVLIUM_NATIVE__ injected by xi.electron). -->
     <script type="text/javascript">
       (function () {
         var isNative =
-          !!(window.__TAURI_INTERNALS__ || window.__SOVLIUM_NATIVE__);
+          !!(window.__SOVLIUM_NATIVE__ || window.__SOVLIUM_ELECTRON__);
         if (isNative) {
           window.ym = function () {};
           return;

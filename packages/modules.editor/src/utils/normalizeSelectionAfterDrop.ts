@@ -24,10 +24,25 @@ export function normalizeSelectionAfterDrop(editor: Editor | null): void {
     if (!selection.eq(newSelection)) {
       view.dispatch(state.tr.setSelection(newSelection));
     }
+    clearActivityTextSelection(view.dom);
   } catch {
     // Если resolve/near упали (например, from указывает в doc), ставим курсор в начало первого блока
     const safePos = Math.min(1, size - 1);
     const $pos = doc.resolve(safePos);
     view.dispatch(state.tr.setSelection(TextSelection.near($pos)));
+    clearActivityTextSelection(view.dom);
   }
+}
+
+/** Дроп блока оставляет нативное выделение на тексте внутри atom-упражнения. */
+function clearActivityTextSelection(editorDom: HTMLElement) {
+  requestAnimationFrame(() => {
+    const native = window.getSelection();
+    if (!native || native.rangeCount === 0) return;
+    const anchor = native.anchorNode;
+    const element = anchor instanceof Element ? anchor : anchor?.parentElement;
+    if (!element?.closest('.node-activity')) return;
+    if (!editorDom.contains(element)) return;
+    native.removeAllRanges();
+  });
 }

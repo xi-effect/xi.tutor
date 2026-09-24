@@ -1,12 +1,11 @@
 {
   "modal": {
-    "title": "Create invoice",
-    "description": "Create invoice",
-    "intro1": "You are creating and sending an invoice.",
-    "intro2": "The student pays you directly — by transfer or in cash.",
+    "title": "New payment invoice",
+    "description": "New payment invoice",
+    "intro": "Students pay invoices directly — by transfer or in cash",
     "addRow": "Add row",
     "addLesson": "Add lesson",
-    "lessons": "Lessons",
+    "lessons": "Lesson",
     "price": "Price",
     "quantity": "Quantity",
     "sum": "Total",
@@ -26,8 +25,8 @@
     "addFromTemplate": "Add lesson from template"
   },
   "comment": {
-    "labelMobile": "Comment",
-    "label": "Comment for the student",
+    "labelMobile": "Invoice comment",
+    "label": "Invoice comment",
     "optional": "optional",
     "placeholder": "e.g. payment for September lessons"
   },

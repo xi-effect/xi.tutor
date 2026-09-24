@@ -122,6 +122,7 @@
 @source "../../../packages/pages.invites/src";
 @source "../../../packages/pages.reset-password/src";
 @source "../../../packages/features.invoice/src";
+@source "../../../packages/features.subscription/src";
 @source "../../../packages/features.materials.duplicate/src";
 @source "../../../packages/pages.email/src";
 @source "../../../packages/pages.notes/src";
@@ -133,6 +134,7 @@
 @source "../../../packages/features.group.manage/src";
 @source "../../../packages/features.group.invite/src";
 @source "../../../packages/pages.calendar/src";
+@source "../../../packages/pages.bank/src";
 @source "../../../packages/features.lesson.cancel/src";
 @source "../../../packages/features.invoice.card/src";
 @source "../../../packages/features.lesson.info/src";

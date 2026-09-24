@@ -36,6 +36,7 @@ export const MaterialActionsMenu = ({
   onDuplicate,
   onEditTags,
   setModalOpen,
+  contentLocked = false,
 }: MaterialActionsMenuPropsT) => {
   const { t } = useTranslation('materialsCard');
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -126,7 +127,7 @@ export const MaterialActionsMenu = ({
               ))}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
-        ) : (
+        ) : contentLocked ? null : (
           <DropdownMenuItem
             className={cardMenuItemClass}
             onClick={handleAction(onDuplicate)}
@@ -136,35 +137,39 @@ export const MaterialActionsMenu = ({
             {t('menu.duplicateToClassroom')}
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem
-          className={cardMenuItemClass}
-          onClick={handleAction(() => setModalOpen(true))}
-          data-umami-event="material-rename"
-        >
-          <Edit />
-          {t('menu.rename')}
-        </DropdownMenuItem>
-        {onEditTags ? (
-          <DropdownMenuItem
-            className={cardMenuItemClass}
-            onClick={handleAction(onEditTags)}
-            data-umami-event="material-edit-tags"
-          >
-            <Flag />
-            {t('menu.editTags')}
-          </DropdownMenuItem>
-        ) : null}
+        {contentLocked ? null : (
+          <>
+            <DropdownMenuItem
+              className={cardMenuItemClass}
+              onClick={handleAction(() => setModalOpen(true))}
+              data-umami-event="material-rename"
+            >
+              <Edit />
+              {t('menu.rename')}
+            </DropdownMenuItem>
+            {onEditTags ? (
+              <DropdownMenuItem
+                className={cardMenuItemClass}
+                onClick={handleAction(onEditTags)}
+                data-umami-event="material-edit-tags"
+              >
+                <Flag />
+                {t('menu.editTags')}
+              </DropdownMenuItem>
+            ) : null}
 
-        <DropdownMenuSeparator className={cardMenuSeparatorClass} />
-        <DropdownMenuItem
-          error
-          className={cardMenuDeleteItemClass}
-          onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
-          data-umami-event={isClassroom ? 'material-delete-from-classroom' : 'material-delete'}
-        >
-          <Trash />
-          {t('menu.delete')}
-        </DropdownMenuItem>
+            <DropdownMenuSeparator className={cardMenuSeparatorClass} />
+            <DropdownMenuItem
+              error
+              className={cardMenuDeleteItemClass}
+              onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
+              data-umami-event={isClassroom ? 'material-delete-from-classroom' : 'material-delete'}
+            >
+              <Trash />
+              {t('menu.delete')}
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

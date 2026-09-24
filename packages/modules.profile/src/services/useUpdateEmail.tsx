@@ -17,10 +17,14 @@ export const useUpdateEmail = () => {
     mutationFn: async (emailData: EmailData) => {
       try {
         const axiosInst = await getAxiosInstance();
+        const payload = {
+          ...emailData,
+          new_email: emailData.new_email.trim().toLowerCase(),
+        };
         const response = await axiosInst({
           method: userApiConfig[UserQueryKey.EmailChangeRequest].method,
           url: userApiConfig[UserQueryKey.EmailChangeRequest].getUrl(),
-          data: emailData,
+          data: payload,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -44,7 +48,7 @@ export const useUpdateEmail = () => {
         if (!old) return old;
         return {
           ...old,
-          email: emailData.new_email,
+          email: emailData.new_email.trim().toLowerCase(),
           email_confirmed: false, // После смены email требуется повторное подтверждение
         };
       });

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { createFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useAllTutorClassrooms, useCreateClassroomEvent } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import type { ProductAnalyticsLessonType, ProductAnalyticsSource } from 'common.utils';
 import { buildCreateClassroomEventRequest } from '../utils/buildCreateClassroomEventRequest';
 
@@ -59,6 +60,10 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
     }
 
     const classroomId = Number(data.studentId);
+    const selected = classrooms.find((item) => item.id === classroomId);
+    if (isClassroomOnPause(selected?.status)) {
+      return;
+    }
     const body = buildCreateClassroomEventRequest(data);
 
     await createEvent.mutateAsync({
@@ -78,13 +83,18 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
     reset(getDefaultValues(initialDate, fixedClassroomId));
   };
 
+  const selectableClassrooms = useMemo(
+    () => classrooms.filter((classroom) => !isClassroomOnPause(classroom.status)),
+    [classrooms],
+  );
+
   return {
     form,
     control,
     handleSubmit,
     onSubmit,
     handleClearForm,
-    classrooms,
+    classrooms: selectableClassrooms,
     isClassroomsLoading,
   };
 };

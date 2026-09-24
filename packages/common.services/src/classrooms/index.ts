@@ -7,3 +7,4 @@ export { useDeleteClassroom } from './useDeleteClassroom';
 export { useUpdateIndividualClassroom } from './useUpdateIndividualClassroom';
 export { useUpdateGroupClassroom } from './useUpdateGroupClassroom';
 export { useUpdateClassroomStatus } from './useUpdateClassroomStatus';
+export { useIsClassroomInactive, useIsClassroomOnPause } from './useIsClassroomOnPause';

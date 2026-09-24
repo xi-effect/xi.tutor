@@ -12,13 +12,20 @@ import {
   readCallsDepsMode,
 } from './vite.calls-local.ts';
 import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
+import { mathBankAssetsPlugin } from './vite.math-bank.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
+
+const isHeavyOcrAsset = (filePath: string) =>
+  /(?:^|\/)dist-[^/]+\.js$/.test(filePath) ||
+  /paddleocr|opencv|onnxruntime|ort\.bundle|ort-wasm|worker-entry/i.test(filePath);
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   const callsDepsMode = readCallsDepsMode(appDir);
   const useCallsLink = mode === 'development' && callsDepsMode === 'link';
+  const isElectron = mode === 'electron';
+  const shouldMinify = mode === 'production' || isElectron;
 
   const importConditions: string[] = ['import', 'module', 'browser', 'default'];
   const resolveConditions: string[] = useCallsLink ? ['development', 'import'] : importConditions;
@@ -26,92 +33,117 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   const config = {
     plugins: [
       paddleOcrCjsInteropPlugin(),
+      mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
-      VitePWA({
-        registerType: 'autoUpdate',
-        injectRegister: 'auto',
-        devOptions: { enabled: false },
-        manifest: {
-          id: '/',
-          name: 'sovlium',
-          short_name: 'sovlium',
-          description: 'web application for sovlium.ru',
-          theme_color: '#ffffff',
-          background_color: '#ffffff',
-          display: 'standalone',
-          start_url: '/',
-          icons: [
-            {
-              src: '/web-app-manifest-192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
-              purpose: 'any',
-            },
-            {
-              src: '/web-app-manifest-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable',
-            },
-          ],
-        },
-
-        workbox: {
-          mode: 'development',
-          skipWaiting: true,
-          clientsClaim: true,
-          globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
-          globIgnores: [
-            '**/*paddleocr*',
-            '**/*opencv*',
-            '**/*onnxruntime*',
-            '**/*ort-wasm*',
-            '**/*worker-entry*',
-            '**/emoji/svg/**',
-            // PaddleOCR собирается в hashed `assets/dist-*.js` (~24MB) — не кладём в precache.
-            '**/assets/dist-*.js',
-          ],
-          maximumFileSizeToCacheInBytes: 32 * 1024 * 1024,
-          navigateFallback: '/index.html',
-          navigateFallbackDenylist: [/^\/deployments\/.*/],
-          runtimeCaching: [
-            {
-              urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'html',
-                networkTimeoutSeconds: 3,
+      !isElectron &&
+        VitePWA({
+          registerType: 'autoUpdate',
+          injectRegister: 'auto',
+          devOptions: { enabled: false },
+          manifest: {
+            id: '/',
+            name: 'sovlium',
+            short_name: 'sovlium',
+            description: 'web application for sovlium.ru',
+            theme_color: '#ffffff',
+            background_color: '#ffffff',
+            display: 'standalone',
+            start_url: '/',
+            icons: [
+              {
+                src: '/web-app-manifest-192x192.png',
+                sizes: '192x192',
+                type: 'image/png',
+                purpose: 'any',
               },
-            },
-            {
-              handler: 'NetworkOnly',
-              urlPattern: /\/deployments\/.*/,
-              method: 'GET',
-            },
-            {
-              // Иконки эмодзи попадают в кэш только когда реально запрошены (открытие EmojiPicker),
-              // и переиспользуются из кэша при повторных визитах без похода в сеть.
-              urlPattern: /\/emoji\/svg\/.*\.svg$/,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'emoji-icons',
-                expiration: {
-                  maxEntries: 2000,
-                  maxAgeSeconds: 60 * 60 * 24 * 30,
+              {
+                src: '/web-app-manifest-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'any maskable',
+              },
+            ],
+          },
+
+          workbox: {
+            skipWaiting: true,
+            clientsClaim: true,
+            cleanupOutdatedCaches: true,
+            globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
+            globIgnores: [
+              '**/*paddleocr*',
+              '**/*opencv*',
+              '**/*onnxruntime*',
+              '**/*ort-wasm*',
+              '**/*ort.bundle*',
+              '**/*worker-entry*',
+              '**/emoji/svg/**',
+              // PaddleOCR: hashed `dist-*.js` или крупные `index-*.js` — не precache.
+              '**/assets/dist-*.js',
+              '**/math-bank/**',
+              '**/task-bank/**',
+            ],
+            // Ниже ~6–24MB чанков OCR: иначе они снова попадут в precache под именем index-*.js.
+            maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+            navigateFallback: '/index.html',
+            navigateFallbackDenylist: [/^\/deployments\/.*/],
+            runtimeCaching: [
+              {
+                urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',
+                handler: 'NetworkFirst',
+                options: {
+                  cacheName: 'html',
+                  // Без timeout: иначе при медленной сети отдаётся старый index.html
+                  // со ссылками на уже удалённые hashed-ассеты → белый экран.
                 },
               },
-            },
-          ],
-        },
-      }),
-    ],
+              {
+                handler: 'NetworkOnly',
+                urlPattern: /\/deployments\/.*/,
+                method: 'GET',
+              },
+              {
+                // Иконки эмодзи попадают в кэш только когда реально запрошены (открытие EmojiPicker),
+                // и переиспользуются из кэша при повторных визитах без похода в сеть.
+                urlPattern: /\/emoji\/svg\/.*\.svg$/,
+                handler: 'CacheFirst',
+                options: {
+                  cacheName: 'emoji-icons',
+                  expiration: {
+                    maxEntries: 2000,
+                    maxAgeSeconds: 60 * 60 * 24 * 30,
+                  },
+                },
+              },
+              {
+                urlPattern: /\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
+                handler: 'CacheFirst',
+                options: {
+                  cacheName: 'math-bank-assets',
+                  expiration: {
+                    maxEntries: 40,
+                    maxAgeSeconds: 60 * 60 * 24 * 30,
+                  },
+                },
+              },
+            ],
+          },
+        }),
+    ].filter(Boolean),
     build: {
       chunkSizeWarningLimit: 1000,
-      minify: mode === 'production',
+      minify: shouldMinify,
       outDir: 'build',
       sourcemap: mode === 'debug',
+      reportCompressedSize: false,
+      // PaddleOCR не должен попадать в <link rel="modulepreload"> у index.html:
+      // после деплоя старые dist-*.js дают 404 и белый экран.
+      modulePreload: {
+        resolveDependencies: (_filename: string, deps: string[]) =>
+          deps.filter((dep) => !isHeavyOcrAsset(dep)),
+      },
     },
     optimizeDeps: {
       rolldownOptions: {
@@ -147,7 +179,14 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
     },
     resolve: {
-      alias: {},
+      alias: {
+        // mathlive exports only nested browser.production/development; Vite conditions
+        // here omit those, so the package entry can fail in `vite build`.
+        mathlive: path.resolve(
+          searchForWorkspaceRoot(process.cwd()),
+          'node_modules/mathlive/mathlive.min.mjs',
+        ),
+      },
       conditions: resolveConditions,
       preserveSymlinks: false,
       dedupe: [

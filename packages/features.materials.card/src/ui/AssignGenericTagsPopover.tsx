@@ -159,13 +159,15 @@ export const AssignGenericTagsPopover = ({
         align="end"
         side="bottom"
         sideOffset={8}
-        className="border-border-default bg-background-surface z-100 flex w-80 flex-col overflow-visible rounded-3xl border p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.08)] outline-none"
+        className="border-border-default bg-background-surface z-100 flex w-80 min-w-0 flex-col overflow-hidden rounded-3xl border p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.08)] outline-none"
         onOpenAutoFocus={(event) => event.preventDefault()}
         onCloseAutoFocus={(event) => event.preventDefault()}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex flex-col gap-1 pb-3">
-          <p className="text-text-primary text-lg leading-7 font-semibold">{labels.title}</p>
+        <div className="flex min-w-0 flex-col gap-1 pb-3">
+          <p className="text-text-primary truncate text-lg leading-7 font-semibold">
+            {labels.title}
+          </p>
         </div>
 
         <div className="border-border-control mb-3 flex h-9 w-full items-center gap-1 rounded-xl border px-2">
@@ -178,7 +180,7 @@ export const AssignGenericTagsPopover = ({
           />
         </div>
 
-        <div className="flex max-h-52 min-h-0 w-full shrink flex-col gap-1 overflow-y-auto">
+        <div className="flex max-h-52 min-h-0 w-full min-w-0 shrink flex-col gap-1 overflow-x-hidden overflow-y-auto">
           {allTags.length === 0 && !query ? (
             <p className="text-s-base text-text-secondary py-4 text-center">
               {isSearchLoading ? labels.loading : labels.none}
@@ -199,11 +201,14 @@ export const AssignGenericTagsPopover = ({
                   role="menuitemcheckbox"
                   aria-checked={selected}
                   disabled={disabled}
-                  className="hover:bg-background-subtle flex h-10 w-full cursor-pointer appearance-none items-center gap-3 rounded-lg border-0 bg-transparent px-1 text-left shadow-none disabled:cursor-default disabled:opacity-50"
+                  className="hover:bg-background-subtle flex h-10 w-full min-w-0 cursor-pointer appearance-none items-center gap-3 rounded-lg border-0 bg-transparent px-1 text-left shadow-none disabled:cursor-default disabled:opacity-50"
                   onClick={() => toggleTag(tag)}
                 >
                   <TagDot color={tag.color} />
-                  <span className="text-text-primary min-w-0 flex-1 truncate text-sm leading-5">
+                  <span
+                    className="text-text-primary min-w-0 flex-1 truncate text-sm leading-5"
+                    title={tag.name}
+                  >
                     {tag.name}
                   </span>
                   <span

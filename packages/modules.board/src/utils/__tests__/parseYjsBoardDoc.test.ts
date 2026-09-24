@@ -34,7 +34,7 @@ describe('Yjs board doc helpers', () => {
     expect(info.meta.schemaVersion).toBe('draw');
   });
 
-  it('ensureYjsStorePopulated копирует legacy tl_* в текущий ключ', () => {
+  it('ensureYjsStorePopulated копирует legacy tl_* в текущий ключ и чистит исходный массив', () => {
     const doc = new Y.Doc();
     const legacy = doc.getArray('tl_old-id');
     legacy.push([{ key: 'shape:1', val: { id: 'shape:1', typeName: 'shape' } }]);
@@ -44,5 +44,20 @@ describe('Yjs board doc helpers', () => {
     ensureYjsStorePopulated(doc, 'new-id', yStore);
 
     expect(yStore.get('shape:1')).toEqual({ id: 'shape:1', typeName: 'shape' });
+    expect(legacy.length).toBe(0);
+  });
+
+  it('ensureYjsStorePopulated чистит leftover tl_* если текущий ключ уже заполнен', () => {
+    const doc = new Y.Doc();
+    const current = doc.getArray('tl_new-id');
+    current.push([{ key: 'shape:1', val: { id: 'shape:1', typeName: 'shape' } }]);
+    const leftover = doc.getArray('tl_old-id');
+    leftover.push([{ key: 'shape:2', val: { id: 'shape:2', typeName: 'shape' } }]);
+
+    const yStore = new YKeyValue<DrRecord>(current);
+    ensureYjsStorePopulated(doc, 'new-id', yStore);
+
+    expect(yStore.get('shape:1')).toEqual({ id: 'shape:1', typeName: 'shape' });
+    expect(leftover.length).toBe(0);
   });
 });

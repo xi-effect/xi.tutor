@@ -12,6 +12,11 @@ export const ACTIVITY_KINDS = [
 
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 
+/** Упражнения, которые живут в документе. Флип-карточка — отдельная фигура холста. */
+export const DOCUMENT_ACTIVITY_KINDS = ACTIVITY_KINDS.filter(
+  (kind): kind is Exclude<ActivityKind, 'flip-card'> => kind !== 'flip-card',
+);
+
 export const ACTIVITY_KIND_SET = new Set<string>(ACTIVITY_KINDS);
 
 export function isActivityKind(value: unknown): value is ActivityKind {

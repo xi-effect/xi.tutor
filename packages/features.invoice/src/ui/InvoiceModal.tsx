@@ -4,7 +4,8 @@ import { Form, FormField, FormItem, FormMessage, useFieldArray } from '@xipkg/fo
 import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { useMediaQuery } from '@xipkg/utils';
 import { cn } from '@xipkg/utils';
-import { useFetchClassrooms } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
+import { useAllTutorClassrooms } from 'common.services';
 import {
   ModalCloseIcon,
   modalCancelButtonClass,
@@ -42,7 +43,10 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   const { form, control, handleSubmit, handleClearForm, onSubmit, items, append } =
     useInvoiceForm();
 
-  const { data: classrooms } = useFetchClassrooms();
+  const { classrooms, isLoading: isClassroomsLoading } = useAllTutorClassrooms(open);
+  const hasSelectableClassrooms = classrooms.some(
+    (classroom) => !isClassroomOnPause(classroom.status),
+  );
 
   const totalLessons = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -95,12 +99,13 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
           <ModalDescription className="sr-only">{t('modal.description')}</ModalDescription>
           <Form {...form}>
             <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col gap-6 max-sm:p-0">
-              <div>
-                <p className="text-text-primary max-sm:text-base">{t('modal.intro1')}</p>
-                <p className="text-text-primary">{t('modal.intro2')}</p>
-              </div>
+              <p className="text-text-primary max-sm:text-base">{t('modal.intro')}</p>
 
-              <ClassroomSelector control={control} />
+              <ClassroomSelector
+                control={control}
+                classrooms={classrooms}
+                isLoading={isClassroomsLoading}
+              />
 
               <FormField
                 control={control}
@@ -157,7 +162,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                       <div />
                       <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
                       <div className="w-[12px]" />
-                      <span className="dark:text-text-primary text-right">{totalLessons}</span>
+                      <span className="dark:text-text-primary text-right">
+                        {items.length > 1 ? totalLessons : ''}
+                      </span>
                       <div className="w-[12px]" />
                       <span className="dark:text-text-primary text-right">
                         {totalInvoicePrice} ₽
@@ -181,7 +188,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                     ))}
                     <div className="grid grid-cols-3 items-center gap-2">
                       <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
-                      <span className="dark:text-text-primary text-center">{totalLessons}</span>
+                      <span className="dark:text-text-primary text-center">
+                        {items.length > 1 ? totalLessons : ''}
+                      </span>
                       <span className="dark:text-text-primary text-right">
                         {totalInvoicePrice} ₽
                       </span>
@@ -200,7 +209,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   {t('modal.cancel')}
                 </Button>
                 <Button
-                  disabled={classrooms && classrooms.length === 0}
+                  disabled={!isClassroomsLoading && !hasSelectableClassrooms}
                   className={modalConfirmButtonClass}
                   type="submit"
                   size="m"

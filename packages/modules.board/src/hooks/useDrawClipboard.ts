@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from 'react';
-import { collectDroppedFiles } from 'common.services';
 import { Editor, react, DrAssetId, DrShapeId, decodeMiroClipboardHtml } from '@ibodr/draw';
 import { deserializeDrawContent, readClipboardHtml, serializeDrawContent } from '../utils';
 import {
   preparePastedContent,
   uploadPastedAssetsInBackground,
 } from '../utils/reuploadPastedAssets';
+import { isEditableTarget } from '../utils/isEditableTarget';
+import { looksLikeMarkup, readPasteClipboardSnapshot } from '../utils/pasteClipboard';
 import { getCachedDataUrl, resolveAssetAsDataUrl } from '../utils/resolveAssetUrl';
+import { reconstructPastedMath, pastedMathToRichHtml } from '../shapes/text/utils/clipboardMath';
+import {
+  attachTemporaryPreviewsFromContent,
+  stripInlineSourcesFromContent,
+} from '../utils/boardAssetHygiene';
 
 /** Лимит размера картинки (в байтах) для встраивания в clipboard как data:URL.
  *  Сверх него остаётся fallback на sourceToken — слишком большой clipboard
@@ -102,12 +108,8 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
   useEffect(() => {
     if (!editor) return;
 
-    function isExternalInput(target: HTMLElement): boolean {
-      if (target.isContentEditable) return true;
-      if (['INPUT', 'TEXTAREA'].includes(target.tagName)) {
-        return !editor!.getContainer().contains(target);
-      }
-      return false;
+    function isExternalInput(target: EventTarget | null): boolean {
+      return isEditableTarget(target);
     }
 
     function getTextFromShapes(shapes: any[]): string {
@@ -188,6 +190,11 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
     async function handlePaste(event: ClipboardEvent) {
       if (isExternalInput(event.target as HTMLElement)) return;
 
+      // Снимок ДО preventDefault/await: иначе Chrome обнуляет clipboardData.
+      const snapshot = readPasteClipboardSnapshot(event.clipboardData);
+      let html = snapshot.html;
+      let text = snapshot.text;
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -195,8 +202,7 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
       // и т.д., скопированные из Finder/Explorer или "Copy image"). Идёт через
       // тот же 'files'-хендлер, что и drag-and-drop (см. DrawCanvas.tsx),
       // поэтому типы/размеры/тосты об ошибках обрабатываются одинаково.
-      const pastedFiles = collectDroppedFiles(event.clipboardData);
-      if (pastedFiles.length > 0) {
+      if (snapshot.files.length > 0) {
         const uploadToken = tokenRef.current;
         if (!uploadToken) {
           console.error('Failed to paste files: нет content token');
@@ -206,7 +212,7 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
         try {
           await editor!.putExternalContent({
             type: 'files',
-            files: pastedFiles,
+            files: snapshot.files,
             point: editor!.inputs.currentPagePoint,
           });
         } catch (error) {
@@ -217,9 +223,13 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
 
       if (!editor!.getIsFocused()) editor!.focus();
 
-      let html = event.clipboardData?.getData('text/html') || '';
       if (!html) {
-        html = await readClipboardHtml();
+        const fallback = await readClipboardHtml();
+        if (looksLikeMarkup(fallback)) {
+          html = fallback;
+        } else if (!text.trim()) {
+          text = fallback;
+        }
       }
 
       const content = deserializeDrawContent(html);
@@ -243,13 +253,14 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
 
         // Не наш внутренний формат — если это простой текст (в т.ч. скопированный
         // из другого приложения), создаём текстовый элемент на доске.
-        const text = event.clipboardData?.getData('text/plain') || '';
         if (text.trim()) {
           try {
+            const reconstructed = reconstructPastedMath(text, html);
+            const mathHtml = pastedMathToRichHtml(text, html);
             await editor!.putExternalContent({
               type: 'text',
-              text,
-              html: html || undefined,
+              text: reconstructed,
+              html: mathHtml ?? undefined,
               point: editor!.inputs.currentPagePoint,
             });
           } catch (error) {
@@ -265,7 +276,11 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
         ? preparePastedContent(content, editor!, tokenRef.current)
         : [];
 
+      await attachTemporaryPreviewsFromContent(editor!, content);
+      stripInlineSourcesFromContent(content);
+
       // 2) Мгновенная вставка: shape'ы появляются на доске сразу.
+      //    Inline data:/blob: уже сняты — preview в createTemporaryAssetPreview.
       //    На той же доске id из clipboard уже есть в store — preserveIds:true
       //    не создаёт копии, а смещает существующие фигуры. Для cross-board
       //    preserveIds:true сохраняет id, чтобы uploadPastedAssetsInBackground

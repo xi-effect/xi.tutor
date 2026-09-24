@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { useTranslation } from 'react-i18next';
-import { getClassroomDisplayName, type ClassroomT } from 'common.api';
+import { getClassroomDisplayName, type ClassroomT, isClassroomOnPause } from 'common.api';
 
 type StudentSelectorProps = {
   value: string;
@@ -32,15 +32,17 @@ export const StudentSelector = ({
         />
       </SelectTrigger>
       <SelectContent className="max-h-[300px] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)]">
-        {classrooms.map((classroom) => (
-          <SelectItem
-            key={classroom.id}
-            value={classroom.id.toString()}
-            className="dark:text-text-primary max-w-full min-w-0 truncate"
-          >
-            {getClassroomDisplayName(classroom)}
-          </SelectItem>
-        ))}
+        {classrooms
+          .filter((classroom) => !isClassroomOnPause(classroom.status))
+          .map((classroom) => (
+            <SelectItem
+              key={classroom.id}
+              value={classroom.id.toString()}
+              className="dark:text-text-primary max-w-full min-w-0 truncate"
+            >
+              {getClassroomDisplayName(classroom)}
+            </SelectItem>
+          ))}
       </SelectContent>
     </Select>
   );

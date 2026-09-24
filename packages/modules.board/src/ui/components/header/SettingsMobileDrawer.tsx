@@ -17,8 +17,6 @@ import type { InputMode } from '../../../store/useDrawStore';
 import type { BoardBackgroundState } from '../../../utils/boardBackground';
 import type { BoardBackgroundColorId } from '../../../config';
 
-const BOARD_ELEMENTS_LIMIT = 4000;
-
 type SettingsView =
   'root' | 'inputMode' | 'backgroundType' | 'backgroundColor' | 'lock' | 'unlock' | 'eraser';
 
@@ -26,6 +24,7 @@ type SettingsMobileDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   elementsCount: number;
+  elementsLimit: number;
   progressPercent: number;
   isWarningZone: boolean;
   isLimitReached: boolean;
@@ -37,6 +36,7 @@ type SettingsMobileDrawerProps = {
   onClear: () => void;
   onToggleReadonly: () => void;
   isReadonly: boolean;
+  canToggleReadonly?: boolean;
   isTutor: boolean;
   showImportOption: boolean;
   hasEditor: boolean;
@@ -57,6 +57,7 @@ export const SettingsMobileDrawer = ({
   open,
   onOpenChange,
   elementsCount,
+  elementsLimit,
   progressPercent,
   isWarningZone,
   isLimitReached,
@@ -68,6 +69,7 @@ export const SettingsMobileDrawer = ({
   onClear,
   onToggleReadonly,
   isReadonly,
+  canToggleReadonly = true,
   isTutor,
   showImportOption,
   hasEditor,
@@ -121,7 +123,7 @@ export const SettingsMobileDrawer = ({
                   isLimitReached && 'text-text-danger',
                 )}
               >
-                {elementsCount} / {BOARD_ELEMENTS_LIMIT}
+                {elementsCount} / {elementsLimit}
               </span>
             </div>
             <div className="bg-background-subtle h-2 w-full overflow-hidden rounded-full">
@@ -194,7 +196,7 @@ export const SettingsMobileDrawer = ({
           {isTutor && !isReadonly && (
             <SubRow label={t('settings.eraser')} onClick={() => setView('eraser')} />
           )}
-          {isTutor && (
+          {isTutor && canToggleReadonly && (
             <button
               type="button"
               className={boardDrawerRowClass}

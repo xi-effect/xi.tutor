@@ -1,7 +1,8 @@
 {
-  "settingsTitle": "User settings",
+  "settingsTitle": "Settings",
   "menu": {
     "personalInfo": "Personal data",
+    "subscription": "Plan and subscription",
     "personalisation": "Customization",
     "schedule": "Schedule",
     "security": "Security",
@@ -14,7 +15,15 @@
     "logoutConfirmTitle": "Sign out?",
     "logoutConfirmDescription": "You will be signed out and returned to the login screen",
     "logoutConfirmCancel": "Cancel",
-    "logoutConfirmAction": "Sign out"
+    "logoutConfirmAction": "Sign out",
+    "back": "Back",
+    "close": "Close"
+  },
+  "role": {
+    "label": "Role",
+    "tutor": "Tutor",
+    "student": "Student",
+    "changed": "You are now a {{role}}"
   },
   "personalData": {
     "title": "Personal data",

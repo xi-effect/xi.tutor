@@ -4,6 +4,7 @@ import { AddingLessonModal, buildCreateClassroomEventRequest } from 'features.le
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { useCreateClassroomEvent } from 'modules.calendar';
 import { useCurrentUser, useGetClassroom } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import { ClassroomScheduleProvider } from './scheduleContext';
 
 export const ClassroomScheduleRoot = ({ children }: { children: ReactNode }) => {
@@ -12,15 +13,20 @@ export const ClassroomScheduleRoot = ({ children }: { children: ReactNode }) => 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const numericClassroomId = Number(classroomId);
   const { data: classroom } = useGetClassroom(numericClassroomId, isUserLoading || !isTutor);
+  const isPaused = isClassroomOnPause(classroom?.status);
   const createClassroomEvent = useCreateClassroomEvent();
 
   const [addLessonOpen, setAddLessonOpen] = useState(false);
   const [addLessonInitialDate, setAddLessonInitialDate] = useState<Date | null>(null);
 
-  const handleAddLessonClick = useCallback((date?: Date) => {
-    setAddLessonInitialDate(date ?? null);
-    setAddLessonOpen(true);
-  }, []);
+  const handleAddLessonClick = useCallback(
+    (date?: Date) => {
+      if (isPaused) return;
+      setAddLessonInitialDate(date ?? null);
+      setAddLessonOpen(true);
+    },
+    [isPaused],
+  );
 
   const handleAddLessonSubmit = async (data: AddingLessonFormData) => {
     await createClassroomEvent.mutateAsync({
@@ -41,9 +47,11 @@ export const ClassroomScheduleRoot = ({ children }: { children: ReactNode }) => 
   };
 
   return (
-    <ClassroomScheduleProvider onAddLessonClick={isTutor ? handleAddLessonClick : undefined}>
+    <ClassroomScheduleProvider
+      onAddLessonClick={isTutor && !isPaused ? handleAddLessonClick : undefined}
+    >
       {children}
-      {isTutor ? (
+      {isTutor && !isPaused ? (
         <AddingLessonModal
           open={addLessonOpen}
           onOpenChange={setAddLessonOpen}

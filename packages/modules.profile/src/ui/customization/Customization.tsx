@@ -1,6 +1,5 @@
 import { Badge } from '@xipkg/badge';
 import { Flag, Palette } from '@xipkg/icons';
-import { useMediaQuery } from '@xipkg/utils';
 import {
   Select,
   SelectContent,
@@ -31,7 +30,6 @@ const ThemeOptionLabel = ({ item, label }: { item: ThemeItemT; label: string }) 
 
 export const Customization = () => {
   const { t } = useTranslation('profile');
-  const isMobile = useMediaQuery('(max-width: 719px)');
 
   const { theme, setTheme, themes } = useTheme();
   const { language, setLanguage } = useProfileLanguage();
@@ -42,12 +40,7 @@ export const Customization = () => {
 
   return (
     <>
-      {!isMobile && (
-        <span className="dark:text-text-primary text-3xl font-semibold">
-          {t('customization.title')}
-        </span>
-      )}
-      <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
+      <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
         <div className="flex w-full flex-col p-3">
           <span className="dark:text-text-primary text-xl font-semibold">
             {t('customization.appearance')}

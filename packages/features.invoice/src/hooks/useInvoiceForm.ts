@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from '@tanstack/react-router';
+import { isClassroomOnPause } from 'common.api';
+import { useGetClassroom } from 'common.services';
 import { useFormSchema, type FormData, type FormInput } from '../model';
 import { useCreateInvoice } from './useCreateInvoice';
 import { generateRandomId } from '../utils';
@@ -18,6 +20,7 @@ export const useInvoiceForm = () => {
   // Извлекаем classroomId из пути, если он есть (например, /classrooms/123/...)
   const classroomIdMatch = pathname.match(/\/classrooms\/(\d+)/);
   const classroomIdFromUrl = classroomIdMatch ? classroomIdMatch[1] : '';
+  const { data: urlClassroom } = useGetClassroom(Number(classroomIdFromUrl), !classroomIdFromUrl);
 
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(formSchema),
@@ -60,6 +63,9 @@ export const useInvoiceForm = () => {
   };
 
   const onSubmit = (data: FormData) => {
+    if (isClassroomOnPause(urlClassroom?.status) && data.classroomId === classroomIdFromUrl) {
+      return;
+    }
     const comment: string | null = data.comment && data.comment.length > 0 ? data.comment : null;
     const payload = {
       invoice: { comment },

@@ -2,7 +2,15 @@ import { ReactNode } from 'react';
 import { DrRichText, Editor } from '@ibodr/draw';
 
 export type MarkFormatT =
-  'bold' | 'italic' | 'strike' | 'underline' | 'highlight' | 'link' | 'bulletList';
+  | 'bold'
+  | 'italic'
+  | 'strike'
+  | 'underline'
+  | 'highlight'
+  | 'link'
+  | 'bulletList'
+  | 'superscript'
+  | 'subscript';
 
 export type ActiveFormatesMapT = Record<MarkFormatT, boolean>;
 
@@ -38,6 +46,9 @@ export type ChainedCommandsFallbackT = {
   toggleStrike?: () => { run: () => void };
   toggleUnderline?: () => { run: () => void };
   toggleHighlight?: () => { run: () => void };
+  toggleSuperscript?: () => { run: () => void };
+  toggleSubscript?: () => { run: () => void };
+  insertInlineMath?: (options: { latex: string }) => { run: () => void };
 };
 
 export type ShapeWithRichTextT = {

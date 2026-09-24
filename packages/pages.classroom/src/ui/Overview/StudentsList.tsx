@@ -33,9 +33,10 @@ import { cn } from '@xipkg/utils';
 
 type StudentsListPropsT = {
   classroomId: string;
+  readOnly?: boolean;
 };
 
-export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
+export const StudentsList = ({ classroomId, readOnly = false }: StudentsListPropsT) => {
   const { t } = useTranslation('classroom');
   const { data: students, isLoading, isError, refetch } = useGroupStudentsList(classroomId);
   const deleteStudentMutation = useDeleteStudentFromGroup({ classroom_id: classroomId });
@@ -68,11 +69,13 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
         minHeightClass="min-h-[160px]"
         illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
         actions={
-          <ModalStudentsGroup>
-            <Button type="button" variant="none" className={emptyInviteButtonClass}>
-              {t('actions.addStudent')}
-            </Button>
-          </ModalStudentsGroup>
+          readOnly ? undefined : (
+            <ModalStudentsGroup>
+              <Button type="button" variant="none" className={emptyInviteButtonClass}>
+                {t('actions.addStudent')}
+              </Button>
+            </ModalStudentsGroup>
+          )
         }
       />
     );
@@ -113,32 +116,34 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
                 </h3>
               </div>
               <ContactsBadge userId={user_id} />
-              <div className={cardMenuPositionClass}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button className={cardMenuButtonClass} variant="none" size="icon">
-                      <MoreVert className={cardMenuIconClass} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    side="bottom"
-                    align="end"
-                    className={cardMenuSurfaceClass}
-                    onCloseAutoFocus={(event) => event.preventDefault()}
-                  >
-                    <DropdownMenuItem
-                      error
-                      className={cardMenuDeleteItemClass}
-                      onClick={() => {
-                        setStudentToDelete({ userId: user_id, name: display_name ?? '' });
-                      }}
+              {readOnly ? null : (
+                <div className={cardMenuPositionClass}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className={cardMenuButtonClass} variant="none" size="icon">
+                        <MoreVert className={cardMenuIconClass} />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      side="bottom"
+                      align="end"
+                      className={cardMenuSurfaceClass}
+                      onCloseAutoFocus={(event) => event.preventDefault()}
                     >
-                      <Trash />
-                      {t('actions.deleteFromGroup')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                      <DropdownMenuItem
+                        error
+                        className={cardMenuDeleteItemClass}
+                        onClick={() => {
+                          setStudentToDelete({ userId: user_id, name: display_name ?? '' });
+                        }}
+                      >
+                        <Trash />
+                        {t('actions.deleteFromGroup')}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
             </div>
           </div>
         ))}

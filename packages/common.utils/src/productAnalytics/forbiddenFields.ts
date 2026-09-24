@@ -1,3 +1,9 @@
+/** Свободный текст разрешён только в явно указанных событиях. */
+export const ANALYTICS_ALLOWED_FREE_TEXT_FIELDS: Record<string, ReadonlySet<string>> = {
+  feedback_submitted: new Set(['comment']),
+  math_task_report: new Set(['comment']),
+};
+
 /** Поля, которые нельзя передавать в Umami. */
 export const FORBIDDEN_ANALYTICS_FIELDS = new Set([
   'email',
@@ -21,6 +27,10 @@ export const FORBIDDEN_ANALYTICS_FIELDS = new Set([
   'stack_trace',
   'description',
   'comment',
+  'query',
+  'search',
+  'search_query',
+  'statement',
   'title',
   'name',
   'classroom_name',
@@ -31,4 +41,9 @@ export const FORBIDDEN_ANALYTICS_FIELDS = new Set([
   'tutor_id',
   'classroom_id',
   'student_id',
+  'filename',
+  'file_name',
+  'size_bytes',
+  'file_size',
+  'exact_size',
 ]);

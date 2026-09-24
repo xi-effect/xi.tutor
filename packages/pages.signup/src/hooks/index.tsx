@@ -3,4 +3,5 @@ export {
   handleSignupError,
   getSignupSuccessNavigation,
   applySignupSuccessSideEffects,
+  isOutlookEmail,
 } from './signupFormLogic';

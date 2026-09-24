@@ -5,13 +5,11 @@ import {
   type DragEvent,
   type MouseEvent,
   type ReactNode,
-  type SyntheticEvent,
 } from 'react';
 import { Button } from '@xipkg/button';
 import { Image, Trash } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { useEditor } from '@ibodr/draw';
 import { boardDropdownZClass, boardIconClass, boardMenuSurfaceClass } from '../../ui/boardTheme';
 import {
   collectDroppedFiles,
@@ -22,20 +20,21 @@ import {
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import { useYjsContext } from '../../providers/YjsContext';
+import { useActivityEventGuard, useActivitySession } from './activityHostContext';
 import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
 import { getBoardUploadErrorToast } from '../../utils/boardUploadError';
-
-const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024;
+import { assertBoardUploadAllowed } from '../../utils/planUploadLimit';
+import { getMaxImageBytes } from 'common.subscription';
+import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
 
 const coverToolbarButtonClass =
   'bg-background-surface/95 text-text-primary hover:bg-background-hover border-border-default flex size-8 shrink-0 items-center justify-center rounded-lg border shadow-sm backdrop-blur-sm';
 
 export function useActivityImageSrc(src?: string) {
-  const { token } = useYjsContext();
+  const { token } = useActivitySession();
   const [url, setUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -85,21 +84,20 @@ function boardToast(key: string, options?: Record<string, unknown>) {
 
 async function uploadPickedImage(file: File, token: string) {
   const next = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
+  const attempt = beginFileUploadAttempt('board', next);
 
   if (!next.size) {
+    attempt.reject('unknown');
     toast.error(boardToast('toast.fileEmpty'), { description: boardToast('toast.fileEmptyDesc') });
     throw new Error('empty');
   }
 
-  if (next.size > MAX_IMAGE_SIZE_BYTES) {
-    const description = boardToast('toast.imageSizeDesc', {
-      size: (next.size / 1024 / 1024).toFixed(2),
-    });
-    toast.error(boardToast('toast.imageUploadFailed'), { description, duration: 5000 });
-    throw new Error(description);
+  if (!assertBoardUploadAllowed(next, 'image', attempt)) {
+    throw new Error('too-large');
   }
 
   if (isFileNameTooLong(next.name)) {
+    attempt.reject('unknown');
     toast.error(boardToast('toast.fileNameTooLong'), {
       description: boardToast('toast.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
     });
@@ -107,15 +105,21 @@ async function uploadPickedImage(file: File, token: string) {
   }
 
   if (checkAssetType(next) !== 'img') {
+    attempt.reject('unsupported_type');
     toast.error(boardToast('toast.imageUploadFailed'));
     throw new Error('type');
   }
 
   try {
     const fileId = await uploadFileIdRequest({ file: next, token });
+    attempt.succeed();
     return normalizeStoredFileSrc(fileId);
   } catch (error) {
-    const { title, description } = getBoardUploadErrorToast(error, next, MAX_IMAGE_SIZE_BYTES, {
+    rejectFileUploadFromError(attempt, error, {
+      fileSize: next.size,
+      maxBytes: getMaxImageBytes(),
+    });
+    const { title, description } = getBoardUploadErrorToast(error, next, getMaxImageBytes(), {
       sizeDescKey: 'toast.imageSizeDesc',
       failedTitleKey: 'toast.imageUploadFailed',
       failedDescKey: 'toast.imageUploadFailed',
@@ -141,10 +145,10 @@ export function ActivityImageField({
   onSurfaceClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }) {
   const { t } = useTranslation('board');
-  const { token } = useYjsContext();
+  const { token } = useActivitySession();
   const tokenRef = useRef(token);
   tokenRef.current = token;
-  const editor = useEditor();
+  const { stop } = useActivityEventGuard();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const preview = useActivityImageSrc(value);
@@ -166,11 +170,6 @@ export function ActivityImageField({
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
     }
-  };
-
-  const stop = (event: SyntheticEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
   };
 
   const onDragOverFiles = (event: DragEvent<HTMLElement>) => {
@@ -219,37 +218,46 @@ export function ActivityImageField({
               type="button"
               data-board-control=""
               disabled={uploading}
-              className="text-text-secondary hover:bg-background-hover/40 flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 px-4 text-center text-xs transition-colors"
+              className="text-text-secondary hover:bg-background-hover/40 flex h-full min-h-40 w-full items-center justify-center px-4 text-center text-xs transition-colors"
               onPointerDown={stop}
               onClick={(event) => {
                 stop(event);
                 pick();
               }}
             >
-              <span className="bg-background-surface border-border-default flex size-10 items-center justify-center rounded-xl border shadow-sm">
-                <Image className={cn(boardIconClass, 'size-5')} />
-              </span>
               {uploading ? t('activity.imageUploading') : t('activity.imagePlaceholder')}
             </button>
           )}
-          {value ? (
-            <div
-              className="absolute top-2 right-2 z-10 flex items-center gap-1"
+          <div
+            className="absolute top-2 right-2 z-20 flex items-center gap-1"
+            data-board-control=""
+            onPointerDown={stop}
+            onClick={stop}
+          >
+            <button
+              type="button"
               data-board-control=""
-              onPointerDown={stop}
-              onClick={stop}
+              disabled={uploading}
+              title={
+                uploading
+                  ? t('activity.imageUploading')
+                  : value
+                    ? t('activity.changeImage')
+                    : t('activity.uploadImage')
+              }
+              aria-label={
+                uploading
+                  ? t('activity.imageUploading')
+                  : value
+                    ? t('activity.changeImage')
+                    : t('activity.uploadImage')
+              }
+              className={cn(coverToolbarButtonClass, uploading && 'opacity-50')}
+              onClick={pick}
             >
-              <button
-                type="button"
-                data-board-control=""
-                disabled={uploading}
-                title={uploading ? t('activity.imageUploading') : t('activity.changeImage')}
-                aria-label={uploading ? t('activity.imageUploading') : t('activity.changeImage')}
-                className={cn(coverToolbarButtonClass, uploading && 'opacity-50')}
-                onClick={pick}
-              >
-                <Image className={cn(boardIconClass, 'size-4')} />
-              </button>
+              <Image className={cn(boardIconClass, 'size-4')} />
+            </button>
+            {value ? (
               <button
                 type="button"
                 data-board-control=""
@@ -261,10 +269,10 @@ export function ActivityImageField({
               >
                 <Trash className={cn(boardIconClass, 'size-4')} />
               </button>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
           {children ? (
-            <div className={cn('absolute inset-0', !preview && 'pointer-events-none')}>
+            <div className={cn('absolute inset-0 z-10', !preview && 'pointer-events-none')}>
               {children}
             </div>
           ) : null}
@@ -337,8 +345,8 @@ export function ActivityImageIconButton({
   className?: string;
 }) {
   const { t } = useTranslation('board');
-  const { token } = useYjsContext();
-  const editor = useEditor();
+  const { token } = useActivitySession();
+  const { stop } = useActivityEventGuard();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -362,11 +370,6 @@ export function ActivityImageIconButton({
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
     }
-  };
-
-  const stop = (event: SyntheticEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
   };
 
   const input = (

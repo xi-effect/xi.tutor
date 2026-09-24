@@ -6,10 +6,16 @@ import { Editor } from 'modules.editor';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const InformationNoteContent = ({ note }: { note: ContentYDocItem }) => {
+const InformationNoteContent = ({
+  note,
+  readOnly,
+}: {
+  note: ContentYDocItem;
+  readOnly?: boolean;
+}) => {
   return (
     <div className="w-full min-w-0 pl-12 [&_.xi-editor]:px-0 [&_.xi-editor]:py-2">
-      <Editor storageItem={note} />
+      <Editor storageItem={note} forceReadOnly={readOnly} />
     </div>
   );
 };
@@ -45,11 +51,16 @@ const InformationNoteCreate = ({ classroom }: { classroom: ClassroomT }) => {
 type InformationNoteProps = {
   classroom: ClassroomT;
   note?: ContentYDocItem;
+  readOnly?: boolean;
 };
 
-export const InformationNote = ({ classroom, note }: InformationNoteProps) => {
+export const InformationNote = ({ classroom, note, readOnly = false }: InformationNoteProps) => {
   if (note) {
-    return <InformationNoteContent note={note} />;
+    return <InformationNoteContent note={note} readOnly={readOnly} />;
+  }
+
+  if (readOnly) {
+    return null;
   }
 
   return <InformationNoteCreate classroom={classroom} />;

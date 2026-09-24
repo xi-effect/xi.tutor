@@ -6,12 +6,13 @@ import { ContentYDocItem } from 'common.types';
 type YjsProviderProps = {
   children: ReactNode;
   data: ContentYDocItem;
+  forceReadOnly?: boolean;
 };
 
 const DEMO_YDOC_ID = 'test/demo-room';
 const DEMO_STORAGE_TOKEN = 'test/demo-room';
 
-export const YjsProvider = ({ children, data }: YjsProviderProps) => {
+export const YjsProvider = ({ children, data, forceReadOnly = false }: YjsProviderProps) => {
   const isDemo = import.meta.env.DEV && !data.ydoc_id;
   const contentToken = data.content_token || '';
   const yjsStore = useYjsStore({
@@ -19,6 +20,7 @@ export const YjsProvider = ({ children, data }: YjsProviderProps) => {
     ydocId: isDemo ? DEMO_YDOC_ID : data.ydoc_id || '',
     storageToken: isDemo ? DEMO_STORAGE_TOKEN : contentToken,
     storageItem: data,
+    forceReadOnly,
   });
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;

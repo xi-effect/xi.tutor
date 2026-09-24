@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 import { TelegramFilled, MailRounded, Notification, VK, Trash } from '@xipkg/icons';
 import { Toggle } from '@xipkg/toggle';
 import { Button } from '@xipkg/button';
-import { useMediaQuery } from '@xipkg/utils';
 import { VkConnectButton } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 
@@ -20,7 +19,6 @@ import {
 
 export const Notifications = () => {
   const { t } = useTranslation('profile');
-  const isMobile = useMediaQuery('(max-width: 719px)');
   const { data: user } = useCurrentUser();
   const { data: deliveryMethods } = useGetDeliveryMethods();
   const { isSupported, permission, enabled, setEnabled, requestPermission } =
@@ -138,12 +136,6 @@ export const Notifications = () => {
 
   return (
     <div className="w-full min-w-0">
-      {!isMobile && (
-        <h1 className="bg-background-surface dark:text-text-primary sticky top-0 z-10 mb-4 pb-2 text-3xl font-semibold">
-          {t('notifications.title')}
-        </h1>
-      )}
-
       <div className="flex w-full min-w-0 flex-col gap-4">
         {isSupported && (
           <div className="border-border-control bg-background-surface flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">

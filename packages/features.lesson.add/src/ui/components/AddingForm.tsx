@@ -9,9 +9,10 @@ import {
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Textarea } from '@xipkg/textarea';
-import { Account } from '@xipkg/icons';
 import { Toggle } from '@xipkg/toggle';
 import { cn } from '@xipkg/utils';
+import { ClassroomSelectAvatar } from 'common.ui';
+import { getClassroomDisplayName } from 'common.api';
 import { useTranslation } from 'react-i18next';
 import { useAddingForm } from '../../hooks';
 import { InputDate } from './InputDate';
@@ -161,18 +162,25 @@ export const AddingForm: FC<AddingFormProps> = ({
               <FormControl>
                 {fixedClassroomId != null ? (
                   <Input
-                    value={fixedClassroom?.name ?? t('form.currentClassroom')}
+                    value={
+                      fixedClassroom
+                        ? getClassroomDisplayName(fixedClassroom)
+                        : t('form.currentClassroom')
+                    }
                     disabled
                     variant="s"
                     className="border-border-default rounded-lg border"
-                    before={<Account className="fill-icon-primary h-4 w-4" />}
+                    before={
+                      fixedClassroom ? (
+                        <ClassroomSelectAvatar classroom={fixedClassroom} />
+                      ) : undefined
+                    }
                   />
                 ) : (
                   <StudentSelector
                     {...field}
                     classrooms={classrooms}
                     isLoading={isClassroomsLoading}
-                    before={<Account className="fill-icon-primary h-4 w-4" />}
                   />
                 )}
               </FormControl>

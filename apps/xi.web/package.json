@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "pnpm exec vite --host --port 5173",
     "build": "tsc -b && vite build",
+    "build:electron": "tsc -b && vite build --mode electron",
     "build:debug": "tsc -b && vite build --mode debug",
     "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint .",
@@ -49,6 +50,7 @@
     "features.lesson.change": "workspace:*",
     "features.lesson.start": "workspace:*",
     "features.students.list": "workspace:*",
+    "features.subscription": "workspace:*",
     "features.classroom.rename": "workspace:*",
     "features.avatar.editor": "workspace:*",
     "i18next": "24.2.2",
@@ -65,6 +67,7 @@
     "pages.classrooms": "workspace:*",
     "pages.main": "workspace:*",
     "pages.materials": "workspace:*",
+    "pages.bank": "workspace:*",
     "pages.payments": "workspace:*",
     "pages.signin": "workspace:*",
     "pages.signup": "workspace:*",

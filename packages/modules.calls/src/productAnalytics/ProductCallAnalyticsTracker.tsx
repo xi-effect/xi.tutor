@@ -9,11 +9,14 @@ import { useCurrentUser } from 'common.services';
 import {
   DURATION_THRESHOLDS_MIN,
   PRODUCT_ANALYTICS_EVENTS,
+  beginCallFeedbackSession,
   createAttemptId,
+  flushCallFeedbackUsage,
   getDurationBucket,
   getProductAnalyticsRole,
   mapPermissionError,
   measureDurationMs,
+  startCallFeedbackUsage,
   trackProductEvent,
   type CallFailureReason,
   type ProductAnalyticsLessonType,
@@ -227,6 +230,7 @@ export const ProductCallAnalyticsTracker = () => {
 
   useEffect(() => {
     if (!token) {
+      flushCallFeedbackUsage();
       resetCallSessionAnalyticsState();
     }
   }, [token]);
@@ -237,9 +241,14 @@ export const ProductCallAnalyticsTracker = () => {
     const state = getCallSessionAnalyticsState();
     state.inLessonMediaContext = true;
 
+    if (role === 'tutor') {
+      startCallFeedbackUsage();
+    }
+
     if (!wasConnectedRef.current) {
       wasConnectedRef.current = true;
       state.connectedAt = Date.now();
+      beginCallFeedbackSession();
 
       if (!state.callConnectedSent) {
         state.callConnectedSent = true;
@@ -272,6 +281,18 @@ export const ProductCallAnalyticsTracker = () => {
       }
     };
   }, [connectionState, role, actorRole, activeClassroom, activeBoardId, isScreenShareEnabled]);
+
+  useEffect(() => {
+    if (connectionState !== 'connected') {
+      flushCallFeedbackUsage();
+    }
+
+    return () => {
+      if (connectionState === 'connected') {
+        flushCallFeedbackUsage();
+      }
+    };
+  }, [connectionState]);
 
   useEffect(() => {
     if (connectionState === 'disconnected' && wasConnectedRef.current) {

@@ -9,17 +9,25 @@
     "taskList": "Checklist",
     "file": "File",
     "image": "Image",
-    "fromComputer": "From computer",
+    "fromComputer": "From device",
     "fromCloud": "From cloud",
+    "fromMathBank": "From task bank",
+    "mathBankAddToNote": "Add to note",
+    "mathBankDescription": "Pick a task from the bank to add its statement to the note",
     "fromLink": "From link",
     "cloudAddToNote": "Add to note",
     "cloudFilesDescription": "Pick a file from your materials library to add it to the note",
     "insertCode": "Insert code",
+    "exercise": "Exercise",
+    "insertHint": "Choose a block type — it will appear below the current one",
     "duplicate": "Duplicate",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "delete": "Delete"
   },
+  "noteMenu": "Note menu",
+  "noteActivitiesScope": "Controls for every exercise",
+  "noteActivitiesEmpty": "This note has no exercises",
   "bubbleMenu": {
     "bold": "Bold",
     "italic": "Italic",
@@ -53,7 +61,8 @@
     "moveDown": "Move down",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "extractPage": "Extract as image"
+    "extractPage": "Extract as image",
+    "draw": "Draw"
   },
   "file": {
     "loading": "Loading...",
@@ -123,7 +132,17 @@
     "copied": "Code copied to clipboard"
   },
   "dragHandle": {
+    "addBlock": "Add block",
+    "blockActions": "Drag or block actions",
     "dragBlock": "Drag block"
+  },
+  "outline": {
+    "title": "Table of contents",
+    "emptyHeading": "Heading",
+    "goTo": "Go to “{{heading}}”"
+  },
+  "mobileToolbar": {
+    "hideKeyboard": "Hide keyboard"
   },
   "status": {
     "initializing": "Initializing editor...",

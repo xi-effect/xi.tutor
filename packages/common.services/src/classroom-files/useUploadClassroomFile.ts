@@ -9,6 +9,7 @@ import { getAxiosInstance } from 'common.config';
 import { handleError, showSuccess } from '../utils';
 import { prepareContentUpload } from '../files/prepareContentUpload';
 import { assertValidFileName } from '../files/validateFileName';
+import { createFileUploadHttpError } from '../files/createFileUploadHttpError';
 
 export type UploadClassroomFileVars = {
   classroomId: string;
@@ -54,8 +55,20 @@ export async function uploadClassroomFileRequest({
     },
   });
 
+  if (response.status === 415 || response.status === 422) {
+    throw createFileUploadHttpError(
+      response.status,
+      'Неподдерживаемый формат файла. Пожалуйста, выберите другой файл.',
+      response,
+    );
+  }
+
   if (response.status !== 200 && response.status !== 201) {
-    throw new Error(`Classroom file upload failed: ${response.status}`);
+    throw createFileUploadHttpError(
+      response.status,
+      `Classroom file upload failed: ${response.status}`,
+      response,
+    );
   }
 
   if (!isLibraryFile(response.data)) {

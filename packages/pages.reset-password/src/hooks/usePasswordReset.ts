@@ -1,20 +1,17 @@
-import { useTransition, useState } from 'react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 import { useForm } from '@xipkg/form';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { AxiosError } from 'axios';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRequestPasswordReset } from 'common.services';
 
 import { useFormSchemaEmail, FormDataEmail } from '../model/formSchemaEmail';
 import { typeResponseRequest } from '../types';
+import { isPasswordResetUserNotFound } from './passwordResetLogic';
 
 export const usePasswordReset = () => {
   const { t } = useTranslation('resetPassword');
-
-  const [isPending, startTransition] = useTransition();
-
+  const [isSending, setIsSending] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
   const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
 
@@ -28,66 +25,88 @@ export const usePasswordReset = () => {
     },
   });
 
-  const { setError, reset } = form;
+  const { setError } = form;
 
-  const onSubmit = async (data: FormDataEmail) => {
+  const sendResetLink = async (email: string, options?: { resend?: boolean }) => {
+    if (isSending) {
+      return;
+    }
+
+    const isResend = Boolean(options?.resend);
+    setIsSending(true);
+
     try {
-      const response = await requestPasswordReset(data.email);
+      const response = await requestPasswordReset(email);
 
-      startTransition(() => {
-        switch (response.status) {
-          case typeResponseRequest.SuccessfulResponse:
-            setSubmittedEmail(data.email);
-            reset();
-            toast.success(t('requestSent'));
-            setIsSubmitSuccessful(true);
-            break;
+      switch (response.status) {
+        case typeResponseRequest.SuccessfulResponse:
+          setSubmittedEmail(email);
+          setIsSubmitSuccessful(true);
+          toast.success(t('requestSent'));
+          break;
 
-          case typeResponseRequest.ValidationError:
+        case typeResponseRequest.ValidationError:
+          if (isResend) {
+            toast.error(t('invalidEmail'));
+          } else {
             setError('email', {
               type: 'manual',
               message: t('invalidEmail'),
             });
-            setIsSubmitSuccessful(false);
-            break;
+          }
+          setIsSubmitSuccessful(false);
+          break;
 
-          default:
+        default:
+          if (isResend) {
+            toast.error(t('error'));
+          } else {
             setError('email', {
               type: 'manual',
               message: t('error'),
             });
-            setIsSubmitSuccessful(false);
-            break;
-        }
-      });
+          }
+          setIsSubmitSuccessful(false);
+          break;
+      }
     } catch (error) {
-      startTransition(() => {
-        if (
-          error instanceof AxiosError &&
-          error.response?.status === typeResponseRequest.UserNotFound
-        ) {
-          setError('email', {
-            type: 'manual',
-            message: t('emailNotFound'),
-          });
-        } else if (error instanceof Error && error.message === 'Email not found') {
-          setError('email', {
-            type: 'manual',
-            message: t('emailNotFound'),
-          });
+      if (isPasswordResetUserNotFound(error)) {
+        if (isResend) {
+          toast.error(t('emailNotFound'));
         } else {
-          console.error('Reset password error:', error);
-          toast.error(t('error'));
+          setError('email', {
+            type: 'manual',
+            message: t('emailNotFound'),
+          });
         }
+      } else {
+        console.error('Reset password error:', error);
+        toast.error(t('error'));
+      }
+      if (!isResend) {
         setIsSubmitSuccessful(false);
-      });
+      }
+    } finally {
+      setIsSending(false);
     }
+  };
+
+  const onSubmit = async (data: FormDataEmail) => {
+    await sendResetLink(data.email);
+  };
+
+  const onResend = async () => {
+    if (!submittedEmail) {
+      return;
+    }
+    await sendResetLink(submittedEmail, { resend: true });
   };
 
   return {
     form,
     onSubmit,
-    isLoading: isPending,
+    onResend,
+    isLoading: isSending,
     isSubmitSuccessful,
     submittedEmail,
   };

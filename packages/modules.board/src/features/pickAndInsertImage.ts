@@ -6,9 +6,10 @@ import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
 import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
+import { getMaxImageBytes } from 'common.subscription';
+import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
 import i18n from 'i18next';
-
-const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 
 export type InsertImagePlacement = {
   /** Позиция и размер на доске (в координатах страницы). Если не задано — по центру вьюпорта с натуральными размерами. */
@@ -19,7 +20,7 @@ export type InsertImagePlacement = {
 };
 
 /**
- * Вставка изображения с мгновенным preview и последующей загрузкой
+ * Вставка изображения с мгновенным preview вне store и последующей загрузкой
  * @param placement — опционально: позиция (x, y) и размер (w, h) на доске
  */
 export async function insertImage(
@@ -37,25 +38,21 @@ export async function insertImage(
     toast.error(i18n.t('toast.fileEmpty', { ns: 'board' }), {
       description: i18n.t('toast.fileEmptyDesc', { ns: 'board' }),
     });
+    beginFileUploadAttempt('board', file).reject('unknown');
     return;
   }
 
-  if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    const message = i18n.t('toast.imageSizeDesc', {
-      ns: 'board',
-      size: (file.size / 1024 / 1024).toFixed(2),
-    });
-    toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
-      description: message,
-      duration: 5000,
-    });
-    throw new Error(message);
+  const attempt = beginFileUploadAttempt('board', file);
+
+  if (!assertBoardUploadAllowed(file, 'image', attempt)) {
+    throw new Error(i18n.t('toast.fileTooLarge', { ns: 'board' }));
   }
 
   let bitmap: ImageBitmap;
   try {
     bitmap = await createImageBitmap(file);
   } catch (err) {
+    attempt.reject('upload_error');
     toast.error(i18n.t('toast.imageOpenError', { ns: 'board' }), {
       description: i18n.t('toast.imageReadFailed', { ns: 'board' }),
       duration: 8000,
@@ -66,10 +63,8 @@ export async function insertImage(
   const { width: w, height: h } = bitmap;
   bitmap.close();
 
-  // Создаём shape + asset с временным blob URL (без FileReader)
   const tempAssetId = `asset:${nanoid()}` as DrAssetId;
   const shapeId = `shape:${nanoid()}` as DrShapeId;
-  const previewUrl = URL.createObjectURL(file);
 
   const position = placement
     ? { x: placement.x, y: placement.y }
@@ -77,13 +72,14 @@ export async function insertImage(
   const shapeW = placement ? placement.w : w;
   const shapeH = placement ? placement.h : h;
 
+  editor.createTemporaryAssetPreview(tempAssetId, file);
   editor.createAssets([
     {
       id: tempAssetId,
       type: 'image',
       typeName: 'asset',
       props: {
-        src: previewUrl, // локальный preview
+        src: '',
         w,
         h,
         mimeType: file.type,
@@ -133,6 +129,11 @@ export async function insertImage(
       const { src } = await myAssetStore(token).upload(uploadAsset, file);
       await waitForResolvedAssetUrl(src, token);
 
+      if (!editor.getAsset(tempAssetId) || !editor.getShape(shapeId)) {
+        if (editor.getAsset(tempAssetId)) editor.deleteAssets([tempAssetId]);
+        return;
+      }
+
       // Контракт персиста: только storage file id — см. utils/storedFileSrc.ts
       editor.updateAssets([
         {
@@ -150,9 +151,14 @@ export async function insertImage(
           meta: {},
         },
       ]);
+      attempt.succeed();
     } catch (err) {
       console.error('Image upload failed:', err);
-      const { title, description } = getBoardUploadErrorToast(err, file, MAX_IMAGE_SIZE_BYTES, {
+      rejectFileUploadFromError(attempt, err, {
+        fileSize: file.size,
+        maxBytes: getMaxImageBytes(),
+      });
+      const { title, description } = getBoardUploadErrorToast(err, file, getMaxImageBytes(), {
         sizeDescKey: 'toast.imageSizeDesc',
         failedTitleKey: 'toast.imageUploadError',
         failedDescKey: 'toast.imageUploadFailed',
@@ -163,9 +169,6 @@ export async function insertImage(
       });
       editor.deleteShapes([shapeId]);
       editor.deleteAssets([tempAssetId]);
-    } finally {
-      // Даём <img> перейти с preview на резолвнутый blob, иначе серый «Не удалось загрузить».
-      setTimeout(() => URL.revokeObjectURL(previewUrl), 2_000);
     }
   })();
 }

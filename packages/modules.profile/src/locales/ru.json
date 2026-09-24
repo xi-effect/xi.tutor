@@ -1,7 +1,8 @@
 {
-  "settingsTitle": "Настройки пользователя",
+  "settingsTitle": "Настройки",
   "menu": {
     "personalInfo": "Личные данные",
+    "subscription": "Тариф и подписка",
     "personalisation": "Персонализация",
     "schedule": "Расписание",
     "security": "Безопасность",
@@ -14,7 +15,15 @@
     "logoutConfirmTitle": "Выйти из аккаунта?",
     "logoutConfirmDescription": "Вы выйдете из аккаунта и вернётесь на экран входа",
     "logoutConfirmCancel": "Отменить",
-    "logoutConfirmAction": "Выйти"
+    "logoutConfirmAction": "Выйти",
+    "back": "Назад",
+    "close": "Закрыть"
+  },
+  "role": {
+    "label": "Роль",
+    "tutor": "Репетитор",
+    "student": "Ученик",
+    "changed": "Теперь вы {{role}}"
   },
   "personalData": {
     "title": "Личные данные",

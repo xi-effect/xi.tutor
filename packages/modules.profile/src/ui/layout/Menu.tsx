@@ -5,6 +5,7 @@ import {
   File,
   Key,
   Music,
+  Star,
   Notification,
   Palette,
   SoundOn,
@@ -13,7 +14,10 @@ import {
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
+import { useCurrentUser } from 'common.services';
+import { useSubscriptionUiStore } from 'common.subscription';
 import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
+import { ProfileRoleSwitcher } from './ProfileRoleSwitcher';
 import { ConfirmDialog } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 
@@ -65,6 +69,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <WhiteBoard className={iconClasses} key="board-icon" />;
       case 'report':
         return <File className={iconClasses} key="report-icon" />;
+      case 'subscription':
+        return <Star className={iconClasses} key="subscription-icon" />;
       default:
         return null;
     }
@@ -105,6 +111,8 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   const { t } = useTranslation('profile');
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
 
   const options: ItemT[] = useMemo(
     () => [
@@ -112,6 +120,14 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
         name: t('menu.personalInfo'),
         query: 'personalInfo',
       },
+      ...(isTutor
+        ? [
+            {
+              name: t('menu.subscription'),
+              query: 'subscription',
+            },
+          ]
+        : []),
       ...(THEME_CUSTOMIZATION_ENABLED
         ? [
             {
@@ -149,10 +165,13 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
         query: 'report',
       },
     ],
-    [t],
+    [isTutor, t],
   );
 
   const handleMenuItem = (index: number, query: string) => {
+    if (query === 'subscription') {
+      useSubscriptionUiStore.getState().openOverview();
+    }
     setActiveQuery(query);
     setActiveContent(index);
     setShowContent(true);
@@ -166,19 +185,24 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   };
 
   return (
-    <div className="flex w-full flex-col gap-1 sm:w-[220px]">
-      {options.map((item, index) => (
-        <Item item={item} index={index} key={item.query} onMenuItemChange={handleMenuItem} />
-      ))}
-      <button
-        type="button"
-        onClick={() => setLogoutConfirmOpen(true)}
-        className="text-text-secondary dark:text-text-primary hover:bg-status-error-background group hover:text-text-danger mt-10 flex h-[40px] w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer"
-        data-umami-event="profile-logout"
-      >
-        <Exit className="dark:fill-icon-primary group-hover:fill-icon-danger transition-colors ease-in" />
-        <span className="pl-2 text-[14px] font-normal">{t('menu.logout')}</span>
-      </button>
+    <div className="flex h-full min-h-0 w-full flex-col sm:w-[220px]">
+      <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain">
+        {options.map((item, index) => (
+          <Item item={item} index={index} key={item.query} onMenuItemChange={handleMenuItem} />
+        ))}
+      </div>
+      <div className="flex shrink-0 flex-col gap-3 pt-4">
+        <ProfileRoleSwitcher />
+        <button
+          type="button"
+          onClick={() => setLogoutConfirmOpen(true)}
+          className="text-text-secondary dark:text-text-primary hover:bg-status-error-background group hover:text-text-danger flex h-10 w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer"
+          data-umami-event="profile-logout"
+        >
+          <Exit className="dark:fill-icon-primary group-hover:fill-icon-danger transition-colors ease-in" />
+          <span className="pl-2 text-[14px] font-normal">{t('menu.logout')}</span>
+        </button>
+      </div>
 
       <ConfirmDialog
         open={logoutConfirmOpen}

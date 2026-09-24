@@ -12,6 +12,8 @@ const defaultActiveStatuses: ActiveFormatesMapT = {
   highlight: false,
   link: false,
   bulletList: false,
+  superscript: false,
+  subscript: false,
 };
 
 export const useActiveStatuses = (editor: Editor) => {

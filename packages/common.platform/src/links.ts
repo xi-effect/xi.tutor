@@ -1,4 +1,5 @@
-import { isDesktopNative, isNativeShell } from './detect';
+import { isDesktopNative, isElectronShell, isNativeShell } from './detect';
+import { getSovliumDesktop } from './electron';
 
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tg:', 'telegram:']);
 
@@ -33,9 +34,13 @@ export async function openUrl(url: string): Promise<void> {
         }
       })();
       if (SAFE_SCHEMES.has(protocol) || protocol === '') {
-        const { openUrl: openWithOs } = await import('@tauri-apps/plugin-opener');
-        await openWithOs(href);
-        return;
+        if (isElectronShell()) {
+          const desktop = getSovliumDesktop();
+          if (desktop) {
+            await desktop.external.openUrl(href);
+            return;
+          }
+        }
       }
     } catch (err) {
       console.warn('[common.platform] openUrl native failed, falling back', err);

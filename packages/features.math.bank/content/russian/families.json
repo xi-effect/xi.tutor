@@ -1,0 +1,1067 @@
+[
+  {
+    "id": "ru.root.unstressed",
+    "topic": "Орфография",
+    "subtopic": "Гласные в корне",
+    "skills": [
+      "безударная гласная",
+      "корень слова",
+      "орфограмма"
+    ],
+    "difficulty": 1,
+    "taskType": "fill_blank",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      9
+    ]
+  },
+  {
+    "id": "ru.root.alternating",
+    "topic": "Орфография",
+    "subtopic": "Чередующиеся гласные в корне",
+    "skills": [
+      "чередование корней",
+      "лаг-лож",
+      "кас-кос"
+    ],
+    "difficulty": 2,
+    "taskType": "fill_blank",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      9
+    ]
+  },
+  {
+    "id": "ru.prefix.prepri",
+    "topic": "Орфография",
+    "subtopic": "Приставки ПРЕ-/ПРИ-",
+    "skills": [
+      "пре- и при-",
+      "значение приставки"
+    ],
+    "difficulty": 2,
+    "taskType": "fill_blank",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      10
+    ]
+  },
+  {
+    "id": "ru.prefix.zs",
+    "topic": "Орфография",
+    "subtopic": "Приставки на З/С",
+    "skills": [
+      "приставки на з/с",
+      "фонетический принцип"
+    ],
+    "difficulty": 2,
+    "taskType": "fill_blank",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      10
+    ]
+  },
+  {
+    "id": "ru.prefix.yi",
+    "topic": "Орфография",
+    "subtopic": "Ы/И после приставок",
+    "skills": [
+      "ы и и после приставок"
+    ],
+    "difficulty": 3,
+    "taskType": "fill_blank",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      10
+    ]
+  },
+  {
+    "id": "ru.signs.hardsoft",
+    "topic": "Орфография",
+    "subtopic": "Разделительные Ъ и Ь",
+    "skills": [
+      "твёрдый знак",
+      "мягкий знак"
+    ],
+    "difficulty": 1,
+    "taskType": "fill_blank",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      10
+    ]
+  },
+  {
+    "id": "ru.tsya",
+    "topic": "Орфография",
+    "subtopic": "-ТСЯ и -ТЬСЯ",
+    "skills": [
+      "тся и ться",
+      "инфинитив",
+      "форма глагола"
+    ],
+    "difficulty": 1,
+    "taskType": "fill_blank",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      12
+    ]
+  },
+  {
+    "id": "ru.nnn",
+    "topic": "Орфография",
+    "subtopic": "Н и НН",
+    "skills": [
+      "н и нн",
+      "прилагательные",
+      "причастия"
+    ],
+    "difficulty": 3,
+    "taskType": "fill_blank",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      15
+    ]
+  },
+  {
+    "id": "ru.verb.endings",
+    "topic": "Орфография",
+    "subtopic": "Личные окончания глаголов",
+    "skills": [
+      "спряжение глагола",
+      "личные окончания"
+    ],
+    "difficulty": 2,
+    "taskType": "fill_blank",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      12
+    ]
+  },
+  {
+    "id": "ru.participle.suffix",
+    "topic": "Орфография",
+    "subtopic": "Суффиксы причастий",
+    "skills": [
+      "суффиксы причастий",
+      "спряжение"
+    ],
+    "difficulty": 3,
+    "taskType": "fill_blank",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      12
+    ]
+  },
+  {
+    "id": "ru.ne",
+    "topic": "Орфография",
+    "subtopic": "НЕ с разными частями речи",
+    "skills": [
+      "не слитно и раздельно",
+      "части речи"
+    ],
+    "difficulty": 3,
+    "taskType": "short_answer",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      13
+    ]
+  },
+  {
+    "id": "ru.pronoun.neni",
+    "topic": "Орфография",
+    "subtopic": "НЕ/НИ в местоимениях",
+    "skills": [
+      "не и ни",
+      "местоимения"
+    ],
+    "difficulty": 2,
+    "taskType": "fill_blank",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      13
+    ]
+  },
+  {
+    "id": "ru.spelling.mixed",
+    "topic": "Орфография",
+    "subtopic": "Комплексный орфографический анализ",
+    "skills": [
+      "орфографический анализ",
+      "несколько правил"
+    ],
+    "difficulty": 5,
+    "taskType": "multi_choice",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      6,
+      7
+    ],
+    "ege": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  {
+    "id": "ru.punct.homogeneous",
+    "topic": "Пунктуация",
+    "subtopic": "Однородные члены",
+    "skills": [
+      "однородные члены",
+      "запятая"
+    ],
+    "difficulty": 1,
+    "taskType": "restore_punctuation",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      16
+    ]
+  },
+  {
+    "id": "ru.punct.intro",
+    "topic": "Пунктуация",
+    "subtopic": "Вводные слова",
+    "skills": [
+      "вводные слова",
+      "обособление"
+    ],
+    "difficulty": 2,
+    "taskType": "restore_punctuation",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      18
+    ]
+  },
+  {
+    "id": "ru.punct.address",
+    "topic": "Пунктуация",
+    "subtopic": "Обращения",
+    "skills": [
+      "обращение",
+      "запятая"
+    ],
+    "difficulty": 1,
+    "taskType": "restore_punctuation",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      18
+    ]
+  },
+  {
+    "id": "ru.punct.participle",
+    "topic": "Пунктуация",
+    "subtopic": "Причастный оборот",
+    "skills": [
+      "причастный оборот",
+      "обособление определения"
+    ],
+    "difficulty": 3,
+    "taskType": "restore_punctuation",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      17
+    ]
+  },
+  {
+    "id": "ru.punct.gerund",
+    "topic": "Пунктуация",
+    "subtopic": "Деепричастный оборот",
+    "skills": [
+      "деепричастный оборот",
+      "обособление обстоятельства"
+    ],
+    "difficulty": 3,
+    "taskType": "restore_punctuation",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      17
+    ]
+  },
+  {
+    "id": "ru.punct.ssp",
+    "topic": "Пунктуация",
+    "subtopic": "Сложносочинённое предложение",
+    "skills": [
+      "ссп",
+      "границы частей",
+      "запятая"
+    ],
+    "difficulty": 2,
+    "taskType": "restore_punctuation",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      16
+    ]
+  },
+  {
+    "id": "ru.punct.spp",
+    "topic": "Пунктуация",
+    "subtopic": "Сложноподчинённое предложение",
+    "skills": [
+      "спп",
+      "придаточная часть",
+      "запятая"
+    ],
+    "difficulty": 3,
+    "taskType": "restore_punctuation",
+    "grades": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      19
+    ]
+  },
+  {
+    "id": "ru.punct.mixed",
+    "topic": "Пунктуация",
+    "subtopic": "Сложное предложение с разными видами связи",
+    "skills": [
+      "разные виды связи",
+      "пунктуационный анализ"
+    ],
+    "difficulty": 5,
+    "taskType": "restore_punctuation",
+    "grades": [
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      20,
+      21
+    ]
+  },
+  {
+    "id": "ru.punct.analysis",
+    "topic": "Пунктуация",
+    "subtopic": "Пунктуационный анализ",
+    "skills": [
+      "пунктуационный анализ",
+      "правило постановки знака"
+    ],
+    "difficulty": 4,
+    "taskType": "multi_choice",
+    "grades": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      4,
+      5
+    ],
+    "ege": [
+      21
+    ]
+  },
+  {
+    "id": "ru.syntax.basis",
+    "topic": "Синтаксис",
+    "subtopic": "Грамматическая основа",
+    "skills": [
+      "подлежащее",
+      "сказуемое",
+      "грамматическая основа"
+    ],
+    "difficulty": 2,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      2
+    ],
+    "ege": [
+      8
+    ]
+  },
+  {
+    "id": "ru.syntax.type",
+    "topic": "Синтаксис",
+    "subtopic": "Характеристика предложения",
+    "skills": [
+      "простое и сложное предложение",
+      "односоставное",
+      "осложнение"
+    ],
+    "difficulty": 3,
+    "taskType": "multiple_choice",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      3
+    ],
+    "ege": [
+      8
+    ]
+  },
+  {
+    "id": "ru.syntax.phrase",
+    "topic": "Синтаксис",
+    "subtopic": "Грамматическая синонимия словосочетаний",
+    "skills": [
+      "словосочетание",
+      "управление",
+      "согласование"
+    ],
+    "difficulty": 3,
+    "taskType": "short_answer",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      9
+    ],
+    "ege": [
+      8
+    ]
+  },
+  {
+    "id": "ru.syntax.norm",
+    "topic": "Культура речи",
+    "subtopic": "Синтаксические нормы",
+    "skills": [
+      "синтаксические нормы",
+      "грамматическая ошибка"
+    ],
+    "difficulty": 4,
+    "taskType": "multiple_choice",
+    "grades": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      8
+    ],
+    "ege": [
+      8
+    ]
+  },
+  {
+    "id": "ru.morph.case",
+    "topic": "Морфология",
+    "subtopic": "Падеж и форма слова",
+    "skills": [
+      "падеж",
+      "словоизменение"
+    ],
+    "difficulty": 1,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "oge": [
+      8
+    ],
+    "ege": [
+      7
+    ]
+  },
+  {
+    "id": "ru.morph.forms",
+    "topic": "Культура речи",
+    "subtopic": "Морфологические нормы",
+    "skills": [
+      "форма существительного",
+      "родительный множественного"
+    ],
+    "difficulty": 3,
+    "taskType": "short_answer",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      8
+    ],
+    "ege": [
+      7
+    ]
+  },
+  {
+    "id": "ru.morph.numeral",
+    "topic": "Культура речи",
+    "subtopic": "Формы числительных",
+    "skills": [
+      "склонение числительных",
+      "морфологическая норма"
+    ],
+    "difficulty": 4,
+    "taskType": "short_answer",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      8
+    ],
+    "ege": [
+      7
+    ]
+  },
+  {
+    "id": "ru.lex.paronym",
+    "topic": "Лексика",
+    "subtopic": "Паронимы",
+    "skills": [
+      "паронимы",
+      "лексическая сочетаемость"
+    ],
+    "difficulty": 3,
+    "taskType": "multiple_choice",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      12
+    ],
+    "ege": [
+      5
+    ]
+  },
+  {
+    "id": "ru.lex.redundancy",
+    "topic": "Лексика",
+    "subtopic": "Лексические нормы",
+    "skills": [
+      "плеоназм",
+      "лексическая избыточность"
+    ],
+    "difficulty": 3,
+    "taskType": "short_answer",
+    "grades": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      12
+    ],
+    "ege": [
+      6
+    ]
+  },
+  {
+    "id": "ru.lex.synonym",
+    "topic": "Лексика",
+    "subtopic": "Синонимы",
+    "skills": [
+      "синонимы",
+      "лексическое значение"
+    ],
+    "difficulty": 1,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      12
+    ],
+    "ege": [
+      2,
+      25
+    ]
+  },
+  {
+    "id": "ru.lex.phraseology",
+    "topic": "Лексика",
+    "subtopic": "Фразеологизмы",
+    "skills": [
+      "фразеологизм",
+      "значение выражения"
+    ],
+    "difficulty": 2,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      12
+    ],
+    "ege": [
+      2,
+      25
+    ]
+  },
+  {
+    "id": "ru.orthoepy.stress",
+    "topic": "Орфоэпия",
+    "subtopic": "Нормы ударения",
+    "skills": [
+      "ударение",
+      "орфоэпическая норма"
+    ],
+    "difficulty": 2,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      8
+    ],
+    "ege": [
+      4
+    ]
+  },
+  {
+    "id": "ru.expressive",
+    "topic": "Речь и текст",
+    "subtopic": "Средства выразительности",
+    "skills": [
+      "средства выразительности",
+      "тропы",
+      "фигуры речи"
+    ],
+    "difficulty": 3,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      11
+    ],
+    "ege": [
+      22
+    ]
+  },
+  {
+    "id": "ru.text.mainidea",
+    "topic": "Речь и текст",
+    "subtopic": "Основная мысль текста",
+    "skills": [
+      "основная мысль",
+      "смысловой анализ"
+    ],
+    "difficulty": 3,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      10
+    ],
+    "ege": [
+      23,
+      24
+    ]
+  },
+  {
+    "id": "ru.text.type",
+    "topic": "Речь и текст",
+    "subtopic": "Тип речи",
+    "skills": [
+      "описание",
+      "повествование",
+      "рассуждение"
+    ],
+    "difficulty": 2,
+    "taskType": "multiple_choice",
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      10
+    ],
+    "ege": [
+      3,
+      24
+    ]
+  },
+  {
+    "id": "ru.text.connection",
+    "topic": "Речь и текст",
+    "subtopic": "Средства связи предложений",
+    "skills": [
+      "средства связи",
+      "местоименная связь",
+      "лексический повтор"
+    ],
+    "difficulty": 4,
+    "taskType": "multiple_choice",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      10
+    ],
+    "ege": [
+      1,
+      26
+    ]
+  },
+  {
+    "id": "ru.text.inference",
+    "topic": "Речь и текст",
+    "subtopic": "Смысловой анализ",
+    "skills": [
+      "информация текста",
+      "вывод",
+      "позиция автора"
+    ],
+    "difficulty": 4,
+    "taskType": "multi_choice",
+    "grades": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      10
+    ],
+    "ege": [
+      23,
+      24
+    ]
+  },
+  {
+    "id": "ru.text.compression",
+    "topic": "Речь и текст",
+    "subtopic": "Сжатие текста",
+    "skills": [
+      "сжатое изложение",
+      "микротема",
+      "обобщение"
+    ],
+    "difficulty": 5,
+    "taskType": "open_rubric",
+    "grades": [
+      8,
+      9
+    ],
+    "oge": [
+      1
+    ],
+    "ege": [
+      23
+    ]
+  },
+  {
+    "id": "ru.text.essay",
+    "topic": "Речь и текст",
+    "subtopic": "Сочинение-рассуждение",
+    "skills": [
+      "аргументация",
+      "комментарий",
+      "позиция"
+    ],
+    "difficulty": 5,
+    "taskType": "open_rubric",
+    "grades": [
+      9,
+      10,
+      11
+    ],
+    "oge": [
+      13
+    ],
+    "ege": [
+      27
+    ]
+  }
+]

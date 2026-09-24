@@ -14,6 +14,8 @@ import { Route as authLayoutRouteImport } from './pages/(auth)/_layout'
 import { Route as commonLayoutRouteImport } from './pages/(common)/_layout'
 import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index'
 import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deployments/$deploymentId.enable'
+import { Route as DesktopConferenceClassroomIdRouteImport } from './pages/desktop/conference/$classroomId'
+import { Route as appLayoutBankIndexRouteImport } from './pages/(app)/_layout/bank/index'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
@@ -59,6 +61,17 @@ const DeploymentsDeploymentIdEnableRoute =
     path: '/deployments/$deploymentId/enable',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DesktopConferenceClassroomIdRoute =
+  DesktopConferenceClassroomIdRouteImport.update({
+    id: '/desktop/conference/$classroomId',
+    path: '/desktop/conference/$classroomId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const appLayoutBankIndexRoute = appLayoutBankIndexRouteImport.update({
+  id: '/bank/',
+  path: '/bank/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
 const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
   id: '/board/$boardId',
   path: '/board/$boardId',
@@ -177,10 +190,12 @@ const appLayoutMaterialsMaterialIdNoteIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
+  '/desktop/conference/$classroomId': typeof DesktopConferenceClassroomIdRoute
   '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/bank/': typeof appLayoutBankIndexRoute
   '/call/': typeof appLayoutCallIndexRoute
   '/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/materials/': typeof appLayoutMaterialsIndexRoute
@@ -202,10 +217,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
+  '/desktop/conference/$classroomId': typeof DesktopConferenceClassroomIdRoute
   '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/bank': typeof appLayoutBankIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
@@ -231,10 +248,12 @@ export interface FileRoutesById {
   '/(auth)/_layout': typeof authLayoutRouteWithChildren
   '/(common)/_layout': typeof commonLayoutRouteWithChildren
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
+  '/desktop/conference/$classroomId': typeof DesktopConferenceClassroomIdRoute
   '/(app)/_layout/': typeof appLayoutIndexRoute
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
   '/(common)/_layout/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/(app)/_layout/bank/': typeof appLayoutBankIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
@@ -258,10 +277,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/deployments/$deploymentId/enable'
+    | '/desktop/conference/$classroomId'
     | '/'
     | '/board/$boardId'
     | '/call/$callId'
     | '/invite/$inviteId'
+    | '/bank/'
     | '/call/'
     | '/classrooms/'
     | '/materials/'
@@ -283,10 +304,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/deployments/$deploymentId/enable'
+    | '/desktop/conference/$classroomId'
     | '/'
     | '/board/$boardId'
     | '/call/$callId'
     | '/invite/$inviteId'
+    | '/bank'
     | '/call'
     | '/classrooms'
     | '/materials'
@@ -311,10 +334,12 @@ export interface FileRouteTypes {
     | '/(auth)/_layout'
     | '/(common)/_layout'
     | '/deployments/$deploymentId/enable'
+    | '/desktop/conference/$classroomId'
     | '/(app)/_layout/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
     | '/(common)/_layout/invite/$inviteId'
+    | '/(app)/_layout/bank/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
     | '/(app)/_layout/materials/'
@@ -340,6 +365,7 @@ export interface RootRouteChildren {
   authLayoutRoute: typeof authLayoutRouteWithChildren
   commonLayoutRoute: typeof commonLayoutRouteWithChildren
   DeploymentsDeploymentIdEnableRoute: typeof DeploymentsDeploymentIdEnableRoute
+  DesktopConferenceClassroomIdRoute: typeof DesktopConferenceClassroomIdRoute
   commonWelcomeEmailIndexRoute: typeof commonWelcomeEmailIndexRoute
   commonWelcomeRoleIndexRoute: typeof commonWelcomeRoleIndexRoute
   commonWelcomeSocialsIndexRoute: typeof commonWelcomeSocialsIndexRoute
@@ -382,6 +408,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/deployments/$deploymentId/enable'
       preLoaderRoute: typeof DeploymentsDeploymentIdEnableRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/desktop/conference/$classroomId': {
+      id: '/desktop/conference/$classroomId'
+      path: '/desktop/conference/$classroomId'
+      fullPath: '/desktop/conference/$classroomId'
+      preLoaderRoute: typeof DesktopConferenceClassroomIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)/_layout/bank/': {
+      id: '/(app)/_layout/bank/'
+      path: '/bank'
+      fullPath: '/bank/'
+      preLoaderRoute: typeof appLayoutBankIndexRouteImport
+      parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/board/$boardId': {
       id: '/(app)/_layout/board/$boardId'
@@ -537,6 +577,7 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute
+  appLayoutBankIndexRoute: typeof appLayoutBankIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
@@ -553,6 +594,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
+  appLayoutBankIndexRoute: appLayoutBankIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
@@ -609,6 +651,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLayoutRoute: authLayoutRouteWithChildren,
   commonLayoutRoute: commonLayoutRouteWithChildren,
   DeploymentsDeploymentIdEnableRoute: DeploymentsDeploymentIdEnableRoute,
+  DesktopConferenceClassroomIdRoute: DesktopConferenceClassroomIdRoute,
   commonWelcomeEmailIndexRoute: commonWelcomeEmailIndexRoute,
   commonWelcomeRoleIndexRoute: commonWelcomeRoleIndexRoute,
   commonWelcomeSocialsIndexRoute: commonWelcomeSocialsIndexRoute,

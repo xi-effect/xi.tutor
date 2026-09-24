@@ -7,18 +7,25 @@ import { isClassroomMaterialTab } from './useTabNavigation';
 interface SharedTabsContentProps {
   currentTab: string;
   onOpenInvoiceModal?: () => void;
+  filesUploadOpen?: boolean;
+  onFilesUploadOpenChange?: (open: boolean) => void;
   extraContent?: React.ReactNode;
 }
 
 export const SharedTabsContent = ({
   currentTab,
   onOpenInvoiceModal,
+  filesUploadOpen,
+  onFilesUploadOpenChange,
   extraContent,
 }: SharedTabsContentProps) => (
   <>
     {isClassroomMaterialTab(currentTab) ? (
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        <Materials />
+        <Materials
+          filesUploadOpen={filesUploadOpen}
+          onFilesUploadOpenChange={onFilesUploadOpenChange}
+        />
       </div>
     ) : null}
 

@@ -5,6 +5,7 @@ import { Button } from '@xipkg/button';
 
 import { InformationLayout } from '../Information';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import { ConfirmDialog } from 'common.ui';
 import { cn } from '@xipkg/utils';
 import { InvoiceModal } from 'features.invoice';
@@ -12,7 +13,10 @@ import { useTranslation } from 'react-i18next';
 
 import { SharedTabsContent } from './SharedTabsContent';
 import { isClassroomMaterialTab, useTabNavigation } from './useTabNavigation';
-import { ClassroomMobileActionButton } from './ClassroomMobileActionButton';
+import {
+  ClassroomMobileActionButton,
+  CLASSROOM_FAB_BOTTOM_OFFSET_PX,
+} from './ClassroomMobileActionButton';
 import { ClassroomTabsBar } from './ClassroomTabsBar';
 import { NextLessonChip } from '../Header/NextLessonChip';
 
@@ -73,12 +77,14 @@ export const TabsTutor = () => {
   );
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isFilesUploadOpen, setIsFilesUploadOpen] = useState(false);
   const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
+  const isPaused = isClassroomOnPause(classroom?.status);
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
 
@@ -150,12 +156,26 @@ export const TabsTutor = () => {
             currentTab === 'payments' || isClassroomMaterialTab(currentTab)
               ? 'pr-0 pb-0'
               : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
-            isMobile && 'pb-20',
+            // Материальные вкладки сами считают высоту списка (useFitViewportHeight)
+            isMobile && !isClassroomMaterialTab(currentTab) && 'pb-20',
           )}
+          // ClassroomMobileActionButton портализируется в document.body — обходом
+          // предков в useFitViewportHeight не виден. Отдаём его реальный отступ через
+          // CSS-переменную (тот же приём, что --calls-layout-bottom-offset в Navigation.tsx),
+          // выставляя её ровно при том же условии, при котором рендерится сама кнопка.
+          style={
+            isMobile && !isPaused
+              ? ({
+                  '--classroom-fab-offset': `${CLASSROOM_FAB_BOTTOM_OFFSET_PX}px`,
+                } as React.CSSProperties)
+              : undefined
+          }
         >
           <SharedTabsContent
             currentTab={currentTab}
-            onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+            onOpenInvoiceModal={isPaused ? undefined : () => setIsInvoiceModalOpen(true)}
+            filesUploadOpen={isFilesUploadOpen}
+            onFilesUploadOpenChange={setIsFilesUploadOpen}
             extraContent={
               <Tabs.Content
                 className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain data-[state=inactive]:hidden"
@@ -167,11 +187,11 @@ export const TabsTutor = () => {
           />
         </div>
 
-        {isInvoiceModalOpen && (
+        {isInvoiceModalOpen && !isPaused && (
           <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
         )}
 
-        {isMobile && (
+        {isMobile && !isPaused && (
           <ClassroomMobileActionButton
             currentTab={currentTab}
             classroomKind={classroom?.kind}
@@ -181,6 +201,7 @@ export const TabsTutor = () => {
             isGroupInviteModalOpen={isGroupInviteModalOpen}
             onAddMaterial={handleAddMaterial}
             onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+            onOpenUploadFiles={() => setIsFilesUploadOpen(true)}
             onDeleteClassroom={handleDeleteClassroomClick}
             onStudentsModalChange={setIsStudentsModalOpen}
             onGroupInviteModalChange={setIsGroupInviteModalOpen}

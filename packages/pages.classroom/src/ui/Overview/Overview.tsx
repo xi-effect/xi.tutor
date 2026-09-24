@@ -9,6 +9,7 @@ import {
 } from '@xipkg/dropdown';
 import { Add, FileSmall, WhiteBoard } from '@xipkg/icons';
 import { useGetClassroom, useCurrentUser, useAddClassroomMaterials } from 'common.services';
+import { isClassroomOnPause } from 'common.api';
 import { InvoiceModal } from 'features.invoice';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { useTranslation } from 'react-i18next';
@@ -132,6 +133,7 @@ export const Overview = () => {
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
+  const isPaused = isClassroomOnPause(classroom?.status);
 
   if (isLoading) {
     return <OverviewSkeleton numberOfSections={2} />;
@@ -152,7 +154,7 @@ export const Overview = () => {
       <SectionContainer
         title={t('overview.materials')}
         tabLink="boards"
-        actions={isTutor ? <OverviewMaterialsAddButton /> : null}
+        actions={isTutor && !isPaused ? <OverviewMaterialsAddButton /> : null}
       >
         <MaterialsList />
       </SectionContainer>
@@ -160,7 +162,9 @@ export const Overview = () => {
         title={t('overview.payments')}
         tabLink="payments"
         actions={
-          isTutor ? <OverviewPaymentsAddButton onClick={() => setInvoiceModalOpen(true)} /> : null
+          isTutor && !isPaused ? (
+            <OverviewPaymentsAddButton onClick={() => setInvoiceModalOpen(true)} />
+          ) : null
         }
       >
         <PaymentsList />
@@ -169,12 +173,12 @@ export const Overview = () => {
         <SectionContainer
           title={t('overview.students')}
           tabLink=""
-          actions={<OverviewStudentsAddButton />}
+          actions={isPaused ? null : <OverviewStudentsAddButton />}
         >
-          <StudentsList classroomId={classroomId} />
+          <StudentsList classroomId={classroomId} readOnly={isPaused} />
         </SectionContainer>
       )}
-      {invoiceModalOpen && (
+      {invoiceModalOpen && !isPaused && (
         <InvoiceModal open={invoiceModalOpen} onOpenChange={setInvoiceModalOpen} />
       )}
     </div>

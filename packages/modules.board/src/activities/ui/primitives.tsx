@@ -1,8 +1,8 @@
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
-import { useEditor } from '@ibodr/draw';
 import { motion } from 'motion/react';
-import { useEffect, type ReactNode, type SyntheticEvent } from 'react';
+import { useEffect, type ReactNode } from 'react';
+import { useActivityEventGuard } from './activityHostContext';
 import type { ItemStatus } from '../model/types';
 import { useTokenDnd } from './TokenDnd';
 import {
@@ -19,11 +19,7 @@ import { activityHover, activityItemTransition, activityItemVariants } from './a
 const statusClass = activityStatusBorderClass;
 
 function useStopBoardGesture() {
-  const editor = useEditor();
-  return (event: SyntheticEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
-  };
+  return useActivityEventGuard().stop;
 }
 
 export function DraggableToken({
@@ -150,6 +146,7 @@ export function Selectable({
       transition={activityItemTransition}
       whileHover={disabled ? undefined : activityHover}
       whileTap={disabled ? undefined : { scale: 0.98 }}
+      className="w-full"
     >
       <Button
         type="button"

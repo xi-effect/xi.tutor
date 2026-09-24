@@ -10,6 +10,8 @@ import { InvoiceModal } from 'features.invoice';
 import { useCreateMaterial } from 'features.materials.add';
 import { useTranslation } from 'react-i18next';
 import { ModalInvitation } from './ModalInvitation';
+import { tryStartClassroomCreate } from 'common.subscription';
+import { trackClassroomLimitReached } from 'common.utils';
 
 const menuRowClassName = cn(
   'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
@@ -134,9 +136,17 @@ export const MobileTutorActionButton = ({
 
     switch (actionId) {
       case 'invite':
+        if (!tryStartClassroomCreate()) {
+          trackClassroomLimitReached(variant === 'classrooms' ? 'classroom' : 'other');
+          break;
+        }
         setInviteModalOpen(true);
         break;
       case 'group':
+        if (!tryStartClassroomCreate()) {
+          trackClassroomLimitReached(variant === 'classrooms' ? 'classroom' : 'other');
+          break;
+        }
         setAddGroupModalOpen(true);
         break;
       case 'note':
@@ -160,15 +170,15 @@ export const MobileTutorActionButton = ({
 
   return createPortal(
     <>
-      <div className="pointer-events-none fixed bottom-[76px] left-1/2 z-40 hidden -translate-x-1/2 max-[960px]:block">
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 hidden h-16 items-start justify-center max-[960px]:flex">
         <ActionButton
           onClick={() => setDrawerOpen(true)}
-          classname="pointer-events-auto !relative !right-auto !bottom-auto h-[52px] w-[52px] !rounded-full p-0 shadow-[0_8px_24px_rgba(0,0,0,0.28)]"
+          classname="pointer-events-auto !relative !right-auto !bottom-auto h-[52px] w-[52px] !-translate-y-1/2 !rounded-full p-0 shadow-[0_8px_24px_rgba(0,0,0,0.28)]"
         />
       </div>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} modal>
-        <DrawerContent className="bottom-16 max-h-[calc(100dvh-64px)] w-full overflow-y-auto">
+        <DrawerContent className="bottom-0 max-h-dvh w-full overflow-y-auto">
           <div className="flex flex-col gap-4 pb-8">
             <DrawerTitle className="text-m-base text-text-primary font-medium">
               {drawerTitle}

@@ -55,11 +55,7 @@ export const Schedule = () => {
   return (
     <>
       {!isMobile && (
-        <span className="dark:text-text-primary text-3xl font-semibold">{t('schedule.title')}</span>
-      )}
-
-      {!isMobile && (
-        <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
+        <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
           <div className="flex w-full flex-col p-3">
             <span className="dark:text-text-primary text-xl font-semibold">
               {t('schedule.view')}

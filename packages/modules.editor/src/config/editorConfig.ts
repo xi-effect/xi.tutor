@@ -18,6 +18,7 @@ import {
   FileNode,
   PdfNode,
   PresentationNode,
+  ActivityNode,
 } from '../extensions';
 import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
 import 'highlight.js/styles/base16/atelier-cave-light.min.css';
@@ -60,13 +61,15 @@ export const getExtensions = (
 ) => {
   const base = [
     StarterKit.configure({
-      // Настраиваем Link из StarterKit
       link: {
         HTMLAttributes: {
-          class: 'text-blue-500 hover:text-blue-700 underline cursor-pointer',
+          target: '_blank',
+          rel: 'noopener noreferrer nofollow',
         },
-        openOnClick: false,
+        openOnClick: true,
         autolink: true,
+        linkOnPaste: true,
+        defaultProtocol: 'https',
       },
       // Отключаем undoRedo — Collaboration приносит свою реализацию,
       // конфликт двух history-плагинов вызывает infinite update loop
@@ -86,6 +89,7 @@ export const getExtensions = (
     PdfNode,
     PresentationNode,
     FileNode,
+    ActivityNode,
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -110,6 +114,7 @@ export const getExtensions = (
         'pdf',
         'presentation',
         'file',
+        'activity',
       ],
     }),
     Placeholder.configure({

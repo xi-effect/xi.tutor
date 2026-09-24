@@ -2,7 +2,14 @@ import { Editor } from '@tiptap/core';
 import { fileTypeFromBuffer } from 'file-type';
 import { toast } from 'sonner';
 import i18n from 'i18next';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, cloneDroppedFile } from 'common.services';
+import {
+  cloneDroppedFile,
+  isFileNameTooLong,
+  MAX_FILENAME_LENGTH,
+  beginFileUploadAttempt,
+  rejectFileUploadFromError,
+  trackFileSizeLimitFromUploadError,
+} from 'common.services';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
   ALLOWED_FILE_MIME_TYPES,
@@ -12,6 +19,7 @@ import {
   type EditorMediaType,
 } from '../const/media';
 import { ActiveBlockT } from '../types';
+import { getMaxFileBytes } from 'common.subscription';
 import {
   insertAudioFile,
   insertFileBlock,
@@ -50,8 +58,10 @@ export async function insertEditorAsset(
   activeBlock?: ActiveBlockT,
 ) {
   file = cloneDroppedFile(file);
+  const attempt = beginFileUploadAttempt('other', file);
 
   if (isFileNameTooLong(file.name)) {
+    attempt.reject('unknown');
     toast.error(i18n.t('upload.fileNameTooLong', { ns: 'editor' }), {
       description: i18n.t('upload.fileNameTooLongDesc', {
         ns: 'editor',
@@ -66,16 +76,17 @@ export async function insertEditorAsset(
   try {
     switch (type) {
       case 'image':
-        return insertImageFile(editor, file, token, activeBlock);
+        return insertImageFile(editor, file, token, activeBlock, attempt);
       case 'audio':
-        return insertAudioFile(editor, file, token, activeBlock);
+        return insertAudioFile(editor, file, token, activeBlock, attempt);
       case 'pdf':
-        return insertPdfFile(editor, file, token, activeBlock);
+        return insertPdfFile(editor, file, token, activeBlock, attempt);
       case 'presentation':
-        return insertPresentationFile(editor, file, token, activeBlock);
+        return insertPresentationFile(editor, file, token, activeBlock, attempt);
       case 'file':
-        return insertFileBlock(editor, file, token, activeBlock);
+        return insertFileBlock(editor, file, token, activeBlock, attempt);
       default:
+        attempt.reject('unsupported_type');
         toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'editor' }), {
           description: i18n.t('toast.fileCannotUpload', { ns: 'editor', name: file.name }),
         });
@@ -83,6 +94,11 @@ export async function insertEditorAsset(
     }
   } catch (err) {
     console.error(err);
+    rejectFileUploadFromError(attempt, err, {
+      fileSize: file.size,
+      maxBytes: getMaxFileBytes(),
+    });
+    trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
     toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
     return false;
   }

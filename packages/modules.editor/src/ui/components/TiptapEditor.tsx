@@ -1,4 +1,5 @@
 import { EditorContent } from '@tiptap/react';
+import { DocumentOutline } from './DocumentOutline';
 import { EditorToolkit } from './EditorToolkit';
 import { EditorLoading, EditorSyncError } from './EditorLoading';
 import { useYjsContext } from '../../hooks/useYjsContext';
@@ -19,6 +20,7 @@ export const TiptapEditor = () => {
   return (
     <div className="xi-editor relative w-full min-w-0 p-4">
       <EditorContent editor={editor} className="max-w-none focus:outline-none" />
+      <DocumentOutline editor={editor} />
       <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
     </div>
   );

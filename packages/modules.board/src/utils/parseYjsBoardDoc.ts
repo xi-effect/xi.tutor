@@ -58,23 +58,47 @@ export function ensureYjsStorePopulated(
   ydocId: string,
   yStore: YKeyValue<DrRecord>,
 ): void {
-  if (yStore.yarray.length > 0) return;
-
   const currentKey = `tl_${ydocId}`;
+
+  if (yStore.yarray.length === 0) {
+    for (const [key] of yDoc.share.entries()) {
+      if (key === currentKey || !key.startsWith('tl_')) continue;
+
+      const candidateArr = yDoc.getArray<{ key: string; val: DrRecord }>(key);
+      if (candidateArr.length === 0) continue;
+
+      yDoc.transact(() => {
+        for (const item of candidateArr.toJSON()) {
+          yStore.set(item.key, item.val);
+        }
+        // Иначе дубликат 13 MB доски = 26 MB: исходный массив остаётся навсегда.
+        candidateArr.delete(0, candidateArr.length);
+      }, 'duplicate-migration');
+      break;
+    }
+  }
+
+  clearLegacyTlArrays(yDoc, currentKey);
+}
+
+/** Уже перенесённые `tl_{sourceId}` после дублирования доски — GC схлопнет tombstones. */
+function clearLegacyTlArrays(yDoc: Y.Doc, currentKey: string): void {
+  const leftovers: Array<Y.Array<{ key: string; val: DrRecord }>> = [];
 
   for (const [key] of yDoc.share.entries()) {
     if (key === currentKey || !key.startsWith('tl_')) continue;
-
     const candidateArr = yDoc.getArray<{ key: string; val: DrRecord }>(key);
     if (candidateArr.length === 0) continue;
-
-    yDoc.transact(() => {
-      for (const item of candidateArr.toJSON()) {
-        yStore.set(item.key, item.val);
-      }
-    }, 'duplicate-migration');
-    break;
+    leftovers.push(candidateArr);
   }
+
+  if (leftovers.length === 0) return;
+
+  yDoc.transact(() => {
+    for (const arr of leftovers) {
+      arr.delete(0, arr.length);
+    }
+  }, 'duplicate-cleanup');
 }
 
 export function readYjsBoardRecords(doc: Y.Doc, ydocId: string): DrRecord[] {

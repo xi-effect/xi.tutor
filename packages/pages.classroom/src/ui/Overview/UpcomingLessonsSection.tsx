@@ -128,6 +128,7 @@ export const UpcomingLessonsSection = () => {
   const isTutor = user?.default_layout === 'tutor';
   const scheduleCtx = useClassroomScheduleOptional();
   const onAddLessonClick = scheduleCtx?.onAddLessonClick;
+  const canEditSchedule = Boolean(onAddLessonClick);
   const { classroomId: classroomIdParam } = useParams({
     from: '/(app)/_layout/classrooms/$classroomId/',
   });
@@ -186,7 +187,7 @@ export const UpcomingLessonsSection = () => {
             title={t('overview.upcomingLessons')}
             tabLink="schedule"
             actions={
-              isTutor ? (
+              isTutor && canEditSchedule ? (
                 <Button
                   type="button"
                   variant="primary"
@@ -216,7 +217,7 @@ export const UpcomingLessonsSection = () => {
               <EmptySchedule className={sectionEmptyStateIllustrationClass} aria-hidden />
             }
             actions={
-              isTutor ? (
+              isTutor && canEditSchedule ? (
                 <Button
                   type="button"
                   variant="none"
@@ -241,7 +242,7 @@ export const UpcomingLessonsSection = () => {
                   lesson={lesson}
                   classroomId={classroomId}
                   isNearest={index === 0}
-                  showActions={isTutor}
+                  showActions={isTutor && canEditSchedule}
                   onReschedule={() => setMoveItem(item)}
                   onEdit={() => setEditItem(item)}
                   onDelete={() => setDeleteItem(item)}

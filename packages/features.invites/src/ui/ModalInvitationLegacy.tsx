@@ -18,8 +18,10 @@ import { toast } from 'sonner';
 import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
 import { InvitationDataT } from 'common.types';
 import { env } from 'common.env';
+import { tryStartClassroomCreate } from 'common.subscription';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  trackClassroomLimitReached,
   trackProductEvent,
   type InviteAnalyticsSource,
 } from 'common.utils';
@@ -123,6 +125,10 @@ export const ModalInvitationLegacy = ({
     <Modal
       open={open}
       onOpenChange={(next) => {
+        if (next && !tryStartClassroomCreate()) {
+          trackClassroomLimitReached('other');
+          return;
+        }
         if (typeof next === 'boolean') setOpen(next);
         if (next === false) cleanupBodyScrollLock();
       }}

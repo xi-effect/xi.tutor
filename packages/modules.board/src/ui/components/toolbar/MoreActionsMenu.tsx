@@ -46,6 +46,7 @@ import {
   RecognizePrintedTextMobileRootRow,
   RecognizePrintedTextSubmenu,
 } from './RecognizeTextMenu';
+import { VisualizeMobileRows, VisualizeMoreMenuItems } from './VisualizeMenu';
 
 const altKey = isMac ? '⌥' : 'Alt';
 
@@ -80,6 +81,9 @@ export const MoreActionsMenu = () => {
 
   const selectedIds = editor.getSelectedShapeIds();
   const selectedShapes = editor.getSelectedShapes();
+  const hasRichTextSelection = selectedShapes.some((shape) =>
+    ['note', 'text', 'arrow', 'xi-geo'].includes(shape.type),
+  );
   const selectedPdf =
     selectedShapes.length === 1 && selectedShapes[0].type === 'pdf'
       ? (selectedShapes[0] as PdfShape)
@@ -255,6 +259,7 @@ export const MoreActionsMenu = () => {
                   onOpen={() => setView('ocr')}
                 />
               )}
+              {hasRichTextSelection && <VisualizeMobileRows onDone={() => setOpen(false)} />}
               {selectedActivities.length > 1 && (
                 <p className="text-text-secondary px-1 text-xs leading-snug">
                   {t('activity.batchHint', { count: selectedActivities.length })}
@@ -542,6 +547,7 @@ export const MoreActionsMenu = () => {
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         {selectedImageId && <RecognizePrintedTextSubmenu shapeId={selectedImageId} />}
+        {hasRichTextSelection && <VisualizeMoreMenuItems />}
 
         {selectedActivities.length > 0 && (
           <>

@@ -2,6 +2,7 @@ import { filesApiConfig, FilesQueryKey, type FileResponse } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { prepareContentUpload } from './prepareContentUpload';
 import { assertValidFileName } from './validateFileName';
+import { createFileUploadHttpError } from './createFileUploadHttpError';
 
 export type UploadFileVars = {
   file: File;
@@ -47,10 +48,20 @@ export async function uploadFileRequest({
   });
 
   if (response.status === 415 || response.status === 422) {
-    throw new Error('Неподдерживаемый формат файла. Пожалуйста, выберите другой файл.');
+    throw createFileUploadHttpError(
+      response.status,
+      'Неподдерживаемый формат файла. Пожалуйста, выберите другой файл.',
+      response,
+    );
   }
 
-  if (response.status !== 201) throw new Error(`File upload failed: ${response.status}`);
+  if (response.status !== 201) {
+    throw createFileUploadHttpError(
+      response.status,
+      `File upload failed: ${response.status}`,
+      response,
+    );
+  }
   return response.data as FileResponse;
 }
 

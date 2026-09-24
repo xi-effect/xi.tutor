@@ -15,6 +15,12 @@ export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 
 export type ClassroomStatusT = 'active' | 'paused' | 'locked' | 'finished';
 
+export const isClassroomInactive = (status?: ClassroomStatusT | string | null): boolean =>
+  Boolean(status) && status !== 'active';
+
+/** Кабинет вне статуса «Учится»: пауза, архив и завершённые. */
+export const isClassroomOnPause = isClassroomInactive;
+
 export type UserRoleT = 'tutor' | 'student';
 
 // Базовые типы для пользователей

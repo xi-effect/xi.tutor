@@ -143,6 +143,58 @@ export type ProductAnalyticsDurationBucket = '5-15' | '15-30' | '30-45' | '45+';
 
 export type ProductAnalyticsBoardTrigger = 'duration' | 'objects' | 'collaboration';
 
+export type MathBankAnalyticsSource = 'page' | 'board' | 'editor';
+
+export type MathBankFavoriteAction = 'add' | 'remove';
+
+export type ProductLimitType = 'file_size' | 'storage' | 'board_objects' | 'classrooms' | 'other';
+
+export type ProductLimitSource = 'materials' | 'classroom' | 'board' | 'other';
+
+export type ProductLimitFileCategory = 'image' | 'document' | 'other';
+
+export type FileSizeBucket =
+  | '0_1mb'
+  | '1_2mb'
+  | '2_5mb'
+  | '5_10mb'
+  | '10_20mb'
+  | '20_30mb'
+  | '30_50mb'
+  | '50_100mb'
+  | '100mb_plus';
+
+export type ProductLimitSizeBucket = FileSizeBucket;
+
+export type FileUploadSource = 'materials' | 'classroom' | 'board' | 'profile_avatar' | 'other';
+
+export type FileUploadFileCategory = ProductLimitFileCategory;
+
+export type FileUploadSizeBucket = FileSizeBucket;
+
+export type LimitExceededBy =
+  'up_to_25_percent' | '25_50_percent' | '50_100_percent' | '2x_3x' | '3x_plus';
+
+export type FileUploadRejectReason =
+  'file_too_large' | 'unsupported_type' | 'upload_error' | 'unknown';
+
+export type ProductLimitBlockedOn = 'client' | 'api';
+
+export type ProductLimitObjectKind = 'elements' | 'pdf' | 'file' | 'presentation' | 'audio';
+
+export type ProductAnalyticsFeedbackType = 'call' | 'board';
+
+export type ProductAnalyticsFeedbackScore = 1 | 2 | 3 | 4 | 5;
+
+export type ProductAnalyticsFeedbackPromptSource = 'post_lesson';
+
+export type ProductAnalyticsFeedbackEligibility = 'call_only' | 'board_only' | 'both';
+
+export type ProductAnalyticsFeedbackUsageDurationBucket =
+  '15_30m' | '30_45m' | '45_60m' | '60m_plus';
+
+export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
+
 export type UmamiPrimitive = string | number | boolean;
 export type UmamiEventPayload = Record<
   string,

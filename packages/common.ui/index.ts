@@ -45,6 +45,7 @@ export {
 } from './src/badgeClasses';
 export { getEducationStatusLabel } from './src/getEducationStatusLabel';
 export { ConfirmDialog, type ConfirmDialogProps } from './src/ConfirmDialog';
+export { ClassroomSelectOption, ClassroomSelectAvatar } from './src/ClassroomSelectOption';
 export { ModalCloseIcon } from './src/ModalCloseIcon';
 export {
   modalBodyClass,

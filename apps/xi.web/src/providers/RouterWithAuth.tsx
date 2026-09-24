@@ -5,8 +5,11 @@ import { AuthProvider, useAuth } from 'common.auth';
 import { NetworkProvider, NotificationsProvider } from 'common.services';
 import { ThemeProvider } from 'common.theme';
 import { Toaster } from 'sonner';
+import { TooltipProvider } from '@xipkg/tooltip';
 import { router } from '../router';
 import { AuthSocketBridge } from './AuthSocketBridge';
+import { ElectronDeepLinkHost } from './ElectronDeepLinkHost';
+import { ElectronUpdateHost } from './ElectronUpdateHost';
 
 /** Маршруты с доской — тосты не должны перекрывать DrawZoomPanel (right/bottom). */
 const isBoardRoute = (pathname: string) =>
@@ -103,7 +106,13 @@ const RouterWithAuthContext = () => {
     });
   }, [auth.isAuthenticated, queryClient]);
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  return (
+    <>
+      <ElectronDeepLinkHost />
+      <ElectronUpdateHost />
+      <RouterProvider router={router} context={{ auth }} />
+    </>
+  );
 };
 
 export const RouterWithAuth = () => {
@@ -112,11 +121,13 @@ export const RouterWithAuth = () => {
       <AuthProvider>
         <AuthSocketBridge>
           <ThemeProvider>
-            <NetworkProvider>
-              <NotificationsProvider>
-                <RouterWithAuthContext />
-              </NotificationsProvider>
-            </NetworkProvider>
+            <TooltipProvider delayDuration={200}>
+              <NetworkProvider>
+                <NotificationsProvider>
+                  <RouterWithAuthContext />
+                </NotificationsProvider>
+              </NetworkProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </AuthSocketBridge>
       </AuthProvider>

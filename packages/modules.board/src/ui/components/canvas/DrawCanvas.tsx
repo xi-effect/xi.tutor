@@ -32,6 +32,7 @@ import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
+import 'katex/dist/katex.min.css';
 import './customstyles.css';
 import {
   applyDrawStrokeClosePreference,
@@ -40,7 +41,10 @@ import {
   resetInflatedDrawScale,
 } from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
+import { boardTextOptions } from '../../../shapes/text/boardTextOptions';
 import { insertAsset } from '../../../utils/uploadAsset';
+import { registerBoardElementLimit } from '../../../utils/boardElementLimit';
+import { registerBoardAssetHygiene } from '../../../utils/boardAssetHygiene';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
@@ -122,6 +126,11 @@ export const DrawCanvas = ({
   tokenRef.current = token;
   const addToQueueRef = useRef(addToQueue);
   addToQueueRef.current = addToQueue;
+
+  useEffect(() => {
+    if (!editor) return;
+    return registerBoardElementLimit(editor);
+  }, [editor]);
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -457,6 +466,8 @@ export const DrawCanvas = ({
                 if (!isShapeErasable(shape.type)) return false;
               });
 
+              registerBoardAssetHygiene(editor);
+
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 const dropped = files.map(cloneDroppedFile);
                 const uploadToken = await waitForBoardUploadToken(tokenRef);
@@ -522,6 +533,7 @@ export const DrawCanvas = ({
               iconOffset: { x: -16, y: 2 },
             }}
             {...props}
+            textOptions={boardTextOptions}
           >
             <Header />
             {!isReadonly && (
