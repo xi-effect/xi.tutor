@@ -136,10 +136,13 @@ pnpm electron:publish:macos
 
 Только packaged main process (`app.isPackaged`). В dev updater не стартует.
 
-Лента — GitHub Releases этого репозитория, теги `electron-v*`. `latest.yml` / `latest-mac.yml` создаёт electron-builder.
+Лента — опубликованные релизы `xi-effect/xi.tutor` с тегом `electron-vX.Y.Z`. Draft и pre-release не используются. `latest.yml` / `latest-mac.yml` создаёт electron-builder. Версия в интерфейсе — `app.getVersion()`. Короткая сборка — `GITHUB_SHA` / `SOVLIUM_BUILD_SHA`, который `scripts/build-main.mjs` вшивает при сборке. Без SHA показывается «Сборка dev». В runtime git не вызывается.
 
-- **Windows:** проверка, фоновое скачивание, в `xi.web` кнопка «Перезапустить и обновить» → `quitAndInstall()`. Принудительного перезапуска нет. Проверка подписи обновления выключена, пока нет сертификата (`verifyUpdateCodeSignature: false`).
-- **macOS:** только «Доступна новая версия» и открытие страницы GitHub Release. Автоустановка выключена, пока приложение не подписано и не нотаризовано.
+Проверка стартует сама только в packaged-приложении. Скачивание и `quitAndInstall()` — только по кнопке. При выходе приложение само не ставит обновление (`autoInstallOnAppQuit: false`).
+
+Состояние видно внизу настроек («О приложении») и баннером: «Доступна версия», «Скачать обновление», прогресс, «Перезапустить и обновить». Ошибка проверки — спокойный текст «Не удалось проверить обновления» и «Повторить».
+
+На Windows проверка подписи обновления выключена, пока нет сертификата (`verifyUpdateCodeSignature: false`). macOS пока с ad-hoc подписью: скачивание то же, а установка после «Перезапустить и обновить» может не пройти, пока нет Developer ID и нотаризации.
 
 ## IPC
 

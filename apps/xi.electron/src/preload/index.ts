@@ -154,6 +154,10 @@ const api: SovliumDesktopAPI = {
     getState: async () => readUpdaterState(await ipcRenderer.invoke(IPC.updaterGetState)),
     onState: (handler) =>
       subscribe(EVENTS.updaterState, (payload) => handler(readUpdaterState(payload))),
+    onStateChanged: (handler) =>
+      subscribe(EVENTS.updaterState, (payload) => handler(readUpdaterState(payload))),
+    check: async () => readUpdaterState(await ipcRenderer.invoke(IPC.updaterCheck)),
+    download: () => ipcRenderer.invoke(IPC.updaterDownload),
     install: () => ipcRenderer.invoke(IPC.updaterInstall),
     openRelease: () => ipcRenderer.invoke(IPC.updaterOpenRelease),
   },

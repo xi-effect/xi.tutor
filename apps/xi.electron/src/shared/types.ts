@@ -5,6 +5,8 @@ export type ConferencePresentation = 'hidden' | 'inline' | 'floating';
 export interface AppInfo {
   name: string;
   version: string;
+  /** Short git SHA baked in at build time, or `dev`. */
+  build: string;
   platform: NativeOs;
   isDebug: boolean;
 }
@@ -101,7 +103,7 @@ export interface UpdaterState {
   version: string | null;
   percent: number | null;
   releaseUrl: string | null;
-  /** Windows: the package is downloaded and quitAndInstall is allowed. */
+  /** The package is downloaded and quitAndInstall is allowed. */
   canInstall: boolean;
   message: string | null;
 }
@@ -190,9 +192,13 @@ export interface SovliumDesktopAPI {
   updater: {
     getState(): Promise<UpdaterState>;
     onState(handler: (state: UpdaterState) => void): () => void;
-    /** Windows: quit and run the downloaded installer. No-op unless `canInstall`. */
+    onStateChanged(handler: (state: UpdaterState) => void): () => void;
+    check(): Promise<UpdaterState>;
+    /** Download the detected update. No-op unless status is `available`. */
+    download(): Promise<boolean>;
+    /** Quit and run the downloaded installer. No-op unless `canInstall`. */
     install(): Promise<boolean>;
-    /** macOS: open the GitHub Release page for the detected version. */
+    /** Open the GitHub Release page for the detected version. */
     openRelease(): Promise<boolean>;
   };
   events: {

@@ -18,6 +18,27 @@ function compareStable(left: string, right: string): number {
   return 0;
 }
 
+/**
+ * Tag names of published stable releases.
+ * Drafts and GitHub pre-releases are ignored even when the tag looks like `electron-vX.Y.Z`.
+ */
+export function publishedStableTagNames(releases: readonly unknown[]): string[] {
+  const tags: string[] = [];
+  for (const item of releases) {
+    if (!item || typeof item !== 'object') continue;
+    const record = item as Record<string, unknown>;
+    if (record.draft === true || record.prerelease === true) continue;
+    if (typeof record.tag_name === 'string') tags.push(record.tag_name);
+  }
+  return tags;
+}
+
+/** True when `candidate` is a newer stable `X.Y.Z` than `current`. */
+export function isNewerStableVersion(current: string, candidate: string): boolean {
+  if (!STABLE_VERSION.test(current) || !STABLE_VERSION.test(candidate)) return false;
+  return compareStable(candidate, current) > 0;
+}
+
 /** Newest stable `electron-vX.Y.Z` tag. Other tags and prereleases are ignored. */
 export function pickLatestElectronTag(tags: Iterable<string>): string | null {
   const versions = new Map<string, string>();

@@ -2,8 +2,11 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   feedDirectoryUrl,
+  isNewerStableVersion,
   isReleasePageUrl,
   pickLatestElectronReleaseTag,
+  pickLatestElectronTag,
+  publishedStableTagNames,
   releasePageUrl,
 } from './updater-feed.ts';
 
@@ -52,5 +55,30 @@ describe('electron release feed', () => {
       'https://github.com/xi-effect/xi.tutor/releases/download/electron-v0.1.1',
     );
     assert.equal(feedDirectoryUrl('v0.1.1'), null);
+  });
+
+  it('ignores drafts and pre-releases when choosing the feed tag', () => {
+    const tag = pickLatestElectronTag(
+      publishedStableTagNames([
+        { tag_name: 'electron-v0.9.0', draft: true, prerelease: false },
+        { tag_name: 'electron-v0.8.0', draft: false, prerelease: true },
+        { tag_name: 'electron-v0.2.0-beta.1', draft: false, prerelease: false },
+        { tag_name: 'v1.0.0', draft: false, prerelease: false },
+        { tag_name: 'electron-v0.1.0', draft: false, prerelease: false },
+        { tag_name: 'electron-v0.1.1', draft: false, prerelease: false },
+      ]),
+    );
+    assert.equal(tag, 'electron-v0.1.1');
+    assert.equal(
+      feedDirectoryUrl(tag ?? ''),
+      'https://github.com/xi-effect/xi.tutor/releases/download/electron-v0.1.1',
+    );
+  });
+
+  it('treats 0.1.1 as an update for an installed 0.1.0', () => {
+    assert.equal(isNewerStableVersion('0.1.0', '0.1.1'), true);
+    assert.equal(isNewerStableVersion('0.1.1', '0.1.1'), false);
+    assert.equal(isNewerStableVersion('0.1.1', '0.1.0'), false);
+    assert.equal(isNewerStableVersion('0.1.1', '0.1.1-beta.1'), false);
   });
 });

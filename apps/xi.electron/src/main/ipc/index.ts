@@ -36,7 +36,14 @@ import {
 } from '../clipboard';
 import { setDisplaySleepBlocked } from '../power';
 import { sendToRenderer } from '../send';
-import { getUpdaterState, installDownloadedUpdate, openUpdateRelease } from '../updater';
+import { getBuildSha } from '../build-info';
+import {
+  checkForUpdates,
+  downloadAvailableUpdate,
+  getUpdaterState,
+  installDownloadedUpdate,
+  openUpdateRelease,
+} from '../updater';
 
 function nativeOs(): 'macos' | 'windows' | 'linux' | 'unknown' {
   if (process.platform === 'darwin') return 'macos';
@@ -81,6 +88,7 @@ export function registerIpc(options: {
   handle(IPC.appGetInfo, async () => ({
     name: PRODUCT_NAME,
     version: app.getVersion(),
+    build: getBuildSha(),
     platform: nativeOs(),
     isDebug: !app.isPackaged,
   }));
@@ -289,6 +297,10 @@ export function registerIpc(options: {
   });
 
   handle(IPC.updaterGetState, async () => getUpdaterState());
+
+  handle(IPC.updaterCheck, async () => checkForUpdates());
+
+  handle(IPC.updaterDownload, async () => downloadAvailableUpdate());
 
   handle(IPC.updaterInstall, async () => installDownloadedUpdate());
 

@@ -10,7 +10,7 @@ export function ElectronUpdateHost() {
     const desktop = getSovliumDesktop();
     if (!desktop) return;
 
-    const stop = desktop.updater.onState((next) => {
+    const stop = desktop.updater.onStateChanged((next) => {
       setState(next);
     });
     void desktop.updater.getState().then((next) => {
@@ -35,22 +35,17 @@ export function ElectronUpdateHost() {
   }
 
   if (state.status === 'downloading') {
-    const percent = state.percent === null ? '' : ` ${state.percent}%`;
-    return <UpdateBanner title={`Скачиваем обновление…${percent}`} />;
+    const percent = state.percent === null ? '' : ` — ${state.percent}%`;
+    return <UpdateBanner title={`Скачивание обновления${percent}`} />;
   }
 
-  if (
-    state.status === 'available' &&
-    state.releaseUrl &&
-    window.__SOVLIUM_NATIVE_OS__ === 'macos'
-  ) {
-    const version = state.version ? ` ${state.version}` : '';
+  if (state.status === 'available' && state.version) {
     return (
       <UpdateBanner
-        title={`Доступна новая версия${version}`}
+        title={`Доступна версия ${state.version}`}
         actionLabel="Скачать обновление"
         onAction={() => {
-          void getSovliumDesktop()?.updater.openRelease();
+          void getSovliumDesktop()?.updater.download();
         }}
       />
     );

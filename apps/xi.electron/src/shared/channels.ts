@@ -44,6 +44,8 @@ export const IPC = {
   clipboardReadHtml: 'sovlium:clipboard:read-html',
   powerSetDisplaySleepBlocked: 'sovlium:power:set-display-sleep-blocked',
   updaterGetState: 'sovlium:updater:get-state',
+  updaterCheck: 'sovlium:updater:check',
+  updaterDownload: 'sovlium:updater:download',
   updaterInstall: 'sovlium:updater:install',
   updaterOpenRelease: 'sovlium:updater:open-release',
 } as const;

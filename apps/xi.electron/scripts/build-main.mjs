@@ -5,6 +5,12 @@ import esbuild from 'esbuild';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const watch = process.argv.includes('--watch');
 
+function shortBuildSha() {
+  const raw = (process.env.SOVLIUM_BUILD_SHA || process.env.GITHUB_SHA || '').trim();
+  if (!/^[0-9a-f]{7,40}$/i.test(raw)) return '';
+  return raw.slice(0, 7).toLowerCase();
+}
+
 const common = {
   bundle: true,
   sourcemap: watch,
@@ -20,6 +26,9 @@ const mainOptions = {
   format: 'esm',
   target: 'node20',
   external: ['electron', 'electron-updater', 'electron-log', '@jitsi/robotjs'],
+  define: {
+    'process.env.SOVLIUM_BUILD_SHA': JSON.stringify(shortBuildSha()),
+  },
   banner: {
     js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);",
   },
