@@ -9,8 +9,6 @@ import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
-import { LibraryTagsUiProvider } from './Files/tags/LibraryTagsUiContext';
-import { useLibraryTags } from './Files/tags/useLibraryTags';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import {
@@ -21,6 +19,7 @@ import {
   type FilesTagOptionT,
 } from '../types';
 import { useDebouncedValue } from '../hooks';
+import { LibraryTagsUiProvider, useLibraryTags } from 'features.tags';
 
 const getTabFromUrl = (): MaterialsTabT => {
   if (typeof window === 'undefined') {

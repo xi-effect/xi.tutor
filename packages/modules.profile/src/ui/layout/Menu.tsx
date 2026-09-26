@@ -1,5 +1,6 @@
 import {
   Account,
+  Flag,
   Calendar,
   Exit,
   File,
@@ -65,6 +66,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <SoundOn className={iconClasses} key="sound-and-video-icon" />;
       case 'effects':
         return <Music className={iconClasses} key="music-icon" />;
+      case 'tags':
+        return <Flag className={iconClasses} key="flag-icon" />;
       case 'board':
         return <WhiteBoard className={iconClasses} key="board-icon" />;
       case 'report':
@@ -156,6 +159,14 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
         name: t('menu.effects'),
         query: 'effects',
       },
+      ...(isTutor
+        ? [
+            {
+              name: t('menu.tags'),
+              query: 'tags',
+            },
+          ]
+        : []),
       {
         name: t('menu.board'),
         query: 'board',

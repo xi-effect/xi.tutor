@@ -32,6 +32,7 @@
     "common.services": "workspace:*",
     "common.subscription": "workspace:*",
     "features.subscription": "workspace:*",
+    "features.tags": "workspace:*",
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
     "dayjs": "^1.11.13",

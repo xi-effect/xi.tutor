@@ -50,6 +50,7 @@
     "features.materials.card": "workspace:*",
     "features.payment.approve": "workspace:*",
     "features.table": "workspace:*",
+    "features.tags": "workspace:*",
     "modules.calendar": "workspace:*",
     "modules.calls": "workspace:*",
     "modules.editor": "workspace:*",

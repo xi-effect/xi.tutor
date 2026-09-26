@@ -243,5 +243,24 @@
     "minLength": "Minimum {{count}} characters",
     "emailFormat": "Invalid data format",
     "passwordsMismatch": "Passwords do not match"
+  },
+  "tags": {
+    "searchPlaceholder": "Find tag",
+    "empty": "No tags found",
+    "loading": "Loading...",
+    "tagManage": {
+      "title": "Manage tags",
+      "create": "Create tag",
+      "empty": "No tags yet",
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "Tag actions"
+    },
+    "tagDelete": {
+      "title": "Delete tag \"{{name}}\"?",
+      "description": "The tag will be removed from all materials. The materials themselves will remain unchanged",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
   }
 }

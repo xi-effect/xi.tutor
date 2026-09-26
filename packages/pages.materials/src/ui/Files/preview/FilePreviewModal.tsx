@@ -18,7 +18,7 @@ import {
 } from './filePreviewFullscreenStore';
 import { ShareFileModal } from '../ShareFileModal';
 import { RenameFileModal } from '../RenameFileModal';
-import { useLibraryTagsManage } from '../tags/libraryTagsUiStore';
+import { useLibraryTagsManage } from 'features.tags';
 import { formatMediaTime } from './formatMediaTime';
 import { canPreviewFullscreen, getExtensionLabel, getFilePreviewKind } from './getFilePreviewKind';
 import { ImagePreview } from './ImagePreview';

@@ -13,8 +13,8 @@ import { FilesFilteredEmpty } from '../FilesFilteredEmpty';
 import { FilesTagsFilter } from '../FilesTagsFilter';
 import { FilesTypeFilter } from '../FilesTypeFilter';
 import { FilesUploaderFilter } from '../FilesUploaderFilter';
-import { LibraryTagsUiProvider } from '../tags/LibraryTagsUiContext';
 import { CloudFileRow } from './CloudFileRow';
+import { LibraryTagsUiProvider } from 'features.tags';
 
 export type CloudFilesPickerProps = {
   open: boolean;
