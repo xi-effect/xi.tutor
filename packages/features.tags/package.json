@@ -1,5 +1,5 @@
 {
-  "name": "features.materials.card",
+  "name": "features.tags",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -12,19 +12,16 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@tanstack/react-query": "5.73.3",
-    "@xipkg/badge": "2.1.0",
     "@xipkg/button": "4.3.0",
-    "@xipkg/dropdown": "^3.1.0",
-    "@xipkg/icons": "3.1.8",
+    "@xipkg/dropdown": "3.1.0",
+    "@xipkg/icons": "3.1.7",
+    "@xipkg/modal": "4.6.0",
+    "@xipkg/input": "2.3.0",
+    "@xipkg/utils": "1.8.0",
     "@xipkg/popover": "^4.0.0",
-    "@xipkg/utils": "^1.8.0",
+    "common.api": "workspace:*",
     "common.services": "workspace:*",
-    "common.types": "workspace:*",
     "common.ui": "workspace:*",
-    "features.tags": "workspace:*",
-    "dayjs": "^1.11.13",
-    "features.materials.edit": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1"
   },
@@ -37,7 +34,6 @@
     "@xipkg/tailwind": "1.0.0",
     "@xipkg/typescript": "latest",
     "common.eslint": "workspace:*",
-    "common.services": "workspace:*",
     "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
@@ -49,6 +45,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "features.materials.card",
+  "description": "features.tags",
   "author": "xi.effect"
 }

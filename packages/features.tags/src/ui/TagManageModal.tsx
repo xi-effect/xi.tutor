@@ -29,7 +29,7 @@ import {
   modalTitleClass,
   TagDot,
 } from 'common.ui';
-import type { LibraryTag } from './libraryTagsStore';
+import type { LibraryTag } from '../utils';
 import { TagFormModal } from './TagFormModal';
 
 const cleanupBodyScrollLock = () => {
@@ -44,7 +44,7 @@ type TagManageModalProps = {
 };
 
 export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
-  const { t } = useTranslation('materials');
+  const { t } = useTranslation('tags');
   const { tags, deleteTag, canCreateMore, canManageTag, isLoading } = useLibraryTags();
   const [editingTag, setEditingTag] = useState<LibraryTag | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -115,12 +115,12 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
           <div className={modalBodyClass}>
             <div className={`${modalHeaderRowClass} items-start`}>
               <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <ModalTitle className={modalTitleClass}>{t('files.tagManage.title')}</ModalTitle>
+                <ModalTitle className={modalTitleClass}>{t('tags.tagManage.title')}</ModalTitle>
                 <ModalDescription className={modalDescriptionClass}>
-                  {t('files.tagManage.description')}
+                  {t('tags.tagManage.description')}
                 </ModalDescription>
               </div>
-              <ModalCloseIcon onClick={handleClose} aria-label={t('files.tagManage.close')} />
+              <ModalCloseIcon onClick={handleClose} aria-label={t('tags.tagManage.close')} />
             </div>
 
             <div className="border-border-control flex h-9 w-full items-center gap-1 rounded-xl border px-2">
@@ -128,7 +128,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder={t('files.tags.searchPlaceholder')}
+                placeholder={t('tags.tags.searchPlaceholder')}
                 className="text-s-base text-text-primary placeholder:text-text-secondary min-w-0 flex-1 bg-transparent leading-5 outline-none"
               />
             </div>
@@ -136,11 +136,11 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
             <div className="flex max-h-80 min-h-16 min-w-0 flex-col overflow-x-hidden overflow-y-auto">
               {tags.length === 0 && !search.trim() ? (
                 <p className="text-s-base text-text-secondary py-6 text-center">
-                  {isLoading ? t('files.tags.loading') : t('files.tagManage.empty')}
+                  {isLoading ? t('tags.tags.loading') : t('tags.tagManage.empty')}
                 </p>
               ) : visibleTags.length === 0 ? (
                 <p className="text-s-base text-text-secondary py-6 text-center">
-                  {isLoading ? t('files.tags.loading') : t('files.tags.empty')}
+                  {isLoading ? t('tags.tags.loading') : t('tags.tags.empty')}
                 </p>
               ) : (
                 visibleTags.map((tag) => {
@@ -158,14 +158,14 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
                         {tag.name}
                       </p>
                       {canManage ? (
-                        <DropdownMenu modal>
+                        <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               type="button"
                               variant="none"
                               size="icon"
                               className="hover:bg-background-subtle size-8 rounded-lg p-0"
-                              aria-label={t('files.tagManage.actions')}
+                              aria-label={t('tags.tagManage.actions')}
                               data-umami-event="materials-tag-menu-open"
                             >
                               <MoreVert className={cardMenuIconClass} />
@@ -183,7 +183,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
                               data-umami-event="materials-tag-edit"
                             >
                               <Edit />
-                              {t('files.tagManage.edit')}
+                              {t('tags.tagManage.edit')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator className={cardMenuSeparatorClass} />
                             <DropdownMenuItem
@@ -193,7 +193,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
                               data-umami-event="materials-tag-delete"
                             >
                               <Trash />
-                              {t('files.tagManage.delete')}
+                              {t('tags.tagManage.delete')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -214,7 +214,7 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
                 onClick={() => setCreateOpen(true)}
                 data-umami-event="materials-tag-create-open"
               >
-                {t('files.tagManage.create')}
+                {t('tags.tagManage.create')}
               </Button>
             </div>
           </div>
@@ -249,10 +249,10 @@ export const TagManageModal = ({ open, onOpenChange }: TagManageModalProps) => {
             setDeletingTag(null);
           }
         }}
-        title={t('files.tagDelete.title', { name: deletingTag?.name ?? '' })}
-        description={t('files.tagDelete.description')}
-        confirmLabel={t('files.tagDelete.confirm')}
-        cancelLabel={t('files.tagDelete.cancel')}
+        title={t('tags.tagDelete.title', { name: deletingTag?.name ?? '' })}
+        description={t('tags.tagDelete.description')}
+        confirmLabel={t('tags.tagDelete.confirm')}
+        cancelLabel={t('tags.tagDelete.cancel')}
         onConfirm={() => {
           if (deletingTag) {
             void deleteTag(deletingTag.id);

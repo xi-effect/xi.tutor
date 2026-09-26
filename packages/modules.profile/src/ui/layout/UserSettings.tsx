@@ -20,6 +20,7 @@ const SECTION_TITLE_KEYS: Record<string, string> = {
   notifications: 'menu.notifications',
   soundAndVideo: 'menu.soundAndVideo',
   effects: 'menu.effects',
+  tags: 'menu.tags',
   board: 'menu.board',
   report: 'menu.report',
 };

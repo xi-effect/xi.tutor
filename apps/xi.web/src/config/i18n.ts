@@ -70,6 +70,7 @@ const loadTranslations = async () => {
     { materialsDuplicateEn, materialsDuplicateRu },
     { avatarEditorEn, avatarEditorRu },
     { subscriptionEn, subscriptionRu },
+    { tagsEn, tagsRu },
     { notesEn, notesRu },
     { emailEn, emailRu },
     { emailConfirmEn, emailConfirmRu },
@@ -116,6 +117,7 @@ const loadTranslations = async () => {
     import('features.materials.duplicate/locales'),
     import('features.avatar.editor/locales'),
     import('features.subscription/locales'),
+    import('features.tags/locales'),
     import('pages.notes/locales'),
     import('pages.email/locales'),
     import('pages.email-confirm/locales'),
@@ -220,6 +222,8 @@ const loadTranslations = async () => {
     emailRu,
     emailConfirmEn,
     emailConfirmRu,
+    tagsEn,
+    tagsRu,
   };
 };
 
@@ -278,6 +282,7 @@ const toResources = (t: Translations, lang: 'en' | 'ru') => {
     notes: t[`notes${s}`],
     email: t[`email${s}`],
     emailConfirm: t[`emailConfirm${s}`],
+    tags: t[`tags${s}`],
   };
 };
 
