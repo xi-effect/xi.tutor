@@ -1,6 +1,5 @@
 import { Button } from '@xipkg/button';
 import { Trash } from '@xipkg/icons';
-import { useEditor } from '@ibodr/draw';
 import {
   useEffect,
   useLayoutEffect,
@@ -27,6 +26,7 @@ import type {
 import { DraggableToken, DropZone } from '../primitives';
 import { ActivityInputField } from '../activityFields';
 import { ActivityImage, ActivityImageIconButton } from '../ActivityImage';
+import { useActivityEventGuard } from '../activityHostContext';
 import { itemStatus } from '../../primitives/itemStatus';
 import { activityCardClass, activitySelectedClass, activityStatusBorderClass } from '../activityUi';
 import { cn } from '@xipkg/utils';
@@ -260,7 +260,7 @@ export function MatchingActivity({
   interactLocked = false,
 }: Props) {
   const { t } = useTranslation('board');
-  const editor = useEditor();
+  const { stop, markNative } = useActivityEventGuard();
   const [fromId, setFromId] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ leftId: string; clientX: number; clientY: number } | null>(
     null,
@@ -303,7 +303,7 @@ export function MatchingActivity({
     if (!drawing || lineLocked) return;
 
     const onMove = (event: globalThis.PointerEvent) => {
-      editor.markEventAsHandled(event);
+      markNative(event);
       if (
         Math.hypot(event.clientX - originRef.current.x, event.clientY - originRef.current.y) > 6
       ) {
@@ -318,7 +318,7 @@ export function MatchingActivity({
     };
 
     const onUp = (event: globalThis.PointerEvent) => {
-      editor.markEventAsHandled(event);
+      markNative(event);
       const leftId = fromIdRef.current;
       const hit = document.elementFromPoint(event.clientX, event.clientY);
       const rightId = (hit?.closest('[data-match-target]') as HTMLElement | null)?.getAttribute(
@@ -336,12 +336,11 @@ export function MatchingActivity({
       window.removeEventListener('pointermove', onMove, true);
       window.removeEventListener('pointerup', onUp, true);
     };
-  }, [drawing, editor, lineLocked]);
+  }, [drawing, markNative, lineLocked]);
 
   const startLine = (leftId: string, event: PointerEvent<HTMLButtonElement>) => {
     if (locked || event.button !== 0) return;
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
+    stop(event);
     event.preventDefault();
     dragMovedRef.current = false;
     originRef.current = { x: event.clientX, y: event.clientY };

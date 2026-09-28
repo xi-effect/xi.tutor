@@ -88,9 +88,95 @@
   min-height: inherit;
 }
 
+.dr-note__container {
+  overflow: hidden;
+}
+
 .dr-note__container > .dr-text-label {
   width: 100%;
   height: 100%;
+}
+
+/*
+ * Превью — .dr-text.tl-text-content, не .dr-text-content.
+ * fit-content + padding:inherit сдвигают глифы, когда стикер выделяют,
+ * а нативный ::selection рисует плашки по строкам.
+ * Ширина 100% и нулевой padding держат текст в том же боксе, что и без выделения.
+ */
+.dr-note__container > .dr-text-label > .dr-text-label__inner {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.dr-note__container > .dr-text-label > .dr-text-label__inner > .dr-text.tl-text-content {
+  position: relative;
+  inset: auto;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dr-note__container .dr-rich-text,
+.dr-note__container .dr-rich-text p,
+.dr-note__container .ProseMirror,
+.dr-note__container .ProseMirror p {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  background: transparent;
+}
+
+.dr-note__container > .dr-text-label[data-isediting='false']::selection,
+.dr-note__container > .dr-text-label[data-isediting='false'] *::selection {
+  background: transparent;
+  color: inherit;
+}
+
+/* Превью остаётся в потоке, чтобы абсолютный редактор не прыгал к верхнему краю. */
+.dr-note__container > .dr-text-label[data-isediting='true'] > .dr-text-label__inner > .tl-text-content {
+  display: block;
+  visibility: hidden;
+}
+
+.dr-note__container > .dr-text-label > .dr-text-label__inner > .tl-text-input,
+.dr-note__container > .dr-text-label > .dr-text-label__inner > .dr-rich-text.tl-text-input {
+  padding: 0;
+}
+
+.dr-note__container[data-sticker-align='start'] .dr-rich-text,
+.dr-note__container[data-sticker-align='start'] .dr-rich-text p,
+.dr-note__container[data-sticker-align='start'] .ProseMirror,
+.dr-note__container[data-sticker-align='start'] .ProseMirror p {
+  text-align: left;
+}
+
+.dr-note__container[data-sticker-align='center'] .dr-rich-text,
+.dr-note__container[data-sticker-align='center'] .dr-rich-text p,
+.dr-note__container[data-sticker-align='center'] .ProseMirror,
+.dr-note__container[data-sticker-align='center'] .ProseMirror p {
+  text-align: center;
+}
+
+.dr-note__container[data-sticker-align='end'] .dr-rich-text,
+.dr-note__container[data-sticker-align='end'] .dr-rich-text p,
+.dr-note__container[data-sticker-align='end'] .ProseMirror,
+.dr-note__container[data-sticker-align='end'] .ProseMirror p {
+  text-align: right;
+}
+
+.dr-note__container[data-sticker-align='justify'] .dr-rich-text,
+.dr-note__container[data-sticker-align='justify'] .dr-rich-text p,
+.dr-note__container[data-sticker-align='justify'] .ProseMirror,
+.dr-note__container[data-sticker-align='justify'] .ProseMirror p {
+  text-align: justify;
 }
 
 /*

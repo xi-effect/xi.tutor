@@ -5,13 +5,11 @@ import {
   type DragEvent,
   type MouseEvent,
   type ReactNode,
-  type SyntheticEvent,
 } from 'react';
 import { Button } from '@xipkg/button';
 import { Image, Trash } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { useEditor } from '@ibodr/draw';
 import { boardDropdownZClass, boardIconClass, boardMenuSurfaceClass } from '../../ui/boardTheme';
 import {
   collectDroppedFiles,
@@ -22,7 +20,7 @@ import {
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import { useYjsContext } from '../../providers/YjsContext';
+import { useActivityEventGuard, useActivitySession } from './activityHostContext';
 import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
@@ -36,7 +34,7 @@ const coverToolbarButtonClass =
   'bg-background-surface/95 text-text-primary hover:bg-background-hover border-border-default flex size-8 shrink-0 items-center justify-center rounded-lg border shadow-sm backdrop-blur-sm';
 
 export function useActivityImageSrc(src?: string) {
-  const { token } = useYjsContext();
+  const { token } = useActivitySession();
   const [url, setUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -147,10 +145,10 @@ export function ActivityImageField({
   onSurfaceClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }) {
   const { t } = useTranslation('board');
-  const { token } = useYjsContext();
+  const { token } = useActivitySession();
   const tokenRef = useRef(token);
   tokenRef.current = token;
-  const editor = useEditor();
+  const { stop } = useActivityEventGuard();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const preview = useActivityImageSrc(value);
@@ -172,11 +170,6 @@ export function ActivityImageField({
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
     }
-  };
-
-  const stop = (event: SyntheticEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
   };
 
   const onDragOverFiles = (event: DragEvent<HTMLElement>) => {
@@ -352,8 +345,8 @@ export function ActivityImageIconButton({
   className?: string;
 }) {
   const { t } = useTranslation('board');
-  const { token } = useYjsContext();
-  const editor = useEditor();
+  const { token } = useActivitySession();
+  const { stop } = useActivityEventGuard();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -377,11 +370,6 @@ export function ActivityImageIconButton({
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
     }
-  };
-
-  const stop = (event: SyntheticEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
   };
 
   const input = (

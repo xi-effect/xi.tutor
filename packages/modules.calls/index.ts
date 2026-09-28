@@ -13,3 +13,4 @@ export { SoundAndVideoSettings, PermissionsDialog } from '@xipkg/calls-ui';
 export { useStartCall } from './src/productAnalytics/useStartCall';
 export { useCallStore } from '@xipkg/calls-store';
 export { CallsShell } from './src/CallsShell';
+export { ElectronConferenceSlot } from './src/ElectronConferenceSlot';

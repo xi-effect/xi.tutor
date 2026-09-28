@@ -1,15 +1,17 @@
 /** Поверхность модалки — как у ConfirmDialog. */
 export const modalContentClass =
-  'bg-background-surface w-full max-w-[480px] rounded-3xl p-0 shadow-[0px_24px_32px_0px_rgba(16,16,16,0.08),0px_16px_16px_0px_rgba(16,16,16,0.08)]';
+  'bg-background-surface w-full max-w-[480px] min-w-0 overflow-hidden rounded-3xl p-0 shadow-[0px_24px_32px_0px_rgba(16,16,16,0.08),0px_16px_16px_0px_rgba(16,16,16,0.08)]';
 
-export const modalBodyClass = 'flex flex-col gap-6 p-6';
+export const modalBodyClass = 'flex min-w-0 flex-col gap-6 overflow-hidden p-6';
 
-export const modalHeaderRowClass = 'flex items-center justify-between gap-4 overflow-hidden';
+export const modalHeaderRowClass =
+  'flex min-w-0 items-center justify-between gap-4 overflow-hidden';
 
 export const modalTitleClass =
-  'font-playfair text-text-primary m-0 flex-1 text-2xl leading-normal font-medium';
+  'font-playfair text-text-primary m-0 min-w-0 flex-1 text-2xl leading-normal font-medium break-words';
 
-export const modalDescriptionClass = 'text-m-base text-text-secondary m-0 leading-5';
+export const modalDescriptionClass =
+  'text-m-base text-text-secondary m-0 min-w-0 leading-5 break-words';
 
 export const modalFooterClass = 'flex items-start justify-end gap-3 overflow-hidden pt-3';
 

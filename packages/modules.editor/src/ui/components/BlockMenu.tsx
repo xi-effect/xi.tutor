@@ -10,6 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Code, File, Image, Laptop, Link as LinkIcon, Materials, BookOpened } from '@xipkg/icons';
+import { Activity } from 'modules.board/activities';
+import { insertActivityBlock } from '../../utils/insertActivityBlock';
+import { ActivityKindMenuItems } from './ActivityKindMenuItems';
 import { Fragment, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
@@ -20,6 +23,7 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { ActiveBlockT } from '../../types';
 import { pickAndInsertComputerFiles } from '../../utils/pickAndInsertComputerFiles';
 import { BLOCK_OP_ACTIONS, INSERT_BLOCK_ACTIONS, type BlockOpKey } from '../../config/blockActions';
+import { BlockTextAlign, isAlignableTextBlock } from './TextAlignControl';
 
 const menuItemClass =
   'text-text-primary hover:bg-background-page focus:text-text-primary fill-icon-primary [&_svg]:fill-icon-primary h-7 gap-2 rounded p-1 text-sm';
@@ -89,6 +93,8 @@ export const BlockMenu = ({
     return null;
   }
 
+  const alignBlock = mode === 'ops' ? getActiveBlock() : undefined;
+
   const pickFromComputer = (fileMode: 'image' | 'file') => {
     pickAndInsertComputerFiles(editor, storageItem.content_token, getActiveBlock(), fileMode);
   };
@@ -128,6 +134,21 @@ export const BlockMenu = ({
                 <span>{t(labelKey)}</span>
               </DropdownMenuItem>
             ))}
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger
+                className={menuSubTriggerClass}
+                data-umami-event="editor-activity-open"
+              >
+                <Activity className="size-6" />
+                <span>{t('blockMenu.exercise')}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className={menuContentClass}>
+                <ActivityKindMenuItems
+                  onSelect={(kind) => insertActivityBlock(editor, kind, getActiveBlock())}
+                />
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
 
             {isTutor ? (
               <DropdownMenuItem
@@ -197,25 +218,37 @@ export const BlockMenu = ({
             </DropdownMenuItem>
           </>
         ) : (
-          BLOCK_OP_ACTIONS.map(({ key, labelKey, Icon, shortcut }) => {
-            const handler = opHandlers[key];
+          <>
+            {isAlignableTextBlock(alignBlock?.node) ? (
+              <>
+                <div className="flex gap-0.5">
+                  <BlockTextAlign editor={editor} block={alignBlock} />
+                </div>
+                <DropdownMenuSeparator />
+              </>
+            ) : null}
+            {BLOCK_OP_ACTIONS.map(({ key, labelKey, Icon, shortcut }) => {
+              const handler = opHandlers[key];
 
-            return (
-              <Fragment key={key}>
-                {key === 'delete' ? <DropdownMenuSeparator /> : null}
-                <DropdownMenuItem
-                  className={menuItemClass}
-                  onSelect={key === 'moveUp' || key === 'moveDown' ? deferAction(handler) : handler}
-                >
-                  <Icon size="sm" className="size-6" />
-                  <span>{t(labelKey)}</span>
-                  <span className="text-xxs-base text-text-muted ml-auto">
-                    {isMac ? shortcut.mac : shortcut.other}
-                  </span>
-                </DropdownMenuItem>
-              </Fragment>
-            );
-          })
+              return (
+                <Fragment key={key}>
+                  {key === 'delete' ? <DropdownMenuSeparator /> : null}
+                  <DropdownMenuItem
+                    className={menuItemClass}
+                    onSelect={
+                      key === 'moveUp' || key === 'moveDown' ? deferAction(handler) : handler
+                    }
+                  >
+                    <Icon size="sm" className="size-6" />
+                    <span>{t(labelKey)}</span>
+                    <span className="text-xxs-base text-text-muted ml-auto">
+                      {isMac ? shortcut.mac : shortcut.other}
+                    </span>
+                  </DropdownMenuItem>
+                </Fragment>
+              );
+            })}
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

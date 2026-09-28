@@ -15,6 +15,7 @@ import {
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
+import { writeText } from 'common.services';
 import {
   modalBodyClass,
   modalCloseIconClass,
@@ -81,7 +82,7 @@ const accordionTransition: Transition = {
 };
 
 const copyStatement = async (text: string) => {
-  await navigator.clipboard.writeText(text);
+  await writeText(text);
 };
 
 export const MathBankTaskModal = ({

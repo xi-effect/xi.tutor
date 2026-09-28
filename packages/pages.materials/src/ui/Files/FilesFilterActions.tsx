@@ -2,7 +2,7 @@ import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 
 export const filesFilterPopoverClass = cn(
-  'bg-background-surface text-text-primary z-50 flex w-[280px] min-w-[280px] flex-col gap-4 rounded-2xl border border-border-default p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.08)] outline-none',
+  'bg-background-surface text-text-primary z-50 flex w-[280px] min-w-0 max-w-[280px] flex-col gap-4 overflow-hidden rounded-2xl border border-border-default p-4 shadow-[0px_4px_16px_rgba(0,0,0,0.08)] outline-none',
 );
 
 type FilesFilterActionsProps = {

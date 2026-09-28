@@ -1,5 +1,6 @@
 import { motion, type HTMLMotionProps, type Transition, type Variants } from 'motion/react';
 import type { ReactNode } from 'react';
+import { cn } from '@xipkg/utils';
 
 export const activityItemTransition: Transition = {
   type: 'spring',
@@ -61,9 +62,15 @@ export const randomCardVariants: Variants = {
 
 type ListProps = HTMLMotionProps<'div'> & { children: ReactNode };
 
-export function ActivityMotionList({ children, ...rest }: ListProps) {
+export function ActivityMotionList({ children, className, ...rest }: ListProps) {
   return (
-    <motion.div variants={activityStagger} initial="hidden" animate="show" {...rest}>
+    <motion.div
+      variants={activityStagger}
+      initial="hidden"
+      animate="show"
+      className={cn('w-full', className)}
+      {...rest}
+    >
       {children}
     </motion.div>
   );

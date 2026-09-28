@@ -33,7 +33,7 @@ export const MaterialsFilterOption = ({
       role={isCheckbox ? 'menuitemcheckbox' : 'menuitemradio'}
       aria-checked={selected}
       tabIndex={0}
-      className="text-s-base text-text-primary flex w-full cursor-pointer items-center gap-3 bg-transparent text-left font-medium outline-none"
+      className="text-s-base text-text-primary flex w-full min-w-0 cursor-pointer items-center gap-3 bg-transparent text-left font-medium outline-none"
       onClick={onSelect}
       onPointerDown={(event) => {
         if (isCheckbox) {
@@ -61,7 +61,7 @@ export const MaterialsFilterOption = ({
           )
         ) : null}
       </span>
-      <span className="min-w-0 truncate">{children}</span>
+      <span className="min-w-0 flex-1 truncate">{children}</span>
     </div>
   );
 };

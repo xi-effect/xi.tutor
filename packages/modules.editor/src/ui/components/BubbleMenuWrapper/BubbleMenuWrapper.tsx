@@ -5,6 +5,7 @@ import type { EditorState } from '@tiptap/pm/state';
 import { TextSelection } from '@tiptap/pm/state';
 import { useTranslation } from 'react-i18next';
 import { BubbleButton } from './BubbleButton';
+import { TextAlignMenu } from '../TextAlignControl';
 import { useEditorActive } from '../../../hooks';
 import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
 
@@ -76,6 +77,8 @@ export const BubbleMenuWrapper = ({ editor, isReadOnly }: BubbleMenuProps) => {
         <LinkIcon />
       </BubbleButton>
       <CommentPlaceButton editor={editor} />
+      <span className="bg-border-default mx-0.5 w-px self-stretch" />
+      <TextAlignMenu editor={editor} variant="bubble" />
     </BubbleMenu>
   );
 };

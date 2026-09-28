@@ -35,7 +35,7 @@
           }
         } catch (e) {}
 
-        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__TAURI_INTERNALS__);
+        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__SOVLIUM_ELECTRON__);
         var injected = document.documentElement.getAttribute('data-theme');
         var preference =
           chosen && (stored === 'light' || stored === 'dark')
@@ -88,12 +88,12 @@
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Yandex.Metrika: browser only. Skip inside Tauri / native shell
-         (__TAURI_INTERNALS__ or __SOVLIUM_NATIVE__ injected by xi.tauri). -->
+    <!-- Yandex.Metrika: browser only. Skip inside Electron / native shell
+         (__SOVLIUM_NATIVE__ injected by xi.electron). -->
     <script type="text/javascript">
       (function () {
         var isNative =
-          !!(window.__TAURI_INTERNALS__ || window.__SOVLIUM_NATIVE__);
+          !!(window.__SOVLIUM_NATIVE__ || window.__SOVLIUM_ELECTRON__);
         if (isNative) {
           window.ym = function () {};
           return;

@@ -2,9 +2,9 @@ import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { Edit, InfoCircle } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useEditor } from '@ibodr/draw';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useActivityEventGuard } from './activityHostContext';
 import { useTranslation } from 'react-i18next';
 import { hasCheckableAnswers } from '../primitives/evaluate';
 import type { ActivityKind } from '../model/kinds';
@@ -21,6 +21,7 @@ export function ActivityHeader({
   checkStatus,
   score,
   definition,
+  trailing,
 }: {
   kind: ActivityKind;
   title?: string;
@@ -30,9 +31,10 @@ export function ActivityHeader({
   checkStatus: CheckStatus;
   score: ValidationResult;
   definition: ActivityDefinition;
+  trailing?: ReactNode;
 }) {
   const { t } = useTranslation('board');
-  const editor = useEditor();
+  const { stop } = useActivityEventGuard();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [draft, setDraft] = useState('');
@@ -42,11 +44,6 @@ export function ActivityHeader({
   const checkable = hasCheckableAnswers(definition);
   const showScore = !isEditing && checkStatus !== 'idle' && checkable;
   const emptyDraft = isRenaming && !draft.trim();
-
-  const stop = (event: PointerEvent | KeyboardEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
-  };
 
   const startRenaming = () => {
     if (!canRename) return;
@@ -179,6 +176,7 @@ export function ActivityHeader({
           </Badge>
         </motion.span>
       ) : null}
+      {trailing}
     </div>
   );
 }
