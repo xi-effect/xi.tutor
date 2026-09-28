@@ -231,7 +231,7 @@ export const MaterialsCard = ({
         <div
           onClick={handleCardClick}
           className={cn(
-            'group bg-background-surface relative flex h-44 min-h-44 w-full shrink-0 cursor-pointer flex-col rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+            'group bg-background-surface relative flex h-44 min-h-44 w-full min-w-0 shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
             className,
           )}
           data-umami-event="material-card-open"

@@ -1,7 +1,7 @@
 import type { Editor, JSONContent } from '@tiptap/core';
 import { statementToReadableText } from 'pages.bank/latex';
 import type { ActiveBlockT } from '../types';
-import { getCurrentBlock } from './getCurrentBlock';
+import { insertContentRelativeToBlock } from './insertContentRelativeToBlock';
 
 const statementToContent = (statement: string): JSONContent[] => {
   const lines = statementToReadableText(statement).replace(/\r\n/g, '\n').split('\n');
@@ -16,13 +16,7 @@ export function insertMathTaskToEditor(
   statement: string,
   activeBlock?: ActiveBlockT,
 ): boolean {
-  if (!editor || !editor.isEditable) return false;
+  if (!editor) return false;
 
-  const currentBlock = getCurrentBlock(editor, activeBlock);
-  const insertPos = currentBlock?.node
-    ? currentBlock.pos + currentBlock.node.nodeSize
-    : editor.state.doc.content.size;
-
-  editor.chain().focus().insertContentAt(insertPos, statementToContent(statement)).run();
-  return true;
+  return insertContentRelativeToBlock(editor, statementToContent(statement), activeBlock);
 }

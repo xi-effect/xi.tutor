@@ -100,7 +100,7 @@ export const FilesTagsFilter = ({
             className="text-s-base text-text-primary placeholder:text-text-secondary min-w-0 flex-1 bg-transparent leading-5 outline-none"
           />
         </div>
-        <div className="flex max-h-52 w-full min-w-0 flex-col items-stretch gap-2.5 overflow-y-auto bg-transparent">
+        <div className="flex max-h-52 w-full min-w-0 flex-col items-stretch gap-2.5 overflow-x-hidden overflow-y-auto bg-transparent">
           {allTags.length === 0 && !query ? (
             <p className="text-s-base text-text-secondary leading-5">
               {isSearchLoading ? t('files.tags.loading') : t('files.tags.none')}
@@ -121,7 +121,9 @@ export const FilesTagsFilter = ({
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <TagDot color={tag.color} />
-                  <span className="truncate">{tag.name}</span>
+                  <span className="min-w-0 flex-1 truncate" title={tag.name}>
+                    {tag.name}
+                  </span>
                 </span>
               </MaterialsFilterOption>
             ))

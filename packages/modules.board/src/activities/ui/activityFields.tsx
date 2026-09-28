@@ -2,21 +2,19 @@ import { Input, type InputProps } from '@xipkg/input';
 import { Textarea, type TextareaProps } from '@xipkg/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { cn } from '@xipkg/utils';
-import { useEditor } from '@ibodr/draw';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { boardMenuSurfaceClass } from '../../ui/boardTheme';
+import { useActivityEventGuard } from './activityHostContext';
 
 function useStopBoardKeys() {
-  const editor = useEditor();
+  const { stop } = useActivityEventGuard();
 
   const onPointerDown = (event: PointerEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
+    stop(event);
   };
 
   const onKey = (event: KeyboardEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
+    stop(event);
   };
 
   return { onPointerDown, onKey };

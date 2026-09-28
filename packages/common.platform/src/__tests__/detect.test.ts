@@ -1,8 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  getElectronSurface,
   getNativeOs,
+  getNativeRuntime,
   getRuntimeKind,
   isDesktopNative,
+  isElectronConferenceSurface,
+  isElectronMainSurface,
+  isElectronShell,
   isMobileNative,
   isNativeShell,
   isTabletNative,
@@ -33,7 +38,7 @@ describe('detect', () => {
   });
 
   it('распознаёт Windows desktop', () => {
-    vi.stubGlobal('window', { __TAURI_INTERNALS__: {} });
+    vi.stubGlobal('window', { __SOVLIUM_NATIVE__: true });
     vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' });
 
     expect(isDesktopNative()).toBe(true);
@@ -97,5 +102,53 @@ describe('detect', () => {
 
     expect(isMobileNative()).toBe(true);
     expect(isTabletNative()).toBe(false);
+  });
+
+  it('распознаёт Electron desktop по __SOVLIUM_ELECTRON__', () => {
+    vi.stubGlobal('window', {
+      __SOVLIUM_NATIVE__: true,
+      __SOVLIUM_ELECTRON__: true,
+      __SOVLIUM_NATIVE_OS__: 'macos',
+      __SOVLIUM_ELECTRON_SURFACE__: 'main',
+      sovliumDesktop: {},
+    });
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' });
+
+    expect(isElectronShell()).toBe(true);
+    expect(isDesktopNative()).toBe(true);
+    expect(isElectronMainSurface()).toBe(true);
+    expect(isElectronConferenceSurface()).toBe(false);
+    expect(getElectronSurface()).toBe('main');
+    expect(getNativeRuntime()).toBe('electron');
+  });
+
+  it('считает conference surface только на /desktop/conference/', () => {
+    vi.stubGlobal('window', {
+      __SOVLIUM_NATIVE__: true,
+      __SOVLIUM_ELECTRON__: true,
+      __SOVLIUM_ELECTRON_SURFACE__: 'conference',
+      sovliumDesktop: {},
+      location: { pathname: '/desktop/conference/42', search: '?sovlium_surface=conference' },
+    });
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' });
+
+    expect(isElectronConferenceSurface()).toBe(true);
+    expect(isElectronMainSurface()).toBe(false);
+    expect(getElectronSurface()).toBe('conference');
+  });
+
+  it('не считает главное окно conference из-за query или preload', () => {
+    vi.stubGlobal('window', {
+      __SOVLIUM_NATIVE__: true,
+      __SOVLIUM_ELECTRON__: true,
+      __SOVLIUM_ELECTRON_SURFACE__: 'conference',
+      sovliumDesktop: {},
+      location: { pathname: '/classrooms/42', search: '?sovlium_surface=conference' },
+    });
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' });
+
+    expect(isElectronConferenceSurface()).toBe(false);
+    expect(isElectronMainSurface()).toBe(true);
+    expect(getElectronSurface()).toBe('main');
   });
 });

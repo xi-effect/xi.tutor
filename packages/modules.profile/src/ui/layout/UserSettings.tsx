@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Header } from './Header';
 import { Menu } from './Menu';
 import { Content } from './Content';
+import { DesktopAbout } from './DesktopAbout';
 
 const SECTION_TITLE_KEYS: Record<string, string> = {
   personalInfo: 'menu.personalInfo',
@@ -169,6 +170,7 @@ export const UserSettings = ({
               </>
             )}
           </div>
+          <DesktopAbout />
         </div>
       </ModalContent>
     </Modal>

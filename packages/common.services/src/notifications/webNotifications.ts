@@ -1,7 +1,7 @@
 /**
  * Системные уведомления.
  * В браузере / PWA — Web Notifications API.
- * В Tauri (macOS / Windows) — `@tauri-apps/plugin-notification`.
+ * В Electron (macOS / Windows) — native notifications через `sovliumDesktop`.
  */
 
 import {

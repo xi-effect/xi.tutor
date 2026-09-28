@@ -17,9 +17,15 @@ import { useCallsDeps } from './useCallsDeps';
 import { ProductCallAnalyticsTracker } from './productAnalytics/ProductCallAnalyticsTracker';
 import { BoardCallStorageWarmup } from './boardWarmup/BoardCallStorageWarmup';
 import { NativeShareOverlayBridge } from './useNativeShareOverlay';
-import { NativeCallPipBridge } from './useNativeCallPip';
 import { ShareAnnotationPublisher } from './shareAnnotations/useShareAnnotationPublisher';
 import { ShareAnnotationsOverlay } from './shareAnnotations/ShareAnnotationsOverlay';
+import { ElectronShareAnnotations } from './shareAnnotations/ElectronShareAnnotations';
+import { ElectronShareSourcePicker } from './shareAnnotations/ElectronShareSourcePicker';
+import { RemoteControlViewer } from './remoteControl/RemoteControlViewer';
+import { ElectronCallKeepAwake } from './ElectronCallKeepAwake';
+import { ElectronPermissionsHydrate } from './ElectronPermissionsHydrate';
+import { LiveKitDeadRoomGuard } from './LiveKitDeadRoomGuard';
+import { NativeCallPipBridge } from './useNativeCallPip';
 import { installMediaPermissionRequestAnalytics } from './productAnalytics/installMediaPermissionRequestAnalytics';
 import { installNativeWebApiBridges } from 'common.platform';
 
@@ -73,10 +79,16 @@ const CallsShellProviders = ({ children }: CallsShellPropsT) => {
         <LiveKitProvider>
           <ModeSyncProvider>
             <ProductCallAnalyticsTracker />
-            <NativeShareOverlayBridge />
+            <ElectronCallKeepAwake />
+            <ElectronPermissionsHydrate />
+            <LiveKitDeadRoomGuard />
             <NativeCallPipBridge />
+            <NativeShareOverlayBridge />
             <ShareAnnotationPublisher />
             <ShareAnnotationsOverlay />
+            <ElectronShareAnnotations />
+            <ElectronShareSourcePicker />
+            <RemoteControlViewer />
             <BoardCallStorageWarmup />
             <CallsShellInit />
             {children}

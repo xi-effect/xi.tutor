@@ -65,7 +65,7 @@ export const SignUpPage = () => {
       return;
     }
 
-    const normalized = email.trim().toLowerCase();
+    const normalized = email.trim();
     if (outlookWarningEmailRef.current === normalized) {
       return;
     }

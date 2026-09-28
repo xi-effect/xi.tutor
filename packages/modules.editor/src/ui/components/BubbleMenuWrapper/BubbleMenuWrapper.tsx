@@ -5,6 +5,7 @@ import type { EditorState } from '@tiptap/pm/state';
 import { TextSelection } from '@tiptap/pm/state';
 import { useTranslation } from 'react-i18next';
 import { BubbleButton } from './BubbleButton';
+import { TextAlignMenu } from '../TextAlignControl';
 import { useEditorActive } from '../../../hooks';
 
 interface BubbleMenuProps {
@@ -69,6 +70,10 @@ export const BubbleMenuWrapper = ({ editor, isReadOnly }: BubbleMenuProps) => {
       <BubbleButton ariaLabel={t('bubbleMenu.link')} type="link" isActive={activeStates.link}>
         <LinkIcon />
       </BubbleButton>
+
+      <span className="bg-border-default mx-0.5 w-px self-stretch" />
+
+      <TextAlignMenu editor={editor} variant="bubble" />
     </BubbleMenu>
   );
 };

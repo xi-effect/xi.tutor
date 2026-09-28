@@ -35,6 +35,7 @@ const toolMapping: Record<string, string> = {
 };
 
 const COMMENT_ACTION = 'comment';
+const NO_RESET_ON_CLOSE_POPUPS = new Set(['pen', 'sticker']);
 
 const toolPopupIdByAction: Record<string, string> = {
   pen: 'pen',
@@ -76,7 +77,7 @@ export const Navbar = track(
     const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
 
     const closeToolbarPanel = useCallback(() => {
-      if (activePopup && activePopup !== 'pen') resetToDefaults();
+      if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
       setActivePopup(null);
     }, [activePopup, resetToDefaults]);
 
@@ -114,7 +115,7 @@ export const Navbar = track(
       setPlacingComment(false);
 
       if (toolName === 'activity') {
-        if (activePopup && activePopup !== 'pen') resetToDefaults();
+        if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
         setActivePopup(null);
         setActivityPickerOpen((open) => !open);
         editor.setCurrentTool('select');
@@ -127,13 +128,13 @@ export const Navbar = track(
 
       if (popupId) {
         if (activePopup === popupId) {
-          if (popupId !== 'pen') resetToDefaults();
+          if (!NO_RESET_ON_CLOSE_POPUPS.has(popupId)) resetToDefaults();
           setActivePopup(null);
         } else {
           setActivePopup(popupId);
         }
       } else {
-        if (activePopup && activePopup !== 'pen') resetToDefaults();
+        if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
         setActivePopup(null);
       }
 

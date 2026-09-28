@@ -28,9 +28,9 @@ describe('createFormSchema (signup)', () => {
     expect(schema.safeParse({ ...valid, email: 'not-email' }).success).toBe(false);
   });
 
-  it('нормализует регистр и пробелы в email', () => {
+  it('обрезает пробелы в email и сохраняет регистр', () => {
     const parsed = schema.parse({ ...valid, email: '  Ivan@Example.COM ' });
-    expect(parsed.email).toBe('ivan@example.com');
+    expect(parsed.email).toBe('Ivan@Example.COM');
   });
 
   it('требует пароль минимум 6 символов', () => {

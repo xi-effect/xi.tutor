@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { normalizeEmail } from '../normalizeEmail';
 
 describe('normalizeEmail', () => {
-  it('обрезает пробелы и приводит к нижнему регистру', () => {
-    expect(normalizeEmail('  Luneeva1999@Mail.RU  ')).toBe('luneeva1999@mail.ru');
+  it('обрезает пробелы и сохраняет регистр', () => {
+    expect(normalizeEmail('  Luneeva1999@Mail.RU  ')).toBe('Luneeva1999@Mail.RU');
   });
 
   it('не меняет уже нормализованный адрес', () => {

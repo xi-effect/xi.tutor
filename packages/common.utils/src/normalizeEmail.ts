@@ -1,4 +1,4 @@
-/** Email для lookup: trim + нижний регистр. Домен регистронезависимый, локальную часть так же не различаем. */
+/** Email для отправки: только trim. Регистр нормализует бэкенд. */
 export function normalizeEmail(email: string): string {
-  return email.trim().toLowerCase();
+  return email.trim();
 }

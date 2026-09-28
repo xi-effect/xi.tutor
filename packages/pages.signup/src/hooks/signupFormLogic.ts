@@ -22,7 +22,7 @@ const OUTLOOK_EMAIL_RE = /@(?:outlook|hotmail|live|msn)\.[a-z0-9.-]+$/i;
 
 /** Microsoft-потребительские домены: Outlook / Hotmail / Live / MSN. */
 export function isOutlookEmail(email: string): boolean {
-  return OUTLOOK_EMAIL_RE.test(email.trim().toLowerCase());
+  return OUTLOOK_EMAIL_RE.test(email.trim());
 }
 
 /** Куда вести после успешной регистрации. */

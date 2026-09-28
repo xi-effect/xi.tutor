@@ -9,9 +9,6 @@ export default tseslint.config(
     ignores: [
       'dist',
       'build',
-      // Tauri / Cargo output (tauri-codegen embeds hashed asset blobs as *.js)
-      '**/src-tauri/target/**',
-      '**/src-tauri/gen/**',
     ],
   },
   {

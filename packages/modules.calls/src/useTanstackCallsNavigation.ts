@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import type { CallsNavigationT, UseCallsNavigationHookT } from '@xipkg/calls-providers';
+import { isElectronConferenceSurface } from 'common.platform';
 
 export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
       params,
       getCallId,
       navigateToCall: (classroomId, options) => {
+        if (isElectronConferenceSurface()) return;
         navigate({
           to: '/call/$callId',
           params: { callId: classroomId },
@@ -29,6 +31,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
         });
       },
       navigateToClassroom: (classroomId) => {
+        if (isElectronConferenceSurface()) return;
         navigate({
           to: '/classrooms/$classroomId',
           params: { classroomId },
@@ -36,6 +39,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
         });
       },
       navigateToClassroomOverview: (classroomId, options) => {
+        if (isElectronConferenceSurface()) return;
         const search: Record<string, string | undefined> = { tab: 'boards' };
         if (options?.backgroundCall) {
           search.call = classroomId;
@@ -47,6 +51,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
         });
       },
       navigateToClassroomBoard: (classroomId, boardId, options) => {
+        if (isElectronConferenceSurface()) return;
         const alreadyOnBoard = params.classroomId === classroomId && params.boardId === boardId;
         navigate({
           to: '/classrooms/$classroomId/boards/$boardId',
@@ -58,6 +63,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
         });
       },
       navigateToBoard: (boardId, options) => {
+        if (isElectronConferenceSurface()) return;
         navigate({
           to: '/board/$boardId',
           params: { boardId },

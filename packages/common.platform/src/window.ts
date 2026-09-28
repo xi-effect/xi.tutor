@@ -1,4 +1,5 @@
-import { isDesktopNative, isNativeShell } from './detect';
+import { isDesktopNative, isElectronShell, isNativeShell } from './detect';
+import { getSovliumDesktop } from './electron';
 import { invokeCommand } from './native';
 
 export interface AppInfo {
@@ -23,15 +24,14 @@ export async function getAppInfo(): Promise<AppInfo> {
 export async function focusAppWindow(): Promise<void> {
   if (typeof window === 'undefined') return;
 
-  if (isDesktopNative()) {
+  if (isElectronShell()) {
     try {
-      const { getCurrentWindow } = await import('@tauri-apps/api/window');
-      const current = getCurrentWindow();
-      await current.unminimize();
-      await current.setFocus();
+      const desktop = getSovliumDesktop();
+      await desktop?.window.unminimize();
+      await desktop?.window.focus();
       return;
     } catch (err) {
-      console.warn('[common.platform] focusAppWindow native failed', err);
+      console.warn('[common.platform] focusAppWindow electron failed', err);
     }
   }
 
@@ -53,48 +53,26 @@ export async function onAppFocusChanged(handler: (focused: boolean) => void): Pr
 export async function onMainWindowFocusChanged(
   handler: (focused: boolean) => void,
 ): Promise<() => void> {
-  if (!isDesktopNative()) return () => undefined;
-  try {
-    const { getCurrentWindow } = await import('@tauri-apps/api/window');
-    return getCurrentWindow().onFocusChanged(({ payload }) => {
-      handler(payload);
-    });
-  } catch (err) {
-    console.warn('[common.platform] onMainWindowFocusChanged failed', err);
-    return () => undefined;
-  }
+  if (!isDesktopNative() || !isElectronShell()) return () => undefined;
+  const desktop = getSovliumDesktop();
+  if (!desktop) return () => undefined;
+  return desktop.window.onFocusChanged(handler);
 }
 
 export async function isMainWindowMinimized(): Promise<boolean> {
-  if (!isDesktopNative()) return false;
-  try {
-    const { getCurrentWindow } = await import('@tauri-apps/api/window');
-    return getCurrentWindow().isMinimized();
-  } catch (err) {
-    console.warn('[common.platform] isMainWindowMinimized failed', err);
-    return false;
-  }
+  if (!isDesktopNative() || !isElectronShell()) return false;
+  return (await getSovliumDesktop()?.window.isMinimized()) ?? false;
 }
 
 export async function unminimizeMainWindow(): Promise<void> {
-  if (!isDesktopNative()) return;
-  try {
-    const { getCurrentWindow } = await import('@tauri-apps/api/window');
-    await getCurrentWindow().unminimize();
-  } catch (err) {
-    console.warn('[common.platform] unminimizeMainWindow failed', err);
-  }
+  if (!isDesktopNative() || !isElectronShell()) return;
+  await getSovliumDesktop()?.window.unminimize();
 }
 
 export async function setAppTitle(title: string): Promise<void> {
   if (typeof document !== 'undefined') {
     document.title = title;
   }
-  if (!isDesktopNative()) return;
-  try {
-    const { getCurrentWindow } = await import('@tauri-apps/api/window');
-    await getCurrentWindow().setTitle(title);
-  } catch (err) {
-    console.warn('[common.platform] setAppTitle native failed', err);
-  }
+  if (!isDesktopNative() || !isElectronShell()) return;
+  await getSovliumDesktop()?.window.setTitle(title);
 }

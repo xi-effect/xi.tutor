@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "pnpm exec vite --host --port 5173",
     "build": "tsc -b && vite build",
+    "build:electron": "tsc -b && vite build --mode electron",
     "build:debug": "tsc -b && vite build --mode debug",
     "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint .",

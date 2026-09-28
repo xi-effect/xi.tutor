@@ -15,6 +15,7 @@ export {
   type FileUploadErrorKind,
 } from './classifyFileUploadError';
 export { useDownloadFile, downloadFileRequest } from './useDownloadFile';
+export { saveBlob, writeText } from 'common.platform';
 export { useAttachFileToYDoc, attachFileToYDocRequest } from './useAttachFileToYDoc';
 export type { AttachFileToYDocVars } from './useAttachFileToYDoc';
 export { useRetryFileQueue, type RetryRequest } from './useRetryFileQueue';

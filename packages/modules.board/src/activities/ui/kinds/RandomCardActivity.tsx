@@ -2,9 +2,9 @@ import { Button } from '@xipkg/button';
 import { Trash } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { useEditor } from '@ibodr/draw';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState, type SyntheticEvent } from 'react';
+import { useActivityEventGuard } from '../activityHostContext';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createActivityId } from '../../model/ids';
 import type {
@@ -54,14 +54,9 @@ function CardColorButton({
   noneLabel: string;
   colorLabel: string;
 }) {
-  const editor = useEditor();
+  const { stop } = useActivityEventGuard();
   const [open, setOpen] = useState(false);
   const option = value ? getBoardColorOption(value) : undefined;
-
-  const stop = (event: SyntheticEvent) => {
-    editor.markEventAsHandled(event);
-    event.stopPropagation();
-  };
 
   const pick = (color: string) => {
     onChange(color);
