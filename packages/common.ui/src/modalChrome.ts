@@ -4,7 +4,8 @@ export const modalContentClass =
 
 export const modalBodyClass = 'flex flex-col gap-6 p-6';
 
-export const modalHeaderRowClass = 'flex items-center justify-between gap-4 overflow-hidden';
+export const modalHeaderRowClass =
+  'flex shrink-0 items-center justify-between gap-4 overflow-hidden';
 
 export const modalTitleClass =
   'font-playfair text-text-primary m-0 flex-1 text-2xl leading-normal font-medium';

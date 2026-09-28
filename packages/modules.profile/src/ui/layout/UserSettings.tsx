@@ -126,7 +126,7 @@ export const UserSettings = ({
         className={
           isDesktop
             ? '!flex h-[90vh] max-h-[90vh] max-w-[1132px] flex-col overflow-hidden p-6'
-            : '!flex max-h-dvh flex-col overflow-hidden p-6'
+            : '!flex max-h-dvh w-full max-w-full flex-col overflow-hidden p-6'
         }
         aria-describedby={undefined}
       >
@@ -143,7 +143,7 @@ export const UserSettings = ({
           />
           <div className="flex min-h-0 flex-1 flex-row gap-8">
             {isMobile ? (
-              <div className="bg-background-surface flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+              <div className="bg-background-surface flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
                 {showContent ? (
                   <Content activeQuery={activeQuery} />
                 ) : (
