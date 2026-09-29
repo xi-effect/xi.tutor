@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TAG_ASSIGN_MAX_COUNT, type TagSchema, useSetMaterialTags } from 'common.services';
-import { AssignGenericTagsPopover } from './AssignGenericTagsPopover';
+import { AssignGenericTagsPopover } from 'features.tags';
 
 type AssignMaterialTagsPopoverProps = {
   materialId: string;
