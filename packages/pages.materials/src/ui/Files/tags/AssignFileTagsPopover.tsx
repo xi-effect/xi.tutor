@@ -7,7 +7,7 @@ import {
   useSetFileTags,
   useTagsByIds,
 } from 'common.services';
-import { AssignGenericTagsPopover } from 'features.tags';
+import { AssignGenericTagsPopover } from 'features.materials.card';
 
 type AssignFileTagsPopoverProps = {
   file: LibraryFile;

@@ -11,7 +11,7 @@ import {
 } from '@xipkg/dropdown';
 import { Edit, MoreVert, Search, Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { filterGenericTags } from 'common.services';
+import { filterGenericTags, useLibraryTags } from 'common.services';
 import {
   ConfirmDialog,
   cardMenuDeleteItemClass,
@@ -22,7 +22,7 @@ import {
   TagDot,
 } from 'common.ui';
 import type { LibraryTag } from 'features.tags';
-import { TagFormModal, useLibraryTags } from 'features.tags';
+import { TagFormModal } from 'features.tags';
 
 export const Tags = () => {
   const { t } = useTranslation('profile');
