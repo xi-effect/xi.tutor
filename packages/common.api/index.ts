@@ -1,5 +1,15 @@
 export { authApiConfig, AuthQueryKey } from './src/auth';
 export { userApiConfig, UserQueryKey } from './src/user';
+export {
+  USER_FLAG_KEYS,
+  userFlagsApiConfig,
+  UserFlagsQueryKey,
+  userFlagsQueryKeys,
+  isUserFlagValueSchema,
+  parseUserFlagValue,
+  type UserFlagKey,
+  type UserFlagValueSchema,
+} from './src/userFlags';
 export { invitationsApiConfig, InvitationsQueryKey } from './src/invitations';
 export { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from './src/paymentTemplates';
 export { materialsApiConfig, MaterialsQueryKey } from './src/materials';
