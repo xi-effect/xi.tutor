@@ -1,0 +1,39 @@
+{
+  "tags": {
+    "tagManage": {
+      "title": "Manage tags",
+      "description": "Create and edit tags for materials",
+      "close": "Close",
+      "empty": "No tags yet",
+      "actions": "Tag actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "create": "Create tag"
+    },
+    "tagForm": {
+      "editTitle": "Edit tag",
+      "createTitle": "Create tag",
+      "close": "Close",
+      "name": "Name",
+      "limit": "You can create up to 100 tags",
+      "tooLong": "Name cannot be longer than {{max}} characters",
+      "duplicate": "A tag with this name already exists",
+      "color": "Color",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save",
+      "create": "Create"
+    },
+    "tags": {
+      "searchPlaceholder": "Find tag",
+      "loading": "Loading...",
+      "empty": "No tags found"
+    },
+    "tagDelete": {
+      "title": "Delete tag \"{{name}}\"?",
+      "description": "The tag will be removed from all materials. The materials themselves will remain unchanged",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  }
+}
