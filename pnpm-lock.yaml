@@ -2869,6 +2869,9 @@ importers:
       features.materials.edit:
         specifier: workspace:*
         version: link:../features.materials.edit
+      features.tags:
+        specifier: workspace:*
+        version: link:../features.tags
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
