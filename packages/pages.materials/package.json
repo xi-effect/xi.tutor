@@ -39,6 +39,7 @@
     "features.materials.add": "workspace:*",
     "features.materials.card": "workspace:*",
     "features.materials.duplicate": "workspace:*",
+    "features.tags": "workspace:*",
     "i18next": "24.2.2",
     "motion": "^13.1.1",
     "pdfjs-dist": "^4.10.38",
