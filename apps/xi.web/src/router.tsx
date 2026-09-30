@@ -1,16 +1,14 @@
-import { createRouter, ErrorComponentProps } from '@tanstack/react-router';
+import { createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
 import { ErrorPage, LoadingScreen, NotFoundPage } from 'common.ui';
 import { isStaleChunkError, isStaleChunkReloadPending, reloadOnceOnStaleChunk } from 'common.utils';
 
-const DefaultErrorComponent = ({ error }: ErrorComponentProps) => {
-  const normalizedError = error instanceof Error ? error : new Error(String(error));
-
+const DefaultErrorComponent = ({ error }: { error: Error }) => {
   if (isStaleChunkReloadPending()) {
     return <LoadingScreen />;
   }
 
-  if (isStaleChunkError(normalizedError) && reloadOnceOnStaleChunk(normalizedError)) {
+  if (isStaleChunkError(error) && reloadOnceOnStaleChunk(error)) {
     return <LoadingScreen />;
   }
 
@@ -18,7 +16,7 @@ const DefaultErrorComponent = ({ error }: ErrorComponentProps) => {
     <ErrorPage
       title="Произошла ошибка"
       errorCode={500}
-      text={normalizedError.message || 'Что-то пошло не так'}
+      text={error.message || 'Что-то пошло не так'}
     />
   );
 };
