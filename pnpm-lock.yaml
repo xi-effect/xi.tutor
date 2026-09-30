@@ -3587,6 +3587,94 @@ importers:
         specifier: ^8.22.0
         version: 8.71.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
 
+  packages/features.tags:
+    dependencies:
+      '@xipkg/button':
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.3.0)(react@19.3.0)
+      '@xipkg/dropdown':
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@xipkg/icons':
+        specifier: 3.1.7
+        version: 3.1.7(react@19.3.0)
+      '@xipkg/input':
+        specifier: 2.3.0
+        version: 2.3.0(react@19.3.0)
+      '@xipkg/modal':
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@xipkg/popover':
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@xipkg/utils':
+        specifier: 1.8.0
+        version: 1.8.0(react@19.3.0)
+      common.api:
+        specifier: workspace:*
+        version: link:../common.api
+      common.services:
+        specifier: workspace:*
+        version: link:../common.services
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
+      i18next:
+        specifier: 24.2.2
+        version: 24.2.2(typescript@5.7.3)
+      react:
+        specifier: '19'
+        version: 19.3.0
+      react-i18next:
+        specifier: 15.4.1
+        version: 15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.39.5
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.43
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.3.0(@types/react@19.3.0)
+      '@xipkg/eslint':
+        specifier: 4.6.0
+        version: 4.6.0(jiti@2.7.0)(turbo@2.11.5)
+      '@xipkg/tailwind':
+        specifier: 1.0.0
+        version: 1.0.0
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: workspace:*
+        version: link:../common.eslint
+      common.typescript:
+        specifier: workspace:*
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.39.5(jiti@2.7.0)
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.39.5(jiti@2.7.0))
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.71.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+
   packages/modules.board:
     dependencies:
       '@hocuspocus/provider':
@@ -10554,6 +10642,11 @@ packages:
 
   '@xipkg/icons@2.7.2':
     resolution: {integrity: sha512-Zg5FwD9i6R8ggHNpZbVpLHYTjR93ujB3HiHtsqQWXr96IWVjzi+KlDWMbgNPsagvWNKnbnqwdi3gY3S6ACp1rw==}
+    peerDependencies:
+      react: ^19
+
+  '@xipkg/icons@3.1.7':
+    resolution: {integrity: sha512-PiP3KRI0+87d3OpsefHq1mWbwcJGr9xP7WqJ2SQam1REaJnxVIvK9afK8lqpH2p2Ri9t9vmz35m5cFwuIURQ1A==}
     peerDependencies:
       react: ^19
 
@@ -18311,6 +18404,13 @@ snapshots:
       - react-dom
 
   '@xipkg/icons@2.7.2(react@19.3.0)':
+    dependencies:
+      '@xipkg/utils': 1.8.0(react@19.3.0)
+      class-variance-authority: 0.7.1
+      lucide-react: 0.485.0(react@19.3.0)
+      react: 19.3.0
+
+  '@xipkg/icons@3.1.7(react@19.3.0)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.3.0)
       class-variance-authority: 0.7.1
