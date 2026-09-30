@@ -3596,8 +3596,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@xipkg/icons':
-        specifier: 3.1.7
-        version: 3.1.7(react@19.3.0)
+        specifier: 3.1.8
+        version: 3.1.8(react@19.3.0)
       '@xipkg/input':
         specifier: 2.3.0
         version: 2.3.0(react@19.3.0)
@@ -4763,6 +4763,9 @@ importers:
       features.subscription:
         specifier: workspace:*
         version: link:../features.subscription
+      features.tags:
+        specifier: workspace:*
+        version: link:../features.tags
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -10642,11 +10645,6 @@ packages:
 
   '@xipkg/icons@2.7.2':
     resolution: {integrity: sha512-Zg5FwD9i6R8ggHNpZbVpLHYTjR93ujB3HiHtsqQWXr96IWVjzi+KlDWMbgNPsagvWNKnbnqwdi3gY3S6ACp1rw==}
-    peerDependencies:
-      react: ^19
-
-  '@xipkg/icons@3.1.7':
-    resolution: {integrity: sha512-PiP3KRI0+87d3OpsefHq1mWbwcJGr9xP7WqJ2SQam1REaJnxVIvK9afK8lqpH2p2Ri9t9vmz35m5cFwuIURQ1A==}
     peerDependencies:
       react: ^19
 
@@ -18404,13 +18402,6 @@ snapshots:
       - react-dom
 
   '@xipkg/icons@2.7.2(react@19.3.0)':
-    dependencies:
-      '@xipkg/utils': 1.8.0(react@19.3.0)
-      class-variance-authority: 0.7.1
-      lucide-react: 0.485.0(react@19.3.0)
-      react: 19.3.0
-
-  '@xipkg/icons@3.1.7(react@19.3.0)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.3.0)
       class-variance-authority: 0.7.1

@@ -22,7 +22,7 @@ import {
   TagDot,
 } from 'common.ui';
 import type { TagSchema as LibraryTag } from 'common.api';
-import { TagFormModal } from '../../../../pages.materials/src/ui/Files/tags';
+import { TagFormModal } from 'features.tags';
 
 export const Tags = () => {
   const { t } = useTranslation('profile');

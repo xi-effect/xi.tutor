@@ -35,6 +35,7 @@
     "common.subscription": "workspace:*",
     "common.theme": "workspace:*",
     "features.subscription": "workspace:*",
+    "features.tags": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "dayjs": "1.11.13",
