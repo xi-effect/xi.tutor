@@ -1,0 +1,12 @@
+{
+  "extends": ["common.typescript/tsconfig.app.json"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "features.tags": ["packages/features.tags/src"],
+      "features.tags/*": ["packages/features.tags/src/*"],
+    },
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "build", "node_modules"],
+}
