@@ -9,9 +9,15 @@ export const SOVLIUM_PRICES_URL = 'https://sovlium.ru/prices';
 export const TariffsCompareTable = () => {
   const { t } = useTranslation('subscription');
   const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
-  const { planId } = useSubscriptionPlan();
+  const { planId, tariff } = useSubscriptionPlan();
   const basic = TARIFFS.basic;
   const pro = TARIFFS.pro;
+  const basicClassrooms =
+    planId === 'basic' && tariff ? tariff.maxActiveClassrooms : basic.maxActiveClassrooms;
+  const basicStorage = planId === 'basic' && tariff ? tariff.storageBytes : basic.storageBytes;
+  const proClassrooms =
+    planId === 'pro' && tariff ? tariff.maxActiveClassrooms : pro.maxActiveClassrooms;
+  const proStorage = planId === 'pro' && tariff ? tariff.storageBytes : pro.storageBytes;
 
   const rows = [
     {
@@ -21,13 +27,13 @@ export const TariffsCompareTable = () => {
     },
     {
       label: t('compare.classrooms'),
-      basic: String(basic.maxActiveClassrooms),
-      pro: String(pro.maxActiveClassrooms),
+      basic: String(basicClassrooms),
+      pro: String(proClassrooms),
     },
     {
       label: t('compare.storage'),
-      basic: formatBytes(basic.storageBytes, locale),
-      pro: formatBytes(pro.storageBytes, locale),
+      basic: formatBytes(basicStorage, locale),
+      pro: formatBytes(proStorage, locale),
     },
     {
       label: t('compare.images'),
@@ -41,7 +47,7 @@ export const TariffsCompareTable = () => {
     },
     {
       label: t('compare.calls'),
-      basic: t('compare.callsHours', { count: basic.maxVideoCallHoursPerMonth }),
+      basic: t('compare.callsHours', { count: basic.maxVideoCallHoursPerMonth ?? 0 }),
       pro: t('compare.unlimited'),
     },
     {

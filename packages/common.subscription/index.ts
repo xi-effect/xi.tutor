@@ -1,4 +1,4 @@
-export { SUBSCRIPTION_BILLING_ENABLED } from './src/config';
+export { SUBSCRIPTION_BILLING_ENABLED, SUBSCRIPTION_PROMO_ENABLED } from './src/config';
 export {
   DEFAULT_PRO_RENEWS_AT,
   GB,
@@ -44,12 +44,7 @@ export {
   getRemainingSubscriptionDays,
   isPaidPeriodExpired,
 } from './src/period';
-export {
-  useSubscriptionStore,
-  type PaymentOutcome,
-  type SubscriptionMock,
-  type SubscriptionState,
-} from './src/store';
+export { useSubscriptionStore, type SubscriptionMock, type SubscriptionState } from './src/store';
 export {
   requestClassroomLimitDialog,
   requestProFeatureDialog,

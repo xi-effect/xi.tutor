@@ -859,6 +859,15 @@ importers:
 
   packages/common.subscription:
     dependencies:
+      common.api:
+        specifier: workspace:*
+        version: link:../common.api
+      common.config:
+        specifier: workspace:*
+        version: link:../common.config
+      common.services:
+        specifier: workspace:*
+        version: link:../common.services
       react:
         specifier: '19'
         version: 19.2.8
@@ -3392,6 +3401,9 @@ importers:
 
   packages/features.subscription:
     dependencies:
+      '@tanstack/react-query':
+        specifier: 5.73.3
+        version: 5.73.3(react@19.2.8)
       '@tanstack/react-router':
         specifier: ^1.166.6
         version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -3413,6 +3425,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.8)
+      common.services:
+        specifier: workspace:*
+        version: link:../common.services
       common.subscription:
         specifier: workspace:*
         version: link:../common.subscription

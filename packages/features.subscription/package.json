@@ -19,6 +19,8 @@
     "@xipkg/link": "2.1.0",
     "@xipkg/modal": "4.6.0",
     "@xipkg/utils": "1.8.0",
+    "@tanstack/react-query": "5.73.3",
+    "common.services": "workspace:*",
     "common.subscription": "workspace:*",
     "common.ui": "workspace:*",
     "dayjs": "1.11.13",

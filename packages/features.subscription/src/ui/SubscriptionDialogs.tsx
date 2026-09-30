@@ -19,22 +19,22 @@ export const SubscriptionDialogs = () => {
   const dialog = useSubscriptionUiStore((s) => s.dialog);
   const closeDialog = useSubscriptionUiStore((s) => s.closeDialog);
   const openCompare = useSubscriptionUiStore((s) => s.openCompare);
-  const { planId } = useSubscriptionPlan();
-  const tariff = getTariff(planId);
+  const { planId, tariff } = useSubscriptionPlan();
+  const limits = tariff ?? (planId ? getTariff(planId) : null);
 
   const copy =
     dialog === 'classroom'
       ? {
           title: t('limits.classroomTitle'),
           text: t('limits.classroomText', {
-            plan: t(`plans.${planId}`),
-            count: tariff.maxActiveClassrooms,
+            plan: planId ? t(`plans.${planId}`) : '',
+            count: limits?.maxActiveClassrooms ?? 0,
           }),
         }
       : dialog === 'storage'
         ? {
             title: t('limits.storageTitle'),
-            text: t('limits.storageText', { plan: t(`plans.${planId}`) }),
+            text: t('limits.storageText', { plan: planId ? t(`plans.${planId}`) : '' }),
           }
         : dialog === 'proFeature'
           ? {
