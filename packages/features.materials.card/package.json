@@ -24,7 +24,6 @@
     "common.ui": "workspace:*",
     "dayjs": "^1.11.13",
     "features.materials.edit": "workspace:*",
-    "features.tags": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1"
   },
