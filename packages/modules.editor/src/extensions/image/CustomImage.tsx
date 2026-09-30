@@ -28,6 +28,13 @@ export const CustomImage = Image.extend({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(ImageNodeView);
+    return ReactNodeViewRenderer(ImageNodeView, {
+      stopEvent: ({ event }) => {
+        // drag/drop всегда отдаём ProseMirror
+        if (event.type.startsWith('drag') || event.type === 'drop') return false;
+        // клики по тулбару/кнопкам не должны выделять ноду
+        return !!(event.target as HTMLElement)?.closest?.('[data-editor-ignore]');
+      },
+    });
   },
 });

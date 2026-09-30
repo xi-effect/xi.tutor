@@ -23,6 +23,7 @@ import {
 import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
 import 'highlight.js/styles/base16/atelier-cave-light.min.css';
 import { CustomCodeNode } from '../extensions/code';
+import { CommentMark } from '../extensions/comment/CommentMark';
 
 /** Курсор в стиле доски: вертикальная линия + шильдик с именем */
 function collaborationCaretRender(user: { name?: string; color?: string }): HTMLElement {
@@ -126,6 +127,7 @@ export const getExtensions = (
     NormalizeSelection,
     ExtraShortcuts,
     CustomCodeNode,
+    CommentMark,
   ];
 
   if (!provider || !ydoc) {
