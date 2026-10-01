@@ -97,6 +97,14 @@
     "media": "Media",
     "activities": "Activities"
   },
+  "lineStyle": {
+    "label": "Line style",
+    "solid": "Solid",
+    "dashed": "Dashed",
+    "dotted": "Dotted",
+    "sparse": "Sparse dash",
+    "double": "Double line"
+  },
   "navbar": {
     "select": "Select",
     "hand": "Hand",

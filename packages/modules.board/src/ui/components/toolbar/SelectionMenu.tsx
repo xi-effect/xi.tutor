@@ -14,6 +14,8 @@ import { TextEditorToolbar } from '../../../shapes/text';
 import { FlipCardImageButton } from '../../../shapes/flipCard';
 import { VisualizeSelectionButton } from './VisualizeMenu';
 import { useTranslation } from 'react-i18next';
+import { LineStylePicker } from '../popups/Arrows/LineStylePicker';
+import { applyArrowLineStyle, isLineStyleId, isPlainArrowLine } from '../popups/Arrows/lineStyle';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
 const shapesWithRichTextSet = new Set(['note', 'text', 'arrow', 'xi-geo']);
@@ -32,6 +34,21 @@ export const SelectionMenu = track(function SelectionMenu() {
     selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';
   const isFlipCard = selectedShapes.length === 1 && selectedShapes[0].type === 'flip-card';
   const isMathFigure = selectedShapes.length === 1 && selectedShapes[0].type === 'math-figure';
+  const isArrowSelection =
+    selectedShapes.length > 0 && selectedShapes.every((shape) => shape.type === 'arrow');
+  const arrowShapes = isArrowSelection ? selectedShapes : [];
+  const arrowDashValues = arrowShapes.map((shape) => String(shape.props.dash));
+  const sharedArrowDash =
+    arrowDashValues.length > 0 && arrowDashValues.every((dash) => dash === arrowDashValues[0])
+      ? arrowDashValues[0]
+      : null;
+  const allowDoubleLine =
+    arrowShapes.length > 0 &&
+    arrowShapes.every((shape) =>
+      isPlainArrowLine(
+        shape.props as { arrowheadStart: string; arrowheadEnd: string; dash: string },
+      ),
+    );
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -128,6 +145,13 @@ export const SelectionMenu = track(function SelectionMenu() {
           >
             <Locked className={boardSelectionToolbarIconClass} />
           </Button>
+          {isArrowSelection && (
+            <LineStylePicker
+              value={sharedArrowDash && isLineStyleId(sharedArrowDash) ? sharedArrowDash : null}
+              allowDouble={allowDoubleLine}
+              onChange={(style) => applyArrowLineStyle(editor, style)}
+            />
+          )}
           {isGeo && <BorderPicker />}
           {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
           {isMathFigure && <MathFigureSettingsPicker />}
