@@ -1,6 +1,23 @@
 export { authApiConfig, AuthQueryKey } from './src/auth';
 export { userApiConfig, UserQueryKey } from './src/user';
 export {
+  subscriptionApiConfig,
+  SubscriptionQueryKey,
+  subscriptionQueryKeys,
+  parseCreateSubscriptionPaymentResponse,
+  parseCurrentPlan,
+  parseCurrentSubscription,
+  parseStorageUsage,
+  type CreateSubscriptionPaymentBody,
+  type CreateSubscriptionPaymentResponse,
+  type CurrentPlan,
+  type CurrentSubscription,
+  type PlanKind,
+  type RenewalPeriod,
+  type StorageUsage,
+  type SubscriptionPayment,
+} from './src/subscription';
+export {
   USER_FLAG_KEYS,
   userFlagsApiConfig,
   UserFlagsQueryKey,

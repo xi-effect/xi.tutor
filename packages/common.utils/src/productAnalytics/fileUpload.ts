@@ -184,10 +184,13 @@ export const getFileUploadRejectReasonFromError = (
 };
 
 export const getFileUploadRejectReasonFromEvaluation = (
-  result: { ok: true } | { ok: false; reason: 'storage' | 'size'; maxBytes?: number },
+  result:
+    { ok: true } | { ok: false; reason: 'storage' | 'size' | 'imageUpgrade'; maxBytes?: number },
 ): FileUploadRejectReason | null => {
   if (result.ok) return null;
-  return result.reason === 'size' ? 'file_too_large' : 'unknown';
+  return result.reason === 'size' || result.reason === 'imageUpgrade'
+    ? 'file_too_large'
+    : 'unknown';
 };
 
 const buildBaseProps = (
@@ -241,7 +244,8 @@ export const beginFileUploadAttempt = (
 
 export const rejectFileUploadFromEvaluation = (
   attempt: FileUploadAttempt,
-  result: { ok: true } | { ok: false; reason: 'storage' | 'size'; maxBytes?: number },
+  result:
+    { ok: true } | { ok: false; reason: 'storage' | 'size' | 'imageUpgrade'; maxBytes?: number },
 ): boolean => {
   const reason = getFileUploadRejectReasonFromEvaluation(result);
   if (!reason) return false;

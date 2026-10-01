@@ -194,7 +194,8 @@ export const trackBoardObjectsLimitReached = (
   });
 
 export const trackUploadEvaluationLimit = (
-  result: { ok: true } | { ok: false; reason: 'storage' | 'size'; maxBytes?: number },
+  result:
+    { ok: true } | { ok: false; reason: 'storage' | 'size' | 'imageUpgrade'; maxBytes?: number },
   file: { type?: string; name?: string; size: number },
   source: ProductLimitSource,
 ): boolean => {

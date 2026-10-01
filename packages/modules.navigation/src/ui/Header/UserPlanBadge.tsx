@@ -8,7 +8,9 @@ type UserPlanBadgeProps = {
 
 export const UserPlanBadge = ({ className }: UserPlanBadgeProps) => {
   const { t } = useTranslation('navigation');
-  const { isPro } = useSubscriptionPlan();
+  const { isPro, isPlanReady, isPlanError } = useSubscriptionPlan();
+
+  if (!isPlanReady || isPlanError) return null;
 
   return (
     <span
