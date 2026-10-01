@@ -1,3 +1,3 @@
 export { useMaterialActions } from './hooks';
-export { MaterialsCard } from './ui';
+export { MaterialsCard, AssignGenericTagsPopover } from './ui';
 export { materialsCardEn, materialsCardRu } from './locales';
