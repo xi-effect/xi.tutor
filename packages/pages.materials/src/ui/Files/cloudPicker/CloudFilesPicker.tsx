@@ -13,7 +13,7 @@ import { FilesFilteredEmpty } from '../FilesFilteredEmpty';
 import { FilesTagsFilter } from '../FilesTagsFilter';
 import { FilesTypeFilter } from '../FilesTypeFilter';
 import { FilesUploaderFilter } from '../FilesUploaderFilter';
-import { LibraryTagsUiProvider } from '../tags/LibraryTagsUiContext';
+import { LibraryTagsUiProvider } from 'features.tags';
 import { CloudFileRow } from './CloudFileRow';
 
 export type CloudFilesPickerProps = {
