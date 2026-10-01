@@ -21,7 +21,7 @@ import {
   cardMenuSurfaceClass,
   TagDot,
 } from 'common.ui';
-import type { LibraryTag } from 'features.tags';
+import type { TagSchema as LibraryTag } from 'common.api';
 import { TagFormModal } from 'features.tags';
 
 export const Tags = () => {
