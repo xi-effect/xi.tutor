@@ -9,8 +9,7 @@ import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
-import { LibraryTagsUiProvider } from 'features.tags';
-import { useLibraryTags } from './Files/tags/useLibraryTags';
+import { LibraryTagsUiProvider, useLibraryTags } from 'features.tags';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import {
