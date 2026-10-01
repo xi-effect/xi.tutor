@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 /** База знаний — как в журнале оплат */
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
-const GRID_SCROLL_CLASS = 'min-h-0 flex-1 overflow-auto py-1 -ml-2 pl-2 pr-5';
+const GRID_SCROLL_CLASS = 'min-h-0 flex-1 overflow-auto';
 
 export const TemplatesGrid = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -35,7 +35,7 @@ export const TemplatesGrid = () => {
 
   if (isLoading) {
     return (
-      <div className={cn(GRID_SCROLL_CLASS, isMobile ? 'h-full' : 'h-[calc(100dvh-190px)]')}>
+      <div className={cn(GRID_SCROLL_CLASS, 'h-full', isMobile && 'pb-20')}>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
@@ -80,10 +80,7 @@ export const TemplatesGrid = () => {
   }
 
   return (
-    <div
-      ref={parentRef}
-      className={cn(GRID_SCROLL_CLASS, isMobile ? 'h-full' : 'h-[calc(100dvh-190px)]')}
-    >
+    <div ref={parentRef} className={cn(GRID_SCROLL_CLASS, 'h-full', isMobile && 'pb-20')}>
       <GridVirtualizer
         parentRef={parentRef}
         items={templates}

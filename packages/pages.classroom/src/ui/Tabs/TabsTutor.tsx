@@ -13,10 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import { SharedTabsContent } from './SharedTabsContent';
 import { isClassroomMaterialTab, useTabNavigation } from './useTabNavigation';
-import {
-  ClassroomMobileActionButton,
-  CLASSROOM_FAB_BOTTOM_OFFSET_PX,
-} from './ClassroomMobileActionButton';
+import { ClassroomMobileActionButton } from './ClassroomMobileActionButton';
 import { ClassroomTabsBar } from './ClassroomTabsBar';
 import { NextLessonChip } from '../Header/NextLessonChip';
 
@@ -24,6 +21,10 @@ type ContentKind = 'note' | 'board';
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
 const NEXT_LESSON_TABS = new Set(['boards', 'notes', 'files', 'schedule', 'payments']);
+
+/** Нематериальные вкладки со своей внутренней прокруткой: по дизайну их контент может
+ *  уходить под плавающую кнопку (ClassroomMobileActionButton) — резерв места не нужен. */
+const SELF_SCROLLING_TABS = new Set(['payments', 'schedule']);
 
 interface TutorDesktopToolbarProps {
   currentTab: string;
@@ -152,24 +153,12 @@ export const TabsTutor = () => {
 
         <div
           className={cn(
-            'mt-4 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
-            currentTab === 'payments' || isClassroomMaterialTab(currentTab)
-              ? 'pr-0 pb-0'
-              : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
-            // Материальные вкладки сами считают высоту списка (useFitViewportHeight)
-            isMobile && !isClassroomMaterialTab(currentTab) && 'pb-20',
+            'mt-4 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden sm:mt-6',
+            isMobile &&
+              !SELF_SCROLLING_TABS.has(currentTab) &&
+              !isClassroomMaterialTab(currentTab) &&
+              'pb-20',
           )}
-          // ClassroomMobileActionButton портализируется в document.body — обходом
-          // предков в useFitViewportHeight не виден. Отдаём его реальный отступ через
-          // CSS-переменную (тот же приём, что --calls-layout-bottom-offset в Navigation.tsx),
-          // выставляя её ровно при том же условии, при котором рендерится сама кнопка.
-          style={
-            isMobile && !isPaused
-              ? ({
-                  '--classroom-fab-offset': `${CLASSROOM_FAB_BOTTOM_OFFSET_PX}px`,
-                } as React.CSSProperties)
-              : undefined
-          }
         >
           <SharedTabsContent
             currentTab={currentTab}

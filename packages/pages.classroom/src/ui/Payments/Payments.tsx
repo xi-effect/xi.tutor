@@ -11,7 +11,6 @@ import { useMediaQuery } from '@xipkg/utils';
 import { LoadingState } from './LoadingState';
 import { RolePaymentT } from 'common.types';
 import { UserRoleT, isClassroomOnPause } from 'common.api';
-import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 type PaymentsProps = {
   onOpenInvoiceModal?: () => void;
@@ -72,9 +71,9 @@ export const Payments = ({ onOpenInvoiceModal }: PaymentsProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
       {isTutor && onOpenInvoiceModal && !isMobile && !isPaused ? (
-        <div className={galleryShadowHeaderInsetClass}>
+        <div className="shrink-0">
           <div className="flex min-w-0 flex-row items-center">
             <Button
               variant="primary"

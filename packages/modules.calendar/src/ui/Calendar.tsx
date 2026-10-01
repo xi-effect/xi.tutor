@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { cn } from '@xipkg/utils';
 import { ScheduleKanban, ScheduleMobileView } from './components';
 import { CalendarHeader } from './Header';
 import { useIsMobile, useScheduleViewMode } from '../hooks';
@@ -81,9 +82,14 @@ export const CalendarModule = ({
 
   const kanbanColumnWidth = isFullWeek ? COLUMN_MIN_WIDTH : columnWidth;
 
+  const containerClass = cn(
+    'bg-background-page flex h-full min-h-0 flex-col',
+    isMobile ? 'px-5 pt-5 pb-0' : 'min-w-0 flex-1 gap-6 p-5',
+  );
+
   if (isMobile) {
     return (
-      <div className="flex h-full min-h-0 flex-col">
+      <div className={containerClass}>
         <ScheduleMobileView
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={onLessonReschedule}
@@ -95,8 +101,8 @@ export const CalendarModule = ({
   }
 
   return (
-    <div className="bg-background-page flex h-full min-h-0 min-w-0 flex-1 flex-col">
-      <div className="shrink-0 px-5 pt-5 sm:px-10 sm:pt-10">
+    <div className={containerClass}>
+      <div className="shrink-0">
         <CalendarHeader
           weekStart={weekStart}
           visibleDayCount={effectiveVisibleCount}
@@ -110,39 +116,36 @@ export const CalendarModule = ({
         />
       </div>
 
-      <div className="mt-6 flex min-h-0 min-w-0 flex-1 flex-col px-5 pb-5 sm:px-10">
-        <div
-          ref={containerRef}
-          className={
-            isFullWeek
-              ? 'flex h-full min-h-0 flex-1 overflow-x-auto overflow-y-hidden'
-              : 'flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden'
-          }
-        >
-          {isFullWeek ? (
-            <div
-              style={{ minWidth: FULL_WEEK_MIN_WIDTH }}
-              className="flex h-full min-h-0 flex-1 flex-col"
-            >
-              <ScheduleKanban
-                visibleDays={kanbanVisibleDays}
-                columnWidth={kanbanColumnWidth}
-                onAddLessonClick={onAddLessonClick}
-                onLessonReschedule={onLessonReschedule}
-                onSaveLesson={onSaveLesson}
-                allowHorizontalOverflow
-              />
-            </div>
-          ) : (
+      <div
+        ref={containerRef}
+        className={cn(
+          'flex h-full min-h-0 min-w-0 flex-1',
+          isFullWeek ? 'overflow-x-auto overflow-y-hidden' : 'flex-col overflow-hidden',
+        )}
+      >
+        {isFullWeek ? (
+          <div
+            style={{ minWidth: FULL_WEEK_MIN_WIDTH }}
+            className="flex h-full min-h-0 flex-1 flex-col"
+          >
             <ScheduleKanban
               visibleDays={kanbanVisibleDays}
               columnWidth={kanbanColumnWidth}
               onAddLessonClick={onAddLessonClick}
               onLessonReschedule={onLessonReschedule}
               onSaveLesson={onSaveLesson}
+              allowHorizontalOverflow
             />
-          )}
-        </div>
+          </div>
+        ) : (
+          <ScheduleKanban
+            visibleDays={kanbanVisibleDays}
+            columnWidth={kanbanColumnWidth}
+            onAddLessonClick={onAddLessonClick}
+            onLessonReschedule={onLessonReschedule}
+            onSaveLesson={onSaveLesson}
+          />
+        )}
       </div>
     </div>
   );

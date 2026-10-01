@@ -5,7 +5,7 @@ export const modalContentClass =
 export const modalBodyClass = 'flex min-w-0 flex-col gap-6 overflow-hidden p-6';
 
 export const modalHeaderRowClass =
-  'flex min-w-0 items-center justify-between gap-4 overflow-hidden';
+  'flex min-w-0 shrink-0 items-center justify-between gap-4 overflow-hidden';
 
 export const modalTitleClass =
   'font-playfair text-text-primary m-0 min-w-0 flex-1 text-2xl leading-normal font-medium break-words';
