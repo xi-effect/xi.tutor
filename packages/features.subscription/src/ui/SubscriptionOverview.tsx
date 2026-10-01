@@ -1,10 +1,42 @@
 import { Button } from '@xipkg/button';
-import { formatBytes, useSubscriptionPlan } from 'common.subscription';
+import { InfoCircle } from '@xipkg/icons';
+import { Link } from '@xipkg/link';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
+import { formatPlanStorage, useSubscriptionPlan } from 'common.subscription';
 import { useCurrentSubscription, useStorageUsage } from 'common.services';
+import { getAppLanguage } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDateShort } from '../utils/dates';
-import { TariffsCompareTable } from './TariffsCompare';
 import { UsageBar } from './UsageBar';
+
+const SOVLIUM_PRICES_URL = 'https://sovlium.ru/prices';
+
+const StorageInfoHint = () => {
+  const { t } = useTranslation('subscription');
+
+  return (
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            className="flex size-4 shrink-0 items-center justify-center"
+            aria-label={t('overview.storageInfoLabel')}
+          >
+            <InfoCircle size="sm" theme="muted" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent
+          side="bottom"
+          align="start"
+          className="z-[200] max-w-72 leading-5 font-normal"
+        >
+          {t('overview.storageInfo')}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 export const SubscriptionOverview = () => {
   const { t } = useTranslation('subscription');
@@ -29,13 +61,18 @@ export const SubscriptionOverview = () => {
 
   const subscription = subscriptionQuery.data;
   const endsAt = subscription?.subscription.ends_at;
+  const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="border-border-strong flex flex-col gap-3 rounded-2xl border p-4">
+      <section className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <span className="text-text-secondary text-sm">{t('overview.currentPlan')}</span>
-          <span className="text-text-primary text-base font-semibold">{t(`plans.${planId}`)}</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-text-secondary text-sm">{t('overview.currentPlan')}</span>
+            <span className="text-text-primary text-base font-semibold">
+              {t(`plans.${planId}`)}
+            </span>
+          </div>
           {subscriptionQuery.isPending && subscriptionQuery.fetchStatus !== 'idle' ? (
             <span className="text-text-secondary text-sm">{t('overview.loading')}</span>
           ) : null}
@@ -81,11 +118,14 @@ export const SubscriptionOverview = () => {
         ) : storageQuery.data ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-4">
-              <span className="text-text-secondary text-sm">{t('overview.storage')}</span>
+              <span className="text-text-secondary flex items-center gap-1 text-sm">
+                {t('overview.storage')}
+                <StorageInfoHint />
+              </span>
               <span className="text-text-primary text-sm font-medium">
                 {t('overview.usage', {
-                  used: formatBytes(storageQuery.data.total_storage_bytes),
-                  total: formatBytes(tariff.storageBytes),
+                  used: formatPlanStorage(storageQuery.data.total_storage_bytes, planId, locale),
+                  total: formatPlanStorage(tariff.storageBytes, planId, locale),
                 })}
               </span>
             </div>
@@ -96,7 +136,21 @@ export const SubscriptionOverview = () => {
         )}
       </section>
 
-      <TariffsCompareTable />
+      <section className="bg-background-subtle flex flex-col items-start gap-2 rounded-2xl px-4 py-3">
+        <p className="text-text-secondary text-sm">{t('overview.plansDetails')}</p>
+        <Link
+          href={SOVLIUM_PRICES_URL}
+          target="_blank"
+          rel="noreferrer"
+          size="s"
+          className="text-text-link"
+          data-umami-event="outbound-link-click"
+          data-umami-event-url={SOVLIUM_PRICES_URL}
+          data-umami-event-type="prices"
+        >
+          {t('overview.landing')}
+        </Link>
+      </section>
     </div>
   );
 };

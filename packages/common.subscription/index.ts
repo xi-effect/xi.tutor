@@ -38,7 +38,7 @@ export {
   type PromoResult,
   type PromoStatus,
 } from './src/promo';
-export { bytesToMb, formatBytes, formatRub } from './src/format';
+export { bytesToMb, formatBytes, formatPlanStorage, formatRub } from './src/format';
 export {
   addDaysFromLaterOf,
   getRemainingSubscriptionDays,
@@ -47,6 +47,7 @@ export {
 export { useSubscriptionStore, type SubscriptionMock, type SubscriptionState } from './src/store';
 export {
   requestClassroomLimitDialog,
+  requestImageUpgradeDialog,
   requestProFeatureDialog,
   requestStorageLimitDialog,
   useSubscriptionUiStore,

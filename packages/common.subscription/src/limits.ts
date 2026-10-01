@@ -9,7 +9,11 @@ import {
 } from './planCache';
 import { useSubscriptionStore } from './store';
 import { getTariff, type PlanId, type TariffLimits } from './tariffs';
-import { requestClassroomLimitDialog, requestStorageLimitDialog } from './uiStore';
+import {
+  requestClassroomLimitDialog,
+  requestImageUpgradeDialog,
+  requestStorageLimitDialog,
+} from './uiStore';
 
 export type UploadKind = 'image' | 'other';
 
@@ -17,7 +21,7 @@ export type UploadEvaluation =
   | { ok: true }
   | {
       ok: false;
-      reason: 'storage' | 'size';
+      reason: 'storage' | 'size' | 'imageUpgrade';
       planId: PlanId;
       maxBytes: number;
       kind: UploadKind;
@@ -85,6 +89,18 @@ export const evaluateUpload = (file: File, kind: UploadKind): UploadEvaluation =
     return { ok: false, reason: 'storage', planId: tariff.id, maxBytes, kind };
   }
 
+  const proImageBytes = getTariff('pro').maxImageBytes;
+  const fitsProImageLimit =
+    kind === 'image' &&
+    tariff.id !== 'pro' &&
+    tariff.maxImageBytes < proImageBytes &&
+    file.size > maxBytes &&
+    file.size <= proImageBytes;
+
+  if (SUBSCRIPTION_BILLING_ENABLED && fitsProImageLimit) {
+    return { ok: false, reason: 'imageUpgrade', planId: tariff.id, maxBytes, kind };
+  }
+
   if (
     (SUBSCRIPTION_BILLING_ENABLED && useSubscriptionStore.getState().mock.forceOversizedFile) ||
     file.size > maxBytes
@@ -107,6 +123,9 @@ export const tryStartUpload = (file: File, kind: UploadKind): UploadEvaluation =
   const result = evaluateUpload(file, kind);
   if (!result.ok && result.reason === 'storage') {
     requestStorageLimitDialog();
+  }
+  if (!result.ok && result.reason === 'imageUpgrade') {
+    requestImageUpgradeDialog();
   }
   return result;
 };
