@@ -92,10 +92,10 @@
     "thanksLow": "Thanks for the feedback. It looks like there were problems during the lesson."
   },
   "testingEnd": {
-    "title": "Nearly a year of testing sovlium is behind us",
-    "lead": "In the coming weeks sovlium will have two plans: Basic with limits and Pro with more features.",
-    "details": "Read about the plans, new features, and what’s next in the article on our site.",
-    "read": "Read the article",
+    "title": "Plans are coming to sovlium soon",
+    "lead": "Your classrooms, students, and materials will stay on any plan.",
+    "details": "We cover the new features and what’s next in the blog",
+    "read": "Read the blog",
     "dismiss": "Don’t show again"
   }
 }
