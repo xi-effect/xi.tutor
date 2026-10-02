@@ -25,7 +25,6 @@ import { CalendarScheduleKanban, CalendarScheduleToolbar } from './ClassroomSche
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
-import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 function jsWeekdayToSeriesIndex(date: Date): number {
   const d = date.getDay();
@@ -227,7 +226,7 @@ export const Calendar = () => {
     <>
       {lessonInfoModal}
       {isMobile ? (
-        <div className="flex h-full min-h-0 min-w-0 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <ScheduleMobileView
             key={numericClassroomId}
             onAddLessonClick={isPaused ? undefined : onAddLessonClick}
@@ -240,8 +239,8 @@ export const Calendar = () => {
           />
         </div>
       ) : (
-        <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
-          <div className={galleryShadowHeaderInsetClass}>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
+          <div className="shrink-0">
             <div className="flex min-w-0 flex-row flex-wrap items-center gap-3">
               <CalendarScheduleToolbar />
               {isTutor && !isPaused ? (

@@ -171,7 +171,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
     >
       {/* Заголовки дней — без скролла */}
       <div
-        className="grid shrink-0 gap-x-7 pr-3"
+        className="grid shrink-0 gap-x-7"
         style={{
           gridTemplateColumns,
         }}
@@ -224,12 +224,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       <div
         ref={scrollAreaRef}
         className={cn(
-          'flex min-h-0 flex-1 [scrollbar-gutter:stable] flex-col overflow-y-auto pr-3',
+          'flex min-h-0 flex-1 flex-col overflow-y-auto',
           allowHorizontalOverflow ? 'overflow-x-visible' : 'overflow-x-hidden',
         )}
       >
         <div className="box-border flex min-h-full min-w-0 flex-1 flex-col">
-          <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>
+          <div className="grid flex-1 items-stretch gap-x-7" style={{ gridTemplateColumns }}>
             {eventsLoading
               ? visibleDays.map((day, colIndex) => {
                   const skeletonCount = getLessonCardSkeletonCountForDay(day);

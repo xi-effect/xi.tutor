@@ -97,6 +97,14 @@
     "media": "Медиа",
     "activities": "Упражнения"
   },
+  "lineStyle": {
+    "label": "Тип линии",
+    "solid": "Сплошная",
+    "dashed": "Пунктир",
+    "dotted": "Точки",
+    "sparse": "Редкий пунктир",
+    "double": "Двойная линия"
+  },
   "navbar": {
     "select": "Выбор",
     "hand": "Рука",

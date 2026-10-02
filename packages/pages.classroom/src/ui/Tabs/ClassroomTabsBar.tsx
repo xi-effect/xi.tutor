@@ -28,7 +28,7 @@ export const ClassroomTabsBar = ({
   isMobile,
   extra,
 }: ClassroomTabsBarProps) => (
-  <div className="flex w-full shrink-0 items-center gap-3 px-5 sm:gap-4 sm:px-8 md:px-10">
+  <div className="flex w-full shrink-0 items-center gap-3">
     <ClassroomBackButton />
     {isMobile ? (
       <div className="min-w-0 flex-1">
