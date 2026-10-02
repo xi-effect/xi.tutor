@@ -105,13 +105,8 @@ export const ScheduleMobileView = ({
   );
 
   return (
-    <div className={cn('bg-background-page flex h-full min-h-0 flex-col overflow-hidden')}>
-      <div
-        className={cn(
-          'bg-background-page shrink-0',
-          embedded ? 'px-0 pt-0 pr-5 pb-3' : 'px-5 pt-5 pb-3',
-        )}
-      >
+    <div className="bg-background-page flex h-full min-h-0 flex-col gap-4 overflow-hidden">
+      <div className="bg-background-page shrink-0">
         <div
           className={cn(
             'bg-background-surface flex flex-col rounded-[20px] p-4',
@@ -152,7 +147,7 @@ export const ScheduleMobileView = ({
           ) : null}
         </div>
       </div>
-      <div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden px-4')}>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <ScheduleDaySwiper
           days={slideDays}
           selectedDate={selectedDate}

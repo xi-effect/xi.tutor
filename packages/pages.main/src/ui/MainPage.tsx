@@ -143,14 +143,16 @@ export const MainPage = () => {
     <div
       className={cn(
         'bg-background-page flex flex-col',
-        isMobile ? 'h-full min-h-0 overflow-y-auto overscroll-contain' : 'h-full min-h-0',
+        isMobile
+          ? 'h-full min-h-0 overflow-y-auto overscroll-contain pt-5 pl-5'
+          : 'h-full min-h-0 pt-5 pl-5',
       )}
     >
       <div className={cn('flex flex-col', !isMobile && 'min-h-0 flex-1')}>
         <div
           className={cn(
-            'flex flex-col items-start gap-4 pt-5 pr-0 pl-5',
-            isMobile ? 'pb-24' : 'min-h-0 flex-1 gap-2 pb-0 sm:flex-row sm:gap-4 sm:pt-10 sm:pl-10',
+            'flex flex-col items-start gap-4',
+            isMobile ? 'pb-20' : 'min-h-0 flex-1 gap-2 pb-0 sm:flex-row sm:gap-4',
           )}
         >
           {!isMobile && (

@@ -117,7 +117,7 @@ export const Content = ({ classroom }: ContentProps) => {
     );
 
   return (
-    <div className="flex w-full shrink-0 flex-col gap-4 px-5 pt-5 sm:px-8 sm:pt-8 md:px-10 md:pt-10">
+    <div className="flex w-full shrink-0 flex-col gap-4">
       {isTutor && isPaused ? <PausedClassroomBanner /> : null}
       <div className="flex w-full min-w-0 flex-col gap-2">
         <div className="flex min-w-0 flex-row items-center gap-3 sm:gap-4">

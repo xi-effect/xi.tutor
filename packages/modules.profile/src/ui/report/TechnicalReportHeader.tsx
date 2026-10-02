@@ -13,7 +13,7 @@ export const TechnicalReportHeader = () => {
         <AlertIcon className="hidden md:block">
           <InfoCircle />
         </AlertIcon>
-        <AlertContainer>
+        <AlertContainer className="min-w-0">
           <AlertTitle className="text-base">{t('report.privacyTitle')}</AlertTitle>
           <AlertDescription>
             <ul className="text-text-primary dark:text-text-primary list-inside list-disc space-y-1 text-xs">
