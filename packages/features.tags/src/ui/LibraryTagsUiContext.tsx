@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { useLibraryTagsManage } from './libraryTagsUiStore';
+import { useLibraryTagsManage } from '../utils';
 import { TagManageModal } from './TagManageModal';
 
 export const LibraryTagsUiProvider = ({ children }: { children: ReactNode }) => {
