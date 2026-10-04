@@ -3,38 +3,43 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/lessonRecording/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
     "dev": "tsc --watch",
     "lint": "eslint .",
+    "test": "vitest run",
     "deps:npm": "node scripts/switch-calls-deps.mjs npm",
     "deps:link": "node scripts/switch-calls-deps.mjs link"
   },
   "dependencies": {
     "@livekit/components-styles": "1.1.6",
-    "@livekit/components-react": "^2.9.21",
     "@tanstack/react-query": "^5.73.3",
     "@tanstack/react-router": "^1.166.6",
+    "@xipkg/icons": "3.1.8",
     "common.api": "workspace:*",
     "common.env": "workspace:*",
     "common.platform": "workspace:*",
     "common.services": "workspace:*",
     "common.utils": "workspace:*",
+    "fix-webm-duration": "^1.0.6",
+    "i18next": "24.2.2",
     "modules.board": "workspace:*",
-    "@xipkg/calls": "^0.1.47",
-    "@xipkg/calls-chat": "^0.1.47",
-    "@xipkg/calls-compactview": "^0.1.47",
-    "@xipkg/calls-config": "^0.1.47",
-    "@xipkg/calls-hooks": "^0.1.47",
-    "@xipkg/calls-providers": "^0.1.47",
-    "@xipkg/calls-risehand": "^0.1.47",
-    "@xipkg/calls-store": "^0.1.47",
-    "@xipkg/calls-types": "^0.1.47",
-    "@xipkg/calls-ui": "^0.1.47",
-    "@xipkg/calls-utils": "^0.1.47",
-    "@xipkg/icons": "3.1.8"
+    "react-i18next": "15.4.1",
+    "sonner": "^2.0.7",
+    "@xipkg/calls": "^0.1.52",
+    "@xipkg/calls-chat": "^0.1.52",
+    "@xipkg/calls-compactview": "^0.1.52",
+    "@xipkg/calls-config": "^0.1.52",
+    "@xipkg/calls-hooks": "^0.1.52",
+    "@xipkg/calls-providers": "^0.1.52",
+    "@xipkg/calls-risehand": "^0.1.52",
+    "@xipkg/calls-store": "^0.1.52",
+    "@xipkg/calls-types": "^0.1.52",
+    "@xipkg/calls-ui": "^0.1.52",
+    "@xipkg/calls-utils": "^0.1.52"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -51,7 +56,8 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.22.0"
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "react": "19"

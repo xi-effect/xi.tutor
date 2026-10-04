@@ -25,6 +25,11 @@ export type {
   SlotBounds,
   UpdaterState,
   UpdaterStatus,
+  LessonRecordingCommand,
+  LessonRecordingOpenRequest,
+  LessonRecordingOpenResult,
+  LessonRecordingPresenceEvent,
+  LessonRecordingStatus,
 } from './src/electron-api';
 
 export {
@@ -63,6 +68,9 @@ export {
   requestMediaPermission,
   getUserMedia,
   getDisplayMedia,
+  getUnpatchedDisplayMedia,
+  installDisplayAudioCapture,
+  subscribeDisplayCaptureAudio,
   installNativeMediaAdapters,
   isScreenShareSupported,
   type MediaPermissionKind,

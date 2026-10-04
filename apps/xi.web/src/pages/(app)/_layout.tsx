@@ -17,7 +17,7 @@ const Navigation = lazy(() =>
 
 function LayoutComponent() {
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden">
+    <div data-lesson-capture-root="" className="relative flex min-h-svh flex-col overflow-hidden">
       <Suspense fallback={<LoadingScreen />}>
         <CallsShell>
           <LayoutContent />

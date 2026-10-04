@@ -44,6 +44,16 @@ import {
   installDownloadedUpdate,
   openUpdateRelease,
 } from '../updater';
+import {
+  armLessonSystemAudio,
+  closeLessonRecording,
+  discardLessonRecording,
+  openLessonRecording,
+  reportLessonRecordingPresence,
+  reportLessonRecordingStatus,
+  requestLessonRecordingStop,
+  writeLessonRecording,
+} from '../lesson-recording';
 
 function nativeOs(): 'macos' | 'windows' | 'linux' | 'unknown' {
   if (process.platform === 'darwin') return 'macos';
@@ -305,4 +315,28 @@ export function registerIpc(options: {
   handle(IPC.updaterInstall, async () => installDownloadedUpdate());
 
   handle(IPC.updaterOpenRelease, async () => openUpdateRelease());
+
+  handle(IPC.recordingArmSystemAudio, async () => {
+    armLessonSystemAudio();
+  });
+
+  handle(IPC.recordingOpen, async (event, input) =>
+    openLessonRecording(event, input, { getMainWindow, conference }),
+  );
+
+  handle(IPC.recordingWrite, async (event, input) => writeLessonRecording(event, input));
+
+  handle(IPC.recordingClose, async (event, input) => closeLessonRecording(event, input));
+
+  handle(IPC.recordingDiscard, async (event, input) => discardLessonRecording(event, input));
+
+  handle(IPC.recordingRequestStop, async (event) => requestLessonRecordingStop(event, conference));
+
+  handle(IPC.recordingReportStatus, async (event, input) => {
+    reportLessonRecordingStatus(event, input, getMainWindow);
+  });
+
+  handle(IPC.recordingReportPresence, async (event, input) => {
+    reportLessonRecordingPresence(event, input, getMainWindow);
+  });
 }
