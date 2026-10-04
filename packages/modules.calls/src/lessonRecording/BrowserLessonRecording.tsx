@@ -13,7 +13,7 @@ import { useLessonRecordingControlsStore } from '@xipkg/calls-store';
 import { RecordingBar } from './RecordingBar';
 import { ConferenceAudioMixer } from './audioMixer';
 import { LessonRecorder } from './LessonRecorder';
-import { captureLessonTab, mapCaptureError } from './capture';
+import { captureLessonTab, mapCaptureError, sourcesAlongsidePlayback } from './capture';
 import { createBrowserRecordingSink } from './sinks';
 import { formatLessonRecordingFilename } from './filename';
 import { selectRecordingMimeType } from './mime';
@@ -46,16 +46,20 @@ export function BrowserLessonRecording() {
   const [error, setError] = useState<LessonRecordingFailureReason | null>(null);
   const recorderRef = useRef<LessonRecorder | null>(null);
   const audioRef = useRef(audio);
+  const playbackIncludesCallRef = useRef(false);
   audioRef.current = audio;
 
   useEffect(() => {
-    recorderRef.current?.setAudioSources(audio.sources);
+    recorderRef.current?.setAudioSources(
+      sourcesAlongsidePlayback(audio.sources, playbackIncludesCallRef.current),
+    );
   }, [audio.sources]);
 
   const stop = useCallback(async () => {
     const recorder = recorderRef.current;
     if (!recorder) return;
     recorderRef.current = null;
+    playbackIncludesCallRef.current = false;
     setPhase('stopping');
     publish(false, null);
     const participantsCount = audioRef.current.participantCount;
@@ -139,21 +143,33 @@ export function BrowserLessonRecording() {
     void mixer.resume();
     const mime = selectRecordingMimeType();
     const filename = formatLessonRecordingFilename(new Date(), mime.extension);
-    let video: MediaStream | null = null;
+    let captured: Awaited<ReturnType<typeof captureLessonTab>> | null = null;
     let sinkCreated = false;
     let recorderOwned = false;
     try {
-      video = await captureLessonTab();
+      captured = await captureLessonTab();
+      const playbackIncludesCall = captured.playbackIncludesCall && Boolean(captured.playbackTrack);
+      playbackIncludesCallRef.current = playbackIncludesCall;
       const sink = await createBrowserRecordingSink(filename);
       sinkCreated = true;
       const recorder = await LessonRecorder.start({
         mixer,
-        videoStream: video,
-        audioSources: audioRef.current.sources,
+        videoStream: captured.video,
+        extraStream: captured.extraStream,
+        playbackTrack: captured.playbackTrack,
+        audioSources: sourcesAlongsidePlayback(audioRef.current.sources, playbackIncludesCall),
         sink,
         mimeType: mime.mimeType,
         format: mime.format,
       });
+      captured.playbackTrack?.addEventListener(
+        'ended',
+        () => {
+          playbackIncludesCallRef.current = false;
+          recorderRef.current?.setAudioSources(audioRef.current.sources);
+        },
+        { once: true },
+      );
       recorderOwned = true;
       recorderRef.current = recorder;
       setStartedAt(recorder.startedAt);
@@ -166,8 +182,12 @@ export function BrowserLessonRecording() {
         format: mime.format,
       });
     } catch (caught) {
+      playbackIncludesCallRef.current = false;
       if (!recorderOwned) await mixer.close().catch(() => undefined);
-      if (!sinkCreated) video?.getTracks().forEach((track) => track.stop());
+      if (!sinkCreated) {
+        captured?.video.getTracks().forEach((track) => track.stop());
+        captured?.extraStream?.getTracks().forEach((track) => track.stop());
+      }
       const captureReason = mapCaptureError(caught);
       if (captureReason === 'cancelled') {
         setPhase('idle');

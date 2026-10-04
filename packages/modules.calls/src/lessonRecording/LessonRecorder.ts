@@ -11,6 +11,10 @@ export type LessonRecorderStart = {
   sink: RecordingSink;
   mimeType: string;
   format: RecordingFormat;
+  /** Звук вкладки или компьютера. Исходный трек не останавливается отдельно от потока. */
+  playbackTrack?: MediaStreamTrack | null;
+  /** Поток системного звука, если он снят отдельно от видео. */
+  extraStream?: MediaStream | null;
   /** Создан в обработчике клика, чтобы AudioContext успел выйти из suspended. */
   mixer?: ConferenceAudioMixer;
 };
@@ -22,6 +26,7 @@ export type LessonRecorderStart = {
 export class LessonRecorder {
   private readonly mixer: ConferenceAudioMixer;
   private readonly videoStream: MediaStream;
+  private readonly extraStream: MediaStream | null;
   private readonly sink: RecordingSink;
   private readonly format: RecordingFormat;
   private readonly mimeType: string;
@@ -34,6 +39,7 @@ export class LessonRecorder {
   private constructor(options: {
     mixer: ConferenceAudioMixer;
     videoStream: MediaStream;
+    extraStream: MediaStream | null;
     sink: RecordingSink;
     format: RecordingFormat;
     mimeType: string;
@@ -42,6 +48,7 @@ export class LessonRecorder {
   }) {
     this.mixer = options.mixer;
     this.videoStream = options.videoStream;
+    this.extraStream = options.extraStream;
     this.sink = options.sink;
     this.format = options.format;
     this.mimeType = options.mimeType;
@@ -53,6 +60,7 @@ export class LessonRecorder {
     const mixer = input.mixer ?? new ConferenceAudioMixer();
     try {
       await mixer.resume();
+      mixer.setPlayback(input.playbackTrack ?? null);
       mixer.sync(input.audioSources);
       const [video] = input.videoStream.getVideoTracks();
       if (!video || video.readyState === 'ended') {
@@ -66,6 +74,7 @@ export class LessonRecorder {
       const recorder = new LessonRecorder({
         mixer,
         videoStream: input.videoStream,
+        extraStream: input.extraStream ?? null,
         sink: input.sink,
         format: input.format,
         mimeType: input.mimeType,
@@ -78,6 +87,7 @@ export class LessonRecorder {
     } catch (error) {
       await mixer.close().catch(() => undefined);
       input.videoStream.getTracks().forEach((track) => track.stop());
+      input.extraStream?.getTracks().forEach((track) => track.stop());
       await input.sink.abort().catch(() => undefined);
       throw error;
     }
@@ -140,6 +150,7 @@ export class LessonRecorder {
     } finally {
       await this.mixer.close().catch(() => undefined);
       this.videoStream.getTracks().forEach((track) => track.stop());
+      this.extraStream?.getTracks().forEach((track) => track.stop());
     }
   }
 }

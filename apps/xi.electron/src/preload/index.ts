@@ -75,6 +75,7 @@ function readRecordingCommand(payload: unknown): LessonRecordingCommand | null {
       action: 'start',
       fileId: record.fileId,
       sourceId: record.sourceId,
+      audioSourceId: typeof record.audioSourceId === 'string' ? record.audioSourceId : '',
       mimeType: typeof record.mimeType === 'string' ? record.mimeType : '',
     };
   }
@@ -178,6 +179,7 @@ const api: SovliumDesktopAPI = {
     save: (request) => ipcRenderer.invoke(IPC.filesSave, request),
   },
   recording: {
+    armSystemAudio: () => ipcRenderer.invoke(IPC.recordingArmSystemAudio),
     open: (input) => ipcRenderer.invoke(IPC.recordingOpen, input),
     write: (input) => ipcRenderer.invoke(IPC.recordingWrite, input),
     close: (input) => ipcRenderer.invoke(IPC.recordingClose, input),

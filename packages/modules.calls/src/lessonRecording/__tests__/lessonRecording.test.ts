@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ConferenceAudioMixer } from '../audioMixer';
+import { sourcesAlongsidePlayback } from '../capture';
 import { formatLessonRecordingFilename, formatRecordingClock } from '../filename';
 import { selectRecordingMimeType } from '../mime';
 
@@ -95,5 +96,74 @@ describe('ConferenceAudioMixer', () => {
     expect(disconnect).toHaveBeenCalled();
     expect(destinationStop).toHaveBeenCalled();
     vi.unstubAllGlobals();
+  });
+
+  it('подмешивает звук компьютера и не останавливает его трек', async () => {
+    const disconnect = vi.fn();
+    vi.stubGlobal(
+      'AudioContext',
+      class {
+        state = 'running';
+        resume() {
+          return Promise.resolve();
+        }
+        close() {
+          return Promise.resolve();
+        }
+        createMediaStreamDestination() {
+          return { stream: { getAudioTracks: () => [{ stop() {} }] } };
+        }
+        createMediaStreamSource() {
+          return { connect() {}, disconnect };
+        }
+        createGain() {
+          return {
+            gain: { value: 0 },
+            connect() {
+              return this;
+            },
+            disconnect() {},
+          };
+        }
+        createConstantSource() {
+          return {
+            connect() {
+              return this;
+            },
+            disconnect() {},
+            start() {},
+            stop() {},
+          };
+        }
+      },
+    );
+    vi.stubGlobal(
+      'MediaStream',
+      class {
+        constructor(public tracks: MediaStreamTrack[]) {}
+      },
+    );
+
+    const originalStop = vi.fn();
+    const track = { readyState: 'live', stop: originalStop } as unknown as MediaStreamTrack;
+    const mixer = new ConferenceAudioMixer();
+    mixer.setPlayback(track);
+    mixer.sync([]);
+    await mixer.close();
+
+    expect(originalStop).not.toHaveBeenCalled();
+    expect(disconnect).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+});
+
+describe('sourcesAlongsidePlayback', () => {
+  it('оставляет микрофон репетитора, когда звук вкладки уже содержит звонок', () => {
+    const sources = [
+      { id: 'local', origin: 'local' as const },
+      { id: 'remote', origin: 'remote' as const },
+    ];
+    expect(sourcesAlongsidePlayback(sources, true).map((source) => source.id)).toEqual(['local']);
+    expect(sourcesAlongsidePlayback(sources, false)).toEqual(sources);
   });
 });

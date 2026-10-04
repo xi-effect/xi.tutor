@@ -14,6 +14,7 @@ export class ConferenceAudioMixer {
   private readonly nodes = new Map<string, MediaStreamAudioSourceNode>();
   private readonly keepAlive: AudioScheduledSourceNode;
   private readonly keepAliveGain: GainNode;
+  private playback: MediaStreamAudioSourceNode | null = null;
 
   constructor() {
     const scope = globalThis as typeof globalThis & {
@@ -50,6 +51,19 @@ export class ConferenceAudioMixer {
     }
   }
 
+  /**
+   * Звук вкладки или компьютера: аудиофайлы, видео и всё, что играет у репетитора.
+   * Исходный трек не останавливается.
+   */
+  setPlayback(track: MediaStreamTrack | null): void {
+    this.playback?.disconnect();
+    this.playback = null;
+    if (!track || track.readyState === 'ended') return;
+    const node = this.context.createMediaStreamSource(new MediaStream([track]));
+    node.connect(this.destination);
+    this.playback = node;
+  }
+
   sync(sources: MixerAudioSource[]): void {
     const nextIds = new Set(sources.map((source) => source.id));
     for (const [id, node] of this.nodes) {
@@ -70,6 +84,8 @@ export class ConferenceAudioMixer {
   async close(): Promise<void> {
     for (const node of this.nodes.values()) node.disconnect();
     this.nodes.clear();
+    this.playback?.disconnect();
+    this.playback = null;
     try {
       this.keepAlive.stop();
     } catch {

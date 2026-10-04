@@ -1,9 +1,10 @@
-import { systemPreferences, type Session } from 'electron';
+import { desktopCapturer, systemPreferences, type Session } from 'electron';
 import type { MediaPermissionKind, MediaPermissionStatus } from '../shared/types';
 import { isSovliumHost, isTrustedRendererOrigin, parseUrl } from './security';
 import { isDev } from './config';
 import { rememberSharedDisplay } from './share-annotations';
 import { resolveShareSource } from './share-sources';
+import { takeLessonSystemAudio } from './lesson-recording';
 
 const MEDIA_PERMISSIONS = new Set([
   'media',
@@ -129,6 +130,26 @@ export function installPermissionHandlers(ses: Session): void {
   // Only pass a concrete source: an empty callback({}) used to grant the default
   // display (Finder/Dock in the call tile).
   ses.setDisplayMediaRequestHandler(async (_request, callback) => {
+    if (takeLessonSystemAudio()) {
+      try {
+        const screens = await desktopCapturer.getSources({
+          types: ['screen'],
+          thumbnailSize: { width: 1, height: 1 },
+          fetchWindowIcons: false,
+        });
+        const screen = screens[0];
+        if (!screen) {
+          callback({});
+          return;
+        }
+        callback({ video: screen, audio: 'loopback' });
+      } catch (error) {
+        console.warn('[xi.electron] system audio capture failed', error);
+        callback({});
+      }
+      return;
+    }
+
     try {
       const source = await resolveShareSource();
       if (!source) {

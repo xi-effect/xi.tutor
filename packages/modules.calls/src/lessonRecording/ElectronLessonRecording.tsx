@@ -22,7 +22,7 @@ import { useElectronConferenceState } from '../useElectronConferenceState';
 import { RecordingBar } from './RecordingBar';
 import { ConferenceAudioMixer } from './audioMixer';
 import { LessonRecorder } from './LessonRecorder';
-import { captureElectronWindow, mapCaptureError } from './capture';
+import { captureElectronWindow, mapCaptureError, sourcesAlongsidePlayback } from './capture';
 import { createElectronRecordingSink } from './sinks';
 import { formatLessonRecordingFilename } from './filename';
 import { selectRecordingMimeType } from './mime';
@@ -76,12 +76,14 @@ function ElectronConferenceRecordingEngine() {
   const recorderRef = useRef<LessonRecorder | null>(null);
   const audioRef = useRef(audio);
   const mimeRef = useRef(selectRecordingMimeType());
+  const playbackIncludesCallRef = useRef(false);
   audioRef.current = audio;
 
   const stop = useCallback(async () => {
     const recorder = recorderRef.current;
     if (!recorder) return;
     recorderRef.current = null;
+    playbackIncludesCallRef.current = false;
     const desktop = getSovliumDesktop();
     publish(false, null);
     setPhase('stopping');
@@ -122,7 +124,9 @@ function ElectronConferenceRecordingEngine() {
   stopRef.current = stop;
 
   useEffect(() => {
-    recorderRef.current?.setAudioSources(audio.sources);
+    recorderRef.current?.setAudioSources(
+      sourcesAlongsidePlayback(audio.sources, playbackIncludesCallRef.current),
+    );
   }, [audio.sources]);
 
   useEffect(() => {
@@ -140,17 +144,31 @@ function ElectronConferenceRecordingEngine() {
       const filename = formatLessonRecordingFilename(new Date(), mime.extension);
       const mixer = new ConferenceAudioMixer();
       void mixer.resume();
+      let captured: Awaited<ReturnType<typeof captureElectronWindow>> | null = null;
       try {
-        const video = await captureElectronWindow(command.sourceId);
+        captured = await captureElectronWindow(command.sourceId, command.audioSourceId);
+        const playbackIncludesCall =
+          captured.playbackIncludesCall && Boolean(captured.playbackTrack);
+        playbackIncludesCallRef.current = playbackIncludesCall;
         const sink = createElectronRecordingSink(command.fileId, filename);
         const recorder = await LessonRecorder.start({
           mixer,
-          videoStream: video,
-          audioSources: audioRef.current.sources,
+          videoStream: captured.video,
+          extraStream: captured.extraStream,
+          playbackTrack: captured.playbackTrack,
+          audioSources: sourcesAlongsidePlayback(audioRef.current.sources, playbackIncludesCall),
           sink,
           mimeType: command.mimeType || mime.mimeType,
           format: mime.format,
         });
+        captured.playbackTrack?.addEventListener(
+          'ended',
+          () => {
+            playbackIncludesCallRef.current = false;
+            recorderRef.current?.setAudioSources(audioRef.current.sources);
+          },
+          { once: true },
+        );
         recorderRef.current = recorder;
         setStartedAt(recorder.startedAt);
         setPhase('recording');
@@ -163,7 +181,12 @@ function ElectronConferenceRecordingEngine() {
         });
         void desktop?.recording.reportStatus({ phase: 'recording', startedAt: recorder.startedAt });
       } catch (caught) {
-        if (!recorderRef.current) await mixer.close().catch(() => undefined);
+        playbackIncludesCallRef.current = false;
+        if (!recorderRef.current) {
+          await mixer.close().catch(() => undefined);
+          captured?.video.getTracks().forEach((track) => track.stop());
+          captured?.extraStream?.getTracks().forEach((track) => track.stop());
+        }
         setStartedAt(null);
         setPhase('idle');
         await getSovliumDesktop()?.recording.discard({ fileId: command.fileId });

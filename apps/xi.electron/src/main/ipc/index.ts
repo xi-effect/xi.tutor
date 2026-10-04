@@ -45,6 +45,7 @@ import {
   openUpdateRelease,
 } from '../updater';
 import {
+  armLessonSystemAudio,
   closeLessonRecording,
   discardLessonRecording,
   openLessonRecording,
@@ -314,6 +315,10 @@ export function registerIpc(options: {
   handle(IPC.updaterInstall, async () => installDownloadedUpdate());
 
   handle(IPC.updaterOpenRelease, async () => openUpdateRelease());
+
+  handle(IPC.recordingArmSystemAudio, async () => {
+    armLessonSystemAudio();
+  });
 
   handle(IPC.recordingOpen, async (event, input) =>
     openLessonRecording(event, input, { getMainWindow, conference }),

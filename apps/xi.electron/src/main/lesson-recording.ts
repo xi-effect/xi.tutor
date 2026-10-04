@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, type IpcMainInvokeEvent } from 'electron';
+import { BrowserWindow, desktopCapturer, dialog, type IpcMainInvokeEvent } from 'electron';
 import { randomUUID } from 'node:crypto';
 import { createWriteStream, type WriteStream } from 'node:fs';
 import { unlink } from 'node:fs/promises';
@@ -16,6 +16,18 @@ type Session = {
 };
 
 const sessions = new Map<string, Session>();
+let systemAudioArmedUntil = 0;
+
+/** Следующий getDisplayMedia в течение нескольких секунд забирает системный звук. */
+export function armLessonSystemAudio(): void {
+  systemAudioArmedUntil = Date.now() + 8_000;
+}
+
+export function takeLessonSystemAudio(): boolean {
+  if (Date.now() > systemAudioArmedUntil) return false;
+  systemAudioArmedUntil = 0;
+  return true;
+}
 
 function senderUrl(event: IpcMainInvokeEvent): string {
   return event.senderFrame?.url ?? event.sender.getURL();
@@ -95,12 +107,25 @@ export async function openLessonRecording(
     sourceId = '';
   }
 
+  let audioSourceId = '';
+  try {
+    const screens = await desktopCapturer.getSources({
+      types: ['screen'],
+      thumbnailSize: { width: 1, height: 1 },
+      fetchWindowIcons: false,
+    });
+    audioSourceId = screens[0]?.id ?? '';
+  } catch {
+    audioSourceId = '';
+  }
+
   const sent =
     sourceId.length > 0 &&
     options.conference.postToConference(EVENTS.recordingCommand, {
       action: 'start',
       fileId,
       sourceId,
+      audioSourceId,
       mimeType,
     });
 

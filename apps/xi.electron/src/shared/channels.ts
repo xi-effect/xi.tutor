@@ -48,6 +48,7 @@ export const IPC = {
   updaterDownload: 'sovlium:updater:download',
   updaterInstall: 'sovlium:updater:install',
   updaterOpenRelease: 'sovlium:updater:open-release',
+  recordingArmSystemAudio: 'sovlium:recording:arm-system-audio',
   recordingOpen: 'sovlium:recording:open',
   recordingWrite: 'sovlium:recording:write',
   recordingClose: 'sovlium:recording:close',

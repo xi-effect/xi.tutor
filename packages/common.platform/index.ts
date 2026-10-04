@@ -68,6 +68,7 @@ export {
   requestMediaPermission,
   getUserMedia,
   getDisplayMedia,
+  getUnpatchedDisplayMedia,
   installNativeMediaAdapters,
   isScreenShareSupported,
   type MediaPermissionKind,

@@ -90,7 +90,15 @@ export interface LessonRecordingOpenRequest {
 }
 
 export type LessonRecordingCommand =
-  { action: 'start'; fileId: string; sourceId: string; mimeType: string } | { action: 'stop' };
+  | {
+      action: 'start';
+      fileId: string;
+      sourceId: string;
+      /** Источник экрана для системного звука. Пустая строка — звук только из окна. */
+      audioSourceId: string;
+      mimeType: string;
+    }
+  | { action: 'stop' };
 
 export type LessonRecordingStatus =
   | { phase: 'recording'; startedAt: number }
@@ -186,6 +194,7 @@ export interface SovliumDesktopAPI {
     save(request: SaveFileRequest): Promise<boolean>;
   };
   recording: {
+    armSystemAudio(): Promise<void>;
     open(input: LessonRecordingOpenRequest): Promise<LessonRecordingOpenResult>;
     write(input: { fileId: string; bytes: Uint8Array }): Promise<boolean>;
     close(input: { fileId: string }): Promise<{ sizeBytes: number } | null>;

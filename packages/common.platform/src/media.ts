@@ -101,6 +101,17 @@ export async function getDisplayMedia(options?: DisplayMediaStreamOptions): Prom
   return navigator.mediaDevices.getDisplayMedia(options);
 }
 
+/** Обходит выбор источника демонстрации: нужен для системного звука записи. */
+export function getUnpatchedDisplayMedia(
+  options?: DisplayMediaStreamOptions,
+): Promise<MediaStream> {
+  const request =
+    originalGetDisplayMedia ??
+    navigator.mediaDevices?.getDisplayMedia?.bind(navigator.mediaDevices);
+  if (!request) throw new Error('getDisplayMedia is not available');
+  return request(options);
+}
+
 let mediaAdaptersInstalled = false;
 
 function constraintSize(value: ConstrainULong | undefined): number | undefined {
