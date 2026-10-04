@@ -25,6 +25,11 @@ export type {
   SlotBounds,
   UpdaterState,
   UpdaterStatus,
+  LessonRecordingCommand,
+  LessonRecordingOpenRequest,
+  LessonRecordingOpenResult,
+  LessonRecordingPresenceEvent,
+  LessonRecordingStatus,
 } from './src/electron-api';
 
 export {

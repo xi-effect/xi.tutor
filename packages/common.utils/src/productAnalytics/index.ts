@@ -187,6 +187,7 @@ export type {
   FileUploadSource,
   FileUploadFileCategory,
   FileUploadSizeBucket,
+  LessonRecordingFailureReason,
   FileSizeBucket,
   LimitExceededBy,
   FileUploadRejectReason,

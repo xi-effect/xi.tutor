@@ -141,6 +141,15 @@ export type ActivationHelpScreen =
 
 export type ProductAnalyticsDurationBucket = '5-15' | '15-30' | '30-45' | '45+';
 
+export type LessonRecordingFailureReason =
+  | 'capture_denied'
+  | 'capture_unsupported'
+  | 'desktop_rejected'
+  | 'recorder_error'
+  | 'sink_error'
+  | 'conference_unavailable'
+  | 'unknown';
+
 export type ProductAnalyticsBoardTrigger = 'duration' | 'objects' | 'collaboration';
 
 export type MathBankAnalyticsSource = 'page' | 'board' | 'editor';
