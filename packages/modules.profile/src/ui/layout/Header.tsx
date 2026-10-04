@@ -75,7 +75,7 @@ export const Header = ({
   }
 
   return (
-    <div className="flex items-center gap-8 overflow-hidden">
+    <div className="flex shrink-0 items-center gap-8 overflow-hidden">
       <ModalTitle className={cn(modalTitleClass, 'w-[220px] flex-none shrink-0 pl-2')}>
         {settingsTitle}
       </ModalTitle>

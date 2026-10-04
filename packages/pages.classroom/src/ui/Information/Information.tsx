@@ -183,7 +183,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
           <div className={galleryShadowHeaderInsetClass}>
             <div className="flex w-full min-w-0 flex-row flex-wrap items-center gap-2">
               <h2 className={sectionTitleClass}>{t('information.students')}</h2>
-              <div className="ml-auto flex shrink-0 items-center gap-2">
+              <div className="ml-auto flex flex-wrap items-center gap-2 min-[961px]:shrink-0 min-[961px]:flex-nowrap">
                 {isPaused ? null : (
                   <>
                     <ModalStudentsGroup>

@@ -101,6 +101,93 @@ export async function getDisplayMedia(options?: DisplayMediaStreamOptions): Prom
   return navigator.mediaDevices.getDisplayMedia(options);
 }
 
+/** Обходит выбор источника демонстрации: нужен для системного звука записи. */
+export function getUnpatchedDisplayMedia(
+  options?: DisplayMediaStreamOptions,
+): Promise<MediaStream> {
+  const request =
+    originalGetDisplayMedia ??
+    rawGetDisplayMedia ??
+    navigator.mediaDevices?.getDisplayMedia?.bind(navigator.mediaDevices);
+  if (!request) throw new Error('getDisplayMedia is not available');
+  return request(options);
+}
+
+const displayAudioTracks = new Set<MediaStreamTrack>();
+const displayAudioListeners = new Set<(tracks: MediaStreamTrack[]) => void>();
+let displayAudioCaptureInstalled = false;
+let rawGetDisplayMedia: MediaDevices['getDisplayMedia'] | undefined;
+
+function liveDisplayAudio(): MediaStreamTrack[] {
+  return [...displayAudioTracks].filter((track) => track.readyState === 'live');
+}
+
+function emitDisplayAudio(): void {
+  const tracks = liveDisplayAudio();
+  displayAudioListeners.forEach((listener) => listener(tracks));
+}
+
+/** Живые аудиодорожки демонстрации экрана. Клоны, исходные треки LiveKit не останавливаются. */
+export function subscribeDisplayCaptureAudio(
+  listener: (tracks: MediaStreamTrack[]) => void,
+): () => void {
+  displayAudioListeners.add(listener);
+  listener(liveDisplayAudio());
+  return () => displayAudioListeners.delete(listener);
+}
+
+function retainDisplayAudio(stream: MediaStream): void {
+  let added = false;
+  for (const track of stream.getAudioTracks()) {
+    let clone = track;
+    try {
+      clone = track.clone();
+    } catch {
+      clone = track;
+    }
+    displayAudioTracks.add(clone);
+    added = true;
+    const drop = () => {
+      if (!displayAudioTracks.delete(clone)) return;
+      if (clone !== track) clone.stop();
+      emitDisplayAudio();
+    };
+    track.addEventListener('ended', drop);
+    if (clone !== track) clone.addEventListener('ended', drop);
+  }
+  if (added) emitDisplayAudio();
+}
+
+function withDisplayAudio(
+  options?: DisplayMediaStreamOptions,
+): DisplayMediaStreamOptions | undefined {
+  if (!options?.audio) return options;
+  const audioOptions = typeof options.audio === 'object' ? options.audio : {};
+  return {
+    ...options,
+    audio: { ...audioOptions, suppressLocalAudioPlayback: false },
+    systemAudio: 'include',
+  } as DisplayMediaStreamOptions;
+}
+
+/**
+ * В браузере перехватывает getDisplayMedia демонстрации и сохраняет её звук для записи.
+ * Запись урока ходит через getUnpatchedDisplayMedia и сюда не попадает.
+ */
+export function installDisplayAudioCapture(): void {
+  if (displayAudioCaptureInstalled || typeof navigator === 'undefined') return;
+  const mediaDevices = navigator.mediaDevices;
+  if (!mediaDevices || typeof mediaDevices.getDisplayMedia !== 'function') return;
+  displayAudioCaptureInstalled = true;
+  const current = mediaDevices.getDisplayMedia.bind(mediaDevices);
+  if (!rawGetDisplayMedia) rawGetDisplayMedia = current;
+  mediaDevices.getDisplayMedia = (async (options?: DisplayMediaStreamOptions) => {
+    const stream = await current(withDisplayAudio(options));
+    if (!isElectronShell()) retainDisplayAudio(stream);
+    return stream;
+  }) as typeof mediaDevices.getDisplayMedia;
+}
+
 let mediaAdaptersInstalled = false;
 
 function constraintSize(value: ConstrainULong | undefined): number | undefined {
@@ -311,6 +398,14 @@ export function installNativeMediaAdapters(): void {
   if (isDesktopNative() && typeof mediaDevices.getDisplayMedia === 'function') {
     originalGetDisplayMedia = mediaDevices.getDisplayMedia.bind(mediaDevices);
     mediaDevices.getDisplayMedia = (async (options?: DisplayMediaStreamOptions) => {
+      if (options?.audio) {
+        const audioOptions = typeof options.audio === 'object' ? options.audio : {};
+        options = {
+          ...options,
+          audio: { ...audioOptions, suppressLocalAudioPlayback: false },
+          systemAudio: 'include',
+        } as DisplayMediaStreamOptions;
+      }
       if (isElectronShell()) {
         if (!(await chooseShareSource())) {
           throw new DOMException('Screen share was cancelled', 'NotAllowedError');

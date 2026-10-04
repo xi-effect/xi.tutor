@@ -190,11 +190,11 @@ export const PaymentsPage = () => {
   return (
     <div
       className={cn(
-        'bg-background-page flex flex-col gap-4',
-        isMobile ? 'h-full min-h-0 overflow-hidden' : 'h-screen',
+        'bg-background-page flex flex-col gap-4 p-5',
+        isMobile ? 'h-full min-h-0 overflow-hidden pb-0' : 'h-screen',
       )}
     >
-      <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
+      <div className="flex w-full shrink-0 items-start justify-between sm:flex-row">
         <Header
           onCreateInvoice={onOpenInvoiceModal}
           onCreateTemplate={() => setIsTemplateModalOpen(true)}
@@ -203,12 +203,7 @@ export const PaymentsPage = () => {
         />
       </div>
 
-      <div
-        className={cn(
-          'flex min-h-0 flex-1 flex-col pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10',
-          isMobile && 'pb-20',
-        )}
-      >
+      <div className="flex min-h-0 flex-1 flex-col">
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
           activeTab={activeTab}

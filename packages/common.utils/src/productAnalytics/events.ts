@@ -68,6 +68,9 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   LESSON_JOINED: 'lesson_joined',
   LESSON_DURATION_REACHED: 'lesson_duration_reached',
   LESSON_FINISHED: 'lesson_finished',
+  LESSON_RECORDING_STARTED: 'lesson_recording_started',
+  LESSON_RECORDING_COMPLETED: 'lesson_recording_completed',
+  LESSON_RECORDING_FAILED: 'lesson_recording_failed',
 
   // Media permissions
   MEDIA_PERMISSION_REQUESTED: 'media_permission_requested',

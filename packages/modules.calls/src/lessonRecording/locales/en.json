@@ -1,0 +1,13 @@
+{
+  "start": "Record lesson",
+  "recording": "Recording",
+  "stop": "Stop recording",
+  "student": "Lesson is being recorded",
+  "saved": "Lesson recording saved",
+  "error": "Could not record the lesson",
+  "captureDenied": "Allow access to the lesson tab to start recording",
+  "unsupported": "This browser cannot record the lesson",
+  "desktopRejected": "Recording captures the lesson window, not the whole desktop",
+  "conferenceUnavailable": "Recording starts once the conference is connected",
+  "leaveWarning": "Lesson recording is still in progress. Closing the page may lose the file."
+}
