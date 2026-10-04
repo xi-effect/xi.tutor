@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ConferenceAudioMixer } from '../audioMixer';
 import { sourcesAlongsidePlayback } from '../capture';
+import { collectScreenShareAudio, mergeShareAudio } from '../screenShareAudio';
 import { formatLessonRecordingFilename, formatRecordingClock } from '../filename';
 import { selectRecordingMimeType } from '../mime';
 
@@ -158,12 +159,109 @@ describe('ConferenceAudioMixer', () => {
 });
 
 describe('sourcesAlongsidePlayback', () => {
-  it('оставляет микрофон репетитора, когда звук вкладки уже содержит звонок', () => {
+  it('оставляет микрофон репетитора и звук демонстрации', () => {
+    const localTrack = { id: 'mic' } as unknown as MediaStreamTrack;
+    const remoteTrack = { id: 'remote-mic' } as unknown as MediaStreamTrack;
+    const shareTrack = { id: 'share' } as unknown as MediaStreamTrack;
     const sources = [
-      { id: 'local', origin: 'local' as const },
-      { id: 'remote', origin: 'remote' as const },
+      { id: 'local', origin: 'local' as const, track: localTrack },
+      { id: 'remote', origin: 'remote' as const, track: remoteTrack },
     ];
-    expect(sourcesAlongsidePlayback(sources, true).map((source) => source.id)).toEqual(['local']);
-    expect(sourcesAlongsidePlayback(sources, false)).toEqual(sources);
+    const screenShare = [{ id: 'share', track: shareTrack }];
+    expect(sourcesAlongsidePlayback(sources, true, screenShare).map((source) => source.id)).toEqual(
+      ['local', 'share'],
+    );
+    expect(
+      sourcesAlongsidePlayback(sources, false, screenShare).map((source) => source.id),
+    ).toEqual(['local', 'remote', 'share']);
+  });
+});
+
+describe('collectScreenShareAudio', () => {
+  it('берёт звук своей и чужой демонстрации и не останавливает треки', () => {
+    const stop = vi.fn();
+    const localShare = { readyState: 'live', stop } as unknown as MediaStreamTrack;
+    const remoteShare = { readyState: 'live', stop } as unknown as MediaStreamTrack;
+    const mic = { readyState: 'live', stop } as unknown as MediaStreamTrack;
+    const publications = (
+      items: Array<{ source: string; track: MediaStreamTrack; sid: string; subscribed?: boolean }>,
+    ) => ({
+      forEach: (
+        cb: (publication: {
+          source: string;
+          trackSid: string;
+          isSubscribed: boolean;
+          track?: { mediaStreamTrack?: MediaStreamTrack } | null;
+        }) => void,
+      ) => {
+        for (const item of items) {
+          cb({
+            source: item.source,
+            trackSid: item.sid,
+            isSubscribed: item.subscribed ?? true,
+            track: { mediaStreamTrack: item.track },
+          });
+        }
+      },
+    });
+
+    const sources = collectScreenShareAudio({
+      localParticipant: {
+        identity: 'tutor',
+        audioTrackPublications: publications([
+          { source: 'microphone', track: mic, sid: 'mic' },
+          { source: 'screen_share_audio', track: localShare, sid: 'local-share' },
+        ]),
+      },
+      remoteParticipants: {
+        forEach: (cb) => {
+          cb({
+            identity: 'student',
+            audioTrackPublications: publications([
+              { source: 'screen_share_audio', track: remoteShare, sid: 'remote-share' },
+            ]),
+          });
+        },
+      },
+    });
+
+    expect(sources.map((source) => source.id)).toEqual([
+      'share:local:local-share',
+      'share:remote:student:remote-share',
+    ]);
+    expect(stop).not.toHaveBeenCalled();
+  });
+
+  it('узнаёт звук демонстрации по треку, если публикация ещё unknown', () => {
+    const track = { readyState: 'live', stop: vi.fn() } as unknown as MediaStreamTrack;
+    const sources = collectScreenShareAudio({
+      localParticipant: {
+        identity: 'tutor',
+        getTrackPublications: () => [
+          {
+            source: 'unknown',
+            trackSid: 'share',
+            track: { source: 'screen_share_audio', mediaStreamTrack: track },
+          },
+        ],
+      },
+      remoteParticipants: { forEach() {} },
+    });
+    expect(sources.map((source) => source.id)).toEqual(['share:local:share']);
+  });
+});
+
+describe('mergeShareAudio', () => {
+  it('подменяет свой трек LiveKit клоном демонстрации и оставляет чужой', () => {
+    const local = { id: 'share:local:1', track: { readyState: 'live' } as MediaStreamTrack };
+    const remote = {
+      id: 'share:remote:student:2',
+      track: { readyState: 'live' } as MediaStreamTrack,
+    };
+    const display = { id: 'tab-audio', readyState: 'live' } as MediaStreamTrack;
+    expect(mergeShareAudio([local, remote], [display]).map((source) => source.id)).toEqual([
+      'share:remote:student:2',
+      'display:tab-audio',
+    ]);
   });
 });

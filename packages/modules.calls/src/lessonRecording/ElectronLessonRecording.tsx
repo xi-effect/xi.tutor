@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   getSovliumDesktop,
   isElectronConferenceSurface,
+  subscribeDisplayCaptureAudio,
   type LessonRecordingCommand,
   type LessonRecordingStatus,
 } from 'common.platform';
@@ -23,6 +24,8 @@ import { RecordingBar } from './RecordingBar';
 import { ConferenceAudioMixer } from './audioMixer';
 import { LessonRecorder } from './LessonRecorder';
 import { captureElectronWindow, mapCaptureError, sourcesAlongsidePlayback } from './capture';
+import { mergeShareAudio } from './screenShareAudio';
+import { useScreenShareAudioSources } from './useScreenShareAudioSources';
 import { createElectronRecordingSink } from './sinks';
 import { formatLessonRecordingFilename } from './filename';
 import { selectRecordingMimeType } from './mime';
@@ -67,6 +70,7 @@ function ElectronPresenceRelay() {
 /** Движок в окне конференции: здесь есть LiveKit, а картинка берётся с главного окна приложения. */
 function ElectronConferenceRecordingEngine() {
   const audio = useConferenceAudioSources();
+  const screenShare = useScreenShareAudioSources();
   const publish = usePublishLessonRecording();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -75,9 +79,22 @@ function ElectronConferenceRecordingEngine() {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const recorderRef = useRef<LessonRecorder | null>(null);
   const audioRef = useRef(audio);
+  const screenShareRef = useRef(screenShare);
+  const displayAudioRef = useRef<MediaStreamTrack[]>([]);
+  const [displayAudio, setDisplayAudio] = useState<MediaStreamTrack[]>([]);
   const mimeRef = useRef(selectRecordingMimeType());
   const playbackIncludesCallRef = useRef(false);
   audioRef.current = audio;
+  screenShareRef.current = screenShare;
+
+  useEffect(
+    () =>
+      subscribeDisplayCaptureAudio((tracks) => {
+        displayAudioRef.current = tracks;
+        setDisplayAudio(tracks);
+      }),
+    [],
+  );
 
   const stop = useCallback(async () => {
     const recorder = recorderRef.current;
@@ -125,9 +142,13 @@ function ElectronConferenceRecordingEngine() {
 
   useEffect(() => {
     recorderRef.current?.setAudioSources(
-      sourcesAlongsidePlayback(audio.sources, playbackIncludesCallRef.current),
+      sourcesAlongsidePlayback(
+        audio.sources,
+        playbackIncludesCallRef.current,
+        mergeShareAudio(screenShare, displayAudio),
+      ),
     );
-  }, [audio.sources]);
+  }, [audio.sources, displayAudio, screenShare]);
 
   useEffect(() => {
     if (!recorderRef.current) return;
@@ -156,7 +177,11 @@ function ElectronConferenceRecordingEngine() {
           videoStream: captured.video,
           extraStream: captured.extraStream,
           playbackTrack: captured.playbackTrack,
-          audioSources: sourcesAlongsidePlayback(audioRef.current.sources, playbackIncludesCall),
+          audioSources: sourcesAlongsidePlayback(
+            audioRef.current.sources,
+            playbackIncludesCall,
+            mergeShareAudio(screenShareRef.current, displayAudioRef.current),
+          ),
           sink,
           mimeType: command.mimeType || mime.mimeType,
           format: mime.format,
@@ -165,7 +190,13 @@ function ElectronConferenceRecordingEngine() {
           'ended',
           () => {
             playbackIncludesCallRef.current = false;
-            recorderRef.current?.setAudioSources(audioRef.current.sources);
+            recorderRef.current?.setAudioSources(
+              sourcesAlongsidePlayback(
+                audioRef.current.sources,
+                false,
+                mergeShareAudio(screenShareRef.current, displayAudioRef.current),
+              ),
+            );
           },
           { once: true },
         );

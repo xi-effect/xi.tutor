@@ -157,7 +157,10 @@ export function installPermissionHandlers(ses: Session): void {
         return;
       }
       rememberSharedDisplay(source.id.startsWith('screen:') ? source.display_id : undefined);
-      callback({ video: source });
+      callback({
+        video: source,
+        ...(_request.audioRequested ? { audio: 'loopback' as const } : {}),
+      });
     } catch (error) {
       console.warn('[xi.electron] display media handler failed', error);
       callback({});

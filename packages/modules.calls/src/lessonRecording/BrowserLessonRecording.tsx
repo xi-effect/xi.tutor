@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { subscribeDisplayCaptureAudio } from 'common.platform';
 import { useCurrentUser } from 'common.services';
 import {
   LessonRecordingPresenceSync,
@@ -14,6 +15,8 @@ import { RecordingBar } from './RecordingBar';
 import { ConferenceAudioMixer } from './audioMixer';
 import { LessonRecorder } from './LessonRecorder';
 import { captureLessonTab, mapCaptureError, sourcesAlongsidePlayback } from './capture';
+import { mergeShareAudio } from './screenShareAudio';
+import { useScreenShareAudioSources } from './useScreenShareAudioSources';
 import { createBrowserRecordingSink } from './sinks';
 import { formatLessonRecordingFilename } from './filename';
 import { selectRecordingMimeType } from './mime';
@@ -38,6 +41,7 @@ export function BrowserLessonRecording() {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const audio = useConferenceAudioSources();
+  const screenShare = useScreenShareAudioSources();
   const publish = usePublishLessonRecording();
   const presence = useLessonRecordingPresence();
   const lessonId = useCurrentClassroomId();
@@ -46,14 +50,31 @@ export function BrowserLessonRecording() {
   const [error, setError] = useState<LessonRecordingFailureReason | null>(null);
   const recorderRef = useRef<LessonRecorder | null>(null);
   const audioRef = useRef(audio);
+  const screenShareRef = useRef(screenShare);
+  const displayAudioRef = useRef<MediaStreamTrack[]>([]);
+  const [displayAudio, setDisplayAudio] = useState<MediaStreamTrack[]>([]);
   const playbackIncludesCallRef = useRef(false);
   audioRef.current = audio;
+  screenShareRef.current = screenShare;
+
+  useEffect(
+    () =>
+      subscribeDisplayCaptureAudio((tracks) => {
+        displayAudioRef.current = tracks;
+        setDisplayAudio(tracks);
+      }),
+    [],
+  );
 
   useEffect(() => {
     recorderRef.current?.setAudioSources(
-      sourcesAlongsidePlayback(audio.sources, playbackIncludesCallRef.current),
+      sourcesAlongsidePlayback(
+        audio.sources,
+        playbackIncludesCallRef.current,
+        mergeShareAudio(screenShare, displayAudio),
+      ),
     );
-  }, [audio.sources]);
+  }, [audio.sources, displayAudio, screenShare]);
 
   const stop = useCallback(async () => {
     const recorder = recorderRef.current;
@@ -157,7 +178,11 @@ export function BrowserLessonRecording() {
         videoStream: captured.video,
         extraStream: captured.extraStream,
         playbackTrack: captured.playbackTrack,
-        audioSources: sourcesAlongsidePlayback(audioRef.current.sources, playbackIncludesCall),
+        audioSources: sourcesAlongsidePlayback(
+          audioRef.current.sources,
+          playbackIncludesCall,
+          mergeShareAudio(screenShareRef.current, displayAudioRef.current),
+        ),
         sink,
         mimeType: mime.mimeType,
         format: mime.format,
@@ -166,7 +191,13 @@ export function BrowserLessonRecording() {
         'ended',
         () => {
           playbackIncludesCallRef.current = false;
-          recorderRef.current?.setAudioSources(audioRef.current.sources);
+          recorderRef.current?.setAudioSources(
+            sourcesAlongsidePlayback(
+              audioRef.current.sources,
+              false,
+              mergeShareAudio(screenShareRef.current, displayAudioRef.current),
+            ),
+          );
         },
         { once: true },
       );

@@ -69,6 +69,8 @@ export {
   getUserMedia,
   getDisplayMedia,
   getUnpatchedDisplayMedia,
+  installDisplayAudioCapture,
+  subscribeDisplayCaptureAudio,
   installNativeMediaAdapters,
   isScreenShareSupported,
   type MediaPermissionKind,

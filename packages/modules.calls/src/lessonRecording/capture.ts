@@ -33,15 +33,23 @@ const playbackAudioConstraints = {
 };
 
 /**
- * Пока играет звук компьютера или вкладки, микрофон репетитора остаётся отдельно,
- * а удалённые участники уже входят в этот звук.
+ * Пока играет звук компьютера, микрофон репетитора остаётся отдельно:
+ * голоса участников уже есть в этом звуке.
+ * Звук демонстрации вкладки добавляется всегда: локально он не воспроизводится,
+ * поэтому в системный звук не попадает.
  */
-export function sourcesAlongsidePlayback<T extends { origin: 'local' | 'remote' }>(
+export function sourcesAlongsidePlayback<
+  T extends { origin: 'local' | 'remote'; track: MediaStreamTrack },
+>(
   sources: T[],
   playbackIncludesCall: boolean,
-): T[] {
-  if (!playbackIncludesCall) return sources;
-  return sources.filter((source) => source.origin === 'local');
+  screenShare: Array<{ id: string; track: MediaStreamTrack }> = [],
+): Array<T | { id: string; track: MediaStreamTrack }> {
+  const voice = playbackIncludesCall
+    ? sources.filter((source) => source.origin === 'local')
+    : sources;
+  const used = new Set(voice.map((source) => source.track));
+  return [...voice, ...screenShare.filter((source) => !used.has(source.track))];
 }
 
 function captureSize(): { width: number; height: number } {

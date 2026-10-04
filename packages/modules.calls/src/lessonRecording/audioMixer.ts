@@ -12,6 +12,10 @@ export class ConferenceAudioMixer {
   private readonly context: AudioContext;
   private readonly destination: MediaStreamAudioDestinationNode;
   private readonly nodes = new Map<string, MediaStreamAudioSourceNode>();
+  private readonly shareNodes = new Map<
+    string,
+    { node: { disconnect: () => void }; element: HTMLAudioElement }
+  >();
   private readonly keepAlive: AudioScheduledSourceNode;
   private readonly keepAliveGain: GainNode;
   private playback: MediaStreamAudioSourceNode | null = null;
@@ -71,19 +75,73 @@ export class ConferenceAudioMixer {
       node.disconnect();
       this.nodes.delete(id);
     }
+    for (const [id, share] of this.shareNodes) {
+      if (nextIds.has(id)) continue;
+      this.releaseShare(share);
+      this.shareNodes.delete(id);
+    }
 
     for (const source of sources) {
-      if (this.nodes.has(source.id)) continue;
+      if (this.nodes.has(source.id) || this.shareNodes.has(source.id)) continue;
       if (source.track.readyState === 'ended') continue;
+      if (source.id.startsWith('share:') || source.id.startsWith('display:')) {
+        this.attachScreenShare(source.id, source.track);
+        continue;
+      }
       const node = this.context.createMediaStreamSource(new MediaStream([source.track]));
       node.connect(this.destination);
       this.nodes.set(source.id, node);
     }
   }
 
+  /**
+   * Звук getDisplayMedia в Chrome молчит в createMediaStreamSource.
+   * Аудиоэлемент его отдаёт, а createMediaElementSource не выводит его в колонки.
+   */
+  private attachScreenShare(id: string, track: MediaStreamTrack): void {
+    let sourceTrack = track;
+    try {
+      sourceTrack = track.clone();
+      track.addEventListener('ended', () => sourceTrack.stop(), { once: true });
+    } catch {
+      sourceTrack = track;
+    }
+    const node = this.context.createMediaStreamSource(new MediaStream([sourceTrack]));
+    node.connect(this.destination);
+    this.nodes.set(id, node);
+    this.holdSharePlayback(id, sourceTrack);
+  }
+
+  /** Прячет элемент в DOM: без потребителя Chrome не отдаёт звук захваченной вкладки. */
+  private holdSharePlayback(id: string, track: MediaStreamTrack): void {
+    if (typeof document === 'undefined') return;
+    const element = document.createElement('audio');
+    element.muted = true;
+    element.srcObject = new MediaStream([track]);
+    element.style.display = 'none';
+    document.body?.append(element);
+    void element.play().catch(() => undefined);
+    this.shareNodes.set(id, {
+      node: { disconnect() {} },
+      element,
+    });
+  }
+
+  private releaseShare(share: {
+    node: { disconnect: () => void };
+    element: HTMLAudioElement;
+  }): void {
+    share.node.disconnect();
+    share.element.pause();
+    share.element.srcObject = null;
+    share.element.remove();
+  }
+
   async close(): Promise<void> {
     for (const node of this.nodes.values()) node.disconnect();
     this.nodes.clear();
+    for (const share of this.shareNodes.values()) this.releaseShare(share);
+    this.shareNodes.clear();
     this.playback?.disconnect();
     this.playback = null;
     try {
