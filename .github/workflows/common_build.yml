@@ -39,7 +39,7 @@ jobs:
       - name: Build application
         working-directory: ./out
         env:
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=8192
           TURBO_UI: stream
         run: pnpm run build --filter=${{ inputs.app_name }}
 
