@@ -5,6 +5,8 @@ import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import Inspect from 'vite-plugin-inspect';
+
 import {
   CALLS_PACKAGES,
   CALLS_RUNTIME_DEPS,
@@ -21,27 +23,63 @@ const isHeavyOcrAsset = (filePath: string) =>
   /paddleocr|opencv|onnxruntime|ort\.bundle|ort-wasm|worker-entry/i.test(filePath);
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }: ConfigEnv) => {
+export default defineConfig(({ mode, command }: ConfigEnv) => {
   const callsDepsMode = readCallsDepsMode(appDir);
   const useCallsLink = mode === 'development' && callsDepsMode === 'link';
   const isElectron = mode === 'electron';
   const shouldMinify = mode === 'production' || isElectron;
 
+  /**
+   * Диагностика production build.
+   *
+   * Запуск:
+   * VITE_BUILD_INSPECT=1 pnpm run build
+   *
+   * В CI достаточно добавить:
+   * VITE_BUILD_INSPECT: "1"
+   */
+  const enableBuildInspect = command === 'build' && process.env.VITE_BUILD_INSPECT === '1';
+
   const importConditions: string[] = ['import', 'module', 'browser', 'default'];
+
   const resolveConditions: string[] = useCallsLink ? ['development', 'import'] : importConditions;
 
   const config = {
+    /**
+     * vite-plugin-inspect v12 использует Vite DevTools.
+     *
+     * withApp нужен, чтобы после успешного build получить
+     * статический inspector в `.vite-inspect`.
+     */
+    devtools: enableBuildInspect
+      ? {
+          build: {
+            withApp: true,
+          },
+        }
+      : false,
+
     plugins: [
       paddleOcrCjsInteropPlugin(),
+
       mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
-      tanstackRouter({ target: 'react', autoCodeSplitting: true }),
+
+      tanstackRouter({
+        target: 'react',
+        autoCodeSplitting: true,
+      }),
+
       react(),
+
       tailwindcss(),
+
       !isElectron &&
         VitePWA({
           registerType: 'autoUpdate',
           injectRegister: 'auto',
-          devOptions: { enabled: false },
+          devOptions: {
+            enabled: false,
+          },
           manifest: {
             id: '/',
             name: 'sovlium',
@@ -71,7 +109,9 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             skipWaiting: true,
             clientsClaim: true,
             cleanupOutdatedCaches: true,
+
             globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
+
             globIgnores: [
               '**/*paddleocr*',
               '**/*opencv*',
@@ -80,23 +120,31 @@ export default defineConfig(({ mode }: ConfigEnv) => {
               '**/*ort.bundle*',
               '**/*worker-entry*',
               '**/emoji/svg/**',
-              // PaddleOCR: hashed `dist-*.js` или крупные `index-*.js` — не precache.
+
+              // PaddleOCR: hashed `dist-*.js` или крупные `index-*.js`
+              // не должны попадать в precache.
               '**/assets/dist-*.js',
+
               '**/math-bank/**',
               '**/task-bank/**',
             ],
-            // Ниже ~6–24MB чанков OCR: иначе они снова попадут в precache под именем index-*.js.
+
+            // Ниже ~6–24MB чанков OCR: иначе они снова попадут
+            // в precache под именем index-*.js.
             maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+
             navigateFallback: '/index.html',
             navigateFallbackDenylist: [/^\/deployments\/.*/],
+
             runtimeCaching: [
               {
                 urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',
                 handler: 'NetworkFirst',
                 options: {
                   cacheName: 'html',
-                  // Без timeout: иначе при медленной сети отдаётся старый index.html
-                  // со ссылками на уже удалённые hashed-ассеты → белый экран.
+                  // Без timeout: иначе при медленной сети отдаётся
+                  // старый index.html со ссылками на уже удалённые
+                  // hashed-ассеты → белый экран.
                 },
               },
               {
@@ -105,8 +153,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 method: 'GET',
               },
               {
-                // Иконки эмодзи попадают в кэш только когда реально запрошены (открытие EmojiPicker),
-                // и переиспользуются из кэша при повторных визитах без похода в сеть.
+                // Иконки эмодзи попадают в кэш только когда реально
+                // запрошены и переиспользуются при следующих визитах.
                 urlPattern: /\/emoji\/svg\/.*\.svg$/,
                 handler: 'CacheFirst',
                 options: {
@@ -131,20 +179,57 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             ],
           },
         }),
+
+      /**
+       * Включаем только диагностическим env.
+       *
+       * После успешного build создаст `.vite-inspect`,
+       * где можно посмотреть module graph и plugin transforms.
+       */
+      enableBuildInspect &&
+        Inspect({
+          build: true,
+        }),
     ].filter(Boolean),
+
     build: {
       chunkSizeWarningLimit: 1000,
       minify: shouldMinify,
       outDir: 'build',
       sourcemap: mode === 'debug',
       reportCompressedSize: false,
-      // PaddleOCR не должен попадать в <link rel="modulepreload"> у index.html:
-      // после деплоя старые dist-*.js дают 404 и белый экран.
+
+      /**
+       * Встроенная диагностика Rolldown.
+       *
+       * bundlerTimings:
+       *   ищет дорогие plugin hooks / callbacks.
+       *
+       * largeBarrelModules:
+       *   отдельно ищет патологически большие barrel-файлы.
+       *
+       * sourcemapBroken:
+       *   полезно для плагинов, трансформирующих код.
+       */
+      rolldownOptions: enableBuildInspect
+        ? {
+            checks: {
+              bundlerTimings: true,
+              largeBarrelModules: true,
+              sourcemapBroken: true,
+            },
+          }
+        : undefined,
+
+      // PaddleOCR не должен попадать в <link rel="modulepreload">
+      // у index.html: после деплоя старые dist-*.js дают 404
+      // и белый экран.
       modulePreload: {
         resolveDependencies: (_filename: string, deps: string[]) =>
           deps.filter((dep) => !isHeavyOcrAsset(dep)),
       },
     },
+
     optimizeDeps: {
       rolldownOptions: {
         transform: {
@@ -156,6 +241,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             : importConditions,
         },
       },
+
       include: [
         'react',
         'react-dom',
@@ -167,28 +253,36 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         'motion/react',
         ...(useCallsLink ? CALLS_RUNTIME_DEPS : []),
       ],
+
       exclude: ['@paddleocr/paddleocr-js'],
     },
+
     server: {
       hmr: {
         timeout: 30_000,
         overlay: false,
       },
+
       fs: {
         allow: [searchForWorkspaceRoot(process.cwd()), '../../packages'],
       },
     },
+
     resolve: {
       alias: {
-        // mathlive exports only nested browser.production/development; Vite conditions
-        // here omit those, so the package entry can fail in `vite build`.
+        // mathlive exports only nested browser.production/development;
+        // Vite conditions here omit those, so the package entry
+        // can fail in `vite build`.
         mathlive: path.resolve(
           searchForWorkspaceRoot(process.cwd()),
           'node_modules/mathlive/mathlive.min.mjs',
         ),
       },
+
       conditions: resolveConditions,
+
       preserveSymlinks: false,
+
       dedupe: [
         'react',
         'react-dom',
@@ -203,6 +297,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         ...CALLS_PACKAGES,
       ],
     },
+
     css: {
       devSourcemap: false,
     },
@@ -216,6 +311,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
 
   return mergeConfig(config, {
     ...callsLocal,
+
     optimizeDeps: {
       ...config.optimizeDeps,
       ...callsLocal.optimizeDeps,
