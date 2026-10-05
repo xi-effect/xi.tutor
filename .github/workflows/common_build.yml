@@ -85,42 +85,86 @@ jobs:
       - name: Build application
         working-directory: ./out
         env:
-          # На время диагностики лучше оставить 4096.
-          # После того как поймём проблему, можно вернуть/подобрать значение.
+          # Оставляем 4 GB V8 old-space.
+          # В прошлой сборке RSS Vite вырос почти до 15 GB,
+          # поэтому увеличение этого лимита сейчас проблему не решает.
           NODE_OPTIONS: --max-old-space-size=4096
+
           TURBO_UI: stream
+
+          # Включает vite-plugin-inspect в vite.config.ts.
+          VITE_BUILD_INSPECT: "1"
+
+          # Эквивалент целевого Vite debug для plugin transforms.
+          # Не включаем DEBUG=vite:* — логов будет слишком много.
+          DEBUG: vite:plugin-transform
+
         run: |
+          set -o pipefail
+
+          RESOURCE_LOG="$PWD/resource-monitor.log"
+          BUILD_LOG="$PWD/build-debug.log"
+
           echo "Starting resource monitor..."
+          echo "Resource log: $RESOURCE_LOG"
+          echo "Build log: $BUILD_LOG"
 
           (
             while true; do
-              echo
-              echo "============================================================"
-              echo "RESOURCE SNAPSHOT: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-              echo "============================================================"
-
-              echo "--- Memory ---"
-              free -h
-
-              echo
-              echo "--- Top processes by RAM ---"
-              ps -eo pid,ppid,rss,%mem,%cpu,etime,cmd \
-                --sort=-rss \
-                | head -20
-
-              echo
-              echo "--- Disk ---"
-              df -h /
-
-              if [ -f /sys/fs/cgroup/memory.current ]; then
+              {
                 echo
-                echo "--- Cgroup memory ---"
-                echo -n "current: "
-                cat /sys/fs/cgroup/memory.current
+                echo "============================================================"
+                echo "RESOURCE SNAPSHOT: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+                echo "============================================================"
 
-                echo -n "max: "
-                cat /sys/fs/cgroup/memory.max
-              fi
+                echo
+                echo "--- Memory ---"
+                free -h
+
+                echo
+                echo "--- /proc/meminfo ---"
+                grep -E \
+                  'MemTotal|MemFree|MemAvailable|Buffers|Cached|SwapTotal|SwapFree|Slab|SReclaimable|SUnreclaim' \
+                  /proc/meminfo || true
+
+                echo
+                echo "--- Top processes by RAM ---"
+                ps -eo pid,ppid,rss,vsz,%mem,%cpu,etime,cmd \
+                  --sort=-rss \
+                  | head -25
+
+                echo
+                echo "--- Top processes by CPU ---"
+                ps -eo pid,ppid,rss,vsz,%mem,%cpu,etime,cmd \
+                  --sort=-%cpu \
+                  | head -15
+
+                echo
+                echo "--- Disk ---"
+                df -h /
+
+                if [ -f /sys/fs/cgroup/memory.current ]; then
+                  echo
+                  echo "--- Cgroup memory ---"
+
+                  echo -n "current: "
+                  cat /sys/fs/cgroup/memory.current
+
+                  echo -n "max: "
+                  cat /sys/fs/cgroup/memory.max
+
+                  if [ -f /sys/fs/cgroup/memory.swap.current ]; then
+                    echo -n "swap.current: "
+                    cat /sys/fs/cgroup/memory.swap.current
+                  fi
+
+                  if [ -f /sys/fs/cgroup/memory.events ]; then
+                    echo
+                    echo "memory.events:"
+                    cat /sys/fs/cgroup/memory.events
+                  fi
+                fi
+              } 2>&1 | tee -a "$RESOURCE_LOG"
 
               sleep 15
             done
@@ -129,12 +173,22 @@ jobs:
           MONITOR_PID=$!
 
           cleanup() {
+            echo
+            echo "Stopping resource monitor (PID $MONITOR_PID)..."
             kill "$MONITOR_PID" 2>/dev/null || true
+            wait "$MONITOR_PID" 2>/dev/null || true
           }
 
           trap cleanup EXIT
 
-          pnpm run build --filter=${{ inputs.app_name }}
+          echo
+          echo "============================================================"
+          echo "STARTING BUILD"
+          echo "============================================================"
+          echo
+
+          pnpm run build --filter=${{ inputs.app_name }} \
+            2>&1 | tee "$BUILD_LOG"
 
       - name: Diagnostics after build
         if: always()
@@ -144,14 +198,71 @@ jobs:
           free -h
           echo
 
+          echo "================ FINAL MEMINFO ==========="
+          grep -E \
+            'MemTotal|MemFree|MemAvailable|Buffers|Cached|SwapTotal|SwapFree|Slab|SReclaimable|SUnreclaim' \
+            /proc/meminfo || true
+          echo
+
+          echo "================ CGROUP EVENTS ==========="
+
+          if [ -f /sys/fs/cgroup/memory.events ]; then
+            cat /sys/fs/cgroup/memory.events
+          fi
+
+          echo
+
+          if [ -f /sys/fs/cgroup/memory.current ]; then
+            echo -n "memory.current: "
+            cat /sys/fs/cgroup/memory.current
+          fi
+
+          if [ -f /sys/fs/cgroup/memory.max ]; then
+            echo -n "memory.max: "
+            cat /sys/fs/cgroup/memory.max
+          fi
+
+          if [ -f /sys/fs/cgroup/memory.swap.current ]; then
+            echo -n "memory.swap.current: "
+            cat /sys/fs/cgroup/memory.swap.current
+          fi
+
+          echo
           echo "================ FINAL DISK ============="
           df -h
           echo
 
-          echo "================ TOP PROCESSES ==========="
-          ps -eo pid,ppid,rss,%mem,%cpu,etime,cmd \
+          echo "================ TOP PROCESSES BY RAM ===="
+          ps -eo pid,ppid,rss,vsz,%mem,%cpu,etime,cmd \
             --sort=-rss \
             | head -30
+
+          echo
+          echo "================ DIAGNOSTIC FILES ========"
+
+          find . \
+            \( \
+              -name '.vite-inspect' \
+              -o -name '*.cpuprofile' \
+              -o -name '*.heapsnapshot' \
+              -o -name '*.heapprofile' \
+            \) \
+            -print 2>/dev/null || true
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.app_name }}-build-diagnostics
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            ./out/build-debug.log
+            ./out/resource-monitor.log
+            ./out/**/.vite-inspect/**
+            ./out/**/*.cpuprofile
+            ./out/**/*.heapsnapshot
+            ./out/**/*.heapprofile
 
       - name: Upload build as an artifact
         uses: actions/upload-artifact@v7
