@@ -36,12 +36,122 @@ jobs:
         working-directory: ./out
         run: pnpm install
 
+      - name: Runner diagnostics before build
+        working-directory: ./out
+        run: |
+          echo "================ SYSTEM ================"
+          uname -a
+          echo
+
+          echo "================ CPU ==================="
+          nproc
+          lscpu | grep -E 'Model name|CPU\(s\)'
+          echo
+
+          echo "================ MEMORY ================"
+          free -h
+          echo
+
+          echo "================ DISK =================="
+          df -h
+          echo
+
+          echo "================ DIRECTORY SIZE ========"
+          du -sh . || true
+          du -sh node_modules || true
+          echo
+
+          echo "================ VERSIONS =============="
+          node --version
+          pnpm --version
+          turbo --version
+          echo
+
+          echo "================ LIMITS ================="
+          ulimit -a
+          echo
+
+          echo "================ CGROUP MEMORY =========="
+          if [ -f /sys/fs/cgroup/memory.max ]; then
+            echo -n "memory.max: "
+            cat /sys/fs/cgroup/memory.max
+          fi
+
+          if [ -f /sys/fs/cgroup/memory.current ]; then
+            echo -n "memory.current: "
+            cat /sys/fs/cgroup/memory.current
+          fi
+
       - name: Build application
         working-directory: ./out
         env:
-          NODE_OPTIONS: --max-old-space-size=8192
+          # На время диагностики лучше оставить 4096.
+          # После того как поймём проблему, можно вернуть/подобрать значение.
+          NODE_OPTIONS: --max-old-space-size=4096
           TURBO_UI: stream
-        run: pnpm run build --filter=${{ inputs.app_name }}
+        run: |
+          echo "Starting resource monitor..."
+
+          (
+            while true; do
+              echo
+              echo "============================================================"
+              echo "RESOURCE SNAPSHOT: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+              echo "============================================================"
+
+              echo "--- Memory ---"
+              free -h
+
+              echo
+              echo "--- Top processes by RAM ---"
+              ps -eo pid,ppid,rss,%mem,%cpu,etime,cmd \
+                --sort=-rss \
+                | head -20
+
+              echo
+              echo "--- Disk ---"
+              df -h /
+
+              if [ -f /sys/fs/cgroup/memory.current ]; then
+                echo
+                echo "--- Cgroup memory ---"
+                echo -n "current: "
+                cat /sys/fs/cgroup/memory.current
+
+                echo -n "max: "
+                cat /sys/fs/cgroup/memory.max
+              fi
+
+              sleep 15
+            done
+          ) &
+
+          MONITOR_PID=$!
+
+          cleanup() {
+            kill "$MONITOR_PID" 2>/dev/null || true
+          }
+
+          trap cleanup EXIT
+
+          pnpm run build --filter=${{ inputs.app_name }}
+
+      - name: Diagnostics after build
+        if: always()
+        working-directory: ./out
+        run: |
+          echo "================ FINAL MEMORY ==========="
+          free -h
+          echo
+
+          echo "================ FINAL DISK ============="
+          df -h
+          echo
+
+          echo "================ TOP PROCESSES ==========="
+          ps -eo pid,ppid,rss,%mem,%cpu,etime,cmd \
+            --sort=-rss \
+            | head -30
 
       - name: Upload build as an artifact
         uses: actions/upload-artifact@v7
