@@ -35,6 +35,9 @@
     "activeUntilLabel": "Active until",
     "landing": "More about plans",
     "plansDetails": "Plan details are on the pricing page.",
+    "trialTitle": "Try Pro free for 14 days",
+    "trialDescription": "Every feature is available right away — no payment and no card required.",
+    "trialActivate": "Activate",
     "daysLeftLabel": "Left",
     "daysLeftValue_one": "{{count}} day",
     "daysLeftValue_other": "{{count}} days"

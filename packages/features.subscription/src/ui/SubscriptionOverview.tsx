@@ -7,9 +7,34 @@ import { useCurrentSubscription, useStorageUsage } from 'common.services';
 import { getAppLanguage } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDateShort } from '../utils/dates';
+import { PromoCodeField } from './PromoCodeField';
 import { UsageBar } from './UsageBar';
 
 const SOVLIUM_PRICES_URL = 'https://sovlium.ru/prices';
+
+const ProTrialBanner = () => {
+  const { t } = useTranslation('subscription');
+
+  return (
+    <div className="bg-action-primary-background-pressed flex flex-col items-start gap-3 rounded-2xl px-5 py-4 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div className="min-w-0 flex-1">
+        <div className="text-text-on-accent text-m-base leading-tight font-semibold">
+          {t('overview.trialTitle')}
+        </div>
+        <p className="text-text-on-accent/85 text-s-base mt-0.5 leading-snug">
+          {t('overview.trialDescription')}
+        </p>
+      </div>
+      <Button
+        type="button"
+        variant="none"
+        className="bg-background-surface text-text-link hover:bg-background-surface/90 flex h-auto shrink-0 items-center justify-center rounded-[10px] px-4 py-2 text-sm leading-5 font-medium"
+      >
+        {t('overview.trialActivate')}
+      </Button>
+    </div>
+  );
+};
 
 const StorageInfoHint = () => {
   const { t } = useTranslation('subscription');
@@ -20,7 +45,7 @@ const StorageInfoHint = () => {
         <TooltipTrigger asChild>
           <button
             type="button"
-            className="flex size-4 shrink-0 items-center justify-center"
+            className="inline-flex size-4 shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0 shadow-none"
             aria-label={t('overview.storageInfoLabel')}
           >
             <InfoCircle size="sm" theme="muted" />
@@ -40,7 +65,8 @@ const StorageInfoHint = () => {
 
 export const SubscriptionOverview = () => {
   const { t } = useTranslation('subscription');
-  const { planId, tariff, isPlanError, isPlanLoading, refetchPlan } = useSubscriptionPlan();
+  const { planId, tariff, isBasic, isPlanError, isPlanLoading, refetchPlan } =
+    useSubscriptionPlan();
   const subscriptionQuery = useCurrentSubscription({ enabled: !isPlanLoading && !isPlanError });
   const storageQuery = useStorageUsage();
 
@@ -151,6 +177,9 @@ export const SubscriptionOverview = () => {
           {t('overview.landing')}
         </Link>
       </section>
+
+      {isBasic ? <ProTrialBanner /> : null}
+      <PromoCodeField />
     </div>
   );
 };
