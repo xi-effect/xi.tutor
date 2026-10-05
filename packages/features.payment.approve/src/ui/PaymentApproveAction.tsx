@@ -19,6 +19,7 @@ export const PaymentApproveAction = ({ payment, isTutor, type }: PaymentApproveA
         isTutor={isTutor}
         id={payment.id}
         classroomId={payment.classroom_id}
+        total={payment.total}
         type={type}
       />
       {isOpen && payment && (

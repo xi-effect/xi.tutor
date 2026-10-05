@@ -54,7 +54,35 @@
     <meta name="apple-mobile-web-app-title" content="sovlium" />
     <link rel="canonical" href="https://sovlium.com" />
     <title>sovlium</title>
-    <script defer src="https://umami.sovlium.ru/script.js" data-website-id="5ae7f92f-b9ff-4533-9346-2e621d354220"></script>
+    <script>
+      (function () {
+        var allowed = {
+          'app.sovlium.ru': true,
+          'sovlium.ru': true,
+          'www.sovlium.ru': true,
+        };
+        var host = location.hostname;
+        window.sovliumUmamiBeforeSend = function (_type, payload) {
+          if (!allowed[host]) return false;
+          return payload;
+        };
+        if (!allowed[host]) return;
+        var recorder = document.createElement('script');
+        recorder.defer = true;
+        recorder.src = 'https://umami.sovlium.ru/recorder.js';
+        recorder.setAttribute('data-website-id', '5ae7f92f-b9ff-4533-9346-2e621d354220');
+        document.head.appendChild(recorder);
+      })();
+    </script>
+    <script
+      defer
+      src="https://umami.sovlium.ru/script.js"
+      data-website-id="5ae7f92f-b9ff-4533-9346-2e621d354220"
+      data-domains="app.sovlium.ru,sovlium.ru,www.sovlium.ru"
+      data-exclude-search="true"
+      data-performance="true"
+      data-before-send="sovliumUmamiBeforeSend"
+    ></script>
   </head>
   <body class="overflow-hidden">
     <div id="root"></div>

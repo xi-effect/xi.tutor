@@ -4,6 +4,8 @@ export {
   type ProductAnalyticsEventName,
 } from './events';
 export { trackProductEvent } from './umami';
+export { parsePaymentRevenue, trackPaymentConfirmed } from './payment';
+export type { PaymentConfirmationKind } from './payment';
 export { getProductAnalyticsRole } from './roles';
 export {
   DURATION_THRESHOLDS_MIN,

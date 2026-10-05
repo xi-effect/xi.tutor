@@ -727,6 +727,13 @@ export type ProductAnalyticsEventMap = {
         size_bucket: FileUploadSizeBucket;
       };
 
+  payment_confirmed: {
+    event_version?: number;
+    revenue: number;
+    currency: 'RUB';
+    confirmation: 'receiver' | 'unilateral';
+  };
+
   feedback_prompt_shown: {
     event_version?: number;
     feedback_type: ProductAnalyticsFeedbackType;

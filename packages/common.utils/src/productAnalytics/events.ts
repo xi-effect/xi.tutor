@@ -116,6 +116,9 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   FILE_UPLOAD_SUCCEEDED: 'file_upload_succeeded',
   FILE_UPLOAD_REJECTED: 'file_upload_rejected',
 
+  // Payments
+  PAYMENT_CONFIRMED: 'payment_confirmed',
+
   // Post-lesson feedback
   FEEDBACK_PROMPT_SHOWN: 'feedback_prompt_shown',
   FEEDBACK_PROMPT_OPENED: 'feedback_prompt_opened',

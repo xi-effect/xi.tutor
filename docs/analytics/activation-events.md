@@ -48,7 +48,7 @@
 - `event_version: 1`
 - `activation_flow_id` — если уже создан
 
-`user_id` передаётся через `umami.identify` / session properties, **не** в каждом event payload.
+`user_id` передаётся через `umami.identify(String(user.id), …)` — distinct id для склейки сессий — и дублируется в session properties. В каждом event payload его нет. Рядом уходят `role`, `onboarding_stage`, `source` и `client_surface` (`web` / `pwa` / `electron` / `native`). `username` и `display_name` в identify не передаются.
 
 ### Окружения
 

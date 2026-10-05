@@ -12,6 +12,9 @@ const paramsSchema = z.object({
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const Route = createFileRoute('/(common)/_layout/invite/$inviteId')({
+  head: () => ({
+    meta: [{ title: 'sovlium | Приглашение' }],
+  }),
   component: InvitePage,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

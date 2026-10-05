@@ -3,6 +3,7 @@ import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 import { PaymentTypeT } from 'common.types';
+import { trackPaymentConfirmed } from 'common.utils';
 
 export const usePaymentUnilateralConfirmation = (classroomId?: string) => {
   const queryClient = useQueryClient();
@@ -14,6 +15,7 @@ export const usePaymentUnilateralConfirmation = (classroomId?: string) => {
     }: {
       invoice_id: string;
       paymentType: PaymentTypeT;
+      revenue?: string | number;
     }) => {
       try {
         const axiosInst = await getAxiosInstance();
@@ -36,8 +38,9 @@ export const usePaymentUnilateralConfirmation = (classroomId?: string) => {
     onError: (err) => {
       handleError(err, 'addInvoiceTemplate');
     },
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       if (response?.status === 204) {
+        trackPaymentConfirmed(variables.revenue, 'unilateral');
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'list'] });
         if (classroomId) {
