@@ -28,6 +28,7 @@ export type StorageUsage = {
 
 export type CreateSubscriptionPaymentBody = {
   period: RenewalPeriod;
+  auto_renewal: boolean;
 };
 
 export type SubscriptionPayment = {

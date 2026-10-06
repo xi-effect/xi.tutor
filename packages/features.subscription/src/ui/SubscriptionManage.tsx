@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@xipkg/button';
 import {
   formatRub,
@@ -8,10 +7,11 @@ import {
   useSubscriptionPlan,
   useSubscriptionUiStore,
 } from 'common.subscription';
-import { useCurrentSubscription, useDeleteAutoRenewal } from 'common.services';
-import { ConfirmDialog, getAppLanguage } from 'common.ui';
+import { useCurrentSubscription } from 'common.services';
+import { getAppLanguage } from 'common.ui';
 import { useTranslation } from 'react-i18next';
-import { formatRenewalDate, formatRenewalDateShort } from '../utils/dates';
+import { formatRenewalDate } from '../utils/dates';
+import { CancelSubscriptionButton } from './CancelSubscriptionButton';
 import { PromoCodeField } from './PromoCodeField';
 import { ScreenBackButton } from './ScreenBackButton';
 
@@ -20,10 +20,7 @@ export const SubscriptionManage = () => {
   const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
   const { planId, tariff, isPlanError, refetchPlan } = useSubscriptionPlan();
   const subscriptionQuery = useCurrentSubscription();
-  const deleteAutoRenewal = useDeleteAutoRenewal();
   const openOverview = useSubscriptionUiStore((state) => state.openOverview);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [disableError, setDisableError] = useState(false);
 
   const price = t('price.monthly', {
     price: formatRub((tariff ?? TARIFFS.pro).priceMonthlyRub, locale),
@@ -93,43 +90,7 @@ export const SubscriptionManage = () => {
 
       {SUBSCRIPTION_PROMO_ENABLED ? <PromoCodeField /> : null}
 
-      {subscription?.auto_renewal ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="m"
-          className="text-text-danger h-12 w-full rounded-xl"
-          onClick={() => {
-            setDisableError(false);
-            setConfirmOpen(true);
-          }}
-          disabled={deleteAutoRenewal.isPending}
-        >
-          {t('manage.disable')}
-        </Button>
-      ) : null}
-
-      {disableError ? (
-        <p className="text-status-error-text text-sm">{t('manage.disableError')}</p>
-      ) : null}
-
-      <ConfirmDialog
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        title={t('manage.disableTitle')}
-        description={t('manage.disableDescription', {
-          date: endsAt ? formatRenewalDateShort(endsAt) : '',
-        })}
-        confirmLabel={t('manage.disableConfirm')}
-        cancelLabel={t('manage.cancel')}
-        isPending={deleteAutoRenewal.isPending}
-        onConfirm={() => {
-          deleteAutoRenewal.mutate(undefined, {
-            onSuccess: () => setDisableError(false),
-            onError: () => setDisableError(true),
-          });
-        }}
-      />
+      <CancelSubscriptionButton buttonClassName="text-text-danger h-12 w-full rounded-xl" />
     </div>
   );
 };

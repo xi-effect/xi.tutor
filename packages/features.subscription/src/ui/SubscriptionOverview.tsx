@@ -53,7 +53,7 @@ const StorageInfoHint = () => {
         </TooltipTrigger>
         <TooltipContent
           side="bottom"
-          align="start"
+          align="center"
           className="z-[200] max-w-72 leading-5 font-normal"
         >
           {t('overview.storageInfo')}
@@ -93,12 +93,30 @@ export const SubscriptionOverview = () => {
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <div className="flex items-baseline gap-2">
-            <span className="text-text-secondary text-sm">{t('overview.currentPlan')}</span>
-            <span className="text-text-primary text-base font-semibold">
-              {t(`plans.${planId}`)}
+          <p className="text-text-secondary flex flex-wrap items-baseline gap-x-2 text-sm leading-6">
+            <span className="inline-flex items-baseline gap-2">
+              <span>{t('overview.currentPlan')}</span>
+              <span className="text-text-primary text-base font-semibold">
+                {t(`plans.${planId}`)}
+              </span>
             </span>
-          </div>
+            {endsAt ? (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{t('overview.until', { date: formatRenewalDateShort(endsAt) })}</span>
+              </>
+            ) : null}
+            {subscription ? (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>
+                  {subscription.auto_renewal
+                    ? t('overview.autoRenewOn')
+                    : t('overview.autoRenewOff')}
+                </span>
+              </>
+            ) : null}
+          </p>
           {subscriptionQuery.isPending && subscriptionQuery.fetchStatus !== 'idle' ? (
             <span className="text-text-secondary text-sm">{t('overview.loading')}</span>
           ) : null}
@@ -115,16 +133,6 @@ export const SubscriptionOverview = () => {
                 {t('overview.retry')}
               </Button>
             </div>
-          ) : null}
-          {endsAt ? (
-            <span className="text-text-secondary text-sm">
-              {t('overview.activeUntil', { date: formatRenewalDateShort(endsAt) })}
-            </span>
-          ) : null}
-          {subscription ? (
-            <span className="text-text-secondary text-sm">
-              {subscription.auto_renewal ? t('manage.autoRenewOn') : t('manage.autoRenewOff')}
-            </span>
           ) : null}
         </div>
 

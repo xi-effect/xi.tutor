@@ -74,14 +74,14 @@ export class SubscriptionPaymentLookupError extends Error {
   }
 }
 
-export async function createSubscriptionPayment(): Promise<SubscriptionPayment> {
+export async function createSubscriptionPayment(autoRenewal = true): Promise<SubscriptionPayment> {
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = subscriptionApiConfig[SubscriptionQueryKey.CreatePayment];
 
   const response = await axiosInst({
     method,
     url: getUrl(),
-    data: { period: 'monthly' },
+    data: { period: 'monthly', auto_renewal: autoRenewal },
     headers: jsonHeaders,
   });
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@xipkg/button';
 import { useNavigate, useSearch } from '@tanstack/react-router';
@@ -17,6 +17,26 @@ const PAYMENT_CHECK_ATTEMPTS = 8;
 const PAYMENT_CHECK_INTERVAL_MS = 2000;
 
 type PaymentPhase = 'checking' | 'pending' | 'success' | 'cancelled' | 'error';
+
+const ResultBlock = ({
+  title,
+  text,
+  children,
+}: {
+  title: string;
+  text?: string;
+  children?: ReactNode;
+}) => (
+  <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center">
+    <h1 className="font-playfair text-text-primary m-0 text-2xl leading-snug font-medium">
+      {title}
+    </h1>
+    {text ? <p className="text-text-secondary m-0 text-sm leading-5">{text}</p> : null}
+    {children ? <div className="flex w-full max-w-[280px] flex-col gap-2">{children}</div> : null}
+  </div>
+);
+
+const resultButtonClass = 'h-12 w-full rounded-xl font-medium';
 
 export const SubscriptionPaymentResult = () => {
   const { t } = useTranslation('subscription');
@@ -127,99 +147,83 @@ export const SubscriptionPaymentResult = () => {
   };
 
   return (
-    <div className="flex min-h-[50vh] items-center justify-center p-6">
-      <div className="flex w-full max-w-md flex-col gap-4">
-        {phase === 'checking' ? (
-          <>
-            <span className="text-text-primary text-3xl font-semibold">
-              {t('paymentResult.checkingTitle')}
-            </span>
-            <p className="text-text-secondary text-sm">{t('paymentResult.checkingText')}</p>
-          </>
-        ) : null}
+    <div className="flex h-full min-h-0 w-full items-center justify-center px-6 py-10">
+      {phase === 'checking' ? (
+        <ResultBlock
+          title={t('paymentResult.checkingTitle')}
+          text={t('paymentResult.checkingText')}
+        />
+      ) : null}
 
-        {phase === 'success' ? (
-          <>
-            <span className="text-text-primary text-3xl font-semibold">
-              {t('paymentResult.successTitle')}
-            </span>
-            <p className="text-text-secondary text-sm">{t('result.successText')}</p>
+      {phase === 'success' ? (
+        <ResultBlock title={t('paymentResult.successTitle')} text={t('result.successText')}>
+          <Button
+            type="button"
+            variant="primary"
+            size="m"
+            className={resultButtonClass}
+            onClick={() => openSubscription('overview')}
+          >
+            {t('paymentResult.continue')}
+          </Button>
+        </ResultBlock>
+      ) : null}
+
+      {phase === 'pending' ? (
+        <ResultBlock title={t('paymentResult.pendingTitle')} text={t('paymentResult.pendingText')}>
+          {confirmationUrl ? (
             <Button
               type="button"
               variant="primary"
               size="m"
-              className="h-12 rounded-xl font-medium"
-              onClick={() => openSubscription('overview')}
+              className={resultButtonClass}
+              onClick={() => window.location.assign(confirmationUrl)}
             >
-              {t('paymentResult.continue')}
+              {t('paymentResult.continuePayment')}
             </Button>
-          </>
-        ) : null}
+          ) : null}
+          <Button
+            type="button"
+            variant={confirmationUrl ? 'ghost' : 'primary'}
+            size="m"
+            className={resultButtonClass}
+            onClick={() => setCheckToken((value) => value + 1)}
+          >
+            {t('paymentResult.recheck')}
+          </Button>
+        </ResultBlock>
+      ) : null}
 
-        {phase === 'pending' ? (
-          <>
-            <span className="text-text-primary text-3xl font-semibold">
-              {t('paymentResult.pendingTitle')}
-            </span>
-            <p className="text-text-secondary text-sm">{t('paymentResult.pendingText')}</p>
-            {confirmationUrl ? (
-              <Button
-                type="button"
-                variant="primary"
-                size="m"
-                className="h-12 rounded-xl font-medium"
-                onClick={() => window.location.assign(confirmationUrl)}
-              >
-                {t('paymentResult.continuePayment')}
-              </Button>
-            ) : null}
-            <Button
-              type="button"
-              variant={confirmationUrl ? 'ghost' : 'primary'}
-              size="m"
-              className="h-12 rounded-xl font-medium"
-              onClick={() => setCheckToken((value) => value + 1)}
-            >
-              {t('paymentResult.recheck')}
-            </Button>
-          </>
-        ) : null}
+      {phase === 'cancelled' ? (
+        <ResultBlock
+          title={t('paymentResult.cancelledTitle')}
+          text={t('paymentResult.cancelledText')}
+        >
+          <Button
+            type="button"
+            variant="primary"
+            size="m"
+            className={resultButtonClass}
+            onClick={() => openSubscription('checkout')}
+          >
+            {t('paymentResult.retry')}
+          </Button>
+        </ResultBlock>
+      ) : null}
 
-        {phase === 'cancelled' ? (
-          <>
-            <span className="text-text-primary text-3xl font-semibold">
-              {t('paymentResult.cancelledTitle')}
-            </span>
-            <p className="text-text-secondary text-sm">{t('paymentResult.cancelledText')}</p>
-            <Button
-              type="button"
-              variant="primary"
-              size="m"
-              className="h-12 rounded-xl font-medium"
-              onClick={() => openSubscription('checkout')}
-            >
-              {t('paymentResult.retry')}
-            </Button>
-          </>
-        ) : null}
-
-        {phase === 'error' ? (
-          <>
-            <span className="text-text-primary text-3xl font-semibold">
-              {t('paymentResult.loadError')}
-            </span>
-            <Button
-              type="button"
-              variant="primary"
-              size="m"
-              className="h-12 rounded-xl font-medium"
-              onClick={() => openSubscription('overview')}
-            >
-              {t('result.back')}
-            </Button>
-          </>
-        ) : null}
-      </div>
+      {phase === 'error' ? (
+        <ResultBlock title={t('paymentResult.loadError')} text={t('paymentResult.loadErrorText')}>
+          <Button
+            type="button"
+            variant="primary"
+            size="m"
+            className={resultButtonClass}
+            onClick={() => openSubscription('overview')}
+          >
+            {t('result.back')}
+          </Button>
+        </ResultBlock>
+      ) : null}
     </div>
   );
 };
