@@ -24,14 +24,16 @@ const ResultBlock = ({
   children,
 }: {
   title: string;
-  text?: string;
+  text?: ReactNode;
   children?: ReactNode;
 }) => (
   <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center">
     <h1 className="font-playfair text-text-primary m-0 text-2xl leading-snug font-medium">
       {title}
     </h1>
-    {text ? <p className="text-text-secondary m-0 text-sm leading-5">{text}</p> : null}
+    {text ? (
+      <div className="text-text-secondary flex flex-col gap-0.5 text-sm leading-5">{text}</div>
+    ) : null}
     {children ? <div className="flex w-full max-w-[280px] flex-col gap-2">{children}</div> : null}
   </div>
 );
@@ -156,7 +158,15 @@ export const SubscriptionPaymentResult = () => {
       ) : null}
 
       {phase === 'success' ? (
-        <ResultBlock title={t('paymentResult.successTitle')} text={t('result.successText')}>
+        <ResultBlock
+          title={t('paymentResult.successTitle')}
+          text={
+            <>
+              <p className="m-0">{t('paymentResult.successText')}</p>
+              <p className="m-0">{t('paymentResult.successTextLine2')}</p>
+            </>
+          }
+        >
           <Button
             type="button"
             variant="primary"

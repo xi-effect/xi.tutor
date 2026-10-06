@@ -14,15 +14,24 @@ export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?
   const subscription = subscriptionQuery.data;
   const endsAt = subscription?.subscription.ends_at;
   const autoRenewal = Boolean(subscription?.auto_renewal);
-  const descriptionKey = autoRenewal
-    ? endsAt
-      ? 'manage.disableDescriptionRenewal'
-      : 'manage.disableDescriptionRenewalNoDate'
-    : endsAt
-      ? 'manage.disableDescriptionNoRenewal'
-      : 'manage.disableDescriptionNoRenewalNoDate';
+  const description = endsAt
+    ? t('manage.disableDescriptionRenewal', { date: formatRenewalDateShort(endsAt) })
+    : t('manage.disableDescriptionRenewalNoDate');
 
   if (!subscription) return null;
+
+  if (!autoRenewal) {
+    return (
+      <div className="text-text-secondary flex flex-col items-center gap-1 text-center text-sm leading-5">
+        <p>{t('manage.noRenewalHint')}</p>
+        <p>
+          {endsAt
+            ? t('manage.noRenewalUntil', { date: formatRenewalDateShort(endsAt) })
+            : t('manage.noRenewalUntilNoDate')}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-start gap-2">
@@ -44,9 +53,7 @@ export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         title={t('manage.disableTitle')}
-        description={t(descriptionKey, {
-          date: endsAt ? formatRenewalDateShort(endsAt) : '',
-        })}
+        description={description}
         confirmLabel={t('manage.disableConfirm')}
         cancelLabel={t('manage.disableKeep')}
         isPending={deleteAutoRenewal.isPending}
