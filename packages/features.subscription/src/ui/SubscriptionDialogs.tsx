@@ -1,6 +1,14 @@
 import { Button } from '@xipkg/button';
 import { Modal, ModalBody, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
-import { getTariff, useSubscriptionPlan, useSubscriptionUiStore } from 'common.subscription';
+import { cn } from '@xipkg/utils';
+import {
+  bytesToMb,
+  getTariff,
+  useSubscriptionPlan,
+  useSubscriptionUiStore,
+  type PlanId,
+  type SubscriptionDialog,
+} from 'common.subscription';
 import {
   ModalCloseIcon,
   modalBodyClass,
@@ -14,38 +22,65 @@ import {
 } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 
+type DialogId = Exclude<SubscriptionDialog, null>;
+
+type DialogCopy = {
+  title: string;
+  text: string;
+  closeLabel: string;
+  confirmLabel: string;
+};
+
+const imageSize = (plan: PlanId) => `${bytesToMb(getTariff(plan).maxImageBytes)} МБ`;
+
 export const SubscriptionDialogs = () => {
   const { t } = useTranslation('subscription');
   const dialog = useSubscriptionUiStore((s) => s.dialog);
   const closeDialog = useSubscriptionUiStore((s) => s.closeDialog);
   const openCompare = useSubscriptionUiStore((s) => s.openCompare);
-  const { planId } = useSubscriptionPlan();
-  const tariff = getTariff(planId);
+  const { planId, tariff } = useSubscriptionPlan();
+  const limits = tariff ?? (planId ? getTariff(planId) : null);
+  const planName = planId ? t(`plans.${planId}`) : '';
+  const limitActions = {
+    closeLabel: t('limits.close'),
+    confirmLabel: t('limits.viewPro'),
+  };
 
-  const copy =
-    dialog === 'classroom'
-      ? {
-          title: t('limits.classroomTitle'),
-          text: t('limits.classroomText', {
-            plan: t(`plans.${planId}`),
-            count: tariff.maxActiveClassrooms,
-          }),
-        }
-      : dialog === 'storage'
-        ? {
-            title: t('limits.storageTitle'),
-            text: t('limits.storageText', { plan: t(`plans.${planId}`) }),
-          }
-        : dialog === 'proFeature'
-          ? {
-              title: t('pro.title'),
-              text: '',
-            }
-          : null;
+  const dialogCopy: Record<DialogId, DialogCopy> = {
+    classroom: {
+      title: t('limits.classroomTitle'),
+      text: t('limits.classroomText', {
+        plan: planName,
+        count: limits?.maxActiveClassrooms ?? 0,
+      }),
+      ...limitActions,
+    },
+    storage: {
+      title: t('limits.storageTitle'),
+      text: t('limits.storageText', { plan: planName }),
+      ...limitActions,
+    },
+    proFeature: {
+      title: t('pro.title'),
+      text: '',
+      closeLabel: t('pro.close'),
+      confirmLabel: t('pro.viewPro'),
+    },
+    imageUpgrade: {
+      title: t('limits.imageUpgradeTitle'),
+      text: t('limits.imageUpgradeText', {
+        basicSize: imageSize('basic'),
+        proSize: imageSize('pro'),
+      }),
+      ...limitActions,
+    },
+  };
+
+  const copy = dialog ? dialogCopy[dialog] : null;
 
   return (
     <Modal open={Boolean(dialog)} onOpenChange={(open) => !open && closeDialog()}>
-      <ModalContent className={modalContentClass}>
+      <ModalContent className={cn(modalContentClass)}>
         <ModalBody className={modalBodyClass}>
           <div className={modalHeaderRowClass}>
             <ModalTitle className={modalTitleClass}>{copy?.title}</ModalTitle>
@@ -64,7 +99,7 @@ export const SubscriptionDialogs = () => {
               className={modalCancelButtonClass}
               onClick={closeDialog}
             >
-              {dialog === 'proFeature' ? t('pro.close') : t('limits.close')}
+              {copy?.closeLabel}
             </Button>
             <Button
               type="button"
@@ -73,7 +108,7 @@ export const SubscriptionDialogs = () => {
               className={modalConfirmButtonClass}
               onClick={() => openCompare(true)}
             >
-              {dialog === 'proFeature' ? t('pro.viewPro') : t('limits.viewPro')}
+              {copy?.confirmLabel}
             </Button>
           </div>
         </ModalBody>

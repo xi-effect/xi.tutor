@@ -1,4 +1,4 @@
-export { SUBSCRIPTION_BILLING_ENABLED } from './src/config';
+export { SUBSCRIPTION_BILLING_ENABLED, SUBSCRIPTION_PROMO_ENABLED } from './src/config';
 export {
   DEFAULT_PRO_RENEWS_AT,
   GB,
@@ -38,20 +38,16 @@ export {
   type PromoResult,
   type PromoStatus,
 } from './src/promo';
-export { bytesToMb, formatBytes, formatRub } from './src/format';
+export { bytesToMb, formatBytes, formatPlanStorage, formatRub } from './src/format';
 export {
   addDaysFromLaterOf,
   getRemainingSubscriptionDays,
   isPaidPeriodExpired,
 } from './src/period';
-export {
-  useSubscriptionStore,
-  type PaymentOutcome,
-  type SubscriptionMock,
-  type SubscriptionState,
-} from './src/store';
+export { useSubscriptionStore, type SubscriptionMock, type SubscriptionState } from './src/store';
 export {
   requestClassroomLimitDialog,
+  requestImageUpgradeDialog,
   requestProFeatureDialog,
   requestStorageLimitDialog,
   useSubscriptionUiStore,
