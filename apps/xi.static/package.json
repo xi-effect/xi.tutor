@@ -1,0 +1,9 @@
+{
+  "name": "xi.static",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Статика банка задач: исходники и runtime-файлы для /math-bank и /task-bank",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  }
+}

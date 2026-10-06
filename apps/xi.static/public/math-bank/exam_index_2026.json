@@ -1,0 +1,386 @@
+[
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 1,
+    "count": 248
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 2,
+    "count": 374
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 3,
+    "count": 156
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 4,
+    "count": 622
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 5,
+    "count": 130
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 6,
+    "count": 156
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 7,
+    "count": 219
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 9,
+    "count": 100
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 10,
+    "count": 100
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 11,
+    "count": 324
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 12,
+    "count": 100
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 13,
+    "count": 324
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 14,
+    "count": 248
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 15,
+    "count": 374
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 16,
+    "count": 248
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 17,
+    "count": 244
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 18,
+    "count": 138
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 19,
+    "count": 760
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 20,
+    "count": 618
+  },
+  {
+    "exam": "EGE_BASE",
+    "year": 2026,
+    "taskNumber": 21,
+    "count": 622
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 1,
+    "count": 800
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 2,
+    "count": 884
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 3,
+    "count": 1318
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 4,
+    "count": 627
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 5,
+    "count": 627
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 6,
+    "count": 1647
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 7,
+    "count": 800
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 8,
+    "count": 937
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 9,
+    "count": 100
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 10,
+    "count": 227
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 11,
+    "count": 106
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 12,
+    "count": 1107
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 13,
+    "count": 1357
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 14,
+    "count": 1212
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 15,
+    "count": 1015
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 16,
+    "count": 355
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 17,
+    "count": 800
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 18,
+    "count": 278
+  },
+  {
+    "exam": "EGE_PROFILE",
+    "year": 2026,
+    "taskNumber": 19,
+    "count": 370
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 1,
+    "count": 2263
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 2,
+    "count": 2263
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 3,
+    "count": 2263
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 4,
+    "count": 2263
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 5,
+    "count": 2263
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 6,
+    "count": 3698
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 7,
+    "count": 76
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 8,
+    "count": 449
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 9,
+    "count": 3248
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 10,
+    "count": 674
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 11,
+    "count": 809
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 12,
+    "count": 53
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 13,
+    "count": 166
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 14,
+    "count": 630
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 15,
+    "count": 2183
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 16,
+    "count": 1723
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 17,
+    "count": 2022
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 18,
+    "count": 1873
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 19,
+    "count": 1082
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 20,
+    "count": 2227
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 21,
+    "count": 538
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 22,
+    "count": 519
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 23,
+    "count": 1773
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 24,
+    "count": 2345
+  },
+  {
+    "exam": "OGE",
+    "year": 2026,
+    "taskNumber": 25,
+    "count": 1740
+  }
+]
