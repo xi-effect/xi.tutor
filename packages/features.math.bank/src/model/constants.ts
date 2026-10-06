@@ -1,6 +1,8 @@
+import { env } from 'common.env';
+
 export const MATH_GRADES = [5, 6, 7, 8, 9, 10, 11] as const;
 export const MATH_DIFFICULTIES = [1, 2, 3, 4, 5] as const;
-const BANK_STATIC_ORIGIN = 'https://app-static.sovlium.ru';
+const BANK_STATIC_ORIGIN = env.VITE_BANK_STATIC_ORIGIN.replace(/\/$/, '');
 
 export const MATH_BANK_BASE_URL = `${BANK_STATIC_ORIGIN}/math-bank`;
 export const RUSSIAN_BANK_BASE_URL = `${BANK_STATIC_ORIGIN}/task-bank/russian`;

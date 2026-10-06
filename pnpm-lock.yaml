@@ -3148,6 +3148,9 @@ importers:
 
   packages/features.math.bank:
     dependencies:
+      common.env:
+        specifier: workspace:*
+        version: link:../common.env
       minisearch:
         specifier: ^7.1.2
         version: 7.2.0
