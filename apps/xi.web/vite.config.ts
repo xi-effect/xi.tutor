@@ -12,7 +12,6 @@ import {
   readCallsDepsMode,
 } from './vite.calls-local.ts';
 import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
-import { mathBankAssetsPlugin } from './vite.math-bank.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,7 +28,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   const config = {
     plugins: [
       paddleOcrCjsInteropPlugin(),
-      mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
@@ -118,7 +116,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 },
               },
               {
-                urlPattern: /\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
+                urlPattern:
+                  /^https:\/\/app-static\.sovlium\.ru\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
                 handler: 'CacheFirst',
                 options: {
                   cacheName: 'math-bank-assets',
