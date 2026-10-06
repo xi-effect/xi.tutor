@@ -36,6 +36,9 @@ const searchSchema = z
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/')({
+  head: () => ({
+    meta: [{ title: 'sovlium | Кабинет' }],
+  }),
   component: ClassroomPageComponent,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
   validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),

@@ -144,7 +144,12 @@ const ApproveForm = ({
         <Button
           variant="default"
           className="w-38.5"
-          onClick={() => receiverConfirmationMutation(recipientInvoiceId.toString())}
+          onClick={() =>
+            receiverConfirmationMutation({
+              invoiceId: recipientInvoiceId.toString(),
+              revenue: data?.recipient_invoice?.total || paymentDetails.total,
+            })
+          }
           disabled={isPending}
           data-umami-event="payment-receiver-confirm"
         >
@@ -189,6 +194,7 @@ const AdvanceForm = ({
     recipientInvoiceId,
     isTutor,
     paymentDetails.classroom_id?.toString(),
+    data?.recipient_invoice?.total || paymentDetails.total,
   );
 
   const onFormSubmit = (data: PaymentFormData) => {

@@ -18,10 +18,6 @@ import { mathBankAssetsPlugin } from './vite.math-bank.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
-const isHeavyOcrAsset = (filePath: string) =>
-  /(?:^|\/)dist-[^/]+\.js$/.test(filePath) ||
-  /paddleocr|opencv|onnxruntime|ort\.bundle|ort-wasm|worker-entry/i.test(filePath);
-
 // https://vite.dev/config/
 export default defineConfig(({ mode, command }: ConfigEnv) => {
   const callsDepsMode = readCallsDepsMode(appDir);
@@ -109,9 +105,15 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
             skipWaiting: true,
             clientsClaim: true,
             cleanupOutdatedCaches: true,
-
-            globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
-
+            // null затирает дефолт плагина 'index.html'. Иначе Workbox регистрирует
+            // NavigationRoute раньше runtimeCaching и всегда отдаёт precache HTML.
+            // После деплоя это старый index.html с уже удалёнными hashed-чанками.
+            navigateFallback: null,
+            // Запрос документа стартует параллельно с запуском service worker.
+            navigationPreload: true,
+            // index.html не прекешируем: precache с directoryIndex отдаёт '/' из кэша
+            // даже без navigateFallback.
+            globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}'],
             globIgnores: [
               '**/*paddleocr*',
               '**/*opencv*',
@@ -132,20 +134,13 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
             // Ниже ~6–24MB чанков OCR: иначе они снова попадут
             // в precache под именем index-*.js.
             maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-
-            navigateFallback: '/index.html',
-            navigateFallbackDenylist: [/^\/deployments\/.*/],
-
             runtimeCaching: [
               {
+                // Документ только из сети. Кэш HTML после деплоя ссылается на
+                // удалённые чанки, а на мобильных service worker чаще отдаёт его
+                // из-за оборвавшегося первого запроса.
                 urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',
-                handler: 'NetworkFirst',
-                options: {
-                  cacheName: 'html',
-                  // Без timeout: иначе при медленной сети отдаётся
-                  // старый index.html со ссылками на уже удалённые
-                  // hashed-ассеты → белый экран.
-                },
+                handler: 'NetworkOnly',
               },
               {
                 handler: 'NetworkOnly',
@@ -221,13 +216,10 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
           }
         : undefined,
 
-      // PaddleOCR не должен попадать в <link rel="modulepreload">
-      // у index.html: после деплоя старые dist-*.js дают 404
-      // и белый экран.
-      modulePreload: {
-        resolveDependencies: (_filename: string, deps: string[]) =>
-          deps.filter((dep) => !isHeavyOcrAsset(dep)),
-      },
+      // iOS/Safari вместе с service worker иногда подвешивает module graph на
+      // <link rel="modulepreload"> и не шлёт error. Entry не стартует — белый экран.
+      // import() и preload CSS при динамических чанках остаются.
+      modulePreload: false,
     },
 
     optimizeDeps: {

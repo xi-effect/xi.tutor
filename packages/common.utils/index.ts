@@ -17,6 +17,7 @@ export {
   PRODUCT_ANALYTICS_EVENTS,
   DEPRECATED_ANALYTICS_EVENTS,
   trackProductEvent,
+  trackPaymentConfirmed,
   getProductAnalyticsRole,
   getDurationBucket,
   getReachedDurationThresholds,

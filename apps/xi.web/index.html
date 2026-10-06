@@ -13,6 +13,48 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Не @import из основного CSS: пока fonts.googleapis.com не ответит,
+      браузер не применяет stylesheet и не запускает type=module.
+      media=print не блокирует парсер, onload включает шрифт после ответа.
+    -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <style>
+      #boot-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f7f8fa;
+      }
+      html[data-theme='dark'] #boot-splash {
+        background: #111318;
+      }
+      #boot-splash span {
+        box-sizing: border-box;
+        width: 24px;
+        height: 24px;
+        border: 3px solid #5c5fd1;
+        border-top-color: transparent;
+        border-radius: 999px;
+        animation: boot-spin 0.7s linear infinite;
+      }
+      @keyframes boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      #root:not(:empty) ~ #boot-splash {
+        display: none;
+      }
+    </style>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -54,10 +96,39 @@
     <meta name="apple-mobile-web-app-title" content="sovlium" />
     <link rel="canonical" href="https://sovlium.com" />
     <title>sovlium</title>
-    <script defer src="https://umami.sovlium.ru/script.js" data-website-id="5ae7f92f-b9ff-4533-9346-2e621d354220"></script>
+    <script>
+      (function () {
+        var allowed = {
+          'app.sovlium.ru': true,
+          'sovlium.ru': true,
+          'www.sovlium.ru': true,
+        };
+        var host = location.hostname;
+        window.sovliumUmamiBeforeSend = function (_type, payload) {
+          if (!allowed[host]) return false;
+          return payload;
+        };
+        if (!allowed[host]) return;
+        var recorder = document.createElement('script');
+        recorder.defer = true;
+        recorder.src = 'https://umami.sovlium.ru/recorder.js';
+        recorder.setAttribute('data-website-id', '5ae7f92f-b9ff-4533-9346-2e621d354220');
+        document.head.appendChild(recorder);
+      })();
+    </script>
+    <script
+      defer
+      src="https://umami.sovlium.ru/script.js"
+      data-website-id="5ae7f92f-b9ff-4533-9346-2e621d354220"
+      data-domains="app.sovlium.ru,sovlium.ru,www.sovlium.ru"
+      data-exclude-search="true"
+      data-performance="true"
+      data-before-send="sovliumUmamiBeforeSend"
+    ></script>
   </head>
   <body class="overflow-hidden">
     <div id="root"></div>
+    <div id="boot-splash" aria-hidden="true"><span></span></div>
     <script>
       // Если entry-чанк 404 (протухший index.html после деплоя), JS приложения
       // не стартует и installStaleChunkReload не успевает. Ключ совпадает с
@@ -76,6 +147,10 @@
           }
           window.location.reload();
         };
+        var appHasPainted = function () {
+          var root = document.getElementById('root');
+          return !!(root && root.childElementCount > 0);
+        };
         window.addEventListener(
           'error',
           function (event) {
@@ -85,6 +160,46 @@
           },
           true,
         );
+        window.addEventListener('unhandledrejection', function (event) {
+          var reason = event.reason;
+          var message = (reason && (reason.message || String(reason))) || '';
+          if (
+            /dynamically imported module|module script failed|failed to load module script|unable to preload css/i.test(
+              message,
+            )
+          ) {
+            reloadOnce();
+          }
+        });
+        // Смена service worker посреди загрузки на iOS обрывает модули
+        // и оставляет пустой экран часто без error.
+        if (navigator.serviceWorker) {
+          navigator.serviceWorker.addEventListener('controllerchange', function () {
+            if (appHasPainted()) return;
+            reloadOnce();
+          });
+        }
+        var isNative = !!(window.__SOVLIUM_NATIVE__ || window.__SOVLIUM_ELECTRON__);
+        if (!isNative) {
+          // Отдельный ключ и одна попытка за сессию: общий cooldown 15с
+          // короче этого таймера, и страница перезагружалась бы бесконечно.
+          var watchdogKey = 'boot-watchdog-reload';
+          window.setTimeout(function () {
+            if (appHasPainted()) {
+              try {
+                sessionStorage.removeItem(watchdogKey);
+              } catch (e) {}
+              return;
+            }
+            try {
+              if (sessionStorage.getItem(watchdogKey) === '1') return;
+              sessionStorage.setItem(watchdogKey, '1');
+            } catch (e) {
+              return;
+            }
+            window.location.reload();
+          }, 25000);
+        }
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
