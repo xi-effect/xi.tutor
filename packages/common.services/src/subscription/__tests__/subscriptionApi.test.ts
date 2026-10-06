@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  getSubscriptionPaymentStatus,
   parseCurrentPlan,
   parseCurrentSubscription,
+  parseSubscriptionPayment,
   subscriptionApiConfig,
   SubscriptionQueryKey,
 } from 'common.api';
@@ -11,13 +13,25 @@ vi.mock('common.config', () => ({
 }));
 
 import { getAxiosInstance } from 'common.config';
-import { isProPaymentActivated } from '../paymentActivation';
 import {
+  SubscriptionPaymentLookupError,
   createSubscriptionPayment,
   deleteCurrentAutoRenewal,
   getCurrentPlan,
   getCurrentSubscription,
+  getSubscriptionPayment,
 } from '../subscriptionApi';
+
+const paymentBody = {
+  id: 'pay-1',
+  provider_payment_id: 'yk-1',
+  created_at: '2026-09-29T00:00:00Z',
+  amount_roubles: 1499,
+  subscription_days: 30,
+  confirmation_url: 'https://yookassa.ru/checkout/test',
+  completed_at: null,
+  cancellation_reason: null,
+};
 
 const axiosMock = vi.fn();
 
@@ -38,6 +52,9 @@ describe('subscription API', () => {
       '/api/protected/content-service/roles/tutor/storage-usage/',
     );
     expect(subscriptionApiConfig[SubscriptionQueryKey.CreatePayment].method).toBe('POST');
+    expect(subscriptionApiConfig[SubscriptionQueryKey.GetPayment].getUrl('pay/1')).toContain(
+      '/api/protected/subscription-service/users/current/payments/pay%2F1/',
+    );
     expect(subscriptionApiConfig[SubscriptionQueryKey.DeleteAutoRenewal].method).toBe('DELETE');
   });
 
@@ -56,21 +73,10 @@ describe('subscription API', () => {
     await expect(getCurrentSubscription()).rejects.toThrow('network');
   });
 
-  it('POST payment отправляет только period monthly', async () => {
-    axiosMock.mockResolvedValue({
-      data: {
-        confirmation_url: 'https://yookassa.ru/checkout/test',
-        payment: {
-          id: 'pay-1',
-          provider_payment_id: 'yk-1',
-          created_at: '2026-09-29T00:00:00Z',
-          amount_roubles: 1499,
-          subscription_days: 30,
-        },
-      },
-    });
+  it('POST payment отправляет только period monthly и читает плоский Payment', async () => {
+    axiosMock.mockResolvedValue({ data: paymentBody });
 
-    await createSubscriptionPayment();
+    await expect(createSubscriptionPayment()).resolves.toEqual(paymentBody);
 
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -78,6 +84,36 @@ describe('subscription API', () => {
         data: { period: 'monthly' },
       }),
     );
+  });
+
+  it('GET payment запрашивает конкретный платёж', async () => {
+    axiosMock.mockResolvedValue({
+      data: { ...paymentBody, completed_at: '2026-09-29T01:00:00Z' },
+    });
+
+    await expect(getSubscriptionPayment('pay-1')).resolves.toMatchObject({
+      id: 'pay-1',
+      completed_at: '2026-09-29T01:00:00Z',
+    });
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: 'GET',
+        url: expect.stringContaining('/payments/pay-1/'),
+      }),
+    );
+  });
+
+  it('GET payment 404 и 403 не считаются статусом платежа', async () => {
+    axiosMock.mockRejectedValueOnce({ isAxiosError: true, response: { status: 404 } });
+    await expect(getSubscriptionPayment('missing')).rejects.toBeInstanceOf(
+      SubscriptionPaymentLookupError,
+    );
+
+    axiosMock.mockRejectedValueOnce({ isAxiosError: true, response: { status: 403 } });
+    await expect(getSubscriptionPayment('foreign')).rejects.toMatchObject({ status: 403 });
+
+    axiosMock.mockRejectedValueOnce(new Error('network'));
+    await expect(getSubscriptionPayment('pay-1')).rejects.toThrow('network');
   });
 
   it('DELETE auto-renewal 404 считается уже отключённым', async () => {
@@ -108,39 +144,37 @@ describe('subscription API', () => {
   });
 });
 
-describe('isProPaymentActivated', () => {
-  it('успех, если Про появился вместе с подпиской', () => {
+describe('getSubscriptionPaymentStatus', () => {
+  it('различает pending, success и cancelled', () => {
+    expect(getSubscriptionPaymentStatus(paymentBody)).toBe('pending');
     expect(
-      isProPaymentActivated({
-        planKind: 'pro',
-        subscriptionEndsAt: '2026-10-29T00:00:00Z',
+      getSubscriptionPaymentStatus({
+        ...paymentBody,
+        completed_at: '2026-09-29T01:00:00Z',
       }),
-    ).toBe(true);
+    ).toBe('success');
+    expect(
+      getSubscriptionPaymentStatus({
+        ...paymentBody,
+        completed_at: '2026-09-29T01:00:00Z',
+        cancellation_reason: 'canceled_by_user',
+      }),
+    ).toBe('cancelled');
+    expect(
+      getSubscriptionPaymentStatus({
+        ...paymentBody,
+        cancellation_reason: 'canceled_by_user',
+      }),
+    ).toBe('cancelled');
   });
 
-  it('успех, если ends_at увеличился', () => {
+  it('пустые строки статуса считает отсутствующими', () => {
     expect(
-      isProPaymentActivated({
-        planKind: 'pro',
-        subscriptionEndsAt: '2026-11-29T00:00:00Z',
-        previousSubscriptionEndsAt: '2026-10-29T00:00:00Z',
+      parseSubscriptionPayment({
+        ...paymentBody,
+        completed_at: '  ',
+        cancellation_reason: '',
       }),
-    ).toBe(true);
-  });
-
-  it('не считает оплату успешной, пока тариф не Про или срок не вырос', () => {
-    expect(
-      isProPaymentActivated({
-        planKind: null,
-        subscriptionEndsAt: '2026-11-29T00:00:00Z',
-      }),
-    ).toBe(false);
-    expect(
-      isProPaymentActivated({
-        planKind: 'pro',
-        subscriptionEndsAt: '2026-10-29T00:00:00Z',
-        previousSubscriptionEndsAt: '2026-10-29T00:00:00Z',
-      }),
-    ).toBe(false);
+    ).toMatchObject({ completed_at: null, cancellation_reason: null });
   });
 });

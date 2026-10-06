@@ -92,10 +92,16 @@
   "paymentResult": {
     "checkingTitle": "Checking payment…",
     "checkingText": "This can take a few seconds.",
-    "pendingTitle": "Payment is not confirmed yet",
-    "pendingText": "If you have already paid, the status may update in a few seconds.",
+    "pendingTitle": "Payment is not finished yet",
+    "pendingText": "If the payment has already started, you can continue it.",
+    "continuePayment": "Continue payment",
     "recheck": "Check again",
-    "continue": "Continue"
+    "continue": "Continue",
+    "successTitle": "Pro is connected",
+    "cancelledTitle": "Payment cancelled",
+    "cancelledText": "The payment was not completed.",
+    "retry": "Try again",
+    "loadError": "Could not load the payment information."
   },
   "manage": {
     "title": "Manage subscription",

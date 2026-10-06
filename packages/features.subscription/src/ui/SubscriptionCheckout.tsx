@@ -6,10 +6,10 @@ import {
   TARIFFS,
   useSubscriptionUiStore,
 } from 'common.subscription';
-import { useCreateSubscriptionPayment, useCurrentSubscription } from 'common.services';
+import { useCreateSubscriptionPayment } from 'common.services';
 import { getAppLanguage } from 'common.ui';
 import { useTranslation } from 'react-i18next';
-import { isConfirmationUrl, savePendingSubscriptionPayment } from '../pendingPayment';
+import { isConfirmationUrl } from '../pendingPayment';
 import { PromoCodeField } from './PromoCodeField';
 import { ScreenBackButton } from './ScreenBackButton';
 
@@ -19,37 +19,20 @@ export const SubscriptionCheckout = () => {
   const [error, setError] = useState(false);
   const price = TARIFFS.pro.priceMonthlyRub;
   const openOverview = useSubscriptionUiStore((state) => state.openOverview);
-  const subscriptionQuery = useCurrentSubscription();
   const createPayment = useCreateSubscriptionPayment();
-
-  const payDisabled =
-    createPayment.isPending ||
-    subscriptionQuery.isPending ||
-    subscriptionQuery.isError ||
-    subscriptionQuery.isFetching;
 
   const handlePay = async () => {
     setError(false);
 
     try {
-      const freshSubscription = await subscriptionQuery.refetch();
-      if (freshSubscription.isError) {
+      const payment = await createPayment.mutateAsync();
+
+      if (!isConfirmationUrl(payment.confirmation_url)) {
         setError(true);
         return;
       }
 
-      const result = await createPayment.mutateAsync();
-
-      if (!isConfirmationUrl(result.confirmation_url)) {
-        setError(true);
-        return;
-      }
-
-      savePendingSubscriptionPayment({
-        paymentId: result.payment.id,
-        previousSubscriptionEndsAt: freshSubscription.data?.subscription.ends_at,
-      });
-      window.location.assign(result.confirmation_url);
+      window.location.assign(payment.confirmation_url);
     } catch {
       setError(true);
     }
@@ -78,28 +61,13 @@ export const SubscriptionCheckout = () => {
 
       {SUBSCRIPTION_PROMO_ENABLED ? <PromoCodeField /> : null}
 
-      {subscriptionQuery.isError ? (
-        <div className="flex flex-col items-start gap-2">
-          <p className="text-text-secondary text-sm">{t('overview.subscriptionError')}</p>
-          <Button
-            type="button"
-            variant="ghost"
-            size="s"
-            className="h-8 px-0"
-            onClick={() => void subscriptionQuery.refetch()}
-          >
-            {t('overview.retry')}
-          </Button>
-        </div>
-      ) : null}
-
       <Button
         type="button"
         variant="primary"
         size="m"
         className="h-12 w-full rounded-xl font-medium"
         onClick={() => void handlePay()}
-        disabled={payDisabled}
+        disabled={createPayment.isPending}
       >
         {t('checkout.pay')}
       </Button>

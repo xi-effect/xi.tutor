@@ -1,14 +1,14 @@
 import {
-  parseCreateSubscriptionPaymentResponse,
   parseCurrentPlan,
   parseCurrentSubscription,
   parseStorageUsage,
+  parseSubscriptionPayment,
   subscriptionApiConfig,
   SubscriptionQueryKey,
-  type CreateSubscriptionPaymentResponse,
   type CurrentPlan,
   type CurrentSubscription,
   type StorageUsage,
+  type SubscriptionPayment,
 } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { isAxiosError } from 'axios';
@@ -64,7 +64,17 @@ export async function getTutorStorageUsage(): Promise<StorageUsage> {
   return parseStorageUsage(response.data);
 }
 
-export async function createSubscriptionPayment(): Promise<CreateSubscriptionPaymentResponse> {
+export class SubscriptionPaymentLookupError extends Error {
+  readonly status: 403 | 404;
+
+  constructor(status: 403 | 404) {
+    super('Subscription payment lookup failed');
+    this.name = 'SubscriptionPaymentLookupError';
+    this.status = status;
+  }
+}
+
+export async function createSubscriptionPayment(): Promise<SubscriptionPayment> {
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = subscriptionApiConfig[SubscriptionQueryKey.CreatePayment];
 
@@ -75,7 +85,28 @@ export async function createSubscriptionPayment(): Promise<CreateSubscriptionPay
     headers: jsonHeaders,
   });
 
-  return parseCreateSubscriptionPaymentResponse(response.data);
+  return parseSubscriptionPayment(response.data);
+}
+
+export async function getSubscriptionPayment(paymentId: string): Promise<SubscriptionPayment> {
+  const axiosInst = await getAxiosInstance();
+  const { getUrl, method } = subscriptionApiConfig[SubscriptionQueryKey.GetPayment];
+
+  try {
+    const response = await axiosInst({
+      method,
+      url: getUrl(paymentId),
+      headers: jsonHeaders,
+    });
+
+    return parseSubscriptionPayment(response.data);
+  } catch (error) {
+    if (isAxiosError(error) && (error.response?.status === 404 || error.response?.status === 403)) {
+      throw new SubscriptionPaymentLookupError(error.response.status);
+    }
+
+    throw error;
+  }
 }
 
 export async function deleteCurrentAutoRenewal(): Promise<void> {

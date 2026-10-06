@@ -36,14 +36,12 @@ export type SubscriptionPayment = {
   created_at: string;
   amount_roubles: number;
   subscription_days: number;
-  completed_at?: string | null;
-  cancellation_reason?: string | null;
+  confirmation_url: string;
+  completed_at: string | null;
+  cancellation_reason: string | null;
 };
 
-export type CreateSubscriptionPaymentResponse = {
-  payment: SubscriptionPayment;
-  confirmation_url: string;
-};
+export type SubscriptionPaymentStatus = 'pending' | 'success' | 'cancelled';
 
 const isRecord = (data: unknown): data is Record<string, unknown> =>
   typeof data === 'object' && data !== null;
@@ -51,10 +49,28 @@ const isRecord = (data: unknown): data is Record<string, unknown> =>
 const isFiniteNumber = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value);
 
-const optionalNullableString = (value: unknown): string | null | undefined => {
-  if (value === undefined) return undefined;
-  if (value === null || typeof value === 'string') return value;
-  throw new Error('Invalid subscription payload');
+const nullableString = (value: unknown): string | null => {
+  if (value === null) return null;
+  if (typeof value !== 'string') {
+    throw new Error('Invalid SubscriptionPayment');
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length === 0 ? null : trimmed;
+};
+
+export const getSubscriptionPaymentStatus = (
+  payment: Pick<SubscriptionPayment, 'completed_at' | 'cancellation_reason'>,
+): SubscriptionPaymentStatus => {
+  if (!payment.completed_at && !payment.cancellation_reason) {
+    return 'pending';
+  }
+
+  if (payment.completed_at && !payment.cancellation_reason) {
+    return 'success';
+  }
+
+  return 'cancelled';
 };
 
 export const parseCurrentPlan = (data: unknown): CurrentPlan => {
@@ -121,37 +137,33 @@ export const parseStorageUsage = (data: unknown): StorageUsage => {
   return { total_storage_bytes: data.total_storage_bytes };
 };
 
-export const parseCreateSubscriptionPaymentResponse = (
-  data: unknown,
-): CreateSubscriptionPaymentResponse => {
-  if (!isRecord(data) || !isRecord(data.payment) || typeof data.confirmation_url !== 'string') {
-    throw new Error('Invalid CreateSubscriptionPaymentResponse');
+export const parseSubscriptionPayment = (data: unknown): SubscriptionPayment => {
+  if (!isRecord(data)) {
+    throw new Error('Invalid SubscriptionPayment');
   }
 
-  const payment = data.payment;
-
   if (
-    typeof payment.id !== 'string' ||
-    payment.id.length === 0 ||
-    typeof payment.provider_payment_id !== 'string' ||
-    typeof payment.created_at !== 'string' ||
-    !isFiniteNumber(payment.amount_roubles) ||
-    !isFiniteNumber(payment.subscription_days)
+    typeof data.id !== 'string' ||
+    data.id.length === 0 ||
+    typeof data.provider_payment_id !== 'string' ||
+    typeof data.created_at !== 'string' ||
+    typeof data.confirmation_url !== 'string' ||
+    data.confirmation_url.length === 0 ||
+    !isFiniteNumber(data.amount_roubles) ||
+    !isFiniteNumber(data.subscription_days)
   ) {
-    throw new Error('Invalid CreateSubscriptionPaymentResponse');
+    throw new Error('Invalid SubscriptionPayment');
   }
 
   return {
+    id: data.id,
+    provider_payment_id: data.provider_payment_id,
+    created_at: data.created_at,
+    amount_roubles: data.amount_roubles,
+    subscription_days: data.subscription_days,
     confirmation_url: data.confirmation_url,
-    payment: {
-      id: payment.id,
-      provider_payment_id: payment.provider_payment_id,
-      created_at: payment.created_at,
-      amount_roubles: payment.amount_roubles,
-      subscription_days: payment.subscription_days,
-      completed_at: optionalNullableString(payment.completed_at),
-      cancellation_reason: optionalNullableString(payment.cancellation_reason),
-    },
+    completed_at: nullableString(data.completed_at),
+    cancellation_reason: nullableString(data.cancellation_reason),
   };
 };
 
@@ -160,6 +172,7 @@ enum SubscriptionQueryKey {
   CurrentSubscription = 'currentSubscription',
   StorageUsage = 'storageUsage',
   CreatePayment = 'CreateSubscriptionPayment',
+  GetPayment = 'GetSubscriptionPayment',
   DeleteAutoRenewal = 'DeleteAutoRenewal',
 }
 
@@ -183,6 +196,11 @@ const subscriptionApiConfig = {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/subscription-service/users/current/payments/`,
     method: HttpMethod.POST,
+  },
+  [SubscriptionQueryKey.GetPayment]: {
+    getUrl: (paymentId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/subscription-service/users/current/payments/${encodeURIComponent(paymentId)}/`,
+    method: HttpMethod.GET,
   },
   [SubscriptionQueryKey.DeleteAutoRenewal]: {
     getUrl: () =>
