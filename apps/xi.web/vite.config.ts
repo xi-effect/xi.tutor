@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { ConfigEnv, defineConfig, mergeConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import tailwindcss from '@tailwindcss/vite';
+// import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import Inspect from 'vite-plugin-inspect';
 
@@ -67,7 +67,7 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
 
       react(),
 
-      tailwindcss(),
+      // tailwindcss(),
 
       !isElectron &&
         VitePWA({
