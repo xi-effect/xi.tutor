@@ -99,6 +99,36 @@ export const DrawingOverlay = ({
     redraw();
   }, [redraw, strokes]);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !isActive) return;
+
+    // mousedown: preventDefault отменяет старт нативного drag,
+    // stopPropagation не даёт ProseMirror сделать NodeSelection
+    const onMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    const stop = (e: Event) => e.stopPropagation();
+
+    canvas.addEventListener('mousedown', onMouseDown);
+    canvas.addEventListener('mouseup', stop);
+    canvas.addEventListener('click', stop);
+    canvas.addEventListener('touchstart', stop, { passive: true });
+
+    // на случай, если drag всё же стартует на draggable-предке
+    const draggableAncestor = canvas.closest<HTMLElement>('[draggable="true"]');
+    draggableAncestor?.setAttribute('draggable', 'false');
+
+    return () => {
+      canvas.removeEventListener('mousedown', onMouseDown);
+      canvas.removeEventListener('mouseup', stop);
+      canvas.removeEventListener('click', stop);
+      canvas.removeEventListener('touchstart', stop);
+      draggableAncestor?.setAttribute('draggable', 'true');
+    };
+  }, [isActive]);
+
   const getPoint = useCallback((e: React.PointerEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
@@ -164,6 +194,7 @@ export const DrawingOverlay = ({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
+        draggable="false"
       />
     </div>
   );
