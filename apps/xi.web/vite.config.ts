@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ConfigEnv, defineConfig, mergeConfig, searchForWorkspaceRoot } from 'vite';
+import { ConfigEnv, defineConfig, loadEnv, mergeConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -12,12 +12,17 @@ import {
   readCallsDepsMode,
 } from './vite.calls-local.ts';
 import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
-import { mathBankAssetsPlugin } from './vite.math-bank.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
+  const bankStaticOrigin = (
+    loadEnv(mode, appDir, '').VITE_BANK_STATIC_ORIGIN || 'https://app-static.sovlium.ru'
+  ).replace(/\/$/, '');
+  const bankAssetPattern = new RegExp(
+    `^${bankStaticOrigin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/(?:math-bank|task-bank)/.+\\.(?:json|gz)$`,
+  );
   const callsDepsMode = readCallsDepsMode(appDir);
   const useCallsLink = mode === 'development' && callsDepsMode === 'link';
   const isElectron = mode === 'electron';
@@ -29,7 +34,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   const config = {
     plugins: [
       paddleOcrCjsInteropPlugin(),
-      mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
@@ -118,7 +122,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 },
               },
               {
-                urlPattern: /\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
+                urlPattern: bankAssetPattern,
                 handler: 'CacheFirst',
                 options: {
                   cacheName: 'math-bank-assets',

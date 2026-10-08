@@ -14,59 +14,42 @@ const asBoolean = (value: string | null, defaultValue?: boolean): boolean =>
 const asString = (value: string | null, defaultValue?: string): string =>
   parseEnv(value, (v) => v, defaultValue);
 
-const env = {
-  DEV: import.meta.env.MODE === 'development',
+// В Vite `import.meta.env` всегда есть. В tsx-скриптах пакетов его нет.
+const viteEnv = import.meta.env ?? {};
 
-  VITE_SERVER_URL_BACKEND: asString(
-    import.meta.env.VITE_SERVER_URL_BACKEND,
-    'https://api.sovlium.ru',
-  ),
+const env = {
+  DEV: viteEnv.MODE === 'development',
+
+  VITE_SERVER_URL_BACKEND: asString(viteEnv.VITE_SERVER_URL_BACKEND, 'https://api.sovlium.ru'),
   VITE_SERVER_URL_SOCKETIO: asString(
-    import.meta.env.VITE_SERVER_URL_SOCKETIO,
-    import.meta.env.VITE_SERVER_URL_BACKEND || 'https://api.sovlium.ru',
+    viteEnv.VITE_SERVER_URL_SOCKETIO,
+    viteEnv.VITE_SERVER_URL_BACKEND || 'https://api.sovlium.ru',
   ),
-  VITE_SERVER_URL_LIVEKIT: asString(
-    import.meta.env.VITE_SERVER_URL_LIVEKIT,
-    'https://livekit.sovlium.ru',
-  ),
-  VITE_SERVER_URL_LIVEKIT_DEV: asString(
-    import.meta.env.VITE_SERVER_URL_LIVEKIT_DEV,
-    'ws://127.0.0.1:7880',
-  ),
-  VITE_LIVEKIT_DEV_TOKEN: asString(import.meta.env.VITE_LIVEKIT_DEV_TOKEN, ''),
-  VITE_LIVEKIT_DEV_MODE: asBoolean(import.meta.env.VITE_LIVEKIT_DEV_MODE, false),
+  VITE_SERVER_URL_LIVEKIT: asString(viteEnv.VITE_SERVER_URL_LIVEKIT, 'https://livekit.sovlium.ru'),
+  VITE_SERVER_URL_LIVEKIT_DEV: asString(viteEnv.VITE_SERVER_URL_LIVEKIT_DEV, 'ws://127.0.0.1:7880'),
+  VITE_LIVEKIT_DEV_TOKEN: asString(viteEnv.VITE_LIVEKIT_DEV_TOKEN, ''),
+  VITE_LIVEKIT_DEV_MODE: asBoolean(viteEnv.VITE_LIVEKIT_DEV_MODE, false),
   /** Включить опцию «Усиленное» шумоподавление (Krisp) в UI. Связано с LiveKit Cloud. */
-  VITE_ALLOW_KRISP_NOISE_CANCELLATION: asBoolean(
-    import.meta.env.VITE_ALLOW_KRISP_NOISE_CANCELLATION,
-    true,
-  ),
+  VITE_ALLOW_KRISP_NOISE_CANCELLATION: asBoolean(viteEnv.VITE_ALLOW_KRISP_NOISE_CANCELLATION, true),
   /** Показывать UI шумоподавления (Стандартное/Усиленное). По умолчанию выключено — используется только WebRTC через audioCaptureDefaults комнаты. */
   VITE_NOISE_CANCELLATION_FEATURE_ENABLED: asBoolean(
-    import.meta.env.VITE_NOISE_CANCELLATION_FEATURE_ENABLED,
+    viteEnv.VITE_NOISE_CANCELLATION_FEATURE_ENABLED,
     false,
   ),
-  VITE_SERVER_URL_HOCUS: asString(
-    import.meta.env.VITE_SERVER_URL_HOCUS,
-    'https://hocus.sovlium.ru',
+  VITE_SERVER_URL_HOCUS: asString(viteEnv.VITE_SERVER_URL_HOCUS, 'https://hocus.sovlium.ru'),
+  VITE_BANK_STATIC_ORIGIN: asString(
+    viteEnv.VITE_BANK_STATIC_ORIGIN,
+    'https://app-static.sovlium.ru',
   ),
-  VITE_APP_DOMAIN: asString(import.meta.env.VITE_APP_DOMAIN, 'https://app.sovlium.ru'),
+  VITE_APP_DOMAIN: asString(viteEnv.VITE_APP_DOMAIN, 'https://app.sovlium.ru'),
   /** Временный откат к старой модалке приглашений (таблица со списком ссылок) вместо
    * нового сценария «одна актуальная ссылка + готовое сообщение». По умолчанию выключено. */
-  VITE_LEGACY_INVITES_MODAL_ENABLED: asBoolean(
-    import.meta.env.VITE_LEGACY_INVITES_MODAL_ENABLED,
-    false,
-  ),
-  VITE_DEVTOOLS_ENABLED: asBoolean(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),
-  VITE_ENABLE_X_TESTING: asBoolean(import.meta.env.VITE_ENABLE_X_TESTING, false),
-  VITE_ENABLE_PERFORMANCE_PROFILING: asBoolean(
-    import.meta.env.VITE_ENABLE_PERFORMANCE_PROFILING,
-    false,
-  ),
+  VITE_LEGACY_INVITES_MODAL_ENABLED: asBoolean(viteEnv.VITE_LEGACY_INVITES_MODAL_ENABLED, false),
+  VITE_DEVTOOLS_ENABLED: asBoolean(viteEnv.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),
+  VITE_ENABLE_X_TESTING: asBoolean(viteEnv.VITE_ENABLE_X_TESTING, false),
+  VITE_ENABLE_PERFORMANCE_PROFILING: asBoolean(viteEnv.VITE_ENABLE_PERFORMANCE_PROFILING, false),
   /** DSN для BUGSINK (Sentry-совместимый сбор ошибок). Поддерживается также VITE_GLITCHTIP_DSN для обратной совместимости. */
-  VITE_BUGSINK_DSN: asString(
-    import.meta.env.VITE_BUGSINK_DSN ?? import.meta.env.VITE_GLITCHTIP_DSN,
-    '',
-  ),
+  VITE_BUGSINK_DSN: asString(viteEnv.VITE_BUGSINK_DSN ?? viteEnv.VITE_GLITCHTIP_DSN, ''),
 };
 
 const checkEnv = (envKey: keyof typeof env): boolean => {
