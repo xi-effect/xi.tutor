@@ -1,5 +1,5 @@
 {
-  "name": "modules.profile",
+  "name": "features.tags",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -8,43 +8,22 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "tsc --watch",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "dev": "tsc --watch"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.166.6",
-    "@xipkg/avatar": "3.4.0",
-    "@xipkg/badge": "2.1.0",
     "@xipkg/button": "4.3.0",
     "@xipkg/dropdown": "3.1.0",
     "@xipkg/icons": "3.1.8",
     "@xipkg/modal": "4.6.0",
-    "@xipkg/select": "3.0.0",
-    "@xipkg/slider": "2.3.0",
-    "@xipkg/switcher-animate": "1.1.0",
-    "@xipkg/toggle": "^4.2.0",
-    "@xipkg/tooltip": "2.2.0",
-    "@xipkg/userprofile": "4.2.0",
+    "@xipkg/input": "2.3.0",
     "@xipkg/utils": "1.8.0",
+    "@xipkg/popover": "^4.0.0",
     "common.api": "workspace:*",
-    "common.auth": "workspace:*",
-    "common.config": "workspace:*",
-    "common.env": "workspace:*",
-    "common.platform": "workspace:*",
     "common.services": "workspace:*",
-    "common.subscription": "workspace:*",
-    "common.theme": "workspace:*",
-    "features.subscription": "workspace:*",
-    "features.tags": "workspace:*",
-    "common.types": "workspace:*",
     "common.ui": "workspace:*",
-    "dayjs": "1.11.13",
-    "features.avatar.editor": "workspace:*",
     "i18next": "24.2.2",
-    "modules.calls": "workspace:*",
-    "modules.board": "workspace:*",
-    "react-i18next": "15.4.1",
-    "sonner": "^2.0.7"
+    "react-i18next": "15.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -66,6 +45,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "classrooms page",
+  "description": "features.tags",
   "author": "xi.effect"
 }

@@ -9,6 +9,7 @@
     "notifications": "Notifications",
     "soundAndVideo": "Sound and video",
     "effects": "Effects",
+    "tags": "Tags",
     "board": "Board",
     "report": "Report",
     "logout": "Log out",
@@ -160,6 +161,25 @@
     "pencil": "Pencil",
     "autoCloseDrawShapes": "Close pencil strokes into shapes",
     "autoCloseDrawShapesHint": "If a stroke almost closes, the pencil turns it into a filled shape. On a tablet with a stylus this often happens by accident"
+  },
+  "tags": {
+    "searchPlaceholder": "Find tag",
+    "empty": "No tags found",
+    "loading": "Loading...",
+    "tagManage": {
+      "title": "Manage tags",
+      "create": "Create tag",
+      "empty": "No tags yet",
+      "edit": "Edit",
+      "delete": "Delete",
+      "actions": "Tag actions"
+    },
+    "tagDelete": {
+      "title": "Delete tag \"{{name}}\"?",
+      "description": "The tag will be removed from all materials. The materials themselves will remain unchanged",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
   },
   "report": {
     "title": "Report",
