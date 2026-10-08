@@ -21,6 +21,7 @@ import type {
   LessonCreateFailureReason,
   LessonDurationThreshold,
   LessonFinishReason,
+  LessonRecordingFailureReason,
   MediaType,
   OnboardingSkipReason,
   OnboardingStepFailReason,
@@ -489,6 +490,33 @@ export type ProductAnalyticsEventMap = {
     used_screenshare?: boolean;
     lesson_type?: ProductAnalyticsLessonType;
   };
+  lesson_recording_started: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role?: ProductAnalyticsActorRole;
+    role?: ProductAnalyticsRole;
+    participants_count?: number;
+    format?: string;
+  };
+  lesson_recording_completed: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role?: ProductAnalyticsActorRole;
+    role?: ProductAnalyticsRole;
+    duration_seconds?: number;
+    participants_count?: number;
+    format?: string;
+    size_bucket?: FileUploadSizeBucket;
+  };
+  lesson_recording_failed: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role?: ProductAnalyticsActorRole;
+    role?: ProductAnalyticsRole;
+    reason: LessonRecordingFailureReason;
+    duration_seconds?: number;
+    format?: string;
+  };
   lesson_finished: {
     event_version?: number;
     lesson_id?: string;
@@ -698,6 +726,13 @@ export type ProductAnalyticsEventMap = {
         file_category: FileUploadFileCategory;
         size_bucket: FileUploadSizeBucket;
       };
+
+  payment_confirmed: {
+    event_version?: number;
+    revenue: number;
+    currency: 'RUB';
+    confirmation: 'receiver' | 'unilateral';
+  };
 
   feedback_prompt_shown: {
     event_version?: number;

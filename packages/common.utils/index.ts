@@ -17,6 +17,7 @@ export {
   PRODUCT_ANALYTICS_EVENTS,
   DEPRECATED_ANALYTICS_EVENTS,
   trackProductEvent,
+  trackPaymentConfirmed,
   getProductAnalyticsRole,
   getDurationBucket,
   getReachedDurationThresholds,
@@ -183,6 +184,7 @@ export {
   type OnboardingSkipReason,
   type OnboardingAnalyticsRole,
   type LessonFinishReason,
+  type LessonRecordingFailureReason,
   type UmamiEventPayload,
 } from './src/productAnalytics';
 export { useSyncAutofillOnSubmit } from './src/useSyncAutofillOnSubmit';

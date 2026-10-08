@@ -77,6 +77,23 @@ Object.assign(packageJson.dependencies, callsDeps);
 
 fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 
+// pnpm.overrides в корне иначе перебивает link: и оставляет npm-версию.
+const rootPackagePath = path.resolve(repoRoot, 'package.json');
+const rootPackage = JSON.parse(fs.readFileSync(rootPackagePath, 'utf8'));
+rootPackage.pnpm ??= {};
+rootPackage.pnpm.overrides ??= {};
+for (const pkg of CALLS_PACKAGES) {
+  const specifier = callsDeps[pkg];
+  if (typeof specifier !== 'string') continue;
+  rootPackage.pnpm.overrides[pkg] = specifier.startsWith('link:')
+    ? `link:${path
+        .relative(repoRoot, path.resolve(packageRoot, specifier.slice('link:'.length)))
+        .split(path.sep)
+        .join('/')}`
+    : specifier;
+}
+fs.writeFileSync(rootPackagePath, `${JSON.stringify(rootPackage, null, 2)}\n`);
+
 fs.writeFileSync(modeFilePath, `${mode}\n`);
 
 const indexCss = fs.readFileSync(indexCssPath, 'utf8');
@@ -103,6 +120,8 @@ console.log(`  ${path.relative(repoRoot, indexCssPath)}`);
 console.log('');
 console.log('Дальше: pnpm install');
 if (mode === 'link') {
-  console.log('  (в xi.calls: pnpm exec turbo run build --filter=\'./packages/calls...\' — для .d.ts)');
+  console.log(
+    "  (в xi.calls: pnpm exec turbo run build --filter='./packages/calls...' — для .d.ts)",
+  );
 }
 console.log('  rm -rf apps/xi.web/node_modules/.vite && pnpm dev');
