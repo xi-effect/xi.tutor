@@ -31,11 +31,21 @@ export const router = createRouter({
   context: {
     auth: undefined!, // This will be set after we wrap the app in an AuthProvider
   },
+  // Без pendingComponent роутер рисует пустоту, пока грузится lazy-чанк роута:
+  // на мобильной сети это и есть «страница загружена, но белый экран».
+  defaultPendingComponent: LoadingScreen,
+  defaultPendingMs: 300,
   defaultNotFoundComponent: () => <NotFoundPage />,
   defaultErrorComponent: DefaultErrorComponent,
   defaultOnCatch: (error) => {
     reloadOnceOnStaleChunk(error);
   },
+});
+
+// Маркер для сторожа загрузки в index.html: первый роут реально отрисован.
+const unsubscribeFirstResolve = router.subscribe('onResolved', () => {
+  document.documentElement.dataset.appReady = '1';
+  unsubscribeFirstResolve();
 });
 
 // Register the router instance for type safety

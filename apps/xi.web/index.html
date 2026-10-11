@@ -147,9 +147,10 @@
           }
           window.location.reload();
         };
+        // Не по детям #root: Toaster и провайдеры рендерятся сразу, а роут
+        // может ещё висеть на lazy-чанке. Флаг ставит router.tsx.
         var appHasPainted = function () {
-          var root = document.getElementById('root');
-          return !!(root && root.childElementCount > 0);
+          return document.documentElement.dataset.appReady === '1';
         };
         window.addEventListener(
           'error',
