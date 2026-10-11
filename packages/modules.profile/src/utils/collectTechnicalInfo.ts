@@ -1,4 +1,9 @@
-import { getDateLocale } from 'common.ui';
+import {
+  formatInAppTimeZone,
+  formatTimeZoneOffset,
+  getAppTimeZone,
+  getDateLocale,
+} from 'common.ui';
 import { getCookies, getLocalStorageData, getSessionStorageData } from './technicalInfo/storage';
 import { getBrowserInfo } from './technicalInfo/browser';
 import { checkVideoSupport, checkAudioSupport, checkWebRTCSupport } from './technicalInfo/media';
@@ -75,11 +80,8 @@ export const collectTechnicalInfo = async (
   const dateLocale = getDateLocale();
 
   const now = new Date();
-  const timezoneOffset = -now.getTimezoneOffset();
-  const timezoneSign = timezoneOffset >= 0 ? '+' : '-';
-  const timezoneHours = Math.floor(Math.abs(timezoneOffset) / 60);
-  const timezoneMinutes = Math.abs(timezoneOffset) % 60;
-  const timezoneString = `UTC ${timezoneSign}${String(timezoneHours).padStart(2, '0')}:${String(timezoneMinutes).padStart(2, '0')}`;
+  const appTimeZone = getAppTimeZone();
+  const timezoneString = `${appTimeZone} (${formatTimeZoneOffset(appTimeZone, now)})`;
 
   const browserInfo = getBrowserInfo();
   const osFamily = browserInfo.OSFamily;
@@ -96,8 +98,16 @@ export const collectTechnicalInfo = async (
       [tProfile('report.labels.domain')]: window.location.origin,
       href: window.location.href,
       secure: window.isSecureContext,
-      [tProfile('report.labels.date')]: now.toLocaleDateString(dateLocale),
-      [tProfile('report.labels.time')]: now.toLocaleTimeString(dateLocale),
+      [tProfile('report.labels.date')]: formatInAppTimeZone(
+        now,
+        { day: '2-digit', month: '2-digit', year: 'numeric' },
+        dateLocale,
+      ),
+      [tProfile('report.labels.time')]: formatInAppTimeZone(
+        now,
+        { hour: '2-digit', minute: '2-digit', second: '2-digit' },
+        dateLocale,
+      ),
       [tProfile('report.labels.timezone')]: timezoneString,
       [tProfile('report.labels.ipv4')]: ipv4,
       [tProfile('report.labels.ipv6')]: ipv6,

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "common.services": "workspace:*",
+    "common.ui": "workspace:*",
     "features.lesson.add": "workspace:*",
     "features.lesson.move": "workspace:*",
     "modules.calendar": "workspace:*"

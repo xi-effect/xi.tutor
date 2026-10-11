@@ -11,6 +11,7 @@ import {
   eachDayOfInterval,
   getWeek,
 } from 'date-fns';
+import { getAppNow } from 'common.utils';
 
 export const getMonthDays = (currentDate: Date): Date[] => {
   const monthStart = startOfMonth(currentDate);
@@ -77,8 +78,12 @@ export const getWeeksRangeDays = (
 };
 
 /** Начала недель вокруг текущей — для «бесконечной» карусели недель на мобилке */
-export const getWeekStartsRange = (weeksBefore: number, weeksAfter: number): Date[] => {
-  const anchor = startOfWeek(new Date(), { weekStartsOn: 1 });
+export const getWeekStartsRange = (
+  weeksBefore: number,
+  weeksAfter: number,
+  timeZone?: string,
+): Date[] => {
+  const anchor = startOfWeek(getAppNow(timeZone), { weekStartsOn: 1 });
   const weeks: Date[] = [];
   for (let w = -weeksBefore; w <= weeksAfter; w++) {
     weeks.push(startOfWeek(addWeeks(anchor, w), { weekStartsOn: 1 }));

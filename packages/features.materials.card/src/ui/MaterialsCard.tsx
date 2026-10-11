@@ -18,7 +18,13 @@ import {
   useIsClassroomOnPause,
   useTagsByIds,
 } from 'common.services';
-import { ConfirmDialog, TagChips, cardAccessBadgeClass, cardTypeIconBoxClass } from 'common.ui';
+import {
+  ConfirmDialog,
+  TagChips,
+  cardAccessBadgeClass,
+  cardTypeIconBoxClass,
+  useAppTimeZone,
+} from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
 import { AssignMaterialTagsPopover } from './AssignMaterialTagsPopover';
@@ -43,6 +49,7 @@ export const MaterialsCard = ({
   tags = [],
 }: MaterialsCardProps) => {
   const { t } = useTranslation('materialsCard');
+  useAppTimeZone();
   const { classroomId: routeClassroomId } = useParams({ strict: false });
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const isClassroomRoute = /^\/classrooms\/[^/]+/.test(pathname);

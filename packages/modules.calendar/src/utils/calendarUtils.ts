@@ -1,5 +1,6 @@
 import { addDays, format, isBefore, isSameDay, startOfDay, parse } from 'date-fns';
 import { getDateLocale } from 'common.ui';
+import { getAppNow } from 'common.utils';
 
 /**
  * Начало окна видимых дней: `anchorDay` — первая колонка.
@@ -37,7 +38,7 @@ export const isPastDay = (day: Date, today: Date) => {
 /** Занятие уже закончилось (для целого дня — календарный день в прошлом). */
 export const isCalendarEventInPast = (
   event: { start: Date; end: Date; isAllDay?: boolean },
-  now: Date = new Date(),
+  now: Date = getAppNow(),
 ): boolean => {
   if (event.isAllDay) {
     return isPastDay(event.start, now);

@@ -13,10 +13,11 @@ import {
   PRODUCT_ANALYTICS_EVENTS,
   trackProductEvent,
   type ProductAnalyticsSource,
+  getAppNow,
 } from 'common.utils';
 
 const getToday = () => {
-  const d = new Date();
+  const d = getAppNow();
   d.setHours(0, 0, 0, 0);
   return d;
 };

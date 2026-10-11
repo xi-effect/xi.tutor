@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useAppTimeZone } from 'common.ui';
+import { getAppNow } from 'common.utils';
 import { isSameDay, startOfDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -60,7 +62,8 @@ export const ScheduleDaySwiper = ({
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
   const allEvents = useCalendarEvents();
-  const today = new Date();
+  useAppTimeZone();
+  const today = getAppNow();
   const todayStart = startOfDay(today);
   const swiperRef = useRef<SwiperType | null>(null);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({

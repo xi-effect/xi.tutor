@@ -1,4 +1,5 @@
 import type { NotificationT } from 'common.types';
+import { formatInAppTimeZone } from 'common.utils';
 import { notificationConfigs } from './notificationConfig';
 
 /**
@@ -101,7 +102,7 @@ export const getNotificationInvalidationKeys = (
 /**
  * Форматирует дату для отображения
  */
-export const formatNotificationDate = (dateString: string): string => {
+export const formatNotificationDate = (dateString: string, timeZone?: string): string => {
   const date = new Date(dateString);
   const now = new Date();
   const diffInMs = date.getTime() - now.getTime();
@@ -130,26 +131,36 @@ export const formatNotificationDate = (dateString: string): string => {
   } else if (Math.abs(diffInDays) < 7) {
     return `${Math.abs(diffInDays)} дн. назад`;
   } else {
-    return date.toLocaleDateString(getDateLocale(), {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
+    return formatInAppTimeZone(
+      date,
+      {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      },
+      getDateLocale(),
+      timeZone,
+    );
   }
 };
 
 /**
  * Форматирует полную дату для tooltip
  */
-export const formatFullNotificationDate = (dateString: string): string => {
+export const formatFullNotificationDate = (dateString: string, timeZone?: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleString(getDateLocale(), {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return formatInAppTimeZone(
+    date,
+    {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    },
+    getDateLocale(),
+    timeZone,
+  );
 };
 
 /**

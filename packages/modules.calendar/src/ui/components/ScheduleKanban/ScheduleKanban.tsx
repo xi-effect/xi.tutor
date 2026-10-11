@@ -1,7 +1,8 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfDay } from 'date-fns';
-import { getDateLocale } from 'common.ui';
+import { getDateLocale, useAppTimeZone } from 'common.ui';
+import { getAppNow } from 'common.utils';
 import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
 import { LessonCardSkeleton } from './LessonCardSkeleton';
@@ -94,7 +95,8 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
   const allEvents = useCalendarEvents();
-  const today = new Date();
+  useAppTimeZone();
+  const today = getAppNow();
   const todayStart = startOfDay(today);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,

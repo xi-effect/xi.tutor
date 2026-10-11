@@ -12,7 +12,7 @@ import {
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import { ChangeLessonModal } from 'features.lesson.change';
 import type { ScheduleLessonRow } from 'modules.calendar';
-import { EmptySchedule } from 'common.ui';
+import { EmptySchedule, instantToWallClock, useAppTimeZone } from 'common.ui';
 import {
   MovingLessonModal,
   type RepeatedVirtualRescheduleTarget,
@@ -59,9 +59,9 @@ function upcomingLessonKey(item: ScheduleItem): string {
   return `${item.eventId}:${item.instanceKind}:${item.instanceIndex ?? 'unknown'}:${item.startsAt}`;
 }
 
-function scheduleItemToLesson(item: ScheduleItem): ScheduleLessonRow {
-  const startDate = new Date(item.startsAt);
-  const endDate = new Date(item.endsAt);
+function scheduleItemToLesson(item: ScheduleItem, timeZone: string): ScheduleLessonRow {
+  const startDate = instantToWallClock(item.startsAt, timeZone);
+  const endDate = instantToWallClock(item.endsAt, timeZone);
   return {
     id: item.eventId,
     classroomId: item.classroomId ?? undefined,
@@ -124,6 +124,7 @@ function getSoleTarget(item: ScheduleItem, classroomId: number): SoleRescheduleT
 
 export const UpcomingLessonsSection = () => {
   const { t } = useTranslation('classroom');
+  const timeZone = useAppTimeZone();
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const scheduleCtx = useClassroomScheduleOptional();
@@ -162,9 +163,9 @@ export const UpcomingLessonsSection = () => {
       .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
       .map((item) => ({
         item,
-        lesson: scheduleItemToLesson(item),
+        lesson: scheduleItemToLesson(item, timeZone),
       }));
-  }, [scheduleQuery.data]);
+  }, [scheduleQuery.data, timeZone]);
 
   const handleEditSave = (data: ChangeLessonFormData) => {
     if (editItem == null || !isTutor) return;
@@ -260,14 +261,14 @@ export const UpcomingLessonsSection = () => {
           }}
           formKey={`${moveItem.eventId}-${moveItem.startsAt}`}
           lessonKind={moveItem.instanceKind === 'repeated_virtual' ? 'recurring' : 'one-off'}
-          initialDate={new Date(moveItem.startsAt)}
-          initialStartTime={formatTimeHm(new Date(moveItem.startsAt))}
-          initialEndTime={formatTimeHm(new Date(moveItem.endsAt))}
+          initialDate={instantToWallClock(moveItem.startsAt)}
+          initialStartTime={formatTimeHm(instantToWallClock(moveItem.startsAt))}
+          initialEndTime={formatTimeHm(instantToWallClock(moveItem.endsAt))}
           classroomId={moveItem.classroomId ?? undefined}
           fallbackName={moveItem.title}
           lessonTitle={moveItem.title}
           lessonDescription={moveItem.description ?? undefined}
-          seriesWeekdayIndex={jsWeekdayToSeriesIndex(new Date(moveItem.startsAt))}
+          seriesWeekdayIndex={jsWeekdayToSeriesIndex(instantToWallClock(moveItem.startsAt))}
           weeklyBitmask={
             moveItem.repetitionMode?.kind === 'weekly'
               ? (moveItem.repetitionMode.weekly_starting_bitmask ?? undefined)

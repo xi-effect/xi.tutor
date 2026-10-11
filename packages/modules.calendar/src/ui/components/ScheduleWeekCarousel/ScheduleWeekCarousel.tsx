@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Virtual } from 'swiper/modules';
 import { cn } from '@xipkg/utils';
+import { useAppTimeZone } from 'common.ui';
 import { getWeekDays, getWeekStartsRange } from '../../../utils';
 
 import 'swiper/css';
@@ -34,8 +35,9 @@ export const ScheduleWeekCarousel = ({
   onSelectedDateChange,
 }: ScheduleWeekCarouselProps) => {
   const { t, i18n } = useTranslation('calendar');
+  const timeZone = useAppTimeZone();
   const dayNames = useMemo(() => t('week_days').split(','), [t, i18n.language]);
-  const weeks = useMemo(() => getWeekStartsRange(WEEKS_PAST, WEEKS_FUTURE), []);
+  const weeks = useMemo(() => getWeekStartsRange(WEEKS_PAST, WEEKS_FUTURE, timeZone), [timeZone]);
 
   const currentWeekIndex = useMemo(() => {
     const weekStartMs = weekStart.getTime();

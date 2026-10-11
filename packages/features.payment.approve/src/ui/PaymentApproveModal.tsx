@@ -27,7 +27,7 @@ import {
   useGetRecipientInvoiceByTutor,
 } from 'common.services';
 import { useTranslation } from 'react-i18next';
-import { modalTitleClass } from 'common.ui';
+import { modalTitleClass, useAppTimeZone } from 'common.ui';
 
 type ApproveFormPropsT = {
   recipientInvoiceId: number;
@@ -51,6 +51,7 @@ const ApproveForm = ({
   isLoadingInvoice,
 }: ApproveFormPropsT) => {
   const { t } = useTranslation('paymentApprove');
+  useAppTimeZone();
   const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
     classroomId: paymentDetails.classroom_id?.toString(),
     onSuccess: () => {
@@ -190,6 +191,7 @@ const AdvanceForm = ({
   isLoadingInvoice,
 }: AdvanceFormPropsT) => {
   const { t } = useTranslation('paymentApprove');
+  useAppTimeZone();
   const { form, handleSubmit, onSubmit, isLoading } = usePaymentApproveForm(
     recipientInvoiceId,
     isTutor,
@@ -351,6 +353,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
   recipientInvoiceId,
 }) => {
   const { t } = useTranslation('paymentApprove');
+  useAppTimeZone();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 

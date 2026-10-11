@@ -3904,6 +3904,9 @@ importers:
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       features.lesson.cancel:
         specifier: workspace:*
         version: link:../features.lesson.cancel
@@ -4877,6 +4880,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       features.lesson.add:
         specifier: workspace:*
         version: link:../features.lesson.add

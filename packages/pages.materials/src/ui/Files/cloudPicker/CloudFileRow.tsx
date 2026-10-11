@@ -4,7 +4,7 @@ import { Eyeon, File, Image, Music, Plus } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import type { FileKind } from 'common.api';
 import { getFileTagIds, type LibraryFile, useTagsByIds } from 'common.services';
-import { TagChip, getAppLanguage } from 'common.ui';
+import { TagChip, getAppLanguage, useAppTimeZone } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatFileSize, formatUploadedAt, getLibraryFileDisplayName } from '../../../utils';
 
@@ -47,6 +47,7 @@ export const CloudFileRow = ({
   onAdd,
 }: CloudFileRowProps) => {
   const { t } = useTranslation('materials');
+  useAppTimeZone();
   const { tags: fileTags } = useTagsByIds(getFileTagIds(file));
   const visibleTags = fileTags.slice(0, MAX_VISIBLE_TAGS);
   const [hovered, setHovered] = useState(false);

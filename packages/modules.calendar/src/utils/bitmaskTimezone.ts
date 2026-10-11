@@ -1,5 +1,7 @@
+import { getAppWeekdayIndex } from 'common.utils';
+
 /**
- * Утилиты для конвертации битмаски дней недели между UTC и локальным часовым поясом пользователя.
+ * Утилиты для конвертации битмаски дней недели между UTC и часовым поясом приложения.
  *
  * Контекст: сервер хранит `starts_at` и `weekly_starting_bitmask` в UTC.
  * Например, занятие в 9:00 вторника по Хабаровску (UTC+10) сохраняется
@@ -15,10 +17,9 @@ function getUtcWeekdayIndex(date: Date): number {
   return jsDay === 0 ? 6 : jsDay - 1;
 }
 
-/** Индекс дня недели по локальному времени браузера (0 = Пн, 6 = Вс) */
+/** Индекс дня недели в часовом поясе приложения (0 = Пн, 6 = Вс). `date` — абсолютный момент. */
 function getLocalWeekdayIndex(date: Date): number {
-  const jsDay = date.getDay(); // 0 = Вс, 1 = Пн, ..., 6 = Сб
-  return jsDay === 0 ? 6 : jsDay - 1;
+  return getAppWeekdayIndex(date);
 }
 
 /**

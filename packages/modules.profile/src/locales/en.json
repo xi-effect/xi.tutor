@@ -65,7 +65,10 @@
     "typicalDuration": "Usual duration",
     "lessonDurationHint": "Schedule gaps that can fit at least one such lesson are highlighted in green",
     "from": "From",
-    "to": "To"
+    "to": "To",
+    "timezone": "Time zone",
+    "timezoneHint": "Dates and times in the app follow this time zone",
+    "timezoneAuto": "Same as this device"
   },
   "security": {
     "title": "Security",

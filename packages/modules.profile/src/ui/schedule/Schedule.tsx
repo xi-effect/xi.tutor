@@ -6,6 +6,7 @@ import { useScheduleWorkingHours, useTypicalLessonDuration } from 'common.ui';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LessonDurationPicker } from './LessonDurationPicker';
+import { TimeZonePicker } from './TimeZonePicker';
 import { WorkingHoursTimePicker } from './WorkingHoursTimePicker';
 
 const SCHEDULE_VIEW_MODE_KEY = 'xi_schedule_view_mode';
@@ -54,8 +55,10 @@ export const Schedule = () => {
 
   return (
     <>
+      <TimeZonePicker />
+
       {!isMobile && (
-        <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
+        <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
           <div className="flex w-full flex-col p-3">
             <span className="dark:text-text-primary text-xl font-semibold">
               {t('schedule.view')}
