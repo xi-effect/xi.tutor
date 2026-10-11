@@ -62,24 +62,39 @@ jobs:
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
           remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
 
+      # nginx отдаёт из secondary то, чего нет в primary. Там лежит предыдущая
+      # сборка: во время заливки она закрывает пропуски в primary, а после —
+      # отдаёт старые чанки вкладкам и service worker со старыми хэшами.
+      # Без index.html в primary сайт держится на secondary, его не трогаем.
+      - name: Keep previous build in the secondary source
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          DEPLOY_DIR: ${{ inputs.base_deployment_path }}/${{ env.deployment_path }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASSWORD }}
+          envs: DEPLOY_DIR
+          script_stop: true
+          script: |-
+            dir="$DEPLOY_DIR"
+            case "$dir" in "~/"*) dir="$HOME/${dir#\~/}" ;; esac
+            mkdir -p "$dir/primary" "$dir/secondary"
+            cd "$dir"
+            if [ -f primary/index.html ]; then
+              rsync -a --delete primary/ secondary/
+            fi
+
+      # --delay-updates: новые файлы подменяются разом в конце, а не по одному
+      # во время заливки, когда index.html и чанки могут быть из разных сборок.
       - name: Push files to the primary source
         uses: burnett01/rsync-deployments@7.0.2
         with:
-          switches: --verbose --human-readable --compress --recursive --delete
+          switches: --verbose --human-readable --compress --recursive --delete-after --delay-updates
           path: ./out/*
           remote_path: ${{ inputs.base_deployment_path }}/${{ env.deployment_path }}/primary
-          remote_host: ${{ secrets.SSH_HOST }}
-          remote_port: ${{ secrets.SSH_PORT }}
-          remote_user: ${{ secrets.SSH_USER }}
-          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
-
-      - name: Push files to the secondary source
-        uses: burnett01/rsync-deployments@7.0.2
-        with:
-          switches: --verbose --human-readable --compress --recursive --delete
-          path: ./out/*
-          remote_path: ${{ inputs.base_deployment_path }}/${{ env.deployment_path }}/secondary
           remote_host: ${{ secrets.SSH_HOST }}
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USER }}
