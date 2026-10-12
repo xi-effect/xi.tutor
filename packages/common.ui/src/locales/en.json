@@ -38,14 +38,16 @@
     "tutor": {
       "active": "Studying",
       "paused": "On pause",
-      "locked": "Locked",
-      "finished": "Completed"
+      "locked": "Unavailable",
+      "finished": "Completed",
+      "lockedHint": "This classroom is unavailable because the active classroom limit is reached. To set it to Studying, pause another classroom or complete learning there."
     },
     "student": {
       "active": "Studying",
       "paused": "On pause",
-      "locked": "Locked",
-      "finished": "Completed"
+      "locked": "Unavailable",
+      "finished": "Completed",
+      "lockedHint": "Your tutor is not running lessons in this classroom right now."
     },
     "unknown": "Unknown"
   }

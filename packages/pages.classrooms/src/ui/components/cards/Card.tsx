@@ -3,32 +3,51 @@ import React, { useState } from 'react';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Edit, MoreVert, Trash } from '@xipkg/icons';
+import { Edit, Flag, MoreVert, Trash } from '@xipkg/icons';
 
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
+import {
+  useCurrentUser,
+  useDeleteClassroom,
+  useUpdateClassroomStatus,
+  useUserByRole,
+} from 'common.services';
+import { tryChangeClassroomStatus, useCanActivateClassroom } from 'common.subscription';
 import {
   ConfirmDialog,
   cardMenuButtonClass,
+  cardMenuCheckboxItemClass,
   cardMenuDeleteItemClass,
   cardMenuIconClass,
   cardMenuItemClass,
   cardMenuPositionClass,
   cardMenuSeparatorClass,
+  cardMenuSubTriggerClass,
   cardMenuSurfaceClass,
 } from 'common.ui';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
-import { isClassroomOnPause } from 'common.api';
+import { isClassroomOnPause, type ClassroomStatusT } from 'common.api';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@xipkg/utils';
 import { ClassroomPropsT } from '../../../types';
+
+const CLASSROOM_STATUS_OPTIONS: Exclude<ClassroomStatusT, 'locked'>[] = [
+  'active',
+  'paused',
+  'finished',
+];
 
 type UserAvatarPropsT = {
   kind: string;
@@ -72,6 +91,9 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { call?: string };
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
+  const { updateClassroomStatus, isUpdating: isUpdatingStatus } = useUpdateClassroomStatus();
+  const canActivateClassroom = useCanActivateClassroom();
+  const activateBlocked = status !== 'active' && !canActivateClassroom;
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -105,6 +127,15 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
     e.stopPropagation(); // Предотвращаем переход на страницу класса
     setDropdownOpen(false);
     setOpenEditModal(true);
+  };
+
+  const handleStatusChange = (nextStatus: ClassroomStatusT) => {
+    if (!tryChangeClassroomStatus(status, nextStatus)) {
+      return;
+    }
+
+    setDropdownOpen(false);
+    updateClassroomStatus({ classroomId: id, status: nextStatus });
   };
 
   const handleCloseEditModal = () => {
@@ -176,19 +207,80 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                 className={cardMenuSurfaceClass}
                 onCloseAutoFocus={(event) => event.preventDefault()}
               >
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger
+                    className={cardMenuSubTriggerClass}
+                    onClick={(event) => event.stopPropagation()}
+                    data-umami-event="classroom-change-status-open"
+                  >
+                    <Flag />
+                    {t('changeStatus')}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent
+                    sideOffset={8}
+                    alignOffset={-4}
+                    className={cn(cardMenuSurfaceClass, 'text-text-primary')}
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    {status === 'locked' ? (
+                      <DropdownMenuCheckboxItem
+                        checked
+                        disabled
+                        className={cardMenuCheckboxItemClass}
+                      >
+                        {t('status.locked')}
+                      </DropdownMenuCheckboxItem>
+                    ) : null}
+                    {CLASSROOM_STATUS_OPTIONS.map((option) => {
+                      const isActiveBlocked = option === 'active' && activateBlocked;
+                      const item = (
+                        <DropdownMenuCheckboxItem
+                          checked={status === option}
+                          disabled={isUpdatingStatus || isActiveBlocked}
+                          onCheckedChange={() => handleStatusChange(option)}
+                          onClick={(event) => event.stopPropagation()}
+                          className={cn(
+                            cardMenuCheckboxItemClass,
+                            status === option && 'bg-status-info-background text-text-link',
+                          )}
+                          data-umami-event="classroom-status-change"
+                          data-umami-event-status={option}
+                        >
+                          {t(`status.${option}`)}
+                        </DropdownMenuCheckboxItem>
+                      );
+
+                      if (!isActiveBlocked) {
+                        return item;
+                      }
+
+                      return (
+                        <Tooltip key={option}>
+                          <TooltipTrigger asChild>
+                            <div className="w-full">{item}</div>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="left"
+                            className="z-[200] max-w-72 leading-5 font-normal"
+                          >
+                            {t('status.activeLimitTooltip')}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
                 {isInactive ? null : (
-                  <>
-                    <DropdownMenuItem
-                      className={cardMenuItemClass}
-                      onClick={handleOpenEditModal}
-                      data-umami-event="classroom-edit"
-                    >
-                      <Edit />
-                      {t('rename')}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className={cardMenuSeparatorClass} />
-                  </>
+                  <DropdownMenuItem
+                    className={cardMenuItemClass}
+                    onClick={handleOpenEditModal}
+                    data-umami-event="classroom-edit"
+                  >
+                    <Edit />
+                    {t('rename')}
+                  </DropdownMenuItem>
                 )}
+                <DropdownMenuSeparator className={cardMenuSeparatorClass} />
                 <DropdownMenuItem
                   error
                   className={cardMenuDeleteItemClass}

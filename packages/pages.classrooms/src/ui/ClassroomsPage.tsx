@@ -1,38 +1,9 @@
 import { useRef } from 'react';
 import { MobileTutorActionButton } from 'features.invites';
 import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
-import { useActiveClassroomsCount, useCurrentPlan, useCurrentUser } from 'common.services';
+import { useCurrentUser } from 'common.services';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
-
-const TutorClassroomUsage = () => {
-  const { t } = useTranslation('classrooms');
-  const planQuery = useCurrentPlan();
-  const countQuery = useActiveClassroomsCount();
-  const total = planQuery.data?.max_active_classrooms;
-  const used = countQuery.data;
-
-  if (countQuery.isError || planQuery.isError) {
-    return (
-      <button
-        type="button"
-        className="text-text-secondary text-left text-sm"
-        onClick={() => {
-          void countQuery.refetch();
-          void planQuery.refetch();
-        }}
-      >
-        {t('usageRetry')}
-      </button>
-    );
-  }
-
-  if (typeof used !== 'number' || typeof total !== 'number') {
-    return null;
-  }
-
-  return <p className="text-text-secondary text-sm">{t('usage', { used, total })}</p>;
-};
 
 export const ClassroomsPage = () => {
   const { t } = useTranslation('classrooms');
@@ -49,12 +20,9 @@ export const ClassroomsPage = () => {
       )}
     >
       <div className="flex w-full shrink-0 items-start justify-between sm:flex-row">
-        <div className="flex min-w-0 flex-col gap-1 pb-2">
-          <h1 className="font-playfair text-text-primary text-2xl font-medium sm:text-4xl">
-            {t('title')}
-          </h1>
-          {isTutor ? <TutorClassroomUsage /> : null}
-        </div>
+        <h1 className="font-playfair text-text-primary pb-2 text-2xl font-medium sm:text-4xl">
+          {t('title')}
+        </h1>
 
         {isTutor && (
           <div className="hidden items-end gap-2 sm:flex">

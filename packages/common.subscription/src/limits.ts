@@ -119,6 +119,15 @@ export const tryStartClassroomCreate = (): boolean => {
   return true;
 };
 
+/** Нельзя сделать кабинет активным, пока занят лимит активных кабинетов. */
+export const tryChangeClassroomStatus = (currentStatus: string, nextStatus: string): boolean => {
+  if (nextStatus === currentStatus) return false;
+  if (nextStatus === 'active' && currentStatus !== 'active') {
+    return tryStartClassroomCreate();
+  }
+  return true;
+};
+
 export const tryStartUpload = (file: File, kind: UploadKind): UploadEvaluation => {
   const result = evaluateUpload(file, kind);
   if (!result.ok && result.reason === 'storage') {

@@ -21,6 +21,7 @@ export {
   getMaxImageBytes,
   isBoardElementsLimitReached,
   isStorageQuotaReached,
+  tryChangeClassroomStatus,
   tryStartClassroomCreate,
   tryStartUpload,
   type UploadEvaluation,
@@ -56,6 +57,7 @@ export {
   type SubscriptionScreen,
 } from './src/uiStore';
 export {
+  useCanActivateClassroom,
   useCanUseFeature,
   useCurrentTariff,
   usePlanLimits,

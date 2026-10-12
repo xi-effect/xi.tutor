@@ -1,11 +1,17 @@
 {
   "title": "Classrooms",
-  "usage": "{{used}} of {{total}}",
-  "usageRetry": "Could not load the limit. Retry",
   "createGroup": "Create group",
   "invite": "Invite",
   "studentsList": "Students list",
   "rename": "Rename",
+  "changeStatus": "Change status",
+  "status": {
+    "active": "Studying",
+    "paused": "Paused",
+    "finished": "Completed",
+    "locked": "Unavailable",
+    "activeLimitTooltip": "The active classroom limit is reached. Pause another classroom or complete learning there first."
+  },
   "delete": "Delete",
   "deleting": "Deleting...",
   "deleteConfirm": {
@@ -30,7 +36,7 @@
     "any": "Any",
     "active": "Active",
     "paused": "Paused",
-    "locked": "Locked",
+    "locked": "Unavailable",
     "finished": "Finished",
     "individual": "Individual",
     "group": "Group",
