@@ -2,6 +2,7 @@ import { ClassroomsQueryKey, ClassroomT, ClassroomStatusT, classroomsApiConfig }
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import { invalidateActiveClassroomsCount } from './useActiveClassroomsCount';
 
 interface UpdateClassroomStatusParams {
   classroomId: number;
@@ -176,6 +177,8 @@ export const useUpdateClassroomStatus = () => {
           },
         );
       }
+
+      void invalidateActiveClassroomsCount(queryClient);
 
       // Показываем успешное уведомление
       showSuccess('classroom', `Статус кабинета обновлен`);

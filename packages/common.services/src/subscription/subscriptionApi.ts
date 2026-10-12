@@ -5,6 +5,7 @@ import {
   parseSubscriptionPayment,
   subscriptionApiConfig,
   SubscriptionQueryKey,
+  type CreateSubscriptionPaymentBody,
   type CurrentPlan,
   type CurrentSubscription,
   type StorageUsage,
@@ -74,14 +75,19 @@ export class SubscriptionPaymentLookupError extends Error {
   }
 }
 
-export async function createSubscriptionPayment(autoRenewal = true): Promise<SubscriptionPayment> {
+export async function createSubscriptionPayment(
+  body: CreateSubscriptionPaymentBody,
+): Promise<SubscriptionPayment> {
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = subscriptionApiConfig[SubscriptionQueryKey.CreatePayment];
 
   const response = await axiosInst({
     method,
     url: getUrl(),
-    data: { period: 'monthly', auto_renewal: autoRenewal },
+    data: {
+      period: body.period,
+      should_auto_renew: body.should_auto_renew,
+    },
     headers: jsonHeaders,
   });
 

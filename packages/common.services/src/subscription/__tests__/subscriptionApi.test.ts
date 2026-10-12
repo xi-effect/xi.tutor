@@ -76,12 +76,14 @@ describe('subscription API', () => {
   it('POST payment отправляет period monthly и выбор автопродления', async () => {
     axiosMock.mockResolvedValue({ data: paymentBody });
 
-    await expect(createSubscriptionPayment(false)).resolves.toEqual(paymentBody);
+    await expect(
+      createSubscriptionPayment({ period: 'monthly', should_auto_renew: false }),
+    ).resolves.toEqual(paymentBody);
 
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'POST',
-        data: { period: 'monthly', auto_renewal: false },
+        data: { period: 'monthly', should_auto_renew: false },
       }),
     );
   });

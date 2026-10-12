@@ -9,6 +9,7 @@ enum ClassroomsQueryKey {
   UpdateIndividualClassroom = 'UpdateIndividualClassroom',
   UpdateGroupClassroom = 'UpdateGroupClassroom',
   UpdateClassroomStatus = 'UpdateClassroomStatus',
+  ActiveClassroomsCount = 'activeClassroomsCount',
 }
 
 const classroomsApiConfig = {
@@ -53,6 +54,25 @@ const classroomsApiConfig = {
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/${classroomId}/status/`,
     method: HttpMethod.PUT,
   },
+
+  [ClassroomsQueryKey.ActiveClassroomsCount]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/active-classrooms-count/`,
+    method: HttpMethod.GET,
+  },
 };
 
-export { classroomsApiConfig, ClassroomsQueryKey };
+const classroomsQueryKeys = {
+  activeClassroomsCount: (userId: number) =>
+    [ClassroomsQueryKey.ActiveClassroomsCount, userId] as const,
+};
+
+export const parseActiveClassroomsCount = (data: unknown): number => {
+  if (typeof data !== 'number' || !Number.isInteger(data) || data < 0) {
+    throw new Error('Invalid ActiveClassroomsCount');
+  }
+
+  return data;
+};
+
+export { classroomsApiConfig, ClassroomsQueryKey, classroomsQueryKeys };

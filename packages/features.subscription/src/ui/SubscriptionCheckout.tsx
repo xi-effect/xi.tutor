@@ -27,7 +27,10 @@ export const SubscriptionCheckout = () => {
     setError(false);
 
     try {
-      const payment = await createPayment.mutateAsync(autoRenewal);
+      const payment = await createPayment.mutateAsync({
+        period: 'monthly',
+        should_auto_renew: autoRenewal,
+      });
 
       if (!isConfirmationUrl(payment.confirmation_url)) {
         setError(true);
@@ -73,7 +76,7 @@ export const SubscriptionCheckout = () => {
           <span className="text-text-primary text-sm font-medium">{t('checkout.autoRenewal')}</span>
         </Checkbox>
         <div className="text-text-secondary flex flex-col gap-0.5 pl-5 text-xs leading-4">
-          <p>{t('checkout.autoRenewalHint')}</p>
+          <p>{t('checkout.autoRenewalHint', { price: formatRub(price, locale) })}</p>
           <p>{t('checkout.autoRenewalManage')}</p>
         </div>
       </div>

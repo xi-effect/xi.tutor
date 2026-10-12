@@ -1,8 +1,7 @@
 import {
-  ClassroomsQueryKey,
+  classroomsQueryKeys,
   subscriptionQueryKeys,
   UserQueryKey,
-  type ClassroomT,
   type CurrentPlan,
   type StorageUsage,
 } from 'common.api';
@@ -49,44 +48,10 @@ export const readCachedPlanId = (): PlanId | null => {
   return planKindToPlanId(plan.kind);
 };
 
-const isClassroom = (value: unknown): value is ClassroomT => {
-  if (!value || typeof value !== 'object') return false;
-  const item = value as { id?: unknown; status?: unknown };
-  return typeof item.id === 'number' && typeof item.status === 'string';
-};
-
-const readClassroomList = (data: unknown): ClassroomT[] | null => {
-  if (Array.isArray(data)) {
-    return data.filter(isClassroom);
-  }
-
-  if (!data || typeof data !== 'object' || !('pages' in data)) {
-    return null;
-  }
-
-  const pages = (data as { pages?: unknown }).pages;
-  if (!Array.isArray(pages)) return null;
-
-  return pages.flatMap((page) => (Array.isArray(page) ? page.filter(isClassroom) : []));
-};
-
 export const countCachedActiveClassrooms = (): number | null => {
-  const entries = queryClient.getQueriesData({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
-  const seen = new Set<number>();
-  let sawList = false;
-  let active = 0;
+  const userId = readHomeUserId();
+  if (userId === null) return null;
 
-  for (const [, data] of entries) {
-    const list = readClassroomList(data);
-    if (!list) continue;
-    sawList = true;
-
-    for (const classroom of list) {
-      if (seen.has(classroom.id)) continue;
-      seen.add(classroom.id);
-      if (classroom.status === 'active') active += 1;
-    }
-  }
-
-  return sawList ? active : null;
+  const count = queryClient.getQueryData<number>(classroomsQueryKeys.activeClassroomsCount(userId));
+  return typeof count === 'number' && Number.isFinite(count) ? count : null;
 };

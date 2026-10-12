@@ -35,6 +35,8 @@ export { paymentsApiConfig, PaymentsQueryKey } from './src/payments';
 export {
   classroomsApiConfig,
   ClassroomsQueryKey,
+  classroomsQueryKeys,
+  parseActiveClassroomsCount,
   studentsApiConfig,
   StudentsQueryKey,
 } from './src/tutor';

@@ -3,7 +3,7 @@ import { InfoCircle } from '@xipkg/icons';
 import { Link } from '@xipkg/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { formatPlanStorage, useSubscriptionPlan } from 'common.subscription';
-import { useCurrentSubscription, useStorageUsage } from 'common.services';
+import { useActiveClassroomsCount, useCurrentSubscription, useStorageUsage } from 'common.services';
 import { getAppLanguage } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDateShort } from '../utils/dates';
@@ -32,6 +32,39 @@ const ProTrialBanner = () => {
       >
         {t('overview.trialActivate')}
       </Button>
+    </div>
+  );
+};
+
+const ClassroomsUsage = ({ limit }: { limit: number }) => {
+  const { t } = useTranslation('subscription');
+  const countQuery = useActiveClassroomsCount();
+
+  if (countQuery.isError) {
+    return (
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-text-secondary text-sm">{t('overview.classrooms')}</span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="s"
+          className="h-8 px-0"
+          onClick={() => void countQuery.refetch()}
+        >
+          {t('overview.retry')}
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <span className="text-text-secondary text-sm">{t('overview.classrooms')}</span>
+      <span className="text-text-primary text-sm font-medium">
+        {typeof countQuery.data === 'number'
+          ? t('overview.usage', { used: countQuery.data, total: limit })
+          : t('overview.loading')}
+      </span>
     </div>
   );
 };
@@ -135,6 +168,8 @@ export const SubscriptionOverview = () => {
             </div>
           ) : null}
         </div>
+
+        <ClassroomsUsage limit={tariff.maxActiveClassrooms} />
 
         {storageQuery.isError ? (
           <div className="flex items-center justify-between gap-4">
