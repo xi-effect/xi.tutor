@@ -32,6 +32,7 @@
     "common.api": "workspace:*",
     "common.entities": "workspace:*",
     "common.services": "workspace:*",
+    "common.subscription": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
