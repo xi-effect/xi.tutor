@@ -15,6 +15,7 @@ import {
   formatFullNotificationDate,
 } from 'common.services';
 import type { CustomNotificationModalPayload } from 'common.services';
+import { useAppTimeZone } from 'common.ui';
 import { NotificationAvatar } from './NotificationAvatar';
 import type { NotificationLinkNavigateT } from './notificationsNavigation';
 
@@ -34,6 +35,7 @@ export const NotificationItem = ({
   asDropdownItem?: boolean;
 }) => {
   const { t } = useTranslation('navigation');
+  const timeZone = useAppTimeZone();
 
   // Обработчик клика по уведомлению - переход на целевую страницу или открытие модалки
   const handleClick = async (e: React.MouseEvent) => {
@@ -68,8 +70,8 @@ export const NotificationItem = ({
 
   const title = generateNotificationTitle(notification);
   const description = generateNotificationDescription(notification);
-  const relativeTime = formatNotificationDate(notification.created_at);
-  const fullTime = formatFullNotificationDate(notification.created_at);
+  const relativeTime = formatNotificationDate(notification.created_at, timeZone);
+  const fullTime = formatFullNotificationDate(notification.created_at, timeZone);
 
   const className = cn(
     `flex h-full items-start gap-2 rounded-[16px] p-3 ${

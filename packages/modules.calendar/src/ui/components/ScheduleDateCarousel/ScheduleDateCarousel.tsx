@@ -2,7 +2,8 @@ import { Button } from '@xipkg/button';
 import { ArrowLeft, ArrowRight } from '@xipkg/icons';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getDateLocale } from 'common.ui';
+import { getDateLocale, useAppTimeZone } from 'common.ui';
+import { instantToWallClock } from 'common.utils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { cn } from '@xipkg/utils';
@@ -26,9 +27,9 @@ const styles = {
 const DATE_RANGE_PAST = 730;
 const DATE_RANGE_FUTURE = 730;
 
-const getDatesRange = (fromDays: number, toDays: number) => {
+const getDatesRange = (fromDays: number, toDays: number, timeZone: string) => {
   const dates: Date[] = [];
-  const today = new Date();
+  const today = instantToWallClock(new Date(), timeZone);
   today.setHours(0, 0, 0, 0);
   for (let i = -fromDays; i <= toDays; i++) {
     const d = new Date(today);
@@ -109,6 +110,7 @@ export const ScheduleDateCarousel = ({
   onTodayVisibleInViewportChange,
 }: ScheduleDateCarouselProps) => {
   const { t, i18n } = useTranslation('calendar');
+  const timeZone = useAppTimeZone();
   const swiperRef = useRef<SwiperType | null>(null);
 
   /** week_days — Пн…Вс; для getDay() нужен порядок Вс…Сб */
@@ -117,7 +119,10 @@ export const ScheduleDateCarousel = ({
     return [monFirst[6], ...monFirst.slice(0, 6)];
   }, [t, i18n.language]);
 
-  const dates = useMemo(() => getDatesRange(DATE_RANGE_PAST, DATE_RANGE_FUTURE), []);
+  const dates = useMemo(
+    () => getDatesRange(DATE_RANGE_PAST, DATE_RANGE_FUTURE, timeZone),
+    [timeZone],
+  );
   const selectedIndex = useMemo(
     () => dates.findIndex((d) => d.getTime() === selectedDate.getTime()),
     [dates, selectedDate],
@@ -175,10 +180,10 @@ export const ScheduleDateCarousel = ({
   );
 
   const todayStartMs = useMemo(() => {
-    const t = new Date();
-    t.setHours(0, 0, 0, 0);
-    return t.getTime();
-  }, []);
+    const today = instantToWallClock(new Date(), timeZone);
+    today.setHours(0, 0, 0, 0);
+    return today.getTime();
+  }, [timeZone]);
 
   const todayIndex = useMemo(
     () => dates.findIndex((d) => d.getTime() === todayStartMs),

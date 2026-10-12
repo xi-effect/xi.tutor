@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useCurrentUser, useStudentSchedule, useTutorSchedule } from 'common.services';
-import { getCalendarDayQueryRange } from '../utils/getCalendarDayQueryRange';
+import { useAppTimeZone } from 'common.ui';
+import { getCalendarDayQueryRange, lessonStartsOnDay } from '../utils/getCalendarDayQueryRange';
 import { mapScheduleItemToLessonRow } from '../utils/mapScheduleItemToLessonRow';
 
 type UseScheduleLessonRowsForDayParams = {
@@ -15,7 +16,8 @@ export const useScheduleLessonRowsForDay = ({
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const range = useMemo(() => getCalendarDayQueryRange(day), [day]);
+  const timeZone = useAppTimeZone();
+  const range = useMemo(() => getCalendarDayQueryRange(day, timeZone), [day, timeZone]);
 
   const tutorScheduleQuery = useTutorSchedule({
     ...range,
@@ -30,10 +32,10 @@ export const useScheduleLessonRowsForDay = ({
   const lessons = useMemo(() => {
     const items = scheduleQuery.data ?? [];
     return items
-      .filter((item) => item.cancelledAt == null)
+      .filter((item) => item.cancelledAt == null && lessonStartsOnDay(item.startsAt, day, timeZone))
       .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
-      .map(mapScheduleItemToLessonRow);
-  }, [scheduleQuery.data]);
+      .map((item) => mapScheduleItemToLessonRow(item, timeZone));
+  }, [day, scheduleQuery.data, timeZone]);
 
   const isScheduleLoading =
     enabled && (isUserLoading || scheduleQuery.isLoading || scheduleQuery.isFetching);

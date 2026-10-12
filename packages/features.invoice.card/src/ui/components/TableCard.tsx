@@ -7,6 +7,7 @@ import { CardContentT } from '../../types';
 import { cn } from '@xipkg/utils';
 import { PaymentApproveAction } from 'features.payment.approve';
 import { useTranslation } from 'react-i18next';
+import { useAppTimeZone } from 'common.ui';
 
 export const TableCard = ({
   userData,
@@ -17,6 +18,7 @@ export const TableCard = ({
   onViewInvoice,
 }: CardContentT) => {
   const { t } = useTranslation('invoiceCard');
+  useAppTimeZone();
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 

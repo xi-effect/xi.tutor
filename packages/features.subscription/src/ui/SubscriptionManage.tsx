@@ -8,7 +8,7 @@ import {
   useSubscriptionUiStore,
 } from 'common.subscription';
 import { useCurrentSubscription } from 'common.services';
-import { getAppLanguage } from 'common.ui';
+import { getAppLanguage, useAppTimeZone } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDate } from '../utils/dates';
 import { CancelSubscriptionButton } from './CancelSubscriptionButton';
@@ -17,6 +17,7 @@ import { ScreenBackButton } from './ScreenBackButton';
 
 export const SubscriptionManage = () => {
   const { t } = useTranslation('subscription');
+  useAppTimeZone();
   const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
   const { planId, tariff, isPlanError, refetchPlan } = useSubscriptionPlan();
   const subscriptionQuery = useCurrentSubscription();

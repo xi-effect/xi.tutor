@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { addDays, format, startOfDay } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { create } from 'zustand';
 
 import { MOCK_EVENTS } from '../mocks';
@@ -10,21 +10,14 @@ export const getDateKey = (date: Date): string => {
   return format(startOfDay(date), 'yyyy-MM-dd');
 };
 
-const getEventDateKeys = (event: ICalendarEvent): string[] => {
-  const keys: string[] = [];
+/**
+ * Колонка сетки — календарный день начала в поясе приложения.
+ * Конец ровно в полночь или переход через полночь не копирует карточку на следующий день.
+ */
+export const getEventDateKeys = (event: { start?: Date; end: Date }): string[] => {
   const start = new Date(event.start ?? event.end);
-  const end = new Date(event.end);
-
-  let current = startOfDay(start);
-  const endDay = startOfDay(end);
-
-  while (current <= endDay) {
-    const dateKey = getDateKey(current);
-    keys.push(dateKey);
-    current = addDays(current, 1);
-  }
-
-  return keys;
+  if (Number.isNaN(start.getTime())) return [];
+  return [getDateKey(start)];
 };
 
 type EventsStore = {

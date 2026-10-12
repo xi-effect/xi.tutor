@@ -98,8 +98,8 @@ describe('getScheduleQueryRange', () => {
     const days = [new Date(2026, 3, 27), new Date(2026, 3, 28), new Date(2026, 3, 29)];
     const range = getScheduleQueryRange(days);
 
-    const expectedAfter = new Date(2026, 3, 20, 0, 0, 0, 0);
-    const expectedBeforeEnd = new Date(2026, 4, 13, 23, 59, 59, 999);
+    const expectedAfter = new Date(2026, 3, 19, 0, 0, 0, 0);
+    const expectedBeforeEnd = new Date(2026, 4, 14, 23, 59, 59, 999);
 
     expect(range.happensAfter).toBe(toLocalISOString(expectedAfter));
     expect(range.happensBefore).toBe(toLocalISOString(new Date(expectedBeforeEnd.getTime() + 1)));

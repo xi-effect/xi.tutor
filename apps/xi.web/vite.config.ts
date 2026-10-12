@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ConfigEnv, defineConfig, mergeConfig, searchForWorkspaceRoot } from 'vite';
+import { ConfigEnv, defineConfig, loadEnv, mergeConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -14,12 +14,22 @@ import {
   readCallsDepsMode,
 } from './vite.calls-local.ts';
 import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
-import { mathBankAssetsPlugin } from './vite.math-bank.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
+// Не по префиксу `dist-`: так Rolldown называет и обычные вендорные чанки
+// (у (app)/_layout их ~1.4MB), без preload они грузятся цепочкой.
+const isHeavyOcrAsset = (filePath: string) =>
+  /paddleocr|opencv|onnxruntime|ort\.bundle|ort-wasm|worker-entry/i.test(filePath);
+
 // https://vite.dev/config/
 export default defineConfig(({ mode, command }: ConfigEnv) => {
+  const bankStaticOrigin = (
+    loadEnv(mode, appDir, '').VITE_BANK_STATIC_ORIGIN || 'https://app-static.sovlium.ru'
+  ).replace(/\/$/, '');
+  const bankAssetPattern = new RegExp(
+    `^${bankStaticOrigin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/(?:math-bank|task-bank)/.+\\.(?:json|gz)$`,
+  );
   const callsDepsMode = readCallsDepsMode(appDir);
   const useCallsLink = mode === 'development' && callsDepsMode === 'link';
   const isElectron = mode === 'electron';
@@ -57,8 +67,6 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
 
     plugins: [
       paddleOcrCjsInteropPlugin(),
-
-      mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
 
       tanstackRouter({
         target: 'react',
@@ -161,7 +169,7 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
                 },
               },
               {
-                urlPattern: /\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
+                urlPattern: bankAssetPattern,
                 handler: 'CacheFirst',
                 options: {
                   cacheName: 'math-bank-assets',
@@ -216,10 +224,14 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
           }
         : undefined,
 
-      // iOS/Safari вместе с service worker иногда подвешивает module graph на
-      // <link rel="modulepreload"> и не шлёт error. Entry не стартует — белый экран.
-      // import() и preload CSS при динамических чанках остаются.
-      modulePreload: false,
+      // Без modulepreload зависимости lazy-роутов грузятся цепочкой (у (app)/_layout
+      // 4–5 последовательных запросов), а роутер всё это время рисует пустой экран.
+      // Тяжёлые OCR-ассеты исключаем: вместе с service worker они подвешивают
+      // module graph на iOS/Safari.
+      modulePreload: {
+        resolveDependencies: (_filename: string, deps: string[]) =>
+          deps.filter((dep) => !isHeavyOcrAsset(dep)),
+      },
     },
 
     optimizeDeps: {

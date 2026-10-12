@@ -20,6 +20,7 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { useTranslation } from 'react-i18next';
+import { useAppTimeZone } from 'common.ui';
 import { useClassroomSchedule } from './useClassroomSchedule';
 import { CalendarScheduleKanban, CalendarScheduleToolbar } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
@@ -116,7 +117,11 @@ export const Calendar = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const scheduleRange = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
+  const timeZone = useAppTimeZone();
+  const scheduleRange = useMemo(
+    () => getScheduleQueryRange(weekDays, timeZone),
+    [weekDays, timeZone],
+  );
 
   const tutorQuery = useGetClassroom(numericClassroomId, isUserLoading || !isTutor);
   const studentQuery = useGetClassroomStudent(numericClassroomId, isUserLoading || isTutor);
@@ -181,7 +186,7 @@ export const Calendar = () => {
 
   useEffect(() => {
     if (scheduleQuery.data) {
-      let events = mapScheduleItemsToCalendarEvents(scheduleQuery.data);
+      let events = mapScheduleItemsToCalendarEvents(scheduleQuery.data, timeZone);
       const deepLink = deepLinkEventRef.current;
       if (deepLink != null) {
         const key = eventInstanceKey(deepLink);
@@ -197,7 +202,7 @@ export const Calendar = () => {
     if (scheduleQuery.isError) {
       setEvents(deepLinkEventRef.current != null ? [deepLinkEventRef.current] : []);
     }
-  }, [scheduleQuery.data, scheduleQuery.isError, setEvents]);
+  }, [scheduleQuery.data, scheduleQuery.isError, setEvents, timeZone]);
 
   useEffect(() => () => setEvents([]), [setEvents]);
 

@@ -1,14 +1,16 @@
-import { createRouter } from '@tanstack/react-router';
+import { createRouter, type ErrorComponentProps } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
 import { ErrorPage, LoadingScreen, NotFoundPage } from 'common.ui';
 import { isStaleChunkError, isStaleChunkReloadPending, reloadOnceOnStaleChunk } from 'common.utils';
 
-const DefaultErrorComponent = ({ error }: { error: Error }) => {
+const DefaultErrorComponent = ({ error }: ErrorComponentProps) => {
+  const err = error instanceof Error ? error : new Error(String(error));
+
   if (isStaleChunkReloadPending()) {
     return <LoadingScreen />;
   }
 
-  if (isStaleChunkError(error) && reloadOnceOnStaleChunk(error)) {
+  if (isStaleChunkError(err) && reloadOnceOnStaleChunk(err)) {
     return <LoadingScreen />;
   }
 
@@ -16,7 +18,7 @@ const DefaultErrorComponent = ({ error }: { error: Error }) => {
     <ErrorPage
       title="Произошла ошибка"
       errorCode={500}
-      text={error.message || 'Что-то пошло не так'}
+      text={err.message || 'Что-то пошло не так'}
     />
   );
 };
@@ -29,11 +31,21 @@ export const router = createRouter({
   context: {
     auth: undefined!, // This will be set after we wrap the app in an AuthProvider
   },
+  // Без pendingComponent роутер рисует пустоту, пока грузится lazy-чанк роута:
+  // на мобильной сети это и есть «страница загружена, но белый экран».
+  defaultPendingComponent: LoadingScreen,
+  defaultPendingMs: 300,
   defaultNotFoundComponent: () => <NotFoundPage />,
   defaultErrorComponent: DefaultErrorComponent,
   defaultOnCatch: (error) => {
     reloadOnceOnStaleChunk(error);
   },
+});
+
+// Маркер для сторожа загрузки в index.html: первый роут реально отрисован.
+const unsubscribeFirstResolve = router.subscribe('onResolved', () => {
+  document.documentElement.dataset.appReady = '1';
+  unsubscribeFirstResolve();
 });
 
 // Register the router instance for type safety

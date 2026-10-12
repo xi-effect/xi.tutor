@@ -3,14 +3,14 @@ import { getCalendarDayQueryRange } from '../getCalendarDayQueryRange';
 import { toLocalISOString } from '../dateTimezone';
 
 describe('getCalendarDayQueryRange', () => {
-  it('строит диапазон локального дня [00:00, next midnight]', () => {
+  it('берёт сутки до и после выбранного дня', () => {
     const day = new Date(2026, 3, 21, 15, 30, 0);
     const range = getCalendarDayQueryRange(day);
 
-    const start = new Date(2026, 3, 21, 0, 0, 0, 0);
-    const endInclusive = new Date(2026, 3, 21, 23, 59, 59, 999);
+    const from = new Date(2026, 3, 20, 0, 0, 0, 0);
+    const to = new Date(2026, 3, 23, 0, 0, 0, 0);
 
-    expect(range.happensAfter).toBe(toLocalISOString(start));
-    expect(range.happensBefore).toBe(toLocalISOString(new Date(endInclusive.getTime() + 1)));
+    expect(range.happensAfter).toBe(toLocalISOString(from));
+    expect(range.happensBefore).toBe(toLocalISOString(to));
   });
 });

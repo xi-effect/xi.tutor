@@ -1,13 +1,11 @@
 import type { GetEventInstanceDetailsResponseDto } from 'common.api';
 import { extractInstanceSlot } from 'common.services';
 import { getDateLocale } from 'common.ui';
+import { instantToWallClock } from 'common.utils';
 import type { ICalendarEvent, ScheduleItem, ScheduleLessonRow } from 'modules.calendar';
 import { resolveSchedulerStartsAt } from 'modules.calendar';
-import { addDays, startOfDay } from 'date-fns';
 
-const MS_PER_SECOND = 1000;
-const SCHEDULE_QUERY_PAST_PAD_DAYS = 7;
-const SCHEDULE_QUERY_FUTURE_PAD_DAYS = 14;
+export { getScheduleQueryRange } from 'modules.calendar';
 
 const getCalendarEventId = (item: ScheduleItem): string => {
   const instance = item.eventInstance;
@@ -19,11 +17,14 @@ const getCalendarEventId = (item: ScheduleItem): string => {
   return `${item.eventId}:${item.instanceKind}:${item.instanceIndex ?? 'unknown'}:${item.startsAt}`;
 };
 
-export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEvent => ({
+export const mapScheduleItemToCalendarEvent = (
+  item: ScheduleItem,
+  timeZone?: string,
+): ICalendarEvent => ({
   id: getCalendarEventId(item),
   title: item.title,
-  start: new Date(item.startsAt),
-  end: new Date(item.endsAt),
+  start: instantToWallClock(item.startsAt, timeZone),
+  end: instantToWallClock(item.endsAt, timeZone),
   type: 'lesson',
   isCancelled: item.cancelledAt != null,
   lessonInfo: {
@@ -51,8 +52,10 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
   },
 });
 
-export const mapScheduleItemsToCalendarEvents = (items: ScheduleItem[]): ICalendarEvent[] =>
-  items.map(mapScheduleItemToCalendarEvent);
+export const mapScheduleItemsToCalendarEvents = (
+  items: ScheduleItem[],
+  timeZone?: string,
+): ICalendarEvent[] => items.map((item) => mapScheduleItemToCalendarEvent(item, timeZone));
 
 /**
  * Событие для модалки из реального ответа GET event-instances/{id}/.
@@ -95,8 +98,8 @@ export const mapInstanceDetailsToCalendarEvent = (
   return {
     id: instanceId ?? `${event.id}:${details.kind}:${instanceIndex ?? 'unknown'}:${startsAt}`,
     title,
-    start: new Date(startsAt),
-    end: new Date(endsAt),
+    start: instantToWallClock(startsAt),
+    end: instantToWallClock(endsAt),
     type: 'lesson',
     isCancelled: cancelledAt != null,
     lessonInfo: {
@@ -148,21 +151,3 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
         }
       : undefined,
   }));
-
-export const getScheduleQueryRange = (
-  days: Date[],
-): { happensAfter: string; happensBefore: string } => {
-  const today = startOfDay(new Date());
-  const firstVisible = startOfDay(days[0] ?? today);
-  const lastVisible = startOfDay(days[days.length - 1] ?? firstVisible);
-  const happensAfter = addDays(firstVisible, -SCHEDULE_QUERY_PAST_PAD_DAYS);
-  happensAfter.setHours(0, 0, 0, 0);
-
-  const happensBefore = addDays(lastVisible, SCHEDULE_QUERY_FUTURE_PAD_DAYS);
-  happensBefore.setHours(23, 59, 59, 999);
-
-  return {
-    happensAfter: happensAfter.toISOString(),
-    happensBefore: new Date(happensBefore.getTime() + MS_PER_SECOND).toISOString(),
-  };
-};

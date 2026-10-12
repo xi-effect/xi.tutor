@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { Undo } from '@xipkg/icons';
-import { EmptySchedule } from 'common.ui';
+import { EmptySchedule, useAppTimeZone } from 'common.ui';
+import { getAppNow, instantToWallClock } from 'common.utils';
 import type { DominantVisibleMonthInfo } from '../ScheduleDateCarousel';
 import { ScheduleDateCarousel } from '../ScheduleDateCarousel';
 import { DayLessonFeed } from '../DayLessonFeed';
@@ -39,7 +40,7 @@ type DayLessonsPanelProps = {
 };
 
 const getTodayStart = () => {
-  const d = new Date();
+  const d = getAppNow();
   d.setHours(0, 0, 0, 0);
   return d;
 };
@@ -57,6 +58,7 @@ export const DayLessonsPanel = ({
   onReschedule,
 }: DayLessonsPanelProps) => {
   const { t } = useTranslation('calendar');
+  const timeZone = useAppTimeZone();
   const [visibleMonthInfo, setVisibleMonthInfo] = useState<DominantVisibleMonthInfo | null>(null);
   const [alignCarouselNonce, setAlignCarouselNonce] = useState(0);
   const [isTodayVisibleInCarousel, setIsTodayVisibleInCarousel] = useState(true);
@@ -70,8 +72,8 @@ export const DayLessonsPanel = ({
   const isLoading = lessonsProp === undefined && fetchEnabled && remote.isScheduleLoading;
 
   const nearestIndex = useMemo(
-    () => findNearestLessonIndex(lessons, new Date(), selectedDate),
-    [lessons, selectedDate],
+    () => findNearestLessonIndex(lessons, instantToWallClock(new Date(), timeZone), selectedDate),
+    [lessons, selectedDate, timeZone],
   );
 
   const monthLabelInToolbar = useMemo(() => {

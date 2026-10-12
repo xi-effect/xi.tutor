@@ -1,4 +1,5 @@
 import type { ScheduleItem } from 'common.services';
+import { instantToWallClock } from 'common.utils';
 import type { ScheduleLessonRow } from '../ui/types';
 import { resolveSchedulerStartsAt } from './resolveSchedulerStartsAt';
 
@@ -6,9 +7,12 @@ const formatTime = (d: Date): string =>
   `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 
 /** `ScheduleItem` → строка для списка дня (`ScheduleLessonRow`). */
-export const mapScheduleItemToLessonRow = (item: ScheduleItem): ScheduleLessonRow => {
-  const start = new Date(item.startsAt);
-  const end = new Date(item.endsAt);
+export const mapScheduleItemToLessonRow = (
+  item: ScheduleItem,
+  timeZone?: string,
+): ScheduleLessonRow => {
+  const start = instantToWallClock(item.startsAt, timeZone);
+  const end = instantToWallClock(item.endsAt, timeZone);
   const instance = item.eventInstance;
   const eventInstanceId = 'id' in instance ? instance.id : undefined;
   const repetitionModeId =

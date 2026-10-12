@@ -15,6 +15,7 @@ import {
   getActivePeriodDays,
   getRepeatUntil,
 } from 'modules.calendar';
+import { wallClockToInstant } from 'common.utils';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { durationBetweenMinutes } from '../utils/utils';
 import type { MovingRepetitionResolution } from './useMovingRepetitionResolution';
@@ -29,7 +30,7 @@ function recurringRepeatWeekdaysFromResolution(
     return [...ALL_REPEAT_WEEKDAY_INDICES];
   }
   if (repetition.bitmaskUtc != null && initialDate != null) {
-    const localBitmask = bitmaskUtcToLocal(repetition.bitmaskUtc, initialDate);
+    const localBitmask = bitmaskUtcToLocal(repetition.bitmaskUtc, wallClockToInstant(initialDate));
     return bitmaskToWeekdays(localBitmask);
   }
   return [0];

@@ -15,6 +15,8 @@ import { isClassroomOnPause } from 'common.api';
 import { normalizeEventInstanceDetailsResponse } from 'common.services';
 import { formatLessonDate } from 'features.lesson.info';
 import type { ICalendarEvent } from '../ui/types';
+import { instantToWallClock } from 'common.utils';
+import { useAppTimeZone } from 'common.ui';
 import { resolveSchedulerStartsAt, timeToString } from '../utils';
 import { useCalendarEvents } from '../store/eventsStore';
 import { useLessonClassroomPresentation } from './useLessonClassroomPresentation';
@@ -22,7 +24,7 @@ import { StartLessonButton } from 'features.lesson.start';
 
 function safeTimeToString(primary: string | undefined | null, fallback: Date): string {
   if (primary != null && primary.length > 0) {
-    const d = new Date(primary);
+    const d = instantToWallClock(primary);
     if (!isNaN(d.getTime())) return timeToString(d);
   }
   const fb = new Date(fallback);
@@ -36,7 +38,7 @@ function resolveLessonDate(
 ): string | null {
   const raw = instanceDetails?.starts_at;
   if (raw != null && raw.length > 0) {
-    const d = new Date(raw);
+    const d = instantToWallClock(raw);
     if (Number.isFinite(d.getTime())) return formatLessonDate(d);
   }
   const d = new Date(event.start);
@@ -86,6 +88,7 @@ export const useLessonInfoModal = ({
   onSaveLesson,
 }: UseLessonInfoModalOptions = {}) => {
   const events = useCalendarEvents();
+  const timeZone = useAppTimeZone();
   const [selectedEvent, setSelectedEvent] = useState<ICalendarEvent | null>(null);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
 
@@ -171,20 +174,20 @@ export const useLessonInfoModal = ({
   const resolvedScheduleAt = useMemo(() => {
     const raw = instanceDetails?.starts_at;
     if (raw != null && raw.length > 0) {
-      const d = new Date(raw);
+      const d = instantToWallClock(raw, timeZone);
       if (Number.isFinite(d.getTime())) return d;
     }
     return resolvedEvent?.start;
-  }, [instanceDetails?.starts_at, resolvedEvent?.start]);
+  }, [instanceDetails?.starts_at, resolvedEvent?.start, timeZone]);
 
   const resolvedScheduleEndsAt = useMemo(() => {
     const raw = instanceDetails?.ends_at;
     if (raw != null && raw.length > 0) {
-      const d = new Date(raw);
+      const d = instantToWallClock(raw, timeZone);
       if (Number.isFinite(d.getTime())) return d;
     }
     return resolvedEvent?.end;
-  }, [instanceDetails?.ends_at, resolvedEvent?.end]);
+  }, [instanceDetails?.ends_at, resolvedEvent?.end, timeZone]);
 
   const changeLessonPresentation = useLessonClassroomPresentation({
     classroomId: resolvedEvent?.lessonInfo?.classroomId,

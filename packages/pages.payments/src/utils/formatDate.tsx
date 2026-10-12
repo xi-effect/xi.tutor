@@ -1,23 +1,25 @@
-import dayjs from 'dayjs';
-import 'dayjs/locale/en';
-import 'dayjs/locale/ru';
-import isToday from 'dayjs/plugin/isToday';
-import isYesterday from 'dayjs/plugin/isYesterday';
 import i18n from 'i18next';
-import { getAppLanguage } from 'common.ui';
-
-dayjs.extend(isToday);
-dayjs.extend(isYesterday);
+import {
+  formatAppClock,
+  formatInAppTimeZone,
+  getAppCalendarDayDiff,
+  getDateLocale,
+} from 'common.ui';
 
 export const formatDate = (dateStr: string) => {
-  const date = dayjs(dateStr).locale(getAppLanguage());
-
+  const date = new Date(dateStr);
   const classnameFirstLine = 'text-text-primary font-normal text-s-base';
   const classnameSecondLine = 'text-text-secondary font-normal text-xs-base';
 
-  const formattedTime = <p className={classnameSecondLine}>{date.format('HH:mm')}</p>;
+  if (Number.isNaN(date.getTime())) {
+    return <p className={classnameFirstLine}>{dateStr}</p>;
+  }
 
-  if (date.isToday()) {
+  const locale = getDateLocale();
+  const formattedTime = <p className={classnameSecondLine}>{formatAppClock(date)}</p>;
+  const dayDiff = getAppCalendarDayDiff(date);
+
+  if (dayDiff === 0) {
     return (
       <>
         <p className={classnameFirstLine}>{i18n.t('date.today', { ns: 'payments' })}</p>
@@ -26,7 +28,7 @@ export const formatDate = (dateStr: string) => {
     );
   }
 
-  if (date.isYesterday()) {
+  if (dayDiff === -1) {
     return (
       <>
         <p className={classnameFirstLine}>{i18n.t('date.yesterday', { ns: 'payments' })}</p>
@@ -37,8 +39,10 @@ export const formatDate = (dateStr: string) => {
 
   return (
     <>
-      <p className={classnameFirstLine}>{date.format('D MMMM')}</p>
-      <p className={classnameSecondLine}>{date.format('HH:mm')}</p>
+      <p className={classnameFirstLine}>
+        {formatInAppTimeZone(date, { day: 'numeric', month: 'long' }, locale)}
+      </p>
+      {formattedTime}
     </>
   );
 };

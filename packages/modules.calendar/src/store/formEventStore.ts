@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { getDateLocale } from 'common.ui';
+import { getAppNow } from 'common.utils';
 import { EventFormData } from '../model';
 import { ICalendarEvent } from '../ui/types';
 import { formatDate } from '../utils/calendarUtils';
@@ -14,27 +15,27 @@ type FormEventStore = {
   closeForm: () => void;
 };
 
-const INITIAL_VALUES: EventFormData = {
+const createInitialValues = (): EventFormData => ({
   title: '',
   type: 'rest',
   startTime: '',
   endTime: '',
   isAllDay: false,
-  startDate: formatDate(new Date()),
-  endDate: formatDate(new Date()),
+  startDate: formatDate(getAppNow()),
+  endDate: formatDate(getAppNow()),
   shouldRepeat: 'dont_repeat',
-};
+});
 
 const useFormEventStore = create<FormEventStore>((set) => ({
   isOpen: false,
-  defaultFormValues: INITIAL_VALUES,
+  defaultFormValues: createInitialValues(),
   activeEventId: '',
   paid: true,
   complete: false,
 
   openForm: (calendarEvent) => {
     if (!calendarEvent) {
-      set({ isOpen: true });
+      set({ isOpen: true, defaultFormValues: createInitialValues() });
       return;
     }
 
@@ -72,7 +73,7 @@ const useFormEventStore = create<FormEventStore>((set) => ({
   },
 
   closeForm: () => {
-    set({ isOpen: false, defaultFormValues: INITIAL_VALUES });
+    set({ isOpen: false, defaultFormValues: createInitialValues() });
   },
 }));
 
