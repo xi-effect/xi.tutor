@@ -38,3 +38,12 @@ export const useCanUseFeature = (featureId: SubscriptionFeatureId): boolean => {
 
 export const useCurrentTariff = () =>
   getCurrentTariff(useSubscriptionStore((state) => state.planId));
+
+export const useCanActivateClassroom = (): boolean => {
+  const planId = useSubscriptionStore((state) => state.planId);
+  const classroomsUsed = useSubscriptionStore((state) => state.mock.classroomsUsed);
+
+  if (!SUBSCRIPTION_BILLING_ENABLED) return true;
+
+  return classroomsUsed < TARIFFS[planId].maxActiveClassrooms;
+};

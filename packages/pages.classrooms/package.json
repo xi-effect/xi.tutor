@@ -31,6 +31,7 @@
     "common.entities": "workspace:*",
     "common.env": "workspace:*",
     "common.services": "workspace:*",
+    "common.subscription": "workspace:*",
     "common.ui": "workspace:*",
     "features.classroom": "workspace:*",
     "features.classroom.rename": "workspace:*",

@@ -10,6 +10,7 @@ import { useCurrentUser } from 'common.services';
 import { StartLessonButton } from 'features.lesson.start';
 import { NextLessonChip } from '../NextLessonChip';
 import { EditableClassroomName } from './EditableClassroomName';
+import { LockedClassroomBanner } from './LockedClassroomBanner';
 import { PausedClassroomBanner } from './PausedClassroomBanner';
 
 interface ContentProps {
@@ -23,6 +24,7 @@ export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const isPaused = isClassroomOnPause(classroom.status);
+  const isLocked = classroom.status === 'locked';
   const { startCall } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const hasHandledGotoCallRef = useRef(false);
@@ -118,7 +120,8 @@ export const Content = ({ classroom }: ContentProps) => {
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-4">
-      {isTutor && isPaused ? <PausedClassroomBanner /> : null}
+      {isLocked ? <LockedClassroomBanner isTutor={Boolean(isTutor)} /> : null}
+      {isTutor && isPaused && !isLocked ? <PausedClassroomBanner /> : null}
       <div className="flex w-full min-w-0 flex-col gap-2">
         <div className="flex min-w-0 flex-row items-center gap-3 sm:gap-4">
           <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
