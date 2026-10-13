@@ -3,7 +3,7 @@ import { InfoCircle } from '@xipkg/icons';
 import { Link } from '@xipkg/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { formatPlanStorage, useSubscriptionPlan } from 'common.subscription';
-import { useActiveClassroomsCount, useCurrentSubscription, useStorageUsage } from 'common.services';
+import { useClassroomCounts, useCurrentSubscription, useStorageUsage } from 'common.services';
 import { getAppLanguage } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDateShort } from '../utils/dates';
@@ -38,7 +38,7 @@ const ProTrialBanner = () => {
 
 const ClassroomsUsage = ({ limit }: { limit: number }) => {
   const { t } = useTranslation('subscription');
-  const countQuery = useActiveClassroomsCount();
+  const countQuery = useClassroomCounts();
 
   if (countQuery.isError) {
     return (
@@ -61,8 +61,8 @@ const ClassroomsUsage = ({ limit }: { limit: number }) => {
     <div className="flex items-center justify-between gap-4">
       <span className="text-text-secondary text-sm">{t('overview.classrooms')}</span>
       <span className="text-text-primary text-sm font-medium">
-        {typeof countQuery.data === 'number'
-          ? t('overview.usage', { used: countQuery.data, total: limit })
+        {typeof countQuery.data?.active === 'number'
+          ? t('overview.usage', { used: countQuery.data.active, total: limit })
           : t('overview.loading')}
       </span>
     </div>

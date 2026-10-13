@@ -29,6 +29,18 @@
     "studentDescription": "You haven't been invited to any classroom yet",
     "helpLink": "Learn more about classrooms"
   },
+  "keepActive": {
+    "title": "Choose classrooms",
+    "description_one": "Choose {{count}} classroom to continue lessons on the Basic plan",
+    "description_other": "Choose {{count}} classrooms to continue lessons on the Basic plan",
+    "selected": "Selected {{selected}} of {{count}}",
+    "loading": "Loading classrooms...",
+    "error": "Failed to load classrooms",
+    "empty": "No unavailable classrooms left",
+    "confirm": "Continue",
+    "confirming": "Saving...",
+    "cancel": "Cancel"
+  },
   "filters": {
     "status": "Status:",
     "lessonType": "Lesson type:",

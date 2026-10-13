@@ -36,7 +36,8 @@ export {
   classroomsApiConfig,
   ClassroomsQueryKey,
   classroomsQueryKeys,
-  parseActiveClassroomsCount,
+  parseClassroomCounts,
+  type ClassroomCounts,
   studentsApiConfig,
   StudentsQueryKey,
 } from './src/tutor';

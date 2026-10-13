@@ -79,8 +79,6 @@
     "autoRenewalManage": "You can turn auto-renewal off in settings.",
     "pay": "Continue to payment",
     "paymentHint": "Payment will continue on YooKassa.",
-    "paymentAutoChargeHint": "Allow recurring charges during payment,",
-    "paymentAutoChargeHintLine2": "otherwise we will not be able to charge you again.",
     "error": "Could not create the payment. Try again.",
     "promoSuccess": "Promo code applied",
     "promoInvalid": "Invalid promo code",

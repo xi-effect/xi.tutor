@@ -9,6 +9,7 @@ enum ClassroomsQueryKey {
   UpdateIndividualClassroom = 'UpdateIndividualClassroom',
   UpdateGroupClassroom = 'UpdateGroupClassroom',
   UpdateClassroomStatus = 'UpdateClassroomStatus',
+  ClassroomCounts = 'classroomCounts',
   ActiveClassroomsCount = 'activeClassroomsCount',
 }
 
@@ -55,6 +56,12 @@ const classroomsApiConfig = {
     method: HttpMethod.PUT,
   },
 
+  [ClassroomsQueryKey.ClassroomCounts]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classroom-counts/`,
+    method: HttpMethod.GET,
+  },
+
   [ClassroomsQueryKey.ActiveClassroomsCount]: {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/active-classrooms-count/`,
@@ -63,16 +70,31 @@ const classroomsApiConfig = {
 };
 
 const classroomsQueryKeys = {
-  activeClassroomsCount: (userId: number) =>
-    [ClassroomsQueryKey.ActiveClassroomsCount, userId] as const,
+  classroomCounts: (userId: number) => [ClassroomsQueryKey.ClassroomCounts, userId] as const,
 };
 
-export const parseActiveClassroomsCount = (data: unknown): number => {
-  if (typeof data !== 'number' || !Number.isInteger(data) || data < 0) {
-    throw new Error('Invalid ActiveClassroomsCount');
+export type ClassroomCounts = {
+  active: number;
+  locked: number;
+};
+
+const isClassroomCount = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isInteger(value) && value >= 0;
+
+export const parseClassroomCounts = (data: unknown): ClassroomCounts => {
+  if (typeof data !== 'object' || data === null) {
+    throw new Error('Invalid ClassroomCounts');
   }
 
-  return data;
+  const counts = data as Record<string, unknown>;
+  if (!isClassroomCount(counts.active) || !isClassroomCount(counts.locked)) {
+    throw new Error('Invalid ClassroomCounts');
+  }
+
+  return {
+    active: counts.active,
+    locked: counts.locked,
+  };
 };
 
 export { classroomsApiConfig, ClassroomsQueryKey, classroomsQueryKeys };

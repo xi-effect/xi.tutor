@@ -8,8 +8,9 @@ export { useUpdateIndividualClassroom } from './useUpdateIndividualClassroom';
 export { useUpdateGroupClassroom } from './useUpdateGroupClassroom';
 export { useUpdateClassroomStatus } from './useUpdateClassroomStatus';
 export {
-  getActiveClassroomsCount,
-  invalidateActiveClassroomsCount,
-  useActiveClassroomsCount,
-} from './useActiveClassroomsCount';
+  getClassroomCounts,
+  invalidateClassroomCounts,
+  useClassroomCounts,
+} from './useClassroomCounts';
+export { useActivateClassrooms } from './useActivateClassrooms';
 export { useIsClassroomInactive, useIsClassroomOnPause } from './useIsClassroomOnPause';

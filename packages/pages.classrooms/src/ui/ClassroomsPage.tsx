@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { MobileTutorActionButton } from 'features.invites';
 import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
+import { KeepActiveClassroomsModal } from './components/KeepActiveClassroomsModal';
 import { useCurrentUser } from 'common.services';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +42,7 @@ export const ClassroomsPage = () => {
         <CardsGridSimple parentRef={parentRef} />
       </div>
       <MobileTutorActionButton variant="classrooms" />
+      {isTutor && <KeepActiveClassroomsModal />}
     </div>
   );
 };

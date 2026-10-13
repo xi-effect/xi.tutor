@@ -96,12 +96,6 @@ export const SubscriptionCheckout = () => {
       ) : null}
       <div className="text-text-secondary flex flex-col gap-1 text-center text-xs leading-4">
         <p>{t('checkout.paymentHint')}</p>
-        {autoRenewal ? (
-          <>
-            <p>{t('checkout.paymentAutoChargeHint')}</p>
-            <p>{t('checkout.paymentAutoChargeHintLine2')}</p>
-          </>
-        ) : null}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import {
   classroomsQueryKeys,
   subscriptionQueryKeys,
   UserQueryKey,
+  type ClassroomCounts,
   type CurrentPlan,
   type StorageUsage,
 } from 'common.api';
@@ -52,6 +53,10 @@ export const countCachedActiveClassrooms = (): number | null => {
   const userId = readHomeUserId();
   if (userId === null) return null;
 
-  const count = queryClient.getQueryData<number>(classroomsQueryKeys.activeClassroomsCount(userId));
-  return typeof count === 'number' && Number.isFinite(count) ? count : null;
+  const counts = queryClient.getQueryData<ClassroomCounts>(
+    classroomsQueryKeys.classroomCounts(userId),
+  );
+  return typeof counts?.active === 'number' && Number.isFinite(counts.active)
+    ? counts.active
+    : null;
 };

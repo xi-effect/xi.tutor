@@ -2,6 +2,7 @@ export {
   classroomsApiConfig,
   ClassroomsQueryKey,
   classroomsQueryKeys,
-  parseActiveClassroomsCount,
+  parseClassroomCounts,
+  type ClassroomCounts,
 } from './classrooms';
 export { studentsApiConfig, StudentsQueryKey } from './students';

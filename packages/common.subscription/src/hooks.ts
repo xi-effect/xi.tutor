@@ -1,4 +1,4 @@
-import { useActiveClassroomsCount, useCurrentPlan } from 'common.services';
+import { useClassroomCounts, useCurrentPlan } from 'common.services';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
 import { canUseFeature, type SubscriptionFeatureId } from './features';
 import { mergePlanLimits, planKindToPlanId } from './planCache';
@@ -42,11 +42,11 @@ export const useCurrentTariff = () => {
 
 export const useCanActivateClassroom = (): boolean => {
   const { tariff, isPlanReady } = useSubscriptionPlan();
-  const countQuery = useActiveClassroomsCount();
+  const countQuery = useClassroomCounts();
 
   if (!SUBSCRIPTION_BILLING_ENABLED) return true;
   if (!isPlanReady || !tariff) return true;
-  if (typeof countQuery.data !== 'number') return true;
+  if (typeof countQuery.data?.active !== 'number') return true;
 
-  return countQuery.data < tariff.maxActiveClassrooms;
+  return countQuery.data.active < tariff.maxActiveClassrooms;
 };
