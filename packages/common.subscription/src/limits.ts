@@ -119,9 +119,9 @@ export const tryStartClassroomCreate = (): boolean => {
   return true;
 };
 
-/** Нельзя сделать кабинет активным, пока занят лимит активных кабинетов. */
+/** Нельзя сделать кабинет активным, пока занят лимит активных кабинетов. Статус «Недоступно» пользователь не ставит. */
 export const tryChangeClassroomStatus = (currentStatus: string, nextStatus: string): boolean => {
-  if (nextStatus === currentStatus) return false;
+  if (nextStatus === currentStatus || nextStatus === 'locked') return false;
   if (nextStatus === 'active' && currentStatus !== 'active') {
     return tryStartClassroomCreate();
   }

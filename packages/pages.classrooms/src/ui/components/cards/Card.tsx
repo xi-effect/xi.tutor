@@ -235,6 +235,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                       const isActiveBlocked = option === 'active' && activateBlocked;
                       const item = (
                         <DropdownMenuCheckboxItem
+                          key={option}
                           checked={status === option}
                           disabled={isUpdatingStatus || isActiveBlocked}
                           onCheckedChange={() => handleStatusChange(option)}

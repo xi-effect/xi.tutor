@@ -281,7 +281,9 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                             {t('information.statusFinished')}
                           </SelectItem>
                           {classroom.status === 'locked' ? (
-                            <SelectItem value="locked">{t('information.statusLocked')}</SelectItem>
+                            <SelectItem value="locked" disabled>
+                              {t('information.statusLocked')}
+                            </SelectItem>
                           ) : null}
                         </SelectContent>
                       </Select>
