@@ -92,6 +92,8 @@ const userFacingDetails: Partial<Record<ErrorType, Record<string, string>>> = {
 const FILE_TOO_LARGE = 'Файл слишком большой. Изображения — до 1 МБ, остальные — до 5 МБ';
 const FILE_UNSUPPORTED = 'Недопустимый формат файла';
 const ACTION_FAILED = 'Не получилось выполнить действие. Попробуйте позже.';
+const CLASSROOM_READ_ONLY_DETAIL = 'Classroom is read-only';
+const CLASSROOM_READ_ONLY = 'Кабинет недоступен для изменений';
 
 const readDetail = (error: AxiosError): string | undefined => {
   const data = error.response?.data;
@@ -116,6 +118,10 @@ export const getUserFacingErrorMessage = (error: unknown, type: ErrorType): stri
 
   if (type === 'emailConfirmationRequest' && status === 401) {
     return 'Пользователь не найден';
+  }
+
+  if (detail === CLASSROOM_READ_ONLY_DETAIL) {
+    return CLASSROOM_READ_ONLY;
   }
 
   if (detail && userFacingDetails[type]?.[detail]) {
