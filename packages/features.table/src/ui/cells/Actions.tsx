@@ -25,7 +25,7 @@ export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
 
   return (
     <>
-      <div className="invisible flex flex-row items-center justify-end group-hover:visible">
+      <div className="pointer-events-none invisible flex flex-row items-center justify-end group-hover:pointer-events-auto group-hover:visible">
         <div className="flex flex-row items-center justify-between gap-2">
           <Tooltip delayDuration={1000}>
             <TooltipTrigger asChild>
