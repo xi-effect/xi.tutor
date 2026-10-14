@@ -1,4 +1,4 @@
-import { createElement, type ReactNode } from 'react';
+import { createElement, type ReactElement } from 'react';
 import { DefaultDashStyle, PathBuilder, type PathBuilderOpts } from '@ibodr/draw';
 import { dashDotStroke } from './dashDot';
 import { buildWavyPathD, type WavyCommand } from './wavyPath';
@@ -67,7 +67,7 @@ function collectStrokeRuns(path: PathBuilder, onlyFilled?: boolean) {
   return runs;
 }
 
-function renderDashDot(path: PathBuilder, opts: PathBuilderOpts): ReactNode {
+function renderDashDot(path: PathBuilder, opts: PathBuilderOpts): ReactElement | null {
   const runs = collectStrokeRuns(path, opts.onlyFilled);
   if (runs.length === 0) return null;
   const paths = runs.map((run, index) => {
@@ -95,7 +95,7 @@ function renderDashDot(path: PathBuilder, opts: PathBuilderOpts): ReactNode {
   );
 }
 
-function renderWavy(path: PathBuilder, opts: PathBuilderOpts) {
+function renderWavy(path: PathBuilder, opts: PathBuilderOpts): ReactElement | null {
   const d = buildWavyPathD(path.commands as unknown as WavyCommand[], opts.strokeWidth);
   if (!d) return null;
   return createElement('path', {
@@ -118,7 +118,10 @@ export function installExtendedLineStyles() {
   if (prototype[PATCH_FLAG]) return;
 
   const originalToSvg = prototype.toSvg;
-  prototype.toSvg = function patchedToSvg(this: PathBuilder, opts: PathBuilderOpts) {
+  prototype.toSvg = function patchedToSvg(
+    this: PathBuilder,
+    opts: PathBuilderOpts,
+  ): ReactElement | null {
     const lineStyle = String(opts.style);
     if (!opts.forceSolid && (lineStyle === 'wavy' || lineStyle === 'dash-dot')) {
       const rendered = lineStyle === 'wavy' ? renderWavy(this, opts) : renderDashDot(this, opts);
