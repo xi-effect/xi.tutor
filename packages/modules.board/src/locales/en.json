@@ -286,6 +286,11 @@
   "zoom": {
     "clickHint": "Click — 100%. Double-click — show all elements"
   },
+  "minimap": {
+    "label": "Board minimap",
+    "show": "Show minimap",
+    "hide": "Hide minimap"
+  },
   "geo": {
     "noFill": "No fill",
     "semiTransparent": "Semi-transparent",
