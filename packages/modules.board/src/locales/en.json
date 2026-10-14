@@ -99,10 +99,15 @@
   },
   "lineStyle": {
     "label": "Line style",
+    "arrowSingle": "Arrow",
+    "arrowDouble": "Double arrow",
     "solid": "Solid",
     "dashed": "Dashed",
     "dotted": "Dotted",
     "sparse": "Sparse dash",
+    "dash-dot": "Dash-dot",
+    "wavy": "Wavy",
+    "wavyNoArrowheads": "Wavy lines have no arrowheads",
     "double": "Double line"
   },
   "navbar": {

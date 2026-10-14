@@ -12,7 +12,16 @@ export function useCloseToolbarPanel(activePopup: string | null, onClose: () => 
 
     const handlePointerDown = (e: PointerEvent) => {
       const target = e.target as Element | null;
-      if (target?.closest('[data-board-toolbar-ui], [data-board-drawer]')) return;
+      // Меню типа линии и другие выпадающие списки порталятся в body,
+      // вне панели. Иначе pointerdown в capture закрывает панель раньше
+      // выбора пункта, и стиль линии не успевает примениться.
+      if (
+        target?.closest(
+          '[data-board-toolbar-ui], [data-board-drawer], [data-radix-menu-content], [data-radix-popper-content-wrapper]',
+        )
+      ) {
+        return;
+      }
       if (!closeOnCanvas && target?.closest('.dr-container')) return;
       onClose();
     };
