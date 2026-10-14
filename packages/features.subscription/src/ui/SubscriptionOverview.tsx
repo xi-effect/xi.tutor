@@ -1,16 +1,116 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { InfoCircle } from '@xipkg/icons';
 import { Link } from '@xipkg/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import { formatPlanStorage, useSubscriptionPlan } from 'common.subscription';
+import {
+  formatPlanStorage,
+  getRemainingSubscriptionDays,
+  useSubscriptionPlan,
+} from 'common.subscription';
 import { useClassroomCounts, useCurrentSubscription, useStorageUsage } from 'common.services';
-import { getAppLanguage } from 'common.ui';
+import { getAppLanguage, useAppTimeZone } from 'common.ui';
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { formatRenewalDateShort } from '../utils/dates';
+import { getRenewalHoverDate } from '../utils/dates';
 import { PromoCodeField } from './PromoCodeField';
 import { UsageBar } from './UsageBar';
 
 const SOVLIUM_PRICES_URL = 'https://sovlium.ru/prices';
+
+const TEXT_MORPH_TRANSITION = {
+  type: 'spring' as const,
+  stiffness: 320,
+  damping: 34,
+  mass: 0.8,
+};
+
+const formatHoverDate = (
+  prefix: string,
+  parts: { day: number; before: string; after: string } | null,
+): string => {
+  if (!parts) return prefix;
+
+  const afterGap = parts.after && !/^[,.]/.test(parts.after) ? ' ' : '';
+  const body = `${parts.before ? `${parts.before} ` : ''}${parts.day}${afterGap}${parts.after}`;
+  return `${prefix} ${body}`.trim();
+};
+
+const RemainingDays = ({ days, date }: { days: string; date: string }) => {
+  const reduceMotion = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+  const progress = useMotionValue(0);
+  const daysRef = useRef<HTMLSpanElement>(null);
+  const dateRef = useRef<HTMLSpanElement>(null);
+  const [daysWidth, setDaysWidth] = useState(0);
+  const [dateWidth, setDateWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    setDaysWidth(daysRef.current?.offsetWidth ?? 0);
+    setDateWidth(dateRef.current?.offsetWidth ?? 0);
+  }, [date, days]);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      progress.set(hovered ? 1 : 0);
+      return;
+    }
+
+    const controls = animate(progress, hovered ? 1 : 0, TEXT_MORPH_TRANSITION);
+    return () => controls.stop();
+  }, [hovered, progress, reduceMotion]);
+
+  const width = useTransform(progress, [0, 1], [daysWidth, dateWidth]);
+  const daysOpacity = useTransform(progress, [0, 1], [1, 0]);
+  const dateOpacity = useTransform(progress, [0, 1], [0, 1]);
+  const measured = daysWidth > 0 && dateWidth > 0;
+
+  return (
+    <span
+      className="relative inline-flex justify-end"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+      tabIndex={0}
+      aria-label={`${days}, ${date}`}
+    >
+      <span
+        ref={daysRef}
+        aria-hidden
+        className="pointer-events-none absolute whitespace-nowrap opacity-0"
+      >
+        {days}
+      </span>
+      <span
+        ref={dateRef}
+        aria-hidden
+        className="pointer-events-none absolute whitespace-nowrap opacity-0"
+      >
+        {date}
+      </span>
+      <motion.span
+        className="inline-flex justify-end overflow-visible"
+        style={measured ? { width } : undefined}
+      >
+        <span className="inline-grid w-max justify-items-end">
+          <motion.span
+            style={{ opacity: daysOpacity }}
+            className="col-start-1 row-start-1 whitespace-nowrap"
+          >
+            {days}
+          </motion.span>
+          <motion.span
+            style={{ opacity: dateOpacity }}
+            className="col-start-1 row-start-1 whitespace-nowrap"
+          >
+            {date}
+          </motion.span>
+        </span>
+      </motion.span>
+    </span>
+  );
+};
 
 const ProTrialBanner = () => {
   const { t } = useTranslation('subscription');
@@ -98,6 +198,7 @@ const StorageInfoHint = () => {
 
 export const SubscriptionOverview = () => {
   const { t } = useTranslation('subscription');
+  useAppTimeZone();
   const { planId, tariff, isBasic, isPlanError, isPlanLoading, refetchPlan } =
     useSubscriptionPlan();
   const subscriptionQuery = useCurrentSubscription({ enabled: !isPlanLoading && !isPlanError });
@@ -121,33 +222,34 @@ export const SubscriptionOverview = () => {
   const subscription = subscriptionQuery.data;
   const endsAt = subscription?.subscription.ends_at;
   const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
+  const remainingDays = endsAt ? getRemainingSubscriptionDays(planId, endsAt) : 0;
+  const remainingDaysLabel = t('overview.daysLeftValue', { count: remainingDays });
+  const renewalDate = endsAt ? getRenewalHoverDate(endsAt) : null;
+  const renewalLabel = formatHoverDate(t('overview.until', { date: '' }).trim(), renewalDate);
 
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <p className="text-text-secondary flex flex-wrap items-baseline gap-x-2 text-sm leading-6">
+          <p className="text-text-secondary flex items-baseline justify-between gap-4 text-sm leading-6">
             <span className="inline-flex items-baseline gap-2">
               <span>{t('overview.currentPlan')}</span>
               <span className="text-text-primary text-base font-semibold">
                 {t(`plans.${planId}`)}
               </span>
             </span>
-            {endsAt ? (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{t('overview.until', { date: formatRenewalDateShort(endsAt) })}</span>
-              </>
-            ) : null}
-            {subscription ? (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>
-                  {subscription.auto_renewal
-                    ? t('overview.autoRenewOn')
-                    : t('overview.autoRenewOff')}
-                </span>
-              </>
+            {endsAt || subscription ? (
+              <span className="inline-flex items-baseline gap-2">
+                {endsAt ? <RemainingDays days={remainingDaysLabel} date={renewalLabel} /> : null}
+                {endsAt && subscription ? <span aria-hidden="true">·</span> : null}
+                {subscription ? (
+                  <span>
+                    {subscription.auto_renewal
+                      ? t('overview.autoRenewOn')
+                      : t('overview.autoRenewOff')}
+                  </span>
+                ) : null}
+              </span>
             ) : null}
           </p>
           {subscriptionQuery.isPending && subscriptionQuery.fetchStatus !== 'idle' ? (

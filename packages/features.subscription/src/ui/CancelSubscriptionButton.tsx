@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
 import { useCurrentSubscription, useDeleteAutoRenewal } from 'common.services';
-import { ConfirmDialog } from 'common.ui';
+import { ConfirmDialog, useAppTimeZone } from 'common.ui';
 import { useTranslation } from 'react-i18next';
-import { formatRenewalDateShort } from '../utils/dates';
+import { formatRenewalDate } from '../utils/dates';
 
 export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?: string }) => {
   const { t } = useTranslation('subscription');
+  useAppTimeZone();
   const subscriptionQuery = useCurrentSubscription();
   const deleteAutoRenewal = useDeleteAutoRenewal();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -15,7 +16,7 @@ export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?
   const endsAt = subscription?.subscription.ends_at;
   const autoRenewal = Boolean(subscription?.auto_renewal);
   const description = endsAt
-    ? t('manage.disableDescriptionRenewal', { date: formatRenewalDateShort(endsAt) })
+    ? t('manage.disableDescriptionRenewal', { date: formatRenewalDate(endsAt) })
     : t('manage.disableDescriptionRenewalNoDate');
 
   if (!subscription) return null;
@@ -26,7 +27,7 @@ export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?
         <p>{t('manage.noRenewalHint')}</p>
         <p>
           {endsAt
-            ? t('manage.noRenewalUntil', { date: formatRenewalDateShort(endsAt) })
+            ? t('manage.noRenewalUntil', { date: formatRenewalDate(endsAt) })
             : t('manage.noRenewalUntilNoDate')}
         </p>
       </div>
