@@ -37,6 +37,21 @@ describe('trackUmamiSession', () => {
     expect(payload).not.toHaveProperty('display_name');
   });
 
+  it('не записывает role, пока default_layout пустой', async () => {
+    const identify = vi.fn();
+    (globalThis as { window?: unknown }).window = {
+      umami: { identify },
+      navigator: {},
+      matchMedia: () => ({ matches: false }),
+    };
+
+    await trackUmamiSession({ ...user, default_layout: undefined as never }, 'signup');
+
+    const payload = identify.mock.calls[0]?.[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('role');
+    expect(payload.user_id).toBe(42);
+  });
+
   it('отличает electron, native и pwa', () => {
     (globalThis as { window?: unknown }).window = {
       __SOVLIUM_ELECTRON__: true,

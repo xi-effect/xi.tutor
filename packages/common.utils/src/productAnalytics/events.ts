@@ -24,6 +24,7 @@ export const PRODUCT_ANALYTICS_EVENTS = {
 
   // Onboarding
   ONBOARDING_STARTED: 'onboarding_started',
+  ONBOARDING_ROLE_SELECTED: 'onboarding_role_selected',
   ONBOARDING_STEP_VIEWED: 'onboarding_step_viewed',
   ONBOARDING_STEP_COMPLETED: 'onboarding_step_completed',
   ONBOARDING_STEP_SKIPPED: 'onboarding_step_skipped',
@@ -66,7 +67,9 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   PREJOIN_VIEWED: 'prejoin_viewed',
   LESSON_STARTED: 'lesson_started',
   LESSON_JOINED: 'lesson_joined',
+  LESSON_STUDENT_JOINED: 'lesson_student_joined',
   LESSON_DURATION_REACHED: 'lesson_duration_reached',
+  LESSON_REAL_DURATION_REACHED: 'lesson_real_duration_reached',
   LESSON_FINISHED: 'lesson_finished',
   LESSON_RECORDING_STARTED: 'lesson_recording_started',
   LESSON_RECORDING_COMPLETED: 'lesson_recording_completed',

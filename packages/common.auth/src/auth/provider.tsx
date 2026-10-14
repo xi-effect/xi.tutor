@@ -12,7 +12,9 @@ import {
 } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  completeActivationFlow,
   getProductAnalyticsRole,
+  setActivationAnalyticsUser,
   trackOnce,
   trackProductEvent,
   trackUmamiSession,
@@ -94,6 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     hasEverBeenUnauthenticated.current = true;
+    setActivationAnalyticsUser(null);
     setIsAuthenticated(false);
 
     void signoutService.mutateAsync().catch((error) => {
@@ -111,6 +114,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const refetched = await refetch();
       // Идентифицируем до того, как форма сделает navigate — чтобы properties записались в текущую сессию
       if (refetched.data) {
+        // Привязка до identify, чтобы signup-события этой попытки не уехали на чужой flow.
+        completeActivationFlow(refetched.data.id);
         await trackUmamiSession(refetched.data, 'signup');
 
         // Один раз на пользователя (клиентский once + localStorage; backend-флага пока нет)
@@ -124,9 +129,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (!alreadySent) {
           const role = getProductAnalyticsRole(refetched.data.default_layout);
+          const userRole = role === 'tutor' || role === 'student' ? role : 'unknown';
           trackOnce(storageKey, () => {
             trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_FIRST_AUTHENTICATED_SESSION, {
-              user_role: role === 'student' ? 'student' : 'tutor',
+              user_role: userRole,
               source: 'signup',
             });
           });

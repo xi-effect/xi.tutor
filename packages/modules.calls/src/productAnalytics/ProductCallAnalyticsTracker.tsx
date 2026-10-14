@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useConnectionState, useLocalParticipant, useRoomContext } from '@livekit/components-react';
-import { RoomEvent } from 'livekit-client';
+import { ParticipantKind, RoomEvent, type Room } from 'livekit-client';
 import { useCallStore } from '@xipkg/calls-store';
 import { useCallsNavigation } from '@xipkg/calls-providers';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,6 +18,7 @@ import {
   measureDurationMs,
   startCallFeedbackUsage,
   trackProductEvent,
+  updateLessonOverlap,
   type CallFailureReason,
   type ProductAnalyticsLessonType,
 } from 'common.utils';
@@ -36,6 +37,17 @@ const resolveLessonType = (kind?: string): ProductAnalyticsLessonType => {
 };
 
 const MIN_LESSON_FINISH_MINUTES = 5;
+const OVERLAP_TICK_MS = 5_000;
+
+function countHumanRemoteParticipants(room: Room): number {
+  let count = 0;
+  room.remoteParticipants.forEach((participant) => {
+    if (participant.kind == null || participant.kind === ParticipantKind.STANDARD) {
+      count += 1;
+    }
+  });
+  return count;
+}
 
 export const ProductCallAnalyticsTracker = () => {
   const room = useRoomContext();
@@ -126,6 +138,7 @@ export const ProductCallAnalyticsTracker = () => {
         lesson_type: lessonType,
         students_count: studentsCount,
         student_joined: studentsCount > 0,
+        duration_basis: 'connection',
         board_used: state.usedBoard,
         screen_share_used: state.usedScreenshare,
         used_board: state.usedBoard,
@@ -281,6 +294,55 @@ export const ProductCallAnalyticsTracker = () => {
       }
     };
   }, [connectionState, role, actorRole, activeClassroom, activeBoardId, isScreenShareEnabled]);
+
+  useEffect(() => {
+    if (connectionState !== 'connected' || actorRole !== 'tutor') return;
+
+    const publishOverlap = () => {
+      const update = updateLessonOverlap(
+        getCallSessionAnalyticsState().overlap,
+        countHumanRemoteParticipants(room),
+        Date.now(),
+      );
+      const lessonId = getLessonId();
+      const lessonType = getLessonType();
+
+      if (update.studentJoined) {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_STUDENT_JOINED, {
+          lesson_id: lessonId,
+          actor_role: 'tutor',
+          role,
+          students_count: update.studentsCount,
+          lesson_type: lessonType,
+        });
+      }
+
+      for (const threshold of update.reachedThresholds) {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_REAL_DURATION_REACHED, {
+          lesson_id: lessonId,
+          actor_role: 'tutor',
+          role,
+          duration_threshold: threshold,
+          overlap_seconds: update.overlapSeconds,
+          students_count: update.studentsCount,
+          student_joined: true,
+          duration_basis: 'with_student',
+          lesson_type: lessonType,
+        });
+      }
+    };
+
+    publishOverlap();
+    const timer = setInterval(publishOverlap, OVERLAP_TICK_MS);
+    room.on(RoomEvent.ParticipantConnected, publishOverlap);
+    room.on(RoomEvent.ParticipantDisconnected, publishOverlap);
+
+    return () => {
+      clearInterval(timer);
+      room.off(RoomEvent.ParticipantConnected, publishOverlap);
+      room.off(RoomEvent.ParticipantDisconnected, publishOverlap);
+    };
+  }, [actorRole, connectionState, role, room]);
 
   useEffect(() => {
     if (connectionState !== 'connected') {
