@@ -41,6 +41,38 @@ describe('runWelcomeRoleForward', () => {
     expect(trackCompleted).toHaveBeenCalledWith('role_selection', 'tutor', 'default-layout');
     expect(navigateToSocials).toHaveBeenCalledWith({ invite: 'x' });
   });
+
+  it('после сохранения роли шлёт onboarding_role_selected и не шлёт его при ошибке профиля', async () => {
+    const trackRoleSelected = vi.fn();
+
+    const failed = await runWelcomeRoleForward({
+      ...base,
+      userId: 7,
+      updateProfile: vi.fn().mockRejectedValue(new Error('fail')),
+      transitionForward: vi.fn(),
+      trackFailed: vi.fn(),
+      trackCompleted: vi.fn(),
+      trackRoleSelected,
+      navigateToSocials: vi.fn(),
+    });
+
+    expect(failed).toBe('profile_failed');
+    expect(trackRoleSelected).not.toHaveBeenCalled();
+
+    const ok = await runWelcomeRoleForward({
+      ...base,
+      userId: 7,
+      updateProfile: vi.fn().mockResolvedValue({}),
+      transitionForward: vi.fn().mockResolvedValue({}),
+      trackFailed: vi.fn(),
+      trackCompleted: vi.fn(),
+      trackRoleSelected,
+      navigateToSocials: vi.fn(),
+    });
+
+    expect(ok).toBe('ok');
+    expect(trackRoleSelected).toHaveBeenCalledWith('tutor', 7);
+  });
 });
 
 describe('runWelcomeRoleBack', () => {

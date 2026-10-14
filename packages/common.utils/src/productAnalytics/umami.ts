@@ -27,7 +27,9 @@ function isProductAnalyticsEnabled(): boolean {
 function isForbiddenField(eventName: string | undefined, key: string): boolean {
   if (!FORBIDDEN_ANALYTICS_FIELDS.has(key)) return false;
   if (!eventName) return true;
-  return !ANALYTICS_ALLOWED_FREE_TEXT_FIELDS[eventName]?.has(key);
+  if (ANALYTICS_ALLOWED_FREE_TEXT_FIELDS[eventName]?.has(key)) return false;
+  // Роль выбирается после signup identify. user_id нужен, чтобы не терять attribution.
+  return !(eventName === 'onboarding_role_selected' && key === 'user_id');
 }
 
 function sanitizeUmamiPayload(

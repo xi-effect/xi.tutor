@@ -5,7 +5,7 @@ import { getOnboardingStepMeta } from './onboardingSteps';
 import { getProductAnalyticsRole } from './roles';
 import { trackOnce } from './once';
 import { trackProductEvent } from './umami';
-import { getActivationFlowId, getOrCreateActivationFlowId } from './activationFlowId';
+import { getActivationFlowId } from './activationFlowId';
 import type { OnboardingSkipReason, OnboardingStepFailReason, OnboardingStepName } from './types';
 
 const ONBOARDING_STARTED_AT_KEY = 'onboarding_started_at_ms';
@@ -55,22 +55,38 @@ export function trackOnboardingStarted(
   userRole: OnboardingAnalyticsRole,
   onboardingStage?: string,
 ): boolean {
-  const flowId = getActivationFlowId() ?? getOrCreateActivationFlowId();
-  const onceKey = `onboarding_started:${flowId}`;
+  const flowId = getActivationFlowId();
+  const onceKey = flowId ? `onboarding_started:${flowId}` : 'onboarding_started';
 
-  if (hasOnboardingStartedForFlow(flowId)) {
+  if (flowId && hasOnboardingStartedForFlow(flowId)) {
     // Синхронизируем in-memory once, чтобы повторные вызовы в этой вкладке были no-op.
     trackOnce(onceKey, () => undefined);
     return false;
   }
 
   return trackOnce(onceKey, () => {
-    markOnboardingStartedForFlow(flowId);
+    if (flowId) markOnboardingStartedForFlow(flowId);
     markOnboardingStartedAt();
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_STARTED, {
-      activation_flow_id: flowId,
+      ...(flowId ? { activation_flow_id: flowId } : {}),
       user_role: userRole,
       onboarding_stage: onboardingStage,
+    });
+  });
+}
+
+/**
+ * Роль сохранена на backend. Эквивалента нет: step_completed смешивает роль
+ * с переходом stage, а welcome-role-select — клик по подписи, не outcome.
+ */
+export function trackOnboardingRoleSelected(role: 'tutor' | 'student', userId?: number): void {
+  const flowId = getActivationFlowId();
+  trackOnce(`onboarding_role_selected:${userId ?? 'anon'}:${role}`, () => {
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_ROLE_SELECTED, {
+      ...(flowId ? { activation_flow_id: flowId } : {}),
+      role,
+      user_role: role,
+      ...(typeof userId === 'number' ? { user_id: userId } : {}),
     });
   });
 }

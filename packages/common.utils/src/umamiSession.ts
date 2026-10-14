@@ -1,4 +1,5 @@
 import { UserData } from 'common.types';
+import { setActivationAnalyticsUser } from './productAnalytics/activationFlowId';
 import { getProductAnalyticsRole } from './productAnalytics/roles';
 
 export type UmamiClientSurface = 'web' | 'pwa' | 'electron' | 'native';
@@ -62,7 +63,7 @@ export function getUmamiClientSurface(): UmamiClientSurface {
  */
 export const trackUmamiSession = async (
   user: UserData,
-  source: 'signin' | 'signup' | 'session_init',
+  source: 'signin' | 'signup' | 'session_init' | 'role_update',
 ) => {
   if (typeof window === 'undefined') {
     return;
@@ -77,9 +78,13 @@ export const trackUmamiSession = async (
       return;
     }
 
+    const role = getProductAnalyticsRole(user.default_layout);
+    setActivationAnalyticsUser(user.id);
     window.umami.identify(String(user.id), {
       user_id: user.id,
-      role: getProductAnalyticsRole(user.default_layout),
+      // null layout на signup — это ещё не роль. Не штампуем 'unknown',
+      // иначе регистрация без выбора роли выглядит как потерянная роль.
+      ...(role === 'tutor' || role === 'student' || role === 'parent' ? { role } : {}),
       onboarding_stage: user.onboarding_stage,
       source,
       client_surface: getUmamiClientSurface(),

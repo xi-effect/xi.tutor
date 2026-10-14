@@ -9,7 +9,6 @@ import {
   PRODUCT_ANALYTICS_EVENTS,
   getActivationFlowId,
   getInviteTrackingIdFromContext,
-  getOrCreateActivationFlowId,
   getInviteFunnelEventProps,
   inferSigninSource,
   mapSigninError,
@@ -45,8 +44,8 @@ export const useSigninForm = () => {
     const { email, password } = data;
     const source = inferSigninSource(search);
     const isInviteFlow = source === 'invite';
-    const activationFlowId =
-      source === 'invite' ? getOrCreateActivationFlowId() : getActivationFlowId();
+    // Sign-in не начинает signup-flow: иначе чужой вход занимает activation_flow_id.
+    const activationFlowId = getActivationFlowId();
 
     let invite_tracking_id: string | undefined;
     try {

@@ -15,6 +15,7 @@ import { ArrowShapeUtil } from './arrow';
 import { PresentationShapeUtil } from './presentation';
 import { FlipCardShapeUtil } from './flipCard';
 import { ActivityShapeUtil } from '../activities';
+import './lineStyles/extendedLineStyles';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [

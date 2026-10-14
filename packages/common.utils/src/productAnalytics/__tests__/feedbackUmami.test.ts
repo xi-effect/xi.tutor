@@ -41,6 +41,18 @@ describe('trackProductEvent feedback comment', () => {
       connection_quality: 4,
     });
     expect(track.mock.calls[1]?.[1]).not.toHaveProperty('user_id');
+
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_ROLE_SELECTED, {
+      role: 'tutor',
+      user_role: 'tutor',
+      user_id: 15,
+    });
+
+    expect(track.mock.calls[2]?.[1]).toMatchObject({
+      role: 'tutor',
+      user_role: 'tutor',
+      user_id: 15,
+    });
   });
 
   it('пропускает comment в math_task_report и маскирует PII', () => {
