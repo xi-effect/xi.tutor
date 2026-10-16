@@ -16,12 +16,14 @@ type TestingEndAnnouncementModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDismissForever: () => void;
+  onArticleOpen: () => void;
 };
 
 export const TestingEndAnnouncementModal = ({
   open,
   onOpenChange,
   onDismissForever,
+  onArticleOpen,
 }: TestingEndAnnouncementModalProps) => {
   const { t } = useTranslation('navigation');
 
@@ -70,6 +72,7 @@ export const TestingEndAnnouncementModal = ({
               size="m"
               className={`${modalConfirmButtonClass} w-full justify-center gap-2 sm:w-auto`}
               onClick={() => {
+                onArticleOpen();
                 window.open(TESTING_END_ARTICLE_URL, '_blank', 'noopener,noreferrer');
               }}
             >

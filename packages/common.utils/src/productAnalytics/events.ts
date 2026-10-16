@@ -122,6 +122,12 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   // Payments
   PAYMENT_CONFIRMED: 'payment_confirmed',
 
+  // Subscription announcement (testing end)
+  SUBSCRIPTION_ANNOUNCEMENT_SHOWN: 'subscription_announcement_shown',
+  SUBSCRIPTION_ANNOUNCEMENT_ARTICLE_OPENED: 'subscription_announcement_article_opened',
+  SUBSCRIPTION_ANNOUNCEMENT_CLOSED: 'subscription_announcement_closed',
+  SUBSCRIPTION_ANNOUNCEMENT_DISMISSED: 'subscription_announcement_dismissed',
+
   // Post-lesson feedback
   FEEDBACK_PROMPT_SHOWN: 'feedback_prompt_shown',
   FEEDBACK_PROMPT_OPENED: 'feedback_prompt_opened',
