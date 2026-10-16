@@ -1,6 +1,7 @@
 import { invitationsApiConfig, InvitationsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { handleError } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   trackProductEvent,
@@ -30,6 +31,9 @@ export const useResetGroupInvite = ({ classroom_id }: { classroom_id: string }) 
         console.error('Ошибка:', err);
         throw err;
       }
+    },
+    onError: (err) => {
+      handleError(err, 'classroom');
     },
     onSuccess: (_response, variables) => {
       queryClient.invalidateQueries({

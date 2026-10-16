@@ -8,6 +8,9 @@ const Role = () => {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const Route = createFileRoute('/(common)/welcome/role/')({
+  head: () => ({
+    meta: [{ title: 'sovlium | Роль' }],
+  }),
   component: Role,
   // beforeLoad: ({ context }) => {
   //   console.log('Role', context, location);

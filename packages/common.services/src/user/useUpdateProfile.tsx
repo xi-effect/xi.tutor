@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 import { toast } from 'sonner';
 import { UserData, ProfileData, RoleT } from 'common.types';
+import { trackUmamiSession } from 'common.utils';
 import { handleError, showSuccess } from 'common.services';
 
 interface MutationContext {
@@ -70,6 +71,9 @@ export const useUpdateProfile = () => {
       // Если сервер вернул обновленные данные, обновляем кеш
       if (response?.data) {
         queryClient.setQueryData<UserData>([UserQueryKey.Home], response.data);
+        if (context?.profileData?.default_layout) {
+          void trackUmamiSession(response.data, 'role_update');
+        }
       }
 
       // Проверяем, обновляется ли только default_layout

@@ -2,7 +2,10 @@ import { paymentsApiConfig, PaymentsQueryKey, ClassroomPaymentsQueryKey } from '
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
+import { trackPaymentConfirmed } from 'common.utils';
 import { toast } from 'sonner';
+
+type ReceiverConfirmationInput = string | { invoiceId: string; revenue?: string | number };
 
 export const usePaymentReceiverConfirmation = ({
   classroomId,
@@ -11,12 +14,13 @@ export const usePaymentReceiverConfirmation = ({
   const queryClient = useQueryClient();
 
   const paymentReceiverConfirmationMutation = useMutation({
-    mutationFn: async (invoice_id: string) => {
+    mutationFn: async (input: ReceiverConfirmationInput) => {
+      const invoiceId = typeof input === 'string' ? input : input.invoiceId;
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
           method: paymentsApiConfig[PaymentsQueryKey.PaymentReceiverConfirmation].method,
-          url: paymentsApiConfig[PaymentsQueryKey.PaymentReceiverConfirmation].getUrl(invoice_id),
+          url: paymentsApiConfig[PaymentsQueryKey.PaymentReceiverConfirmation].getUrl(invoiceId),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -30,10 +34,13 @@ export const usePaymentReceiverConfirmation = ({
     onError: (err) => {
       handleError(err, 'addInvoiceTemplate');
     },
-    onSuccess: (response) => {
+    onSuccess: (response, input) => {
       onSuccess?.();
 
       if (response?.status === 204) {
+        if (typeof input !== 'string') {
+          trackPaymentConfirmed(input.revenue, 'receiver');
+        }
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'list'] });
         if (classroomId) {

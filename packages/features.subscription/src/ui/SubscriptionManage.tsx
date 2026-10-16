@@ -6,7 +6,7 @@ import {
   useSubscriptionStore,
   useSubscriptionUiStore,
 } from 'common.subscription';
-import { ConfirmDialog, getAppLanguage } from 'common.ui';
+import { ConfirmDialog, getAppLanguage, useAppTimeZone } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDate, formatRenewalDateShort } from '../utils/dates';
 import { PromoCodeField } from './PromoCodeField';
@@ -14,6 +14,7 @@ import { ScreenBackButton } from './ScreenBackButton';
 
 export const SubscriptionManage = () => {
   const { t } = useTranslation('subscription');
+  useAppTimeZone();
   const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
   const { planId, tariff, autoRenew, renewsAt, remainingDays } = useSubscriptionPlan();
   const setAutoRenew = useSubscriptionStore((s) => s.setAutoRenew);

@@ -32,6 +32,13 @@ export class ConferenceController {
     return false;
   }
 
+  /** Сообщение в рендерер конференции, где живёт LiveKit. */
+  postToConference(channel: string, payload: unknown): boolean {
+    if (!this.view || this.view.webContents.isDestroyed()) return false;
+    sendToRenderer(this.view.webContents, channel, payload);
+    return true;
+  }
+
   private broadcast(): void {
     const state = this.getState();
     for (const window of BrowserWindow.getAllWindows()) {

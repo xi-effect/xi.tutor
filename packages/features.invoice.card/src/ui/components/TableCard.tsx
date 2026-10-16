@@ -7,6 +7,8 @@ import { CardContentT } from '../../types';
 import { cn } from '@xipkg/utils';
 import { PaymentApproveAction } from 'features.payment.approve';
 import { useTranslation } from 'react-i18next';
+import { useAppTimeZone } from 'common.ui';
+import { MouseEvent } from 'react';
 
 export const TableCard = ({
   userData,
@@ -17,15 +19,31 @@ export const TableCard = ({
   onViewInvoice,
 }: CardContentT) => {
   const { t } = useTranslation('invoiceCard');
+  useAppTimeZone();
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 
   return (
     <div
       className={cn(
-        'bg-background-surface relative flex min-h-35 cursor-pointer flex-col justify-between gap-2 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+        'bg-background-surface relative flex min-h-35 flex-col justify-between gap-2 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+        onViewInvoice && 'cursor-pointer',
         className,
       )}
+      onClick={
+        onViewInvoice
+          ? (event: MouseEvent<HTMLDivElement>) => {
+              const target = event.target;
+              if (
+                target instanceof Element &&
+                target.closest('button, a, input, textarea, select, [role="button"]')
+              ) {
+                return;
+              }
+              onViewInvoice(payment);
+            }
+          : undefined
+      }
     >
       <div className="text-s-base text-text-secondary flex flex-row items-baseline gap-1">
         {formattedDate}

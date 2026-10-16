@@ -12,6 +12,7 @@ export const PaymentApproveButton = ({
   isTutor = false,
   id,
   classroomId,
+  total,
 }: PaymentApproveButtonPropsT) => {
   const { t } = useTranslation('paymentApprove');
   const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
@@ -50,7 +51,12 @@ export const PaymentApproveButton = ({
               variant="none"
               size="s"
               className="bg-status-info-background hover:bg-status-info-background/80 flex-1 rounded-lg"
-              onClick={() => receiverConfirmationMutation(id?.toString() ?? '')}
+              onClick={() =>
+                receiverConfirmationMutation({
+                  invoiceId: id?.toString() ?? '',
+                  revenue: total,
+                })
+              }
               loading={isPending}
               disabled={isPending}
               data-umami-event="payment-approve-receiver"

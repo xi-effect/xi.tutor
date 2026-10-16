@@ -26,8 +26,12 @@ on:
     outputs:
       xi_web_build_status:
         value: ${{ jobs.build_xi_web.result }}
+      xi_static_build_status:
+        value: ${{ jobs.build_xi_static.result }}
       xi_web_deployment_status:
         value: ${{ jobs.deploy_xi_web.result }}
+      xi_static_deployment_status:
+        value: ${{ jobs.deploy_xi_static.result }}
 
 jobs:
   analyze_files:
@@ -45,6 +49,7 @@ jobs:
 
     outputs:
       xi_web_files: ${{ steps.path_filter.outputs.xi_web_files }}
+      xi_static_files: ${{ steps.path_filter.outputs.xi_static_files }}
 
   lint:
     needs: analyze_files
@@ -88,6 +93,15 @@ jobs:
     with:
       app_name: xi.web
 
+  build_xi_static:
+    needs:
+      - analyze_files
+      - lint
+    if: needs.analyze_files.outputs.xi_static_files == 'true'
+    uses: ./.github/workflows/common_build.yml
+    with:
+      app_name: xi.static
+
   deploy_xi_web:
     needs:
       - build_xi_web
@@ -95,6 +109,18 @@ jobs:
     with:
       project_name: xi.tutor
       app_name: xi.web
+      base_deployment_path: ${{ inputs.base_deployment_path }}
+      deployment_name: ${{ inputs.deployment_name }}
+      github_environment_name: ${{ inputs.github_environment_name }}
+    secrets: inherit
+
+  deploy_xi_static:
+    needs:
+      - build_xi_static
+    uses: ./.github/workflows/common_push.yml
+    with:
+      project_name: xi.tutor
+      app_name: xi.static
       base_deployment_path: ${{ inputs.base_deployment_path }}
       deployment_name: ${{ inputs.deployment_name }}
       github_environment_name: ${{ inputs.github_environment_name }}

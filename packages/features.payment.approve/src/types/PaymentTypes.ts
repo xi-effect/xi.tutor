@@ -40,4 +40,5 @@ export type PaymentApproveActionPropsT = Pick<ApprovePaymentPropsT, 'payment' | 
 export type PaymentApproveButtonPropsT = Omit<ApprovePaymentPropsT, 'payment'> & {
   type?: InvoiceCardTypeT;
   classroomId?: number;
+  total?: string;
 };

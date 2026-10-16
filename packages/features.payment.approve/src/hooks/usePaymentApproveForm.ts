@@ -8,6 +8,7 @@ export const usePaymentApproveForm = (
   recipientInvoiceId: number,
   isTutor: boolean = false,
   classroomId?: string,
+  revenue?: string | number,
 ) => {
   const paymentFormSchema = usePaymentFormSchema();
 
@@ -33,6 +34,7 @@ export const usePaymentApproveForm = (
         await unilateralConfirmationMutation.mutateAsync({
           invoice_id: String(recipientInvoiceId),
           paymentType: data.typePayment,
+          revenue,
         });
       } else {
         // Для преподавателя используем подтверждение отправителя

@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ConfigEnv, defineConfig, mergeConfig, searchForWorkspaceRoot } from 'vite';
+import { ConfigEnv, defineConfig, loadEnv, mergeConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -12,16 +12,22 @@ import {
   readCallsDepsMode,
 } from './vite.calls-local.ts';
 import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
-import { mathBankAssetsPlugin } from './vite.math-bank.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
+// Не по префиксу `dist-`: так Rolldown называет и обычные вендорные чанки
+// (у (app)/_layout их ~1.4MB), без preload они грузятся цепочкой.
 const isHeavyOcrAsset = (filePath: string) =>
-  /(?:^|\/)dist-[^/]+\.js$/.test(filePath) ||
   /paddleocr|opencv|onnxruntime|ort\.bundle|ort-wasm|worker-entry/i.test(filePath);
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
+  const bankStaticOrigin = (
+    loadEnv(mode, appDir, '').VITE_BANK_STATIC_ORIGIN || 'https://app-static.sovlium.ru'
+  ).replace(/\/$/, '');
+  const bankAssetPattern = new RegExp(
+    `^${bankStaticOrigin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/(?:math-bank|task-bank)/.+\\.(?:json|gz)$`,
+  );
   const callsDepsMode = readCallsDepsMode(appDir);
   const useCallsLink = mode === 'development' && callsDepsMode === 'link';
   const isElectron = mode === 'electron';
@@ -33,7 +39,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   const config = {
     plugins: [
       paddleOcrCjsInteropPlugin(),
-      mathBankAssetsPlugin(searchForWorkspaceRoot(process.cwd())),
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
@@ -71,7 +76,15 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             skipWaiting: true,
             clientsClaim: true,
             cleanupOutdatedCaches: true,
-            globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
+            // null затирает дефолт плагина 'index.html'. Иначе Workbox регистрирует
+            // NavigationRoute раньше runtimeCaching и всегда отдаёт precache HTML.
+            // После деплоя это старый index.html с уже удалёнными hashed-чанками.
+            navigateFallback: null,
+            // Запрос документа стартует параллельно с запуском service worker.
+            navigationPreload: true,
+            // index.html не прекешируем: precache с directoryIndex отдаёт '/' из кэша
+            // даже без navigateFallback.
+            globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}'],
             globIgnores: [
               '**/*paddleocr*',
               '**/*opencv*',
@@ -87,17 +100,13 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             ],
             // Ниже ~6–24MB чанков OCR: иначе они снова попадут в precache под именем index-*.js.
             maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-            navigateFallback: '/index.html',
-            navigateFallbackDenylist: [/^\/deployments\/.*/],
             runtimeCaching: [
               {
+                // Документ только из сети. Кэш HTML после деплоя ссылается на
+                // удалённые чанки, а на мобильных service worker чаще отдаёт его
+                // из-за оборвавшегося первого запроса.
                 urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',
-                handler: 'NetworkFirst',
-                options: {
-                  cacheName: 'html',
-                  // Без timeout: иначе при медленной сети отдаётся старый index.html
-                  // со ссылками на уже удалённые hashed-ассеты → белый экран.
-                },
+                handler: 'NetworkOnly',
               },
               {
                 handler: 'NetworkOnly',
@@ -118,7 +127,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 },
               },
               {
-                urlPattern: /\/(?:math-bank|task-bank)\/.+\.(?:json|gz)$/,
+                urlPattern: bankAssetPattern,
                 handler: 'CacheFirst',
                 options: {
                   cacheName: 'math-bank-assets',
@@ -138,8 +147,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       outDir: 'build',
       sourcemap: mode === 'debug',
       reportCompressedSize: false,
-      // PaddleOCR не должен попадать в <link rel="modulepreload"> у index.html:
-      // после деплоя старые dist-*.js дают 404 и белый экран.
+      // Без modulepreload зависимости lazy-роутов грузятся цепочкой (у (app)/_layout
+      // 4–5 последовательных запросов), а роутер всё это время рисует пустой экран.
       modulePreload: {
         resolveDependencies: (_filename: string, deps: string[]) =>
           deps.filter((dep) => !isHeavyOcrAsset(dep)),

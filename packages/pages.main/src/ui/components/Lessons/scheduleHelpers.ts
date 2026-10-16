@@ -1,3 +1,4 @@
+import { instantToWallClock } from 'common.ui';
 import type { ScheduleItem, ScheduleLessonRow } from 'modules.calendar';
 import { mapScheduleItemToLessonRow as scheduleItemToLessonRow } from 'modules.calendar';
 import type { RepeatedVirtualRescheduleTarget, SoleRescheduleTarget } from 'features.lesson.move';
@@ -57,7 +58,7 @@ export function movingPropsFromLessonRow(lesson: ScheduleLessonRow) {
 
 /** Совпадает ли календарный день у инстанса с переданной датой (локальное время). */
 export const isOnSameLocalDay = (item: ScheduleItem, day: Date): boolean => {
-  const start = new Date(item.startsAt);
+  const start = instantToWallClock(item.startsAt);
   return (
     start.getFullYear() === day.getFullYear() &&
     start.getMonth() === day.getMonth() &&

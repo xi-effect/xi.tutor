@@ -18,6 +18,7 @@ import {
 } from 'modules.calendar';
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useCurrentUser, useUpdateClassroomEvent } from 'common.services';
+import { useAppTimeZone } from 'common.ui';
 
 function jsWeekdayToSeriesIndex(date: Date): number {
   const d = date.getDay();
@@ -79,7 +80,8 @@ const CalendarPageContent = () => {
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
 
   const { weekDays } = useCalendarSchedule();
-  const range = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
+  const timeZone = useAppTimeZone();
+  const range = useMemo(() => getScheduleQueryRange(weekDays, timeZone), [weekDays, timeZone]);
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -106,13 +108,13 @@ const CalendarPageContent = () => {
 
   useEffect(() => {
     if (scheduleQuery.data) {
-      setEvents(mapScheduleItemsToCalendarEvents(scheduleQuery.data));
+      setEvents(mapScheduleItemsToCalendarEvents(scheduleQuery.data, timeZone));
       return;
     }
     if (scheduleQuery.isError) {
       setEvents([]);
     }
-  }, [scheduleQuery.data, scheduleQuery.isError, setEvents]);
+  }, [scheduleQuery.data, scheduleQuery.isError, setEvents, timeZone]);
 
   useEffect(() => () => setEvents([]), [setEvents]);
 

@@ -13,7 +13,7 @@ export type SubjectT = 'all' | 'math' | 'computer_science' | 'foreign_languages'
 export const EDUCATION_STATUS_LABELS_STUDENT: Record<StatusEducationT, string> = {
   active: 'Учусь',
   paused: 'На паузе',
-  locked: 'Заблокировано',
+  locked: 'Недоступно',
   finished: 'Обучение завершено',
 } as const;
 
@@ -23,7 +23,7 @@ export const EDUCATION_STATUS_LABELS_STUDENT: Record<StatusEducationT, string> =
 export const EDUCATION_STATUS_LABELS_TUTOR: Record<StatusEducationT, string> = {
   active: 'Учится',
   paused: 'На паузе',
-  locked: 'Заблокировано',
+  locked: 'Недоступно',
   finished: 'Обучение завершено',
 } as const;
 

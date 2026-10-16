@@ -1,3 +1,6 @@
+/**
+ * Типы для Umami Analytics v3
+ */
 export {};
 
 declare global {

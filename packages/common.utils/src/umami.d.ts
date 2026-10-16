@@ -1,5 +1,5 @@
 /**
- * Типы для Umami Analytics v2
+ * Типы для Umami Analytics v3
  */
 declare global {
   interface Window {

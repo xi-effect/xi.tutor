@@ -63,10 +63,25 @@ export const callsLocalDevConfig = (appDir: string): UserConfig => {
       conditions: ['development', 'import'],
       dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
       preserveSymlinks: false,
-      // calls-ui импортирует Switch из switcher@3; в xi.tutor hoisted switcher@4 (Switcher)
-      alias: {
-        '@xipkg/switcher': path.join(xiCallsRoot, 'node_modules/@xipkg/switcher'),
-      },
+      // calls-ui импортирует Switch из switcher@3; в xi.tutor hoisted switcher@4 (Switcher).
+      // Длинные имена раньше короткого `@xipkg/calls`, иначе префикс перехватывает calls-ui.
+      alias: [
+        ...[...CALLS_PACKAGES]
+          .sort((left, right) => right.length - left.length)
+          .map((pkg) => ({
+            find: pkg,
+            replacement: path.join(
+              callsPackagesRoot,
+              pkg === '@xipkg/calls'
+                ? 'calls'
+                : pkg.replace('@xipkg/', '').replace('calls-', 'calls.'),
+            ),
+          })),
+        {
+          find: '@xipkg/switcher',
+          replacement: path.join(xiCallsRoot, 'node_modules/@xipkg/switcher'),
+        },
+      ],
     },
     optimizeDeps: {
       exclude: [...CALLS_PACKAGES],

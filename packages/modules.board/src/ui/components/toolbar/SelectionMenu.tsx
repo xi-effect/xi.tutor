@@ -149,6 +149,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             <LineStylePicker
               value={sharedArrowDash && isLineStyleId(sharedArrowDash) ? sharedArrowDash : null}
               allowDouble={allowDoubleLine}
+              allowWavy={allowDoubleLine}
               onChange={(style) => applyArrowLineStyle(editor, style)}
             />
           )}

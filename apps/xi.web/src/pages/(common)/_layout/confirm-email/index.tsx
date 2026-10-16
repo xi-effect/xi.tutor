@@ -11,6 +11,9 @@ const searchSchema = z.object({
 
 // @ts-ignore
 export const Route = createFileRoute('/(common)/_layout/confirm-email/')({
+  head: () => ({
+    meta: [{ title: 'sovlium | Подтверждение почты' }],
+  }),
   component: ConfirmEmailPageWrapper,
   validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
 });

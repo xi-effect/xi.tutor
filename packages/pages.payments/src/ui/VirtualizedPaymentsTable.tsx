@@ -20,7 +20,7 @@ import {
 import { Button } from '@xipkg/button';
 import { ArrowUpRight } from '@xipkg/icons';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { RefObject } from 'react';
+import { MouseEvent, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   EmptyPaymentsFull,
@@ -37,6 +37,10 @@ import { InvoiceCard } from 'features.invoice.card';
 
 /** База знаний — как в блоке «Оплата» на главной */
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
+
+const isInteractiveRowTarget = (target: EventTarget | null) =>
+  target instanceof Element &&
+  Boolean(target.closest('button, a, input, textarea, select, [role="button"]'));
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -161,7 +165,20 @@ export const VirtualizedPaymentsTable = ({
           renderItem={(item) => (
             <Table className="table-fixed">
               <TableBody>
-                <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
+                <TableRow
+                  className={cn(
+                    'group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]',
+                    onViewInvoice && 'cursor-pointer',
+                  )}
+                  onClick={
+                    onViewInvoice
+                      ? (event: MouseEvent<HTMLTableRowElement>) => {
+                          if (isInteractiveRowTarget(event.target)) return;
+                          onViewInvoice(item.original);
+                        }
+                      : undefined
+                  }
+                >
                   {item.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

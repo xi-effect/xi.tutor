@@ -7,14 +7,7 @@
 
 Первые 9 000 задач (`math-ru-00001` … `math-ru-09000`) сохранены. Ещё 12 000 (`math-ru-09001` … `math-ru-21000`) построены по историческим архетипам (Киселёв, Рыбкин, Шапошников–Вальцов), без копирования текстов источников. Подробности — в `HISTORICAL_EXPANSION.md`.
 
-## Команды
-
-```bash
-pnpm --filter features.math.bank math-bank:build
-pnpm --filter features.math.bank math-bank:qa
-```
-
-`math-bank:build` читает только `content/tasks.source.json.gz` и воспроизводимо создаёт runtime-файлы в `public/math-bank/`. Полные дампы (`tasks.json` и т.п.) в git не хранятся.
+Клиент загружает runtime-файлы с `https://app-static.sovlium.ru/math-bank` и `https://app-static.sovlium.ru/task-bank/russian`. Локальный каталог `content/` в пакет не входит.
 
 Повторно дописать исторические задачи в source (уже включены в этот релиз):
 

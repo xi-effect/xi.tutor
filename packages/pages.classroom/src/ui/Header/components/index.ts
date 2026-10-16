@@ -7,3 +7,4 @@ export * from './Skeleton';
 export * from './Error';
 export * from './Content';
 export * from './PausedClassroomBanner';
+export * from './LockedClassroomBanner';

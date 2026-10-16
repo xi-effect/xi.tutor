@@ -21,6 +21,7 @@ import type {
   LessonCreateFailureReason,
   LessonDurationThreshold,
   LessonFinishReason,
+  LessonRecordingFailureReason,
   MediaType,
   OnboardingSkipReason,
   OnboardingStepFailReason,
@@ -144,7 +145,7 @@ export type ProductAnalyticsEventMap = {
       invite_tracking_id?: string;
     };
   auth_first_authenticated_session: BaseProps & {
-    user_role: 'tutor' | 'student';
+    user_role: 'tutor' | 'student' | 'unknown';
     source: 'signup' | 'login' | 'invite';
   };
 
@@ -195,6 +196,12 @@ export type ProductAnalyticsEventMap = {
 
   onboarding_started: BaseProps & {
     user_role: 'tutor' | 'student' | 'unknown';
+  };
+  onboarding_role_selected: BaseProps & {
+    role: 'tutor' | 'student';
+    user_role: 'tutor' | 'student';
+    /** Distinct id. Разрешён только здесь: signup identify ещё не знает роль. */
+    user_id?: number;
   };
   onboarding_step_viewed: BaseProps &
     InviteFunnelProps & {
@@ -407,6 +414,14 @@ export type ProductAnalyticsEventMap = {
     lesson_type?: ProductAnalyticsLessonType;
     students_count?: number;
   };
+  lesson_student_joined: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role: 'tutor';
+    role?: ProductAnalyticsRole;
+    students_count: number;
+    lesson_type?: ProductAnalyticsLessonType;
+  };
 
   media_permission_requested: {
     event_version?: number;
@@ -483,11 +498,52 @@ export type ProductAnalyticsEventMap = {
     duration_min?: number;
     students_count?: number;
     student_joined?: boolean;
+    /** connection — часы tutor; with_student — совместное присутствие. */
+    duration_basis?: 'connection' | 'with_student';
     board_used?: boolean;
     screen_share_used?: boolean;
     used_board?: boolean;
     used_screenshare?: boolean;
     lesson_type?: ProductAnalyticsLessonType;
+  };
+  lesson_real_duration_reached: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role: 'tutor';
+    role?: ProductAnalyticsRole;
+    duration_threshold: 5 | 15;
+    overlap_seconds: number;
+    students_count: number;
+    student_joined: true;
+    duration_basis: 'with_student';
+    lesson_type?: ProductAnalyticsLessonType;
+  };
+  lesson_recording_started: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role?: ProductAnalyticsActorRole;
+    role?: ProductAnalyticsRole;
+    participants_count?: number;
+    format?: string;
+  };
+  lesson_recording_completed: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role?: ProductAnalyticsActorRole;
+    role?: ProductAnalyticsRole;
+    duration_seconds?: number;
+    participants_count?: number;
+    format?: string;
+    size_bucket?: FileUploadSizeBucket;
+  };
+  lesson_recording_failed: {
+    event_version?: number;
+    lesson_id?: string;
+    actor_role?: ProductAnalyticsActorRole;
+    role?: ProductAnalyticsRole;
+    reason: LessonRecordingFailureReason;
+    duration_seconds?: number;
+    format?: string;
   };
   lesson_finished: {
     event_version?: number;
@@ -698,6 +754,13 @@ export type ProductAnalyticsEventMap = {
         file_category: FileUploadFileCategory;
         size_bucket: FileUploadSizeBucket;
       };
+
+  payment_confirmed: {
+    event_version?: number;
+    revenue: number;
+    currency: 'RUB';
+    confirmation: 'receiver' | 'unilateral';
+  };
 
   feedback_prompt_shown: {
     event_version?: number;

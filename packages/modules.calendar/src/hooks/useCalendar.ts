@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { addDays, startOfDay, startOfWeek } from 'date-fns';
+import { getAppNow } from 'common.utils';
 import { getDaysFrom, getWeekStartForCenteredDate, getWeekStartForVisibleWindow } from '../utils';
 
-const getInitialWeekStart = () => getWeekStartForVisibleWindow(new Date());
+const getInitialWeekStart = () => getWeekStartForVisibleWindow(getAppNow());
 
 type UseCalendarOptions = {
   /** Начальная неделя — например, из диплинка `focused_at` в URL кабинета */
@@ -37,11 +38,11 @@ export const useCalendar = (options?: UseCalendarOptions) => {
   }, []);
 
   const goToToday = useCallback(() => {
-    setWeekStart(getWeekStartForVisibleWindow(new Date()));
+    setWeekStart(getWeekStartForVisibleWindow(getAppNow()));
   }, []);
 
   /** Подстроить начало окна к якорному дню (первая колонка) */
-  const syncWeekStartForVisibleCount = useCallback((anchorDay = new Date()) => {
+  const syncWeekStartForVisibleCount = useCallback((anchorDay = getAppNow()) => {
     setWeekStart(getWeekStartForVisibleWindow(anchorDay));
   }, []);
 

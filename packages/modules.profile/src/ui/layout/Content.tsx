@@ -8,6 +8,7 @@ import { Effects } from '../effects';
 import { Board } from '../board';
 import { TechnicalReport } from '../report';
 import { Schedule } from '../schedule';
+import { Tags } from '../tags';
 import { SubscriptionSettings } from 'features.subscription';
 
 type ComponentMapT = {
@@ -22,6 +23,7 @@ const componentMap: ComponentMapT = {
   notifications: <Notifications />,
   soundAndVideo: <SoundAndVideo />,
   effects: <Effects />,
+  tags: <Tags />,
   board: <Board />,
   report: <TechnicalReport />,
   subscription: <SubscriptionSettings />,
@@ -36,7 +38,7 @@ export const Content = ({ activeQuery }: ContentPropsT) => {
 
   return (
     <div className="bg-background-surface h-full min-h-0 w-full min-w-0 overflow-y-auto overscroll-contain pr-4">
-      <div className="pb-4">{activeItem}</div>
+      <div className="h-full pb-4">{activeItem}</div>
     </div>
   );
 };

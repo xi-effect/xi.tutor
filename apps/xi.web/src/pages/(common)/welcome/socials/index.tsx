@@ -8,6 +8,9 @@ const Socials = () => {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const Route = createFileRoute('/(common)/welcome/socials/')({
+  head: () => ({
+    meta: [{ title: 'sovlium | Контакты' }],
+  }),
   component: Socials,
   // beforeLoad: ({ context }) => {
   //   console.log('Socials', context, location);

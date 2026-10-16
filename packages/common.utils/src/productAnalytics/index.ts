@@ -4,6 +4,8 @@ export {
   type ProductAnalyticsEventName,
 } from './events';
 export { trackProductEvent } from './umami';
+export { parsePaymentRevenue, trackPaymentConfirmed } from './payment';
+export type { PaymentConfirmationKind } from './payment';
 export { getProductAnalyticsRole } from './roles';
 export {
   DURATION_THRESHOLDS_MIN,
@@ -11,6 +13,14 @@ export {
   getReachedDurationThresholds,
   type LessonDurationThresholdMin,
 } from './lesson';
+export {
+  REAL_LESSON_THRESHOLDS_MIN,
+  createLessonOverlapState,
+  updateLessonOverlap,
+  type LessonOverlapState,
+  type LessonOverlapUpdate,
+  type RealLessonThresholdMin,
+} from './lessonPresence';
 export { pickFeedbackType } from './feedbackType';
 export {
   accrueActiveUsageMs,
@@ -76,9 +86,12 @@ export {
 } from './inviteProgress';
 export type { InviteFunnelMeta } from './inviteProgress';
 export {
+  beginSignupActivationFlow,
+  completeActivationFlow,
   getOrCreateActivationFlowId,
   getActivationFlowId,
   resetActivationFlowId,
+  setActivationAnalyticsUser,
 } from './activationFlowId';
 export { createAttemptId, measureDurationMs, nowMs } from './attemptId';
 export { nextSignupAttemptNumber, nextEmailResendAttemptNumber } from './attemptCounters';
@@ -154,6 +167,7 @@ export {
   markOnboardingStartedAt,
   getOnboardingDurationMs,
   trackOnboardingStarted,
+  trackOnboardingRoleSelected,
   trackOnboardingStepCompleted,
   trackOnboardingStepSkipped,
   trackOnboardingStepFailed,
@@ -187,6 +201,7 @@ export type {
   FileUploadSource,
   FileUploadFileCategory,
   FileUploadSizeBucket,
+  LessonRecordingFailureReason,
   FileSizeBucket,
   LimitExceededBy,
   FileUploadRejectReason,

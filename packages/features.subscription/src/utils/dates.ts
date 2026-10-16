@@ -1,12 +1,15 @@
-import dayjs from 'dayjs';
-import { getDateLocale } from 'common.ui';
+import { formatInAppTimeZone, getDateLocale } from 'common.ui';
 
-export const formatRenewalDate = (iso: string): string =>
-  dayjs(iso)
-    .locale(getDateLocale().startsWith('en') ? 'en' : 'ru')
-    .format('D MMMM YYYY');
+const formatDayMonth = (iso: string, withYear: boolean): string => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const locale = getDateLocale();
+  const dayMonth = formatInAppTimeZone(date, { day: 'numeric', month: 'long' }, locale);
+  if (!withYear) return dayMonth;
+  const year = formatInAppTimeZone(date, { year: 'numeric' }, 'en-US');
+  return `${dayMonth} ${year}`;
+};
 
-export const formatRenewalDateShort = (iso: string): string =>
-  dayjs(iso)
-    .locale(getDateLocale().startsWith('en') ? 'en' : 'ru')
-    .format('D MMMM');
+export const formatRenewalDate = (iso: string): string => formatDayMonth(iso, true);
+
+export const formatRenewalDateShort = (iso: string): string => formatDayMonth(iso, false);
