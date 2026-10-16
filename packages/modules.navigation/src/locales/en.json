@@ -90,5 +90,12 @@
     "thanksTitle": "Thank you!",
     "thanksGood": "This helps us improve sovlium.",
     "thanksLow": "Thanks for the feedback. It looks like there were problems during the lesson."
+  },
+  "testingEnd": {
+    "title": "Plans are coming to sovlium soon",
+    "lead": "Your classrooms, students, and materials will stay.",
+    "details": "We cover the new features and what’s next in the blog",
+    "read": "Read the blog",
+    "dismiss": "Don’t show again"
   }
 }
