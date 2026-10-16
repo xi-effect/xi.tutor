@@ -755,6 +755,19 @@ export type ProductAnalyticsEventMap = {
         size_bucket: FileUploadSizeBucket;
       };
 
+  subscription_announcement_shown: BaseProps & {
+    user_role: 'tutor';
+  };
+  subscription_announcement_article_opened: BaseProps & {
+    user_role: 'tutor';
+  };
+  subscription_announcement_closed: BaseProps & {
+    user_role: 'tutor';
+  };
+  subscription_announcement_dismissed: BaseProps & {
+    user_role: 'tutor';
+  };
+
   payment_confirmed: {
     event_version?: number;
     revenue: number;
