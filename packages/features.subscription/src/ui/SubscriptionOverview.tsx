@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg
 import {
   formatPlanStorage,
   getRemainingSubscriptionDays,
+  TRIAL_PROMO_CODE,
   useSubscriptionPlan,
 } from 'common.subscription';
 import { useClassroomCounts, useCurrentSubscription, useStorageUsage } from 'common.services';
@@ -129,6 +130,7 @@ const ProTrialBanner = () => {
         type="button"
         variant="none"
         className="bg-background-surface text-text-link hover:bg-background-surface/90 flex h-auto shrink-0 items-center justify-center rounded-[10px] px-4 py-2 text-sm leading-5 font-medium"
+        data-promo-code={TRIAL_PROMO_CODE}
       >
         {t('overview.trialActivate')}
       </Button>

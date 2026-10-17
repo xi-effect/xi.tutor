@@ -36,6 +36,7 @@ export {
 export {
   applyMockPromo,
   MOCK_PROMO_ADDED_DAYS,
+  TRIAL_PROMO_CODE,
   type PromoResult,
   type PromoStatus,
 } from './src/promo';
