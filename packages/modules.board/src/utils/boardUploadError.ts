@@ -1,6 +1,7 @@
 import { getFileUploadErrorKind } from 'common.services';
 import { trackFileSizeLimitFromUploadError } from 'common.utils';
 import i18n from 'i18next';
+import { toast } from 'sonner';
 
 const tBoard = (key: string, options?: Record<string, unknown>) =>
   i18n.t(key, { ns: 'board', ...options });
@@ -15,9 +16,11 @@ export const getBoardUploadErrorToast = (
     failedDescKey: string;
     formatDescKey?: string;
   },
-): { title: string; description: string } => {
-  trackFileSizeLimitFromUploadError(error, file, 'board', maxBytes);
+): { title: string; description: string } | null => {
   const kind = getFileUploadErrorKind(error, { fileSize: file.size, maxBytes });
+  if (kind === 'storage') return null;
+
+  trackFileSizeLimitFromUploadError(error, file, 'board', maxBytes);
   const size = (file.size / 1024 / 1024).toFixed(2);
 
   if (kind === 'tooLarge') {
@@ -43,11 +46,27 @@ export const getBoardUploadErrorToast = (
   };
 };
 
+export const toastBoardUploadError = (
+  error: unknown,
+  file: File,
+  maxBytes: number,
+  keys: {
+    sizeDescKey: string;
+    failedTitleKey: string;
+    failedDescKey: string;
+    formatDescKey?: string;
+  },
+): void => {
+  const content = getBoardUploadErrorToast(error, file, maxBytes, keys);
+  if (!content) return;
+  toast.error(content.title, { description: content.description, duration: 5000 });
+};
+
 export const isNonRetryableBoardUploadError = (
   error: unknown,
   file: File,
   maxBytes: number,
 ): boolean => {
   const kind = getFileUploadErrorKind(error, { fileSize: file.size, maxBytes });
-  return kind === 'tooLarge' || kind === 'unsupported';
+  return kind === 'tooLarge' || kind === 'unsupported' || kind === 'storage';
 };

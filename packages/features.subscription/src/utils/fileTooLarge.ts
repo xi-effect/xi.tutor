@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 import type { PlanId, UploadKind } from 'common.subscription';
-import { bytesToMb } from 'common.subscription';
+import { bytesToMb, getTariff } from 'common.subscription';
 
 export const getFileTooLargeMessage = (
   planId: PlanId,
@@ -14,4 +14,10 @@ export const getFileTooLargeMessage = (
       ns: 'subscription',
     }),
     size: `${bytesToMb(maxBytes)} МБ`,
+  });
+
+export const getImageUpgradeMessage = (): string =>
+  i18n.t('limits.imageUpgradeInline', {
+    ns: 'subscription',
+    proSize: `${bytesToMb(getTariff('pro').maxImageBytes)} МБ`,
   });

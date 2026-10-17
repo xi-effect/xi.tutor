@@ -30,6 +30,17 @@ describe('getFileUploadErrorKind', () => {
     ).toBe('failed');
   });
 
+  it('считает 409 Storage limit reached лимитом хранилища', () => {
+    expect(
+      getFileUploadErrorKind({
+        response: { status: 409, data: { detail: 'Storage limit reached' } },
+      }),
+    ).toBe('storage');
+    expect(
+      getFileUploadErrorKind({ response: { status: 409, data: { detail: 'Already exists' } } }),
+    ).toBe('failed');
+  });
+
   it('считает 415 и 422 неподдерживаемым форматом', () => {
     expect(getFileUploadErrorKind({ response: { status: 415 } })).toBe('unsupported');
     expect(getFileUploadErrorKind({ response: { status: 422 } })).toBe('unsupported');

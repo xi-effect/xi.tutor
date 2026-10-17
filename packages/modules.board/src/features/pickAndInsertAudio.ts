@@ -10,7 +10,7 @@ import {
 } from '../shapes/audio';
 import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
-import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { toastBoardUploadError } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxFileBytes } from 'common.subscription';
 import {
@@ -131,15 +131,11 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
         fileSize: file.size,
         maxBytes: getMaxFileBytes(),
       });
-      const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
+      toastBoardUploadError(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.audioSizeDesc',
         failedTitleKey: 'toast.audioUploadError',
         failedDescKey: 'toast.audioUploadFailed',
         formatDescKey: 'toast.audioFormatDesc',
-      });
-      toast.error(title, {
-        description,
-        duration: 5000,
       });
       editor.deleteShapes([shapeId]);
     }

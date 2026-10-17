@@ -1,6 +1,24 @@
 export { authApiConfig, AuthQueryKey } from './src/auth';
 export { userApiConfig, UserQueryKey } from './src/user';
 export {
+  subscriptionApiConfig,
+  SubscriptionQueryKey,
+  subscriptionQueryKeys,
+  getSubscriptionPaymentStatus,
+  parseCurrentPlan,
+  parseCurrentSubscription,
+  parseStorageUsage,
+  parseSubscriptionPayment,
+  type CreateSubscriptionPaymentBody,
+  type CurrentPlan,
+  type CurrentSubscription,
+  type PlanKind,
+  type RenewalPeriod,
+  type StorageUsage,
+  type SubscriptionPayment,
+  type SubscriptionPaymentStatus,
+} from './src/subscription';
+export {
   USER_FLAG_KEYS,
   userFlagsApiConfig,
   UserFlagsQueryKey,
@@ -17,6 +35,9 @@ export { paymentsApiConfig, PaymentsQueryKey } from './src/payments';
 export {
   classroomsApiConfig,
   ClassroomsQueryKey,
+  classroomsQueryKeys,
+  parseClassroomCounts,
+  type ClassroomCounts,
   studentsApiConfig,
   StudentsQueryKey,
 } from './src/tutor';

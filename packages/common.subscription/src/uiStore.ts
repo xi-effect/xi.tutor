@@ -6,7 +6,7 @@ export type SubscriptionScreen = 'overview' | 'checkout' | 'result' | 'manage';
 
 export type PaymentResultStatus = 'success' | 'processing' | 'error';
 
-export type SubscriptionDialog = 'classroom' | 'storage' | 'proFeature' | null;
+export type SubscriptionDialog = 'classroom' | 'storage' | 'proFeature' | 'imageUpgrade' | null;
 
 type SubscriptionUiState = {
   screen: SubscriptionScreen;
@@ -74,6 +74,9 @@ export const requestClassroomLimitDialog = () =>
 
 export const requestStorageLimitDialog = () =>
   useSubscriptionUiStore.getState().openDialog('storage');
+
+export const requestImageUpgradeDialog = () =>
+  useSubscriptionUiStore.getState().openDialog('imageUpgrade');
 
 export const requestProFeatureDialog = (featureId?: SubscriptionFeatureId) => {
   void featureId;

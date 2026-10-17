@@ -345,7 +345,9 @@ const UploadFileRow = ({ item, onRemove }: UploadFileRowProps) => {
                   ? t('files.uploadModal.failedTooLarge')
                   : item.errorKind === 'unsupported'
                     ? t('files.uploadModal.failedType')
-                    : t('files.uploadModal.failed')
+                    : item.errorKind === 'storage'
+                      ? t('files.uploadModal.failedStorage')
+                      : t('files.uploadModal.failed')
                 : `${item.progress}%`}
           </p>
         </div>

@@ -25,7 +25,7 @@ import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
-import { getBoardUploadErrorToast } from '../../utils/boardUploadError';
+import { toastBoardUploadError } from '../../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../../utils/planUploadLimit';
 import { getMaxImageBytes } from 'common.subscription';
 import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
@@ -119,12 +119,11 @@ async function uploadPickedImage(file: File, token: string) {
       fileSize: next.size,
       maxBytes: getMaxImageBytes(),
     });
-    const { title, description } = getBoardUploadErrorToast(error, next, getMaxImageBytes(), {
+    toastBoardUploadError(error, next, getMaxImageBytes(), {
       sizeDescKey: 'toast.imageSizeDesc',
       failedTitleKey: 'toast.imageUploadFailed',
       failedDescKey: 'toast.imageUploadFailed',
     });
-    toast.error(title, { description, duration: 5000 });
     throw error;
   }
 }
