@@ -2,8 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PRODUCT_ANALYTICS_EVENTS } from '../events';
 import {
   beginFileUploadAttempt,
+  getFileUploadErrorKind,
   getFileUploadRejectReasonFromError,
   getFileUploadSizeBucket,
+  StorageWriteBlockedError,
   rejectFileUploadFromEvaluation,
 } from '../fileUpload';
 
@@ -42,11 +44,25 @@ describe('getFileUploadSizeBucket', () => {
   });
 });
 
+describe('getFileUploadErrorKind', () => {
+  it('считает клиентскую блокировку лимитом хранилища', () => {
+    expect(getFileUploadErrorKind(new StorageWriteBlockedError())).toBe('storage');
+  });
+});
+
 describe('getFileUploadRejectReasonFromError', () => {
   it('мапит 413 в file_too_large без сырого сообщения', () => {
     expect(getFileUploadRejectReasonFromError({ response: { status: 413 } })).toBe(
       'file_too_large',
     );
+  });
+
+  it('не отправляет сырой текст 409 Storage limit reached', () => {
+    expect(
+      getFileUploadRejectReasonFromError({
+        response: { status: 409, data: { detail: 'Storage limit reached' } },
+      }),
+    ).toBe('unknown');
   });
 
   it('мапит 415/422 в unsupported_type', () => {

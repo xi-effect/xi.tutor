@@ -10,6 +10,10 @@ import { handleError, showSuccess } from '../utils';
 import { prepareContentUpload } from '../files/prepareContentUpload';
 import { assertValidFileName } from '../files/validateFileName';
 import { createFileUploadHttpError } from '../files/createFileUploadHttpError';
+import {
+  preventStorageWrite,
+  reportStorageLimitReached,
+} from '../storageLimit/storageLimitReached';
 
 export type UploadLibraryFileVars = {
   file: File;
@@ -29,6 +33,7 @@ export async function uploadLibraryFileRequest({
   signal,
   onUploadProgress,
 }: UploadLibraryFileVars): Promise<LibraryFile> {
+  preventStorageWrite();
   const prepared = prepareContentUpload(file);
   assertValidFileName(prepared.file);
 
@@ -37,22 +42,28 @@ export async function uploadLibraryFileRequest({
   const formData = new FormData();
   formData.append('upload', prepared.file);
 
-  const response = await axiosInst<LibraryFile>({
-    method,
-    url: getUrl(),
-    data: formData,
-    signal,
-    headers: {
-      'Content-Type': false,
-    },
-    onUploadProgress: (event) => {
-      if (!onUploadProgress || !event.total) {
-        return;
-      }
+  let response;
+  try {
+    response = await axiosInst<LibraryFile>({
+      method,
+      url: getUrl(),
+      data: formData,
+      signal,
+      headers: {
+        'Content-Type': false,
+      },
+      onUploadProgress: (event) => {
+        if (!onUploadProgress || !event.total) {
+          return;
+        }
 
-      onUploadProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
-    },
-  });
+        onUploadProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+      },
+    });
+  } catch (error) {
+    reportStorageLimitReached(error);
+    throw error;
+  }
 
   if (response.status === 415 || response.status === 422) {
     throw createFileUploadHttpError(

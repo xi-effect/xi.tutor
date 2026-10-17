@@ -1,7 +1,18 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
-import { useClassroomCounts, useCurrentPlan, useStorageUsage } from 'common.services';
-import { isSubscriptionDebugEnabled, useSubscriptionUiStore } from 'common.subscription';
+import {
+  setStorageWriteGuard,
+  setTutorStorageLimitHandler,
+  useClassroomCounts,
+  useCurrentPlan,
+  useStorageUsage,
+} from 'common.services';
+import {
+  isStorageQuotaReached,
+  isSubscriptionDebugEnabled,
+  requestStorageLimitDialog,
+  useSubscriptionUiStore,
+} from 'common.subscription';
 import { SubscriptionDebugPanel } from './SubscriptionDebugPanel';
 import { SubscriptionDialogs } from './SubscriptionDialogs';
 
@@ -16,6 +27,19 @@ export const SubscriptionHost = () => {
   useCurrentPlan();
   useStorageUsage();
   useClassroomCounts();
+
+  useEffect(() => {
+    setTutorStorageLimitHandler(requestStorageLimitDialog);
+    setStorageWriteGuard(() => {
+      if (!isStorageQuotaReached()) return false;
+      requestStorageLimitDialog();
+      return true;
+    });
+    return () => {
+      setTutorStorageLimitHandler(null);
+      setStorageWriteGuard(null);
+    };
+  }, []);
 
   useEffect(() => {
     if (!settingsOpenRequested) return;

@@ -11,10 +11,7 @@ import { FileShape } from '../shapes/file';
 import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
 import { ALLOWED_FILE_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
-import {
-  getBoardUploadErrorToast,
-  isNonRetryableBoardUploadError,
-} from '../utils/boardUploadError';
+import { isNonRetryableBoardUploadError, toastBoardUploadError } from '../utils/boardUploadError';
 import { tryStartUpload } from 'common.subscription';
 import { getMaxFileBytes } from 'common.subscription';
 import { getPlanSizeLimitMessage } from '../utils/planUploadLimit';
@@ -114,12 +111,11 @@ export async function insertFile(
     if (!isOffline && isNonRetryableBoardUploadError(err, file, getMaxFileBytes())) {
       editor.deleteShapes([shapeId]);
       void deleteFileFromDB(shapeId);
-      const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
+      toastBoardUploadError(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.fileSizeDesc',
         failedTitleKey: 'toast.fileUploadError',
         failedDescKey: 'toast.fileUploadFailed',
       });
-      toast.error(title, { description, duration: 5000 });
       return;
     }
 
@@ -140,20 +136,18 @@ export async function insertFile(
 
     console.error('[insertFile] Upload failed:', err);
 
-    const { title, description } = isOffline
-      ? {
-          title: i18n.t('toast.fileUploadError', { ns: 'board' }),
-          description: i18n.t('toast.offlineUpload', { ns: 'board' }),
-        }
-      : getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
-          sizeDescKey: 'toast.fileSizeDesc',
-          failedTitleKey: 'toast.fileUploadError',
-          failedDescKey: 'toast.fileUploadFailed',
-        });
-    toast.error(title, {
-      description,
-      duration: 5000,
-    });
+    if (isOffline) {
+      toast.error(i18n.t('toast.fileUploadError', { ns: 'board' }), {
+        description: i18n.t('toast.offlineUpload', { ns: 'board' }),
+        duration: 5000,
+      });
+    } else {
+      toastBoardUploadError(err, file, getMaxFileBytes(), {
+        sizeDescKey: 'toast.fileSizeDesc',
+        failedTitleKey: 'toast.fileUploadError',
+        failedDescKey: 'toast.fileUploadFailed',
+      });
+    }
   }
 }
 

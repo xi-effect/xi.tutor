@@ -1,5 +1,7 @@
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
+import { reportStorageLimitReached } from '../storageLimit/storageLimitReached';
+import { isStorageWriteBlockedError } from 'common.utils';
 
 export type ErrorType =
   | 'profile'
@@ -146,6 +148,9 @@ export const getApiErrorMessage = (error: unknown, type: ErrorType): string =>
   getUserFacingErrorMessage(error, type) ?? ACTION_FAILED;
 
 export const handleError = (error: unknown, type: ErrorType): void => {
+  if (isStorageWriteBlockedError(error)) return;
+  if (reportStorageLimitReached(error)) return;
+
   const message = getUserFacingErrorMessage(error, type);
   if (message) {
     toast.error(message);

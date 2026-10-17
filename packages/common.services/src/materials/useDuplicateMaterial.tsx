@@ -1,7 +1,7 @@
 import { ClassroomMaterialsQueryKey, materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess } from 'common.services';
+import { handleError, showSuccess, preventStorageWrite } from 'common.services';
 import { AccessModeT, MaterialId } from 'common.types';
 import i18n from 'i18next';
 
@@ -37,6 +37,8 @@ export const useDuplicateMaterial = () => {
     MutationContext
   >({
     mutationFn: async (params: DuplicateMaterialParams) => {
+      preventStorageWrite();
+
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({

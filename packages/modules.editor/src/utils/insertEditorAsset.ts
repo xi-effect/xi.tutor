@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import i18n from 'i18next';
 import {
   cloneDroppedFile,
+  getFileUploadErrorKind,
   isFileNameTooLong,
   MAX_FILENAME_LENGTH,
   beginFileUploadAttempt,
@@ -99,7 +100,9 @@ export async function insertEditorAsset(
       maxBytes: getMaxFileBytes(),
     });
     trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
-    toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
+    if (getFileUploadErrorKind(err) !== 'storage') {
+      toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
+    }
     return false;
   }
 }

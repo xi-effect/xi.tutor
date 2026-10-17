@@ -13,7 +13,7 @@ import type {
   FileUploadSource,
 } from './types';
 
-export type FileUploadErrorKind = 'tooLarge' | 'unsupported' | 'failed';
+export type FileUploadErrorKind = 'tooLarge' | 'unsupported' | 'storage' | 'failed';
 
 export type FileUploadErrorContext = {
   fileSize?: number;
@@ -136,10 +136,32 @@ const isKnownUnsupportedText = (text: string): boolean =>
   text.includes('unsupported') ||
   text.includes('неподдерживаем');
 
+export class StorageWriteBlockedError extends Error {
+  constructor() {
+    super('Storage write blocked');
+    this.name = 'StorageWriteBlockedError';
+  }
+}
+
+export const isStorageWriteBlockedError = (error: unknown): boolean =>
+  error instanceof StorageWriteBlockedError ||
+  (typeof error === 'object' &&
+    error !== null &&
+    (error as { name?: string }).name === 'StorageWriteBlockedError');
+
+export const isStorageLimitReachedError = (error: unknown): boolean => {
+  if (getFileUploadHttpStatus(error) !== 409) return false;
+  return collectErrorText(error).includes('storage limit reached');
+};
+
 export const getFileUploadErrorKind = (
   error: unknown,
   options?: FileUploadErrorContext,
 ): FileUploadErrorKind => {
+  if (isStorageWriteBlockedError(error) || isStorageLimitReachedError(error)) {
+    return 'storage';
+  }
+
   const status = getFileUploadHttpStatus(error);
 
   if (status === 413) {
@@ -180,6 +202,7 @@ export const getFileUploadRejectReasonFromError = (
   const kind = getFileUploadErrorKind(error, options);
   if (kind === 'tooLarge') return 'file_too_large';
   if (kind === 'unsupported') return 'unsupported_type';
+  if (kind === 'storage') return 'unknown';
   return 'upload_error';
 };
 

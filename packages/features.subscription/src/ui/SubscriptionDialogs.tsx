@@ -38,7 +38,7 @@ export const SubscriptionDialogs = () => {
   const dialog = useSubscriptionUiStore((s) => s.dialog);
   const closeDialog = useSubscriptionUiStore((s) => s.closeDialog);
   const openCompare = useSubscriptionUiStore((s) => s.openCompare);
-  const { planId, tariff } = useSubscriptionPlan();
+  const { planId, tariff, isPro } = useSubscriptionPlan();
   const limits = tariff ?? (planId ? getTariff(planId) : null);
   const planName = planId ? t(`plans.${planId}`) : '';
   const limitActions = {
@@ -77,6 +77,7 @@ export const SubscriptionDialogs = () => {
   };
 
   const copy = dialog ? dialogCopy[dialog] : null;
+  const offerPro = dialog !== 'storage' || !isPro;
 
   return (
     <Modal open={Boolean(dialog)} onOpenChange={(open) => !open && closeDialog()}>
@@ -101,15 +102,17 @@ export const SubscriptionDialogs = () => {
             >
               {copy?.closeLabel}
             </Button>
-            <Button
-              type="button"
-              variant="primary"
-              size="m"
-              className={modalConfirmButtonClass}
-              onClick={() => openCompare(true)}
-            >
-              {copy?.confirmLabel}
-            </Button>
+            {offerPro ? (
+              <Button
+                type="button"
+                variant="primary"
+                size="m"
+                className={modalConfirmButtonClass}
+                onClick={() => openCompare(true)}
+              >
+                {copy?.confirmLabel}
+              </Button>
+            ) : null}
           </div>
         </ModalBody>
       </ModalContent>
