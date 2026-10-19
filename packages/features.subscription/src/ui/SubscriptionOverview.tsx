@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg
 import {
   formatPlanStorage,
   getRemainingSubscriptionDays,
+  isSubscriptionPeriodActive,
   TRIAL_PROMO_CODE,
   useSubscriptionPlan,
 } from 'common.subscription';
@@ -223,10 +224,12 @@ export const SubscriptionOverview = () => {
 
   const subscription = subscriptionQuery.data;
   const endsAt = subscription?.subscription.ends_at;
+  const activeSubscription = isSubscriptionPeriodActive(endsAt) ? subscription : null;
+  const activeEndsAt = activeSubscription?.subscription.ends_at;
   const locale = getAppLanguage() === 'en' ? 'en-US' : 'ru-RU';
-  const remainingDays = endsAt ? getRemainingSubscriptionDays(planId, endsAt) : 0;
+  const remainingDays = activeEndsAt ? getRemainingSubscriptionDays('pro', activeEndsAt) : 0;
   const remainingDaysLabel = t('overview.daysLeftValue', { count: remainingDays });
-  const renewalDate = endsAt ? getRenewalHoverDate(endsAt) : null;
+  const renewalDate = activeEndsAt ? getRenewalHoverDate(activeEndsAt) : null;
   const renewalLabel = formatHoverDate(t('overview.until', { date: '' }).trim(), renewalDate);
 
   return (
@@ -240,17 +243,15 @@ export const SubscriptionOverview = () => {
                 {t(`plans.${planId}`)}
               </span>
             </span>
-            {endsAt || subscription ? (
+            {activeEndsAt ? (
               <span className="inline-flex items-baseline gap-2">
-                {endsAt ? <RemainingDays days={remainingDaysLabel} date={renewalLabel} /> : null}
-                {endsAt && subscription ? <span aria-hidden="true">·</span> : null}
-                {subscription ? (
-                  <span>
-                    {subscription.auto_renewal
-                      ? t('overview.autoRenewOn')
-                      : t('overview.autoRenewOff')}
-                  </span>
-                ) : null}
+                <RemainingDays days={remainingDaysLabel} date={renewalLabel} />
+                <span aria-hidden="true">·</span>
+                <span>
+                  {activeSubscription?.auto_renewal
+                    ? t('overview.autoRenewOn')
+                    : t('overview.autoRenewOff')}
+                </span>
               </span>
             ) : null}
           </p>
@@ -325,7 +326,7 @@ export const SubscriptionOverview = () => {
         </Link>
       </section>
 
-      {isBasic ? <ProTrialBanner /> : null}
+      {isBasic && !subscriptionQuery.isPending && !activeSubscription ? <ProTrialBanner /> : null}
       <PromoCodeField />
     </div>
   );

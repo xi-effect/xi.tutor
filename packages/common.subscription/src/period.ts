@@ -19,6 +19,17 @@ export const getRemainingSubscriptionDays = (
   return Math.max(0, Math.round((startOfLocalDay(end) - startOfLocalDay(now)) / MS_DAY));
 };
 
+/** Подписка с прошедшим `ends_at` всё ещё приходит объектом, но период уже не действует. */
+export const isSubscriptionPeriodActive = (
+  endsAt: string | null | undefined,
+  now = Date.now(),
+): boolean => {
+  if (!endsAt) return false;
+
+  const end = new Date(endsAt).getTime();
+  return Number.isFinite(end) && end > now;
+};
+
 export const isPaidPeriodExpired = (
   planId: 'basic' | 'pro',
   renewsAt: string,

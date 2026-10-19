@@ -45,6 +45,7 @@ export {
   addDaysFromLaterOf,
   getRemainingSubscriptionDays,
   isPaidPeriodExpired,
+  isSubscriptionPeriodActive,
 } from './src/period';
 export { useSubscriptionStore, type SubscriptionMock, type SubscriptionState } from './src/store';
 export {

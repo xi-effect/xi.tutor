@@ -2,6 +2,7 @@ import { Button } from '@xipkg/button';
 import {
   formatRub,
   getRemainingSubscriptionDays,
+  isSubscriptionPeriodActive,
   SUBSCRIPTION_PROMO_ENABLED,
   TARIFFS,
   useSubscriptionPlan,
@@ -28,8 +29,10 @@ export const SubscriptionManage = () => {
   });
   const subscription = subscriptionQuery.data;
   const endsAt = subscription?.subscription.ends_at;
-  const autoRenew = Boolean(subscription?.auto_renewal);
-  const remainingDays = planId && endsAt ? getRemainingSubscriptionDays(planId, endsAt) : 0;
+  const activeSubscription = isSubscriptionPeriodActive(endsAt) ? subscription : null;
+  const activeEndsAt = activeSubscription?.subscription.ends_at;
+  const autoRenew = Boolean(activeSubscription?.auto_renewal);
+  const remainingDays = activeEndsAt ? getRemainingSubscriptionDays('pro', activeEndsAt) : 0;
 
   if (isPlanError || !planId) {
     return (
@@ -53,19 +56,19 @@ export const SubscriptionManage = () => {
       <section className="border-border-strong flex flex-col gap-3 rounded-2xl border p-4">
         <Row label={t('manage.plan')} value={t(`plans.${planId}`)} />
         <Row label={t('manage.price')} value={price} />
-        {endsAt ? (
+        {activeEndsAt ? (
           <Row
             label={autoRenew ? t('manage.nextRenewal') : t('overview.activeUntilLabel')}
-            value={formatRenewalDate(endsAt)}
+            value={formatRenewalDate(activeEndsAt)}
           />
         ) : null}
-        {endsAt ? (
+        {activeEndsAt ? (
           <Row
             label={t('manage.daysLeftLabel')}
             value={t('manage.daysLeftValue', { count: remainingDays })}
           />
         ) : null}
-        {subscription ? (
+        {activeSubscription ? (
           <Row label={autoRenew ? t('manage.autoRenewOn') : t('manage.autoRenewOff')} value="" />
         ) : null}
       </section>
