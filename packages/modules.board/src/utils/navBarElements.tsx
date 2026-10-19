@@ -11,6 +11,7 @@ import {
   TText,
   Emotions,
   FilePlus,
+  Link,
 } from '@xipkg/icons';
 import i18n from 'i18next';
 import { Activity } from '../ui/icons/Activity';
@@ -123,5 +124,12 @@ export const navBarElements: NavbarElementT[] = [
       return t('navbar.activities');
     },
     icon: <Activity className={boardToolbarIconClass} />,
+  },
+  {
+    action: 'embed',
+    get title() {
+      return t('embed.title');
+    },
+    icon: <Link className={boardToolbarIconClass} />,
   },
 ];
