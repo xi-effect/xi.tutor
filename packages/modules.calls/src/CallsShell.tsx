@@ -27,6 +27,7 @@ import { ElectronPermissionsHydrate } from './ElectronPermissionsHydrate';
 import { LiveKitDeadRoomGuard } from './LiveKitDeadRoomGuard';
 import { NativeCallPipBridge } from './useNativeCallPip';
 import { installMediaPermissionRequestAnalytics } from './productAnalytics/installMediaPermissionRequestAnalytics';
+import { LessonRecordingHost } from './lessonRecording/LessonRecordingHost';
 import { installNativeWebApiBridges } from 'common.platform';
 
 import '@xipkg/calls-ui/video-security.css';
@@ -90,6 +91,7 @@ const CallsShellProviders = ({ children }: CallsShellPropsT) => {
             <ElectronShareSourcePicker />
             <RemoteControlViewer />
             <BoardCallStorageWarmup />
+            <LessonRecordingHost />
             <CallsShellInit />
             {children}
           </ModeSyncProvider>

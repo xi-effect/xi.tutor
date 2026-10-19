@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Outlet, createFileRoute, useNavigate, useRouter, useSearch } from '@tanstack/react-router';
-import { applyUserLanguage, LoadingScreen } from 'common.ui';
+import { applyUserLanguage, LoadingScreen, useAppTimeZone } from 'common.ui';
 import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
@@ -17,7 +17,7 @@ const Navigation = lazy(() =>
 
 function LayoutComponent() {
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden">
+    <div data-lesson-capture-root="" className="relative flex min-h-svh flex-col overflow-hidden">
       <Suspense fallback={<LoadingScreen />}>
         <CallsShell>
           <LayoutContent />
@@ -33,6 +33,7 @@ function LayoutContent() {
   const token = useCallStore((state) => state.token);
 
   useUmamiActivityHeartbeat();
+  useAppTimeZone();
 
   useEffect(() => {
     const pathname = router.state.location.pathname;

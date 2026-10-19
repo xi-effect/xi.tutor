@@ -3,10 +3,12 @@ import type { OnboardingAnalyticsRole } from 'common.utils';
 
 export type WelcomeRoleForwardDeps = {
   role: RoleT;
+  userId?: number;
   userRole: OnboardingAnalyticsRole;
   onboardingStage?: string;
   updateProfile: (payload: { default_layout: RoleT }) => Promise<unknown>;
   transitionForward: () => Promise<unknown>;
+  trackRoleSelected?: (role: RoleT, userId?: number) => void;
   trackFailed: (
     step: 'role_selection',
     role: OnboardingAnalyticsRole,
@@ -50,6 +52,8 @@ export async function runWelcomeRoleForward(
     deps.trackFailed('role_selection', deps.userRole, error, deps.onboardingStage);
     return 'profile_failed';
   }
+
+  deps.trackRoleSelected?.(deps.role, deps.userId);
 
   try {
     await deps.transitionForward();

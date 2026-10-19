@@ -49,7 +49,7 @@ export {
 } from './src/hooks/useLessonClassroomPresentation';
 export { getScheduleLessonEndAt } from './src/utils/getScheduleLessonEndAt';
 export { getScheduleLessonStartAt } from './src/utils/getScheduleLessonStartAt';
-export { getCalendarDayQueryRange } from './src/utils/getCalendarDayQueryRange';
+export { getCalendarDayQueryRange, lessonStartsOnDay } from './src/utils/getCalendarDayQueryRange';
 export { mapScheduleItemToLessonRow } from './src/utils/mapScheduleItemToLessonRow';
 export { getScheduleItemRowKey } from './src/utils/getScheduleItemRowKey';
 export {

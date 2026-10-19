@@ -32,23 +32,23 @@
 
 ## Инфраструктура
 
-| Модуль               | Путь                                                                        |
-| -------------------- | --------------------------------------------------------------------------- |
-| Helper               | `packages/common.utils/src/productAnalytics/umami.ts` → `trackProductEvent` |
-| Типы / EventMap      | `eventMap.ts`, `types.ts`, `events.ts`                                      |
-| `activation_flow_id` | `activationFlowId.ts` (localStorage, TTL 30 дней)                           |
-| `attempt_id`         | `attemptId.ts` → `createAttemptId()`                                        |
-| Error mappers        | `errorMappers.ts`                                                           |
-| Защита от дублей     | `once.ts` → `trackOnce`                                                     |
+| Модуль               | Путь                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| Helper               | `packages/common.utils/src/productAnalytics/umami.ts` → `trackProductEvent`                 |
+| Типы / EventMap      | `eventMap.ts`, `types.ts`, `events.ts`                                                      |
+| `activation_flow_id` | `activationFlowId.ts` (sessionStorage на попытку; после успеха привязка к одному `user_id`) |
+| `attempt_id`         | `attemptId.ts` → `createAttemptId()`                                                        |
+| Error mappers        | `errorMappers.ts`                                                                           |
+| Защита от дублей     | `once.ts` → `trackOnce`                                                                     |
 
 ### Общие свойства
 
 `trackProductEvent` автоматически добавляет:
 
 - `event_version: 1`
-- `activation_flow_id` — если уже создан
+- `activation_flow_id` — если в этой вкладке есть незавершённый signup или flow уже привязан к текущему пользователю. Завершённый id другого `user_id` не подмешивается.
 
-`user_id` передаётся через `umami.identify` / session properties, **не** в каждом event payload.
+`user_id` передаётся через `umami.identify(String(user.id), …)` — distinct id для склейки сессий — и дублируется в session properties. В каждом event payload его нет. Рядом уходят `role`, `onboarding_stage`, `source` и `client_surface` (`web` / `pwa` / `electron` / `native`). `username` и `display_name` в identify не передаются.
 
 ### Окружения
 
@@ -204,6 +204,7 @@
 | Событие                     | Тип     | Когда                                           | Дедуп                 |
 | --------------------------- | ------- | ----------------------------------------------- | --------------------- |
 | `onboarding_started`        | Outcome | Первый вход в онбординг                         | 1× вкладка            |
+| `onboarding_role_selected`  | Outcome | Backend сохранил `default_layout`               | 1× роль / вкладка     |
 | `onboarding_step_viewed`    | UI      | Показан шаг                                     | 1× шаг / вкладка      |
 | `onboarding_step_completed` | Outcome | Backend подтвердил переход вперёд               | 1× шаг / вкладка      |
 | `onboarding_step_skipped`   | Outcome | Пропуск тура (`later` / `dismiss` / `no_steps`) | каждый skip           |
@@ -366,17 +367,19 @@
 
 ### Запуск занятия и ВКС
 
-| Событие                      | Статус                  | Когда                                                                                                             |
-| ---------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `prejoin_viewed`             | новый                   | Есть токен, ещё не `connected`                                                                                    |
-| `lesson_started`             | существующий            | Репетитор инициировал старт (после токена)                                                                        |
-| `lesson_joined`              | существующий            | Ученик вошёл                                                                                                      |
-| `media_permission_granted`   | новый                   | Камера/мик включены                                                                                               |
-| `media_permission_denied`    | новый                   | `MediaDevicesError`                                                                                               |
-| `media_permission_requested` | новый                   | Первый `getUserMedia` в сессии, если Permissions API = `prompt` (или API недоступен); не на каждый preview/unmute |
-| `call_connect_attempted`     | новый                   | `connectionState === connecting`                                                                                  |
-| `call_connected`             | существующий (расширен) | Успешное подключение                                                                                              |
-| `call_connection_failed`     | существующий (расширен) | Ошибка токена / permissions / др.                                                                                 |
+| Событие                        | Статус                  | Когда                                                                                                             |
+| ------------------------------ | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `prejoin_viewed`               | новый                   | Есть токен, ещё не `connected`                                                                                    |
+| `lesson_started`               | существующий            | Репетитор инициировал старт (после токена)                                                                        |
+| `lesson_joined`                | существующий            | Ученик получил токен                                                                                              |
+| `lesson_student_joined`        | новый                   | В комнате репетитора появился первый удалённый участник (не egress/agent)                                         |
+| `lesson_real_duration_reached` | новый                   | Суммарное совместное присутствие достигло 5 или 15 минут                                                          |
+| `media_permission_granted`     | новый                   | Камера/мик включены                                                                                               |
+| `media_permission_denied`      | новый                   | `MediaDevicesError`                                                                                               |
+| `media_permission_requested`   | новый                   | Первый `getUserMedia` в сессии, если Permissions API = `prompt` (или API недоступен); не на каждый preview/unmute |
+| `call_connect_attempted`       | новый                   | `connectionState === connecting`                                                                                  |
+| `call_connected`               | существующий (расширен) | Успешное подключение                                                                                              |
+| `call_connection_failed`       | существующий (расширен) | Ошибка токена / permissions / др.                                                                                 |
 
 Общий `attempt_id` на одну попытку подключения. Reconnect → новый `attempt_id`, тот же `lesson_id` (сейчас = `classroom_id`).
 
@@ -453,6 +456,17 @@
 
 Каждый порог — один раз на сессию звонка (`sentDurationThresholds`). Отправляется для **обеих** ролей с обязательным `actor_role` (раньше — только tutor).
 
+`duration_basis: connection` — это часы локального подключения, не реальный урок. `student_joined` здесь снимок `remoteParticipants` в момент порога: ученик, который пришёл позже или ушёл раньше, в эту цифру не попадает.
+
+Реальный урок считается отдельно, по совместному присутствию, и не через `COUNT(DISTINCT lesson_id)` (`lesson_id` — это кабинет):
+
+| Событие                                                                                        | Когда                                                         |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `lesson_student_joined`                                                                        | Первый живой удалённый участник в комнате репетитора          |
+| `lesson_real_duration_reached` (`duration_threshold` 5 или 15, `duration_basis: with_student`) | Сумма интервалов, когда ученик был в комнате, достигла порога |
+
+Воронка активации занятия: `lesson_started` → `lesson_student_joined` → `lesson_real_duration_reached` 5 → `lesson_real_duration_reached` 15.
+
 Совместимость: сохранены `duration_min`, `used_board`, `used_screenshare`, `role`.
 
 #### `lesson_finished`
@@ -516,19 +530,21 @@ student_invite_page_viewed (student_authenticated: true)
 
 # Дальше активация занятия
 lesson_create_submit / lesson_created_success
+→ lesson_started
 → prejoin_viewed
 → media_permission_granted
 → call_connect_attempted
 → call_connected
-→ lesson_duration_reached (5)
-→ lesson_duration_reached (15) + student_joined
+→ lesson_student_joined
+→ lesson_real_duration_reached (5)
+→ lesson_real_duration_reached (15)
 ```
 
 Ключи склейки:
 
 | Ключ                 | Назначение                                                                                                                     |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `activation_flow_id` | До и после регистрации                                                                                                         |
+| `activation_flow_id` | Одна попытка регистрации одного пользователя. После `auth_signup_succeeded` следующий signup получает новый UUID.              |
 | `attempt_id`         | Одна сетевая попытка                                                                                                           |
 | `invite_id`          | Создание ↔ принятие приглашения                                                                                                |
 | `invite_tracking_id` | Копирование/шеринг у репетитора ↔ открытие/принятие у ученика (v2, хеш токена, см. [`invite-flow-v2.md`](./invite-flow-v2.md)) |

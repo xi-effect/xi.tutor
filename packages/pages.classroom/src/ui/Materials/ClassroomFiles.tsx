@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { Plus } from '@xipkg/icons';
-import { cn, useMediaQuery } from '@xipkg/utils';
+import { useMediaQuery } from '@xipkg/utils';
 import {
   useCurrentUser,
   useDetachClassroomFile,
@@ -29,8 +29,6 @@ import { useTranslation } from 'react-i18next';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
-import { useFitViewportHeight } from './useFitViewportHeight';
-import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 type ClassroomFilesProps = {
   classroomId: string;
@@ -59,7 +57,6 @@ export const ClassroomFiles = ({
   const uploadOpen = onUploadOpenChange ? Boolean(uploadOpenProp) : internalUploadOpen;
   const setUploadOpen = onUploadOpenChange ?? setInternalUploadOpen;
   const listRef = useRef<HTMLDivElement>(null);
-  const fitHeight = useFitViewportHeight(listRef, isMobile);
   const detachMutation = useDetachClassroomFile();
   const filtersActive = hasActiveFilesFilters(filters);
 
@@ -90,13 +87,8 @@ export const ClassroomFiles = ({
 
   const header = (
     <>
-      <div className="shrink-0 pr-5 sm:pr-8 md:pr-10">
-        <div
-          className={cn(
-            'flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4',
-            galleryShadowHeaderInsetClass,
-          )}
-        >
+      <div className="shrink-0">
+        <div className="flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex min-w-0 flex-1 flex-row flex-wrap items-center gap-3">
             <div className="flex flex-wrap items-center gap-3">
               <FilesTagsFilter
@@ -166,19 +158,9 @@ export const ClassroomFiles = ({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2">
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
       {header}
-
-      {/* Скролл-контейнер = parentRef виртуализатора и пагинации по скроллу:
-          GridVirtualizer — его прямой ребёнок с padding-top: 0. На планшетах/мобильных
-          высоту считаем явно (fitHeight): flex-1 не вычитает fixed нижнюю панель. */}
-      <div
-        ref={listRef}
-        className={cn(
-          'min-h-0 flex-1 overflow-y-auto overscroll-contain pr-3 pb-5 pl-2 sm:pr-6 sm:pb-8 md:pr-8',
-        )}
-        style={fitHeight != null ? { height: fitHeight, flex: 'none' } : undefined}
-      >
+      <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {!files.length && !filtersActive ? (
           <EmptyDataState title={t('files.emptyTitle')} description={t('files.emptyDescription')} />
         ) : !files.length ? (

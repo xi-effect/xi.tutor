@@ -6,7 +6,11 @@ import { toast } from 'sonner';
 import { createFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useAllTutorClassrooms, useCreateClassroomEvent } from 'common.services';
 import { isClassroomOnPause } from 'common.api';
-import type { ProductAnalyticsLessonType, ProductAnalyticsSource } from 'common.utils';
+import {
+  getAppNow,
+  type ProductAnalyticsLessonType,
+  type ProductAnalyticsSource,
+} from 'common.utils';
 import { buildCreateClassroomEventRequest } from '../utils/buildCreateClassroomEventRequest';
 
 type UseAddingFormOptions = {
@@ -21,7 +25,7 @@ const getDefaultValues = (initialDate?: Date | null, fixedClassroomId?: number):
   studentId: fixedClassroomId != null ? String(fixedClassroomId) : '',
   startTime: '',
   endTime: '',
-  startDate: initialDate ?? new Date(),
+  startDate: initialDate ?? getAppNow(),
   repeatMode: 'none',
   repeatDays: [],
   repeatEnds: 'never',

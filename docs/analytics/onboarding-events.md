@@ -40,6 +40,32 @@
 
 ---
 
+### `onboarding_role_selected`
+
+| Поле      | Значение                                                            |
+| --------- | ------------------------------------------------------------------- |
+| Тип       | Outcome                                                             |
+| Когда     | `default_layout` сохранён на backend (до перехода на следующий шаг) |
+| Роль      | `tutor` \| `student` — выбранное значение, не подпись кнопки        |
+| Дедуп     | Один раз на роль в этой вкладке                                     |
+| В воронке | Да — единственный надёжный сигнал выбора роли                       |
+
+`onboarding_step_completed` (`role_selection`) остаётся событием перехода шага. `welcome-role-select` — клик по карточке до сохранения; в `data-umami-event-role` теперь стабильное `tutor` \| `student`, не перевод.
+
+```json
+{
+  "role": "tutor",
+  "user_role": "tutor",
+  "user_id": 123,
+  "activation_flow_id": "uuid",
+  "event_version": 1
+}
+```
+
+`user_id` разрешён только в этом событии: identify на signup уходит раньше выбора роли и не должен штамповать `role: unknown`. После сохранения роли identify обновляется с `source: role_update`.
+
+---
+
 ### `onboarding_step_viewed`
 
 | Поле      | Значение                                                                               |
@@ -168,6 +194,7 @@ Legacy declarative: `onboarding-complete` (kebab) всё ещё шлётся п�
 | Событие                     | Правило                |
 | --------------------------- | ---------------------- |
 | `onboarding_started`        | 1× вкладка             |
+| `onboarding_role_selected`  | 1× роль / вкладка      |
 | `onboarding_step_viewed`    | 1× шаг / вкладка       |
 | `onboarding_step_completed` | 1× шаг / вкладка       |
 | `onboarding_step_skipped`   | каждый skip-action     |
@@ -199,5 +226,6 @@ React Strict Mode: once-ключи в памяти модуля защищают
 | `useEmailConfirmation`                   | step_completed (email)                                              |
 | `pages.welcome` hooks                    | completed / failed / back по шагам                                  |
 | `useOnboardingAnalytics`                 | started, step_viewed                                                |
+| `useWelcomeRoleForm`                     | `onboarding_role_selected` после сохранения `default_layout`        |
 | `common.ui/OnboardingPopup`              | training viewed/skipped/completed, onboarding_completed, tutorial_* |
 | `common.utils/.../onboardingTracking.ts` | общие хелперы                                                       |

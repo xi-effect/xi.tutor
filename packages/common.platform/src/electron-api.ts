@@ -80,6 +80,36 @@ export interface SaveFileRequest {
   contentsBase64: string;
 }
 
+export type LessonRecordingOpenResult =
+  { fileId: string } | { error: 'cancelled' | 'conference_unavailable' };
+
+export interface LessonRecordingOpenRequest {
+  defaultName: string;
+  mimeType: string;
+}
+
+export type LessonRecordingCommand =
+  | {
+      action: 'start';
+      fileId: string;
+      sourceId: string;
+      /** Источник экрана для системного звука. Пустая строка — звук только из окна. */
+      audioSourceId: string;
+      mimeType: string;
+    }
+  | { action: 'stop' };
+
+export type LessonRecordingStatus =
+  | { phase: 'recording'; startedAt: number }
+  | { phase: 'saved'; sizeBytes: number; format: string; filename: string }
+  | { phase: 'error'; reason: string }
+  | { phase: 'idle' };
+
+export interface LessonRecordingPresenceEvent {
+  active: boolean;
+  startedAt: number | null;
+}
+
 export type MediaPermissionKind = 'camera' | 'microphone' | 'screen';
 export type MediaPermissionStatus = 'granted' | 'denied' | 'prompt' | 'unsupported';
 export type ShellTheme = 'light' | 'dark';
@@ -153,6 +183,19 @@ export interface SovliumDesktopAPI {
   };
   files: {
     save(request: SaveFileRequest): Promise<boolean>;
+  };
+  recording: {
+    armSystemAudio(): Promise<void>;
+    open(input: LessonRecordingOpenRequest): Promise<LessonRecordingOpenResult>;
+    write(input: { fileId: string; bytes: Uint8Array }): Promise<boolean>;
+    close(input: { fileId: string }): Promise<{ sizeBytes: number } | null>;
+    discard(input: { fileId: string }): Promise<void>;
+    requestStop(): Promise<void>;
+    reportStatus(status: LessonRecordingStatus): Promise<void>;
+    reportPresence(presence: LessonRecordingPresenceEvent): Promise<void>;
+    onCommand(handler: (command: LessonRecordingCommand) => void): () => void;
+    onStatus(handler: (status: LessonRecordingStatus) => void): () => void;
+    onPresence(handler: (presence: LessonRecordingPresenceEvent) => void): () => void;
   };
   notifications: {
     status(): Promise<DesktopNotificationPermission>;

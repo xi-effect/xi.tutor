@@ -28,6 +28,7 @@
     "common.api": "workspace:*",
     "common.services": "workspace:*",
     "common.ui": "workspace:*",
+    "common.utils": "workspace:*",
     "features.lesson.cancel": "workspace:*",
     "features.lesson.change": "workspace:*",
     "features.lesson.info": "workspace:*",

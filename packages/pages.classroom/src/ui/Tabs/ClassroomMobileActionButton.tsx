@@ -12,18 +12,6 @@ const menuRowClassName = cn(
   'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
 );
 
-/**
- * Реальный отступ снизу, который кнопка занимает над низом экрана — она
- * `createPortal`-ится в document.body, поэтому невидима для обхода предков в
- * useFitViewportHeight (Materials.tsx/ClassroomFiles.tsx); эта константа
- * передаётся наружу через CSS-переменную --classroom-fab-offset (см. TabsTutor.tsx).
- *
- * Обёртка h-16 (64px, items-start) + кружок h-[52px] с -translate-y-1/2 (сдвиг
- * вверх на половину своей высоты, 26px) → верхний край кружка на 64 + 26 = 90px
- * от низа вьюпорта. +10px — визуальный зазор.
- */
-export const CLASSROOM_FAB_BOTTOM_OFFSET_PX = 100;
-
 type ContentKind = 'note' | 'board';
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 

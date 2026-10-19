@@ -9,9 +9,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsc --watch",
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@xipkg/actionbutton": "1.1.0",
@@ -34,6 +32,7 @@
     "common.api": "workspace:*",
     "common.entities": "workspace:*",
     "common.services": "workspace:*",
+    "common.subscription": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
@@ -50,6 +49,7 @@
     "features.materials.card": "workspace:*",
     "features.payment.approve": "workspace:*",
     "features.table": "workspace:*",
+    "features.tags": "workspace:*",
     "modules.calendar": "workspace:*",
     "modules.calls": "workspace:*",
     "modules.editor": "workspace:*",
@@ -74,8 +74,7 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.22.0",
-    "vitest": "^4.1.10"
+    "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
     "react": "19",

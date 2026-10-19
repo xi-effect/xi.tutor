@@ -1,3 +1,4 @@
+import { getAppNow } from 'common.utils';
 import type { ICalendarEvent, ScheduleLessonRow } from '../ui/types';
 import { getScheduleLessonEndAt } from './getScheduleLessonEndAt';
 
@@ -19,7 +20,7 @@ export const findNearestLessonIndex = (
 /** id текущего или ближайшего занятия среди событий календаря (канбан, мобильный список). */
 export const findNearestCalendarEventId = (
   events: ICalendarEvent[],
-  now: Date = new Date(),
+  now: Date = getAppNow(),
 ): string | null => {
   const nowMs = now.getTime();
   let ongoingId: string | null = null;
@@ -52,7 +53,7 @@ export const findNearestCalendarEventId = (
 export const findNearestVisibleCalendarEventId = (
   allEvents: ICalendarEvent[],
   visibleEvents: ICalendarEvent[],
-  now: Date = new Date(),
+  now: Date = getAppNow(),
 ): string | null => {
   const nearestId = findNearestCalendarEventId(allEvents, now);
   if (nearestId == null) return null;

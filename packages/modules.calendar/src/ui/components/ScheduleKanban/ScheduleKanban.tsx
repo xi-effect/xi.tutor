@@ -1,7 +1,8 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfDay } from 'date-fns';
-import { getDateLocale } from 'common.ui';
+import { getDateLocale, useAppTimeZone } from 'common.ui';
+import { getAppNow } from 'common.utils';
 import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
 import { LessonCardSkeleton } from './LessonCardSkeleton';
@@ -94,7 +95,8 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
   const allEvents = useCalendarEvents();
-  const today = new Date();
+  useAppTimeZone();
+  const today = getAppNow();
   const todayStart = startOfDay(today);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
@@ -171,7 +173,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
     >
       {/* Заголовки дней — без скролла */}
       <div
-        className="grid shrink-0 gap-x-7 pr-3"
+        className="grid shrink-0 gap-x-7"
         style={{
           gridTemplateColumns,
         }}
@@ -224,12 +226,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       <div
         ref={scrollAreaRef}
         className={cn(
-          'flex min-h-0 flex-1 [scrollbar-gutter:stable] flex-col overflow-y-auto pr-3',
+          'flex min-h-0 flex-1 flex-col overflow-y-auto',
           allowHorizontalOverflow ? 'overflow-x-visible' : 'overflow-x-hidden',
         )}
       >
         <div className="box-border flex min-h-full min-w-0 flex-1 flex-col">
-          <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>
+          <div className="grid flex-1 items-stretch gap-x-7" style={{ gridTemplateColumns }}>
             {eventsLoading
               ? visibleDays.map((day, colIndex) => {
                   const skeletonCount = getLessonCardSkeletonCountForDay(day);

@@ -44,11 +44,11 @@ export const MathBankPage = () => {
   return (
     <div
       className={cn(
-        'bg-background-page flex flex-col gap-4',
-        isMobile ? 'h-full min-h-0 overflow-hidden' : 'h-screen',
+        'bg-background-page flex flex-col gap-8 p-5',
+        isMobile ? 'h-full min-h-0 overflow-hidden pb-0' : 'h-screen',
       )}
     >
-      <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
+      <div className="flex w-full shrink-0 items-start justify-between sm:flex-row">
         <Header
           subject={subject}
           filters={filters}
@@ -61,13 +61,7 @@ export const MathBankPage = () => {
         />
       </div>
 
-      <div
-        ref={parentRef}
-        className={cn(
-          'min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-5 sm:mt-4 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
-          isMobile && 'pb-20',
-        )}
-      >
+      <div ref={parentRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {isError ? (
           <MathBankErrorState />
         ) : (

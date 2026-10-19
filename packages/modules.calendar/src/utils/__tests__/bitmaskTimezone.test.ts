@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { setAppTimeZone } from 'common.utils';
 import {
   bitmaskLocalToUtc,
   bitmaskToWeekdays,
@@ -25,36 +26,30 @@ describe('weekdaysToBitmask / bitmaskToWeekdays', () => {
 
 describe('bitmaskUtcToLocal / bitmaskLocalToUtc', () => {
   afterEach(() => {
-    vi.restoreAllMocks();
+    setAppTimeZone(null);
   });
 
-  it('не сдвигает маску, если UTC и local день совпадают', () => {
+  it('не сдвигает маску, если UTC и пояс приложения попадают в один день', () => {
+    setAppTimeZone('Europe/Moscow');
+    // 2026-04-20 — понедельник и в UTC, и в Москве (15:00)
     const mondayUtc = new Date('2026-04-20T12:00:00Z');
-    vi.spyOn(Date.prototype, 'getUTCDay').mockReturnValue(1); // Пн
-    vi.spyOn(Date.prototype, 'getDay').mockReturnValue(1); // Пн
-
-    const mask = weekdaysToBitmask([1]); // Вт
+    const mask = weekdaysToBitmask([1]);
     expect(bitmaskUtcToLocal(mask, mondayUtc)).toBe(mask);
     expect(bitmaskLocalToUtc(mask, mondayUtc)).toBe(mask);
   });
 
-  it('сдвигает вперёд для UTC+ (Пн UTC → Вт local)', () => {
+  it('сдвигает вперёд, когда локальный день наступает раньше UTC', () => {
+    setAppTimeZone('Europe/Moscow');
+    // 23:00 UTC понедельника = 02:00 вторника в Москве
     const startsAt = new Date('2026-04-20T23:00:00Z');
-    vi.spyOn(Date.prototype, 'getUTCDay').mockReturnValue(1); // Пн UTC
-    vi.spyOn(Date.prototype, 'getDay').mockReturnValue(2); // Вт local
-
-    // UTC-битмаска: только понедельник (бит 0)
     const utcMask = weekdaysToBitmask([0]);
-    // В local должно стать вторник (бит 1)
     expect(bitmaskUtcToLocal(utcMask, startsAt)).toBe(weekdaysToBitmask([1]));
     expect(bitmaskLocalToUtc(weekdaysToBitmask([1]), startsAt)).toBe(utcMask);
   });
 
   it('roundtrip utc→local→utc сохраняет маску при сдвиге', () => {
+    setAppTimeZone('Europe/Moscow');
     const startsAt = new Date('2026-04-20T23:00:00Z');
-    vi.spyOn(Date.prototype, 'getUTCDay').mockReturnValue(1);
-    vi.spyOn(Date.prototype, 'getDay').mockReturnValue(2);
-
     const utcMask = weekdaysToBitmask([0, 2, 4]);
     const localMask = bitmaskUtcToLocal(utcMask, startsAt);
     expect(bitmaskLocalToUtc(localMask, startsAt)).toBe(utcMask);

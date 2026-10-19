@@ -97,6 +97,19 @@
     "media": "Media",
     "activities": "Activities"
   },
+  "lineStyle": {
+    "label": "Line style",
+    "arrowSingle": "Arrow",
+    "arrowDouble": "Double arrow",
+    "solid": "Solid",
+    "dashed": "Dashed",
+    "dotted": "Dotted",
+    "sparse": "Sparse dash",
+    "dash-dot": "Dash-dot",
+    "wavy": "Wavy",
+    "wavyNoArrowheads": "Wavy lines have no arrowheads",
+    "double": "Double line"
+  },
   "navbar": {
     "select": "Select",
     "hand": "Hand",
@@ -272,6 +285,11 @@
   },
   "zoom": {
     "clickHint": "Click — 100%. Double-click — show all elements"
+  },
+  "minimap": {
+    "label": "Board minimap",
+    "show": "Show minimap",
+    "hide": "Hide minimap"
   },
   "geo": {
     "noFill": "No fill",

@@ -1,8 +1,7 @@
-import dayjs from 'dayjs';
-import 'dayjs/locale/en';
-import 'dayjs/locale/ru';
-import { getAppLanguage } from 'common.ui';
+import { formatInAppTimeZone, getDateLocale } from 'common.ui';
 
 export const formatToShortDate = (isoDate: string): string => {
-  return dayjs(isoDate).locale(getAppLanguage()).format('D MMMM');
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return '';
+  return formatInAppTimeZone(date, { day: 'numeric', month: 'long' }, getDateLocale());
 };

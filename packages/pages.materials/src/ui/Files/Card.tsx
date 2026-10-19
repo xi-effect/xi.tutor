@@ -6,6 +6,7 @@ import { cn } from '@xipkg/utils';
 import {
   ConfirmDialog,
   TagChips,
+  useAppTimeZone,
   cardMaterialMenuButtonClass,
   cardMenuIconClass,
   cardTypeIconBoxClass,
@@ -48,6 +49,7 @@ export const FileCard = ({
   onRemoveFromClassroom,
 }: FileCardProps) => {
   const { t } = useTranslation('materials');
+  useAppTimeZone();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);

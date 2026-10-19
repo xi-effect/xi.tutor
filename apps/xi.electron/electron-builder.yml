@@ -34,6 +34,7 @@ mac:
     NSCameraUsageDescription: Sovlium uses the camera for video lessons.
     NSMicrophoneUsageDescription: Sovlium uses the microphone for video lessons.
     NSScreenCaptureUsageDescription: Sovlium captures the screen when you share it in a lesson.
+    NSAudioCaptureUsageDescription: Sovlium records computer audio during a lesson.
     NSUserNotificationsUsageDescription: Sovlium shows lesson and message notifications.
     CFBundleURLTypes:
       - CFBundleURLName: Sovlium

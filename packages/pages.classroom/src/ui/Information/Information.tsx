@@ -1,6 +1,7 @@
 import { useForm } from '@xipkg/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@xipkg/form';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 
 import { useEffect, useRef, useCallback } from 'react';
 import { ClassroomT, ClassroomStatusT, isClassroomOnPause } from 'common.api';
@@ -10,6 +11,7 @@ import {
   useUpdateGroupClassroom,
   useUpdateIndividualClassroom,
 } from 'common.services';
+import { tryChangeClassroomStatus, useCanActivateClassroom } from 'common.subscription';
 import { useTranslation } from 'react-i18next';
 import { Autocomplete } from './Autocomplete';
 import { useParams } from '@tanstack/react-router';
@@ -36,6 +38,8 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
 
   const { updateGroupClassroom, isUpdating: isUpdatingGroupClassroom } = useUpdateGroupClassroom();
   const { updateClassroomStatus, isUpdating } = useUpdateClassroomStatus();
+  const canActivateClassroom = useCanActivateClassroom();
+  const activateBlocked = classroom?.status !== 'active' && !canActivateClassroom;
   const { updateIndividualClassroom, isUpdating: isUpdatingIndividualClassroom } =
     useUpdateIndividualClassroom();
 
@@ -73,6 +77,11 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
         const promises = [];
 
         if (statusChanged) {
+          if (!tryChangeClassroomStatus(initialValues.current.status, data.status)) {
+            form.setValue('status', initialValues.current.status);
+            return;
+          }
+
           promises.push(
             new Promise((resolve, reject) => {
               updateClassroomStatus(
@@ -154,6 +163,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
       updateClassroomStatus,
       updateIndividualClassroom,
       updateGroupClassroom,
+      form,
     ],
   );
 
@@ -183,7 +193,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
           <div className={galleryShadowHeaderInsetClass}>
             <div className="flex w-full min-w-0 flex-row flex-wrap items-center gap-2">
               <h2 className={sectionTitleClass}>{t('information.students')}</h2>
-              <div className="ml-auto flex shrink-0 items-center gap-2">
+              <div className="ml-auto flex flex-wrap items-center gap-2 min-[961px]:shrink-0 min-[961px]:flex-nowrap">
                 {isPaused ? null : (
                   <>
                     <ModalStudentsGroup>
@@ -232,7 +242,12 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                     <FormControl>
                       <Select
                         value={field.value}
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          if (!tryChangeClassroomStatus(classroom.status, value)) {
+                            return;
+                          }
+                          field.onChange(value);
+                        }}
                         disabled={isUpdating}
                       >
                         <SelectTrigger className="dark:text-text-primary h-[32px] w-full">
@@ -242,14 +257,42 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                           />
                         </SelectTrigger>
                         <SelectContent className="dark:text-text-primary w-full">
-                          <SelectItem value="active">{t('information.statusActive')}</SelectItem>
+                          {activateBlocked ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="w-full">
+                                  <SelectItem value="active" disabled>
+                                    {t('information.statusActive')}
+                                  </SelectItem>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="left"
+                                className="z-[200] max-w-72 leading-5 font-normal"
+                              >
+                                {t('information.statusActiveLimitTooltip')}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <SelectItem value="active">{t('information.statusActive')}</SelectItem>
+                          )}
                           <SelectItem value="paused">{t('information.statusPaused')}</SelectItem>
                           <SelectItem value="finished">
                             {t('information.statusFinished')}
                           </SelectItem>
+                          {classroom.status === 'locked' ? (
+                            <SelectItem value="locked" disabled>
+                              {t('information.statusLocked')}
+                            </SelectItem>
+                          ) : null}
                         </SelectContent>
                       </Select>
                     </FormControl>
+                    {activateBlocked ? (
+                      <FormDescription className="text-text-secondary pt-1 text-xs">
+                        {t('information.statusLockedHint')}
+                      </FormDescription>
+                    ) : null}
                   </FormItem>
                 )}
               />

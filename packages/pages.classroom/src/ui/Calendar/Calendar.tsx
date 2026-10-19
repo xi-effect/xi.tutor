@@ -20,12 +20,12 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { useTranslation } from 'react-i18next';
+import { useAppTimeZone } from 'common.ui';
 import { useClassroomSchedule } from './useClassroomSchedule';
 import { CalendarScheduleKanban, CalendarScheduleToolbar } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
-import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 function jsWeekdayToSeriesIndex(date: Date): number {
   const d = date.getDay();
@@ -117,7 +117,11 @@ export const Calendar = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const scheduleRange = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
+  const timeZone = useAppTimeZone();
+  const scheduleRange = useMemo(
+    () => getScheduleQueryRange(weekDays, timeZone),
+    [weekDays, timeZone],
+  );
 
   const tutorQuery = useGetClassroom(numericClassroomId, isUserLoading || !isTutor);
   const studentQuery = useGetClassroomStudent(numericClassroomId, isUserLoading || isTutor);
@@ -182,7 +186,7 @@ export const Calendar = () => {
 
   useEffect(() => {
     if (scheduleQuery.data) {
-      let events = mapScheduleItemsToCalendarEvents(scheduleQuery.data);
+      let events = mapScheduleItemsToCalendarEvents(scheduleQuery.data, timeZone);
       const deepLink = deepLinkEventRef.current;
       if (deepLink != null) {
         const key = eventInstanceKey(deepLink);
@@ -198,7 +202,7 @@ export const Calendar = () => {
     if (scheduleQuery.isError) {
       setEvents(deepLinkEventRef.current != null ? [deepLinkEventRef.current] : []);
     }
-  }, [scheduleQuery.data, scheduleQuery.isError, setEvents]);
+  }, [scheduleQuery.data, scheduleQuery.isError, setEvents, timeZone]);
 
   useEffect(() => () => setEvents([]), [setEvents]);
 
@@ -227,7 +231,7 @@ export const Calendar = () => {
     <>
       {lessonInfoModal}
       {isMobile ? (
-        <div className="flex h-full min-h-0 min-w-0 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <ScheduleMobileView
             key={numericClassroomId}
             onAddLessonClick={isPaused ? undefined : onAddLessonClick}
@@ -240,8 +244,8 @@ export const Calendar = () => {
           />
         </div>
       ) : (
-        <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
-          <div className={galleryShadowHeaderInsetClass}>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
+          <div className="shrink-0">
             <div className="flex min-w-0 flex-row flex-wrap items-center gap-3">
               <CalendarScheduleToolbar />
               {isTutor && !isPaused ? (

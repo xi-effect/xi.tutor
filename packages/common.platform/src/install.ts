@@ -1,4 +1,4 @@
-import { installNativeMediaAdapters } from './media';
+import { installDisplayAudioCapture, installNativeMediaAdapters } from './media';
 import { refreshNotificationPermission } from './notifications';
 import { isElectronShell } from './detect';
 import { installElectronCallOverlayShim } from './electronCallOverlay';
@@ -16,6 +16,7 @@ let installed = false;
 export function installNativeWebApiBridges(): void {
   if (installed) return;
   installed = true;
+  installDisplayAudioCapture();
   installNativeMediaAdapters();
   if (isElectronShell()) {
     installElectronCallOverlayShim();

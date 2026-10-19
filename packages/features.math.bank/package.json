@@ -17,6 +17,7 @@
     "russian-bank:check": "pnpm russian-bank:build && pnpm russian-bank:qa"
   },
   "dependencies": {
+    "common.env": "workspace:*",
     "minisearch": "^7.1.2"
   },
   "devDependencies": {

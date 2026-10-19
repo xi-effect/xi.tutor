@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { startOfDay } from 'date-fns';
+import { instantToWallClock } from 'common.utils';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import type { ICalendarEvent } from 'modules.calendar';
 import {
@@ -29,7 +30,7 @@ export function parseScheduleAnchorFromSearch(search: {
       : null;
   if (!focusedAt) return null;
 
-  const d = startOfDay(new Date(focusedAt));
+  const d = startOfDay(instantToWallClock(focusedAt));
   return Number.isFinite(d.getTime()) ? d : null;
 }
 
@@ -215,7 +216,7 @@ export function useClassroomScheduleDeepLink() {
     const dedupeKey = scheduleDlToken != null ? `dl:${scheduleDlToken}` : `at:${focusedAt}`;
     if (lastFocusedAtRef.current === dedupeKey) return;
 
-    const d = startOfDay(new Date(focusedAt));
+    const d = startOfDay(instantToWallClock(focusedAt));
     if (!Number.isFinite(d.getTime())) {
       scheduleStrip();
       return;
@@ -280,7 +281,9 @@ export function useClassroomScheduleDeepLink() {
 
         const startAt = readInstanceStartsAt(data);
         const anchor =
-          startAt != null && Number.isFinite(startAt.getTime()) ? startOfDay(startAt) : null;
+          startAt != null && Number.isFinite(startAt.getTime())
+            ? startOfDay(instantToWallClock(startAt))
+            : null;
 
         if (readInstanceIsCancelled(data)) {
           setPendingEventToOpen(null);
@@ -384,7 +387,9 @@ export function useClassroomScheduleDeepLink() {
 
         const startAt = readInstanceStartsAt(data);
         const anchor =
-          startAt != null && Number.isFinite(startAt.getTime()) ? startOfDay(startAt) : null;
+          startAt != null && Number.isFinite(startAt.getTime())
+            ? startOfDay(instantToWallClock(startAt))
+            : null;
 
         if (readInstanceIsCancelled(data)) {
           setPendingEventToOpen(null);

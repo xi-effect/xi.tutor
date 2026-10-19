@@ -1,4 +1,5 @@
 import { Badge } from '@xipkg/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
 import { educationStatusBadgeClasses, getEducationStatusLabel } from 'common.ui';
 
@@ -24,9 +25,26 @@ export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
     : educationStatusBadgeClasses[status];
   const statusText = getEducationStatusLabel(status, isTutor, t);
 
-  return (
+  const badge = (
     <Badge size="m" className={cn(styles, baseClasses)}>
       <span className="max-w-full min-w-0 truncate text-center">{statusText}</span>
     </Badge>
+  );
+
+  if (status !== 'locked') {
+    return badge;
+  }
+
+  const role = isTutor ? 'tutor' : 'student';
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex min-w-0">{badge}</span>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="z-[200] max-w-72 leading-5 font-normal">
+        {t(`educationStatus.${role}.lockedHint`)}
+      </TooltipContent>
+    </Tooltip>
   );
 };

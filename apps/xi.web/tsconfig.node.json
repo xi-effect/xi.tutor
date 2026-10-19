@@ -14,5 +14,5 @@
     "noUnusedParameters": true,
     "types": ["node"]
   },
-  "include": ["vite.math-bank.ts"]
+  "include": ["vite.config.ts", "vite.calls-local.ts", "vite.paddleocr.ts"]
 }

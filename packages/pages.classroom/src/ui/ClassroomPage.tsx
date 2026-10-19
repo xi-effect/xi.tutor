@@ -30,14 +30,12 @@ export const ClassroomPage = () => {
     <ClassroomScheduleRoot>
       <div
         className={cn(
-          'bg-background-page flex flex-col gap-4',
-          isMobile ? 'h-full min-h-0 overflow-hidden' : 'h-screen',
+          'bg-background-page flex flex-col gap-4 p-5',
+          isMobile ? 'h-full min-h-0 overflow-hidden pb-0' : 'h-screen',
         )}
       >
         <Header />
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          <Tabs />
-        </div>
+        <Tabs />
       </div>
     </ClassroomScheduleRoot>
   );

@@ -1,4 +1,8 @@
-import type { LessonDurationThresholdMin } from 'common.utils';
+import {
+  createLessonOverlapState,
+  type LessonDurationThresholdMin,
+  type LessonOverlapState,
+} from 'common.utils';
 
 export type CallSessionAnalyticsState = {
   connectedAt: number | null;
@@ -24,6 +28,8 @@ export type CallSessionAnalyticsState = {
   /** Комната уже была connected в текущей сессии звонка → source=lesson */
   inLessonMediaContext: boolean;
   lessonId: string | null;
+  /** Совместное присутствие tutor и ученика внутри этой сессии звонка. */
+  overlap: LessonOverlapState;
 };
 
 export const createCallSessionAnalyticsState = (): CallSessionAnalyticsState => ({
@@ -47,6 +53,7 @@ export const createCallSessionAnalyticsState = (): CallSessionAnalyticsState => 
   mediaPermissionRequestedSent: false,
   inLessonMediaContext: false,
   lessonId: null,
+  overlap: createLessonOverlapState(),
 });
 
 let callSessionState = createCallSessionAnalyticsState();

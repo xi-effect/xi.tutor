@@ -5,6 +5,9 @@ import {
   type ConferenceState,
   type MediaPermissionKind,
   type SlotBounds,
+  type LessonRecordingCommand,
+  type LessonRecordingPresenceEvent,
+  type LessonRecordingStatus,
   type SovliumDesktopAPI,
   type UpdaterState,
   type UpdaterStatus,
@@ -55,6 +58,59 @@ function readUpdaterState(payload: unknown): UpdaterState {
     releaseUrl,
     canInstall: record.canInstall === true && status === 'downloaded',
     message,
+  };
+}
+
+function readRecordingCommand(payload: unknown): LessonRecordingCommand | null {
+  const record =
+    payload !== null && typeof payload === 'object' ? (payload as Record<string, unknown>) : null;
+  if (!record) return null;
+  if (record.action === 'stop') return { action: 'stop' };
+  if (
+    record.action === 'start' &&
+    typeof record.fileId === 'string' &&
+    typeof record.sourceId === 'string'
+  ) {
+    return {
+      action: 'start',
+      fileId: record.fileId,
+      sourceId: record.sourceId,
+      audioSourceId: typeof record.audioSourceId === 'string' ? record.audioSourceId : '',
+      mimeType: typeof record.mimeType === 'string' ? record.mimeType : '',
+    };
+  }
+  return null;
+}
+
+function readRecordingStatus(payload: unknown): LessonRecordingStatus | null {
+  const record =
+    payload !== null && typeof payload === 'object' ? (payload as Record<string, unknown>) : null;
+  if (!record) return null;
+  if (record.phase === 'recording' && typeof record.startedAt === 'number') {
+    return { phase: 'recording', startedAt: record.startedAt };
+  }
+  if (record.phase === 'saved') {
+    return {
+      phase: 'saved',
+      sizeBytes: typeof record.sizeBytes === 'number' ? record.sizeBytes : 0,
+      format: typeof record.format === 'string' ? record.format : 'webm',
+      filename: typeof record.filename === 'string' ? record.filename : '',
+    };
+  }
+  if (record.phase === 'error' && typeof record.reason === 'string') {
+    return { phase: 'error', reason: record.reason };
+  }
+  if (record.phase === 'idle') return { phase: 'idle' };
+  return null;
+}
+
+function readRecordingPresence(payload: unknown): LessonRecordingPresenceEvent | null {
+  const record =
+    payload !== null && typeof payload === 'object' ? (payload as Record<string, unknown>) : null;
+  if (!record || typeof record.active !== 'boolean') return null;
+  return {
+    active: record.active,
+    startedAt: record.active && typeof record.startedAt === 'number' ? record.startedAt : null,
   };
 }
 
@@ -121,6 +177,31 @@ const api: SovliumDesktopAPI = {
   },
   files: {
     save: (request) => ipcRenderer.invoke(IPC.filesSave, request),
+  },
+  recording: {
+    armSystemAudio: () => ipcRenderer.invoke(IPC.recordingArmSystemAudio),
+    open: (input) => ipcRenderer.invoke(IPC.recordingOpen, input),
+    write: (input) => ipcRenderer.invoke(IPC.recordingWrite, input),
+    close: (input) => ipcRenderer.invoke(IPC.recordingClose, input),
+    discard: (input) => ipcRenderer.invoke(IPC.recordingDiscard, input),
+    requestStop: () => ipcRenderer.invoke(IPC.recordingRequestStop),
+    reportStatus: (status) => ipcRenderer.invoke(IPC.recordingReportStatus, status),
+    reportPresence: (presence) => ipcRenderer.invoke(IPC.recordingReportPresence, presence),
+    onCommand: (handler) =>
+      subscribe(EVENTS.recordingCommand, (payload) => {
+        const command = readRecordingCommand(payload);
+        if (command) handler(command);
+      }),
+    onStatus: (handler) =>
+      subscribe(EVENTS.recordingStatus, (payload) => {
+        const status = readRecordingStatus(payload);
+        if (status) handler(status);
+      }),
+    onPresence: (handler) =>
+      subscribe(EVENTS.recordingPresence, (payload) => {
+        const presence = readRecordingPresence(payload);
+        if (presence) handler(presence);
+      }),
   },
   notifications: {
     status: () => ipcRenderer.invoke(IPC.notificationsStatus),

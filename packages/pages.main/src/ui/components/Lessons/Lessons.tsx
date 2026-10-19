@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { AllLessons } from './AllLessons';
 import {
   getCalendarDayQueryRange,
+  lessonStartsOnDay,
   ScheduleDateCarousel,
   useStudentSchedule,
   useTutorSchedule,
@@ -18,6 +19,7 @@ import type {
   ScheduleLessonRow,
 } from 'modules.calendar';
 import { useCurrentUser } from 'common.services';
+import { getAppNow, useAppTimeZone } from 'common.ui';
 import { movingPropsFromLessonRow, scheduleItemToLessonRow } from './scheduleHelpers';
 import { WidgetHeader, widgetTitleClass } from '../WidgetHeader';
 import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
@@ -25,7 +27,7 @@ import { cn } from '@xipkg/utils';
 import { FORCE_MAIN_LISTS_LOADING } from '../../forceListsLoading';
 
 const getToday = () => {
-  const d = new Date();
+  const d = getAppNow();
   d.setHours(0, 0, 0, 0);
   return d;
 };
@@ -39,6 +41,7 @@ export const Lessons = () => {
   const [isTodayVisibleInCarousel, setIsTodayVisibleInCarousel] = useState(true);
   const [moveLesson, setMoveLesson] = useState<ScheduleLessonRow | null>(null);
 
+  const timeZone = useAppTimeZone();
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -64,7 +67,10 @@ export const Lessons = () => {
     [updateEvent],
   );
 
-  const range = useMemo(() => getCalendarDayQueryRange(selectedDate), [selectedDate]);
+  const range = useMemo(
+    () => getCalendarDayQueryRange(selectedDate, timeZone),
+    [selectedDate, timeZone],
+  );
   const tutorScheduleQuery = useTutorSchedule({
     ...range,
     enabled: !isUserLoading && isTutor === true,
@@ -78,14 +84,18 @@ export const Lessons = () => {
   const lessonsForSelectedDay = useMemo<ScheduleLessonRow[]>(() => {
     const items = scheduleQuery.data ?? [];
     return items
-      .filter((item) => item.cancelledAt == null)
+      .filter(
+        (item) =>
+          item.cancelledAt == null && lessonStartsOnDay(item.startsAt, selectedDate, timeZone),
+      )
       .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
-      .map(scheduleItemToLessonRow);
-  }, [scheduleQuery.data]);
+      .map((item) => scheduleItemToLessonRow(item, timeZone));
+  }, [scheduleQuery.data, selectedDate, timeZone]);
 
   const monthLabelInHeader = useMemo(() => {
     if (!visibleMonthInfo) return null;
-    const today = getToday();
+    const today = getAppNow(timeZone);
+    today.setHours(0, 0, 0, 0);
     if (
       visibleMonthInfo.year === today.getFullYear() &&
       visibleMonthInfo.monthIndex === today.getMonth()
@@ -93,7 +103,7 @@ export const Lessons = () => {
       return null;
     }
     return visibleMonthInfo.label;
-  }, [visibleMonthInfo]);
+  }, [visibleMonthInfo, timeZone]);
 
   const handleGoToToday = () => {
     setSelectedDate(getToday());

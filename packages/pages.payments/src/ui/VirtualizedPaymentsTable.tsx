@@ -19,8 +19,8 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@xipkg/button';
 import { ArrowUpRight } from '@xipkg/icons';
-import { useMediaQuery } from '@xipkg/utils';
-import { RefObject } from 'react';
+import { cn, useMediaQuery } from '@xipkg/utils';
+import { MouseEvent, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   EmptyPaymentsFull,
@@ -37,6 +37,10 @@ import { InvoiceCard } from 'features.invoice.card';
 
 /** База знаний — как в блоке «Оплата» на главной */
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
+
+const isInteractiveRowTarget = (target: EventTarget | null) =>
+  target instanceof Element &&
+  Boolean(target.closest('button, a, input, textarea, select, [role="button"]'));
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -61,7 +65,7 @@ export const VirtualizedPaymentsTable = ({
   onViewInvoice,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
   const { t } = useTranslation('payments');
-  const isMobile = useMediaQuery('(max-width: 719px)');
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const table = useReactTable({
     data,
@@ -104,7 +108,10 @@ export const VirtualizedPaymentsTable = ({
 
   if (isMobile) {
     return (
-      <div ref={parentRef} className="h-full min-h-0 flex-1 overflow-auto py-1 pr-5 pb-4">
+      <div
+        ref={parentRef}
+        className={cn('h-full min-h-0 flex-1 overflow-auto', isTutor && 'pb-20')}
+      >
         <GridVirtualizer
           parentRef={parentRef}
           items={data}
@@ -130,7 +137,8 @@ export const VirtualizedPaymentsTable = ({
 
   return (
     <>
-      <Table className="xs:rounded-tl-2xl table-fixed rounded-none px-2">
+      {/* px-1 компенсирует разницу, чтобы названия столбцов выровнялись с контентом в строках */}
+      <Table className="xs:rounded-tl-2xl table-fixed rounded-none px-1">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -147,17 +155,30 @@ export const VirtualizedPaymentsTable = ({
           ))}
         </TableHeader>
       </Table>
-
-      <div ref={parentRef} className="h-[calc(100dvh-224px)] flex-1 overflow-auto">
+      <div ref={parentRef} className="h-full min-h-0 flex-1 overflow-auto px-1">
+        {/* px-1 не дает обрезаться бордеру слева и справа у строки в таблице */}
         <GridVirtualizer<Row<RolePaymentT<UserRoleT>>>
           parentRef={parentRef}
           items={rows}
           isSingleColumn
           defaultRowHeight={50}
           renderItem={(item) => (
-            <Table className="table-fixed pr-5 pl-1">
+            <Table className="table-fixed">
               <TableBody>
-                <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
+                <TableRow
+                  className={cn(
+                    'group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]',
+                    onViewInvoice && 'cursor-pointer',
+                  )}
+                  onClick={
+                    onViewInvoice
+                      ? (event: MouseEvent<HTMLTableRowElement>) => {
+                          if (isInteractiveRowTarget(event.target)) return;
+                          onViewInvoice(item.original);
+                        }
+                      : undefined
+                  }
+                >
                   {item.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -168,7 +189,6 @@ export const VirtualizedPaymentsTable = ({
             </Table>
           )}
         />
-
         <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
       </div>
     </>

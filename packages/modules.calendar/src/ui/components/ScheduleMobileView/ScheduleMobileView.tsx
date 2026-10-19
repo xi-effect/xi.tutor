@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfDay, startOfWeek } from 'date-fns';
-import { getDateLocale } from 'common.ui';
+import { getDateLocale, useAppTimeZone } from 'common.ui';
+import { getAppNow, instantToWallClock } from 'common.utils';
 import { formatMonthLabel } from '../../../utils/calendarUtils';
 import { ScheduleWeekCarousel } from '../ScheduleWeekCarousel';
 import { ScheduleDaySwiper } from '../ScheduleDaySwiper';
@@ -12,7 +13,7 @@ import { Plus } from '@xipkg/icons';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
 
-const getInitialWeekStart = () => startOfWeek(new Date(), { weekStartsOn: 1 });
+const getInitialWeekStart = () => startOfWeek(getAppNow(), { weekStartsOn: 1 });
 
 /** ±2 года дней для свайпа по дням */
 const DAY_SWIPER_WEEKS_BEFORE = 104;
@@ -46,9 +47,10 @@ export const ScheduleMobileView = ({
   onQueryWeekChange,
 }: ScheduleMobileViewProps) => {
   const { t, i18n } = useTranslation('calendar');
+  const timeZone = useAppTimeZone();
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
-    const today = new Date();
+    const today = getAppNow();
     today.setHours(0, 0, 0, 0);
     return today;
   });
@@ -72,11 +74,11 @@ export const ScheduleMobileView = ({
   const slideDays = useMemo(
     () =>
       getWeeksRangeDays(
-        startOfWeek(new Date(), { weekStartsOn: 1 }),
+        startOfWeek(instantToWallClock(new Date(), timeZone), { weekStartsOn: 1 }),
         DAY_SWIPER_WEEKS_BEFORE,
         DAY_SWIPER_WEEKS_AFTER,
       ),
-    [],
+    [timeZone],
   );
 
   const monthLabel = useMemo(
@@ -105,13 +107,8 @@ export const ScheduleMobileView = ({
   );
 
   return (
-    <div className={cn('bg-background-page flex h-full min-h-0 flex-col overflow-hidden')}>
-      <div
-        className={cn(
-          'bg-background-page shrink-0',
-          embedded ? 'px-0 pt-0 pr-5 pb-3' : 'px-5 pt-5 pb-3',
-        )}
-      >
+    <div className="bg-background-page flex h-full min-h-0 flex-col gap-4 overflow-hidden">
+      <div className="bg-background-page shrink-0">
         <div
           className={cn(
             'bg-background-surface flex flex-col rounded-[20px] p-4',
@@ -152,7 +149,7 @@ export const ScheduleMobileView = ({
           ) : null}
         </div>
       </div>
-      <div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden px-4')}>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <ScheduleDaySwiper
           days={slideDays}
           selectedDate={selectedDate}

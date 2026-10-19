@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { Button } from '@xipkg/button';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useParams, useSearch } from '@tanstack/react-router';
-import { cn, useMediaQuery } from '@xipkg/utils';
+import { useMediaQuery } from '@xipkg/utils';
 import {
   useCurrentUser,
   useGetClassroom,
@@ -11,16 +11,15 @@ import {
 } from 'common.services';
 import { MaterialsCard } from 'features.materials.card';
 import { MaterialsAdd } from 'features.materials.add';
+import { LibraryTagsUiProvider } from 'features.tags';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 import { isClassroomOnPause } from 'common.api';
-import { FilesTagsFilter, LibraryTagsUiProvider, type FilesTagOptionT } from 'pages.materials';
+import { FilesTagsFilter, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
 import { ClassroomFiles } from './ClassroomFiles';
-import { useFitViewportHeight } from './useFitViewportHeight';
-import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 
 type MaterialTypeTab = 'boards' | 'notes' | 'files';
 
@@ -47,7 +46,6 @@ const ClassroomMaterialsGallery = ({
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const isMobile = useMediaQuery('(max-width: 960px)');
   const parentRef = useRef<HTMLDivElement>(null);
-  const fitHeight = useFitViewportHeight(parentRef, isMobile);
   const [materialTags, setMaterialTags] = useState<FilesTagOptionT[]>([]);
   const tagIds = materialTags.map((tag) => tag.id);
 
@@ -121,28 +119,11 @@ const ClassroomMaterialsGallery = ({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2">
-      <div className="shrink-0 pr-5 sm:pr-8 md:pr-10">
-        <div
-          className={cn(
-            'flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4',
-            galleryShadowHeaderInsetClass,
-          )}
-        >
-          {toolbar}
-        </div>
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
+      <div className="shrink-0">
+        <div className="flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4">{toolbar}</div>
       </div>
-
-      {/* Скролл-контейнер = parentRef виртуализатора: GridVirtualizer должен быть его
-          прямым ребёнком с padding-top: 0. На планшетах/мобильных высоту считаем явно
-          (fitHeight), т.к. flex-1 не вычитает fixed нижнюю панель. */}
-      <div
-        ref={parentRef}
-        className={cn(
-          'min-h-0 flex-1 overflow-y-auto overscroll-contain pr-3 pb-5 pl-2 sm:pr-6 sm:pb-8 md:pr-8',
-        )}
-        style={fitHeight != null ? { height: fitHeight, flex: 'none' } : undefined}
-      >
+      <div ref={parentRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-0">
         {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
           <ErrorState />
         ) : isClassroomLoading || isMaterialsLoading || !roleReady ? (

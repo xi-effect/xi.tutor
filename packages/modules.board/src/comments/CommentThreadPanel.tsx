@@ -19,7 +19,7 @@ import { useCopyBoardDeepLink } from '../hooks/useBoardDeepLinkFocus';
 import type { DrCommentMessage, DrCommentThread } from './commentRecords';
 import type { RecordId } from '@ibodr/draw';
 import { useTranslation } from 'react-i18next';
-import { getDateLocale } from 'common.ui';
+import { formatInAppTimeZone, getDateLocale, useAppTimeZone } from 'common.ui';
 
 type CommentThreadPanelProps = {
   threadId: RecordId<DrCommentThread>;
@@ -28,13 +28,18 @@ type CommentThreadPanelProps = {
   showHeader?: boolean;
 };
 
-function formatMessageTime(ts: number): string {
-  return new Date(ts).toLocaleString(getDateLocale(), {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+function formatMessageTime(ts: number, timeZone: string): string {
+  return formatInAppTimeZone(
+    ts,
+    {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    },
+    getDateLocale(),
+    timeZone,
+  );
 }
 
 export const CommentThreadPanel = track(function CommentThreadPanel({
@@ -43,6 +48,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
   showHeader = true,
 }: CommentThreadPanelProps) {
   const { t } = useTranslation('board');
+  const timeZone = useAppTimeZone();
   const editor = useEditor();
   const author = useCommentAuthor();
   const markRead = useMarkCommentThreadRead();
@@ -162,7 +168,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
                     {message.authorName}
                   </span>
                   <span className="text-text-disabled shrink-0 text-xs">
-                    {formatMessageTime(message.createdAt)}
+                    {formatMessageTime(message.createdAt, timeZone)}
                   </span>
                   {isOwnMessage && (
                     <button

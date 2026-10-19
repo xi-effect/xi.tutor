@@ -1,6 +1,12 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { getDateLocale } from 'common.ui';
+import {
+  formatInAppTimeZone,
+  getAppCalendarDayDiff,
+  getDateLocale,
+  instantToWallClock,
+  useAppTimeZone,
+} from 'common.ui';
 import type { ScheduleItem } from 'modules.calendar';
 import { useNextClassroomLesson } from './useNextClassroomLesson';
 
@@ -8,39 +14,40 @@ function formatTime(date: Date): string {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-function startOfLocalDay(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-}
-
 function formatNextLessonLabel(
   item: ScheduleItem,
   locale: string,
+  timeZone: string,
   t: (key: string, options?: Record<string, string>) => string,
 ) {
-  const startsAt = new Date(item.startsAt);
-  const endsAt = new Date(item.endsAt);
+  const startsAt = instantToWallClock(item.startsAt, timeZone);
+  const endsAt = instantToWallClock(item.endsAt, timeZone);
   const start = formatTime(startsAt);
   const end = formatTime(endsAt);
-  const diffDays = Math.round(
-    (startOfLocalDay(startsAt) - startOfLocalDay(new Date())) / 86_400_000,
-  );
+  const diffDays = getAppCalendarDayDiff(item.startsAt, new Date(), timeZone);
 
   if (diffDays === 0) return t('header.nextLessonToday', { start, end });
   if (diffDays === 1) return t('header.nextLessonTomorrow', { start, end });
 
-  const date = startsAt.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  const date = formatInAppTimeZone(
+    item.startsAt,
+    { day: 'numeric', month: 'short' },
+    locale,
+    timeZone,
+  );
   return t('header.nextLessonOnDate', { date, start, end });
 }
 
 export const NextLessonChip = () => {
   const { t, i18n } = useTranslation('classroom');
+  const timeZone = useAppTimeZone();
   const navigate = useNavigate();
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { item, isLoading } = useNextClassroomLesson();
 
   if (isLoading || item == null) return null;
 
-  const label = formatNextLessonLabel(item, getDateLocale(i18n.language), t);
+  const label = formatNextLessonLabel(item, getDateLocale(i18n.language), timeZone, t);
 
   const handleClick = () => {
     const instance = item.eventInstance;

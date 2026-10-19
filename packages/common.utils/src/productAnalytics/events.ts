@@ -24,6 +24,7 @@ export const PRODUCT_ANALYTICS_EVENTS = {
 
   // Onboarding
   ONBOARDING_STARTED: 'onboarding_started',
+  ONBOARDING_ROLE_SELECTED: 'onboarding_role_selected',
   ONBOARDING_STEP_VIEWED: 'onboarding_step_viewed',
   ONBOARDING_STEP_COMPLETED: 'onboarding_step_completed',
   ONBOARDING_STEP_SKIPPED: 'onboarding_step_skipped',
@@ -66,8 +67,13 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   PREJOIN_VIEWED: 'prejoin_viewed',
   LESSON_STARTED: 'lesson_started',
   LESSON_JOINED: 'lesson_joined',
+  LESSON_STUDENT_JOINED: 'lesson_student_joined',
   LESSON_DURATION_REACHED: 'lesson_duration_reached',
+  LESSON_REAL_DURATION_REACHED: 'lesson_real_duration_reached',
   LESSON_FINISHED: 'lesson_finished',
+  LESSON_RECORDING_STARTED: 'lesson_recording_started',
+  LESSON_RECORDING_COMPLETED: 'lesson_recording_completed',
+  LESSON_RECORDING_FAILED: 'lesson_recording_failed',
 
   // Media permissions
   MEDIA_PERMISSION_REQUESTED: 'media_permission_requested',
@@ -112,6 +118,15 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   FILE_UPLOAD_ATTEMPTED: 'file_upload_attempted',
   FILE_UPLOAD_SUCCEEDED: 'file_upload_succeeded',
   FILE_UPLOAD_REJECTED: 'file_upload_rejected',
+
+  // Payments
+  PAYMENT_CONFIRMED: 'payment_confirmed',
+
+  // Subscription announcement (testing end)
+  SUBSCRIPTION_ANNOUNCEMENT_SHOWN: 'subscription_announcement_shown',
+  SUBSCRIPTION_ANNOUNCEMENT_ARTICLE_OPENED: 'subscription_announcement_article_opened',
+  SUBSCRIPTION_ANNOUNCEMENT_CLOSED: 'subscription_announcement_closed',
+  SUBSCRIPTION_ANNOUNCEMENT_DISMISSED: 'subscription_announcement_dismissed',
 
   // Post-lesson feedback
   FEEDBACK_PROMPT_SHOWN: 'feedback_prompt_shown',

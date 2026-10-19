@@ -48,6 +48,14 @@ export const IPC = {
   updaterDownload: 'sovlium:updater:download',
   updaterInstall: 'sovlium:updater:install',
   updaterOpenRelease: 'sovlium:updater:open-release',
+  recordingArmSystemAudio: 'sovlium:recording:arm-system-audio',
+  recordingOpen: 'sovlium:recording:open',
+  recordingWrite: 'sovlium:recording:write',
+  recordingClose: 'sovlium:recording:close',
+  recordingDiscard: 'sovlium:recording:discard',
+  recordingRequestStop: 'sovlium:recording:request-stop',
+  recordingReportStatus: 'sovlium:recording:report-status',
+  recordingReportPresence: 'sovlium:recording:report-presence',
 } as const;
 
 export type IpcChannel = (typeof IPC)[keyof typeof IPC];
@@ -61,6 +69,9 @@ export const EVENTS = {
   callPipRestored: 'call-pip-restored',
   notificationClick: 'sovlium:event:notification-click',
   updaterState: 'sovlium:event:updater-state',
+  recordingCommand: 'sovlium:event:recording-command',
+  recordingStatus: 'sovlium:event:recording-status',
+  recordingPresence: 'sovlium:event:recording-presence',
 } as const;
 
 export type EventChannel = (typeof EVENTS)[keyof typeof EVENTS];

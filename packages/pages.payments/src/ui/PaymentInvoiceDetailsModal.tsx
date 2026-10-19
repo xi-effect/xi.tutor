@@ -22,7 +22,7 @@ import { UserRoleT } from 'common.api';
 import { getUserAvatarUrl } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
-import { modalTitleClass } from 'common.ui';
+import { modalTitleClass, useAppTimeZone } from 'common.ui';
 import { formatDate } from '../utils';
 
 type InvoiceItemT = {
@@ -125,6 +125,7 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
   currentUserRole,
 }) => {
   const { t } = useTranslation('payments');
+  useAppTimeZone();
   const isTutor = currentUserRole === 'tutor';
   const {
     data: dataByTutor,
