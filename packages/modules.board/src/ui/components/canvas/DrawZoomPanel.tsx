@@ -1,7 +1,8 @@
 import { track, useEditor } from '@ibodr/draw';
 import { Plus, Minus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { cn } from '@xipkg/utils';
 import {
   boardChromeZClass,
   boardIconClass,
@@ -9,6 +10,17 @@ import {
   boardTextClass,
 } from '../../boardTheme';
 import { useTranslation } from 'react-i18next';
+import { BoardMinimap } from './BoardMinimap';
+
+const MINIMAP_STORAGE_KEY = 'board.minimap.open';
+
+function readMinimapOpen() {
+  try {
+    return localStorage.getItem(MINIMAP_STORAGE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 const ZOOM_ANIMATION = { animation: { duration: 200 } } as const;
 /** Задержка одиночного клика, чтобы не срабатывал вместе с double-click */
@@ -18,6 +30,19 @@ export const DrawZoomPanel = track(() => {
   const { t } = useTranslation('board');
   const editor = useEditor();
   const resetZoomClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [minimapOpen, setMinimapOpen] = useState(readMinimapOpen);
+
+  const toggleMinimap = () => {
+    setMinimapOpen((open) => {
+      const next = !open;
+      try {
+        localStorage.setItem(MINIMAP_STORAGE_KEY, next ? '1' : '0');
+      } catch {
+        // Настройка не критична: карта всё равно переключается в этой сессии.
+      }
+      return next;
+    });
+  };
 
   if (!editor) return null;
 
@@ -55,8 +80,23 @@ export const DrawZoomPanel = track(() => {
   };
 
   return (
-    <div className={`absolute right-4 bottom-20 ${boardChromeZClass} sm:bottom-4`}>
+    <div
+      className={`absolute right-4 bottom-20 ${boardChromeZClass} flex flex-col items-end gap-2 sm:bottom-4`}
+    >
+      {minimapOpen && <BoardMinimap />}
       <div className={`${boardPanelClass} flex items-center justify-center gap-2 p-1`}>
+        <Button
+          className={cn(
+            'hover:bg-status-info-background pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl',
+            minimapOpen && 'bg-status-info-background text-text-link',
+          )}
+          variant="none"
+          aria-pressed={minimapOpen}
+          title={minimapOpen ? t('minimap.hide') : t('minimap.show')}
+          onClick={toggleMinimap}
+        >
+          <MapIcon />
+        </Button>
         <Button
           className="hover:bg-status-info-background pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
           variant="none"
@@ -84,3 +124,21 @@ export const DrawZoomPanel = track(() => {
     </div>
   );
 });
+
+function MapIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="h-4 w-4 lg:h-5 lg:w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+    >
+      <path d="M9 4.6 4.8 6.2v13.2L9 17.8l6 2 4.2-1.6V4.8L15 6.4 9 4.6Z" />
+      <path d="M9 4.6v13.2M15 6.4v13.4" />
+    </svg>
+  );
+}

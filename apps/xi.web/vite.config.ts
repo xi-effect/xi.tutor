@@ -15,6 +15,11 @@ import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
+// Не по префиксу `dist-`: так Rolldown называет и обычные вендорные чанки
+// (у (app)/_layout их ~1.4MB), без preload они грузятся цепочкой.
+const isHeavyOcrAsset = (filePath: string) =>
+  /paddleocr|opencv|onnxruntime|ort\.bundle|ort-wasm|worker-entry/i.test(filePath);
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   const bankStaticOrigin = (
@@ -142,10 +147,12 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       outDir: 'build',
       sourcemap: mode === 'debug',
       reportCompressedSize: false,
-      // iOS/Safari вместе с service worker иногда подвешивает module graph на
-      // <link rel="modulepreload"> и не шлёт error. Entry не стартует — белый экран.
-      // import() и preload CSS при динамических чанках остаются.
-      modulePreload: false,
+      // Без modulepreload зависимости lazy-роутов грузятся цепочкой (у (app)/_layout
+      // 4–5 последовательных запросов), а роутер всё это время рисует пустой экран.
+      modulePreload: {
+        resolveDependencies: (_filename: string, deps: string[]) =>
+          deps.filter((dep) => !isHeavyOcrAsset(dep)),
+      },
     },
     optimizeDeps: {
       rolldownOptions: {

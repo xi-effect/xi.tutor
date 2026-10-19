@@ -17,6 +17,7 @@ import { FlipCardShapeUtil } from './flipCard';
 import { ActivityShapeUtil } from '../activities';
 import { boardEmbedDefinitions } from './embed/embeddefinitions';
 import { BoardEmbedShapeUtil } from './embed/BoardEmbedShapeUtil';
+import './lineStyles/extendedLineStyles';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [

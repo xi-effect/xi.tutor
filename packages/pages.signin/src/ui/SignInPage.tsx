@@ -22,6 +22,7 @@ import {
   getInviteAuthSearch,
   getInviteCodeFromSearch,
   getInviteFunnelEventProps,
+  getActivationFlowId,
   getInviteTrackingId,
   getOrCreateActivationFlowId,
   persistPendingInviteCode,
@@ -76,7 +77,7 @@ export const SignInPage = () => {
 
     persistPendingInviteCode(inviteCode);
     persistInviteProgressTrack('signin');
-    const activationFlowId = getOrCreateActivationFlowId();
+    const activationFlowId = getActivationFlowId();
 
     void getInviteTrackingId(inviteCode).then((invite_tracking_id) => {
       if (shouldTrackInvitePageViewed(inviteCode)) {

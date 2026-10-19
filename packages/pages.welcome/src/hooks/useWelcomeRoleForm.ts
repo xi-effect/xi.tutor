@@ -3,6 +3,7 @@ import { useCurrentUser, useOnboardingTransition, useUpdateProfile } from 'commo
 import { RoleT } from 'common.types';
 import {
   resolveOnboardingAnalyticsRole,
+  trackOnboardingRoleSelected,
   trackOnboardingStepBack,
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
@@ -31,7 +32,9 @@ export const useWelcomeRoleForm = () => {
 
     await runWelcomeRoleForward({
       role,
+      userId: user?.id,
       userRole,
+      trackRoleSelected: trackOnboardingRoleSelected,
       onboardingStage: user?.onboarding_stage ?? undefined,
       updateProfile: (payload) => updateProfile.mutateAsync(payload),
       transitionForward: () => transitionStageForward.mutateAsync(),

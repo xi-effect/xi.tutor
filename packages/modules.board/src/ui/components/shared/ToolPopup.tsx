@@ -20,7 +20,14 @@ export const ToolPopup = ({
   isCloseOnOutside = false,
 }: ToolPopupProps) => {
   const handleEvent = (e: any) => {
-    if (!isCloseOnOutside && e.target.classList.contains('dr-container')) {
+    const target = e.target as HTMLElement | null;
+    // Меню типа линии порталится в body и для поповера выглядит как клик снаружи.
+    // Если его не удержать, поповер закроется на pointerdown и выбор стиля пропадёт.
+    if (target?.closest?.('[data-radix-menu-content]')) {
+      e.preventDefault();
+      return;
+    }
+    if (!isCloseOnOutside && target?.classList?.contains('dr-container')) {
       e.preventDefault();
     }
   };

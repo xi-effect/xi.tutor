@@ -67,7 +67,7 @@ export const ConfirmDialog = ({
             <ModalCloseIcon onClick={() => onOpenChange(false)} disabled={isPending} />
           </div>
 
-          <ModalDescription className={`${modalDescriptionClass} line-clamp-3 break-all`}>
+          <ModalDescription className={`${modalDescriptionClass} line-clamp-3`}>
             {description}
           </ModalDescription>
 

@@ -32,6 +32,15 @@ describe('getUserFacingErrorMessage', () => {
     expect(getUserFacingErrorMessage(axiosError(400, 'File not found'), 'files')).toBeNull();
   });
 
+  it('объясняет, что кабинет доступен только для чтения', () => {
+    expect(getUserFacingErrorMessage(axiosError(409, 'Classroom is read-only'), 'classroom')).toBe(
+      'Кабинет недоступен для изменений',
+    );
+    expect(
+      getUserFacingErrorMessage(axiosError(409, 'Classroom is read-only'), 'deleteStudent'),
+    ).toBe('Кабинет недоступен для изменений');
+  });
+
   it('показывает конфликт, который пользователь может исправить', () => {
     expect(getUserFacingErrorMessage(axiosError(409, 'Username already in use'), 'profile')).toBe(
       'Такое имя пользователя уже занято',
