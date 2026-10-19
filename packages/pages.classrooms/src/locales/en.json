@@ -55,6 +55,13 @@
     "math": "Mathematics",
     "computerScience": "Computer science",
     "foreignLanguages": "Foreign languages",
-    "other": "Other"
+    "other": "Other",
+    "statusChip": "Status",
+    "statusChipCount": "Status · {{count}}",
+    "reset": "Reset",
+    "apply": "Apply",
+    "resetAll": "Reset all",
+    "filteredEmptyTitle": "Nothing found",
+    "filteredEmptyDescription": "Try changing the filters or reset them"
   }
 }

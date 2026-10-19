@@ -1,5 +1,4 @@
 import { useQuery, type QueryClient } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import {
   classroomsApiConfig,
   ClassroomsQueryKey,
@@ -14,43 +13,16 @@ const jsonHeaders = {
   'Content-Type': 'application/json',
 };
 
-const readActiveClassroomsCount = (data: unknown): number => {
-  if (typeof data !== 'number' || !Number.isInteger(data) || data < 0) {
-    throw new Error('Invalid ActiveClassroomsCount');
-  }
-
-  return data;
-};
-
 export async function getClassroomCounts(): Promise<ClassroomCounts> {
   const axiosInst = await getAxiosInstance();
   const countsConfig = classroomsApiConfig[ClassroomsQueryKey.ClassroomCounts];
-
-  try {
-    const response = await axiosInst({
-      method: countsConfig.method,
-      url: countsConfig.getUrl(),
-      headers: jsonHeaders,
-    });
-
-    return parseClassroomCounts(response.data);
-  } catch (error) {
-    if (!isAxiosError(error) || error.response?.status !== 404) {
-      throw error;
-    }
-  }
-
-  const legacyConfig = classroomsApiConfig[ClassroomsQueryKey.ActiveClassroomsCount];
   const response = await axiosInst({
-    method: legacyConfig.method,
-    url: legacyConfig.getUrl(),
+    method: countsConfig.method,
+    url: countsConfig.getUrl(),
     headers: jsonHeaders,
   });
 
-  return {
-    active: readActiveClassroomsCount(response.data),
-    locked: 0,
-  };
+  return parseClassroomCounts(response.data);
 }
 
 export const invalidateClassroomCounts = (queryClient: QueryClient) =>

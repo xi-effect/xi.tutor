@@ -1,43 +1,26 @@
 import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
 import {
-  classroomsApiConfig,
-  ClassroomsQueryKey,
-  ClassroomT,
+  classroomsQueryKeys,
   getClassroomDisplayName,
+  getNextClassroomsCursor,
+  type ClassroomCursor,
+  type ClassroomStatusT,
 } from 'common.api';
-import { getAxiosInstance } from 'common.config';
+import { searchTutorClassrooms } from './searchTutorClassrooms';
 
 const PAGE_SIZE = 50;
 
-export const useAllTutorClassrooms = (enabled = true) => {
+export const useAllTutorClassrooms = (enabled = true, statuses?: ClassroomStatusT[]) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } =
     useTanStackInfiniteQuery({
-      queryKey: [ClassroomsQueryKey.GetClassrooms, 'all'],
-      queryFn: async ({ pageParam }) => {
-        const axiosInst = await getAxiosInstance();
-        const response = await axiosInst({
-          method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
-          url: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].getUrl(),
-          params: {
-            limit: PAGE_SIZE,
-            created_before: pageParam,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        return response.data as ClassroomT[];
-      },
-      initialPageParam: undefined as string | undefined,
-      getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length < PAGE_SIZE) {
-          return undefined;
-        }
-
-        return lastPage[lastPage.length - 1]?.created_at;
-      },
+      queryKey: classroomsQueryKeys.search(PAGE_SIZE, statuses),
+      queryFn: async ({ pageParam }) =>
+        searchTutorClassrooms((pageParam as ClassroomCursor | undefined) ?? null, PAGE_SIZE, {
+          statuses,
+        }),
+      initialPageParam: undefined as ClassroomCursor | undefined,
+      getNextPageParam: (lastPage) => getNextClassroomsCursor(lastPage, PAGE_SIZE),
       enabled,
       staleTime: 5 * 60 * 1000,
       gcTime: 10 * 60 * 1000,

@@ -1,15 +1,18 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
 import {
-  classroomsApiConfig,
-  ClassroomsQueryKey,
-  ClassroomT,
+  classroomsQueryKeys,
   getClassroomDisplayName,
+  getNextClassroomsCursor,
+  type ClassroomCursor,
+  type ClassroomStatusT,
+  type ClassroomT,
 } from 'common.api';
-import { getAxiosInstance } from 'common.config';
+import { searchTutorClassrooms } from 'common.services';
 import React from 'react';
 import { ClassroomPropsT } from '../types';
 
-// Адаптер для преобразования ClassroomT в ClassroomPropsT
+const PAGE_SIZE = 25;
+
 const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
   id: classroom.id,
   name: getClassroomDisplayName(classroom),
@@ -21,48 +24,36 @@ const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
   subject_id: classroom.subject_id,
 });
 
-export const useInfiniteQuery = () => {
+export const useInfiniteQuery = (statuses: ClassroomStatusT[] = []) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
-      queryKey: [ClassroomsQueryKey.GetClassrooms],
-      queryFn: async ({ pageParam }) => {
-        const axiosInst = await getAxiosInstance();
-        const url = classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].getUrl();
-
-        const response = await axiosInst({
-          method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
-          url,
-          params: {
-            limit: 25,
-            created_before: pageParam,
-          },
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        return response.data as ClassroomT[];
-      },
-      initialPageParam: undefined as string | undefined,
-      getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length < 25) {
-          return undefined;
-        }
-
-        return lastPage[lastPage.length - 1].created_at;
-      },
-      staleTime: 5 * 60 * 1000, // 5 минут
-      gcTime: 10 * 60 * 1000, // 10 минут
+      queryKey: classroomsQueryKeys.search(PAGE_SIZE, statuses),
+      queryFn: async ({ pageParam }) =>
+        searchTutorClassrooms((pageParam as ClassroomCursor | undefined) ?? null, PAGE_SIZE, {
+          statuses,
+        }),
+      initialPageParam: undefined as ClassroomCursor | undefined,
+      getNextPageParam: (lastPage) => getNextClassroomsCursor(lastPage, PAGE_SIZE),
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     });
 
-  // Объединяем все страницы в один массив и адаптируем типы
   const items: ClassroomPropsT[] = React.useMemo(() => {
     if (!data?.pages) {
       return [];
     }
 
     const flattened = data.pages.flat();
-    return flattened.map(adaptClassroom);
+    const seen = new Set<number>();
+
+    return flattened.flatMap((classroom) => {
+      if (!classroom?.id || seen.has(classroom.id)) {
+        return [];
+      }
+
+      seen.add(classroom.id);
+      return [adaptClassroom(classroom)];
+    });
   }, [data?.pages]);
 
   return {

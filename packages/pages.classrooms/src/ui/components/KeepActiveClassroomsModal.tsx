@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Modal,
   ModalCloseButton,
@@ -101,13 +101,12 @@ export const KeepActiveClassroomsModal = () => {
     setOpen(true);
   }, [shouldOffer]);
 
-  const { classrooms, isLoading, isError } = useAllTutorClassrooms(open);
+  const {
+    classrooms: lockedClassrooms,
+    isLoading,
+    isError,
+  } = useAllTutorClassrooms(open, ['locked']);
   const { activateClassrooms, isActivating } = useActivateClassrooms();
-
-  const lockedClassrooms = useMemo(
-    () => classrooms.filter((classroom) => classroom.status === 'locked'),
-    [classrooms],
-  );
   const listReady = !isLoading && !isError;
   const requiredCount = Math.min(
     maxActiveClassrooms,

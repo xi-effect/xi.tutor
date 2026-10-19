@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AxiosError } from 'axios';
 import { classroomsApiConfig, ClassroomsQueryKey, parseClassroomCounts } from 'common.api';
 
 vi.mock('common.config', () => ({
@@ -11,54 +10,45 @@ import { getClassroomCounts } from '../useClassroomCounts';
 
 const axiosMock = vi.fn();
 
-describe('classroom counts', () => {
+const statusCounts = {
+  active: 2,
+  paused: 1,
+  locked: 4,
+  finished: 3,
+};
+
+describe('classroom status counts', () => {
   beforeEach(() => {
     axiosMock.mockReset();
     vi.mocked(getAxiosInstance).mockResolvedValue(axiosMock as never);
   });
 
-  it('запрашивает количество кабинетов по статусам', async () => {
-    axiosMock.mockResolvedValue({ data: { active: 0, locked: 4, paused: 1 } });
+  it('запрашивает количество кабинетов по каждому статусу', async () => {
+    axiosMock.mockResolvedValue({ data: statusCounts });
 
-    await expect(getClassroomCounts()).resolves.toEqual({ active: 0, locked: 4 });
+    await expect(getClassroomCounts()).resolves.toEqual(statusCounts);
     expect(classroomsApiConfig[ClassroomsQueryKey.ClassroomCounts].method).toBe('GET');
     expect(classroomsApiConfig[ClassroomsQueryKey.ClassroomCounts].getUrl()).toContain(
-      '/api/protected/classroom-service/roles/tutor/classroom-counts/',
+      '/api/protected/classroom-service/roles/tutor/classroom-status-counts/',
     );
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'GET',
-        url: expect.stringContaining('/classroom-counts/'),
-      }),
-    );
-  });
-
-  it('пока нового метода нет, берёт число активных кабинетов из прежней ручки', async () => {
-    const notFound = new AxiosError('Not Found');
-    notFound.response = { status: 404 } as AxiosError['response'];
-    axiosMock.mockRejectedValueOnce(notFound);
-    axiosMock.mockResolvedValueOnce({ data: 2 });
-
-    await expect(getClassroomCounts()).resolves.toEqual({ active: 2, locked: 0 });
-    expect(axiosMock).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        method: 'GET',
-        url: expect.stringContaining('/active-classrooms-count/'),
+        url: expect.stringContaining('/classroom-status-counts/'),
       }),
     );
   });
 
   it('не принимает ответ без целых неотрицательных счётчиков', () => {
-    expect(parseClassroomCounts({ active: 0, locked: 1 })).toEqual({ active: 0, locked: 1 });
-    expect(() => parseClassroomCounts({ active: 2 })).toThrow('Invalid ClassroomCounts');
-    expect(() => parseClassroomCounts({ active: '0', locked: 1 })).toThrow(
+    expect(parseClassroomCounts(statusCounts)).toEqual(statusCounts);
+    expect(() => parseClassroomCounts({ active: 0, locked: 1 })).toThrow('Invalid ClassroomCounts');
+    expect(() => parseClassroomCounts({ ...statusCounts, active: '0' })).toThrow(
       'Invalid ClassroomCounts',
     );
-    expect(() => parseClassroomCounts({ active: 1.5, locked: 1 })).toThrow(
+    expect(() => parseClassroomCounts({ ...statusCounts, paused: 1.5 })).toThrow(
       'Invalid ClassroomCounts',
     );
-    expect(() => parseClassroomCounts({ active: -1, locked: 1 })).toThrow(
+    expect(() => parseClassroomCounts({ ...statusCounts, finished: -1 })).toThrow(
       'Invalid ClassroomCounts',
     );
     expect(() => parseClassroomCounts(null)).toThrow('Invalid ClassroomCounts');

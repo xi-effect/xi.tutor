@@ -57,6 +57,13 @@
     "math": "Математика",
     "computerScience": "Информатика",
     "foreignLanguages": "Иностранные языки",
-    "other": "Другое"
+    "other": "Другое",
+    "statusChip": "Статус",
+    "statusChipCount": "Статус · {{count}}",
+    "reset": "Сбросить",
+    "apply": "Применить",
+    "resetAll": "Сбросить все",
+    "filteredEmptyTitle": "Ничего не найдено",
+    "filteredEmptyDescription": "Попробуйте изменить параметры или сбросить выбранные фильтры"
   }
 }
