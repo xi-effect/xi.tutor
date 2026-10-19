@@ -14,6 +14,31 @@ export { useCurrentSubscription } from './useCurrentSubscription';
 export { useDeleteAutoRenewal } from './useDeleteAutoRenewal';
 export { useStorageUsage } from './useStorageUsage';
 export {
+  getMonetizationOverride,
+  hasMonetizationOverride,
+  initialMonetizationOverride,
+  monetizationEndsAt,
+  overlayMonetizationQuery,
+  activateLockedWithinLimit,
+  activateMonetizationClassrooms,
+  fitActiveClassroomCount,
+  lockActiveClassrooms,
+  mergeMonetizationClassrooms,
+  overlayClassroomStatus,
+  projectMonetizationClassrooms,
+  resolveMonetizationClassroomCounts,
+  resolveMonetizationPlan,
+  resolveMonetizationStorage,
+  resolveMonetizationSubscription,
+  tallyClassroomStatuses,
+  updateMonetizationClassroomStatus,
+  useMonetizationDevStore,
+  type MonetizationOverride,
+  type MonetizationPaymentPreview,
+  type MonetizationPlanMode,
+  type MonetizationSubscriptionMode,
+} from './monetizationDevtools';
+export {
   SubscriptionQueryKey,
   getSubscriptionPaymentStatus,
   subscriptionApiConfig,

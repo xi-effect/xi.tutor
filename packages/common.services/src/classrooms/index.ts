@@ -1,5 +1,6 @@
 export { useFetchClassrooms } from './useFetchClassrooms';
 export { searchTutorClassrooms } from './searchTutorClassrooms';
+export { loadAllTutorClassrooms } from './loadAllTutorClassrooms';
 export { useAllTutorClassrooms } from './useAllTutorClassrooms';
 export { useGetClassroom } from './useGetClassroom';
 export { useGetClassroomStudent } from './useGetClassroomStudent';

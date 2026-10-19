@@ -119,7 +119,7 @@ export const SubscriptionCheckout = () => {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-4">
+    <div className="mx-auto flex h-full w-full max-w-md flex-col gap-4">
       <ScreenBackButton onClick={openOverview} />
       <span className="text-text-primary text-3xl font-semibold max-sm:hidden">
         {t('checkout.title')}
@@ -192,6 +192,9 @@ export const SubscriptionCheckout = () => {
         <p>{t('checkout.paymentHint')}</p>
         <p>{t('checkout.autoRenewalManage')}</p>
       </div>
+      <p className="text-text-secondary mt-auto pt-4 text-center text-xs leading-4">
+        {t('checkout.yearlyDiscountNote')}
+      </p>
     </div>
   );
 };

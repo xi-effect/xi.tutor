@@ -5,6 +5,10 @@ import {
   type ClassroomT,
 } from 'common.api';
 import { useQuery } from '@tanstack/react-query';
+import {
+  mergeMonetizationClassrooms,
+  useMonetizationDevStore,
+} from '../subscription/monetizationDevtools';
 import { searchTutorClassrooms } from './searchTutorClassrooms';
 
 const DEFAULT_LIMIT = 20;
@@ -16,6 +20,7 @@ export const useFetchClassrooms = (
   },
   disabled?: boolean,
 ) => {
+  const catalog = useMonetizationDevStore((state) => state.override.classroomCatalog);
   const limit = normalizeClassroomsSearchLimit(searchParams?.limit ?? DEFAULT_LIMIT);
   const statuses = searchParams?.statuses;
 
@@ -26,9 +31,11 @@ export const useFetchClassrooms = (
   });
 
   return {
-    data: data as ClassroomT[] | undefined,
-    isError,
-    isLoading,
+    data: catalog
+      ? mergeMonetizationClassrooms((data as ClassroomT[] | undefined) ?? [], catalog, statuses)
+      : (data as ClassroomT[] | undefined),
+    isError: catalog ? false : isError,
+    isLoading: catalog ? false : isLoading,
     ...rest,
   };
 };

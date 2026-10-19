@@ -2,6 +2,10 @@ import { ClassroomsQueryKey, ClassroomT, ClassroomStatusT, classroomsApiConfig }
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import {
+  getMonetizationOverride,
+  updateMonetizationClassroomStatus,
+} from '../subscription/monetizationDevtools';
 import { invalidateClassroomCounts } from './useClassroomCounts';
 import {
   patchClassroomInLists,
@@ -29,6 +33,9 @@ export const useUpdateClassroomStatus = () => {
     MutationContext
   >({
     mutationFn: async ({ classroomId, status }: UpdateClassroomStatusParams) => {
+      const simulated = updateMonetizationClassroomStatus(classroomId, status);
+      if (simulated) return simulated;
+
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -90,6 +97,11 @@ export const useUpdateClassroomStatus = () => {
       handleError(err, 'classroom');
     },
     onSuccess: (updatedClassroom, { classroomId }) => {
+      if (getMonetizationOverride().classroomCatalog) {
+        showSuccess('classroom', `Статус кабинета обновлен`);
+        return;
+      }
+
       // Если сервер вернул обновленные данные, обновляем кеш
       if (updatedClassroom) {
         queryClient.setQueryData<ClassroomT>(

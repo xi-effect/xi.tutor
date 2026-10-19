@@ -12,7 +12,7 @@ export interface ClassroomCursor {
 }
 
 export interface ClassroomFilters {
-  statuses?: ClassroomStatusT[] | null;
+  statuses?: readonly ClassroomStatusT[] | null;
 }
 
 export interface ClassroomSearchRequest {

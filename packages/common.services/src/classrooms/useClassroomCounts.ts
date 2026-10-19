@@ -7,6 +7,11 @@ import {
   type ClassroomCounts,
 } from 'common.api';
 import { getAxiosInstance } from 'common.config';
+import {
+  overlayMonetizationQuery,
+  resolveMonetizationClassroomCounts,
+  useMonetizationDevStore,
+} from '../subscription/monetizationDevtools';
 import { useTutorBillingScope } from '../subscription/useTutorBillingScope';
 
 const jsonHeaders = {
@@ -30,8 +35,8 @@ export const invalidateClassroomCounts = (queryClient: QueryClient) =>
 
 export const useClassroomCounts = (options?: { enabled?: boolean }) => {
   const { userId, enabled } = useTutorBillingScope(options?.enabled ?? true);
-
-  return useQuery({
+  const override = useMonetizationDevStore((state) => state.override);
+  const query = useQuery({
     queryKey:
       userId === null
         ? (['classroomCounts', 'anonymous'] as const)
@@ -39,4 +44,8 @@ export const useClassroomCounts = (options?: { enabled?: boolean }) => {
     queryFn: getClassroomCounts,
     enabled,
   });
+  const counts = resolveMonetizationClassroomCounts(query.data, override);
+  if (!counts || counts === query.data) return query;
+
+  return overlayMonetizationQuery(query, counts, true);
 };

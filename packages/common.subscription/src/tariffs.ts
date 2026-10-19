@@ -34,8 +34,9 @@ export const TARIFFS: Record<PlanId, TariffLimits> = {
   pro: {
     id: 'pro',
     priceMonthlyRub: 1499,
-    priceYearlyRub: 14999,
-    maxActiveClassrooms: 30,
+    // Годовая цена зафиксирована: 14 990 ₽. Не менять без явного разрешения.
+    priceYearlyRub: 14990,
+    maxActiveClassrooms: 60,
     storageBytes: 20 * GB,
     maxImageBytes: 5 * MB,
     maxFileBytes: 30 * MB,

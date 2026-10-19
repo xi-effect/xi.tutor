@@ -4,14 +4,21 @@ import {
   classroomsQueryKeys,
   getClassroomDisplayName,
   getNextClassroomsCursor,
+  serializeClassroomStatuses,
   type ClassroomCursor,
   type ClassroomStatusT,
 } from 'common.api';
+import {
+  mergeMonetizationClassrooms,
+  useMonetizationDevStore,
+} from '../subscription/monetizationDevtools';
 import { searchTutorClassrooms } from './searchTutorClassrooms';
 
 const PAGE_SIZE = 50;
 
-export const useAllTutorClassrooms = (enabled = true, statuses?: ClassroomStatusT[]) => {
+export const useAllTutorClassrooms = (enabled = true, statuses?: readonly ClassroomStatusT[]) => {
+  const catalog = useMonetizationDevStore((state) => state.override.classroomCatalog);
+  const statusKey = serializeClassroomStatuses(statuses);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } =
     useTanStackInfiniteQuery({
       queryKey: classroomsQueryKeys.search(PAGE_SIZE, statuses),
@@ -27,35 +34,36 @@ export const useAllTutorClassrooms = (enabled = true, statuses?: ClassroomStatus
     });
 
   useEffect(() => {
-    if (!enabled || !hasNextPage || isFetchingNextPage || isError) {
+    if (!enabled || catalog || !hasNextPage || isFetchingNextPage || isError) {
       return;
     }
 
     void fetchNextPage();
-  }, [enabled, fetchNextPage, hasNextPage, isFetchingNextPage, isError]);
+  }, [catalog, enabled, fetchNextPage, hasNextPage, isFetchingNextPage, isError]);
 
   const classrooms = useMemo(() => {
     const flattened = data?.pages.flat() ?? [];
     const seen = new Set<number>();
+    const unique = flattened.filter((classroom) => {
+      if (!classroom?.id || seen.has(classroom.id)) {
+        return false;
+      }
+      seen.add(classroom.id);
+      return true;
+    });
 
-    return flattened
-      .filter((classroom) => {
-        if (!classroom?.id || seen.has(classroom.id)) {
-          return false;
-        }
-        seen.add(classroom.id);
-        return true;
-      })
-      .sort((a, b) =>
-        getClassroomDisplayName(a).localeCompare(getClassroomDisplayName(b), 'ru', {
-          sensitivity: 'base',
-        }),
-      );
-  }, [data?.pages]);
+    const allowed = statusKey ? (statusKey.split(',') as ClassroomStatusT[]) : undefined;
+
+    return mergeMonetizationClassrooms(unique, catalog, allowed).sort((a, b) =>
+      getClassroomDisplayName(a).localeCompare(getClassroomDisplayName(b), 'ru', {
+        sensitivity: 'base',
+      }),
+    );
+  }, [catalog, data?.pages, statusKey]);
 
   return {
     classrooms,
-    isLoading: isLoading || isFetchingNextPage || Boolean(hasNextPage),
-    isError,
+    isLoading: catalog ? false : isLoading || isFetchingNextPage || Boolean(hasNextPage),
+    isError: catalog ? false : isError,
   };
 };

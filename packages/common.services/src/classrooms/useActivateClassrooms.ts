@@ -2,6 +2,10 @@ import { classroomsApiConfig, ClassroomsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import {
+  activateMonetizationClassrooms,
+  getMonetizationOverride,
+} from '../subscription/monetizationDevtools';
 import { invalidateClassroomCounts } from './useClassroomCounts';
 
 const jsonHeaders = {
@@ -13,6 +17,8 @@ export const useActivateClassrooms = () => {
 
   const activateClassroomsMutation = useMutation<void, Error, number[]>({
     mutationFn: async (classroomIds) => {
+      if (activateMonetizationClassrooms(classroomIds)) return;
+
       const axiosInst = await getAxiosInstance();
       const { method, getUrl } = classroomsApiConfig[ClassroomsQueryKey.UpdateClassroomStatus];
 
@@ -26,6 +32,11 @@ export const useActivateClassrooms = () => {
       }
     },
     onSuccess: () => {
+      if (getMonetizationOverride().classroomCatalog) {
+        showSuccess('classroom', 'Выбранные кабинеты снова активны');
+        return;
+      }
+
       void queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
       void queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassroom] });
       void invalidateClassroomCounts(queryClient);

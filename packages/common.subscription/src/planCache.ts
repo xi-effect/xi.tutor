@@ -7,6 +7,12 @@ import {
   type StorageUsage,
 } from 'common.api';
 import { queryClient } from 'common.config';
+import {
+  getMonetizationOverride,
+  resolveMonetizationClassroomCounts,
+  resolveMonetizationPlan,
+  resolveMonetizationStorage,
+} from 'common.services';
 import { getTariff, type PlanId, type TariffLimits } from './tariffs';
 
 type HomeUser = {
@@ -18,17 +24,29 @@ const readHomeUserId = (): number | null => {
   return typeof user?.id === 'number' ? user.id : null;
 };
 
-export const readCachedCurrentPlan = (): CurrentPlan | undefined => {
+const readRawCurrentPlan = (): CurrentPlan | undefined => {
   const userId = readHomeUserId();
   if (userId === null) return undefined;
   return queryClient.getQueryData<CurrentPlan>(subscriptionQueryKeys.currentPlan(userId));
 };
 
-export const readCachedStorageUsage = (): StorageUsage | undefined => {
+const readRawStorageUsage = (): StorageUsage | undefined => {
   const userId = readHomeUserId();
   if (userId === null) return undefined;
   return queryClient.getQueryData<StorageUsage>(subscriptionQueryKeys.storageUsage(userId));
 };
+
+const readRawClassroomCounts = (): ClassroomCounts | undefined => {
+  const userId = readHomeUserId();
+  if (userId === null) return undefined;
+  return queryClient.getQueryData<ClassroomCounts>(classroomsQueryKeys.classroomCounts(userId));
+};
+
+export const readCachedCurrentPlan = (): CurrentPlan | undefined =>
+  resolveMonetizationPlan(readRawCurrentPlan(), getMonetizationOverride());
+
+export const readCachedStorageUsage = (): StorageUsage | undefined =>
+  resolveMonetizationStorage(readRawStorageUsage(), getMonetizationOverride());
 
 export const planKindToPlanId = (kind: CurrentPlan['kind']): PlanId =>
   kind === 'pro' ? 'pro' : 'basic';
@@ -50,11 +68,9 @@ export const readCachedPlanId = (): PlanId | null => {
 };
 
 export const countCachedActiveClassrooms = (): number | null => {
-  const userId = readHomeUserId();
-  if (userId === null) return null;
-
-  const counts = queryClient.getQueryData<ClassroomCounts>(
-    classroomsQueryKeys.classroomCounts(userId),
+  const counts = resolveMonetizationClassroomCounts(
+    readRawClassroomCounts(),
+    getMonetizationOverride(),
   );
   return typeof counts?.active === 'number' && Number.isFinite(counts.active)
     ? counts.active

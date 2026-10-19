@@ -8,8 +8,9 @@ import {
   getSubscriptionPaymentStatus,
   invalidateSubscriptionBilling,
   useCurrentUser,
+  useMonetizationDevStore,
 } from 'common.services';
-import { useSubscriptionUiStore } from 'common.subscription';
+import { isSubscriptionDebugEnabled, useSubscriptionUiStore } from 'common.subscription';
 import { useTranslation } from 'react-i18next';
 import { isConfirmationUrl } from '../pendingPayment';
 
@@ -50,7 +51,9 @@ export const SubscriptionPaymentResult = () => {
   const paymentId = typeof search.payment_id === 'string' ? search.payment_id : '';
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const [phase, setPhase] = useState<PaymentPhase>(paymentId ? 'checking' : 'error');
+  const paymentPreview = useMonetizationDevStore((state) => state.override.paymentPreview);
+  const preview = isSubscriptionDebugEnabled() ? paymentPreview : null;
+  const [phase, setPhase] = useState<PaymentPhase>(preview ?? (paymentId ? 'checking' : 'error'));
   const [confirmationUrl, setConfirmationUrl] = useState<string | null>(null);
   const [checkToken, setCheckToken] = useState(0);
 
@@ -62,6 +65,12 @@ export const SubscriptionPaymentResult = () => {
   }, [isTutor, isUserLoading, navigate, user]);
 
   useEffect(() => {
+    if (preview) {
+      setPhase(preview);
+      setConfirmationUrl(null);
+      return;
+    }
+
     if (!isTutor || !paymentId) return;
 
     let cancelled = false;
@@ -136,7 +145,7 @@ export const SubscriptionPaymentResult = () => {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [checkToken, isTutor, paymentId, queryClient]);
+  }, [checkToken, isTutor, paymentId, preview, queryClient]);
 
   const openSubscription = (screen: 'overview' | 'checkout') => {
     if (screen === 'checkout') openCheckout();

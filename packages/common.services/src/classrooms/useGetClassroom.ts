@@ -2,8 +2,13 @@ import { ClassroomsQueryKey, ClassroomTutorResponseSchema } from 'common.api';
 import { useQuery } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
 import { env } from 'common.env';
+import {
+  overlayClassroomStatus,
+  useMonetizationDevStore,
+} from '../subscription/monetizationDevtools';
 
 export const useGetClassroom = (classroomId: number, disabled?: boolean) => {
+  const catalog = useMonetizationDevStore((state) => state.override.classroomCatalog);
   const { data, isError, isLoading, ...rest } = useQuery({
     queryKey: [ClassroomsQueryKey.GetClassroom, classroomId],
     queryFn: async () => {
@@ -24,7 +29,7 @@ export const useGetClassroom = (classroomId: number, disabled?: boolean) => {
   });
 
   return {
-    data,
+    data: overlayClassroomStatus(data, catalog),
     isError,
     isLoading,
     ...rest,

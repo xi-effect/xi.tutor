@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { isSubscriptionPeriodActive } from 'common.subscription';
-import { useCurrentSubscription, useDeleteAutoRenewal } from 'common.services';
+import {
+  useCurrentSubscription,
+  useDeleteAutoRenewal,
+  useMonetizationDevStore,
+} from 'common.services';
 import { ConfirmDialog, useAppTimeZone } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDate } from '../utils/dates';
@@ -21,6 +25,20 @@ export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?
   const description = activeEndsAt
     ? t('manage.disableDescriptionRenewal', { date: formatRenewalDate(activeEndsAt) })
     : t('manage.disableDescriptionRenewalNoDate');
+  const cancelDialogRequested = useMonetizationDevStore(
+    (state) => state.override.cancelDialogRequested,
+  );
+  const subscriptionOverridden = useMonetizationDevStore(
+    (state) => state.override.enabled && state.override.subscription !== 'real',
+  );
+  const consumeCancelDialog = useMonetizationDevStore((state) => state.consumeCancelDialog);
+  const patchOverride = useMonetizationDevStore((state) => state.patchOverride);
+
+  useEffect(() => {
+    if (!cancelDialogRequested || !autoRenewal) return;
+    consumeCancelDialog();
+    setConfirmOpen(true);
+  }, [autoRenewal, cancelDialogRequested, consumeCancelDialog]);
 
   if (!activeSubscription) return null;
 
@@ -62,6 +80,13 @@ export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?
         cancelLabel={t('manage.disableKeep')}
         isPending={deleteAutoRenewal.isPending}
         onConfirm={() => {
+          if (subscriptionOverridden) {
+            patchOverride({ autoRenewal: false });
+            setError(false);
+            setConfirmOpen(false);
+            return;
+          }
+
           deleteAutoRenewal.mutate(undefined, {
             onSuccess: () => setError(false),
             onError: () => setError(true),

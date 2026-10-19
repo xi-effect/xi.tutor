@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Modal,
   ModalCloseButton,
@@ -12,15 +12,18 @@ import { Button } from '@xipkg/button';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { cn } from '@xipkg/utils';
-import { getClassroomDisplayName, type ClassroomT } from 'common.api';
+import { getClassroomDisplayName, type ClassroomStatusT, type ClassroomT } from 'common.api';
 import {
   useActivateClassrooms,
   useAllTutorClassrooms,
   useClassroomCounts,
+  useMonetizationDevStore,
   useStudentById,
 } from 'common.services';
 import { SUBSCRIPTION_BILLING_ENABLED, useSubscriptionPlan } from 'common.subscription';
 import { useTranslation } from 'react-i18next';
+
+const lockedStatuses: readonly ClassroomStatusT[] = ['locked'];
 
 type ClassroomCardProps = {
   classroom: ClassroomT;
@@ -47,10 +50,9 @@ const ClassroomCard = ({ classroom, isSelected, isDisabled, onSelect }: Classroo
       data-umami-event="classroom-keep-active-select"
       data-umami-event-classroom-id={classroom.id}
       className={cn(
-        'border-border-default hover:bg-background-page flex w-full cursor-pointer items-center gap-3 rounded-2xl border p-4 text-left',
-        isSelected &&
-          'border-border-focus bg-status-info-background hover:bg-status-info-background',
-        isDisabled && 'cursor-not-allowed opacity-60 hover:bg-transparent',
+        'border-border-strong bg-background-surface hover:border-border-focus flex w-full cursor-pointer items-center gap-3 rounded-2xl border p-4 text-left shadow-sm transition-colors',
+        isSelected && 'border-border-focus bg-status-info-background',
+        isDisabled && 'hover:border-border-strong cursor-not-allowed',
       )}
     >
       {isIndividual && studentId ? (
@@ -91,9 +93,19 @@ export const KeepActiveClassroomsModal = () => {
     counts?.active === 0 &&
     counts.locked > 0;
 
+  const keepActiveRequested = useMonetizationDevStore(
+    (state) => state.override.keepActiveRequested,
+  );
+  const consumeKeepActive = useMonetizationDevStore((state) => state.consumeKeepActive);
   const [open, setOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const offeredRef = useRef(false);
+
+  useEffect(() => {
+    if (!keepActiveRequested) return;
+    consumeKeepActive();
+    setOpen(true);
+  }, [consumeKeepActive, keepActiveRequested]);
 
   useEffect(() => {
     if (!shouldOffer || offeredRef.current) return;
@@ -101,11 +113,23 @@ export const KeepActiveClassroomsModal = () => {
     setOpen(true);
   }, [shouldOffer]);
 
+  const catalog = useMonetizationDevStore((state) => state.override.classroomCatalog);
   const {
-    classrooms: lockedClassrooms,
-    isLoading,
+    classrooms: fetchedClassrooms,
+    isLoading: isFetchingClassrooms,
     isError,
-  } = useAllTutorClassrooms(open, ['locked']);
+  } = useAllTutorClassrooms(open && !catalog, lockedStatuses);
+  const lockedClassrooms = useMemo(() => {
+    const source = catalog ?? fetchedClassrooms;
+    return source
+      .filter((classroom) => classroom.status === 'locked')
+      .sort((left, right) =>
+        getClassroomDisplayName(left).localeCompare(getClassroomDisplayName(right), 'ru', {
+          sensitivity: 'base',
+        }),
+      );
+  }, [catalog, fetchedClassrooms]);
+  const isLoading = catalog ? false : isFetchingClassrooms;
   const { activateClassrooms, isActivating } = useActivateClassrooms();
   const listReady = !isLoading && !isError;
   const requiredCount = Math.min(
@@ -115,11 +139,19 @@ export const KeepActiveClassroomsModal = () => {
   const canConfirm =
     listReady && requiredCount > 0 && selectedIds.length === requiredCount && !isActivating;
 
+  const lockedIdsKey = lockedClassrooms.map((classroom) => classroom.id).join(',');
+
   useEffect(() => {
     if (!listReady) return;
-    const lockedIds = new Set(lockedClassrooms.map((classroom) => classroom.id));
-    setSelectedIds((current) => current.filter((id) => lockedIds.has(id)));
-  }, [listReady, lockedClassrooms]);
+    const lockedIds = new Set(lockedIdsKey.length === 0 ? [] : lockedIdsKey.split(',').map(Number));
+    setSelectedIds((current) => {
+      const next = current.filter((id) => lockedIds.has(id));
+      if (next.length === current.length && next.every((id, index) => id === current[index])) {
+        return current;
+      }
+      return next;
+    });
+  }, [listReady, lockedIdsKey]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
@@ -155,6 +187,7 @@ export const KeepActiveClassroomsModal = () => {
           <ModalDescription>
             {t('keepActive.description', { count: requiredCount })}
           </ModalDescription>
+          <p className="text-text-secondary m-0 text-sm leading-5">{t('keepActive.changeLater')}</p>
         </ModalHeader>
 
         <div className="min-h-[300px] py-4 pr-2 pl-6 max-sm:min-h-[240px] max-sm:py-3 max-sm:pr-3 max-sm:pl-3">

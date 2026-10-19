@@ -3,11 +3,16 @@ import {
   classroomsQueryKeys,
   getClassroomDisplayName,
   getNextClassroomsCursor,
+  serializeClassroomStatuses,
   type ClassroomCursor,
   type ClassroomStatusT,
   type ClassroomT,
 } from 'common.api';
-import { searchTutorClassrooms } from 'common.services';
+import {
+  mergeMonetizationClassrooms,
+  searchTutorClassrooms,
+  useMonetizationDevStore,
+} from 'common.services';
 import React from 'react';
 import { ClassroomPropsT } from '../types';
 
@@ -24,7 +29,9 @@ const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
   subject_id: classroom.subject_id,
 });
 
-export const useInfiniteQuery = (statuses: ClassroomStatusT[] = []) => {
+export const useInfiniteQuery = (statuses: readonly ClassroomStatusT[] = []) => {
+  const catalog = useMonetizationDevStore((state) => state.override.classroomCatalog);
+  const statusKey = serializeClassroomStatuses(statuses);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
       queryKey: classroomsQueryKeys.search(PAGE_SIZE, statuses),
@@ -39,14 +46,15 @@ export const useInfiniteQuery = (statuses: ClassroomStatusT[] = []) => {
     });
 
   const items: ClassroomPropsT[] = React.useMemo(() => {
-    if (!data?.pages) {
+    if (!catalog && !data?.pages) {
       return [];
     }
 
-    const flattened = data.pages.flat();
+    const allowed = statusKey ? (statusKey.split(',') as ClassroomStatusT[]) : undefined;
+    const source = mergeMonetizationClassrooms(data?.pages.flat() ?? [], catalog, allowed);
     const seen = new Set<number>();
 
-    return flattened.flatMap((classroom) => {
+    return source.flatMap((classroom) => {
       if (!classroom?.id || seen.has(classroom.id)) {
         return [];
       }
@@ -54,15 +62,15 @@ export const useInfiniteQuery = (statuses: ClassroomStatusT[] = []) => {
       seen.add(classroom.id);
       return [adaptClassroom(classroom)];
     });
-  }, [data?.pages]);
+  }, [catalog, data?.pages, statusKey]);
 
   return {
     items,
-    isLoading,
-    isError,
+    isLoading: catalog ? false : isLoading,
+    isError: catalog ? false : isError,
     error,
-    isFetchingNextPage,
-    hasNextPage,
+    isFetchingNextPage: catalog ? false : isFetchingNextPage,
+    hasNextPage: catalog ? false : hasNextPage,
     fetchNextPage,
   };
 };

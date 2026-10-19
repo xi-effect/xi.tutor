@@ -41,7 +41,7 @@ export const StatusBadge = ({ status, deleted, className, textClassName }: Statu
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="inline-flex min-w-0">{badge}</span>
+        <span className="inline-flex shrink-0">{badge}</span>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="z-[200] max-w-72 leading-5 font-normal">
         {t(`educationStatus.${role}.lockedHint`)}

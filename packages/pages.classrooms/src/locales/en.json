@@ -33,6 +33,7 @@
     "title": "Choose classrooms",
     "description_one": "Choose {{count}} classroom to continue lessons on the Basic plan",
     "description_other": "Choose {{count}} classrooms to continue lessons on the Basic plan",
+    "changeLater": "You can change statuses later and choose different active classrooms.",
     "selected": "Selected {{selected}} of {{count}}",
     "loading": "Loading classrooms...",
     "error": "Failed to load classrooms",
