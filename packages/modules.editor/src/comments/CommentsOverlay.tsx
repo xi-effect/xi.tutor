@@ -2,7 +2,7 @@ import { useYjsContext } from '../hooks/useYjsContext';
 import { useCommentAuthor } from './hooks/useCommentAuthor';
 import { useShallow } from 'zustand/shallow';
 import { useCommentsUiStore } from './commentsUiStore';
-import { useCloseOnOutsideClick } from './hooks/useCloseOnOutsideClick';
+import { useCloseOnOutsideClick } from 'modules.board';
 import { useYMapVersion } from './hooks/useYMapVersion';
 import { CommentComposer } from './ui/CommentComposer';
 import { CommentPin } from './ui/CommentPin';

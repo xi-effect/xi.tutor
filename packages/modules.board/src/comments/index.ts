@@ -4,3 +4,4 @@ export { CommentsFeedButton } from './CommentsFeedButton';
 export { useCommentsUiStore } from './commentsUiStore';
 export type { DrCommentThread, DrCommentMessage } from './commentRecords';
 export { commentCustomRecords } from './commentRecords';
+export { useCloseOnOutsideClick } from './useCloseOnOutsideClick';
