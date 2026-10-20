@@ -142,8 +142,11 @@ export const CommentThreadPanel = ({
         {messages.map((message) => {
           const isOwnMessage = author?.authorId === message.authorId;
           return (
-            <div key={message.id} className="group flex items-start gap-2">
-              <Avatar size="s">
+            <div
+              key={`${message.id}-${message.createdAt}`}
+              className="group flex items-start gap-2"
+            >
+              <Avatar size="s" key={message.id}>
                 <AvatarImage
                   src={getCommentAuthorAvatarUrl(message.authorId)}
                   alt={message.authorName}

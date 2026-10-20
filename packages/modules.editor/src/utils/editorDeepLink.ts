@@ -6,6 +6,8 @@ import type { Editor } from '@tiptap/react';
 import { getThreadMarkRange } from '../comments/commentQueries';
 import type { EditorCommentThread } from '../comments/commentRecords';
 import type * as Y from 'yjs';
+import { useCommentsUiStore } from '../comments';
+import { keepCommentCentered } from './scrollToComment';
 
 export type EditorDeepLinkSearch = {
   comment?: string;
@@ -53,13 +55,6 @@ export function focusEditorComment(
   editor: Editor,
   commentThreadsMap: Y.Map<EditorCommentThread>,
   threadId: string,
-  {
-    openThread,
-    setCommentsVisible,
-  }: {
-    openThread: (id: string | null) => void;
-    setCommentsVisible: (value: boolean) => void;
-  },
 ): boolean {
   const thread = commentThreadsMap.get(threadId);
   if (!thread) return false;
@@ -67,8 +62,12 @@ export function focusEditorComment(
   const range = getThreadMarkRange(editor, threadId);
   if (!range) return false;
 
-  setCommentsVisible(true);
-  openThread(threadId);
+  const ui = useCommentsUiStore.getState();
+  ui.setCommentsVisible(true);
+  ui.openThread(threadId);
+
+  editor.chain().setTextSelection(range.from).run();
+  keepCommentCentered(editor, threadId);
   return true;
 }
 

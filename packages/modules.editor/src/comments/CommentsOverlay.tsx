@@ -157,7 +157,7 @@ export const CommentsOverlay = () => {
       {groups.flatMap((group) =>
         group.items.map((item, index) => (
           <CommentPin
-            key={item.thread.id}
+            key={`${item.thread.id}-${item.thread.createdAt}`}
             thread={item.thread}
             top={group.avgTop}
             right={index * PIN_SHIFT_STEP}

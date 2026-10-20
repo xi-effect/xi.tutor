@@ -3,7 +3,6 @@ import type { Editor } from '@tiptap/react';
 import { useLocation, useSearch } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import type * as Y from 'yjs';
-import { useCommentsUiStore } from '../comments/commentsUiStore';
 import type { EditorCommentThread } from '../comments/commentRecords';
 import {
   type EditorDeepLinkSearch,
@@ -26,7 +25,7 @@ export function useEditorDeepLinkFocus({
   commentThreadsMap,
   ready = true,
 }: UseEditorDeepLinkFocusArgs) {
-  const search = useSearch({ strict: false }) as EditorDeepLinkSearch;
+  const search = useSearch({ strict: false });
   const appliedKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -40,13 +39,8 @@ export function useEditorDeepLinkFocus({
 
     if (appliedKeyRef.current === commentId) return;
 
-    const openThread = useCommentsUiStore.getState().openThread;
-    const setCommentsVisible = useCommentsUiStore.getState().setCommentsVisible;
+    const handled = focusEditorComment(editor, commentThreadsMap, commentId);
 
-    const handled = focusEditorComment(editor, commentThreadsMap, commentId, {
-      openThread,
-      setCommentsVisible,
-    });
     if (!handled) {
       toast.error(i18n.t('comments.notFound', { ns: 'editor' }));
     } else {
