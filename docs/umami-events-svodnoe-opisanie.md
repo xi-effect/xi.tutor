@@ -203,6 +203,8 @@
 | `classrooms-create-group`    | `data-umami-event` — клик «Создать группу»                   | Создание группы                     |
 | `classrooms-invite-student`  | `data-umami-event` — клик «Пригласить ученика»               | Открытие модалки приглашения        |
 | `classrooms-page-empty-help` | `data-umami-event` — клик «Как работают кабинеты»            | Переход в базу знаний               |
+| `classrooms-guide-read`      | `data-umami-event` — клик «Читать гайд» в плашке под шапкой  | Переход к статье о кабинетах        |
+| `classrooms-guide-dismiss`   | `data-umami-event` — клик «Закрыть» в плашке под шапкой      | Закрытие плашки о кабинетах         |
 | `material-card-open`         | `data-umami-event` — клик по карточке кабинета               | Открытие кабинета, свойство: `type` |
 | `material-edit`              | `data-umami-event` — клик «Переименовать» в контекстном меню | Переименование кабинета             |
 

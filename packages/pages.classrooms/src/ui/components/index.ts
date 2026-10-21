@@ -1,3 +1,5 @@
+export { ClassroomGuideBanner } from './ClassroomGuideBanner';
+
 // Cards
 export * from './cards';
 

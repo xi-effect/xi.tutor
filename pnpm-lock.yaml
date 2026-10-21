@@ -2166,8 +2166,8 @@ importers:
         specifier: 4.3.0
         version: 4.3.0(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/datepicker':
-        specifier: 2.4.0
-        version: 2.4.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 2.4.1
+        version: 2.4.1(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/form':
         specifier: 4.3.0
         version: 4.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -2566,8 +2566,8 @@ importers:
         specifier: 4.3.0
         version: 4.3.0(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/datepicker':
-        specifier: 2.4.0
-        version: 2.4.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 2.4.1
+        version: 2.4.1(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/form':
         specifier: 4.3.0
         version: 4.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -3957,11 +3957,11 @@ importers:
         specifier: 4.3.0
         version: 4.3.0(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/calendar':
-        specifier: 2.4.0
-        version: 2.4.0(@types/react@19.2.18)(react@19.2.8)
+        specifier: 2.4.1
+        version: 2.4.1(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/datepicker':
-        specifier: 2.4.0
-        version: 2.4.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 2.4.1
+        version: 2.4.1(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.8
         version: 3.1.8(react@19.2.8)
@@ -10556,8 +10556,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/calendar@2.4.0':
-    resolution: {integrity: sha512-IYVthVeIFSVp3C9JfcgFuAigbA0NnZZ2j5qxIxwUsSUhwPDHLFQyQsDnRdEo5HFMOiBlKSn6V8K7yHxnpyNMXw==}
+  '@xipkg/calendar@2.4.1':
+    resolution: {integrity: sha512-hqcbTWQeiESTe1iE0fSVfOysUfICAbSVQqe4g+P8gIO2d/su+DB9zMPpnSwlCLPIVoOFWI65w7NGSIEMTXEbew==}
     peerDependencies:
       react: ^19
 
@@ -10638,8 +10638,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/datepicker@2.4.0':
-    resolution: {integrity: sha512-53/SlQg3GpuI2vMk2RR/aObvYWP8bnFKXNFMpLi7g5yBKFDyft1FxX19mojx2rXhmQLEwaBFJ3r8nANmID+e/g==}
+  '@xipkg/datepicker@2.4.1':
+    resolution: {integrity: sha512-aYCmFLZ42ZRnZ7GfEgz7vTWZ5rDpN8ROhn8/1q0EfV5P1AbEzfGCPD82GyucjHs0sHgcwKwSMRRgI7weHzKbmQ==}
     peerDependencies:
       react: ^19
 
@@ -18037,7 +18037,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@xipkg/calendar@2.4.0(@types/react@19.2.18)(react@19.2.8)':
+  '@xipkg/calendar@2.4.1(@types/react@19.2.18)(react@19.2.8)':
     dependencies:
       '@radix-ui/react-slot': 1.3.3(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/button': 4.3.0(@types/react@19.2.18)(react@19.2.8)
@@ -18347,11 +18347,11 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/datepicker@2.4.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@xipkg/datepicker@2.4.1(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@radix-ui/react-slot': 1.3.3(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/button': 4.3.0(@types/react@19.2.18)(react@19.2.8)
-      '@xipkg/calendar': 2.4.0(@types/react@19.2.18)(react@19.2.8)
+      '@xipkg/calendar': 2.4.1(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/icons': 3.1.8(react@19.2.8)
       '@xipkg/popover': 3.0.5(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/utils': 1.8.0(react@19.2.8)

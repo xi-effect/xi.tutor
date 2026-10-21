@@ -1,6 +1,11 @@
 import { useRef } from 'react';
 import { MobileTutorActionButton } from 'features.invites';
-import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
+import {
+  ButtonsHeader,
+  ClassroomGuideBanner,
+  LinkListStudents,
+  CardsGridSimple,
+} from './components';
 import { useCurrentUser } from 'common.services';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +36,7 @@ export const ClassroomsPage = () => {
           </div>
         )}
       </div>
+      {isTutor && <ClassroomGuideBanner />}
       <div
         ref={parentRef}
         className={cn(
