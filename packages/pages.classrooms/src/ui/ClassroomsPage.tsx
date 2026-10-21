@@ -1,7 +1,12 @@
 import { useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { MobileTutorActionButton } from 'features.invites';
-import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
+import {
+  ButtonsHeader,
+  ClassroomGuideBanner,
+  LinkListStudents,
+  CardsGridSimple,
+} from './components';
 import { ClassroomsStatusFilter } from './components/controls/ClassroomsStatusFilter';
 import { KeepActiveClassroomsModal } from './components/KeepActiveClassroomsModal';
 import { useCurrentUser } from 'common.services';
@@ -55,6 +60,7 @@ export const ClassroomsPage = () => {
           </div>
         )}
       </div>
+      {isTutor && <ClassroomGuideBanner />}
       <div
         ref={parentRef}
         className={cn(

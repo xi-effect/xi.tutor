@@ -1,5 +1,11 @@
 {
   "title": "Classrooms",
+  "guide": {
+    "title": "How classrooms work",
+    "description": "What classrooms are and how their statuses work",
+    "read": "Read the guide",
+    "closeAria": "Dismiss tip"
+  },
   "createGroup": "Create group",
   "invite": "Invite",
   "studentsList": "Students list",

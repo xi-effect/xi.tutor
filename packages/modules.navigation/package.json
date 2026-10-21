@@ -21,6 +21,7 @@
     "@xipkg/icons": "3.1.8",
     "@xipkg/link": "2.1.0",
     "@xipkg/modal": "4.6.0",
+    "@xipkg/popover": "^4.0.0",
     "@xipkg/radio": "2.1.0",
     "@xipkg/scrollarea": "2.3.0",
     "@xipkg/sidebar": "0.5.0",

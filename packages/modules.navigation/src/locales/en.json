@@ -24,6 +24,11 @@
   "mathBank": "Task bank",
   "payments": "Payments",
   "support": "Support",
+  "maintenance": {
+    "title": "Maintenance",
+    "description": "Overnight from 22 to 23 October, 22:00–6:00 MSK, sovlium may be unstable.",
+    "dismiss": "Hide notice"
+  },
   "board": "Board",
   "faq": "FAQ",
   "profile": "Settings",
