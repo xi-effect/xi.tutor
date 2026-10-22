@@ -1,49 +1,63 @@
+import { useClassroomCounts, useCurrentPlan, useCurrentUser } from 'common.services';
+import { canUseSubscriptionCommerce } from './commerce';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
 import { canUseFeature, type SubscriptionFeatureId } from './features';
+import { mergePlanLimits, planKindToPlanId } from './planCache';
 import { getCurrentTariff } from './limits';
-import { getRemainingSubscriptionDays } from './period';
-import { useSubscriptionStore } from './store';
 import { TARIFFS, type TariffLimits } from './tariffs';
 
+export const useCanUseSubscriptionCommerce = () => {
+  const { data: user, isSuccess } = useCurrentUser();
+  const userId = typeof user?.id === 'number' ? user.id : null;
+
+  return {
+    allowed: canUseSubscriptionCommerce(userId),
+    isReady: isSuccess,
+  };
+};
+
 export const useSubscriptionPlan = () => {
-  const planId = useSubscriptionStore((state) => state.planId);
-  const autoRenew = useSubscriptionStore((state) => state.autoRenew);
-  const renewsAt = useSubscriptionStore((state) => state.renewsAt);
-  const mock = useSubscriptionStore((state) => state.mock);
-  const tariff = TARIFFS[planId];
-  const remainingDays = getRemainingSubscriptionDays(planId, renewsAt);
+  const planQuery = useCurrentPlan();
+  const plan = planQuery.data;
+  const planId = plan ? planKindToPlanId(plan.kind) : null;
+  const tariff = plan ? mergePlanLimits(plan) : null;
 
   return {
     planId,
-    autoRenew,
-    renewsAt,
-    remainingDays,
-    mock,
     tariff,
-    isPro: planId === 'pro',
-    isBasic: planId === 'basic',
+    isPro: plan?.kind === 'pro',
+    isBasic: Boolean(plan) && plan?.kind !== 'pro',
+    isPlanReady: planQuery.isSuccess,
+    isPlanError: planQuery.isError,
+    isPlanLoading: planQuery.isPending && planQuery.fetchStatus !== 'idle',
+    refetchPlan: planQuery.refetch,
   };
 };
 
 export const usePlanLimits = (): TariffLimits => {
-  const planId = useSubscriptionStore((state) => state.planId);
-  return TARIFFS[planId];
+  const { tariff } = useSubscriptionPlan();
+  return tariff ?? TARIFFS.basic;
 };
 
 export const useCanUseFeature = (featureId: SubscriptionFeatureId): boolean => {
-  const planId = useSubscriptionStore((state) => state.planId);
+  const { isPlanReady, planId } = useSubscriptionPlan();
   if (!SUBSCRIPTION_BILLING_ENABLED) return true;
+  if (!isPlanReady || !planId) return true;
   return canUseFeature(featureId, planId);
 };
 
-export const useCurrentTariff = () =>
-  getCurrentTariff(useSubscriptionStore((state) => state.planId));
+export const useCurrentTariff = () => {
+  const { tariff } = useSubscriptionPlan();
+  return tariff ?? getCurrentTariff();
+};
 
 export const useCanActivateClassroom = (): boolean => {
-  const planId = useSubscriptionStore((state) => state.planId);
-  const classroomsUsed = useSubscriptionStore((state) => state.mock.classroomsUsed);
+  const { tariff, isPlanReady } = useSubscriptionPlan();
+  const countQuery = useClassroomCounts();
 
   if (!SUBSCRIPTION_BILLING_ENABLED) return true;
+  if (!isPlanReady || !tariff) return true;
+  if (typeof countQuery.data?.active !== 'number') return true;
 
-  return classroomsUsed < TARIFFS[planId].maxActiveClassrooms;
+  return countQuery.data.active < tariff.maxActiveClassrooms;
 };

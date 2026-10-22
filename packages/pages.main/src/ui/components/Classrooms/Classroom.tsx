@@ -140,8 +140,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
             <SubjectBadge
               subjectId={classroom.subject_id}
               isTooltip
-              className="overflow-hidden"
-              textClassName="truncate max-w-full"
+              className="min-w-0 overflow-hidden"
+              textClassName="truncate"
             />
           )}
         </div>

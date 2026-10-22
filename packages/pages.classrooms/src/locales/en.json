@@ -35,6 +35,19 @@
     "studentDescription": "You haven't been invited to any classroom yet",
     "helpLink": "Learn more about classrooms"
   },
+  "keepActive": {
+    "title": "Choose classrooms",
+    "description_one": "The «Basic» plan allows work in only {{count}} active classroom. Choose the classroom where you want to continue",
+    "description_other": "The «Basic» plan allows work in only {{count}} active classrooms. Choose the classrooms where you want to continue",
+    "changeLater": "You can change statuses later and choose different active classrooms.",
+    "selected": "Selected {{selected}} of {{count}}",
+    "loading": "Loading classrooms...",
+    "error": "Failed to load classrooms",
+    "empty": "No unavailable classrooms left",
+    "confirm": "Continue",
+    "confirming": "Saving...",
+    "cancel": "Cancel"
+  },
   "filters": {
     "status": "Status:",
     "lessonType": "Lesson type:",
@@ -49,6 +62,13 @@
     "math": "Mathematics",
     "computerScience": "Computer science",
     "foreignLanguages": "Foreign languages",
-    "other": "Other"
+    "other": "Other",
+    "statusChip": "Status",
+    "statusChipCount": "Status · {{count}}",
+    "reset": "Reset",
+    "apply": "Apply",
+    "resetAll": "Reset all",
+    "filteredEmptyTitle": "Nothing found",
+    "filteredEmptyDescription": "Try changing the filters or reset them"
   }
 }

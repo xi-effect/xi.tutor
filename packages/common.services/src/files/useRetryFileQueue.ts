@@ -85,7 +85,7 @@ export const useRetryFileQueue = () => {
           maxBytes: 5 * 1024 * 1024,
         });
 
-        if (kind === 'tooLarge' || kind === 'unsupported') {
+        if (kind === 'tooLarge' || kind === 'unsupported' || kind === 'storage') {
           await deleteFileFromDB(req.shapeId);
           removeFromQueue(req.id);
           continue;

@@ -6,6 +6,8 @@ export type PromoResult =
 
 export const MOCK_PROMO_ADDED_DAYS = 30;
 
+export const TRIAL_PROMO_CODE = 'TRIAL';
+
 export const applyMockPromo = (raw: string): PromoResult => {
   const code = raw.trim().toUpperCase();
 

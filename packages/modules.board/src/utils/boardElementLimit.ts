@@ -5,6 +5,8 @@ import {
   SUBSCRIPTION_BILLING_ENABLED,
   getBoardElementsLimit,
   isBoardElementsLimitReached,
+  isStorageQuotaReached,
+  requestStorageLimitDialog,
   useSubscriptionUiStore,
 } from 'common.subscription';
 import { trackBoardObjectsLimitReached } from 'common.utils';
@@ -24,6 +26,12 @@ export const registerBoardElementLimit = (editor: Editor) => {
       .map((record) => record.id as DrShapeId);
 
     if (createdShapeIds.length === 0) return;
+
+    if (isStorageQuotaReached()) {
+      editor.deleteShapes(createdShapeIds);
+      requestStorageLimitDialog();
+      return;
+    }
 
     const currentCount = editor.getCurrentPageShapeIds().size;
     const previousCount = currentCount - createdShapeIds.length;

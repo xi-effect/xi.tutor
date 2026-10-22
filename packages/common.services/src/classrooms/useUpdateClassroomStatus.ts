@@ -2,6 +2,16 @@ import { ClassroomsQueryKey, ClassroomT, ClassroomStatusT, classroomsApiConfig }
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import {
+  getMonetizationOverride,
+  updateMonetizationClassroomStatus,
+} from '../subscription/monetizationDevtools';
+import { invalidateClassroomCounts } from './useClassroomCounts';
+import {
+  patchClassroomInLists,
+  restoreClassroomLists,
+  snapshotClassroomLists,
+} from './patchClassroomListCache';
 
 interface UpdateClassroomStatusParams {
   classroomId: number;
@@ -10,29 +20,8 @@ interface UpdateClassroomStatusParams {
 
 interface MutationContext {
   previousClassroom?: ClassroomT;
-  previousClassrooms?: ClassroomT[];
-  previousInfiniteData?: {
-    pages: ClassroomT[][];
-    pageParams: (string | undefined)[];
-  };
+  previousLists: ReturnType<typeof snapshotClassroomLists>;
 }
-
-// Тип для данных infinite query
-type InfiniteQueryData = {
-  pages: ClassroomT[][];
-  pageParams: (string | undefined)[];
-};
-
-// Проверка, является ли данные infinite query
-const isInfiniteQueryData = (data: unknown): data is InfiniteQueryData => {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'pages' in data &&
-    'pageParams' in data &&
-    Array.isArray((data as InfiniteQueryData).pages)
-  );
-};
 
 export const useUpdateClassroomStatus = () => {
   const queryClient = useQueryClient();
@@ -44,6 +33,9 @@ export const useUpdateClassroomStatus = () => {
     MutationContext
   >({
     mutationFn: async ({ classroomId, status }: UpdateClassroomStatusParams) => {
+      const simulated = updateMonetizationClassroomStatus(classroomId, status);
+      if (simulated) return simulated;
+
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -73,41 +65,9 @@ export const useUpdateClassroomStatus = () => {
         ClassroomsQueryKey.GetClassroom,
         classroomId,
       ]);
-      const previousClassrooms = queryClient.getQueryData<ClassroomT[]>([
-        ClassroomsQueryKey.GetClassrooms,
-      ]);
-      const previousInfiniteData = queryClient.getQueryData<InfiniteQueryData>([
-        ClassroomsQueryKey.GetClassrooms,
-      ]);
+      const previousLists = snapshotClassroomLists(queryClient);
 
-      // Оптимистично обновляем данные кабинета в списке
-      queryClient.setQueryData(
-        [ClassroomsQueryKey.GetClassrooms],
-        (old: ClassroomT[] | InfiniteQueryData | undefined) => {
-          if (!old) return old;
-
-          // Если это infinite query формат
-          if (isInfiniteQueryData(old)) {
-            return {
-              ...old,
-              pages: old.pages.map((page) =>
-                page.map((classroom) =>
-                  classroom.id === classroomId ? { ...classroom, status } : classroom,
-                ),
-              ),
-            };
-          }
-
-          // Если это обычный массив
-          if (Array.isArray(old)) {
-            return old.map((classroom) =>
-              classroom.id === classroomId ? { ...classroom, status } : classroom,
-            );
-          }
-
-          return old;
-        },
-      );
+      patchClassroomInLists(queryClient, classroomId, { status });
 
       // Оптимистично обновляем данные конкретного кабинета
       queryClient.setQueryData<ClassroomT>(
@@ -119,7 +79,7 @@ export const useUpdateClassroomStatus = () => {
       );
 
       // Возвращаем предыдущие значения для отката в случае ошибки
-      return { previousClassroom, previousClassrooms, previousInfiniteData };
+      return { previousClassroom, previousLists };
     },
     onError: (err, { classroomId }, context) => {
       // В случае ошибки откатываем изменения
@@ -129,17 +89,19 @@ export const useUpdateClassroomStatus = () => {
           context.previousClassroom,
         );
       }
-      if (context?.previousClassrooms) {
-        queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousClassrooms);
-      }
-      if (context?.previousInfiniteData) {
-        queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousInfiniteData);
+      if (context?.previousLists) {
+        restoreClassroomLists(queryClient, context.previousLists);
       }
 
       // Показываем toast с ошибкой
       handleError(err, 'classroom');
     },
     onSuccess: (updatedClassroom, { classroomId }) => {
+      if (getMonetizationOverride().classroomCatalog) {
+        showSuccess('classroom', `Статус кабинета обновлен`);
+        return;
+      }
+
       // Если сервер вернул обновленные данные, обновляем кеш
       if (updatedClassroom) {
         queryClient.setQueryData<ClassroomT>(
@@ -147,35 +109,11 @@ export const useUpdateClassroomStatus = () => {
           updatedClassroom,
         );
 
-        // Обновляем кабинет в списке
-        queryClient.setQueryData(
-          [ClassroomsQueryKey.GetClassrooms],
-          (old: ClassroomT[] | InfiniteQueryData | undefined) => {
-            if (!old) return old;
-
-            // Если это infinite query формат
-            if (isInfiniteQueryData(old)) {
-              return {
-                ...old,
-                pages: old.pages.map((page) =>
-                  page.map((classroom) =>
-                    classroom.id === classroomId ? updatedClassroom : classroom,
-                  ),
-                ),
-              };
-            }
-
-            // Если это обычный массив
-            if (Array.isArray(old)) {
-              return old.map((classroom) =>
-                classroom.id === classroomId ? updatedClassroom : classroom,
-              );
-            }
-
-            return old;
-          },
-        );
+        patchClassroomInLists(queryClient, classroomId, updatedClassroom);
       }
+
+      void queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
+      void invalidateClassroomCounts(queryClient);
 
       // Показываем успешное уведомление
       showSuccess('classroom', `Статус кабинета обновлен`);

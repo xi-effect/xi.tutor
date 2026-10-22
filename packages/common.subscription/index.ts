@@ -1,4 +1,9 @@
-export { SUBSCRIPTION_BILLING_ENABLED } from './src/config';
+export { SUBSCRIPTION_BILLING_ENABLED, SUBSCRIPTION_PROMO_ENABLED } from './src/config';
+export {
+  canCurrentUserUseSubscriptionCommerce,
+  canUseSubscriptionCommerce,
+  SUBSCRIPTION_COMMERCE_USER_IDS,
+} from './src/commerce';
 export {
   DEFAULT_PRO_RENEWS_AT,
   GB,
@@ -16,6 +21,7 @@ export {
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   getCurrentTariff,
+  getFileTooLargeLimitMessage,
   getMaxBytesForKind,
   getMaxFileBytes,
   getMaxImageBytes,
@@ -36,23 +42,21 @@ export {
 export {
   applyMockPromo,
   MOCK_PROMO_ADDED_DAYS,
+  TRIAL_PROMO_CODE,
   type PromoResult,
   type PromoStatus,
 } from './src/promo';
-export { bytesToMb, formatBytes, formatRub } from './src/format';
+export { bytesToMb, formatBytes, formatPlanStorage, formatRub } from './src/format';
 export {
   addDaysFromLaterOf,
   getRemainingSubscriptionDays,
   isPaidPeriodExpired,
+  isSubscriptionPeriodActive,
 } from './src/period';
-export {
-  useSubscriptionStore,
-  type PaymentOutcome,
-  type SubscriptionMock,
-  type SubscriptionState,
-} from './src/store';
+export { useSubscriptionStore, type SubscriptionMock, type SubscriptionState } from './src/store';
 export {
   requestClassroomLimitDialog,
+  requestImageUpgradeDialog,
   requestProFeatureDialog,
   requestStorageLimitDialog,
   useSubscriptionUiStore,
@@ -63,6 +67,7 @@ export {
 export {
   useCanActivateClassroom,
   useCanUseFeature,
+  useCanUseSubscriptionCommerce,
   useCurrentTariff,
   usePlanLimits,
   useSubscriptionPlan,

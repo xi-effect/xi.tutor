@@ -322,6 +322,7 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     },
     invalidationKeys: [
       ClassroomsQueryKey.GetClassrooms,
+      ClassroomsQueryKey.ClassroomCounts,
       StudentsQueryKey.AllStudents,
       InvitationsQueryKey.AllInvitations,
     ],

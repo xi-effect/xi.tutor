@@ -153,15 +153,15 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         onClick={handleClick}
         className="group bg-background-surface relative flex h-40 w-full cursor-pointer justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
       >
-        <div className="flex h-full max-w-full flex-col justify-between">
-          <div className="mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
+        <div className="flex h-full min-w-0 flex-1 flex-col justify-between">
+          <div className="mr-8 flex min-w-0 items-center gap-2">
             <StatusBadge status={status} kind={kind} deleted={deleted} />
 
             {subject_id && (
               <SubjectBadge
                 subjectId={subject_id}
-                className="overflow-hidden"
-                textClassName="truncate max-w-full"
+                className="min-w-0 overflow-hidden"
+                textClassName="truncate"
                 isTooltip
               />
             )}

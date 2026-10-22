@@ -1,6 +1,24 @@
 export { authApiConfig, AuthQueryKey } from './src/auth';
 export { userApiConfig, UserQueryKey } from './src/user';
 export {
+  subscriptionApiConfig,
+  SubscriptionQueryKey,
+  subscriptionQueryKeys,
+  getSubscriptionPaymentStatus,
+  parseCurrentPlan,
+  parseCurrentSubscription,
+  parseStorageUsage,
+  parseSubscriptionPayment,
+  type CreateSubscriptionPaymentBody,
+  type CurrentPlan,
+  type CurrentSubscription,
+  type PlanKind,
+  type RenewalPeriod,
+  type StorageUsage,
+  type SubscriptionPayment,
+  type SubscriptionPaymentStatus,
+} from './src/subscription';
+export {
   USER_FLAG_KEYS,
   userFlagsApiConfig,
   UserFlagsQueryKey,
@@ -15,8 +33,25 @@ export { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from './src/payme
 export { materialsApiConfig, MaterialsQueryKey } from './src/materials';
 export { paymentsApiConfig, PaymentsQueryKey } from './src/payments';
 export {
+  CLASSROOM_STATUSES,
+  CLASSROOM_FILTER_MAX_STATUSES,
+  CLASSROOMS_SEARCH_DEFAULT_LIMIT,
+  CLASSROOMS_SEARCH_MAX_LIMIT,
   classroomsApiConfig,
   ClassroomsQueryKey,
+  classroomsQueryKeys,
+  buildClassroomSearchRequest,
+  classroomStatusesFromQueryKey,
+  getNextClassroomsCursor,
+  normalizeClassroomFilters,
+  normalizeClassroomStatuses,
+  normalizeClassroomsSearchLimit,
+  serializeClassroomStatuses,
+  parseClassroomCounts,
+  type ClassroomCounts,
+  type ClassroomCursor,
+  type ClassroomFilters,
+  type ClassroomSearchRequest,
   studentsApiConfig,
   StudentsQueryKey,
 } from './src/tutor';

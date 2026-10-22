@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { canCurrentUserUseSubscriptionCommerce } from './commerce';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
 import type { SubscriptionFeatureId } from './features';
 
@@ -6,7 +7,7 @@ export type SubscriptionScreen = 'overview' | 'checkout' | 'result' | 'manage';
 
 export type PaymentResultStatus = 'success' | 'processing' | 'error';
 
-export type SubscriptionDialog = 'classroom' | 'storage' | 'proFeature' | null;
+export type SubscriptionDialog = 'classroom' | 'storage' | 'proFeature' | 'imageUpgrade' | null;
 
 type SubscriptionUiState = {
   screen: SubscriptionScreen;
@@ -40,7 +41,7 @@ export const useSubscriptionUiStore = create<SubscriptionUiState>((set) => ({
       settingsOpenRequested: openSettings,
     }),
   openCheckout: () => {
-    if (!SUBSCRIPTION_BILLING_ENABLED) {
+    if (!SUBSCRIPTION_BILLING_ENABLED || !canCurrentUserUseSubscriptionCommerce()) {
       set({ screen: 'overview', paymentResult: null });
       return;
     }
@@ -74,6 +75,9 @@ export const requestClassroomLimitDialog = () =>
 
 export const requestStorageLimitDialog = () =>
   useSubscriptionUiStore.getState().openDialog('storage');
+
+export const requestImageUpgradeDialog = () =>
+  useSubscriptionUiStore.getState().openDialog('imageUpgrade');
 
 export const requestProFeatureDialog = (featureId?: SubscriptionFeatureId) => {
   void featureId;

@@ -1,7 +1,12 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess, findNextAvailableName } from 'common.services';
+import {
+  handleError,
+  showSuccess,
+  findNextAvailableName,
+  preventStorageWrite,
+} from 'common.services';
 import i18n from 'i18next';
 
 interface ClassroomMaterialsResponseT {
@@ -43,6 +48,8 @@ export const useAddClassroomMaterials = () => {
     MutationContext
   >({
     mutationFn: async (materialsData: ClassroomMaterialsDataT & { classroomId: string }) => {
+      preventStorageWrite();
+
       if (!validateKind(materialsData.content_kind)) {
         throw new Error('Invalid material kind');
       }

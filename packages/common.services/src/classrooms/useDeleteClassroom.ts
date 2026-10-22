@@ -2,6 +2,7 @@ import { ClassroomsQueryKey, classroomsApiConfig } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import { invalidateClassroomCounts } from './useClassroomCounts';
 
 interface DeleteClassroomParams {
   classroomId: number;
@@ -35,6 +36,7 @@ export const useDeleteClassroom = () => {
     onSuccess: () => {
       // Инвалидируем кеш для обновления данных
       queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
+      void invalidateClassroomCounts(queryClient);
 
       // Показываем успешное уведомление
       showSuccess('classroom', 'Кабинет успешно удален');

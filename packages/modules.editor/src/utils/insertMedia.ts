@@ -1,7 +1,12 @@
 import { Editor } from '@tiptap/core';
 import { toast } from 'sonner';
 import i18n from 'i18next';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'common.services';
+import {
+  getFileUploadErrorKind,
+  isFileNameTooLong,
+  MAX_FILENAME_LENGTH,
+  uploadFileIdRequest,
+} from 'common.services';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
   getFileExtension,
@@ -125,7 +130,9 @@ export async function insertImageFile(
       maxBytes: getMaxImageBytes(),
     });
     trackFileSizeLimitFromUploadError(err, file, 'other', getMaxImageBytes());
-    toast.error(t('toast.imageUploadError'));
+    if (getFileUploadErrorKind(err) !== 'storage') {
+      toast.error(t('toast.imageUploadError'));
+    }
     return false;
   }
 }

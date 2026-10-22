@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "install:ci": "pnpm install --ignore-scripts && pnpm run prepare",
-    "build": "turbo run build --no-daemon",
+    "build": "turbo run build",
     "build:debug": "pnpm --filter xi.web build:debug",
     "build:dev": "pnpm --filter xi.web build:dev",
     "dev": "pnpm --filter xi.web dev",

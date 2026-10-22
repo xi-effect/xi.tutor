@@ -1,5 +1,7 @@
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
+import { reportStorageLimitReached } from '../storageLimit/storageLimitReached';
+import { isStorageWriteBlockedError } from 'common.utils';
 
 export type ErrorType =
   | 'profile'
@@ -89,7 +91,14 @@ const userFacingDetails: Partial<Record<ErrorType, Record<string, string>>> = {
   },
 };
 
-const FILE_TOO_LARGE = 'Файл слишком большой. Изображения — до 1 МБ, остальные — до 5 МБ';
+const BASIC_FILE_TOO_LARGE = 'Файл слишком большой. Изображения — до 1 МБ, остальные — до 5 МБ';
+
+let readFileTooLargeMessage: () => string = () => BASIC_FILE_TOO_LARGE;
+
+/** Подставляет лимиты текущего тарифа. Без подписки остаётся сообщение Базового. */
+export const setFileTooLargeMessage = (read: (() => string) | null): void => {
+  readFileTooLargeMessage = read ?? (() => BASIC_FILE_TOO_LARGE);
+};
 const FILE_UNSUPPORTED = 'Недопустимый формат файла';
 const ACTION_FAILED = 'Не получилось выполнить действие. Попробуйте позже.';
 const CLASSROOM_READ_ONLY_DETAIL = 'Classroom is read-only';
@@ -129,7 +138,7 @@ export const getUserFacingErrorMessage = (error: unknown, type: ErrorType): stri
   }
 
   if (type === 'files' && (status === 413 || status === 415 || status === 422)) {
-    return status === 413 ? FILE_TOO_LARGE : FILE_UNSUPPORTED;
+    return status === 413 ? readFileTooLargeMessage() : FILE_UNSUPPORTED;
   }
 
   if (typeof status === 'number' && status >= 500) {
@@ -146,6 +155,9 @@ export const getApiErrorMessage = (error: unknown, type: ErrorType): string =>
   getUserFacingErrorMessage(error, type) ?? ACTION_FAILED;
 
 export const handleError = (error: unknown, type: ErrorType): void => {
+  if (isStorageWriteBlockedError(error)) return;
+  if (reportStorageLimitReached(error)) return;
+
   const message = getUserFacingErrorMessage(error, type);
   if (message) {
     toast.error(message);
