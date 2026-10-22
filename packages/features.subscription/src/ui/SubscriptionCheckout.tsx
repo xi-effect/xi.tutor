@@ -5,7 +5,6 @@ import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useSearch } from '@tanstack/react-router';
 import {
   formatRub,
-  SUBSCRIPTION_PROMO_ENABLED,
   TARIFFS,
   useCanUseSubscriptionCommerce,
   useSubscriptionUiStore,
@@ -21,7 +20,6 @@ import {
 } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { isConfirmationUrl } from '../pendingPayment';
-import { PromoCodeField } from './PromoCodeField';
 import { ScreenBackButton } from './ScreenBackButton';
 
 type CheckoutPeriod = 'monthly' | 'yearly';
@@ -164,8 +162,6 @@ export const SubscriptionCheckout = () => {
           />
         </div>
       </section>
-
-      {SUBSCRIPTION_PROMO_ENABLED ? <PromoCodeField /> : null}
 
       <Checkbox
         size="s"

@@ -3,7 +3,6 @@ import {
   formatRub,
   getRemainingSubscriptionDays,
   isSubscriptionPeriodActive,
-  SUBSCRIPTION_PROMO_ENABLED,
   TARIFFS,
   useSubscriptionPlan,
   useSubscriptionUiStore,
@@ -13,7 +12,6 @@ import { getAppLanguage, useAppTimeZone } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDate } from '../utils/dates';
 import { CancelSubscriptionButton } from './CancelSubscriptionButton';
-import { PromoCodeField } from './PromoCodeField';
 import { ScreenBackButton } from './ScreenBackButton';
 
 export const SubscriptionManage = () => {
@@ -91,8 +89,6 @@ export const SubscriptionManage = () => {
           </Button>
         </div>
       ) : null}
-
-      {SUBSCRIPTION_PROMO_ENABLED ? <PromoCodeField /> : null}
 
       <CancelSubscriptionButton buttonClassName="text-text-danger h-12 w-full rounded-xl" />
     </div>
