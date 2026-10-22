@@ -19,6 +19,7 @@ import {
 import type { ActivityKind } from '../model/kinds';
 import type { ActivityAttempt, ActivityDefinition, CheckStatus } from '../model/types';
 import { evaluateActivity, hasCheckableAnswers } from '../primitives/evaluate';
+import { shuffleGapAttempt, syncAttemptOrder } from '../primitives/bankOrder';
 import { resetAttempt, revealAttempt } from '../primitives/reset';
 import { useActivityEditStore } from '../store/activityEditStore';
 import type { ActivityShape } from '../shape/ActivityShape';
@@ -108,9 +109,19 @@ export function ActivityDocument({
     if (action === 'edit') {
       const nextEditing = !isEditing;
       setEditing(value.id, nextEditing);
-      if (!nextEditing && definition.kind === 'multiple-choice') {
-        const normalized = normalizeMultipleChoiceDefinition(definition);
-        if (normalized !== definition) onChange({ definition: normalized, kind: normalized.kind });
+      if (!nextEditing) {
+        const normalized =
+          definition.kind === 'multiple-choice'
+            ? normalizeMultipleChoiceDefinition(definition)
+            : definition;
+        const attempt = syncAttemptOrder(normalized, value.attempt);
+        const patch: Partial<Omit<ActivityDocumentValue, 'id'>> = {};
+        if (normalized !== definition) {
+          patch.definition = normalized;
+          patch.kind = normalized.kind;
+        }
+        if (attempt !== value.attempt) patch.attempt = attempt;
+        if (Object.keys(patch).length > 0) onChange(patch);
       }
       return;
     }
@@ -120,6 +131,11 @@ export function ActivityDocument({
     }
     if (action === 'reset') {
       onChange({ attempt: resetAttempt(definition), checkStatus: 'idle' });
+      return;
+    }
+    if (action === 'shuffle') {
+      const attempt = shuffleGapAttempt(definition, value.attempt);
+      if (attempt) onChange({ attempt });
       return;
     }
     if (action === 'reveal' && value.kind !== 'random-card') {

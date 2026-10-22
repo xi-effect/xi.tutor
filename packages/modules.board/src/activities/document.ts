@@ -10,6 +10,7 @@ export type { ActivityStudentAccessKey } from './model/studentAccess';
 export type { ActivityAttempt, ActivityDefinition, CheckStatus } from './model/types';
 export { hasCheckableAnswers } from './primitives/evaluate';
 export { resetAttempt, revealAttempt } from './primitives/reset';
+export { shuffleGapAttempt, syncAttemptOrder } from './primitives/bankOrder';
 export { normalizeMultipleChoiceDefinition } from './model/multipleChoice';
 export { useActivityEditStore } from './store/activityEditStore';
 export {

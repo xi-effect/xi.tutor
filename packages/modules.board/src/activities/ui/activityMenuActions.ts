@@ -1,4 +1,5 @@
 import type { Editor } from '@ibodr/draw';
+import { gapDragTokens } from '../primitives/bankOrder';
 import { hasCheckableAnswers } from '../primitives/evaluate';
 import type { ActivityShape } from '../shape/ActivityShape';
 import {
@@ -9,11 +10,12 @@ import {
 import { normalizeMultipleChoiceDefinition } from '../model/multipleChoice';
 import {
   ACTIVITY_STUDENT_ACCESS_KEYS,
+  normalizeStudentAccess,
   studentAccessFlag,
   type ActivityStudentAccessKey,
 } from '../model/studentAccess';
 
-export type ActivityMenuActionId = 'edit' | 'check' | 'reset' | 'reveal';
+export type ActivityMenuActionId = 'edit' | 'check' | 'reset' | 'shuffle' | 'reveal';
 
 export type ActivityMenuAction = {
   id: ActivityMenuActionId;
@@ -26,6 +28,13 @@ export function selectedActivityShapes(
   return shapes.filter(
     (shape): shape is ActivityShape => shape.type === 'activity' && !shape.isLocked,
   );
+}
+
+function canShuffleGapText(shape: ActivityShape, isTutor: boolean): boolean {
+  const { definition, checkStatus, studentAccess } = shape.props;
+  if (definition.kind !== 'gap-text' || checkStatus === 'revealed') return false;
+  if (!isTutor && !normalizeStudentAccess(studentAccess).canInteract) return false;
+  return gapDragTokens(definition).length > 1;
 }
 
 export function getActivityMenuActions({
@@ -76,6 +85,9 @@ export function getActivityMenuActions({
   }
   if (allowReset) {
     items.push({ id: 'reset', label: t('activity.reset') });
+  }
+  if (shapes.some((shape) => canShuffleGapText(shape, isTutor))) {
+    items.push({ id: 'shuffle', label: t('activity.shuffle') });
   }
   if (allowReveal && shapes.some((shape) => shape.props.kind !== 'random-card')) {
     items.push({ id: 'reveal', label: t('activity.reveal') });

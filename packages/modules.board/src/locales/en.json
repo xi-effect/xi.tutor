@@ -580,6 +580,7 @@
     "noRepeat": "No repeats",
     "draw": "Next",
     "reshuffle": "Reshuffle",
+    "shuffle": "Shuffle",
     "drawPrompt": "Press Next",
     "picker": {
       "title": "Activities",
@@ -590,7 +591,7 @@
     "catalog": {
       "gap-text": {
         "description": "A text with blanks: students restore words and phrases right in the sentence.",
-        "mechanics": "Select a word and turn it into a blank. Each blank can be typed, chosen from a list, or filled by dragging. You can accept several answers and add extra words to the bank."
+        "mechanics": "Select a word and turn it into a blank. Each blank can be typed, chosen from a list, or filled by dragging. You can accept several answers and add extra words to the bank. Drag words appear in a random order during practice and can be shuffled again."
       },
       "matching": {
         "description": "Two columns to match by meaning, translation, or image.",

@@ -5,6 +5,8 @@ import {
   normalizeStudentAccess,
   resetAttempt,
   revealAttempt,
+  shuffleGapAttempt,
+  syncAttemptOrder,
   useActivityEditStore,
   type ActivityDocumentValue,
   type ActivityMenuActionId,
@@ -70,10 +72,18 @@ export function runNoteActivityAction(editor: Editor, action: ActivityMenuAction
     for (const activity of activities) store.setEditing(activity.value.id, nextEditing);
     if (!nextEditing) {
       patchActivities(editor, (value) => {
-        if (value.definition.kind !== 'multiple-choice') return null;
-        const normalized = normalizeMultipleChoiceDefinition(value.definition);
-        if (normalized === value.definition) return null;
-        return { definition: normalized, kind: normalized.kind };
+        const normalized =
+          value.definition.kind === 'multiple-choice'
+            ? normalizeMultipleChoiceDefinition(value.definition)
+            : value.definition;
+        const attempt = syncAttemptOrder(normalized, value.attempt);
+        const patch: Partial<ActivityDocumentValue> = {};
+        if (normalized !== value.definition) {
+          patch.definition = normalized;
+          patch.kind = normalized.kind;
+        }
+        if (attempt !== value.attempt) patch.attempt = attempt;
+        return Object.keys(patch).length > 0 ? patch : null;
       });
     }
     return;
@@ -91,6 +101,14 @@ export function runNoteActivityAction(editor: Editor, action: ActivityMenuAction
       attempt: resetAttempt(value.definition),
       checkStatus: 'idle',
     }));
+    return;
+  }
+
+  if (action === 'shuffle') {
+    patchActivities(editor, (value) => {
+      const attempt = shuffleGapAttempt(value.definition, value.attempt);
+      return attempt ? { attempt } : null;
+    });
     return;
   }
 
