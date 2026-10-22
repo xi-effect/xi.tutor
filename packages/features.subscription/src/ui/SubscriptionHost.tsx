@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import {
+  setFileTooLargeMessage,
   setStorageWriteGuard,
   setTutorStorageLimitHandler,
   useClassroomCounts,
@@ -8,6 +9,7 @@ import {
   useStorageUsage,
 } from 'common.services';
 import {
+  getFileTooLargeLimitMessage,
   isStorageQuotaReached,
   isSubscriptionDebugEnabled,
   requestStorageLimitDialog,
@@ -30,6 +32,7 @@ export const SubscriptionHost = () => {
 
   useEffect(() => {
     setTutorStorageLimitHandler(requestStorageLimitDialog);
+    setFileTooLargeMessage(getFileTooLargeLimitMessage);
     setStorageWriteGuard(() => {
       if (!isStorageQuotaReached()) return false;
       requestStorageLimitDialog();
@@ -37,6 +40,7 @@ export const SubscriptionHost = () => {
     });
     return () => {
       setTutorStorageLimitHandler(null);
+      setFileTooLargeMessage(null);
       setStorageWriteGuard(null);
     };
   }, []);

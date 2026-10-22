@@ -39,7 +39,7 @@ export const TARIFFS: Record<PlanId, TariffLimits> = {
     maxActiveClassrooms: 60,
     storageBytes: 20 * GB,
     maxImageBytes: 5 * MB,
-    maxFileBytes: 30 * MB,
+    maxFileBytes: 5 * MB,
     maxBoardElements: 4000,
     maxVideoCallHoursPerMonth: null,
     extraProFeatures: true,

@@ -22,11 +22,12 @@ export const getBoardUploadErrorToast = (
 
   trackFileSizeLimitFromUploadError(error, file, 'board', maxBytes);
   const size = (file.size / 1024 / 1024).toFixed(2);
+  const limit = Math.max(1, Math.round(maxBytes / (1024 * 1024)));
 
   if (kind === 'tooLarge') {
     return {
       title: tBoard('toast.fileTooLarge'),
-      description: tBoard(keys.sizeDescKey, { size }),
+      description: tBoard(keys.sizeDescKey, { size, limit }),
     };
   }
 

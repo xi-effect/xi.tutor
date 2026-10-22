@@ -1,4 +1,5 @@
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
+import { bytesToMb } from './format';
 import { canUseFeature, type SubscriptionFeatureId } from './features';
 import {
   countCachedActiveClassrooms,
@@ -44,6 +45,11 @@ export const getCurrentTariff = (planId?: PlanId): TariffLimits => {
 export const getMaxImageBytes = (): number => getCurrentTariff().maxImageBytes;
 
 export const getMaxFileBytes = (): number => getCurrentTariff().maxFileBytes;
+
+export const getFileTooLargeLimitMessage = (): string => {
+  const tariff = getCurrentTariff();
+  return `Файл слишком большой. Изображения — до ${bytesToMb(tariff.maxImageBytes)} МБ, остальные — до ${bytesToMb(tariff.maxFileBytes)} МБ`;
+};
 
 export const getBoardElementsLimit = (): number => getCurrentTariff().maxBoardElements;
 

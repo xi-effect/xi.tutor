@@ -21,6 +21,7 @@ export {
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   getCurrentTariff,
+  getFileTooLargeLimitMessage,
   getMaxBytesForKind,
   getMaxFileBytes,
   getMaxImageBytes,
