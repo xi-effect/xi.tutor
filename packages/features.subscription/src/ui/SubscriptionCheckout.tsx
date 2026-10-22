@@ -7,6 +7,7 @@ import {
   formatRub,
   SUBSCRIPTION_PROMO_ENABLED,
   TARIFFS,
+  useCanUseSubscriptionCommerce,
   useSubscriptionUiStore,
 } from 'common.subscription';
 import { useCreateSubscriptionPayment } from 'common.services';
@@ -92,13 +93,20 @@ export const SubscriptionCheckout = () => {
     const fromSearch = readCheckoutPeriod(search.period);
     if (fromSearch) setPeriod(fromSearch);
   }, [search.period]);
+
   const price = period === 'yearly' ? TARIFFS.pro.priceYearlyRub : TARIFFS.pro.priceMonthlyRub;
   const days = PERIOD_DAYS[period];
   const openOverview = useSubscriptionUiStore((state) => state.openOverview);
+  const { allowed, isReady } = useCanUseSubscriptionCommerce();
   const createPayment = useCreateSubscriptionPayment();
   const formattedPrice = formatRub(price, locale);
 
+  useEffect(() => {
+    if (isReady && !allowed) openOverview();
+  }, [allowed, isReady, openOverview]);
+
   const handlePay = async () => {
+    if (!allowed) return;
     setError(false);
 
     try {
@@ -181,7 +189,7 @@ export const SubscriptionCheckout = () => {
         size="m"
         className="h-12 w-full rounded-xl font-medium"
         onClick={() => void handlePay()}
-        disabled={createPayment.isPending}
+        disabled={!allowed || createPayment.isPending}
       >
         {t('checkout.pay')}
       </Button>

@@ -1,5 +1,10 @@
 export { SUBSCRIPTION_BILLING_ENABLED, SUBSCRIPTION_PROMO_ENABLED } from './src/config';
 export {
+  canCurrentUserUseSubscriptionCommerce,
+  canUseSubscriptionCommerce,
+  SUBSCRIPTION_COMMERCE_USER_IDS,
+} from './src/commerce';
+export {
   DEFAULT_PRO_RENEWS_AT,
   GB,
   getTariff,
@@ -61,6 +66,7 @@ export {
 export {
   useCanActivateClassroom,
   useCanUseFeature,
+  useCanUseSubscriptionCommerce,
   useCurrentTariff,
   usePlanLimits,
   useSubscriptionPlan,

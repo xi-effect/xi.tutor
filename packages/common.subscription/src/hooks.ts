@@ -1,9 +1,20 @@
-import { useClassroomCounts, useCurrentPlan } from 'common.services';
+import { useClassroomCounts, useCurrentPlan, useCurrentUser } from 'common.services';
+import { canUseSubscriptionCommerce } from './commerce';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
 import { canUseFeature, type SubscriptionFeatureId } from './features';
 import { mergePlanLimits, planKindToPlanId } from './planCache';
 import { getCurrentTariff } from './limits';
 import { TARIFFS, type TariffLimits } from './tariffs';
+
+export const useCanUseSubscriptionCommerce = () => {
+  const { data: user, isSuccess } = useCurrentUser();
+  const userId = typeof user?.id === 'number' ? user.id : null;
+
+  return {
+    allowed: canUseSubscriptionCommerce(userId),
+    isReady: isSuccess,
+  };
+};
 
 export const useSubscriptionPlan = () => {
   const planQuery = useCurrentPlan();

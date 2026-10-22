@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
+import { useCanUseSubscriptionCommerce } from 'common.subscription';
 import { useRedeemPromocode } from 'common.services';
 import { useTranslation } from 'react-i18next';
 
 export const PromoCodeField = () => {
   const { t } = useTranslation('subscription');
+  const { allowed } = useCanUseSubscriptionCommerce();
   const redeemPromocode = useRedeemPromocode();
   const [code, setCode] = useState('');
   const [status, setStatus] = useState<'success' | 'error' | null>(null);
@@ -14,7 +16,7 @@ export const PromoCodeField = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!trimmed || pending) return;
+    if (!allowed || !trimmed || pending) return;
 
     setStatus(null);
 
@@ -26,6 +28,8 @@ export const PromoCodeField = () => {
       setStatus('error');
     }
   };
+
+  if (!allowed) return null;
 
   return (
     <section className="flex flex-col gap-2">
