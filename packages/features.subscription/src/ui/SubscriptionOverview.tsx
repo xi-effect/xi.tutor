@@ -21,6 +21,7 @@ import { getAppLanguage, useAppTimeZone } from 'common.ui';
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { getRenewalHoverDate } from '../utils/dates';
+import { PayAheadButton } from './PayAheadButton';
 import { PromoCodeField } from './PromoCodeField';
 import { UsageBar } from './UsageBar';
 
@@ -358,6 +359,7 @@ export const SubscriptionOverview = () => {
       </section>
 
       {isBasic && !subscriptionQuery.isPending && !activeSubscription ? <ProTrialBanner /> : null}
+      {activeSubscription && !activeSubscription.auto_renewal ? <PayAheadButton /> : null}
       <PromoCodeField />
     </div>
   );

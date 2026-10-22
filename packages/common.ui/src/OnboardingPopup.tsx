@@ -5,7 +5,8 @@ import 'driver.js/dist/driver.css';
 import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import { setOnboardingSurfaceActive } from './onboardingSurface';
 import { useTranslation } from 'react-i18next';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -57,6 +58,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showForCompleted, setShowForCompleted] = useState(false);
+  const [tourRunning, setTourRunning] = useState(false);
   const { transitionStage } = useOnboardingTransition('completed', 'forwards');
 
   useEffect(() => {
@@ -159,6 +161,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   const shouldShowForTraining = user?.onboarding_stage === 'training';
 
   const driverAction = useCallback(() => {
+    setTourRunning(true);
     hideMenuForSession();
 
     const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
@@ -193,6 +196,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
 
     if (validSteps.length === 0) {
       console.warn('Нет валидных шагов для обучения, автоматически завершаем онбординг');
+      setTourRunning(false);
 
       if (user?.onboarding_stage === 'completed') {
         sessionStorage.removeItem(SESSION_STORAGE_KEY);
@@ -244,6 +248,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
       doneBtnText: t('onboarding.done'),
       progressText: t('onboarding.progress'),
       onDestroyed: (_element, step) => {
+        setTourRunning(false);
         if (isTransitioning) return;
 
         if (user?.onboarding_stage === 'completed') {
@@ -287,6 +292,29 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
       driverAction();
     }
   }, [shouldShowForCompleted, driverAction]);
+
+  useLayoutEffect(() => {
+    const hiddenInSession = sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true';
+    const welcomeVisible =
+      !isLoading &&
+      !!user &&
+      shouldShowForTraining &&
+      !showForCompleted &&
+      !isHidden &&
+      !isTransitioning &&
+      !hiddenInSession;
+
+    setOnboardingSurfaceActive(welcomeVisible || tourRunning);
+    return () => setOnboardingSurfaceActive(false);
+  }, [
+    isLoading,
+    user,
+    shouldShowForTraining,
+    showForCompleted,
+    isHidden,
+    isTransitioning,
+    tourRunning,
+  ]);
 
   if (isLoading) {
     return null;

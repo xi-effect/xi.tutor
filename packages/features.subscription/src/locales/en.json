@@ -25,6 +25,8 @@
     "limitCalls": "Unlimited video calls",
     "viewPro": "View Pro",
     "manage": "Manage subscription",
+    "payNow": "Pay for the subscription",
+    "payNowHint": "You can pay now, without waiting for the current days to end.",
     "usage": "{{used}} of {{total}}",
     "loading": "Loading…",
     "planError": "Could not load the plan",
