@@ -10,7 +10,12 @@ import {
   TRIAL_PROMO_CODE,
   useSubscriptionPlan,
 } from 'common.subscription';
-import { useClassroomCounts, useCurrentSubscription, useStorageUsage } from 'common.services';
+import {
+  useClassroomCounts,
+  useCurrentSubscription,
+  useRedeemPromocode,
+  useStorageUsage,
+} from 'common.services';
 import { getAppLanguage, useAppTimeZone } from 'common.ui';
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { useTranslation } from 'react-i18next';
@@ -116,25 +121,47 @@ const RemainingDays = ({ days, date }: { days: string; date: string }) => {
 
 const ProTrialBanner = () => {
   const { t } = useTranslation('subscription');
+  const redeemPromocode = useRedeemPromocode();
+  const [error, setError] = useState(false);
+
+  const handleActivate = async () => {
+    if (redeemPromocode.isPending) return;
+    setError(false);
+
+    try {
+      await redeemPromocode.mutateAsync(TRIAL_PROMO_CODE);
+    } catch {
+      setError(true);
+    }
+  };
 
   return (
-    <div className="bg-action-primary-background-pressed flex flex-col items-start gap-3 rounded-2xl px-5 py-4 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-      <div className="min-w-0 flex-1">
-        <div className="text-text-on-accent text-m-base leading-tight font-semibold">
-          {t('overview.trialTitle')}
+    <div className="flex flex-col gap-2">
+      <div className="bg-action-primary-background-pressed flex flex-col items-start gap-3 rounded-2xl px-5 py-4 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="text-text-on-accent text-m-base leading-tight font-semibold">
+            {t('overview.trialTitle')}
+          </div>
+          <p className="text-text-on-accent/85 text-s-base mt-0.5 leading-snug">
+            {t('overview.trialDescription')}
+          </p>
         </div>
-        <p className="text-text-on-accent/85 text-s-base mt-0.5 leading-snug">
-          {t('overview.trialDescription')}
-        </p>
+        <Button
+          type="button"
+          variant="none"
+          className="bg-background-surface text-text-link hover:bg-background-surface/90 flex h-auto shrink-0 items-center justify-center rounded-[10px] px-4 py-2 text-sm leading-5 font-medium disabled:cursor-not-allowed disabled:opacity-70"
+          data-promo-code={TRIAL_PROMO_CODE}
+          disabled={redeemPromocode.isPending}
+          onClick={() => void handleActivate()}
+        >
+          {t('overview.trialActivate')}
+        </Button>
       </div>
-      <Button
-        type="button"
-        variant="none"
-        className="bg-background-surface text-text-link hover:bg-background-surface/90 flex h-auto shrink-0 items-center justify-center rounded-[10px] px-4 py-2 text-sm leading-5 font-medium"
-        data-promo-code={TRIAL_PROMO_CODE}
-      >
-        {t('overview.trialActivate')}
-      </Button>
+      {error ? (
+        <p className="text-status-error-text text-sm" role="alert">
+          {t('overview.trialError')}
+        </p>
+      ) : null}
     </div>
   );
 };

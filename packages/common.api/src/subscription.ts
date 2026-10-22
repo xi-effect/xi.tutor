@@ -175,6 +175,7 @@ enum SubscriptionQueryKey {
   CreatePayment = 'CreateSubscriptionPayment',
   GetPayment = 'GetSubscriptionPayment',
   DeleteAutoRenewal = 'DeleteAutoRenewal',
+  RedeemPromocode = 'RedeemPromocode',
 }
 
 const subscriptionApiConfig = {
@@ -207,6 +208,11 @@ const subscriptionApiConfig = {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/subscription-service/users/current/auto-renewal/`,
     method: HttpMethod.DELETE,
+  },
+  [SubscriptionQueryKey.RedeemPromocode]: {
+    getUrl: (code: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/subscription-service/promocodes/${encodeURIComponent(code)}/redemptions/`,
+    method: HttpMethod.POST,
   },
 };
 

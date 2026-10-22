@@ -41,6 +41,7 @@
     "trialTitle": "Try Pro free for 14 days",
     "trialDescription": "Every feature is available right away — no payment and no card required.",
     "trialActivate": "Activate",
+    "trialError": "Could not activate the trial",
     "daysLeftLabel": "Left",
     "daysLeftValue_one": "{{count}} day",
     "daysLeftValue_other": "{{count}} days"
@@ -148,7 +149,7 @@
     "hint": "You can apply a code at any time. Pro days will be added to the current period.",
     "placeholder": "Promo code",
     "apply": "Apply",
-    "success": "Promo code applied. {{count}} days added.",
+    "success": "Promo code applied",
     "invalid": "Invalid promo code",
     "expired": "This promo code has expired",
     "error": "Could not apply the promo code"

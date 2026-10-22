@@ -115,6 +115,26 @@ export async function getSubscriptionPayment(paymentId: string): Promise<Subscri
   }
 }
 
+export async function redeemPromocode(code: string): Promise<void> {
+  const normalized = code.trim();
+  if (!normalized) {
+    throw new Error('Promocode is empty');
+  }
+
+  const axiosInst = await getAxiosInstance();
+  const { getUrl, method } = subscriptionApiConfig[SubscriptionQueryKey.RedeemPromocode];
+
+  const response = await axiosInst({
+    method,
+    url: getUrl(normalized),
+    headers: jsonHeaders,
+  });
+
+  if (response.status !== 204) {
+    throw new Error(`Unexpected promocode redemption status: ${response.status}`);
+  }
+}
+
 export async function deleteCurrentAutoRenewal(): Promise<void> {
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = subscriptionApiConfig[SubscriptionQueryKey.DeleteAutoRenewal];

@@ -6,12 +6,14 @@ export {
   getCurrentSubscription,
   getSubscriptionPayment,
   getTutorStorageUsage,
+  redeemPromocode,
 } from './subscriptionApi';
 export { invalidateSubscriptionBilling } from './invalidateSubscriptionBilling';
 export { useCreateSubscriptionPayment } from './useCreateSubscriptionPayment';
 export { useCurrentPlan } from './useCurrentPlan';
 export { useCurrentSubscription } from './useCurrentSubscription';
 export { useDeleteAutoRenewal } from './useDeleteAutoRenewal';
+export { useRedeemPromocode } from './useRedeemPromocode';
 export { useStorageUsage } from './useStorageUsage';
 export {
   getMonetizationOverride,

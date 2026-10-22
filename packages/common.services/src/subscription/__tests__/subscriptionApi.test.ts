@@ -20,6 +20,7 @@ import {
   getCurrentPlan,
   getCurrentSubscription,
   getSubscriptionPayment,
+  redeemPromocode,
 } from '../subscriptionApi';
 
 const paymentBody = {
@@ -56,6 +57,10 @@ describe('subscription API', () => {
       '/api/protected/subscription-service/users/current/payments/pay%2F1/',
     );
     expect(subscriptionApiConfig[SubscriptionQueryKey.DeleteAutoRenewal].method).toBe('DELETE');
+    expect(subscriptionApiConfig[SubscriptionQueryKey.RedeemPromocode].method).toBe('POST');
+    expect(subscriptionApiConfig[SubscriptionQueryKey.RedeemPromocode].getUrl('pro/1')).toContain(
+      '/api/protected/subscription-service/promocodes/pro%2F1/redemptions/',
+    );
   });
 
   it('GET plan не считает ошибку тарифом Базовый', async () => {
@@ -116,6 +121,32 @@ describe('subscription API', () => {
 
     axiosMock.mockRejectedValueOnce(new Error('network'));
     await expect(getSubscriptionPayment('pay-1')).rejects.toThrow('network');
+  });
+
+  it('POST promocode redemption считает успехом только 204', async () => {
+    axiosMock.mockResolvedValueOnce({ status: 204, data: '' });
+    await expect(redeemPromocode(' pro/1 ')).resolves.toBeUndefined();
+    expect(axiosMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: 'POST',
+        url: expect.stringContaining(
+          '/api/protected/subscription-service/promocodes/pro%2F1/redemptions/',
+        ),
+      }),
+    );
+
+    axiosMock.mockResolvedValueOnce({ status: 200, data: {} });
+    await expect(redeemPromocode('PRO')).rejects.toThrow(
+      'Unexpected promocode redemption status: 200',
+    );
+
+    axiosMock.mockRejectedValueOnce({ isAxiosError: true, response: { status: 404 } });
+    await expect(redeemPromocode('MISSING')).rejects.toMatchObject({
+      response: { status: 404 },
+    });
+
+    await expect(redeemPromocode('   ')).rejects.toThrow('Promocode is empty');
+    expect(axiosMock).toHaveBeenCalledTimes(3);
   });
 
   it('DELETE auto-renewal 404 считается уже отключённым', async () => {
