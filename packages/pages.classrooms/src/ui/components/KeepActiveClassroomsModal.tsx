@@ -223,8 +223,8 @@ export const KeepActiveClassroomsModal = () => {
           )}
         </div>
 
-        <ModalFooter className="border-border-default flex flex-col gap-4 border-t">
-          <p className="text-s-base text-text-secondary w-full">
+        <ModalFooter className="border-border-default flex items-center justify-between gap-4 border-t">
+          <p className="text-s-base text-text-secondary m-0 shrink-0">
             {t('keepActive.selected', { selected: selectedIds.length, count: requiredCount })}
           </p>
           <div className="flex justify-end gap-2 max-sm:flex-col max-sm:gap-3">

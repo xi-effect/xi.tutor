@@ -37,8 +37,8 @@
   },
   "keepActive": {
     "title": "Choose classrooms",
-    "description_one": "Choose {{count}} classroom to continue lessons on the Basic plan",
-    "description_other": "Choose {{count}} classrooms to continue lessons on the Basic plan",
+    "description_one": "The «Basic» plan allows work in only {{count}} active classroom. Choose the classroom where you want to continue",
+    "description_other": "The «Basic» plan allows work in only {{count}} active classrooms. Choose the classrooms where you want to continue",
     "changeLater": "You can change statuses later and choose different active classrooms.",
     "selected": "Selected {{selected}} of {{count}}",
     "loading": "Loading classrooms...",
