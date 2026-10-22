@@ -15,6 +15,7 @@ import {
   CustomImage,
   MoveBlockKeyboard,
   NormalizeSelection,
+  StorageQuotaGuard,
   FileNode,
   PdfNode,
   PresentationNode,
@@ -124,6 +125,7 @@ export const getExtensions = (
     }),
     MoveBlockKeyboard,
     NormalizeSelection,
+    StorageQuotaGuard,
     ExtraShortcuts,
     CustomCodeNode,
   ];

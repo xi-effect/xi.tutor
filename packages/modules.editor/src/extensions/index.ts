@@ -6,3 +6,4 @@ export { FileNode } from './file';
 export { ActivityNode } from './activity/ActivityNode';
 export { MoveBlockKeyboard } from './move-block-keyboard';
 export { NormalizeSelection } from './normalize-selection';
+export { StorageQuotaGuard } from './storage-quota-guard';
