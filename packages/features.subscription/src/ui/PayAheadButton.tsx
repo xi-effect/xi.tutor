@@ -10,7 +10,7 @@ export const PayAheadButton = () => {
   if (!allowed) return null;
 
   return (
-    <div className="flex max-w-md flex-col gap-2">
+    <div className="mx-auto flex w-full max-w-md flex-col items-center gap-2">
       <Button
         type="button"
         variant="primary"
@@ -20,7 +20,9 @@ export const PayAheadButton = () => {
       >
         {t('overview.payNow')}
       </Button>
-      <p className="text-text-secondary m-0 text-sm leading-5">{t('overview.payNowHint')}</p>
+      <p className="text-text-secondary m-0 text-center text-sm leading-5">
+        {t('overview.payNowHint')}
+      </p>
     </div>
   );
 };
