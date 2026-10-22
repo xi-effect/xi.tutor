@@ -27,6 +27,7 @@ import { DraggableToken, DropZone } from '../primitives';
 import { ActivityInputField } from '../activityFields';
 import { ActivityImage, ActivityImageIconButton } from '../ActivityImage';
 import { useActivityEventGuard } from '../activityHostContext';
+import { resolveBankOrder } from '../../primitives/bankOrder';
 import { itemStatus } from '../../primitives/itemStatus';
 import { activityCardClass, activitySelectedClass, activityStatusBorderClass } from '../activityUi';
 import { cn } from '@xipkg/utils';
@@ -507,9 +508,11 @@ export function MatchingActivity({
     );
   }
 
-  const rightOrder = attempt.bankOrder.length
-    ? attempt.bankOrder
-    : definition.right.map((item) => item.id);
+  const rightOrder = resolveBankOrder(
+    definition.right.map((item) => item.id),
+    attempt.bankOrder,
+    attempt.seed,
+  );
   const rightById = new Map(definition.right.map((item) => [item.id, item]));
   const usedRight = new Set(Object.values(attempt.placements).filter(Boolean));
 

@@ -12,6 +12,7 @@ import type {
   GapInputMode,
   GapTextDefinition,
 } from '../../model/types';
+import { gapDragTokens, resolveBankOrder, type GapDragToken } from '../../primitives/bankOrder';
 import { parseGapSourceText } from '../../primitives/text';
 import { ActivityInput, Choice, DraggableToken, DropZone } from '../primitives';
 import { ActivityInputField, ActivityTextareaField } from '../activityFields';
@@ -406,15 +407,16 @@ export function GapTextActivity({
   const segments = parseGapSourceText(definition.sourceText);
   const gapById = new Map(definition.gaps.map((gap) => [gap.id, gap]));
   const placedTokenIds = new Set(Object.values(attempt.placements).filter(Boolean));
-  const hasDragGaps = definition.gaps.some((gap) => gap.input === 'drag');
-  const dragTokens = hasDragGaps
-    ? [
-        ...definition.gaps
-          .filter((gap) => gap.input === 'drag')
-          .map((gap) => ({ id: gap.id, label: gap.answers[0] ?? gap.id })),
-        ...definition.bank.map((word, index) => ({ id: `bank-${index}`, label: word })),
-      ].filter((token) => !placedTokenIds.has(token.id))
-    : [];
+  const tokens = gapDragTokens(definition);
+  const tokenOrder = resolveBankOrder(
+    tokens.map((token) => token.id),
+    attempt.bankOrder,
+    attempt.seed,
+  );
+  const tokenById = new Map(tokens.map((token) => [token.id, token]));
+  const dragTokens = tokenOrder
+    .map((id) => tokenById.get(id))
+    .filter((token): token is GapDragToken => token != null && !placedTokenIds.has(token.id));
 
   return (
     <ActivityMotionList className="flex flex-col gap-3 p-3">
@@ -442,16 +444,7 @@ export function GapTextActivity({
           }
           if (gap.input === 'drag') {
             const placed = attempt.placements[gap.id];
-            const token = [
-              ...definition.gaps.map((item) => ({
-                id: item.id,
-                label: item.answers[0] ?? item.id,
-              })),
-              ...definition.bank.map((word, tokenIndex) => ({
-                id: `bank-${tokenIndex}`,
-                label: word,
-              })),
-            ].find((item) => item.id === placed);
+            const token = tokenById.get(placed ?? '');
             return (
               <span key={gap.id} className="inline-flex align-middle">
                 <DropZone
