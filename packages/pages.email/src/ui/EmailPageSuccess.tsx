@@ -4,6 +4,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useEmailConfirmation } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  getPendingInviteCode,
   inferEmailConfirmationSource,
   trackProductEvent,
 } from 'common.utils';
@@ -27,7 +28,11 @@ const Loading = () => {
 export const EmailPageSuccess = () => {
   const { t } = useTranslation('email');
   const navigate = useNavigate();
-  const search = useSearch({ strict: false });
+  const search = useSearch({ strict: false }) as {
+    token?: string;
+    redirect?: string;
+    invite?: string;
+  };
   const emailToken = useEmailToken();
   const { isLoading, isSuccess, isError, isAlreadyConfirmed } = useEmailConfirmation(emailToken);
   const source = inferEmailConfirmationSource({
@@ -39,7 +44,16 @@ export const EmailPageSuccess = () => {
       already_confirmed: isAlreadyConfirmed,
       source,
     });
-    navigate({ to: '/welcome/user', search: { ...search } });
+    const pendingInvite = getPendingInviteCode(search);
+    navigate({
+      to: '/welcome/user',
+      search: {
+        ...search,
+        ...(pendingInvite && !search.invite
+          ? { invite: pendingInvite, redirect: search.redirect ?? `/invite/${pendingInvite}` }
+          : {}),
+      },
+    });
   };
 
   const shouldShowButton = (isSuccess || isAlreadyConfirmed) && !isLoading;

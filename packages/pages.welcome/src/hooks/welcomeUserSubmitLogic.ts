@@ -10,7 +10,7 @@ export type WelcomeUserSubmitDeps = {
   userRole: OnboardingAnalyticsRole;
   userId?: number;
   onboardingStage?: string;
-  /** Код приглашения из URL. Тогда роль ученика ставится вместе с именем. */
+  /** Код приглашения из URL или из сохранённого pending-кода. Тогда роль ученика ставится вместе с именем. */
   inviteCode?: string;
   updateProfile: (payload: WelcomeUserProfilePayload) => Promise<unknown>;
   transitionToRoleStage: () => Promise<unknown>;

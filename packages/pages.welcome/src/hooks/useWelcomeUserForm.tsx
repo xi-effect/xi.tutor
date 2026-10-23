@@ -7,7 +7,7 @@ import {
   useUpdateProfile,
 } from 'common.services';
 import {
-  getInviteCodeFromSearch,
+  getPendingInviteCode,
   resolveOnboardingAnalyticsRole,
   trackOnboardingRoleSelected,
   trackOnboardingStepCompleted,
@@ -23,7 +23,9 @@ export const useWelcomeUserForm = () => {
   const { transitionStage } = useOnboardingTransition('default-layout', 'forwards');
   const { skipRoleStage } = useSkipRoleOnboardingStage();
   const { updateProfile } = useUpdateProfile();
-  const inviteCode = getInviteCodeFromSearch(search);
+  // Письмо подтверждения открывает /welcome/email?token=… и затирает invite в адресе.
+  // Код, сохранённый при регистрации по приглашению, всё ещё лежит в localStorage.
+  const inviteCode = getPendingInviteCode(search);
 
   const isLoading = updateProfile.isPending || transitionStage.isPending || skipRoleStage.isPending;
 

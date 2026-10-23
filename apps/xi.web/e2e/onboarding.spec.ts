@@ -100,6 +100,31 @@ test.describe('Onboarding', () => {
     expect(stages).toEqual(['default-layout', 'training']);
   });
 
+  test('письмо с token не стирает приглашение: имя пропускает роль', async ({ page }) => {
+    await mockAuthenticatedSession(
+      page,
+      mockUser({
+        onboarding_stage: 'user-information',
+        display_name: null,
+        default_layout: null,
+      }),
+    );
+    await mockProfileUpdate(page);
+    await mockOnboardingTransition(page);
+
+    await page.addInitScript(() => {
+      localStorage.setItem('invite.pending_code', 'invite-e2e-1');
+    });
+
+    await page.goto('/welcome/user?token=email-token');
+    await expect(welcomeTitle(page, 'Давайте познакомимся')).toBeVisible();
+    await page.locator('input[autocomplete="name"]').fill('Иван Тестов');
+    await page.getByRole('button', { name: 'Продолжить' }).click();
+
+    await expect(page).toHaveURL(/\/invite\/invite-e2e-1/, { timeout: 15_000 });
+    await expect(page).not.toHaveURL(/\/welcome\/role/);
+  });
+
   test('роль завершает welcome и открывает главную', async ({ page }) => {
     await mockAuthenticatedSession(
       page,
