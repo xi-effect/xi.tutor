@@ -31,7 +31,8 @@ export function useEditorDeepLinkFocus({
   useEffect(() => {
     if (!editor || !ready) return;
 
-    const commentId = search.comment?.trim();
+    const commentId = typeof search.comment === 'string' ? search.comment.trim() : undefined;
+
     if (!commentId) {
       appliedKeyRef.current = null;
       return;
