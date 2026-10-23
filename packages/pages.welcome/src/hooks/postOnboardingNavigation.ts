@@ -1,4 +1,4 @@
-/** Куда вести после завершения шага notifications. */
+/** Куда вести после завершения welcome: на инвайт, если код сохранён, иначе на главную. */
 export function resolvePostOnboardingNavigation(
   searchInvite?: string,
   storedInviteId?: string | null,

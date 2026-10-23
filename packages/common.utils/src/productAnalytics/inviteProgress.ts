@@ -5,7 +5,7 @@ export const INVITE_PROGRESS_TRACK_KEY = 'invite.progress_track';
 export type InviteProgressTrack = 'signup' | 'signin';
 
 export type InviteProgressStep =
-  'invite_open' | 'auth' | 'email' | 'welcome_user' | 'welcome_role' | 'welcome_socials' | 'accept';
+  'invite_open' | 'auth' | 'email' | 'welcome_user' | 'welcome_role' | 'accept';
 
 export type InviteProgress = {
   remaining: number;
@@ -20,7 +20,6 @@ const SIGNUP_STEPS: InviteProgressStep[] = [
   'email',
   'welcome_user',
   'welcome_role',
-  'welcome_socials',
   'accept',
 ];
 
@@ -75,7 +74,6 @@ export function resolveInviteProgressStep(
   if (path === '/welcome/email') return 'email';
   if (path === '/welcome/user') return 'welcome_user';
   if (path === '/welcome/role') return 'welcome_role';
-  if (path === '/welcome/socials') return 'welcome_socials';
   return null;
 }
 

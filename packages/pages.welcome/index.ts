@@ -1,6 +1,6 @@
 export { ProtectedProvider } from './src/providers';
 export { WelcomeContext } from './src/model';
-export { WelcomeUserPage, WelcomeRolePage, WelcomeSocialsPage } from './src/ui';
+export { WelcomeUserPage, WelcomeRolePage } from './src/ui';
 export {
   welcomeEn,
   welcomeRu,
@@ -10,7 +10,5 @@ export {
   welcomeRoleEn,
   welcomeAboutEn,
   welcomeAboutRu,
-  welcomeSocialsEn,
-  welcomeSocialsRu,
 } from './src/locales';
 export { onboardingStageToPath } from './src/utils';

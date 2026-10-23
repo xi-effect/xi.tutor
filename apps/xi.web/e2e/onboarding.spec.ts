@@ -62,7 +62,7 @@ test.describe('Onboarding', () => {
     await expect(welcomeTitle(page, 'Выберите роль')).toBeVisible();
   });
 
-  test('роль → socials', async ({ page }) => {
+  test('роль завершает welcome и открывает главную', async ({ page }) => {
     await mockAuthenticatedSession(
       page,
       mockUser({
@@ -76,29 +76,30 @@ test.describe('Onboarding', () => {
 
     await page.goto('/welcome/role');
     await expect(welcomeTitle(page, 'Выберите роль')).toBeVisible();
-    await page.getByRole('button', { name: 'Продолжить' }).click();
+    await page.getByRole('button', { name: 'Начать работу' }).click();
 
-    await expect(page).toHaveURL(/\/welcome\/socials/, { timeout: 15_000 });
-    await expect(welcomeTitle(page, 'Настройте уведомления')).toBeVisible();
+    await expect(page).toHaveURL(/\/($|\?)/, { timeout: 15_000 });
+    await expect(page).not.toHaveURL(/\/welcome\//);
   });
 
-  test('socials с invite.pending_code → /invite/$id', async ({ page }) => {
+  test('роль с invite.pending_code → /invite/$id', async ({ page }) => {
     await mockAuthenticatedSession(
       page,
       mockUser({
-        onboarding_stage: 'notifications',
+        onboarding_stage: 'default-layout',
         display_name: 'Иван',
-        default_layout: 'tutor',
+        default_layout: null,
       }),
     );
+    await mockProfileUpdate(page);
     await mockOnboardingTransition(page);
 
     await page.addInitScript(() => {
       localStorage.setItem('invite.pending_code', 'invite-e2e-1');
     });
 
-    await page.goto('/welcome/socials');
-    await expect(welcomeTitle(page, 'Настройте уведомления')).toBeVisible();
+    await page.goto('/welcome/role');
+    await expect(welcomeTitle(page, 'Выберите роль')).toBeVisible();
     await page.getByRole('button', { name: 'Начать работу' }).click();
 
     await expect(page).toHaveURL(/\/invite\/invite-e2e-1/, { timeout: 15_000 });

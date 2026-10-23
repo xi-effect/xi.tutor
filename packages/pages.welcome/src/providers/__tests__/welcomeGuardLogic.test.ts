@@ -14,7 +14,7 @@ describe('resolveWelcomeGuardAction', () => {
     expect(
       resolveWelcomeGuardAction({
         onboardingStage: 'training',
-        pathname: '/welcome/socials',
+        pathname: '/welcome/role',
         hasInvite: false,
       }),
     ).toEqual({ type: 'navigate', to: '/' });

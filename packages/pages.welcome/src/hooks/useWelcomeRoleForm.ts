@@ -8,6 +8,7 @@ import {
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
 } from 'common.utils';
+import { resolvePostOnboardingNavigation } from './postOnboardingNavigation';
 import { runWelcomeRoleBack, runWelcomeRoleForward } from './welcomeRoleSubmitLogic';
 
 export const useWelcomeRoleForm = () => {
@@ -23,7 +24,7 @@ export const useWelcomeRoleForm = () => {
   );
 
   const { transitionStage: transitionStageForward } = useOnboardingTransition(
-    'notifications',
+    'training',
     'forwards',
   );
 
@@ -40,8 +41,22 @@ export const useWelcomeRoleForm = () => {
       transitionForward: () => transitionStageForward.mutateAsync(),
       trackFailed: trackOnboardingStepFailed,
       trackCompleted: trackOnboardingStepCompleted,
-      navigateToSocials: (nextSearch) => {
-        navigate({ to: '/welcome/socials', search: nextSearch });
+      navigateAfterRole: (nextSearch) => {
+        window.setTimeout(() => {
+          const storedInviteId = localStorage.getItem('invite.pending_code');
+          const target = resolvePostOnboardingNavigation(nextSearch.invite, storedInviteId);
+
+          if (target.clearStoredInvite) {
+            localStorage.removeItem('invite.pending_code');
+          }
+
+          if (target.to === '/invite/$inviteId') {
+            void navigate({ to: target.to, params: target.params });
+            return;
+          }
+
+          void navigate({ to: target.to });
+        }, 100);
       },
       search,
     });

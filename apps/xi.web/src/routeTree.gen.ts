@@ -30,7 +30,6 @@ import { Route as commonLayoutConfirmEmailIndexRouteImport } from './pages/(comm
 import { Route as commonLayoutInviteInviteIdRouteImport } from './pages/(common)/_layout/invite/$inviteId'
 import { Route as commonWelcomeEmailIndexRouteImport } from './pages/(common)/welcome/email/index'
 import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
-import { Route as commonWelcomeSocialsIndexRouteImport } from './pages/(common)/welcome/socials/index'
 import { Route as commonWelcomeUserIndexRouteImport } from './pages/(common)/welcome/user/index'
 import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
 import { Route as appLayoutSettingsSubscriptionPaymentResultRouteImport } from './pages/(app)/_layout/settings/subscription/payment-result'
@@ -147,12 +146,6 @@ const commonWelcomeRoleIndexRoute = commonWelcomeRoleIndexRouteImport.update({
   path: '/welcome/role/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const commonWelcomeSocialsIndexRoute =
-  commonWelcomeSocialsIndexRouteImport.update({
-    id: '/(common)/welcome/socials/',
-    path: '/welcome/socials/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const commonWelcomeUserIndexRoute = commonWelcomeUserIndexRouteImport.update({
   id: '/(common)/welcome/user/',
   path: '/welcome/user/',
@@ -214,7 +207,6 @@ export interface FileRoutesByFullPath {
   '/confirm-email/': typeof commonLayoutConfirmEmailIndexRoute
   '/welcome/email/': typeof commonWelcomeEmailIndexRoute
   '/welcome/role/': typeof commonWelcomeRoleIndexRoute
-  '/welcome/socials/': typeof commonWelcomeSocialsIndexRoute
   '/welcome/user/': typeof commonWelcomeUserIndexRoute
   '/settings/subscription/payment-result': typeof appLayoutSettingsSubscriptionPaymentResultRoute
   '/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
@@ -242,7 +234,6 @@ export interface FileRoutesByTo {
   '/confirm-email': typeof commonLayoutConfirmEmailIndexRoute
   '/welcome/email': typeof commonWelcomeEmailIndexRoute
   '/welcome/role': typeof commonWelcomeRoleIndexRoute
-  '/welcome/socials': typeof commonWelcomeSocialsIndexRoute
   '/welcome/user': typeof commonWelcomeUserIndexRoute
   '/settings/subscription/payment-result': typeof appLayoutSettingsSubscriptionPaymentResultRoute
   '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
@@ -274,7 +265,6 @@ export interface FileRoutesById {
   '/(common)/_layout/confirm-email/': typeof commonLayoutConfirmEmailIndexRoute
   '/(common)/welcome/email/': typeof commonWelcomeEmailIndexRoute
   '/(common)/welcome/role/': typeof commonWelcomeRoleIndexRoute
-  '/(common)/welcome/socials/': typeof commonWelcomeSocialsIndexRoute
   '/(common)/welcome/user/': typeof commonWelcomeUserIndexRoute
   '/(app)/_layout/settings/subscription/payment-result': typeof appLayoutSettingsSubscriptionPaymentResultRoute
   '/(app)/_layout/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
@@ -304,7 +294,6 @@ export interface FileRouteTypes {
     | '/confirm-email/'
     | '/welcome/email/'
     | '/welcome/role/'
-    | '/welcome/socials/'
     | '/welcome/user/'
     | '/settings/subscription/payment-result'
     | '/classrooms/$classroomId/'
@@ -332,7 +321,6 @@ export interface FileRouteTypes {
     | '/confirm-email'
     | '/welcome/email'
     | '/welcome/role'
-    | '/welcome/socials'
     | '/welcome/user'
     | '/settings/subscription/payment-result'
     | '/classrooms/$classroomId'
@@ -363,7 +351,6 @@ export interface FileRouteTypes {
     | '/(common)/_layout/confirm-email/'
     | '/(common)/welcome/email/'
     | '/(common)/welcome/role/'
-    | '/(common)/welcome/socials/'
     | '/(common)/welcome/user/'
     | '/(app)/_layout/settings/subscription/payment-result'
     | '/(app)/_layout/classrooms/$classroomId/'
@@ -381,7 +368,6 @@ export interface RootRouteChildren {
   DesktopConferenceClassroomIdRoute: typeof DesktopConferenceClassroomIdRoute
   commonWelcomeEmailIndexRoute: typeof commonWelcomeEmailIndexRoute
   commonWelcomeRoleIndexRoute: typeof commonWelcomeRoleIndexRoute
-  commonWelcomeSocialsIndexRoute: typeof commonWelcomeSocialsIndexRoute
   commonWelcomeUserIndexRoute: typeof commonWelcomeUserIndexRoute
 }
 
@@ -534,13 +520,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof commonWelcomeRoleIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(common)/welcome/socials/': {
-      id: '/(common)/welcome/socials/'
-      path: '/welcome/socials'
-      fullPath: '/welcome/socials/'
-      preLoaderRoute: typeof commonWelcomeSocialsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(common)/welcome/user/': {
       id: '/(common)/welcome/user/'
       path: '/welcome/user'
@@ -677,7 +656,6 @@ const rootRouteChildren: RootRouteChildren = {
   DesktopConferenceClassroomIdRoute: DesktopConferenceClassroomIdRoute,
   commonWelcomeEmailIndexRoute: commonWelcomeEmailIndexRoute,
   commonWelcomeRoleIndexRoute: commonWelcomeRoleIndexRoute,
-  commonWelcomeSocialsIndexRoute: commonWelcomeSocialsIndexRoute,
   commonWelcomeUserIndexRoute: commonWelcomeUserIndexRoute,
 }
 export const routeTree = rootRouteImport

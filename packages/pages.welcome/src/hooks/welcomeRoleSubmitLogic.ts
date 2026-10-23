@@ -16,7 +16,7 @@ export type WelcomeRoleForwardDeps = {
     stage?: string,
   ) => void;
   trackCompleted: (step: 'role_selection', role: OnboardingAnalyticsRole, stage?: string) => void;
-  navigateToSocials: (search: { invite?: string }) => void;
+  navigateAfterRole: (search: { invite?: string }) => void;
   search: { invite?: string };
 };
 
@@ -42,7 +42,7 @@ export type WelcomeRoleBackDeps = {
 
 export type WelcomeRoleSubmitResult = 'ok' | 'profile_failed' | 'transition_failed';
 
-/** Вперёд: сохранить роль → notifications → /welcome/socials. */
+/** Вперёд: сохранить роль → training → / или /invite/$id. */
 export async function runWelcomeRoleForward(
   deps: WelcomeRoleForwardDeps,
 ): Promise<WelcomeRoleSubmitResult> {
@@ -58,7 +58,7 @@ export async function runWelcomeRoleForward(
   try {
     await deps.transitionForward();
     deps.trackCompleted('role_selection', deps.userRole, deps.onboardingStage);
-    deps.navigateToSocials({ ...deps.search });
+    deps.navigateAfterRole({ ...deps.search });
     return 'ok';
   } catch (error) {
     deps.trackFailed('role_selection', deps.userRole, error, deps.onboardingStage);
