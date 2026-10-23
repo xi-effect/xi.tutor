@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { canCurrentUserUseSubscriptionCommerce } from './commerce';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
 import type { SubscriptionFeatureId } from './features';
 
@@ -41,7 +40,7 @@ export const useSubscriptionUiStore = create<SubscriptionUiState>((set) => ({
       settingsOpenRequested: openSettings,
     }),
   openCheckout: () => {
-    if (!SUBSCRIPTION_BILLING_ENABLED || !canCurrentUserUseSubscriptionCommerce()) {
+    if (!SUBSCRIPTION_BILLING_ENABLED) {
       set({ screen: 'overview', paymentResult: null });
       return;
     }

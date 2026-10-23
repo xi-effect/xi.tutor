@@ -3,12 +3,7 @@ import { Button } from '@xipkg/button';
 import { Checkbox } from '@xipkg/checkbox';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useSearch } from '@tanstack/react-router';
-import {
-  formatRub,
-  TARIFFS,
-  useCanUseSubscriptionCommerce,
-  useSubscriptionUiStore,
-} from 'common.subscription';
+import { formatRub, TARIFFS, useSubscriptionUiStore } from 'common.subscription';
 import { useCreateSubscriptionPayment } from 'common.services';
 import { getAppLanguage } from 'common.ui';
 import {
@@ -95,16 +90,10 @@ export const SubscriptionCheckout = () => {
   const price = period === 'yearly' ? TARIFFS.pro.priceYearlyRub : TARIFFS.pro.priceMonthlyRub;
   const days = PERIOD_DAYS[period];
   const openOverview = useSubscriptionUiStore((state) => state.openOverview);
-  const { allowed, isReady } = useCanUseSubscriptionCommerce();
   const createPayment = useCreateSubscriptionPayment();
   const formattedPrice = formatRub(price, locale);
 
-  useEffect(() => {
-    if (isReady && !allowed) openOverview();
-  }, [allowed, isReady, openOverview]);
-
   const handlePay = async () => {
-    if (!allowed) return;
     setError(false);
 
     try {
@@ -185,7 +174,7 @@ export const SubscriptionCheckout = () => {
         size="m"
         className="h-12 w-full rounded-xl font-medium"
         onClick={() => void handlePay()}
-        disabled={!allowed || createPayment.isPending}
+        disabled={createPayment.isPending}
       >
         {t('checkout.pay')}
       </Button>

@@ -8,7 +8,6 @@ import {
   getRemainingSubscriptionDays,
   isSubscriptionPeriodActive,
   TRIAL_PROMO_CODE,
-  useCanUseSubscriptionCommerce,
   useSubscriptionPlan,
 } from 'common.subscription';
 import {
@@ -122,12 +121,11 @@ const RemainingDays = ({ days, date }: { days: string; date: string }) => {
 
 const ProTrialBanner = () => {
   const { t } = useTranslation('subscription');
-  const { allowed } = useCanUseSubscriptionCommerce();
   const redeemPromocode = useRedeemPromocode();
   const [error, setError] = useState(false);
 
   const handleActivate = async () => {
-    if (!allowed || redeemPromocode.isPending) return;
+    if (redeemPromocode.isPending) return;
     setError(false);
 
     try {
@@ -136,8 +134,6 @@ const ProTrialBanner = () => {
       setError(true);
     }
   };
-
-  if (!allowed) return null;
 
   return (
     <div className="flex flex-col gap-2">

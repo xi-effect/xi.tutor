@@ -1,13 +1,10 @@
 import { Button } from '@xipkg/button';
-import { useCanUseSubscriptionCommerce, useSubscriptionUiStore } from 'common.subscription';
+import { useSubscriptionUiStore } from 'common.subscription';
 import { useTranslation } from 'react-i18next';
 
 export const PayAheadButton = () => {
   const { t } = useTranslation('subscription');
-  const { allowed } = useCanUseSubscriptionCommerce();
   const openCheckout = useSubscriptionUiStore((state) => state.openCheckout);
-
-  if (!allowed) return null;
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-col items-center gap-2">
