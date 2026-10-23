@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react';
-import { useLocation } from '@tanstack/react-router';
+import { useLocation, useSearch } from '@tanstack/react-router';
 import { cn } from '@xipkg/utils';
+import { getInviteProgress } from 'common.utils';
 import { InviteProgressCard } from './InviteProgressCard';
 import { Logo } from './Logo';
 
@@ -60,18 +61,27 @@ export const AuthFlowShell = ({
   cardClassName,
 }: AuthFlowShellProps) => {
   const location = useLocation();
+  const search = useSearch({ strict: false }) as { invite?: string; redirect?: string };
+  const inviteProgressVisible =
+    showInviteProgress &&
+    Boolean(getInviteProgress({ pathname: location.pathname, search, isAuthenticated }));
 
   return (
     <div className="flex w-full flex-1 flex-col">
       {showInviteProgress ? (
         <InviteProgressCard isAuthenticated={isAuthenticated} placement="pageTop" />
       ) : null}
-      <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
+      <div
+        className={cn(
+          'flex w-full flex-1 flex-col items-center p-1 py-4',
+          inviteProgressVisible ? 'justify-start sm:justify-center' : 'justify-center',
+        )}
+      >
         <div
           className={cn(
             'xs:border-border-default xs:rounded-2xl xs:border xs:p-8',
             'flex w-full max-w-105 min-w-0 flex-col bg-transparent p-4',
-            cardClassName ?? 'min-h-150',
+            cardClassName ?? (inviteProgressVisible ? 'sm:min-h-150' : 'min-h-150'),
           )}
         >
           <AuthStageEnter key={location.pathname}>
