@@ -67,14 +67,7 @@ export type InviteFunnelTrack = 'signup' | 'signin' | 'already_auth';
 
 /** Шаг UI-воронки. `accept_direct` — авторизованный ученик сразу на принятии, без signup/signin. */
 export type InviteFunnelStep =
-  | 'invite_open'
-  | 'auth'
-  | 'email'
-  | 'welcome_user'
-  | 'welcome_role'
-  | 'welcome_socials'
-  | 'accept'
-  | 'accept_direct';
+  'invite_open' | 'auth' | 'email' | 'welcome_user' | 'welcome_role' | 'accept' | 'accept_direct';
 
 export type SignupValidationFailureReason =
   'required_field' | 'invalid_email' | 'weak_password' | 'terms_not_accepted' | 'multiple_fields';
@@ -116,7 +109,7 @@ export type PermissionFailureReason =
 export type HttpStatusGroup = '4xx' | '5xx' | 'none';
 
 export type OnboardingStepName =
-  'email_confirmation' | 'profile' | 'role_selection' | 'notifications' | 'training' | 'completed';
+  'email_confirmation' | 'profile' | 'role_selection' | 'training' | 'completed';
 
 export type OnboardingStepFailReason =
   'validation_error' | 'network_error' | 'server_error' | 'unknown';

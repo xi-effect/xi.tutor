@@ -11,11 +11,10 @@
 | `email_confirmation` | `email-confirmation`       | `/welcome/email`                   |
 | `profile`            | `user-information`         | `/welcome/user`                    |
 | `role_selection`     | `default-layout`           | `/welcome/role`                    |
-| `notifications`      | `notifications`            | `/welcome/socials`                 |
 | `training`           | `training`                 | тур на главной (`OnboardingPopup`) |
 | `completed`          | `completed`                | онбординг завершён                 |
 
-`step_index` — 1-based позиция в `ONBOARDING_STEPS` (всего 6).
+`step_index` — 1-based позиция в `ONBOARDING_STEPS` (всего 5).
 
 ---
 
@@ -119,13 +118,13 @@
 
 ### `onboarding_step_failed`
 
-| Поле      | Значение                                                                |
-| --------- | ----------------------------------------------------------------------- |
-| Тип       | Outcome (ошибка)                                                        |
-| Когда     | Ошибка API на шаге (profile / role / notifications / training complete) |
-| Роль      | обе / unknown                                                           |
-| Дедуп     | Один раз на неуспешный запрос (каждый failed request = событие)         |
-| В воронке | Да — диагностика drop-off                                               |
+| Поле      | Значение                                                        |
+| --------- | --------------------------------------------------------------- |
+| Тип       | Outcome (ошибка)                                                |
+| Когда     | Ошибка API на шаге (profile / role / training complete)         |
+| Роль      | обе / unknown                                                   |
+| Дедуп     | Один раз на неуспешный запрос (каждый failed request = событие) |
+| В воронке | Да — диагностика drop-off                                       |
 
 **Обязательные:** `step`, `step_index`, `total_steps`, `user_role`, `reason`, `event_version`
 
@@ -155,7 +154,6 @@
 Примеры:
 
 - `role_selection` → `profile`
-- `notifications` → `role_selection`
 
 ---
 
