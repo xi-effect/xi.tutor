@@ -186,7 +186,7 @@ export const getFileUploadErrorKind = (
     return 'failed';
   }
 
-  if (typeof maxBytes === 'number' && maxBytes > 0 && fileSize >= maxBytes) {
+  if (typeof maxBytes === 'number' && maxBytes > 0 && fileSize > maxBytes) {
     return 'tooLarge';
   }
 

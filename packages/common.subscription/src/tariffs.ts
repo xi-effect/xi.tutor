@@ -45,7 +45,4 @@ export const TARIFFS: Record<PlanId, TariffLimits> = {
     extraProFeatures: true,
   },
 };
-
-export const DEFAULT_PRO_RENEWS_AT = '2026-10-08T00:00:00.000Z';
-
 export const getTariff = (planId: PlanId): TariffLimits => TARIFFS[planId];

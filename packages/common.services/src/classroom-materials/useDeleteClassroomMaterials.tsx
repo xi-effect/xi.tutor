@@ -1,7 +1,8 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess } from 'common.services';
+import { handleError, showSuccess } from '../utils';
+import { invalidateStorageUsage } from '../storageLimit/storageLimitReached';
 import i18n from 'i18next';
 
 interface DeleteClassroomMaterialsParams {
@@ -66,6 +67,7 @@ export const useDeleteClassroomMaterials = () => {
       handleError(err, 'materials');
     },
     onSuccess: (_, params) => {
+      invalidateStorageUsage();
       // Инвалидируем все queries для данного classroomId и kind, чтобы они перезапросились
       queryClient.invalidateQueries({
         queryKey: [

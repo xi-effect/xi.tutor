@@ -91,13 +91,26 @@ const userFacingDetails: Partial<Record<ErrorType, Record<string, string>>> = {
   },
 };
 
-const BASIC_FILE_TOO_LARGE = 'Файл слишком большой. Изображения — до 1 МБ, остальные — до 5 МБ';
+const GENERIC_FILE_TOO_LARGE = 'Файл слишком большой';
+const CLASSROOM_LIMIT = 'Достигнут лимит активных кабинетов';
+const CLASSROOM_LIMIT_DETAILS = new Set([
+  'Quantity exceeded',
+  'Classroom limit reached',
+  'Active classroom limit reached',
+]);
 
-let readFileTooLargeMessage: () => string = () => BASIC_FILE_TOO_LARGE;
+let tutorClassroomLimitHandler: (() => void) | null = null;
 
-/** Подставляет лимиты текущего тарифа. Без подписки остаётся сообщение Базового. */
+/** Существующий диалог лимита кабинетов. Его подключает SubscriptionHost. */
+export const setTutorClassroomLimitHandler = (handler: (() => void) | null): void => {
+  tutorClassroomLimitHandler = handler;
+};
+
+let readFileTooLargeMessage: () => string = () => GENERIC_FILE_TOO_LARGE;
+
+/** Подставляет лимиты текущего тарифа. Пока тариф неизвестен, лимиты не называем. */
 export const setFileTooLargeMessage = (read: (() => string) | null): void => {
-  readFileTooLargeMessage = read ?? (() => BASIC_FILE_TOO_LARGE);
+  readFileTooLargeMessage = read ?? (() => GENERIC_FILE_TOO_LARGE);
 };
 const FILE_UNSUPPORTED = 'Недопустимый формат файла';
 const ACTION_FAILED = 'Не получилось выполнить действие. Попробуйте позже.';
@@ -112,6 +125,13 @@ const readDetail = (error: AxiosError): string | undefined => {
 
   const { detail } = data;
   return typeof detail === 'string' ? detail : undefined;
+};
+
+const isClassroomLimitError = (error: AxiosError, type: ErrorType): boolean => {
+  if (type !== 'classroom' && type !== 'createGroup') return false;
+  const detail = readDetail(error);
+  if (detail && CLASSROOM_LIMIT_DETAILS.has(detail)) return true;
+  return error.response?.status === 429 && !detail;
 };
 
 /**
@@ -131,6 +151,10 @@ export const getUserFacingErrorMessage = (error: unknown, type: ErrorType): stri
 
   if (detail === CLASSROOM_READ_ONLY_DETAIL) {
     return CLASSROOM_READ_ONLY;
+  }
+
+  if (isClassroomLimitError(error, type)) {
+    return CLASSROOM_LIMIT;
   }
 
   if (detail && userFacingDetails[type]?.[detail]) {
@@ -157,6 +181,15 @@ export const getApiErrorMessage = (error: unknown, type: ErrorType): string =>
 export const handleError = (error: unknown, type: ErrorType): void => {
   if (isStorageWriteBlockedError(error)) return;
   if (reportStorageLimitReached(error)) return;
+
+  if (
+    error instanceof AxiosError &&
+    isClassroomLimitError(error, type) &&
+    tutorClassroomLimitHandler
+  ) {
+    tutorClassroomLimitHandler();
+    return;
+  }
 
   const message = getUserFacingErrorMessage(error, type);
   if (message) {

@@ -11,6 +11,7 @@ import { prepareContentUpload } from '../files/prepareContentUpload';
 import { assertValidFileName } from '../files/validateFileName';
 import { createFileUploadHttpError } from '../files/createFileUploadHttpError';
 import {
+  invalidateStorageUsage,
   preventStorageWrite,
   reportStorageLimitReached,
 } from '../storageLimit/storageLimitReached';
@@ -86,6 +87,7 @@ export async function uploadClassroomFileRequest({
     throw new Error('Classroom file upload failed: empty response');
   }
 
+  invalidateStorageUsage();
   return response.data;
 }
 

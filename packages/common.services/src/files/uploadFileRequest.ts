@@ -4,6 +4,7 @@ import { prepareContentUpload } from './prepareContentUpload';
 import { assertValidFileName } from './validateFileName';
 import { createFileUploadHttpError } from './createFileUploadHttpError';
 import {
+  invalidateStorageUsage,
   preventStorageWrite,
   reportStorageLimitReached,
 } from '../storageLimit/storageLimitReached';
@@ -69,6 +70,7 @@ export async function uploadFileRequest({
     reportStorageLimitReached(error);
     throw error;
   }
+  invalidateStorageUsage();
   return response.data as FileResponse;
 }
 

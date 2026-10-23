@@ -6,7 +6,7 @@ import {
   useMonetizationDevStore,
 } from './monetizationDevtools';
 import { getCurrentSubscription } from './subscriptionApi';
-import { useTutorBillingScope } from './useTutorBillingScope';
+import { BILLING_QUERY_FRESHNESS, useTutorBillingScope } from './useTutorBillingScope';
 
 export const useCurrentSubscription = (options?: { enabled?: boolean }) => {
   const { userId, enabled } = useTutorBillingScope(options?.enabled ?? true);
@@ -18,6 +18,7 @@ export const useCurrentSubscription = (options?: { enabled?: boolean }) => {
         : subscriptionQueryKeys.currentSubscription(userId),
     queryFn: getCurrentSubscription,
     enabled,
+    ...BILLING_QUERY_FRESHNESS,
   });
   const subscription = resolveMonetizationSubscription(query.data, override);
   if (subscription === query.data || subscription === undefined) return query;

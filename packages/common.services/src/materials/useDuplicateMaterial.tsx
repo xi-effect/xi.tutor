@@ -1,7 +1,8 @@
 import { ClassroomMaterialsQueryKey, materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess, preventStorageWrite } from 'common.services';
+import { handleError, showSuccess } from '../utils';
+import { invalidateStorageUsage, preventStorageWrite } from '../storageLimit/storageLimitReached';
 import { AccessModeT, MaterialId } from 'common.types';
 import i18n from 'i18next';
 
@@ -79,6 +80,7 @@ export const useDuplicateMaterial = () => {
       handleError(err, 'materials');
     },
     onSuccess: (response, params) => {
+      invalidateStorageUsage();
       if (response.data) {
         queryClient.invalidateQueries({
           queryKey: [MaterialsQueryKey.Materials],

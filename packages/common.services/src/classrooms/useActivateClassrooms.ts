@@ -1,7 +1,7 @@
 import { classroomsApiConfig, ClassroomsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess } from 'common.services';
+import { handleError, showSuccess } from '../utils';
 import {
   activateMonetizationClassrooms,
   getMonetizationOverride,

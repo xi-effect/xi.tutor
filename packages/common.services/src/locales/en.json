@@ -12,6 +12,10 @@
     "storageLimit": {
       "student": "Your tutor has run out of storage on their plan. Please contact them.",
       "tutor": "This plan has run out of storage."
+    },
+    "upload": {
+      "file": "File uploaded",
+      "image": "Image uploaded"
     }
   }
 }

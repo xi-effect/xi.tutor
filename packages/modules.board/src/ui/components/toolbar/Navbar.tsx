@@ -13,6 +13,7 @@ import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
+import { getMaxFileBytes, isStorageQuotaReached } from 'common.subscription';
 import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { stickers } from '../../../config';
@@ -87,9 +88,13 @@ export const Navbar = track(
       if (!isOnline) return;
 
       (async () => {
-        const fileQueue = await processQueue();
+        const { uploaded, failed } = await processQueue({
+          hasShape: (shapeId) => Boolean(editor.getShape(shapeId)),
+          canUpload: () => !isStorageQuotaReached(),
+          maxBytes: getMaxFileBytes,
+        });
 
-        fileQueue?.forEach(({ fileId, shapeId }) => {
+        uploaded.forEach(({ fileId, shapeId }) => {
           if (!editor.getShape(shapeId)) return;
 
           editor.updateShape({
@@ -99,6 +104,16 @@ export const Navbar = track(
               src: fileId,
               status: 'uploaded',
             },
+          });
+        });
+
+        failed.forEach((shapeId) => {
+          if (!editor.getShape(shapeId)) return;
+
+          editor.updateShape({
+            id: shapeId,
+            type: 'file',
+            props: { status: 'error' },
           });
         });
       })();

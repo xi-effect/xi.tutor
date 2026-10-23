@@ -11,6 +11,7 @@ import { prepareContentUpload } from '../files/prepareContentUpload';
 import { assertValidFileName } from '../files/validateFileName';
 import { createFileUploadHttpError } from '../files/createFileUploadHttpError';
 import {
+  invalidateStorageUsage,
   preventStorageWrite,
   reportStorageLimitReached,
 } from '../storageLimit/storageLimitReached';
@@ -85,6 +86,7 @@ export async function uploadLibraryFileRequest({
     throw new Error('Library file upload failed: empty response');
   }
 
+  invalidateStorageUsage();
   return response.data;
 }
 

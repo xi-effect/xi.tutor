@@ -1,7 +1,7 @@
 import { ClassroomsQueryKey, ClassroomT, ClassroomStatusT, classroomsApiConfig } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess } from 'common.services';
+import { handleError, showSuccess } from '../utils';
 import {
   getMonetizationOverride,
   updateMonetizationClassroomStatus,
@@ -92,6 +92,8 @@ export const useUpdateClassroomStatus = () => {
       if (context?.previousLists) {
         restoreClassroomLists(queryClient, context.previousLists);
       }
+
+      void invalidateClassroomCounts(queryClient);
 
       // Показываем toast с ошибкой
       handleError(err, 'classroom');

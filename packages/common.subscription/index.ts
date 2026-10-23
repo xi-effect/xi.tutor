@@ -1,23 +1,12 @@
-export { SUBSCRIPTION_BILLING_ENABLED, SUBSCRIPTION_PROMO_ENABLED } from './src/config';
+export { SUBSCRIPTION_BILLING_ENABLED } from './src/config';
+export { GB, getTariff, MB, TARIFFS, type PlanId, type TariffLimits } from './src/tariffs';
 export {
-  DEFAULT_PRO_RENEWS_AT,
-  GB,
-  getTariff,
-  MB,
-  PLAN_IDS,
-  TARIFFS,
-  type PlanId,
-  type TariffLimits,
-} from './src/tariffs';
-export {
-  canAccessFeature,
   canCreateClassroom,
   evaluateUpload,
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   getCurrentTariff,
   getFileTooLargeLimitMessage,
-  getMaxBytesForKind,
   getMaxFileBytes,
   getMaxImageBytes,
   isBoardElementsLimitReached,
@@ -28,41 +17,31 @@ export {
   type UploadEvaluation,
   type UploadKind,
 } from './src/limits';
+export { canUseFeature, type SubscriptionFeatureId } from './src/features';
+export { TRIAL_PROMO_CODE } from './src/promo';
+export { isCurrentUserTutor } from './src/planCache';
 export {
-  canUseFeature,
-  getFeatureMinPlan,
-  SUBSCRIPTION_FEATURE_IDS,
-  type SubscriptionFeatureId,
-} from './src/features';
-export {
-  applyMockPromo,
-  MOCK_PROMO_ADDED_DAYS,
-  TRIAL_PROMO_CODE,
-  type PromoResult,
-  type PromoStatus,
-} from './src/promo';
-export { bytesToMb, formatBytes, formatPlanStorage, formatRub } from './src/format';
-export {
-  addDaysFromLaterOf,
-  getRemainingSubscriptionDays,
-  isPaidPeriodExpired,
-  isSubscriptionPeriodActive,
-} from './src/period';
-export { useSubscriptionStore, type SubscriptionMock, type SubscriptionState } from './src/store';
+  bytesToMb,
+  formatBytes,
+  formatMegabytes,
+  formatPlanStorage,
+  formatRub,
+} from './src/format';
+export { getRemainingSubscriptionDays, isSubscriptionPeriodActive } from './src/period';
+export { useSubscriptionStore } from './src/store';
 export {
   requestClassroomLimitDialog,
   requestImageUpgradeDialog,
   requestProFeatureDialog,
   requestStorageLimitDialog,
   useSubscriptionUiStore,
-  type PaymentResultStatus,
+  type CheckoutReturnScreen,
   type SubscriptionDialog,
   type SubscriptionScreen,
 } from './src/uiStore';
 export {
   useCanActivateClassroom,
   useCanUseFeature,
-  useCurrentTariff,
   usePlanLimits,
   useSubscriptionPlan,
 } from './src/hooks';

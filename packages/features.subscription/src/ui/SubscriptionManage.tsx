@@ -23,15 +23,15 @@ export const SubscriptionManage = () => {
   const subscriptionQuery = useCurrentSubscription();
   const openOverview = useSubscriptionUiStore((state) => state.openOverview);
 
-  const price = t('price.monthly', {
-    price: formatRub((tariff ?? TARIFFS.pro).priceMonthlyRub, locale),
-  });
   const subscription = subscriptionQuery.data;
   const endsAt = subscription?.subscription.ends_at;
   const activeSubscription = isSubscriptionPeriodActive(endsAt) ? subscription : null;
   const activeEndsAt = activeSubscription?.subscription.ends_at;
   const autoRenew = Boolean(activeSubscription?.auto_renewal);
   const remainingDays = activeEndsAt ? getRemainingSubscriptionDays('pro', activeEndsAt) : 0;
+  const price = t('price.monthly', {
+    price: formatRub((tariff ?? TARIFFS.pro).priceMonthlyRub, locale),
+  });
 
   if (isPlanError || !planId) {
     return (

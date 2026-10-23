@@ -44,6 +44,7 @@ export const PromoCodeField = () => {
               setStatus(null);
             }}
             placeholder={t('promo.placeholder')}
+            aria-label={t('promo.title')}
             autoComplete="off"
             autoCapitalize="characters"
             spellCheck={false}

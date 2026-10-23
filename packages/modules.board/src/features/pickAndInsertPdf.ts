@@ -133,6 +133,11 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    attempt.reject('unknown');
+    return;
+  }
+
   editor.setSelectedShapes([shapeId]);
   Promise.resolve().then(() => {
     editor.zoomToSelection({ animation: { duration: 200 } });

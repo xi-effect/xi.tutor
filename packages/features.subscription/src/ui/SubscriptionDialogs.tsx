@@ -2,7 +2,7 @@ import { Button } from '@xipkg/button';
 import { Modal, ModalBody, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
 import {
-  bytesToMb,
+  formatMegabytes,
   getTariff,
   useSubscriptionPlan,
   useSubscriptionUiStore,
@@ -31,7 +31,7 @@ type DialogCopy = {
   confirmLabel: string;
 };
 
-const imageSize = (plan: PlanId) => `${bytesToMb(getTariff(plan).maxImageBytes)} МБ`;
+const imageSize = (plan: PlanId) => formatMegabytes(getTariff(plan).maxImageBytes);
 
 export const SubscriptionDialogs = () => {
   const { t } = useTranslation('subscription');

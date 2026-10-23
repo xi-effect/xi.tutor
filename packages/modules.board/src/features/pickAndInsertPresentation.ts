@@ -80,6 +80,11 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    attempt.reject('unknown');
+    return;
+  }
+
   try {
     const serverUrl = await uploadFileIdRequest({
       file,

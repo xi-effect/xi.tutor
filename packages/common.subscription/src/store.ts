@@ -19,7 +19,3 @@ export const useSubscriptionStore = create<SubscriptionState>()((set) => ({
   mock: defaultMock,
   patchMock: (patch) => set((state) => ({ mock: { ...state.mock, ...patch } })),
 }));
-
-if (typeof localStorage !== 'undefined') {
-  localStorage.removeItem('sovlium-subscription-mock');
-}

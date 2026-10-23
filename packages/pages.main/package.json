@@ -28,6 +28,7 @@
     "common.config": "workspace:*",
     "common.env": "workspace:*",
     "common.services": "workspace:*",
+    "common.subscription": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "features.classroom": "workspace:*",

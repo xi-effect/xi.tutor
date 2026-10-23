@@ -1,13 +1,15 @@
-import { useClassroomCounts, useCurrentPlan } from 'common.services';
+import { useClassroomCounts, useCurrentPlan, useCurrentUser } from 'common.services';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
 import { canUseFeature, type SubscriptionFeatureId } from './features';
 import { mergePlanLimits, planKindToPlanId } from './planCache';
 import { getCurrentTariff } from './limits';
-import { TARIFFS, type TariffLimits } from './tariffs';
+import type { TariffLimits } from './tariffs';
 
 export const useSubscriptionPlan = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
   const planQuery = useCurrentPlan();
-  const plan = planQuery.data;
+  const plan = isTutor ? planQuery.data : undefined;
   const planId = plan ? planKindToPlanId(plan.kind) : null;
   const tariff = plan ? mergePlanLimits(plan) : null;
 
@@ -16,16 +18,16 @@ export const useSubscriptionPlan = () => {
     tariff,
     isPro: plan?.kind === 'pro',
     isBasic: Boolean(plan) && plan?.kind !== 'pro',
-    isPlanReady: planQuery.isSuccess,
-    isPlanError: planQuery.isError,
-    isPlanLoading: planQuery.isPending && planQuery.fetchStatus !== 'idle',
+    isPlanReady: isTutor && planQuery.isSuccess,
+    isPlanError: isTutor && planQuery.isError,
+    isPlanLoading: isTutor && planQuery.isPending && planQuery.fetchStatus !== 'idle',
     refetchPlan: planQuery.refetch,
   };
 };
 
 export const usePlanLimits = (): TariffLimits => {
   const { tariff } = useSubscriptionPlan();
-  return tariff ?? TARIFFS.basic;
+  return tariff ?? getCurrentTariff();
 };
 
 export const useCanUseFeature = (featureId: SubscriptionFeatureId): boolean => {
@@ -33,11 +35,6 @@ export const useCanUseFeature = (featureId: SubscriptionFeatureId): boolean => {
   if (!SUBSCRIPTION_BILLING_ENABLED) return true;
   if (!isPlanReady || !planId) return true;
   return canUseFeature(featureId, planId);
-};
-
-export const useCurrentTariff = () => {
-  const { tariff } = useSubscriptionPlan();
-  return tariff ?? getCurrentTariff();
 };
 
 export const useCanActivateClassroom = (): boolean => {

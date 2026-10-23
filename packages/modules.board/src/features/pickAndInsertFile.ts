@@ -66,6 +66,11 @@ export async function insertFile(
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    attempt.reject('unknown');
+    return;
+  }
+
   editor.setSelectedShapes([shapeId]);
   Promise.resolve().then(() => {
     editor.zoomToSelection({ animation: { duration: 200 } });
@@ -76,6 +81,7 @@ export async function insertFile(
   try {
     if (!editor.getShape(shapeId)) {
       attempt.reject('unknown');
+      void deleteFileFromDB(shapeId);
       return;
     }
 
@@ -88,6 +94,7 @@ export async function insertFile(
     });
 
     const fileId = await uploadFileIdRequest({ file, token });
+    void deleteFileFromDB(shapeId);
 
     editor.updateShape<FileShape>({
       id: shapeId,

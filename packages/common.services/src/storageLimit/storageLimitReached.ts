@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 
 const HANDLED = Symbol.for('xi.storageLimitReached');
 const STUDENT_TOAST_WINDOW_MS = 2000;
+const STORAGE_USAGE_REFRESH_DELAY_MS = 400;
 
 type HandledError = {
   [HANDLED]?: boolean;
@@ -22,6 +23,16 @@ type HomeUser = {
 let tutorStorageLimitHandler: (() => void) | null = null;
 let storageWriteGuard: (() => boolean) | null = null;
 let lastStudentToastAt = 0;
+let storageUsageRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** Перезапрашивает занятое место после загрузки или удаления. Серия вызовов схлопывается в один запрос. */
+export const invalidateStorageUsage = () => {
+  if (storageUsageRefreshTimer) clearTimeout(storageUsageRefreshTimer);
+  storageUsageRefreshTimer = setTimeout(() => {
+    storageUsageRefreshTimer = null;
+    void queryClient.invalidateQueries({ queryKey: [SubscriptionQueryKey.StorageUsage] });
+  }, STORAGE_USAGE_REFRESH_DELAY_MS);
+};
 
 export const setStorageWriteGuard = (guard: (() => boolean) | null) => {
   storageWriteGuard = guard;

@@ -70,7 +70,11 @@ export const CancelSubscriptionButton = ({ buttonClassName }: { buttonClassName?
       >
         {t('manage.disable')}
       </Button>
-      {error ? <p className="text-status-error-text text-sm">{t('manage.disableError')}</p> : null}
+      {error ? (
+        <p className="text-status-error-text text-sm" role="alert">
+          {t('manage.disableError')}
+        </p>
+      ) : null}
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}

@@ -130,7 +130,7 @@ export async function redeemPromocode(code: string): Promise<void> {
     headers: jsonHeaders,
   });
 
-  if (response.status !== 204) {
+  if (response.status < 200 || response.status >= 300) {
     throw new Error(`Unexpected promocode redemption status: ${response.status}`);
   }
 }

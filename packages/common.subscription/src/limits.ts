@@ -1,10 +1,9 @@
+import i18n from 'i18next';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
-import { bytesToMb } from './format';
-import { canUseFeature, type SubscriptionFeatureId } from './features';
+import { formatMegabytes } from './format';
 import {
   countCachedActiveClassrooms,
   mergePlanLimits,
-  planKindToPlanId,
   readCachedCurrentPlan,
   readCachedStorageUsage,
 } from './planCache';
@@ -28,18 +27,14 @@ export type UploadEvaluation =
       kind: UploadKind;
     };
 
-export const getCurrentTariff = (planId?: PlanId): TariffLimits => {
+/**
+ * Лимиты текущего репетитора. Без кэша тарифа (ученик, тариф ещё грузится или запрос упал)
+ * клиент берёт самый широкий тариф и не предлагает апгрейд: окончательно размер проверяет сервер.
+ */
+export const getCurrentTariff = (): TariffLimits => {
   const cached = readCachedCurrentPlan();
-
-  if (planId) {
-    if (cached && planKindToPlanId(cached.kind) === planId) {
-      return mergePlanLimits(cached);
-    }
-    return getTariff(planId);
-  }
-
   if (cached) return mergePlanLimits(cached);
-  return getTariff('basic');
+  return getTariff('pro');
 };
 
 export const getMaxImageBytes = (): number => getCurrentTariff().maxImageBytes;
@@ -47,8 +42,16 @@ export const getMaxImageBytes = (): number => getCurrentTariff().maxImageBytes;
 export const getMaxFileBytes = (): number => getCurrentTariff().maxFileBytes;
 
 export const getFileTooLargeLimitMessage = (): string => {
+  if (!readCachedCurrentPlan()) {
+    return i18n.t('limits.fileTooLargeGeneric', { ns: 'subscription' });
+  }
+
   const tariff = getCurrentTariff();
-  return `Файл слишком большой. Изображения — до ${bytesToMb(tariff.maxImageBytes)} МБ, остальные — до ${bytesToMb(tariff.maxFileBytes)} МБ`;
+  return i18n.t('limits.fileTooLargeBoth', {
+    ns: 'subscription',
+    image: formatMegabytes(tariff.maxImageBytes),
+    other: formatMegabytes(tariff.maxFileBytes),
+  });
 };
 
 export const getBoardElementsLimit = (): number => getCurrentTariff().maxBoardElements;
@@ -78,20 +81,27 @@ export const isStorageQuotaReached = (): boolean => {
   return usage.total_storage_bytes >= plan.max_total_storage_bytes;
 };
 
+const wouldExceedStorageQuota = (bytes: number): boolean => {
+  if (!SUBSCRIPTION_BILLING_ENABLED) return false;
+
+  const plan = readCachedCurrentPlan();
+  const usage = readCachedStorageUsage();
+  if (!plan || !usage) return false;
+
+  return usage.total_storage_bytes + bytes > plan.max_total_storage_bytes;
+};
+
 export const isBoardElementsLimitReached = (currentCount: number): boolean => {
   const atLimitByCount = currentCount >= getCurrentTariff().maxBoardElements;
   if (!SUBSCRIPTION_BILLING_ENABLED) return atLimitByCount;
   return useSubscriptionStore.getState().mock.boardAtLimit || atLimitByCount;
 };
 
-export const getMaxBytesForKind = (kind: UploadKind): number =>
-  kind === 'image' ? getMaxImageBytes() : getMaxFileBytes();
-
-export const evaluateUpload = (file: File, kind: UploadKind): UploadEvaluation => {
+export const evaluateUpload = (file: Pick<File, 'size'>, kind: UploadKind): UploadEvaluation => {
   const tariff = getCurrentTariff();
   const maxBytes = kind === 'image' ? tariff.maxImageBytes : tariff.maxFileBytes;
 
-  if (SUBSCRIPTION_BILLING_ENABLED && isStorageQuotaReached()) {
+  if (wouldExceedStorageQuota(file.size)) {
     return { ok: false, reason: 'storage', planId: tariff.id, maxBytes, kind };
   }
 
@@ -134,7 +144,7 @@ export const tryChangeClassroomStatus = (currentStatus: string, nextStatus: stri
   return true;
 };
 
-export const tryStartUpload = (file: File, kind: UploadKind): UploadEvaluation => {
+export const tryStartUpload = (file: Pick<File, 'size'>, kind: UploadKind): UploadEvaluation => {
   const result = evaluateUpload(file, kind);
   if (!result.ok && result.reason === 'storage') {
     requestStorageLimitDialog();
@@ -144,6 +154,3 @@ export const tryStartUpload = (file: File, kind: UploadKind): UploadEvaluation =
   }
   return result;
 };
-
-export const canAccessFeature = (featureId: SubscriptionFeatureId): boolean =>
-  canUseFeature(featureId);

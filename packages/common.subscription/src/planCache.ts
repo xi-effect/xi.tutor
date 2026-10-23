@@ -17,11 +17,19 @@ import { getTariff, type PlanId, type TariffLimits } from './tariffs';
 
 type HomeUser = {
   id?: number;
+  default_layout?: string;
 };
 
+const readHomeUser = (): HomeUser | undefined =>
+  queryClient.getQueryData<HomeUser>([UserQueryKey.Home]);
+
+export const isCurrentUserTutor = (): boolean => readHomeUser()?.default_layout === 'tutor';
+
+/** Биллинг относится только к роли репетитора: после переключения на ученика его кэш не применяется. */
 const readHomeUserId = (): number | null => {
-  const user = queryClient.getQueryData<HomeUser>([UserQueryKey.Home]);
-  return typeof user?.id === 'number' ? user.id : null;
+  const user = readHomeUser();
+  if (user?.default_layout !== 'tutor') return null;
+  return typeof user.id === 'number' ? user.id : null;
 };
 
 const readRawCurrentPlan = (): CurrentPlan | undefined => {

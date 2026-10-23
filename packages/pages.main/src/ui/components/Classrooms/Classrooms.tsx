@@ -9,7 +9,13 @@ import {
 import { Add, ArrowRight, Group, UserPlus } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
-import { useCurrentUser, useFetchClassrooms, useFetchClassroomsByStudent } from 'common.services';
+import {
+  trackClassroomLimitReached,
+  useCurrentUser,
+  useFetchClassrooms,
+  useFetchClassroomsByStudent,
+} from 'common.services';
+import { tryStartClassroomCreate } from 'common.subscription';
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ModalAddGroup } from 'features.group.add';
@@ -49,6 +55,14 @@ export const Classrooms = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [addGroupModalOpen, setAddGroupModalOpen] = useState(false);
+
+  const openAddGroupModal = () => {
+    if (!tryStartClassroomCreate()) {
+      trackClassroomLimitReached('other');
+      return;
+    }
+    setAddGroupModalOpen(true);
+  };
   const navigate = useNavigate();
 
   const filteredClassrooms = useMemo(() => {
@@ -121,7 +135,7 @@ export const Classrooms = () => {
                 className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
                 onSelect={() => {
                   setDropdownOpen(false);
-                  setAddGroupModalOpen(true);
+                  openAddGroupModal();
                 }}
                 data-umami-event="classrooms-add-group"
               >
@@ -201,7 +215,7 @@ export const Classrooms = () => {
                   type="button"
                   variant="none"
                   className={createGroupEmptyButtonClass}
-                  onClick={() => setAddGroupModalOpen(true)}
+                  onClick={openAddGroupModal}
                   data-umami-event="classrooms-empty-create-group"
                 >
                   {t('classrooms.createGroup')}

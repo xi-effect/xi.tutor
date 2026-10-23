@@ -104,6 +104,12 @@ export async function insertImage(
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    editor.deleteAssets([tempAssetId]);
+    attempt.reject('unknown');
+    return;
+  }
+
   editor.setSelectedShapes([shapeId]);
   Promise.resolve().then(() => {
     editor.zoomToSelection({ animation: { duration: 200 } });

@@ -13,7 +13,7 @@ import {
 } from '../../hooks';
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
 import { PdfViewer } from './PdfViewer';
-import { optimizeImage } from '../../utils/optimizeImage';
+import { uploadExtractedImage } from '../../utils/uploadExtractedImage';
 import { StrokeT } from '../../types';
 import { DrawSwitchButton } from '../../ui/components/drawing/DrawSwitchButton';
 import { cn } from '@xipkg/utils';
@@ -46,9 +46,8 @@ export const PdfNodeView = ({ node, getPos, updateAttributes, selected }: NodeVi
       if (!storageToken) return;
       const baseName = (node.attrs.fileName || 'pdf').replace(/\.pdf$/i, '');
       const file = new File([blob], `${baseName}_p${page}.png`, { type: 'image/png' });
-      const optimized = await optimizeImage(file);
-      const uploadedId = await uploadImage({ file: optimized, token: storageToken });
-      insertImage(uploadedId, `${baseName} p.${page}`);
+      const uploadedId = await uploadExtractedImage(file, storageToken, uploadImage);
+      if (uploadedId) insertImage(uploadedId, `${baseName} p.${page}`);
     },
     [insertImage, node.attrs.fileName, storageToken, uploadImage],
   );

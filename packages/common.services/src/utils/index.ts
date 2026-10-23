@@ -1,6 +1,7 @@
 export * from './errorHandler';
 export * from './findNextAvailableName';
 export {
+  invalidateStorageUsage,
   isStorageLimitReachedError,
   preventStorageWrite,
   reportStorageLimitReached,

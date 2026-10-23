@@ -6,6 +6,7 @@
   "price": {
     "free": "0 ₽",
     "monthly": "{{price}} / month",
+    "yearly": "{{price}} / year",
     "perMonth": "{{price}}/mo"
   },
   "launchBanner": "We are preparing to launch plans within the next month. You cannot pay for a subscription yet. There are currently no limits on classrooms or storage.",
@@ -138,6 +139,7 @@
     "disableDescriptionNoRenewalNoDate": "Auto-renewal is already off, so you will not be charged. The remaining days can still be used.",
     "disableConfirm": "Yes, cancel",
     "disableKeep": "Keep subscription",
+    "disableError": "Couldn’t cancel the subscription. Please try again.",
     "noRenewalHint": "Auto-renewal is off, so you will not be charged again.",
     "noRenewalUntil": "«Pro» stays available until {{date}}. After that the «Basic» plan will be enabled.",
     "noRenewalUntilNoDate": "Paid «Pro» days can be used until the current period ends.",
@@ -169,7 +171,14 @@
     "fileTooLarge": "The file is too large. On the «{{plan}}» plan, {{kind}} can be up to {{size}}.",
     "fileKindImage": "images",
     "fileKindOther": "files",
-    "storageFullInline": "Not enough storage space."
+    "storageFullInline": "Not enough storage space.",
+    "fileTooLargeBoth": "The file is too large. Images can be up to {{image}}, other files up to {{other}}",
+    "fileTooLargeGeneric": "The file is too large"
+  },
+  "units": {
+    "b": "B",
+    "mb": "MB",
+    "gb": "GB"
   },
   "pro": {
     "badge": "Pro",

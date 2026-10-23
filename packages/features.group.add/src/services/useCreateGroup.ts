@@ -59,6 +59,7 @@ export const useCreateGroup = () => {
         queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousClassrooms);
       }
 
+      void invalidateClassroomCounts(queryClient);
       handleError(err, 'createGroup');
     },
     onSuccess: () => {

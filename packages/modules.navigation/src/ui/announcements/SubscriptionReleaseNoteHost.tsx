@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import { USER_FLAG_KEYS, useCurrentUser, useDismissibleUserFlag } from 'common.services';
 import { isOnboardingSurfaceActive, subscribeOnboardingSurface } from 'common.ui';
 import { useCallStore } from 'modules.calls';
@@ -8,6 +8,7 @@ import { SubscriptionReleaseNoteModal } from './SubscriptionReleaseNoteModal';
 
 /** Пауза после онбординга, чтобы новость не открывалась в тот же кадр. */
 const NEWS_AFTER_ONBOARDING_MS = 600;
+const PAYMENT_RESULT_PATH = '/settings/subscription/payment-result';
 
 const isReadyTutor = (user: { default_layout: string; onboarding_stage: string } | undefined) =>
   user?.default_layout === 'tutor' &&
@@ -16,8 +17,9 @@ const isReadyTutor = (user: { default_layout: string; onboarding_stage: string }
 export const SubscriptionReleaseNoteHost = () => {
   const { data: user } = useCurrentUser();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const inCall = useCallStore((state) => Boolean(state.token));
-  const ready = isReadyTutor(user) && !inCall;
+  const ready = isReadyTutor(user) && !inCall && !pathname.startsWith(PAYMENT_RESULT_PATH);
   const { visible, dismiss } = useDismissibleUserFlag(
     USER_FLAG_KEYS.SUBSCRIPTION_RELEASE_NOTE_DISMISSED,
     { enabled: ready },

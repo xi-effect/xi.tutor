@@ -136,9 +136,7 @@ describe('subscription API', () => {
     );
 
     axiosMock.mockResolvedValueOnce({ status: 200, data: {} });
-    await expect(redeemPromocode('PRO')).rejects.toThrow(
-      'Unexpected promocode redemption status: 200',
-    );
+    await expect(redeemPromocode('PRO')).resolves.toBeUndefined();
 
     axiosMock.mockRejectedValueOnce({ isAxiosError: true, response: { status: 404 } });
     await expect(redeemPromocode('MISSING')).rejects.toMatchObject({

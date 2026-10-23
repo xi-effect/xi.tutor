@@ -80,6 +80,7 @@ const RemainingDays = ({ days, date }: { days: string; date: string }) => {
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
       tabIndex={0}
+      role="note"
       aria-label={`${days}, ${date}`}
     >
       <span
@@ -353,7 +354,7 @@ export const SubscriptionOverview = () => {
         </Link>
       </section>
 
-      {isBasic && !subscriptionQuery.isPending && !activeSubscription ? <ProTrialBanner /> : null}
+      {isBasic && subscriptionQuery.isSuccess && !activeSubscription ? <ProTrialBanner /> : null}
       <PromoCodeField />
     </div>
   );

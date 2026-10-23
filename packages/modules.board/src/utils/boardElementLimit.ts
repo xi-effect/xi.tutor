@@ -2,19 +2,64 @@ import type { DrShapeId, Editor } from '@ibodr/draw';
 import i18n from 'i18next';
 import { toast } from 'sonner';
 import {
-  SUBSCRIPTION_BILLING_ENABLED,
   getBoardElementsLimit,
+  getCurrentTariff,
+  getTariff,
   isBoardElementsLimitReached,
+  isCurrentUserTutor,
   isStorageQuotaReached,
   requestStorageLimitDialog,
   useSubscriptionUiStore,
 } from 'common.subscription';
 import { trackBoardObjectsLimitReached } from 'common.utils';
 
-export const registerBoardElementLimit = (editor: Editor) => {
-  let toastShown = false;
+const CONTAINER_SHAPE_TYPES = new Set(['group', 'frame']);
 
-  return editor.store.listen((event) => {
+const canUpgradeBoardLimit = (): boolean =>
+  isCurrentUserTutor() &&
+  getCurrentTariff().id !== 'pro' &&
+  getTariff('pro').maxBoardElements > getBoardElementsLimit();
+
+export const showBoardElementsLimitToast = () => {
+  const limit = getBoardElementsLimit();
+  toast.error(i18n.t('settings.limitReachedTitle', { ns: 'board' }), {
+    id: 'board-elements-limit',
+    description: i18n.t('settings.limitReachedDesc', { ns: 'board', limit }),
+    duration: 4000,
+    ...(canUpgradeBoardLimit()
+      ? {
+          action: {
+            label: i18n.t('limits.viewPro', { ns: 'subscription' }),
+            onClick: () => useSubscriptionUiStore.getState().openCompare(true),
+          },
+        }
+      : {}),
+  });
+};
+
+/** Сколько фигур ещё можно добавить на текущую страницу. */
+export const getRemainingBoardElements = (editor: Editor): number =>
+  Math.max(0, getBoardElementsLimit() - editor.getCurrentPageShapeIds().size);
+
+/**
+ * Группа и рамка не занимают хранилище. Новую обёртку вокруг уже существующих фигур не удаляем:
+ * deleteShapes удалил бы вместе с ней и эти фигуры у всех участников.
+ */
+const collectBlockedForStorage = (editor: Editor, createdIds: DrShapeId[]): DrShapeId[] => {
+  const created = new Set<DrShapeId>(createdIds);
+
+  return createdIds.filter((id) => {
+    const shape = editor.getShape(id);
+    if (!shape || !CONTAINER_SHAPE_TYPES.has(shape.type)) return true;
+
+    return editor
+      .getSortedChildIdsForParent(id)
+      .every((childId) => created.has(childId as DrShapeId));
+  });
+};
+
+export const registerBoardElementLimit = (editor: Editor) => {
+  const stopListening = editor.store.listen((event) => {
     const source = 'source' in event ? event.source : 'user';
     if (source !== 'user') return;
 
@@ -28,7 +73,10 @@ export const registerBoardElementLimit = (editor: Editor) => {
     if (createdShapeIds.length === 0) return;
 
     if (isStorageQuotaReached()) {
-      editor.deleteShapes(createdShapeIds);
+      const blocked = collectBlockedForStorage(editor, createdShapeIds);
+      if (blocked.length === 0) return;
+
+      editor.deleteShapes(blocked);
       requestStorageLimitDialog();
       return;
     }
@@ -36,26 +84,23 @@ export const registerBoardElementLimit = (editor: Editor) => {
     const currentCount = editor.getCurrentPageShapeIds().size;
     const previousCount = currentCount - createdShapeIds.length;
 
-    if (!isBoardElementsLimitReached(previousCount)) return;
+    if (currentCount <= getBoardElementsLimit() && !isBoardElementsLimitReached(previousCount)) {
+      return;
+    }
 
     editor.deleteShapes(createdShapeIds);
     trackBoardObjectsLimitReached('elements');
-
-    if (toastShown) return;
-    toastShown = true;
-
-    const limit = getBoardElementsLimit();
-    toast.error(i18n.t('settings.limitReachedTitle', { ns: 'board' }), {
-      description: i18n.t('settings.limitReachedDesc', { ns: 'board', limit }),
-      duration: 4000,
-      ...(SUBSCRIPTION_BILLING_ENABLED
-        ? {
-            action: {
-              label: i18n.t('limits.viewPro', { ns: 'subscription' }),
-              onClick: () => useSubscriptionUiStore.getState().openCompare(true),
-            },
-          }
-        : {}),
-    });
+    showBoardElementsLimitToast();
   });
+
+  const handleMaxShapes = () => {
+    trackBoardObjectsLimitReached('elements');
+    showBoardElementsLimitToast();
+  };
+  editor.on('max-shapes', handleMaxShapes);
+
+  return () => {
+    stopListening();
+    editor.off('max-shapes', handleMaxShapes);
+  };
 };

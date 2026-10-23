@@ -333,6 +333,7 @@ export const resolveMonetizationClassroomCounts = (
   real: ClassroomCounts | undefined,
   state: MonetizationOverride,
 ): ClassroomCounts | undefined => {
+  if (!state.enabled) return real;
   if (state.classroomCatalog) return tallyClassroomStatuses(state.classroomCatalog);
   if (!hasMonetizationOverride(state) || state.activeClassrooms === null) return real;
 

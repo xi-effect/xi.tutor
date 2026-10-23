@@ -28,7 +28,7 @@ const ResultBlock = ({
   text?: ReactNode;
   children?: ReactNode;
 }) => (
-  <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center">
+  <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center" aria-live="polite">
     <h1 className="font-playfair text-text-primary m-0 text-2xl leading-snug font-medium">
       {title}
     </h1>

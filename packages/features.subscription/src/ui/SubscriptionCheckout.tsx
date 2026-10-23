@@ -92,8 +92,11 @@ export const SubscriptionCheckout = () => {
   const openOverview = useSubscriptionUiStore((state) => state.openOverview);
   const createPayment = useCreateSubscriptionPayment();
   const formattedPrice = formatRub(price, locale);
+  const [redirecting, setRedirecting] = useState(false);
+  const busy = createPayment.isPending || redirecting;
 
   const handlePay = async () => {
+    if (busy) return;
     setError(false);
 
     try {
@@ -107,6 +110,7 @@ export const SubscriptionCheckout = () => {
         return;
       }
 
+      setRedirecting(true);
       window.location.assign(payment.confirmation_url);
     } catch {
       setError(true);
@@ -174,12 +178,14 @@ export const SubscriptionCheckout = () => {
         size="m"
         className="h-12 w-full rounded-xl font-medium"
         onClick={() => void handlePay()}
-        disabled={createPayment.isPending}
+        disabled={busy}
       >
         {t('checkout.pay')}
       </Button>
       {error ? (
-        <p className="text-status-error-text text-center text-sm">{t('checkout.error')}</p>
+        <p className="text-status-error-text text-center text-sm" role="alert">
+          {t('checkout.error')}
+        </p>
       ) : null}
       <div className="text-text-secondary flex flex-col gap-1 text-center text-xs leading-4">
         <p>{t('checkout.paymentHint')}</p>
