@@ -2,6 +2,7 @@ import { libraryFilesApiConfig, LibraryFilesQueryKey, libraryFilesQueryKeys } fr
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from '../utils';
+import { invalidateStorageUsage } from '../storageLimit/storageLimitReached';
 
 export async function deleteLibraryFileRequest(fileId: string): Promise<void> {
   const axiosInst = await getAxiosInstance();
@@ -29,6 +30,7 @@ export const useDeleteLibraryFile = () => {
       handleError(err, 'files');
     },
     onSuccess: (_data, fileId) => {
+      invalidateStorageUsage();
       queryClient.invalidateQueries({
         queryKey: [LibraryFilesQueryKey.SearchLibraryFiles],
       });

@@ -9,7 +9,9 @@ import {
 import { getLibraryFileDisplayName } from 'pages.materials';
 import { toast } from 'sonner';
 import i18n from 'i18next';
+import { tryStartUpload } from 'common.subscription';
 import { insertAsset } from './uploadAsset';
+import { getPlanSizeLimitMessage } from './planUploadLimit';
 
 const EXT_MIME: Record<string, string> = {
   pdf: 'application/pdf',
@@ -59,6 +61,19 @@ export async function insertLibraryFileToBoard(
       }),
       duration: 5000,
     });
+    return;
+  }
+
+  const expectedMime = EXT_MIME[libraryFile.extension.replace(/^\./, '').toLowerCase()];
+  const kind = expectedMime?.startsWith('image/') ? 'image' : 'other';
+  const evaluation = tryStartUpload({ size: libraryFile.size_bytes }, kind);
+  if (!evaluation.ok) {
+    if (evaluation.reason === 'size') {
+      toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {
+        description: getPlanSizeLimitMessage(kind),
+        duration: 5000,
+      });
+    }
     return;
   }
 

@@ -1,6 +1,11 @@
 import i18n from 'i18next';
 import { toast } from 'sonner';
-import { bytesToMb, getCurrentTariff, tryStartUpload, type UploadKind } from 'common.subscription';
+import {
+  formatMegabytes,
+  getCurrentTariff,
+  tryStartUpload,
+  type UploadKind,
+} from 'common.subscription';
 import {
   rejectFileUploadFromEvaluation,
   trackUploadEvaluationLimit,
@@ -17,7 +22,7 @@ export const getPlanSizeLimitMessage = (kind: UploadKind): string => {
     kind: i18n.t(kind === 'image' ? 'limits.fileKindImage' : 'limits.fileKindOther', {
       ns: 'subscription',
     }),
-    size: `${bytesToMb(maxBytes)} МБ`,
+    size: formatMegabytes(maxBytes),
   });
 };
 

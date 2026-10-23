@@ -93,6 +93,12 @@ export const ModalAddGroup = ({
   }, [isOpen]);
 
   const onSubmit = (data: FormValues) => {
+    if (!tryStartClassroomCreate()) {
+      trackClassroomLimitReached('other');
+      closeModal();
+      return;
+    }
+
     createGroup(
       {
         subject_id: data.subject,

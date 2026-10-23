@@ -11,7 +11,7 @@ import {
 } from '../../hooks';
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
 import { PresentationViewer } from './PresentationViewer';
-import { optimizeImage } from '../../utils/optimizeImage';
+import { uploadExtractedImage } from '../../utils/uploadExtractedImage';
 
 function isResolvedSrc(src: string) {
   return src.startsWith('blob:') || src.startsWith('http') || src.startsWith('data:');
@@ -40,9 +40,8 @@ export const PresentationNodeView = ({ node, getPos }: NodeViewProps) => {
       if (!storageToken) return;
       const baseName = (node.attrs.fileName || 'presentation').replace(/\.pptx?$/i, '');
       const file = new File([blob], `${baseName}_slide${slide}.png`, { type: 'image/png' });
-      const optimized = await optimizeImage(file);
-      const uploadedId = await uploadImage({ file: optimized, token: storageToken });
-      insertImage(uploadedId, `${baseName} slide ${slide}`);
+      const uploadedId = await uploadExtractedImage(file, storageToken, uploadImage);
+      if (uploadedId) insertImage(uploadedId, `${baseName} slide ${slide}`);
     },
     [insertImage, node.attrs.fileName, storageToken, uploadImage],
   );

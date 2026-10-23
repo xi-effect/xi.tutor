@@ -18,7 +18,7 @@ import {
   getLibraryUploadMaxBytes,
   type LibraryUploadErrorKind,
 } from './libraryUpload';
-import { getFileTooLargeMessage } from 'features.subscription';
+import { getFileTooLargeMessage, getImageUpgradeMessage } from 'features.subscription';
 import {
   isStorageQuotaReached,
   requestStorageLimitDialog,
@@ -247,7 +247,10 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
           return;
         }
 
-        if (!evaluation.ok && evaluation.reason === 'size') {
+        if (
+          !evaluation.ok &&
+          (evaluation.reason === 'size' || evaluation.reason === 'imageUpgrade')
+        ) {
           nextItems.push({
             id: createItemId(),
             file,
@@ -255,11 +258,10 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
             progress: 0,
             status: 'error',
             errorKind: 'tooLarge',
-            errorMessage: getFileTooLargeMessage(
-              evaluation.planId,
-              evaluation.kind,
-              evaluation.maxBytes,
-            ),
+            errorMessage:
+              evaluation.reason === 'imageUpgrade'
+                ? getImageUpgradeMessage()
+                : getFileTooLargeMessage(evaluation.planId, evaluation.kind, evaluation.maxBytes),
           });
           return;
         }

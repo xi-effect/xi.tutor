@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { prepareContentUpload, uploadFileIdRequest } from 'common.services';
 import { PresentationShape } from '../shapes/presentation';
 
-import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { toastBoardUploadError } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxFileBytes } from 'common.subscription';
 import {
@@ -80,6 +80,11 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    attempt.reject('unknown');
+    return;
+  }
+
   try {
     const serverUrl = await uploadFileIdRequest({
       file,
@@ -101,13 +106,12 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
       maxBytes: getMaxFileBytes(),
     });
 
-    const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
+    toastBoardUploadError(err, file, getMaxFileBytes(), {
       sizeDescKey: 'toast.presentationSizeDesc',
       failedTitleKey: 'toast.presentationUploadError',
       failedDescKey: 'toast.presentationUploadFailed',
       formatDescKey: 'toast.presentationFormatDesc',
     });
-    toast.error(title, { description, duration: 5000 });
 
     editor.deleteShapes([shapeId]);
   }

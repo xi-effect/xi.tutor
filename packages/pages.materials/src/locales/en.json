@@ -43,6 +43,7 @@
       "failed": "Upload failed",
       "failedTooLarge": "File is too large",
       "failedType": "Unsupported format",
+      "failedStorage": "Not enough storage",
       "tooLarge": "The file “{{name}}” is too large",
       "tooLong": "The name “{{name}}” is longer than 100 characters",
       "maxFiles": "You can upload at most {{max}} files at a time"

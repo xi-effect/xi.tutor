@@ -8,12 +8,14 @@ import { useTranslation } from 'react-i18next';
 
 export const SubscriptionHeaderCta = () => {
   const { t } = useTranslation('subscription');
-  const { isPro } = useSubscriptionPlan();
+  const { isPro, isPlanReady, isPlanError } = useSubscriptionPlan();
   const screen = useSubscriptionUiStore((s) => s.screen);
   const openCheckout = useSubscriptionUiStore((s) => s.openCheckout);
   const openManage = useSubscriptionUiStore((s) => s.openManage);
 
-  if (!SUBSCRIPTION_BILLING_ENABLED || screen !== 'overview') return null;
+  if (!SUBSCRIPTION_BILLING_ENABLED || !isPlanReady || isPlanError || screen !== 'overview') {
+    return null;
+  }
 
   return (
     <Button

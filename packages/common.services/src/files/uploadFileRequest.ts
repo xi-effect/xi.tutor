@@ -3,6 +3,11 @@ import { getAxiosInstance } from 'common.config';
 import { prepareContentUpload } from './prepareContentUpload';
 import { assertValidFileName } from './validateFileName';
 import { createFileUploadHttpError } from './createFileUploadHttpError';
+import {
+  invalidateStorageUsage,
+  preventStorageWrite,
+  reportStorageLimitReached,
+} from '../storageLimit/storageLimitReached';
 
 export type UploadFileVars = {
   file: File;
@@ -17,6 +22,7 @@ export async function uploadFileRequest({
   signal,
   onUploadProgress,
 }: UploadFileVars): Promise<FileResponse> {
+  preventStorageWrite();
   assertValidFileName(file);
 
   const prepared = prepareContentUpload(file);
@@ -56,12 +62,15 @@ export async function uploadFileRequest({
   }
 
   if (response.status !== 201) {
-    throw createFileUploadHttpError(
+    const error = createFileUploadHttpError(
       response.status,
       `File upload failed: ${response.status}`,
       response,
     );
+    reportStorageLimitReached(error);
+    throw error;
   }
+  invalidateStorageUsage();
   return response.data as FileResponse;
 }
 

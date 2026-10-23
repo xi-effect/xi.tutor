@@ -13,6 +13,7 @@ import {
   FilePlus,
 } from '@xipkg/icons';
 import i18n from 'i18next';
+import { bytesToMb, getCurrentTariff } from 'common.subscription';
 import { Activity } from '../ui/icons/Activity';
 import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/boardTheme';
 
@@ -113,7 +114,12 @@ export const navBarElements: NavbarElementT[] = [
   {
     action: 'asset',
     get title() {
-      return t('navbar.uploadFile');
+      const tariff = getCurrentTariff();
+      return i18n.t('navbar.uploadFile', {
+        ns: 'board',
+        image: bytesToMb(tariff.maxImageBytes),
+        other: bytesToMb(tariff.maxFileBytes),
+      });
     },
     icon: <FilePlus className={boardToolbarIconClass} />,
   },

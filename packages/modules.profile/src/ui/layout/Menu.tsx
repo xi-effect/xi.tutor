@@ -116,7 +116,6 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   const navigate = useNavigate();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-
   const options: ItemT[] = useMemo(
     () => [
       {

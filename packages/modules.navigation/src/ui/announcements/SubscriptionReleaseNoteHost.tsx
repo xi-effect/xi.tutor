@@ -1,24 +1,40 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import { USER_FLAG_KEYS, useCurrentUser, useDismissibleUserFlag } from 'common.services';
+import { isOnboardingSurfaceActive, subscribeOnboardingSurface } from 'common.ui';
 import { useCallStore } from 'modules.calls';
 import { PRODUCT_ANALYTICS_EVENTS, trackOnce, trackProductEvent } from 'common.utils';
-import { TestingEndAnnouncementModal } from './TestingEndAnnouncementModal';
+import { SubscriptionReleaseNoteModal } from './SubscriptionReleaseNoteModal';
+
+/** Пауза после онбординга, чтобы новость не открывалась в тот же кадр. */
+const NEWS_AFTER_ONBOARDING_MS = 600;
+const PAYMENT_RESULT_PATH = '/settings/subscription/payment-result';
 
 const isReadyTutor = (user: { default_layout: string; onboarding_stage: string } | undefined) =>
   user?.default_layout === 'tutor' &&
   (user.onboarding_stage === 'completed' || user.onboarding_stage === 'training');
 
-export const TestingEndAnnouncementHost = () => {
+export const SubscriptionReleaseNoteHost = () => {
   const { data: user } = useCurrentUser();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const inCall = useCallStore((state) => Boolean(state.token));
-  const ready = isReadyTutor(user) && !inCall;
+  const ready = isReadyTutor(user) && !inCall && !pathname.startsWith(PAYMENT_RESULT_PATH);
   const { visible, dismiss } = useDismissibleUserFlag(
-    USER_FLAG_KEYS.SUBSCRIPTION_ANNOUNCEMENT_DISMISSED,
+    USER_FLAG_KEYS.SUBSCRIPTION_RELEASE_NOTE_DISMISSED,
     { enabled: ready },
   );
   const [closedThisVisit, setClosedThisVisit] = useState(false);
+  const isNewRegistration = user?.onboarding_stage === 'training';
+  const [deferNews, setDeferNews] = useState(isNewRegistration);
+  const registrationRef = useRef(isNewRegistration);
   const prevUserIdRef = useRef<number | null>(null);
   const dismissedRef = useRef(false);
+
+  if (registrationRef.current !== isNewRegistration) {
+    registrationRef.current = isNewRegistration;
+    setDeferNews(isNewRegistration);
+  }
 
   useEffect(() => {
     const userId = user?.id ?? null;
@@ -28,11 +44,37 @@ export const TestingEndAnnouncementHost = () => {
     setClosedThisVisit(false);
   }, [user?.id]);
 
-  const open = visible && ready && !closedThisVisit;
+  useLayoutEffect(() => {
+    if (!isNewRegistration) return;
+
+    let releaseTimer = 0;
+
+    const sync = () => {
+      window.clearTimeout(releaseTimer);
+      if (isOnboardingSurfaceActive()) {
+        setDeferNews(true);
+        return;
+      }
+
+      releaseTimer = window.setTimeout(() => {
+        if (!isOnboardingSurfaceActive()) setDeferNews(false);
+      }, NEWS_AFTER_ONBOARDING_MS);
+    };
+
+    sync();
+    const unsubscribe = subscribeOnboardingSurface(sync);
+
+    return () => {
+      window.clearTimeout(releaseTimer);
+      unsubscribe();
+    };
+  }, [isNewRegistration, user?.id]);
+
+  const open = visible && ready && !closedThisVisit && !deferNews;
 
   useEffect(() => {
     if (!open || user?.id == null) return;
-    trackOnce(`subscription_announcement_shown:${user.id}`, () => {
+    trackOnce(`subscription_release_note_shown:${user.id}`, () => {
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.SUBSCRIPTION_ANNOUNCEMENT_SHOWN, {
         user_role: 'tutor',
         onboarding_stage: user.onboarding_stage,
@@ -43,7 +85,7 @@ export const TestingEndAnnouncementHost = () => {
   if (!open) return null;
 
   return (
-    <TestingEndAnnouncementModal
+    <SubscriptionReleaseNoteModal
       open={open}
       onOpenChange={(nextOpen) => {
         if (!nextOpen) {
@@ -63,6 +105,10 @@ export const TestingEndAnnouncementHost = () => {
         });
         dismiss();
         setClosedThisVisit(true);
+      }}
+      onActivatePromo={() => {
+        setClosedThisVisit(true);
+        void navigate({ to: '/', search: { profile: 'subscription' } });
       }}
       onArticleOpen={() => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.SUBSCRIPTION_ANNOUNCEMENT_ARTICLE_OPENED, {

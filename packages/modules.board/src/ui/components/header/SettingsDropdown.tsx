@@ -55,6 +55,7 @@ import {
   normalizeBoardBackgroundType,
 } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
+import { showBoardElementsLimitToast } from '../../../utils/boardElementLimit';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'common.ui';
 import {
@@ -207,12 +208,11 @@ export const SettingsDropdown = () => {
   }, [editor]);
 
   useEffect(() => {
+    if (isReadonly) return;
+
     if (effectiveCount >= BOARD_ELEMENTS_LIMIT) {
       if (!shownLimitToastRef.current) {
-        toast.error(t('settings.limitReachedTitle'), {
-          description: t('settings.limitReachedDesc', { limit: BOARD_ELEMENTS_LIMIT }),
-          duration: 6000,
-        });
+        showBoardElementsLimitToast();
         shownLimitToastRef.current = true;
       }
       shownWarningToastRef.current = true;
@@ -236,7 +236,7 @@ export const SettingsDropdown = () => {
 
     shownWarningToastRef.current = false;
     shownLimitToastRef.current = false;
-  }, [effectiveCount, BOARD_ELEMENTS_LIMIT, BOARD_ELEMENTS_WARNING_THRESHOLD, t]);
+  }, [effectiveCount, BOARD_ELEMENTS_LIMIT, BOARD_ELEMENTS_WARNING_THRESHOLD, isReadonly, t]);
 
   const settingsTrigger = (
     <Button

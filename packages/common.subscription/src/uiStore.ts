@@ -1,72 +1,70 @@
 import { create } from 'zustand';
 import { SUBSCRIPTION_BILLING_ENABLED } from './config';
+import { isCurrentUserTutor } from './planCache';
 import type { SubscriptionFeatureId } from './features';
 
-export type SubscriptionScreen = 'overview' | 'checkout' | 'result' | 'manage';
+export type SubscriptionScreen = 'overview' | 'checkout' | 'manage';
 
-export type PaymentResultStatus = 'success' | 'processing' | 'error';
+export type CheckoutReturnScreen = 'overview' | 'manage';
 
-export type SubscriptionDialog = 'classroom' | 'storage' | 'proFeature' | null;
+export type SubscriptionDialog = 'classroom' | 'storage' | 'proFeature' | 'imageUpgrade' | null;
 
 type SubscriptionUiState = {
   screen: SubscriptionScreen;
-  paymentResult: PaymentResultStatus | null;
+  checkoutReturnTo: CheckoutReturnScreen;
   dialog: SubscriptionDialog;
   settingsOpenRequested: boolean;
-  setScreen: (screen: SubscriptionScreen) => void;
   openOverview: () => void;
   openCompare: (openSettings?: boolean) => void;
-  openCheckout: () => void;
+  openCheckout: (returnTo?: CheckoutReturnScreen) => void;
+  closeCheckout: () => void;
   openManage: () => void;
-  setPaymentResult: (paymentResult: PaymentResultStatus | null) => void;
   openDialog: (dialog: Exclude<SubscriptionDialog, null>) => void;
   closeDialog: () => void;
   requestSettingsOpen: () => void;
   consumeSettingsOpenRequest: () => void;
+  reset: () => void;
 };
 
-export const useSubscriptionUiStore = create<SubscriptionUiState>((set) => ({
-  screen: 'overview',
-  paymentResult: null,
-  dialog: null,
+const initialState = {
+  screen: 'overview' as SubscriptionScreen,
+  checkoutReturnTo: 'overview' as CheckoutReturnScreen,
+  dialog: null as SubscriptionDialog,
   settingsOpenRequested: false,
-  setScreen: (screen) => set({ screen }),
-  openOverview: () => set({ screen: 'overview', paymentResult: null }),
+};
+
+export const useSubscriptionUiStore = create<SubscriptionUiState>((set, get) => ({
+  ...initialState,
+  openOverview: () => set({ screen: 'overview' }),
   openCompare: (openSettings = true) =>
     set({
       screen: 'overview',
       dialog: null,
-      paymentResult: null,
       settingsOpenRequested: openSettings,
     }),
-  openCheckout: () => {
+  openCheckout: (returnTo) => {
     if (!SUBSCRIPTION_BILLING_ENABLED) {
-      set({ screen: 'overview', paymentResult: null });
+      set({ screen: 'overview' });
       return;
     }
-    set({
-      screen: 'checkout',
-      paymentResult: null,
-    });
+    set({ screen: 'checkout', checkoutReturnTo: returnTo === 'manage' ? 'manage' : 'overview' });
   },
+  closeCheckout: () => set({ screen: get().checkoutReturnTo, checkoutReturnTo: 'overview' }),
   openManage: () => {
     if (!SUBSCRIPTION_BILLING_ENABLED) {
-      set({ screen: 'overview', paymentResult: null });
+      set({ screen: 'overview' });
       return;
     }
-    set({ screen: 'manage', paymentResult: null });
-  },
-  setPaymentResult: (paymentResult) => {
-    if (!SUBSCRIPTION_BILLING_ENABLED) return;
-    set({ paymentResult, screen: 'result' });
+    set({ screen: 'manage' });
   },
   openDialog: (dialog) => {
-    if (!SUBSCRIPTION_BILLING_ENABLED) return;
+    if (!SUBSCRIPTION_BILLING_ENABLED || !isCurrentUserTutor()) return;
     set({ dialog });
   },
   closeDialog: () => set({ dialog: null }),
   requestSettingsOpen: () => set({ settingsOpenRequested: true }),
   consumeSettingsOpenRequest: () => set({ settingsOpenRequested: false }),
+  reset: () => set(initialState),
 }));
 
 export const requestClassroomLimitDialog = () =>
@@ -74,6 +72,9 @@ export const requestClassroomLimitDialog = () =>
 
 export const requestStorageLimitDialog = () =>
   useSubscriptionUiStore.getState().openDialog('storage');
+
+export const requestImageUpgradeDialog = () =>
+  useSubscriptionUiStore.getState().openDialog('imageUpgrade');
 
 export const requestProFeatureDialog = (featureId?: SubscriptionFeatureId) => {
   void featureId;

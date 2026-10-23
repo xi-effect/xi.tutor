@@ -5,6 +5,7 @@
  */
 import type { DrContent, Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { uploadFileIdRequest } from 'common.services';
+import { evaluateUpload } from 'common.subscription';
 import { resolveAssetUrl, getCachedBlobUrl } from './resolveAssetUrl';
 import { getRegisteredTokens } from './tokenRegistry';
 import { isInlineAssetSrc } from './storedFileSrc';
@@ -306,6 +307,9 @@ async function doResolveAndUpload(
     const mimeType = await resolveMimeType(blob, rawName);
     const name = ensureFileExtension(rawName, mimeType);
     const file = new File([blob], name, { type: mimeType });
+
+    // Без диалогов: в фоне просто оставляем ссылку на исходный файл.
+    if (!evaluateUpload(file, mimeType.startsWith('image/') ? 'image' : 'other').ok) return null;
 
     const fileId = await uploadFileIdRequest({ file, token: destToken });
     // Контракт персиста: только id — см. utils/storedFileSrc.ts

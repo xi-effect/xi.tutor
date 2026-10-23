@@ -50,6 +50,11 @@ export const UserSettings = ({
     setActiveQuery(profileType);
   }, [profileType]);
 
+  // Ссылка на раздел должна открывать его и на узком экране, где иначе видно только меню.
+  useEffect(() => {
+    if (open && profileType && profileType !== 'personalInfo') setShowContent(true);
+  }, [open, profileType]);
+
   useEffect(() => {
     if (THEME_CUSTOMIZATION_ENABLED || profileType !== 'personalisation') return;
 

@@ -3,6 +3,10 @@ import { FilesQueryKey, filesApiConfig } from 'common.api';
 
 vi.mock('common.config', () => ({
   getAxiosInstance: vi.fn(),
+  queryClient: {
+    getQueryData: vi.fn(),
+    invalidateQueries: vi.fn(),
+  },
 }));
 
 import { getAxiosInstance } from 'common.config';

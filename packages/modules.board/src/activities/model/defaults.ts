@@ -1,6 +1,7 @@
 import { createActivityId } from './ids';
 import type { ActivityKind } from './kinds';
 import type { ActivityAttempt, ActivityDefinition } from './types';
+import { gapDragTokens } from '../primitives/bankOrder';
 import { createSeed, shuffleWithSeed } from '../primitives/randomize';
 
 function item(text: string, extra?: { imageSrc?: string }) {
@@ -154,12 +155,7 @@ export function createEmptyAttempt(
             )
           : definition.kind === 'gap-text'
             ? shuffleWithSeed(
-                [
-                  ...definition.gaps
-                    .filter((gap) => gap.input === 'drag')
-                    .map((gap) => gap.answers[0] ?? gap.id),
-                  ...definition.bank,
-                ].filter(Boolean),
+                gapDragTokens(definition).map((token) => token.id),
                 seed,
               )
             : [];

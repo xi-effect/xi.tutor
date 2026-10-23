@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
-import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { toastBoardUploadError } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxImageBytes } from 'common.subscription';
 import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
@@ -104,6 +104,12 @@ export async function insertImage(
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    editor.deleteAssets([tempAssetId]);
+    attempt.reject('unknown');
+    return;
+  }
+
   editor.setSelectedShapes([shapeId]);
   Promise.resolve().then(() => {
     editor.zoomToSelection({ animation: { duration: 200 } });
@@ -158,14 +164,10 @@ export async function insertImage(
         fileSize: file.size,
         maxBytes: getMaxImageBytes(),
       });
-      const { title, description } = getBoardUploadErrorToast(err, file, getMaxImageBytes(), {
+      toastBoardUploadError(err, file, getMaxImageBytes(), {
         sizeDescKey: 'toast.imageSizeDesc',
         failedTitleKey: 'toast.imageUploadError',
         failedDescKey: 'toast.imageUploadFailed',
-      });
-      toast.error(title, {
-        description,
-        duration: 5000,
       });
       editor.deleteShapes([shapeId]);
       editor.deleteAssets([tempAssetId]);

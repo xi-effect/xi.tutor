@@ -3,6 +3,10 @@ import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ContentYDocItem } from 'common.types';
 import { handleError } from 'common.services';
+import {
+  preventStorageWrite,
+  reportStorageLimitReached,
+} from '../storageLimit/storageLimitReached';
 import { AxiosError } from 'axios';
 
 interface NoteStorageItemResponseT {
@@ -25,6 +29,8 @@ export const useAddNoteStorageItem = () => {
     MutationContext
   >({
     mutationFn: async (variables) => {
+      preventStorageWrite();
+
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -51,6 +57,8 @@ export const useAddNoteStorageItem = () => {
       return { previousQueries: [] };
     },
     onError: (err, variables) => {
+      if (reportStorageLimitReached(err)) return;
+
       if (err instanceof AxiosError && err.response?.status === 409) {
         queryClient.invalidateQueries({
           queryKey: [ClassroomNotesQueryKey.GetNoteStorageItem, variables.classroomId],
