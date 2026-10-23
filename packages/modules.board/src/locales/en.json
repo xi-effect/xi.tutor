@@ -394,6 +394,31 @@
     "loading": "Loading...",
     "loadFailed": "Failed to load"
   },
+  "embed": {
+    "tool": "Embed from website",
+    "title": "Embed external content",
+    "hint": "Paste a link or embed code (<iframe>). Only the URL is extracted from the code; everything else is discarded.",
+    "placeholder": "https://www.youtube.com/watch?v=… or <iframe src=\"…\"></iframe>",
+    "supported": "Supported platforms",
+    "detected": "Detected: {{provider}}",
+    "insert": "Insert",
+    "cancel": "Cancel",
+    "interact": "Interact",
+    "stopInteract": "Done",
+    "open": "Open in new tab ↗",
+    "loading": "Loading…",
+    "blocked": "Content blocked: the URL failed the security check",
+    "errors": {
+      "empty": "Enter a link or embed code",
+      "too_long": "The link or embed code is too long",
+      "invalid_url": "Unable to parse the URL",
+      "insecure_protocol": "Only HTTPS links are allowed",
+      "forbidden_url_parts": "The URL contains disallowed parts (credentials, port, etc.)",
+      "unsupported_markup": "Only a single <iframe> tag without any other code is allowed",
+      "unsupported_host": "This website is not on the list of allowed domains",
+      "unsupported_link": "This link does not point to embeddable content (for VK, use the embed code from “Share → Export”)"
+    }
+  },
   "debug": {
     "title": "Debug info",
     "elementsCount": "Elements on board: {{count}}"

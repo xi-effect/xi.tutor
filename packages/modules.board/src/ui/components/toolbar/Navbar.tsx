@@ -18,6 +18,7 @@ import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { stickers } from '../../../config';
 import { AssetUploadControl } from './AssetUploadControl';
+import { EmbedInsertDialog } from '../../../shapes/embed/EmbedInsertDialog';
 
 const toolMapping: Record<string, string> = {
   select: 'select',
@@ -72,6 +73,9 @@ export const Navbar = track(
       useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
+
+    const [embedDialogOpen, setEmbedDialogOpen] = React.useState(false);
+
     const editor = useEditor();
     const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
     const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
@@ -128,6 +132,15 @@ export const Navbar = track(
     const handleSelectTool = (toolName: string) => {
       editor.selectNone();
       setPlacingComment(false);
+
+      if (toolName === 'embed') {
+        if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
+        setActivePopup(null);
+        setActivityPickerOpen(false);
+        setEmbedDialogOpen(true);
+        editor.setCurrentTool('select');
+        return;
+      }
 
       if (toolName === 'activity') {
         if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
@@ -196,7 +209,11 @@ export const Navbar = track(
 
     const renderToolbarItem = (item: NavbarElementT) => {
       const isActive =
-        item.action === 'activity' ? activityPickerOpen : item.action === currentTool;
+        item.action === 'activity'
+          ? activityPickerOpen
+          : item.action === 'embed'
+            ? embedDialogOpen
+            : item.action === currentTool;
 
       if (item.action === 'asset') {
         return (
@@ -270,6 +287,8 @@ export const Navbar = track(
 
     return (
       <>
+        <EmbedInsertDialog open={embedDialogOpen} onOpenChange={setEmbedDialogOpen} />
+
         <ActivityPicker open={activityPickerOpen} onOpenChange={setActivityPickerOpen} />
         <div className="pointer-events-none absolute inset-0">
           <div
