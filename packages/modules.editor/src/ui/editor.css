@@ -400,6 +400,7 @@
   border-radius: 0.5rem;
 }
 
+/* Стилизация текста, к которому оставлены комментарии */
 .editor-comment-mark {
   background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 30%, transparent);
   border-radius: 2px;
@@ -411,8 +412,8 @@
   background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 50%, transparent);
 }
 
-.editor-comment-mark.active {
-  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 65%, transparent);
+.editor-comment-mark .comment-active {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 55%, transparent);
 }
 
 /* Оглавление у правого края страницы, как в Tiptap Notion-like */

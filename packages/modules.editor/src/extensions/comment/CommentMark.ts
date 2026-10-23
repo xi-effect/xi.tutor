@@ -1,5 +1,4 @@
 import { Mark, mergeAttributes } from '@tiptap/core';
-import { useCommentsUiStore } from '../../comments';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -38,16 +37,7 @@ export const CommentMark = Mark.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    const currentOpenId = useCommentsUiStore.getState().openThreadId;
-    const isCurrentActive =
-      currentOpenId && HTMLAttributes['data-comment-thread-id'] === currentOpenId;
-    return [
-      'span',
-      mergeAttributes(HTMLAttributes, {
-        class: `editor-comment-mark ${isCurrentActive ? 'active' : ''}`,
-      }),
-      0,
-    ];
+    return ['span', mergeAttributes(HTMLAttributes, { class: 'editor-comment-mark' }), 0];
   },
 
   addCommands() {
