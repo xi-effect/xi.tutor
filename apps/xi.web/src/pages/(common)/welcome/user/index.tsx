@@ -1,5 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { WelcomeUserPage } from 'pages.welcome';
+import { z } from 'zod';
+
+const searchSchema = z.object({
+  redirect: z.string().optional(),
+  invite: z.string().optional(),
+});
 
 const User = () => {
   return <WelcomeUserPage />;
@@ -12,7 +18,5 @@ export const Route = createFileRoute('/(common)/welcome/user/')({
     meta: [{ title: 'sovlium | Профиль' }],
   }),
   component: User,
-  // beforeLoad: ({ context }) => {
-  //   console.log('User', context, location);
-  // },
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
 });

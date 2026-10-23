@@ -320,14 +320,14 @@
   "student_authenticated": false,
   "has_invite": true,
   "invite_progress_track": "signup | signin | already_auth",
-  "invite_progress_step": "invite_open | auth | email | welcome_user | welcome_role | accept | accept_direct",
+  "invite_progress_step": "invite_open | auth | email | welcome_user | accept | accept_direct",
   "invite_progress_current": 1,
-  "invite_progress_total": 6,
+  "invite_progress_total": 5,
   "event_version": 1
 }
 ```
 
-Три трека: **signup** (6 шагов), **signin** (3 шага), **already_auth** (1 шаг, `accept_direct`).
+Три трека: **signup** (5 шагов), **signin** (3 шага), **already_auth** (1 шаг, `accept_direct`). На signup-треке экран выбора роли не показывается: роль ученика сохраняется вместе с именем.
 Формулы drop-off: [`invite-flow-v2.md`](./invite-flow-v2.md#метрики).
 
 `student_invite_signup_clicked` / `student_invite_login_clicked` отправляются по клику на `/invite/$inviteId` (registration-first). Fallback на `SignInPage` остаётся для прямого захода `/signin?redirect=/invite/...` и дедуплицируется через sessionStorage. `invite_tracking_id` считается из `invite.pending_code` / `search.invite` / `redirect`. Обычный `/signin` без invite в URL воронку не помечает.
@@ -513,7 +513,7 @@ student_invite_page_viewed (unauth)
 → student_invite_signup_clicked
 → auth_signup_succeeded
 → email_confirmation_viewed
-→ onboarding_step_viewed (profile / role_selection)
+→ onboarding_step_viewed (profile)
 → student_invite_accept_submit
 → invite_accepted_success
 

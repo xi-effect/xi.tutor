@@ -19,7 +19,6 @@ const SIGNUP_STEPS: InviteProgressStep[] = [
   'auth',
   'email',
   'welcome_user',
-  'welcome_role',
   'accept',
 ];
 

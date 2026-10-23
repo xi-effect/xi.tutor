@@ -8,7 +8,7 @@ import {
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
 } from 'common.utils';
-import { resolvePostOnboardingNavigation } from './postOnboardingNavigation';
+import { schedulePostOnboardingNavigation } from './postOnboardingNavigation';
 import { runWelcomeRoleBack, runWelcomeRoleForward } from './welcomeRoleSubmitLogic';
 
 export const useWelcomeRoleForm = () => {
@@ -42,21 +42,13 @@ export const useWelcomeRoleForm = () => {
       trackFailed: trackOnboardingStepFailed,
       trackCompleted: trackOnboardingStepCompleted,
       navigateAfterRole: (nextSearch) => {
-        window.setTimeout(() => {
-          const storedInviteId = localStorage.getItem('invite.pending_code');
-          const target = resolvePostOnboardingNavigation(nextSearch.invite, storedInviteId);
-
-          if (target.clearStoredInvite) {
-            localStorage.removeItem('invite.pending_code');
-          }
-
-          if (target.to === '/invite/$inviteId') {
-            void navigate({ to: target.to, params: target.params });
+        schedulePostOnboardingNavigation(nextSearch.invite, (options) => {
+          if (options.to === '/invite/$inviteId') {
+            void navigate({ to: options.to, params: options.params });
             return;
           }
-
-          void navigate({ to: target.to });
-        }, 100);
+          void navigate({ to: options.to });
+        });
       },
       search,
     });
