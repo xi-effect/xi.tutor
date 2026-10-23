@@ -13,7 +13,7 @@ export const PayAheadButton = () => {
         variant="primary"
         size="m"
         className="h-12 w-full rounded-xl font-medium"
-        onClick={openCheckout}
+        onClick={() => openCheckout()}
       >
         {t('overview.payNow')}
       </Button>
