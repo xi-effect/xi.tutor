@@ -83,10 +83,6 @@ export type ExtendedStoreStatus = {
   status: DrStoreWithStatus['status'];
   error?: Error;
   connectionStatus?: ConnectionStatus;
-  undo: () => void;
-  redo: () => void;
-  canUndo: boolean;
-  canRedo: boolean;
   isReadonly: boolean;
   forceReadonly: boolean;
   toggleReadonly: () => void;
@@ -320,11 +316,6 @@ export function useYjsStore({
     });
   });
 
-  const undoManagerRef = useRef<Y.UndoManager | null>(null);
-  const suppressSyncRef = useRef(false);
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
-
   const [serverReadonly, setServerReadonly] = useState(false);
   const [localReadonly, setLocalReadonly] = useState(false);
 
@@ -520,8 +511,6 @@ export function useYjsStore({
       unsubs.push(
         store.listen(
           ({ changes }) => {
-            if (suppressSyncRef.current) return;
-
             if (!pendingChangesRef.current) {
               pendingChangesRef.current = { added: {}, updated: {}, removed: {} };
             }
@@ -658,6 +647,14 @@ export function useYjsStore({
           };
         };
 
+        const putLocalPresence = (presence: DrInstancePresence) => {
+          // Presence — не правка доски. Иначе вход и обновление курсора становятся шагом Undo:
+          // откат снимает аватар, а следующая рассылка presence тут же возвращает его.
+          store.mergeRemoteChanges(() => {
+            store.put([presence]);
+          });
+        };
+
         const flushPresence = () => {
           presenceTimer = null;
 
@@ -665,7 +662,7 @@ export function useYjsStore({
 
           const presenceToSend = enrichPresenceWithBackendId(pendingPresence);
           awareness.setLocalStateField('presence', presenceToSend);
-          store.put([presenceToSend]);
+          putLocalPresence(presenceToSend);
           pendingPresence = null;
         };
 
@@ -686,7 +683,7 @@ export function useYjsStore({
         if (initialPresence) {
           const initialEnriched = enrichPresenceWithBackendId(initialPresence);
           awareness.setLocalStateField('presence', initialEnriched);
-          store.put([initialEnriched]);
+          putLocalPresence(initialEnriched);
         }
 
         // Повторная отправка presence через 2 с (когда currentUser уже мог подгрузиться), чтобы у других отображалась аватарка
@@ -695,7 +692,7 @@ export function useYjsStore({
           if (p) {
             const enriched = enrichPresenceWithBackendId(p);
             awareness.setLocalStateField('presence', enriched);
-            store.put([enriched]);
+            putLocalPresence(enriched);
           }
         }, 2000);
         unsubs.push(() => clearTimeout(retryPresenceTimer));
@@ -801,32 +798,6 @@ export function useYjsStore({
 
         if (result === 'migration-error') return;
         sharedEntry.yjsDocumentHydrated = true;
-      }
-
-      /** 6) undo manager */
-      if (!undoManagerRef.current) {
-        undoManagerRef.current = new Y.UndoManager(yStore.yarray, {
-          captureTimeout: 300,
-          trackedOrigins: new Set(['user', null]),
-        });
-
-        const um = undoManagerRef.current;
-
-        const updateFlags = () => {
-          setCanUndo(um.canUndo());
-          setCanRedo(um.canRedo());
-        };
-
-        um.on('stack-item-added', updateFlags);
-        um.on('stack-item-popped', updateFlags);
-        um.on('stack-cleared', updateFlags);
-        updateFlags();
-
-        unsubs.push(() => {
-          um.off('stack-item-added', updateFlags);
-          um.off('stack-item-popped', updateFlags);
-          um.off('stack-cleared', updateFlags);
-        });
       }
 
       setStoreWithStatus({
@@ -965,38 +936,6 @@ export function useYjsStore({
     connectSharedProvider(provider);
   }, [storageToken, sharedEntry, provider, localYjsPreview]);
 
-  function undo() {
-    const um = undoManagerRef.current;
-    if (!um?.canUndo()) return;
-
-    suppressSyncRef.current = true;
-
-    try {
-      um.undo();
-    } finally {
-      suppressSyncRef.current = false;
-    }
-
-    setCanUndo(um.canUndo());
-    setCanRedo(um.canRedo());
-  }
-
-  function redo() {
-    const um = undoManagerRef.current;
-    if (!um?.canRedo()) return;
-
-    suppressSyncRef.current = true;
-
-    try {
-      um.redo();
-    } finally {
-      suppressSyncRef.current = false;
-    }
-
-    setCanUndo(um.canUndo());
-    setCanRedo(um.canRedo());
-  }
-
   function toggleReadonly() {
     if (forceReadonly) return;
     const newReadonly = !(readonlyMap.get('isReadonly') ?? false);
@@ -1056,11 +995,6 @@ export function useYjsStore({
     status: storeWithStatus.status,
     error: storeWithStatus.error,
     connectionStatus: storeWithStatus.connectionStatus,
-
-    undo,
-    redo,
-    canUndo,
-    canRedo,
 
     toggleReadonly,
     isReadonly: finalIsReadonly,

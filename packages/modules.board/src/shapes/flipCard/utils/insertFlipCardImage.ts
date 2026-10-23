@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { myAssetStore } from '../../../features/imageStore';
 import i18n from 'i18next';
 import { assertBoardUploadAllowed } from '../../../utils/planUploadLimit';
+import { runWithoutHistory } from '../../../utils/runWithoutHistory';
 import { getMaxImageBytes } from 'common.subscription';
 import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils';
 
@@ -71,15 +72,17 @@ export async function insertFlipCardImage(
 
     if (!editor.getAsset(tempAssetId)) return;
 
-    editor.updateAssets([
-      {
-        id: tempAssetId,
-        type: 'image',
-        typeName: 'asset',
-        props: { src, w, h, mimeType: file.type, name: file.name, isAnimated: false },
-        meta: {},
-      },
-    ]);
+    runWithoutHistory(editor, () => {
+      editor.updateAssets([
+        {
+          id: tempAssetId,
+          type: 'image',
+          typeName: 'asset',
+          props: { src, w, h, mimeType: file.type, name: file.name, isAnimated: false },
+          meta: {},
+        },
+      ]);
+    });
     attempt.succeed();
   } catch (err) {
     console.error('Flip card image upload failed:', err);
@@ -88,6 +91,8 @@ export async function insertFlipCardImage(
       maxBytes: getMaxImageBytes(),
     });
     toast.error(i18n.t('toast.imageUploadError', { ns: 'board' }));
-    editor.deleteAssets([tempAssetId]);
+    runWithoutHistory(editor, () => {
+      editor.deleteAssets([tempAssetId]);
+    });
   }
 }

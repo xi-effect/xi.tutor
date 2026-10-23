@@ -5,6 +5,7 @@ import { prepareContentUpload, uploadFileIdRequest } from 'common.services';
 import { PresentationShape } from '../shapes/presentation';
 
 import { toastBoardUploadError } from '../utils/boardUploadError';
+import { runWithoutHistory } from '../utils/runWithoutHistory';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxFileBytes } from 'common.subscription';
 import {
@@ -91,12 +92,14 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
       token,
     });
 
-    editor.updateShape<PresentationShape>({
-      id: shapeId,
-      type: 'presentation',
-      props: {
-        src: serverUrl,
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape<PresentationShape>({
+        id: shapeId,
+        type: 'presentation',
+        props: {
+          src: serverUrl,
+        },
+      });
     });
     attempt.succeed();
   } catch (err) {
@@ -113,6 +116,8 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
       formatDescKey: 'toast.presentationFormatDesc',
     });
 
-    editor.deleteShapes([shapeId]);
+    runWithoutHistory(editor, () => {
+      editor.deleteShapes([shapeId]);
+    });
   }
 }

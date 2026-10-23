@@ -11,6 +11,7 @@ import { FileShape } from '../shapes/file';
 import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
 import { ALLOWED_FILE_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
+import { runWithoutHistory } from '../utils/runWithoutHistory';
 import { isNonRetryableBoardUploadError, toastBoardUploadError } from '../utils/boardUploadError';
 import { tryStartUpload } from 'common.subscription';
 import { getMaxFileBytes } from 'common.subscription';
@@ -85,24 +86,28 @@ export async function insertFile(
       return;
     }
 
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        status: 'loading',
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape<FileShape>({
+        id: shapeId,
+        type: 'file',
+        props: {
+          status: 'loading',
+        },
+      });
     });
 
     const fileId = await uploadFileIdRequest({ file, token });
     void deleteFileFromDB(shapeId);
 
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        src: fileId,
-        status: 'uploaded',
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape<FileShape>({
+        id: shapeId,
+        type: 'file',
+        props: {
+          src: fileId,
+          status: 'uploaded',
+        },
+      });
     });
 
     attempt.succeed();
@@ -116,7 +121,9 @@ export async function insertFile(
     const isOffline = !navigator.onLine;
 
     if (!isOffline && isNonRetryableBoardUploadError(err, file, getMaxFileBytes())) {
-      editor.deleteShapes([shapeId]);
+      runWithoutHistory(editor, () => {
+        editor.deleteShapes([shapeId]);
+      });
       void deleteFileFromDB(shapeId);
       toastBoardUploadError(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.fileSizeDesc',
@@ -126,12 +133,14 @@ export async function insertFile(
       return;
     }
 
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        status: isOffline ? 'offline' : 'error',
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape<FileShape>({
+        id: shapeId,
+        type: 'file',
+        props: {
+          status: isOffline ? 'offline' : 'error',
+        },
+      });
     });
 
     addToQueue({

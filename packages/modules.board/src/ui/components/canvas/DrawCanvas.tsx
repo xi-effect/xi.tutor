@@ -5,7 +5,7 @@ import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
-import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
+import { Editor, DrInstancePresence, Draw, DrawProps, type DrUiOverrides } from '@ibodr/draw';
 import { useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { cloneDroppedFile, useRetryFileQueue } from 'common.services';
@@ -51,6 +51,18 @@ import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../.
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
 
+/** Ctrl/Cmd+Y в шорткатах редактора нет, а Ctrl/Cmd+Shift+Z есть. Добавляем Y в тот же action, чтобы жест откатывался один раз. */
+const boardUiOverrides: DrUiOverrides = {
+  actions(_editor, actions) {
+    const redo = actions.redo;
+    if (!redo?.kbd || redo.kbd.includes('ctrl+y')) return actions;
+    return {
+      ...actions,
+      redo: { ...redo, kbd: `${redo.kbd},cmd+y,ctrl+y` },
+    };
+  },
+};
+
 async function waitForBoardUploadToken(
   tokenRef: MutableRefObject<string>,
   timeoutMs = 15_000,
@@ -76,18 +88,7 @@ export const DrawCanvas = ({
   const { selectedElementId, selectElement, showDebugInfo } = useDrawStore();
   const { theme } = useTheme();
   const [shapeCount, setShapeCount] = useState(0);
-  const {
-    store,
-    status,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-    isReadonly,
-    getUserCamera,
-    setUserCamera,
-    provider,
-  } = useYjsContext();
+  const { store, status, isReadonly, getUserCamera, setUserCamera, provider } = useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
   const didResetDrawScaleRef = useRef(false);
@@ -533,16 +534,15 @@ export const DrawCanvas = ({
               iconOffset: { x: -16, y: 2 },
             }}
             {...props}
+            overrides={boardUiOverrides}
             textOptions={boardTextOptions}
           >
             <Header />
-            {!isReadonly && (
-              <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
-            )}
+            {!isReadonly && <Navbar token={token} />}
             <div
               className={`${boardPanelClass} absolute bottom-20 left-4 ${boardChromeZClass} flex p-1 sm:hidden`}
             >
-              <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
+              <UndoRedo />
             </div>
             <DrawZoomPanel />
             {showDebugInfo && editor && (

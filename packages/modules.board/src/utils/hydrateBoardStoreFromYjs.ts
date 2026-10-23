@@ -121,7 +121,11 @@ export function hydrateBoardStoreFromYjs({
     }, 'init');
   }
 
-  loadSnapshot(store, { store: migratedStore, schema: ourSchema });
+  // Загрузка документа — чужое состояние, не жест пользователя. Иначе первый undo
+  // сотрёт доску и уйдёт на сервер одним большим откатом.
+  store.mergeRemoteChanges(() => {
+    loadSnapshot(store, { store: migratedStore, schema: ourSchema });
+  });
   return 'hydrated';
 }
 

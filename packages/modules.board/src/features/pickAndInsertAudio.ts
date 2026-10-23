@@ -10,6 +10,7 @@ import {
 } from '../shapes/audio';
 import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
+import { runWithoutHistory } from '../utils/runWithoutHistory';
 import { toastBoardUploadError } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxFileBytes } from 'common.subscription';
@@ -124,10 +125,12 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
     try {
       const serverUrl = await uploadFileIdRequest({ file, token });
 
-      editor.updateShape<AudioShape>({
-        id: shapeId,
-        type: 'audio',
-        props: { src: serverUrl },
+      runWithoutHistory(editor, () => {
+        editor.updateShape<AudioShape>({
+          id: shapeId,
+          type: 'audio',
+          props: { src: serverUrl },
+        });
       });
       attempt.succeed();
     } catch (err) {
@@ -142,7 +145,9 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
         failedDescKey: 'toast.audioUploadFailed',
         formatDescKey: 'toast.audioFormatDesc',
       });
-      editor.deleteShapes([shapeId]);
+      runWithoutHistory(editor, () => {
+        editor.deleteShapes([shapeId]);
+      });
     }
   })();
 }

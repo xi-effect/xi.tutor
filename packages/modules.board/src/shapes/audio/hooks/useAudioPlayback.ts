@@ -7,6 +7,7 @@ import {
 } from '../../../audioOutput/boardAudioOutput';
 import { useYjsContext } from '../../../providers/YjsContext';
 import type { AudioShape } from '../AudioShape';
+import { runWithoutHistory } from '../../../utils/runWithoutHistory';
 import { setAudioOutputSink } from '../utils/setAudioOutputSink';
 
 export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
@@ -52,10 +53,12 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       if (isFinite(dur) && dur > 0) {
         setDuration(dur);
         if (shape.props.duration === 0) {
-          editor.updateShape<AudioShape>({
-            id: shape.id,
-            type: 'audio',
-            props: { duration: dur },
+          runWithoutHistory(editor, () => {
+            editor.updateShape<AudioShape>({
+              id: shape.id,
+              type: 'audio',
+              props: { duration: dur },
+            });
           });
         }
         // Sync-событие могло прийти до loadedmetadata — повторяем, иначе ученик «зависнет».
