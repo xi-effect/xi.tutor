@@ -71,16 +71,11 @@ export const AuthFlowShell = ({
       {showInviteProgress ? (
         <InviteProgressCard isAuthenticated={isAuthenticated} placement="pageTop" />
       ) : null}
-      <div
-        className={cn(
-          'flex w-full flex-1 flex-col items-center p-1 py-4',
-          inviteProgressVisible ? 'justify-start sm:justify-center' : 'justify-center',
-        )}
-      >
+      <div className="flex w-full flex-1 flex-col items-center p-1 py-4">
         <div
           className={cn(
             'xs:border-border-default xs:rounded-2xl xs:border xs:p-8',
-            'flex w-full max-w-105 min-w-0 flex-col bg-transparent p-4',
+            'my-auto flex w-full max-w-105 min-w-0 flex-col bg-transparent p-4',
             cardClassName ?? (inviteProgressVisible ? 'sm:min-h-150' : 'min-h-150'),
           )}
         >

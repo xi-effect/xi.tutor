@@ -1,5 +1,4 @@
 import { AUTH_FLOW_LOGO_SIZE, InviteProgressCard, Logo } from 'common.ui';
-import { cn } from '@xipkg/utils';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { SupportPageShell } from 'modules.navigation';
@@ -105,12 +104,7 @@ export const InvitesPage = () => {
         {!authPending && !isAuthenticated ? (
           <InviteProgressCard placement="pageTop" isAuthenticated={false} />
         ) : null}
-        <section
-          className={cn(
-            'flex min-w-0 flex-1 flex-col items-center gap-6 px-4 py-8 sm:gap-8 sm:py-12',
-            !authPending && !isAuthenticated ? 'justify-start sm:justify-center' : 'justify-center',
-          )}
-        >
+        <section className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:py-12">
           <Logo width={AUTH_FLOW_LOGO_SIZE.width} height={AUTH_FLOW_LOGO_SIZE.height} />
           {content}
         </section>
