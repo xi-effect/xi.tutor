@@ -53,6 +53,15 @@ import type {
   SignupValidationFailureReason,
   SigninAnalyticsSource,
   SigninFailureReason,
+  SubscriptionActivationType,
+  SubscriptionAnalyticsSource,
+  SubscriptionBillingPeriod,
+  SubscriptionCheckoutFailureReason,
+  SubscriptionDowngradeReason,
+  SubscriptionPaymentReturnResult,
+  SubscriptionPaywallLimitType,
+  SubscriptionPromoFailureReason,
+  SubscriptionRenewalFailureReason,
 } from './types';
 
 type BaseProps = CommonActivationProperties;
@@ -760,6 +769,124 @@ export type ProductAnalyticsEventMap = {
   };
   subscription_announcement_article_opened: BaseProps & {
     user_role: 'tutor';
+    source: 'announcement';
+  };
+  subscription_pricing_viewed: {
+    event_version?: number;
+    source: SubscriptionAnalyticsSource;
+    current_plan?: string;
+  };
+  subscription_plan_selected: {
+    event_version?: number;
+    subscription_flow_id: string;
+    source: SubscriptionAnalyticsSource;
+    current_plan?: string;
+    target_plan: string;
+    billing_period: SubscriptionBillingPeriod;
+  };
+  subscription_billing_period_changed: {
+    event_version?: number;
+    billing_period: SubscriptionBillingPeriod;
+    previous_billing_period: SubscriptionBillingPeriod;
+  };
+  subscription_checkout_started: {
+    event_version?: number;
+    subscription_flow_id: string;
+    source: SubscriptionAnalyticsSource;
+    current_plan?: string;
+    target_plan: string;
+    billing_period: SubscriptionBillingPeriod;
+  };
+  subscription_payment_redirected: {
+    event_version?: number;
+    subscription_flow_id: string;
+    target_plan: string;
+    billing_period: SubscriptionBillingPeriod;
+  };
+  subscription_checkout_failed: {
+    event_version?: number;
+    subscription_flow_id: string;
+    target_plan: string;
+    billing_period: SubscriptionBillingPeriod;
+    reason: SubscriptionCheckoutFailureReason;
+  };
+  subscription_payment_returned: {
+    event_version?: number;
+    subscription_flow_id?: string;
+    target_plan?: string;
+    billing_period?: SubscriptionBillingPeriod;
+    result: SubscriptionPaymentReturnResult;
+  };
+  subscription_activated: {
+    event_version?: number;
+    subscription_flow_id?: string;
+    plan: string;
+    billing_period: SubscriptionBillingPeriod;
+    activation_type: SubscriptionActivationType;
+  };
+  subscription_management_opened: {
+    event_version?: number;
+    plan: string;
+    billing_period?: SubscriptionBillingPeriod;
+  };
+  subscription_auto_renew_disabled: {
+    event_version?: number;
+    plan: string;
+    billing_period: SubscriptionBillingPeriod;
+  };
+  subscription_auto_renew_enabled: {
+    event_version?: number;
+    plan: string;
+    billing_period: SubscriptionBillingPeriod;
+  };
+  subscription_cancelled: {
+    event_version?: number;
+    plan: string;
+    billing_period?: SubscriptionBillingPeriod;
+  };
+  subscription_renewal_succeeded: {
+    event_version?: number;
+    plan: string;
+    billing_period: SubscriptionBillingPeriod;
+  };
+  subscription_renewal_failed: {
+    event_version?: number;
+    plan: string;
+    billing_period: SubscriptionBillingPeriod;
+    reason?: SubscriptionRenewalFailureReason;
+  };
+  subscription_expired: {
+    event_version?: number;
+    plan: string;
+    billing_period?: SubscriptionBillingPeriod;
+  };
+  subscription_downgraded: {
+    event_version?: number;
+    previous_plan: string;
+    new_plan: string;
+    reason: SubscriptionDowngradeReason;
+  };
+  subscription_paywall_shown: {
+    event_version?: number;
+    source: 'product_limit';
+    limit_type: SubscriptionPaywallLimitType;
+    current_plan?: string;
+  };
+  subscription_paywall_upgrade_clicked: {
+    event_version?: number;
+    source: 'product_limit';
+    limit_type: SubscriptionPaywallLimitType;
+    current_plan?: string;
+  };
+  subscription_promo_code_submitted: {
+    event_version?: number;
+  };
+  subscription_promo_code_applied: {
+    event_version?: number;
+  };
+  subscription_promo_code_failed: {
+    event_version?: number;
+    reason: SubscriptionPromoFailureReason;
   };
   subscription_announcement_closed: BaseProps & {
     user_role: 'tutor';

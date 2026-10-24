@@ -14,6 +14,8 @@ type SubscriptionUiState = {
   checkoutReturnTo: CheckoutReturnScreen;
   dialog: SubscriptionDialog;
   settingsOpenRequested: boolean;
+  analyticsSource: string | null;
+  setAnalyticsSource: (source: string) => void;
   openOverview: () => void;
   openCompare: (openSettings?: boolean) => void;
   openCheckout: (returnTo?: CheckoutReturnScreen) => void;
@@ -31,6 +33,7 @@ const initialState = {
   checkoutReturnTo: 'overview' as CheckoutReturnScreen,
   dialog: null as SubscriptionDialog,
   settingsOpenRequested: false,
+  analyticsSource: null as string | null,
 };
 
 export const useSubscriptionUiStore = create<SubscriptionUiState>((set, get) => ({
@@ -62,6 +65,7 @@ export const useSubscriptionUiStore = create<SubscriptionUiState>((set, get) => 
     set({ dialog });
   },
   closeDialog: () => set({ dialog: null }),
+  setAnalyticsSource: (analyticsSource) => set({ analyticsSource }),
   requestSettingsOpen: () => set({ settingsOpenRequested: true }),
   consumeSettingsOpenRequest: () => set({ settingsOpenRequested: false }),
   reset: () => set(initialState),

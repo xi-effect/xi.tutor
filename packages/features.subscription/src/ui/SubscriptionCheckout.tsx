@@ -7,6 +7,14 @@ import { formatRub, TARIFFS, useSubscriptionUiStore } from 'common.subscription'
 import { useCreateSubscriptionPayment } from 'common.services';
 import { getAppLanguage } from 'common.ui';
 import {
+  mapSubscriptionCheckoutFailure,
+  trackSubscriptionBillingPeriodChanged,
+  trackSubscriptionCheckoutFailed,
+  trackSubscriptionCheckoutStarted,
+  trackSubscriptionPaymentRedirected,
+  type SubscriptionBillingPeriod,
+} from 'common.utils';
+import {
   animate,
   motion,
   useMotionValue,
@@ -15,6 +23,7 @@ import {
 } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { isConfirmationUrl } from '../pendingPayment';
+import { useSubscriptionPurchaseContext } from '../analytics';
 import { ScreenBackButton } from './ScreenBackButton';
 
 type CheckoutPeriod = 'monthly' | 'yearly';
@@ -23,6 +32,9 @@ const PERIOD_DAYS: Record<CheckoutPeriod, number> = {
   monthly: 30,
   yearly: 360,
 };
+
+const toAnalyticsPeriod = (value: CheckoutPeriod): SubscriptionBillingPeriod =>
+  value === 'yearly' ? 'year' : 'month';
 
 const PRICE_MORPH_TRANSITION = {
   type: 'spring' as const,
@@ -93,11 +105,24 @@ export const SubscriptionCheckout = () => {
   const createPayment = useCreateSubscriptionPayment();
   const formattedPrice = formatRub(price, locale);
   const [redirecting, setRedirecting] = useState(false);
+  const purchase = useSubscriptionPurchaseContext();
   const busy = createPayment.isPending || redirecting;
 
   const handlePay = async () => {
     if (busy) return;
     setError(false);
+    const billingPeriod = toAnalyticsPeriod(period);
+
+    trackSubscriptionCheckoutStarted({
+      source: purchase.source,
+      currentPlan: purchase.currentPlan,
+      targetPlan: 'pro',
+      billingPeriod,
+      wasActive: purchase.wasActive,
+      hadSubscription: purchase.hadSubscription,
+      autoRenewWasOn: purchase.autoRenewWasOn,
+      shouldAutoRenew: autoRenewal,
+    });
 
     try {
       const payment = await createPayment.mutateAsync({
@@ -106,13 +131,26 @@ export const SubscriptionCheckout = () => {
       });
 
       if (!isConfirmationUrl(payment.confirmation_url)) {
+        trackSubscriptionCheckoutFailed('payment_create_failed', {
+          source: purchase.source,
+          currentPlan: purchase.currentPlan,
+          targetPlan: 'pro',
+          billingPeriod,
+        });
         setError(true);
         return;
       }
 
+      trackSubscriptionPaymentRedirected();
       setRedirecting(true);
       window.location.assign(payment.confirmation_url);
-    } catch {
+    } catch (error) {
+      trackSubscriptionCheckoutFailed(mapSubscriptionCheckoutFailure(error), {
+        source: purchase.source,
+        currentPlan: purchase.currentPlan,
+        targetPlan: 'pro',
+        billingPeriod,
+      });
       setError(true);
     }
   };
@@ -131,7 +169,16 @@ export const SubscriptionCheckout = () => {
           { id: 'yearly', label: t('checkout.periodYear') },
         ]}
         activeTab={period}
-        onChange={(tabId) => setPeriod(tabId === 'yearly' ? 'yearly' : 'monthly')}
+        onChange={(tabId) => {
+          const next = tabId === 'yearly' ? 'yearly' : 'monthly';
+          if (next !== period) {
+            trackSubscriptionBillingPeriodChanged(
+              toAnalyticsPeriod(next),
+              toAnalyticsPeriod(period),
+            );
+          }
+          setPeriod(next);
+        }}
         className="bg-background-subtle h-9 w-full gap-0.5 rounded-[10px] p-1"
         tabClassName="h-7 flex-1 rounded-lg px-2 py-1 text-sm font-medium data-[state=inactive]:text-text-secondary data-[state=active]:text-text-primary data-[state=active]:hover:text-text-primary"
         indicatorClassName="rounded-lg border-0 bg-background-surface shadow-sm"

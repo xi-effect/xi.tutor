@@ -28,6 +28,7 @@ export {
   formatRub,
 } from './src/format';
 export { getRemainingSubscriptionDays, isSubscriptionPeriodActive } from './src/period';
+export { readCachedPlanId } from './src/planCache';
 export { useSubscriptionStore } from './src/store';
 export {
   requestClassroomLimitDialog,

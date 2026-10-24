@@ -1,6 +1,8 @@
 import { Button } from '@xipkg/button';
 import { useSubscriptionUiStore } from 'common.subscription';
+import { trackSubscriptionPlanSelected } from 'common.utils';
 import { useTranslation } from 'react-i18next';
+import { resolveSubscriptionEntrySource } from '../analytics';
 
 export const PayAheadButton = () => {
   const { t } = useTranslation('subscription');
@@ -13,7 +15,18 @@ export const PayAheadButton = () => {
         variant="primary"
         size="m"
         className="h-12 w-full rounded-xl font-medium"
-        onClick={() => openCheckout()}
+        onClick={() => {
+          trackSubscriptionPlanSelected({
+            source: resolveSubscriptionEntrySource(),
+            currentPlan: 'pro',
+            targetPlan: 'pro',
+            billingPeriod: 'month',
+            wasActive: true,
+            hadSubscription: true,
+            autoRenewWasOn: false,
+          });
+          openCheckout();
+        }}
       >
         {t('overview.payNow')}
       </Button>

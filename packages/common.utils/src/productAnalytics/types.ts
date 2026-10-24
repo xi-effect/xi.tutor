@@ -197,6 +197,38 @@ export type ProductAnalyticsFeedbackUsageDurationBucket =
 
 export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
 
+export type SubscriptionBillingPeriod = 'month' | 'year';
+
+export type SubscriptionAnalyticsSource =
+  | 'announcement'
+  | 'settings'
+  | 'pricing'
+  | 'product_limit'
+  | 'classrooms_limit'
+  | 'board_objects_limit'
+  | 'file_size_limit'
+  | 'storage_limit'
+  | 'other';
+
+export type SubscriptionActivationType = 'new' | 'upgrade' | 'resume';
+
+export type SubscriptionCheckoutFailureReason =
+  'payment_create_failed' | 'invalid_plan' | 'already_subscribed' | 'network_error' | 'unknown';
+
+export type SubscriptionPaymentReturnResult =
+  'success' | 'pending' | 'cancelled' | 'failed' | 'unknown';
+
+export type SubscriptionRenewalFailureReason =
+  'insufficient_funds' | 'payment_method_failed' | 'provider_error' | 'internal_error' | 'unknown';
+
+export type SubscriptionDowngradeReason = 'expired' | 'cancelled' | 'payment_failed' | 'manual';
+
+export type SubscriptionPaywallLimitType =
+  'file_size' | 'board_objects' | 'classrooms' | 'storage' | 'other';
+
+export type SubscriptionPromoFailureReason =
+  'invalid' | 'expired' | 'not_applicable' | 'already_used' | 'unknown';
+
 export type UmamiPrimitive = string | number | boolean;
 export type UmamiEventPayload = Record<
   string,

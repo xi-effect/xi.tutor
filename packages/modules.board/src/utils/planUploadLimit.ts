@@ -3,11 +3,13 @@ import { toast } from 'sonner';
 import {
   formatMegabytes,
   getCurrentTariff,
+  isCurrentUserTutor,
   tryStartUpload,
   type UploadKind,
 } from 'common.subscription';
 import {
   rejectFileUploadFromEvaluation,
+  trackSubscriptionPaywallShown,
   trackUploadEvaluationLimit,
   type FileUploadAttempt,
 } from 'common.utils';
@@ -40,6 +42,9 @@ export const assertBoardUploadAllowed = (
   }
 
   if (result.reason === 'size') {
+    if (isCurrentUserTutor()) {
+      trackSubscriptionPaywallShown({ limitType: 'file_size', currentPlan: result.planId }, 5000);
+    }
     toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {
       description: getPlanSizeLimitMessage(kind),
       duration: 5000,

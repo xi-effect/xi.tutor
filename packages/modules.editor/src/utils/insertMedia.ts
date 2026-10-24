@@ -28,6 +28,7 @@ import {
   formatMegabytes,
   getMaxFileBytes,
   getMaxImageBytes,
+  isCurrentUserTutor,
   tryStartUpload,
   type UploadEvaluation,
   type UploadKind,
@@ -38,6 +39,7 @@ import {
   rejectFileUploadFromEvaluation,
   trackFileSizeLimitFromUploadError,
   trackProductLimitReached,
+  trackSubscriptionPaywallShown,
   trackUploadEvaluationLimit,
   type FileUploadAttempt,
   type ProductLimitObjectKind,
@@ -52,6 +54,9 @@ function t(key: string, options?: Record<string, unknown>) {
 
 export function toastEditorUploadRejected(result: UploadEvaluation, kind: UploadKind) {
   if (result.ok || result.reason !== 'size') return;
+  if (isCurrentUserTutor()) {
+    trackSubscriptionPaywallShown({ limitType: 'file_size', currentPlan: result.planId }, 5000);
+  }
   toast.error(t('toast.fileTooLarge'), {
     description: i18n.t('limits.fileTooLarge', {
       ns: 'subscription',

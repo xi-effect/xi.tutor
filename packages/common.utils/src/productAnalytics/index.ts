@@ -146,6 +146,46 @@ export {
   type MathBankTaskSnapshot,
 } from './mathBank';
 export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
+export {
+  beginSubscriptionFlow,
+  billingPeriodFromSubscriptionDays,
+  getSubscriptionAnalyticsSource,
+  getSubscriptionFlow,
+  hasActiveSubscriptionFlow,
+  isSubscriptionAnalyticsSource,
+  markSubscriptionPeriodExtendedLocally,
+  resetSubscriptionFlowForTests,
+  setSubscriptionAnalyticsSource,
+  toSubscriptionBillingPeriod,
+  type SubscriptionFlowState,
+} from './subscriptionFlow';
+export {
+  mapSubscriptionCheckoutFailure,
+  mapSubscriptionPaymentReturnResult,
+  mapSubscriptionPromoFailure,
+  mapSubscriptionRenewalFailure,
+  observeSubscriptionLifecycle,
+  resetSubscriptionAnalyticsForTests,
+  subscriptionSourceForPaywall,
+  trackSubscriptionActivatedFromFlow,
+  trackConfirmedSubscriptionActivation,
+  trackSubscriptionAutoRenewDisabled,
+  trackSubscriptionBillingPeriodChanged,
+  trackSubscriptionCheckoutFailed,
+  trackSubscriptionCheckoutStarted,
+  trackSubscriptionManagementOpened,
+  trackSubscriptionPaywallShown,
+  trackSubscriptionPaywallUpgradeClicked,
+  trackSubscriptionPaymentRedirected,
+  trackSubscriptionPaymentReturned,
+  trackSubscriptionPlanSelected,
+  trackSubscriptionPricingViewed,
+  trackSubscriptionPromoCodeApplied,
+  trackSubscriptionPromoCodeFailed,
+  trackSubscriptionPromoCodeSubmitted,
+  type SubscriptionLifecycleSnapshot,
+  type SubscriptionPurchaseContext,
+} from './subscriptionAnalytics';
 export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
   mapSignupError,
@@ -233,5 +273,8 @@ export type {
   LessonFinishReason,
   ActivationHelpScreen,
   CommonActivationProperties,
+  SubscriptionAnalyticsSource,
+  SubscriptionBillingPeriod,
+  SubscriptionPaywallLimitType,
   UmamiEventPayload,
 } from './types';

@@ -8,10 +8,15 @@ import {
   isBoardElementsLimitReached,
   isCurrentUserTutor,
   isStorageQuotaReached,
+  readCachedPlanId,
   requestStorageLimitDialog,
   useSubscriptionUiStore,
 } from 'common.subscription';
-import { trackBoardObjectsLimitReached } from 'common.utils';
+import {
+  trackBoardObjectsLimitReached,
+  trackSubscriptionPaywallShown,
+  trackSubscriptionPaywallUpgradeClicked,
+} from 'common.utils';
 
 const CONTAINER_SHAPE_TYPES = new Set(['group', 'frame']);
 
@@ -22,15 +27,34 @@ const canUpgradeBoardLimit = (): boolean =>
 
 export const showBoardElementsLimitToast = () => {
   const limit = getBoardElementsLimit();
+  const canUpgrade = canUpgradeBoardLimit();
+  if (isCurrentUserTutor()) {
+    const planId = readCachedPlanId();
+    trackSubscriptionPaywallShown(
+      {
+        limitType: 'board_objects',
+        currentPlan: planId ?? undefined,
+      },
+      5000,
+    );
+  }
   toast.error(i18n.t('settings.limitReachedTitle', { ns: 'board' }), {
     id: 'board-elements-limit',
     description: i18n.t('settings.limitReachedDesc', { ns: 'board', limit }),
     duration: 4000,
-    ...(canUpgradeBoardLimit()
+    ...(canUpgrade
       ? {
           action: {
             label: i18n.t('limits.viewPro', { ns: 'subscription' }),
-            onClick: () => useSubscriptionUiStore.getState().openCompare(true),
+            onClick: () => {
+              const planId = readCachedPlanId();
+              trackSubscriptionPaywallUpgradeClicked({
+                limitType: 'board_objects',
+                currentPlan: planId ?? undefined,
+              });
+              useSubscriptionUiStore.getState().setAnalyticsSource('board_objects_limit');
+              useSubscriptionUiStore.getState().openCompare(true);
+            },
           },
         }
       : {}),
