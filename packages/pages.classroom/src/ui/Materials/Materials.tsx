@@ -15,7 +15,7 @@ import { LibraryTagsUiProvider } from 'features.tags';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 import { isClassroomOnPause } from 'common.api';
-import { FilesTagsFilter, type FilesTagOptionT } from 'pages.materials';
+import { FilesFilteredEmpty, FilesTagsFilter, type FilesTagOptionT } from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
@@ -118,6 +118,15 @@ const ClassroomMaterialsGallery = ({
     );
   }
 
+  const emptyTitle =
+    activeTab === 'boards'
+      ? t(isTutor ? 'materials.noBoards' : 'materials.noBoardsStudent')
+      : t(isTutor ? 'materials.noNotes' : 'materials.noNotesStudent');
+  const emptyDescription =
+    activeTab === 'boards'
+      ? t(isTutor ? 'materials.noBoardsDescription' : 'materials.noBoardsStudentDescription')
+      : t(isTutor ? 'materials.noNotesDescription' : 'materials.noNotesStudentDescription');
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
       <div className="shrink-0">
@@ -128,15 +137,10 @@ const ClassroomMaterialsGallery = ({
           <ErrorState />
         ) : isClassroomLoading || isMaterialsLoading || !roleReady ? (
           <LoadingState />
+        ) : ydocMaterials.length === 0 && materialTags.length > 0 ? (
+          <FilesFilteredEmpty onReset={() => setMaterialTags([])} />
         ) : ydocMaterials.length === 0 ? (
-          <EmptyDataState
-            title={activeTab === 'boards' ? t('materials.noBoards') : t('materials.noNotes')}
-            description={
-              activeTab === 'boards'
-                ? t('materials.noBoardsDescription')
-                : t('materials.noNotesDescription')
-            }
-          />
+          <EmptyDataState title={emptyTitle} description={emptyDescription} />
         ) : (
           <GridVirtualizer
             parentRef={parentRef}

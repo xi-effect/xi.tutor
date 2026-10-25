@@ -49,12 +49,18 @@
     "files": "Файлы",
     "noBoards": "Создайте первую доску",
     "noBoardsDescription": "На доску можно добавить картинки, презентации, аудио и другие файлы",
+    "noBoardsStudent": "Пока нет досок",
+    "noBoardsStudentDescription": "Доски появятся здесь, когда их добавит репетитор",
     "noNotes": "Создайте первую заметку",
     "noNotesDescription": "В\u00A0заметку можно добавить тексты, списки, чек\u2011листы и\u00A0картинки",
+    "noNotesStudent": "Пока нет заметок",
+    "noNotesStudentDescription": "Заметки появятся здесь, когда их добавит репетитор",
     "noFiles": "Пока нет файлов",
     "noFilesDescription": "Файлы, которыми поделились с кабинетом, появятся здесь",
     "noMaterials": "Нет материалов",
     "emptyDescription": "Чтобы записать идеи для занятий",
+    "noMaterialsStudent": "Пока нет материалов",
+    "emptyStudentDescription": "Материалы появятся здесь, когда их добавит репетитор",
     "loadError": "Ошибка загрузки материалов",
     "noteCollaborative": "Заметка: можно править",
     "noteCollaborativeHint": "Ученик видит заметку и может её менять",
@@ -72,7 +78,8 @@
   "files": {
     "upload": "Загрузить файл",
     "emptyTitle": "Пока нет файлов",
-    "emptyDescription": "Загрузите файл — он появится здесь"
+    "emptyDescription": "Загрузите файл — он появится здесь",
+    "emptyStudentDescription": "Файлы появятся здесь, когда их добавит репетитор"
   },
   "overview": {
     "materials": "Материалы",
@@ -83,6 +90,8 @@
     "noLessonsDescription": "Когда уроки появятся в расписании кабинета, они отобразятся здесь",
     "paymentsEmpty": "Нет платежей",
     "paymentsEmptyDescription": "Счета появятся здесь после выставления",
+    "paymentsEmptyStudent": "Пока нет счетов",
+    "paymentsEmptyStudentDescription": "Счета появятся здесь, когда их выставит репетитор",
     "addStudentTitle": "Добавьте ученика в группу",
     "studentsEmptyDescription": "Добавьте учеников в группу",
     "studentDeleted": "Студент удален из группы",

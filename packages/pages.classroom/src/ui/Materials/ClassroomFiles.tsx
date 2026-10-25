@@ -162,7 +162,10 @@ export const ClassroomFiles = ({
       {header}
       <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {!files.length && !filtersActive ? (
-          <EmptyDataState title={t('files.emptyTitle')} description={t('files.emptyDescription')} />
+          <EmptyDataState
+            title={t('files.emptyTitle')}
+            description={isTutor ? t('files.emptyDescription') : t('files.emptyStudentDescription')}
+          />
         ) : !files.length ? (
           <FilesFilteredEmpty onReset={() => setFilters(DEFAULT_FILES_FILTERS)} />
         ) : (

@@ -52,8 +52,12 @@ export const PaymentsList = () => {
   if (!payments || payments.length === 0) {
     return (
       <SectionEmptyState
-        title={t('overview.paymentsEmpty')}
-        description={t('overview.paymentsEmptyDescription')}
+        title={t(isTutor ? 'overview.paymentsEmpty' : 'overview.paymentsEmptyStudent')}
+        description={t(
+          isTutor
+            ? 'overview.paymentsEmptyDescription'
+            : 'overview.paymentsEmptyStudentDescription',
+        )}
         minHeightClass="min-h-[160px]"
         illustration={<EmptyPayments className={sectionEmptyStateIllustrationClass} />}
       />
