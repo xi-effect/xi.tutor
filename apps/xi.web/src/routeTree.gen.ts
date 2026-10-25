@@ -20,6 +20,7 @@ import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
+import { Route as appLayoutHomeworkIndexRouteImport } from './pages/(app)/_layout/homework/index'
 import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
 import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
 import { Route as appLayoutScheduleIndexRouteImport } from './pages/(app)/_layout/schedule/index'
@@ -93,6 +94,11 @@ const appLayoutClassroomsIndexRoute =
     path: '/classrooms/',
     getParentRoute: () => appLayoutRoute,
   } as any)
+const appLayoutHomeworkIndexRoute = appLayoutHomeworkIndexRouteImport.update({
+  id: '/homework/',
+  path: '/homework/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
 const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexRouteImport.update({
   id: '/materials/',
   path: '/materials/',
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/bank/': typeof appLayoutBankIndexRoute
   '/call/': typeof appLayoutCallIndexRoute
   '/classrooms/': typeof appLayoutClassroomsIndexRoute
+  '/homework/': typeof appLayoutHomeworkIndexRoute
   '/materials/': typeof appLayoutMaterialsIndexRoute
   '/payments/': typeof appLayoutPaymentsIndexRoute
   '/schedule/': typeof appLayoutScheduleIndexRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/bank': typeof appLayoutBankIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
+  '/homework': typeof appLayoutHomeworkIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
   '/schedule': typeof appLayoutScheduleIndexRoute
@@ -256,6 +264,7 @@ export interface FileRoutesById {
   '/(app)/_layout/bank/': typeof appLayoutBankIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
+  '/(app)/_layout/homework/': typeof appLayoutHomeworkIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
   '/(app)/_layout/schedule/': typeof appLayoutScheduleIndexRoute
@@ -285,6 +294,7 @@ export interface FileRouteTypes {
     | '/bank/'
     | '/call/'
     | '/classrooms/'
+    | '/homework/'
     | '/materials/'
     | '/payments/'
     | '/schedule/'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/bank'
     | '/call'
     | '/classrooms'
+    | '/homework'
     | '/materials'
     | '/payments'
     | '/schedule'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/bank/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
+    | '/(app)/_layout/homework/'
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
     | '/(app)/_layout/schedule/'
@@ -448,6 +460,13 @@ declare module '@tanstack/react-router' {
       path: '/classrooms'
       fullPath: '/classrooms/'
       preLoaderRoute: typeof appLayoutClassroomsIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/homework/': {
+      id: '/(app)/_layout/homework/'
+      path: '/homework'
+      fullPath: '/homework/'
+      preLoaderRoute: typeof appLayoutHomeworkIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/materials/': {
@@ -579,6 +598,7 @@ interface appLayoutRouteChildren {
   appLayoutBankIndexRoute: typeof appLayoutBankIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
+  appLayoutHomeworkIndexRoute: typeof appLayoutHomeworkIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute
   appLayoutScheduleIndexRoute: typeof appLayoutScheduleIndexRoute
@@ -597,6 +617,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutBankIndexRoute: appLayoutBankIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
+  appLayoutHomeworkIndexRoute: appLayoutHomeworkIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
   appLayoutScheduleIndexRoute: appLayoutScheduleIndexRoute,
