@@ -62,6 +62,7 @@
     "modules.editor": "workspace:*",
     "modules.calendar": "workspace:*",
     "modules.navigation": "workspace:*",
+    "modules.homework": "workspace:*",
     "modules.profile": "workspace:*",
     "pages.calendar": "workspace:*",
     "pages.classroom": "workspace:*",

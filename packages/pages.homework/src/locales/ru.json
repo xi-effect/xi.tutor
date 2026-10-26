@@ -1,6 +1,11 @@
 {
   "title": "Домашние задания",
   "create": "Создать задание",
+  "draftTitle": "Новое задание",
+  "kind": {
+    "assignment": "Задание",
+    "template": "Шаблон"
+  },
   "tabs": {
     "active": "Активные",
     "templates": "Шаблоны",

@@ -1,3 +1,4 @@
+import { normalizeHomeworkContent } from 'modules.homework';
 import { createMockHomework } from './mocks';
 import type {
   HomeworkItem,
@@ -69,7 +70,10 @@ export const readHomeworkLibrary = (): HomeworkItem[] => {
     if (library.version !== 1 || !Array.isArray(library.items)) return createMockHomework();
     if (!library.items.every(isHomeworkItem)) return createMockHomework();
 
-    return library.items;
+    return library.items.map((item) => ({
+      ...item,
+      content: normalizeHomeworkContent(item.content),
+    }));
   } catch {
     return createMockHomework();
   }

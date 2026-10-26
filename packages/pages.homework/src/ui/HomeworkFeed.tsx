@@ -10,7 +10,7 @@ type HomeworkFeedProps = {
   activeTab: HomeworkTab;
   items: HomeworkItem[];
   parentRef: RefObject<HTMLDivElement | null>;
-  onChange: (id: string, value: { title: string; description: string }) => void;
+  onOpen: (id: string) => void;
   onDuplicate: (id: string) => void;
   onArchive: (id: string) => void;
   onRestore: (id: string) => void;
@@ -27,7 +27,7 @@ export const HomeworkFeed = ({
   activeTab,
   items,
   parentRef,
-  onChange,
+  onOpen,
   onDuplicate,
   onArchive,
   onRestore,
@@ -57,7 +57,7 @@ export const HomeworkFeed = ({
         <HomeworkCard
           item={item}
           className="w-full"
-          onChange={onChange}
+          onOpen={onOpen}
           onDuplicate={onDuplicate}
           onArchive={onArchive}
           onRestore={onRestore}

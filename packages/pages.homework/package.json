@@ -12,6 +12,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.166.6",
     "@xipkg/badge": "2.1.0",
     "@xipkg/button": "4.3.0",
     "@xipkg/dropdown": "3.1.0",
@@ -24,6 +25,7 @@
     "@xipkg/utils": "1.8.0",
     "common.services": "workspace:*",
     "common.ui": "workspace:*",
+    "modules.homework": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "sonner": "^2.0.7"

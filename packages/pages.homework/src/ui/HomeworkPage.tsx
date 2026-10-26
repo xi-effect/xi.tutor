@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -8,7 +9,6 @@ import { useHomeworkLibrary } from '../hooks/useHomeworkLibrary';
 import { isHomeworkTab, type HomeworkTab } from '../types';
 import { Header } from './Header';
 import { HomeworkFeed } from './HomeworkFeed';
-import { HomeworkFormModal } from './HomeworkFormModal';
 
 const getTabFromUrl = (): HomeworkTab => {
   if (typeof window === 'undefined') return 'active';
@@ -25,21 +25,14 @@ const replaceTab = (tab: HomeworkTab) => {
 
 export const HomeworkPage = () => {
   const { t } = useTranslation('homework');
+  const navigate = useNavigate();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const isMobile = useMediaQuery('(max-width: 960px)');
   const parentRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<HomeworkTab>(() => getTabFromUrl());
-  const [createOpen, setCreateOpen] = useState(false);
-  const {
-    items,
-    updateItem,
-    createAssignment,
-    duplicateItem,
-    archiveItem,
-    restoreItem,
-    createFromTemplate,
-  } = useHomeworkLibrary();
+  const { items, createAssignment, duplicateItem, archiveItem, restoreItem, createFromTemplate } =
+    useHomeworkLibrary();
 
   useEffect(() => {
     const syncFromUrl = () => setActiveTab(getTabFromUrl());
@@ -54,6 +47,13 @@ export const HomeworkPage = () => {
   };
 
   const findItem = (id: string) => items.find((item) => item.id === id);
+
+  const openEditor = (id: string) => {
+    navigate({
+      to: '/homework/$homeworkId',
+      params: { homeworkId: id },
+    });
+  };
 
   if (!isTutor) {
     return <NotFoundPage withLogo={false} />;
@@ -71,7 +71,7 @@ export const HomeworkPage = () => {
           <Header
             activeTab={activeTab}
             onTabChange={handleTabChange}
-            onCreate={() => setCreateOpen(true)}
+            onCreate={() => openEditor(createAssignment(t('draftTitle'), ''))}
           />
         </div>
 
@@ -83,7 +83,7 @@ export const HomeworkPage = () => {
             activeTab={activeTab}
             items={items}
             parentRef={parentRef}
-            onChange={(id, value) => updateItem(id, value)}
+            onOpen={openEditor}
             onDuplicate={(id) => {
               duplicateItem(id);
               toast(t('toast.duplicated'));
@@ -99,25 +99,13 @@ export const HomeworkPage = () => {
               toast(t(item?.kind === 'template' ? 'toast.templateRestored' : 'toast.restored'));
             }}
             onCreateFromTemplate={(id) => {
-              createFromTemplate(id);
-              handleTabChange('active');
+              const createdId = createFromTemplate(id);
               toast(t('toast.createdFromTemplate'));
+              if (createdId) openEditor(createdId);
             }}
           />
         </div>
       </div>
-
-      <HomeworkFormModal
-        open={createOpen}
-        mode="create"
-        onClose={() => setCreateOpen(false)}
-        onSubmit={({ title, description }) => {
-          createAssignment(title, description);
-          setCreateOpen(false);
-          handleTabChange('active');
-          toast(t('toast.created'));
-        }}
-      />
     </>
   );
 };

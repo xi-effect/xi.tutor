@@ -33,6 +33,7 @@ import { Route as commonWelcomeEmailIndexRouteImport } from './pages/(common)/we
 import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
 import { Route as commonWelcomeUserIndexRouteImport } from './pages/(common)/welcome/user/index'
 import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
+import { Route as appLayoutHomeworkHomeworkIdIndexRouteImport } from './pages/(app)/_layout/homework/$homeworkId/index'
 import { Route as appLayoutSettingsSubscriptionPaymentResultRouteImport } from './pages/(app)/_layout/settings/subscription/payment-result'
 import { Route as appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/boards/$boardId'
 import { Route as appLayoutClassroomsClassroomIdNotesNoteIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/notes/$noteId'
@@ -163,6 +164,12 @@ const appLayoutClassroomsClassroomIdIndexRoute =
     path: '/classrooms/$classroomId/',
     getParentRoute: () => appLayoutRoute,
   } as any)
+const appLayoutHomeworkHomeworkIdIndexRoute =
+  appLayoutHomeworkHomeworkIdIndexRouteImport.update({
+    id: '/homework/$homeworkId/',
+    path: '/homework/$homeworkId/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
 const appLayoutSettingsSubscriptionPaymentResultRoute =
   appLayoutSettingsSubscriptionPaymentResultRouteImport.update({
     id: '/settings/subscription/payment-result',
@@ -217,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/welcome/user/': typeof commonWelcomeUserIndexRoute
   '/settings/subscription/payment-result': typeof appLayoutSettingsSubscriptionPaymentResultRoute
   '/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/homework/$homeworkId/': typeof appLayoutHomeworkHomeworkIdIndexRoute
   '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
   '/materials/$materialId/board/': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
@@ -245,6 +253,7 @@ export interface FileRoutesByTo {
   '/welcome/user': typeof commonWelcomeUserIndexRoute
   '/settings/subscription/payment-result': typeof appLayoutSettingsSubscriptionPaymentResultRoute
   '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/homework/$homeworkId': typeof appLayoutHomeworkHomeworkIdIndexRoute
   '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
   '/materials/$materialId/board': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
@@ -277,6 +286,7 @@ export interface FileRoutesById {
   '/(common)/welcome/user/': typeof commonWelcomeUserIndexRoute
   '/(app)/_layout/settings/subscription/payment-result': typeof appLayoutSettingsSubscriptionPaymentResultRoute
   '/(app)/_layout/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/(app)/_layout/homework/$homeworkId/': typeof appLayoutHomeworkHomeworkIdIndexRoute
   '/(app)/_layout/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   '/(app)/_layout/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
   '/(app)/_layout/materials/$materialId/board/': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/welcome/user/'
     | '/settings/subscription/payment-result'
     | '/classrooms/$classroomId/'
+    | '/homework/$homeworkId/'
     | '/classrooms/$classroomId/boards/$boardId'
     | '/classrooms/$classroomId/notes/$noteId'
     | '/materials/$materialId/board/'
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/welcome/user'
     | '/settings/subscription/payment-result'
     | '/classrooms/$classroomId'
+    | '/homework/$homeworkId'
     | '/classrooms/$classroomId/boards/$boardId'
     | '/classrooms/$classroomId/notes/$noteId'
     | '/materials/$materialId/board'
@@ -366,6 +378,7 @@ export interface FileRouteTypes {
     | '/(common)/welcome/user/'
     | '/(app)/_layout/settings/subscription/payment-result'
     | '/(app)/_layout/classrooms/$classroomId/'
+    | '/(app)/_layout/homework/$homeworkId/'
     | '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
     | '/(app)/_layout/classrooms/$classroomId/notes/$noteId'
     | '/(app)/_layout/materials/$materialId/board/'
@@ -553,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutClassroomsClassroomIdIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/(app)/_layout/homework/$homeworkId/': {
+      id: '/(app)/_layout/homework/$homeworkId/'
+      path: '/homework/$homeworkId'
+      fullPath: '/homework/$homeworkId/'
+      preLoaderRoute: typeof appLayoutHomeworkHomeworkIdIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
     '/(app)/_layout/settings/subscription/payment-result': {
       id: '/(app)/_layout/settings/subscription/payment-result'
       path: '/settings/subscription/payment-result'
@@ -604,6 +624,7 @@ interface appLayoutRouteChildren {
   appLayoutScheduleIndexRoute: typeof appLayoutScheduleIndexRoute
   appLayoutSettingsSubscriptionPaymentResultRoute: typeof appLayoutSettingsSubscriptionPaymentResultRoute
   appLayoutClassroomsClassroomIdIndexRoute: typeof appLayoutClassroomsClassroomIdIndexRoute
+  appLayoutHomeworkHomeworkIdIndexRoute: typeof appLayoutHomeworkHomeworkIdIndexRoute
   appLayoutClassroomsClassroomIdBoardsBoardIdRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   appLayoutClassroomsClassroomIdNotesNoteIdRoute: typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
   appLayoutMaterialsMaterialIdBoardIndexRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRoute
@@ -625,6 +646,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
     appLayoutSettingsSubscriptionPaymentResultRoute,
   appLayoutClassroomsClassroomIdIndexRoute:
     appLayoutClassroomsClassroomIdIndexRoute,
+  appLayoutHomeworkHomeworkIdIndexRoute: appLayoutHomeworkHomeworkIdIndexRoute,
   appLayoutClassroomsClassroomIdBoardsBoardIdRoute:
     appLayoutClassroomsClassroomIdBoardsBoardIdRoute,
   appLayoutClassroomsClassroomIdNotesNoteIdRoute:

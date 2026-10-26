@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { Badge } from '@xipkg/badge';
 import { File, TaskFile } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
@@ -9,13 +7,11 @@ import { useHomeworkPresentation } from '../hooks/useHomeworkPresentation';
 import { homeworkStatusBadgeClass } from '../status';
 import type { HomeworkItem } from '../types';
 import { HomeworkActionsMenu } from './HomeworkActionsMenu';
-import { HomeworkDetailsModal } from './HomeworkDetailsModal';
-import { HomeworkFormModal } from './HomeworkFormModal';
 
 type HomeworkCardProps = {
   item: HomeworkItem;
   className?: string;
-  onChange: (id: string, value: { title: string; description: string }) => void;
+  onOpen: (id: string) => void;
   onDuplicate: (id: string) => void;
   onArchive: (id: string) => void;
   onRestore: (id: string) => void;
@@ -25,7 +21,7 @@ type HomeworkCardProps = {
 export const HomeworkCard = ({
   item,
   className,
-  onChange,
+  onOpen,
   onDuplicate,
   onArchive,
   onRestore,
@@ -33,25 +29,13 @@ export const HomeworkCard = ({
 }: HomeworkCardProps) => {
   const { t } = useTranslation('homework');
   const { status, description, primaryLine, dateLine } = useHomeworkPresentation(item);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
   const Icon = item.kind === 'template' ? File : TaskFile;
-  const canEdit = item.feed !== 'archive';
-
-  const openDetails = () => {
-    if (editOpen) return;
-    setDetailsOpen(true);
-  };
-
-  const openEdit = () => {
-    setDetailsOpen(false);
-    window.setTimeout(() => setEditOpen(true), 0);
-  };
+  const openEditor = () => onOpen(item.id);
 
   return (
     <>
       <div
-        onClick={openDetails}
+        onClick={openEditor}
         className={cn(
           'group bg-background-surface relative flex h-44 min-h-44 w-full min-w-0 shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
           className,
@@ -86,8 +70,8 @@ export const HomeworkCard = ({
           >
             <HomeworkActionsMenu
               item={item}
-              onOpen={openDetails}
-              onEdit={openEdit}
+              onOpen={openEditor}
+              onEdit={openEditor}
               onDuplicate={() => onDuplicate(item.id)}
               onArchive={() => onArchive(item.id)}
               onRestore={() => onRestore(item.id)}
@@ -124,26 +108,6 @@ export const HomeworkCard = ({
           </p>
         </div>
       </div>
-
-      <HomeworkDetailsModal
-        item={item}
-        open={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
-        onEdit={canEdit ? openEdit : undefined}
-      />
-      <HomeworkFormModal
-        open={editOpen}
-        mode="edit"
-        kind={item.kind}
-        initialTitle={item.title}
-        initialDescription={item.description}
-        onClose={() => setEditOpen(false)}
-        onSubmit={(value) => {
-          onChange(item.id, value);
-          setEditOpen(false);
-          toast(t('toast.saved'));
-        }}
-      />
     </>
   );
 };

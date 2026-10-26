@@ -1,0 +1,33 @@
+.homework-rich p {
+  margin: 0.25rem 0;
+}
+
+.homework-rich ul {
+  margin: 0.25rem 0;
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.homework-rich ol {
+  margin: 0.25rem 0;
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+
+.homework-rich a {
+  text-decoration: underline;
+}
+
+.homework-rich img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.homework-rich p.is-editor-empty:first-child::before {
+  color: color-mix(in srgb, currentColor 45%, transparent);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

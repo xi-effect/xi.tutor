@@ -1,3 +1,8 @@
+import {
+  emptyHomeworkContent,
+  type HomeworkContent,
+  type HomeworkQuestion,
+} from 'modules.homework';
 import type { HomeworkItem, HomeworkStudent, StudentWorkState } from './types';
 
 const hoursFromNow = (hours: number) => new Date(Date.now() + hours * 3_600_000).toISOString();
@@ -9,6 +14,29 @@ const student = (id: string, name: string, state: StudentWorkState): HomeworkStu
   state,
 });
 
+const content = (
+  questions: HomeworkQuestion[] = [],
+  extra?: Partial<HomeworkContent>,
+): HomeworkContent => ({
+  ...emptyHomeworkContent(),
+  ...extra,
+  questions,
+});
+
+const shortQuestion = (id: string, prompt: string): HomeworkQuestion => ({
+  id,
+  type: 'short_text',
+  promptHtml: `<p>${prompt}</p>`,
+  required: false,
+  options: [],
+  correctAnswer: '',
+});
+
+const templateQuestions = (prefix: string, count: number, prompt: string) =>
+  Array.from({ length: count }, (_, index) =>
+    shortQuestion(`${prefix}-q${index + 1}`, `${prompt} ${index + 1}`),
+  );
+
 export const createMockHomework = (): HomeworkItem[] => [
   {
     id: 'hw-draft',
@@ -19,7 +47,37 @@ export const createMockHomework = (): HomeworkItem[] => [
     description: 'Пока только условие, ученикам ещё не отправлял',
     students: [],
     dueAt: null,
-    questionCount: 0,
+    questionCount: 3,
+    content: content([
+      {
+        id: 'hw-draft-short',
+        type: 'short_text',
+        promptHtml: '<p>Решите уравнение |x − 2| = 4. Напишите больший корень.</p>',
+        required: true,
+        options: [],
+        correctAnswer: '6',
+      },
+      {
+        id: 'hw-draft-choice',
+        type: 'single_choice',
+        promptHtml: '<p>Какое число является корнем уравнения |x| = 0?</p>',
+        required: true,
+        options: [
+          { id: 'hw-draft-choice-a', text: '0', isCorrect: true },
+          { id: 'hw-draft-choice-b', text: '1', isCorrect: false },
+          { id: 'hw-draft-choice-c', text: '−1 и 1', isCorrect: false },
+        ],
+        correctAnswer: '',
+      },
+      {
+        id: 'hw-draft-long',
+        type: 'long_text',
+        promptHtml: '<p>Объясните, почему модуль числа не бывает отрицательным.</p>',
+        required: false,
+        options: [],
+        correctAnswer: '',
+      },
+    ]),
     createdAt: daysFromNow(-6),
     updatedAt: daysFromNow(-6),
   },
@@ -37,6 +95,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     ],
     dueAt: daysFromNow(5),
     questionCount: 0,
+    content: content(),
     createdAt: daysFromNow(-8),
     updatedAt: daysFromNow(-1),
   },
@@ -55,6 +114,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     ],
     dueAt: daysFromNow(1),
     questionCount: 0,
+    content: content(),
     createdAt: daysFromNow(-4),
     updatedAt: hoursFromNow(-2),
   },
@@ -72,6 +132,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     ],
     dueAt: daysFromNow(-3),
     questionCount: 0,
+    content: content(),
     createdAt: daysFromNow(-12),
     updatedAt: daysFromNow(-2),
   },
@@ -90,6 +151,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     ],
     dueAt: daysFromNow(-10),
     questionCount: 0,
+    content: content(),
     createdAt: daysFromNow(-20),
     updatedAt: daysFromNow(-1),
   },
@@ -107,6 +169,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     ],
     dueAt: daysFromNow(2),
     questionCount: 0,
+    content: content(),
     createdAt: daysFromNow(-3),
     updatedAt: daysFromNow(-3),
   },
@@ -120,6 +183,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     students: [],
     dueAt: null,
     questionCount: 5,
+    content: content(templateQuestions('hw-template-oral', 5, 'Пример')),
     createdAt: daysFromNow(-20),
     updatedAt: daysFromNow(-20),
   },
@@ -133,6 +197,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     students: [],
     dueAt: null,
     questionCount: 12,
+    content: content(),
     createdAt: daysFromNow(-30),
     updatedAt: hoursFromNow(-4),
   },
@@ -146,6 +211,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     students: [],
     dueAt: null,
     questionCount: 8,
+    content: content(templateQuestions('hw-template-geometry', 8, 'Задача')),
     createdAt: daysFromNow(-40),
     updatedAt: daysFromNow(-15),
   },
@@ -159,6 +225,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     students: [student('st-ira', 'Ира', 'reviewed'), student('st-roma', 'Рома', 'reviewed')],
     dueAt: daysFromNow(-18),
     questionCount: 0,
+    content: content(),
     createdAt: daysFromNow(-25),
     updatedAt: daysFromNow(-7),
   },
@@ -172,6 +239,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     students: [student('st-polina', 'Полина', 'not_submitted')],
     dueAt: daysFromNow(4),
     questionCount: 0,
+    content: content(),
     createdAt: daysFromNow(-9),
     updatedAt: daysFromNow(-2),
   },
@@ -185,6 +253,7 @@ export const createMockHomework = (): HomeworkItem[] => [
     students: [],
     dueAt: null,
     questionCount: 7,
+    content: content(),
     createdAt: daysFromNow(-60),
     updatedAt: daysFromNow(-11),
   },

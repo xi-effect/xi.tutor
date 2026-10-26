@@ -1,3 +1,5 @@
+import type { HomeworkContent } from 'modules.homework';
+
 export type HomeworkTab = 'active' | 'templates' | 'archive';
 
 export type HomeworkKind = 'assignment' | 'template';
@@ -24,6 +26,7 @@ export type HomeworkItem = {
   students: HomeworkStudent[];
   dueAt: string | null;
   questionCount: number;
+  content: HomeworkContent;
   createdAt: string;
   updatedAt: string;
 };
