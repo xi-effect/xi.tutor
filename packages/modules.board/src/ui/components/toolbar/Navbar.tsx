@@ -28,6 +28,7 @@ const toolMapping: Record<string, string> = {
   geo: 'xi-geo',
   arrow: 'arrow',
   eraser: 'eraser',
+  laser: 'laser',
   sticker: 'note',
   frame: 'frame',
   emoji: 'emoji',
@@ -172,6 +173,7 @@ export const Navbar = track(({ token }: { token: string }) => {
       'xi-geo': 'geo',
       arrow: 'arrow',
       eraser: 'eraser',
+      laser: 'laser',
       note: 'sticker',
       frame: 'frame',
       emoji: 'emoji',
@@ -206,6 +208,7 @@ export const Navbar = track(({ token }: { token: string }) => {
       item.action === 'select' ||
       item.action === 'hand' ||
       item.action === 'eraser' ||
+      item.action === 'laser' ||
       item.action === 'text'
     ) {
       return (

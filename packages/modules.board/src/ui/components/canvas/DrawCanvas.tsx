@@ -24,6 +24,7 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { hiddenComponents } from '../../../utils/customConfig';
 import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
+import { bindBoardOverviewLod } from '../../boardOverviewLod';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -395,6 +396,11 @@ export const DrawCanvas = ({
 
     editor.user.updateUserPreferences({ colorScheme: theme });
   }, [editor, theme]);
+
+  useEffect(() => {
+    if (!editor) return;
+    return bindBoardOverviewLod(editor);
+  }, [editor]);
 
   useEffect(() => {
     if (!editor || !isBoardStoreReady(status) || didResetDrawScaleRef.current) return;

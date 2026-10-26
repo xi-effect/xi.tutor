@@ -6,6 +6,7 @@ import {
   Figures,
   Hand,
   Pen,
+  Pointer,
   Sticker,
   Transform,
   TText,
@@ -68,6 +69,13 @@ export const navBarElements: NavbarElementT[] = [
       return t('navbar.eraser');
     },
     icon: <Eraser className={boardToolbarIconClass} />,
+  },
+  {
+    action: 'laser',
+    get title() {
+      return t('navbar.laser');
+    },
+    icon: <Pointer className={boardToolbarIconClass} />,
   },
   {
     action: 'text',

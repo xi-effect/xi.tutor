@@ -610,7 +610,10 @@ export function useYjsStore({
           defaultUserPreferences.name;
         const userColor = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);
 
-        setUserPreferences({ id: drawUserId, name: userName, color: userColor });
+        // id здесь сырой: с 0.2.7 getRecordId() сам добавляет префикс `user:`.
+        // Если положить уже готовый drawUserId, свой presence не совпадёт с текущим
+        // пользователем и доска нарисует собственный курсор.
+        setUserPreferences({ id: yClientId, name: userName, color: userColor });
 
         const $boardUser = computed<DrUser | null>('boardUser', () => {
           const prefs = getUserPreferences();

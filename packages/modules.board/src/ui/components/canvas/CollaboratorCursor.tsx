@@ -5,14 +5,27 @@ import { useTranslation } from 'react-i18next';
 
 export type CollaboratorCursorProps = DrCollaboratorCursorProps;
 
+/**
+ * С 0.2.7 слот `CollaboratorCursor` вызывают два слоя:
+ * наш `CollaboratorCursors` (экранные координаты и `scale`) и новый
+ * `LiveCollaborators` ядра (координаты страницы и `zoom`).
+ * Второй экземпляр не рисуем — иначе курсор и подпись двоятся и разъезжаются по размеру.
+ */
+type CollaboratorCursorInput = DrCollaboratorCursorProps & {
+  zoom?: number;
+};
+
 export function CollaboratorCursor({
   point,
   color,
   name,
   scale,
   layout,
-}: DrCollaboratorCursorProps) {
+  zoom,
+}: CollaboratorCursorInput) {
   const { t } = useTranslation('board');
+  if (zoom != null && scale == null) return null;
+
   const badgeOffset = layout?.badgeOffset ?? { x: 2, y: 4 };
   const iconOffset = layout?.iconOffset ?? { x: -12, y: -12 };
 
