@@ -36,6 +36,7 @@ import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
 import {
   SUBSCRIPTION_BILLING_ENABLED,
+  BOARD_ELEMENTS_PERFORMANCE_NOTICE,
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   useSubscriptionStore,
@@ -164,6 +165,7 @@ export const SettingsDropdown = () => {
   const importInputRef = useRef<HTMLInputElement>(null);
   const shownWarningToastRef = useRef(false);
   const shownLimitToastRef = useRef(false);
+  const shownPerformanceToastRef = useRef(false);
 
   const effectiveCount =
     SUBSCRIPTION_BILLING_ENABLED && boardAtLimit ? BOARD_ELEMENTS_LIMIT : elementsCount;
@@ -219,6 +221,19 @@ export const SettingsDropdown = () => {
       return;
     }
 
+    if (
+      effectiveCount >= BOARD_ELEMENTS_PERFORMANCE_NOTICE &&
+      effectiveCount < BOARD_ELEMENTS_LIMIT &&
+      !shownPerformanceToastRef.current
+    ) {
+      toast.info(t('settings.performanceNoticeTitle'), {
+        id: 'board-elements-performance',
+        description: t('settings.performanceNoticeDesc'),
+        duration: 6000,
+      });
+      shownPerformanceToastRef.current = true;
+    }
+
     if (effectiveCount >= BOARD_ELEMENTS_WARNING_THRESHOLD) {
       if (!shownWarningToastRef.current) {
         toast.info(t('settings.almostFullTitle'), {
@@ -236,6 +251,9 @@ export const SettingsDropdown = () => {
 
     shownWarningToastRef.current = false;
     shownLimitToastRef.current = false;
+    if (effectiveCount < BOARD_ELEMENTS_PERFORMANCE_NOTICE) {
+      shownPerformanceToastRef.current = false;
+    }
   }, [effectiveCount, BOARD_ELEMENTS_LIMIT, BOARD_ELEMENTS_WARNING_THRESHOLD, isReadonly, t]);
 
   const settingsTrigger = (

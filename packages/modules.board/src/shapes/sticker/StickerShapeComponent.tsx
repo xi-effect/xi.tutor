@@ -1,5 +1,4 @@
 import { Fragment, useCallback, useLayoutEffect, useRef } from 'react';
-import { useBoardOverviewLod } from '../../ui/boardOverviewLod';
 import {
   getDisplayValues,
   NoteShapeUtil,
@@ -27,7 +26,6 @@ type StickerShapeComponentProps = {
 
 export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProps) => {
   const editor = useEditor();
-  const overview = useBoardOverviewLod();
   const containerRef = useRef<HTMLDivElement>(null);
   const { id, type, props } = shape;
   const { scale, richText, fontSizeAdjustment, textLastEditedBy } = props;
@@ -95,8 +93,6 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
   const preferredFontSize = getStickerFontSizePx(editor, shape);
 
   useLayoutEffect(() => {
-    if (overview) return;
-
     const limits = getStickerTextLimits(dv.noteWidth, dv.noteHeight, dv.labelPadding);
     const renderedPx = Math.round((fontSizeAdjustment ?? 1) * dv.labelFontSize);
 
@@ -233,7 +229,6 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
     dv.noteWidth,
     dv.noteHeight,
     shape.props.growY,
-    overview,
   ]);
 
   const startEditing = useCallback(() => {
@@ -254,21 +249,6 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
 
   const showRichTextLabel = !isEmpty || isReadyForEditing || isEditing;
   const showEmptyCaret = isSelected && isEmpty && !isEditing;
-
-  if (overview && !isEditing && !isSelected) {
-    return (
-      <div
-        ref={containerRef}
-        id={id}
-        className="dr-note__container"
-        style={{
-          width: nw,
-          height: nh,
-          backgroundColor: dv.noteBackgroundColor,
-        }}
-      />
-    );
-  }
 
   return (
     <Fragment>

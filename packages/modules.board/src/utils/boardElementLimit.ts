@@ -66,6 +66,16 @@ export const getRemainingBoardElements = (editor: Editor): number =>
   Math.max(0, getBoardElementsLimit() - editor.getCurrentPageShapeIds().size);
 
 /**
+ * У редактора свой потолок, по умолчанию 4000. Создание, дублирование и вставка
+ * проверяют его раньше нашего лимита тарифа и молча отбрасывают новые фигуры.
+ */
+export const syncBoardMaxShapesPerPage = (editor: Editor) => {
+  const limit = getBoardElementsLimit();
+  if (editor.options.maxShapesPerPage === limit) return;
+  (editor.options as { maxShapesPerPage: number }).maxShapesPerPage = limit;
+};
+
+/**
  * Группа и рамка не занимают хранилище. Новую обёртку вокруг уже существующих фигур не удаляем:
  * deleteShapes удалил бы вместе с ней и эти фигуры у всех участников.
  */
@@ -83,6 +93,8 @@ const collectBlockedForStorage = (editor: Editor, createdIds: DrShapeId[]): DrSh
 };
 
 export const registerBoardElementLimit = (editor: Editor) => {
+  syncBoardMaxShapesPerPage(editor);
+
   const stopListening = editor.store.listen((event) => {
     const source = 'source' in event ? event.source : 'user';
     if (source !== 'user') return;

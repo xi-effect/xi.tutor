@@ -1,4 +1,6 @@
 import { BaseBoxShapeUtil, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
+import { getBoardColorOption } from '../../utils/boardColors';
 import { FlipCardShape, flipCardShapeProps } from './FlipCardShape';
 import { FlipCardComponent } from './FlipCardComponent';
 import {
@@ -16,6 +18,11 @@ import { FlipCardBackColorStyle, FlipCardFrontColorStyle } from '../shapeStyles'
 export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
   static override type = 'flip-card' as const;
   static override props = flipCardShapeProps;
+
+  override getLodStyle(shape: FlipCardShape) {
+    const color = shape.props.isFlipped ? shape.props.backColor : shape.props.frontColor;
+    return cardLodStyle(getBoardColorOption(color)?.cssVar);
+  }
 
   override getDefaultProps(): FlipCardShape['props'] {
     return {

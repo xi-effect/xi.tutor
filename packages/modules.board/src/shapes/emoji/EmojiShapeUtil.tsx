@@ -6,6 +6,7 @@ import {
   HTMLContainer,
   Rectangle2d,
 } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 import { Emoji, getEmojiIconId } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../shapeStyles';
 import { TEmoji } from '../../types';
@@ -59,6 +60,10 @@ export class EmojiShapeUtil extends BaseBoxShapeUtil<EmojiShape> {
       h: 80,
       emoji: '😀',
     };
+  }
+
+  override getLodStyle() {
+    return cardLodStyle();
   }
 
   override getGeometry(shape: EmojiShape) {

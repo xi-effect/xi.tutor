@@ -9,6 +9,7 @@ import { Editor, DrInstancePresence, Draw, DrawProps, type DrUiOverrides } from 
 import { useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { cloneDroppedFile, useRetryFileQueue } from 'common.services';
+import { usePlanLimits } from 'common.subscription';
 import {
   useLockedShapeSelection,
   useDrawClipboard,
@@ -24,7 +25,6 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { hiddenComponents } from '../../../utils/customConfig';
 import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
-import { bindBoardOverviewLod } from '../../boardOverviewLod';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
 import { BoardCanvasBackground } from './BoardCanvasBackground';
@@ -45,7 +45,10 @@ import {
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { boardTextOptions } from '../../../shapes/text/boardTextOptions';
 import { insertAsset } from '../../../utils/uploadAsset';
-import { registerBoardElementLimit } from '../../../utils/boardElementLimit';
+import {
+  registerBoardElementLimit,
+  syncBoardMaxShapesPerPage,
+} from '../../../utils/boardElementLimit';
 import { registerBoardAssetHygiene } from '../../../utils/boardAssetHygiene';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
@@ -86,6 +89,7 @@ export const DrawCanvas = ({
 }: JSX.IntrinsicAttributes & DrawProps & { token: string }) => {
   const { t } = useTranslation('board');
   const [editor, setEditor] = useState<Editor | null>(null);
+  const maxBoardElements = usePlanLimits().maxBoardElements;
 
   const { selectedElementId, selectElement, showDebugInfo } = useDrawStore();
   const { theme } = useTheme();
@@ -135,6 +139,11 @@ export const DrawCanvas = ({
     if (!editor) return;
     return registerBoardElementLimit(editor);
   }, [editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+    syncBoardMaxShapesPerPage(editor);
+  }, [editor, maxBoardElements]);
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -400,11 +409,6 @@ export const DrawCanvas = ({
   }, [editor, theme]);
 
   useEffect(() => {
-    if (!editor) return;
-    return bindBoardOverviewLod(editor);
-  }, [editor]);
-
-  useEffect(() => {
     if (!editor || !isBoardStoreReady(status) || didResetDrawScaleRef.current) return;
     didResetDrawScaleRef.current = true;
     resetInflatedDrawScale(editor);
@@ -427,6 +431,7 @@ export const DrawCanvas = ({
             themes={BOARD_DRAW_THEMES}
             onMount={(editor) => {
               setEditor(editor);
+              syncBoardMaxShapesPerPage(editor);
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,

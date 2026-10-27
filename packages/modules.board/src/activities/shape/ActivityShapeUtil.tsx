@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 import {
   ACTIVITY_MIN_SIZE,
   activityShapeProps,
@@ -14,6 +15,10 @@ export class ActivityShapeUtil extends BaseBoxShapeUtil<ActivityShape> {
 
   override getDefaultProps(): ActivityShape['props'] {
     return getActivityDefaultProps('gap-text');
+  }
+
+  override getLodStyle() {
+    return cardLodStyle();
   }
 
   override canEdit() {

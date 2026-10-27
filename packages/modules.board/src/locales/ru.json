@@ -63,7 +63,9 @@
     "limitReachedTitle": "Место на доске закончилось",
     "limitReachedDesc": "Достигнут лимит в {{limit}} элементов.",
     "almostFullTitle": "Доска почти заполнена",
-    "almostFullDesc": "На доске уже {{count}} элементов из {{limit}}."
+    "almostFullDesc": "На доске уже {{count}} элементов из {{limit}}.",
+    "performanceNoticeTitle": "Много элементов на доске",
+    "performanceNoticeDesc": "При большом количестве элементов на слабых устройствах доска может работать медленнее."
   },
   "background": {
     "none": "Без фона",

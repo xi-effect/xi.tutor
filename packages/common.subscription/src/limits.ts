@@ -56,6 +56,9 @@ export const getFileTooLargeLimitMessage = (): string => {
 
 export const getBoardElementsLimit = (): number => getCurrentTariff().maxBoardElements;
 
+/** С этого числа фигур предупреждаем, что слабые устройства могут тормозить. */
+export const BOARD_ELEMENTS_PERFORMANCE_NOTICE = 4000;
+
 export const getBoardElementsWarningThreshold = (): number =>
   Math.floor(getBoardElementsLimit() * 0.75);
 
