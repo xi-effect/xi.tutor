@@ -44,9 +44,8 @@ import {
 } from '../utils/yjsStoreRecords';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
-import type { BoardBackgroundColorId } from '../config';
+import type { BoardBackgroundColorId, BoardBackgroundPattern } from '../config';
 import { parseBoardBackgroundFromYMap, type BoardBackgroundState } from '../utils/boardBackground';
-import type { DrBoardBackgroundType } from '@ibodr/draw';
 import i18n from 'i18next';
 
 type UseYjsStoreArgs = Partial<{
@@ -101,7 +100,7 @@ export type ExtendedStoreStatus = {
   /** Общий фон доски: type — паттерн, color — preset цвета */
   boardBackgroundMap: Y.Map<string>;
   getBoardBackground: () => BoardBackgroundState;
-  setBoardBackgroundType: (type: DrBoardBackgroundType) => void;
+  setBoardBackgroundType: (type: BoardBackgroundPattern) => void;
   setBoardBackgroundColor: (color: BoardBackgroundColorId) => void;
   /** Hocuspocus-провайдер (awareness — эфемерное состояние, не в персисте Y.Doc) */
   provider: HocuspocusProvider;
@@ -974,7 +973,7 @@ export function useYjsStore({
   }, [boardBackgroundMap]);
 
   const setBoardBackgroundType = useCallback(
-    (type: DrBoardBackgroundType) => {
+    (type: BoardBackgroundPattern) => {
       yDoc.transact(() => {
         boardBackgroundMap.set('type', type);
       }, 'board-background');

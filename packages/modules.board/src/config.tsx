@@ -4,6 +4,9 @@ import { Cursor, Pen } from '@xipkg/icons';
 import i18n from 'i18next';
 
 export const DEFAULT_BOARD_BACKGROUND_TYPE: DrBoardBackgroundType = 'dots';
+/** Нет в @ibodr/draw: рисуем сами, в редактор уходит `none`. */
+export const STAFF_BOARD_BACKGROUND_TYPE = 'staff' as const;
+export type BoardBackgroundPattern = DrBoardBackgroundType | typeof STAFF_BOARD_BACKGROUND_TYPE;
 export const DEFAULT_BOARD_BACKGROUND_COLOR = 'white' as const;
 
 export type BoardBackgroundColorId = 'white' | 'gray' | 'cream' | 'green' | 'blue';
@@ -11,7 +14,7 @@ export type BoardBackgroundColorId = 'white' | 'gray' | 'cream' | 'green' | 'blu
 const t = (key: string) => String(i18n.t(key, { ns: 'board' }));
 
 export const BOARD_BACKGROUND_TYPE_OPTIONS: {
-  value: DrBoardBackgroundType;
+  value: BoardBackgroundPattern;
   label: string;
 }[] = [
   {
@@ -42,6 +45,12 @@ export const BOARD_BACKGROUND_TYPE_OPTIONS: {
     value: 'lined',
     get label() {
       return t('background.lined');
+    },
+  },
+  {
+    value: STAFF_BOARD_BACKGROUND_TYPE,
+    get label() {
+      return t('background.staff');
     },
   },
   {
@@ -128,7 +137,7 @@ export function getBoardBackgroundColorValue(
     : BOARD_BACKGROUND_COLOR_VALUES[color];
 }
 
-const BOARD_BACKGROUND_TYPE_SET = new Set<DrBoardBackgroundType>(
+const BOARD_BACKGROUND_TYPE_SET = new Set<BoardBackgroundPattern>(
   BOARD_BACKGROUND_TYPE_OPTIONS.map(({ value }) => value),
 );
 
@@ -136,8 +145,10 @@ const BOARD_BACKGROUND_COLOR_SET = new Set<BoardBackgroundColorId>(
   BOARD_BACKGROUND_COLOR_OPTIONS.map(({ value }) => value),
 );
 
-export function isBoardBackgroundType(value: unknown): value is DrBoardBackgroundType {
-  return typeof value === 'string' && BOARD_BACKGROUND_TYPE_SET.has(value as DrBoardBackgroundType);
+export function isBoardBackgroundType(value: unknown): value is BoardBackgroundPattern {
+  return (
+    typeof value === 'string' && BOARD_BACKGROUND_TYPE_SET.has(value as BoardBackgroundPattern)
+  );
 }
 
 export function isBoardBackgroundColorId(value: unknown): value is BoardBackgroundColorId {
@@ -146,12 +157,12 @@ export function isBoardBackgroundColorId(value: unknown): value is BoardBackgrou
   );
 }
 
-export function normalizeBoardBackgroundType(type: unknown): DrBoardBackgroundType {
+export function normalizeBoardBackgroundType(type: unknown): BoardBackgroundPattern {
   if (isBoardBackgroundType(type)) return type;
   return DEFAULT_BOARD_BACKGROUND_TYPE;
 }
 
-export function getBoardBackgroundTypeLabel(type: DrBoardBackgroundType): string {
+export function getBoardBackgroundTypeLabel(type: BoardBackgroundPattern): string {
   return (
     BOARD_BACKGROUND_TYPE_OPTIONS.find(({ value }) => value === normalizeBoardBackgroundType(type))
       ?.label ?? type

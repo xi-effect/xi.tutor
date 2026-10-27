@@ -27,6 +27,7 @@ import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
 import { bindBoardOverviewLod } from '../../boardOverviewLod';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
+import { BoardCanvasBackground } from './BoardCanvasBackground';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { CanvasOverlays } from './CanvasOverlays';
 import { FollowBanner } from './FollowBanner';
@@ -109,6 +110,7 @@ export const DrawCanvas = ({
   const drawComponents = useMemo(
     () => ({
       ...hiddenComponents,
+      Background: BoardCanvasBackground,
       InFrontOfTheCanvas: CanvasOverlays,
       CollaboratorCursor,
       RichTextToolbar: TextEditorToolbarWithContext,
