@@ -167,7 +167,14 @@
     "newBoard": "Новая доска",
     "newBoardHint": "Тип и цвет фона, с которыми создаётся новая доска. Уже созданные доски не меняются",
     "backgroundType": "Тип фона",
-    "backgroundColor": "Цвет фона"
+    "backgroundColor": "Цвет фона",
+    "toolbar": "Панель инструментов",
+    "toolbarPosition": "Положение",
+    "toolbarHint": "Где находятся инструменты и отмена действия. Сверху шапка уходит вниз, а зум — наверх",
+    "toolbarBottom": "Снизу",
+    "toolbarLeft": "Слева",
+    "toolbarTop": "Сверху",
+    "toolbarRight": "Справа"
   },
   "tags": {
     "searchPlaceholder": "Найти тег",

@@ -747,6 +747,28 @@ export function useYjsStore({
           rafId = requestAnimationFrame(flushRemotePresence);
         };
 
+        const prunePresencesNotInAwareness = () => {
+          const states = awareness.getStates() as Map<number, PresenceState>;
+          if (states.size === 0) return;
+
+          const live = new Set<string>([presenceId]);
+          for (const state of states.values()) {
+            const id = state?.presence?.id;
+            if (id) live.add(id);
+          }
+
+          const staleIds: DrInstancePresence['id'][] = [];
+          for (const record of store.allRecords()) {
+            if (record.typeName !== 'instance_presence') continue;
+            if (!live.has(record.id)) staleIds.push(record.id as DrInstancePresence['id']);
+          }
+          if (staleIds.length === 0) return;
+
+          store.mergeRemoteChanges(() => {
+            store.remove(staleIds);
+          });
+        };
+
         const onAwarenessChange = ({ added, updated, removed }: AwarenessChange) => {
           const states = awareness.getStates() as Map<number, PresenceState>;
 
@@ -773,9 +795,11 @@ export function useYjsStore({
           }
 
           scheduleFlushRemote();
+          if (added.length > 0 || removed.length > 0) prunePresencesNotInAwareness();
         };
 
         awareness.on('change', onAwarenessChange);
+        prunePresencesNotInAwareness();
         unsubs.push(() => awareness.off('change', onAwarenessChange));
 
         unsubs.push(() => {

@@ -167,7 +167,14 @@
     "newBoard": "New board",
     "newBoardHint": "Background type and color used when a new board is created. Existing boards stay as they are",
     "backgroundType": "Background type",
-    "backgroundColor": "Background color"
+    "backgroundColor": "Background color",
+    "toolbar": "Toolbar",
+    "toolbarPosition": "Position",
+    "toolbarHint": "Where the tools and undo sit. At the top, the header moves to the bottom and zoom moves up",
+    "toolbarBottom": "Bottom",
+    "toolbarLeft": "Left",
+    "toolbarTop": "Top",
+    "toolbarRight": "Right"
   },
   "tags": {
     "searchPlaceholder": "Find tag",

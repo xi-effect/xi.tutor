@@ -8,6 +8,11 @@ import {
   type BoardBackgroundColorId,
   type BoardBackgroundPattern,
 } from '../utils/boardBackgroundCatalog';
+import {
+  DEFAULT_BOARD_TOOLBAR_DOCK,
+  normalizeBoardToolbarDock,
+  type BoardToolbarDock,
+} from '../utils/boardToolbarDock';
 import { BOARD_PREFERENCES_STORAGE_KEY } from '../utils/preferredBoardBackground';
 
 function readLegacyAutoClose(): boolean {
@@ -31,6 +36,9 @@ interface BoardPreferencesState {
   /** Цвет фона, с которым создаётся новая доска */
   defaultBackgroundColor: BoardBackgroundColorId;
   setDefaultBackgroundColor: (value: BoardBackgroundColorId) => void;
+  /** Куда прижата панель инструментов */
+  toolbarDock: BoardToolbarDock;
+  setToolbarDock: (value: BoardToolbarDock) => void;
 }
 
 export const useBoardPreferencesStore = create<BoardPreferencesState>()(
@@ -44,6 +52,8 @@ export const useBoardPreferencesStore = create<BoardPreferencesState>()(
       defaultBackgroundColor: DEFAULT_BOARD_BACKGROUND_COLOR,
       setDefaultBackgroundColor: (value) =>
         set({ defaultBackgroundColor: normalizeBoardBackgroundColor(value) }),
+      toolbarDock: DEFAULT_BOARD_TOOLBAR_DOCK,
+      setToolbarDock: (value) => set({ toolbarDock: normalizeBoardToolbarDock(value) }),
     }),
     {
       name: BOARD_PREFERENCES_STORAGE_KEY,
@@ -59,6 +69,7 @@ export const useBoardPreferencesStore = create<BoardPreferencesState>()(
           defaultBackgroundColor: normalizeBoardBackgroundColor(
             persisted.defaultBackgroundColor ?? currentState.defaultBackgroundColor,
           ),
+          toolbarDock: normalizeBoardToolbarDock(persisted.toolbarDock ?? currentState.toolbarDock),
         };
       },
     },
@@ -73,3 +84,9 @@ export {
   type BoardBackgroundColorId,
   type BoardBackgroundPattern,
 } from '../utils/boardBackgroundCatalog';
+
+export {
+  BOARD_TOOLBAR_DOCKS,
+  isBoardToolbarDock,
+  type BoardToolbarDock,
+} from '../utils/boardToolbarDock';

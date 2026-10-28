@@ -6,6 +6,7 @@ import { OpacitySizeMenu } from '../popups/Pen/OpacitySizeMenu';
 import { ShapeSet } from '../popups/Shapes/ShapeSet';
 import { ColorSet } from '../popups/Sticker/ColorSet';
 import { ArrowSet } from '../popups/Arrows/ArrowSet';
+import { isVerticalToolbarDock, type BoardToolbarDock } from '../../../utils/boardToolbarDock';
 import { BoardDrawer, useBoardIsMobile } from '../shared';
 
 type ToolbarSticker = {
@@ -16,11 +17,19 @@ type ToolbarSticker = {
 
 type ToolbarOptionsPanelProps = {
   activePopup: string | null;
+  dock?: BoardToolbarDock;
   recentEmojis: string[];
   stickers: ToolbarSticker[];
   onEmojiSelect: (emoji: string) => void;
   onEmojiStickerSelect: (sticker: ToolbarSticker) => void;
   onClose?: () => void;
+};
+
+const popupPositionClass: Record<BoardToolbarDock, string> = {
+  bottom: 'bottom-full left-1/2 mb-2 -translate-x-1/2',
+  top: 'top-full left-1/2 mt-2 -translate-x-1/2',
+  left: 'top-1/2 left-full ml-2 -translate-y-1/2',
+  right: 'top-1/2 right-full mr-2 -translate-y-1/2',
 };
 
 const drawerPanelClass = 'border-0 bg-transparent p-0 shadow-none';
@@ -37,6 +46,7 @@ const mobileEmojiPickerClass = cn(
 
 export const ToolbarOptionsPanel = ({
   activePopup,
+  dock = 'bottom',
   recentEmojis,
   stickers,
   onEmojiSelect,
@@ -56,18 +66,22 @@ export const ToolbarOptionsPanel = ({
     emoji: t('navbar.emoji'),
   };
 
+  const vertical = isVerticalToolbarDock(dock);
+
   const content = (
     <>
       {activePopup === 'pen' && (
-        <OpacitySizeMenu className={isMobile ? drawerPanelClass : undefined} />
+        <OpacitySizeMenu className={isMobile ? drawerPanelClass : undefined} vertical={vertical} />
       )}
       {activePopup === 'shapes' && (
         <ShapeSet className={isMobile ? drawerPanelClass : undefined} onClose={onClose} />
       )}
       {activePopup === 'sticker' && (
-        <ColorSet className={isMobile ? drawerPanelClass : undefined} />
+        <ColorSet className={isMobile ? drawerPanelClass : undefined} vertical={vertical} />
       )}
-      {activePopup === 'arrow' && <ArrowSet className={isMobile ? drawerPanelClass : undefined} />}
+      {activePopup === 'arrow' && (
+        <ArrowSet className={isMobile ? drawerPanelClass : undefined} vertical={vertical} />
+      )}
       {activePopup === 'emoji' && (
         <EmojiPickerPopup
           recentEmojis={recentEmojis}
@@ -106,7 +120,8 @@ export const ToolbarOptionsPanel = ({
       data-board-toolbar-ui
       className={cn(
         boardDropdownZClass,
-        'pointer-events-auto absolute bottom-full left-1/2 mb-2 w-max max-w-[calc(100vw-2rem)] -translate-x-1/2',
+        'pointer-events-auto absolute w-max max-w-[calc(100vw-6rem)]',
+        popupPositionClass[dock],
       )}
     >
       {content}

@@ -1,15 +1,21 @@
 import { useCanRedo, useCanUndo, useEditor } from '@ibodr/draw';
 import { Undo, Redo } from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
 import { useYjsContext } from '../../../providers/YjsProvider';
 
-export const UndoRedo = () => {
+export const UndoRedo = ({ direction = 'row' }: { direction?: 'row' | 'column' }) => {
   const editor = useEditor();
   const { isReadonly } = useYjsContext();
   const canUndo = useCanUndo() && !isReadonly;
   const canRedo = useCanRedo() && !isReadonly;
 
   return (
-    <div className="pointer-events-auto flex items-center justify-center gap-1">
+    <div
+      className={cn(
+        'pointer-events-auto flex items-center justify-center gap-1',
+        direction === 'column' && 'flex-col',
+      )}
+    >
       <button
         aria-label="Undo"
         disabled={!canUndo}

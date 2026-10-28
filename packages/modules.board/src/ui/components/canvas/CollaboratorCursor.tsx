@@ -6,10 +6,9 @@ import { useTranslation } from 'react-i18next';
 export type CollaboratorCursorProps = DrCollaboratorCursorProps;
 
 /**
- * С 0.2.7 слот `CollaboratorCursor` вызывают два слоя:
- * наш `CollaboratorCursors` (экранные координаты и `scale`) и новый
- * `LiveCollaborators` ядра (координаты страницы и `zoom`).
- * Второй экземпляр не рисуем — иначе курсор и подпись двоятся и разъезжаются по размеру.
+ * Слот курсора вызывают два слоя: `BoardCollaboratorCursors` (экран и `scale`)
+ * и `LiveCollaborators` ядра (координаты страницы и `zoom`).
+ * Второй экземпляр не рисуем — иначе курсор и подпись двоятся.
  */
 type CollaboratorCursorInput = DrCollaboratorCursorProps & {
   zoom?: number;

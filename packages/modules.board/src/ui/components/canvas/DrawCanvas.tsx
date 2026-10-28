@@ -27,7 +27,11 @@ import { hiddenComponents } from '../../../utils/customConfig';
 import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
+import { BoardChromeProvider } from '../../BoardChromeProvider';
+import { BoardToolLayer } from '../../boardToolLayer';
+import { useBoardChrome } from '../../useBoardChrome';
 import { BoardCanvasBackground } from './BoardCanvasBackground';
+import { BoardCollaboratorCursors } from './BoardCollaboratorCursors';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { CanvasOverlays } from './CanvasOverlays';
 import { FollowBanner } from './FollowBanner';
@@ -87,7 +91,6 @@ export const DrawCanvas = ({
   token,
   ...props
 }: JSX.IntrinsicAttributes & DrawProps & { token: string }) => {
-  const { t } = useTranslation('board');
   const [editor, setEditor] = useState<Editor | null>(null);
   const maxBoardElements = usePlanLimits().maxBoardElements;
 
@@ -117,6 +120,7 @@ export const DrawCanvas = ({
       Background: BoardCanvasBackground,
       InFrontOfTheCanvas: CanvasOverlays,
       CollaboratorCursor,
+      CollaboratorCursors: BoardCollaboratorCursors,
       RichTextToolbar: TextEditorToolbarWithContext,
     }),
     [],
@@ -417,159 +421,174 @@ export const DrawCanvas = ({
   if (status === 'loading') return <LoadingScreen />;
 
   return (
-    <div
-      id="whiteboard-container"
-      data-testid="board-canvas"
-      className="flex h-full w-full flex-col"
-    >
-      {/* z-0: stacking context — внутренние z-index draw/UI не выше @xipkg/modal (z-50) */}
-      <div className="relative z-0 flex-1 overflow-hidden">
-        {followingPresenceId && <FollowBanner />}
-        <div className="absolute inset-0">
-          <Draw
-            colorScheme={theme}
-            themes={BOARD_DRAW_THEMES}
-            onMount={(editor) => {
-              setEditor(editor);
-              syncBoardMaxShapesPerPage(editor);
-              editor.updateInstanceState({
-                isGridMode: true,
-                isDebugMode: false,
-              });
-              // Иначе при зуме < 100% карандаш масштабируется как 1/zoom и
-              // даже XS становится очень толстым («невозможно писать»).
-              editor.user.updateUserPreferences({ isDynamicSizeMode: false });
-              resetInflatedDrawScale(editor);
-              editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
-                let next = shape;
-                if (shape.type === 'draw' && shape.props.scale !== 1) {
-                  next = { ...shape, props: { ...shape.props, scale: 1 } };
-                }
-                if (shape.type === 'highlight' && shape.props.scale !== 1) {
-                  next = { ...shape, props: { ...shape.props, scale: 1 } };
-                }
-                return applyDrawStrokeClosePreference(
-                  next,
-                  useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
+    <BoardChromeProvider toolbarVisible={!isReadonly}>
+      <div
+        id="whiteboard-container"
+        data-testid="board-canvas"
+        className="relative flex h-full w-full flex-col"
+      >
+        {/* z-0: stacking context — внутренние z-index draw/UI не выше @xipkg/modal (z-50) */}
+        <div className="relative z-0 flex-1 overflow-hidden">
+          {followingPresenceId && <FollowBanner />}
+          <div className="absolute inset-0">
+            <Draw
+              colorScheme={theme}
+              themes={BOARD_DRAW_THEMES}
+              onMount={(editor) => {
+                setEditor(editor);
+                syncBoardMaxShapesPerPage(editor);
+                editor.updateInstanceState({
+                  isGridMode: true,
+                  isDebugMode: false,
+                });
+                // Иначе при зуме < 100% карандаш масштабируется как 1/zoom и
+                // даже XS становится очень толстым («невозможно писать»).
+                editor.user.updateUserPreferences({ isDynamicSizeMode: false });
+                resetInflatedDrawScale(editor);
+                editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
+                  let next = shape;
+                  if (shape.type === 'draw' && shape.props.scale !== 1) {
+                    next = { ...shape, props: { ...shape.props, scale: 1 } };
+                  }
+                  if (shape.type === 'highlight' && shape.props.scale !== 1) {
+                    next = { ...shape, props: { ...shape.props, scale: 1 } };
+                  }
+                  return applyDrawStrokeClosePreference(
+                    next,
+                    useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
+                  );
+                });
+                editor.sideEffects.registerBeforeChangeHandler('shape', (_, next) =>
+                  applyDrawStrokeClosePreference(
+                    next,
+                    useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
+                  ),
                 );
-              });
-              editor.sideEffects.registerBeforeChangeHandler('shape', (_, next) =>
-                applyDrawStrokeClosePreference(
-                  next,
-                  useBoardPreferencesStore.getState().autoCloseDrawShapes === true,
-                ),
-              );
 
-              const inputMode = useDrawStore.getState().inputMode;
-              if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });
-              else if (inputMode === 'mouse') editor.updateInstanceState({ isPenMode: false });
+                const inputMode = useDrawStore.getState().inputMode;
+                if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });
+                else if (inputMode === 'mouse') editor.updateInstanceState({ isPenMode: false });
 
-              editor.sideEffects.registerBeforeChangeHandler('instance', (_, next) => {
-                const mode = useDrawStore.getState().inputMode;
-                if (mode === 'pen') return { ...next, isPenMode: true };
-                if (mode === 'mouse') return { ...next, isPenMode: false };
-                return next;
-              });
-
-              // Фильтр категорий ластика — только для локального стирания.
-              // Remote-удаления из Yjs/Hocuspocus нельзя блокировать: иначе у ученика
-              // останутся фигуры, которые репетитор уже стёр.
-              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape, source) => {
-                if (source !== 'user') return;
-                if (editor.getCurrentToolId() !== 'eraser') return;
-                if (!isShapeErasable(shape.type)) return false;
-              });
-
-              registerBoardAssetHygiene(editor);
-
-              editor.registerExternalContentHandler('files', async ({ files }) => {
-                const dropped = files.map(cloneDroppedFile);
-                const uploadToken = await waitForBoardUploadToken(tokenRef);
-                if (!uploadToken) {
-                  console.error('Ошибка при загрузке файла: нет content token');
-                  return;
-                }
-
-                for (const file of dropped) {
-                  try {
-                    await insertAsset(editor, file, uploadToken, addToQueueRef.current);
-                  } catch (error) {
-                    console.error('Ошибка при загрузке файла:', error);
-                  }
-                }
-              });
-
-              const win = window as unknown as {
-                getBoardSnapshot?: () => unknown;
-                showBoardImportOption?: () => void;
-              };
-              win.getBoardSnapshot = () => {
-                const records = editor.store.allRecords();
-                const normalized = records.map((r) => {
-                  const raw = r as unknown as Record<string, unknown>;
-                  const rec = {
-                    ...r,
-                    props:
-                      raw.props && typeof raw.props === 'object'
-                        ? { ...(raw.props as Record<string, unknown>) }
-                        : raw.props,
-                  } as typeof r;
-                  const props = (rec as unknown as Record<string, unknown>).props as
-                    Record<string, unknown> | undefined;
-                  if (props?.src && typeof props.src === 'string') {
-                    props.src = normalizeStoredFileSrc(props.src);
-                  }
-                  return rec;
+                editor.sideEffects.registerBeforeChangeHandler('instance', (_, next) => {
+                  const mode = useDrawStore.getState().inputMode;
+                  if (mode === 'pen') return { ...next, isPenMode: true };
+                  if (mode === 'mouse') return { ...next, isPenMode: false };
+                  return next;
                 });
-                const snapshot = {
-                  records: normalized,
-                  byId: Object.fromEntries(normalized.map((r) => [r.id, r])),
+
+                // Фильтр категорий ластика — только для локального стирания.
+                // Remote-удаления из Yjs/Hocuspocus нельзя блокировать: иначе у ученика
+                // останутся фигуры, которые репетитор уже стёр.
+                editor.sideEffects.registerBeforeDeleteHandler('shape', (shape, source) => {
+                  if (source !== 'user') return;
+                  if (editor.getCurrentToolId() !== 'eraser') return;
+                  if (!isShapeErasable(shape.type)) return false;
+                });
+
+                registerBoardAssetHygiene(editor);
+
+                editor.registerExternalContentHandler('files', async ({ files }) => {
+                  const dropped = files.map(cloneDroppedFile);
+                  const uploadToken = await waitForBoardUploadToken(tokenRef);
+                  if (!uploadToken) {
+                    console.error('Ошибка при загрузке файла: нет content token');
+                    return;
+                  }
+
+                  for (const file of dropped) {
+                    try {
+                      await insertAsset(editor, file, uploadToken, addToQueueRef.current);
+                    } catch (error) {
+                      console.error('Ошибка при загрузке файла:', error);
+                    }
+                  }
+                });
+
+                const win = window as unknown as {
+                  getBoardSnapshot?: () => unknown;
+                  showBoardImportOption?: () => void;
                 };
-                const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
-                  type: 'application/json',
+                win.getBoardSnapshot = () => {
+                  const records = editor.store.allRecords();
+                  const normalized = records.map((r) => {
+                    const raw = r as unknown as Record<string, unknown>;
+                    const rec = {
+                      ...r,
+                      props:
+                        raw.props && typeof raw.props === 'object'
+                          ? { ...(raw.props as Record<string, unknown>) }
+                          : raw.props,
+                    } as typeof r;
+                    const props = (rec as unknown as Record<string, unknown>).props as
+                      Record<string, unknown> | undefined;
+                    if (props?.src && typeof props.src === 'string') {
+                      props.src = normalizeStoredFileSrc(props.src);
+                    }
+                    return rec;
+                  });
+                  const snapshot = {
+                    records: normalized,
+                    byId: Object.fromEntries(normalized.map((r) => [r.id, r])),
+                  };
+                  const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
+                    type: 'application/json',
+                  });
+                  void saveBlob(blob, { fileName: `board-snapshot-${Date.now()}.json` });
+                  return snapshot;
+                };
+                win.showBoardImportOption = () => {
+                  window.dispatchEvent(new CustomEvent('showBoardImportJson'));
+                };
+                editor.setCameraOptions({
+                  zoomSteps: [0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 8],
                 });
-                void saveBlob(blob, { fileName: `board-snapshot-${Date.now()}.json` });
-                return snapshot;
-              };
-              win.showBoardImportOption = () => {
-                window.dispatchEvent(new CustomEvent('showBoardImportJson'));
-              };
-              editor.setCameraOptions({
-                zoomSteps: [0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 8],
-              });
-            }}
-            store={store}
-            tools={boardCustomTools}
-            shapeUtils={boardCustomShapeUtils}
-            components={drawComponents}
-            collaboratorCursorLayout={{
-              badgeOffset: { x: 2, y: 4 },
-              iconOffset: { x: -16, y: 2 },
-            }}
-            {...props}
-            overrides={boardUiOverrides}
-            textOptions={boardTextOptions}
-          >
-            <Header />
-            {!isReadonly && <Navbar token={token} />}
-            <div
-              className={`${boardPanelClass} absolute bottom-20 left-4 ${boardChromeZClass} flex p-1 sm:hidden`}
+              }}
+              store={store}
+              tools={boardCustomTools}
+              shapeUtils={boardCustomShapeUtils}
+              components={drawComponents}
+              collaboratorCursorLayout={{
+                badgeOffset: { x: 2, y: 4 },
+                iconOffset: { x: -16, y: 2 },
+              }}
+              {...props}
+              overrides={boardUiOverrides}
+              textOptions={boardTextOptions}
             >
-              <UndoRedo />
-            </div>
-            <DrawZoomPanel />
-            {showDebugInfo && editor && (
+              <Header />
+              {!isReadonly && <Navbar token={token} />}
               <div
-                className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
-                aria-live="polite"
+                className={`${boardPanelClass} absolute bottom-20 left-4 ${boardChromeZClass} flex p-1 sm:hidden`}
               >
-                <div className="font-sans font-medium">{t('debug.title')}</div>
-                {t('debug.elementsCount', { count: shapeCount })}
+                <UndoRedo />
               </div>
-            )}
-          </Draw>
+              <DrawZoomPanel />
+              {showDebugInfo && editor && <BoardDebugBadge count={shapeCount} />}
+            </Draw>
+          </div>
         </div>
+        <BoardToolLayer />
       </div>
-    </div>
+    </BoardChromeProvider>
   );
 };
+
+function BoardDebugBadge({ count }: { count: number }) {
+  const { t } = useTranslation('board');
+  const chrome = useBoardChrome();
+
+  return (
+    <div
+      className="pointer-events-none absolute rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
+      style={
+        chrome.mirrored
+          ? { left: chrome.debugLeft, top: chrome.debugOffset }
+          : { left: chrome.debugLeft, bottom: chrome.debugOffset }
+      }
+      aria-live="polite"
+    >
+      <div className="font-sans font-medium">{t('debug.title')}</div>
+      {t('debug.elementsCount', { count })}
+    </div>
+  );
+}
