@@ -50,6 +50,7 @@ import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
+import { registerEmbedGuard } from '../../../shapes/embed/embedProviders';
 
 async function waitForBoardUploadToken(
   tokenRef: MutableRefObject<string>,
@@ -467,6 +468,7 @@ export const DrawCanvas = ({
               });
 
               registerBoardAssetHygiene(editor);
+              registerEmbedGuard(editor);
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 const dropped = files.map(cloneDroppedFile);

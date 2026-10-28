@@ -1,15 +1,16 @@
-import { EmbedShapeUtil, type DrEmbedShape } from '@ibodr/draw';
+import { EmbedShapeUtil, HTMLContainer, type DrEmbedShape } from '@ibodr/draw';
 import { EmbedLoadingFrame } from './EmbedLoadingFrame';
 
 export class BoardEmbedShapeUtil extends EmbedShapeUtil {
-  override component(shape: DrEmbedShape) {
-    const content = super.component(shape);
-    if (!content) return null;
+  override canEdit() {
+    return false;
+  }
 
+  override component(shape: DrEmbedShape) {
     return (
-      <EmbedLoadingFrame key={shape.props.url} w={shape.props.w} h={shape.props.h}>
-        {content}
-      </EmbedLoadingFrame>
+      <HTMLContainer style={{ width: shape.props.w, height: shape.props.h, pointerEvents: 'none' }}>
+        <EmbedLoadingFrame url={shape.props.url} w={shape.props.w} h={shape.props.h} />
+      </HTMLContainer>
     );
   }
 }

@@ -1,5 +1,8 @@
 export const EMBED_MIN_WIDTH = 240;
 export const EMBED_MIN_HEIGHT = 140;
+export const EMBED_HEADER_HEIGHT = 32;
+export const EMBED_IFRAME_SANDBOX =
+  'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation allow-forms';
 export const PORTAL_Z = 9999;
 
 export const MAX_INPUT_LENGTH = 4000;
