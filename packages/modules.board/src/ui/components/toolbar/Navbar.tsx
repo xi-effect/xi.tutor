@@ -16,6 +16,7 @@ import { initFileDB, useRetryFileQueue } from 'common.services';
 import { getMaxFileBytes, isStorageQuotaReached } from 'common.subscription';
 import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
+import { filterAllowedEmojis, isAllowedEmoji } from '../../../utils/allowedEmojis';
 import { stickers } from '../../../config';
 import { AssetUploadControl } from './AssetUploadControl';
 import { runWithoutHistory } from '../../../utils/runWithoutHistory';
@@ -288,9 +289,10 @@ export const Navbar = track(({ token }: { token: string }) => {
             >
               <ToolbarOptionsPanel
                 activePopup={activePopup}
-                recentEmojis={recentEmojis}
+                recentEmojis={filterAllowedEmojis(recentEmojis)}
                 stickers={stickers}
                 onEmojiSelect={(emoji) => {
+                  if (!isAllowedEmoji(emoji)) return;
                   editor.setStyleForNextShapes(EmojiStyle, emoji);
                   addRecentEmoji(emoji);
                 }}

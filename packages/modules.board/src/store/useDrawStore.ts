@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { isAllowedEmoji } from '../utils/allowedEmojis';
 import { ToolType } from '../types';
 
 export type InputMode = 'auto' | 'pen' | 'mouse';
@@ -155,13 +156,27 @@ export const useDrawStore = create<DrawState>()(
 
       recentEmojis: [],
       addRecentEmoji: (emoji) => {
-        if (!emoji) return;
+        if (!isAllowedEmoji(emoji)) return;
 
         const { recentEmojis } = get();
-        const emojis = [emoji, ...recentEmojis].slice(0, 8);
+        const emojis = [emoji, ...recentEmojis.filter(isAllowedEmoji)].slice(0, 8);
         set(() => ({ recentEmojis: emojis }));
       },
     }),
-    { name: 'draw-storage' },
+    {
+      name: 'draw-storage',
+      merge: (persistedState, currentState) => {
+        const persisted = (persistedState ?? {}) as Partial<DrawState>;
+        const recentEmojis = Array.isArray(persisted.recentEmojis)
+          ? persisted.recentEmojis.filter(isAllowedEmoji)
+          : currentState.recentEmojis;
+
+        return {
+          ...currentState,
+          ...persisted,
+          recentEmojis,
+        };
+      },
+    },
   ),
 );

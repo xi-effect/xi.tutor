@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "parse-ydoc": "node scripts/parse-board-ydoc.mjs"
+    "parse-ydoc": "node scripts/parse-board-ydoc.mjs",
+    "sync-emoji-catalog": "node scripts/sync-emoji-catalog.mjs"
   },
   "dependencies": {
     "@hocuspocus/provider": "4.7.0",
@@ -37,7 +38,7 @@
     "@xipkg/checkbox": "5.1.0",
     "@xipkg/drawer": "0.2.0",
     "@xipkg/dropdown": "3.1.0",
-    "@xipkg/emojipicker": "1.4.1",
+    "@xipkg/emojipicker": "1.5.0",
     "@xipkg/form": "4.3.0",
     "@xipkg/gridvirtualizer": "1.0.2",
     "@xipkg/icons": "3.2.0",

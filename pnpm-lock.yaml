@@ -3791,8 +3791,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/emojipicker':
-        specifier: 1.4.1
-        version: 1.4.1(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 1.5.0
+        version: 1.5.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/form':
         specifier: 4.3.0
         version: 4.3.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -10881,8 +10881,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/emojipicker@1.4.1':
-    resolution: {integrity: sha512-RrWonPZoMAAFvtj9fZNHLjME2WeXxM2nsTu2vDGK/ynx8fFVHUL4mn0OCv8m5lEX4prkO95R/vDqTNw8RRwyhg==}
+  '@xipkg/emojipicker@1.5.0':
+    resolution: {integrity: sha512-0wWpbPdpSTUYBZZXAUgFvDVNg1bbo+D94bvb6riuGUJPZnE3lSCqMJRRlajXKW2/bAboW6IncFKVVlLKS1pzqQ==}
     peerDependencies:
       react: ^19
 
@@ -19028,7 +19028,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/emojipicker@1.4.1(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@xipkg/emojipicker@1.5.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@xipkg/button': 4.3.0(@types/react@19.2.18)(react@19.2.8)
       '@xipkg/dropdown': 3.1.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

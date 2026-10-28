@@ -10,6 +10,7 @@ import { cardLodStyle } from '../../utils/resolveLodStyle';
 import { Emoji, getEmojiIconId } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../shapeStyles';
 import { TEmoji } from '../../types';
+import { isAllowedEmoji } from '../../utils/allowedEmojis';
 import { blobOrUrlToDataUrl } from '../../utils/shapeSvgExport';
 
 const EMOJI_IMAGE_BASE_URL = '/emoji/svg';
@@ -77,6 +78,7 @@ export class EmojiShapeUtil extends BaseBoxShapeUtil<EmojiShape> {
   override component(shape: EmojiShape) {
     const { w, h, emoji } = shape.props;
     const size = Math.min(w, h) * EMOJI_BOX_SIZE;
+    const canRender = isAllowedEmoji(emoji);
 
     return (
       <HTMLContainer
@@ -88,13 +90,15 @@ export class EmojiShapeUtil extends BaseBoxShapeUtil<EmojiShape> {
           justifyContent: 'center',
         }}
       >
-        <Emoji char={emoji} size={size} baseUrl={EMOJI_IMAGE_BASE_URL} />
+        {canRender ? <Emoji char={emoji} size={size} baseUrl={EMOJI_IMAGE_BASE_URL} /> : null}
       </HTMLContainer>
     );
   }
 
   override async toSvg(shape: EmojiShape) {
     const { w, h, emoji } = shape.props;
+    if (!isAllowedEmoji(emoji)) return null;
+
     const size = Math.min(w, h) * EMOJI_BOX_SIZE;
     const src = await getEmojiSvgDataUrl(getEmojiIconId(emoji));
 
