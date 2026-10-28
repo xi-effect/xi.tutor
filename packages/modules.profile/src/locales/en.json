@@ -163,7 +163,11 @@
     "title": "Board",
     "pencil": "Pencil",
     "autoCloseDrawShapes": "Close pencil strokes into shapes",
-    "autoCloseDrawShapesHint": "If a stroke almost closes, the pencil turns it into a filled shape. On a tablet with a stylus this often happens by accident"
+    "autoCloseDrawShapesHint": "If a stroke almost closes, the pencil turns it into a filled shape. On a tablet with a stylus this often happens by accident",
+    "newBoard": "New board",
+    "newBoardHint": "Background type and color used when a new board is created. Existing boards stay as they are",
+    "backgroundType": "Background type",
+    "backgroundColor": "Background color"
   },
   "tags": {
     "searchPlaceholder": "Find tag",
