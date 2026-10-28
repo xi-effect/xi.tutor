@@ -7,9 +7,9 @@ import {
   DropdownMenuSeparator,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
-import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
+import { ArrowBottom, ArrowUp, Chat, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import { Editor } from '@tiptap/core';
 import { useBlockMenuActions } from '../../hooks';
 import { ActiveBlockT } from '../../types';
@@ -22,6 +22,7 @@ type MediaBlockMenuProps = {
   onDownload: () => void;
   extraItems?: ReactNode;
   className?: string;
+  onComment?: () => void;
 };
 
 export const MediaBlockMenu = ({
@@ -31,9 +32,11 @@ export const MediaBlockMenu = ({
   onDownload,
   extraItems,
   className,
+  onComment,
 }: MediaBlockMenuProps) => {
   const { t } = useTranslation('editor');
   const { duplicate, remove, moveDown, moveUp } = useBlockMenuActions(editor, getActiveBlock);
+  const skipFocusRestore = useRef(false);
 
   return (
     <div
@@ -53,6 +56,12 @@ export const MediaBlockMenu = ({
           side="bottom"
           align="end"
           className="flex w-[260px] flex-col space-y-1 p-2"
+          onCloseAutoFocus={(e) => {
+            if (skipFocusRestore.current) {
+              e.preventDefault();
+              skipFocusRestore.current = false;
+            }
+          }}
         >
           <DropdownMenuItem
             className="hover:bg-background-page h-7 gap-2 rounded p-1"
@@ -61,7 +70,18 @@ export const MediaBlockMenu = ({
             <Download size="sm" className="size-6" />
             <span className="text-sm">{t('media.download')}</span>
           </DropdownMenuItem>
-
+          {onComment && !isReadOnly && (
+            <DropdownMenuItem
+              className="hover:bg-background-page h-7 gap-2 rounded p-1"
+              onSelect={() => {
+                skipFocusRestore.current = true;
+                onComment();
+              }}
+            >
+              <Chat size="sm" className="size-6" />
+              <span className="text-sm">{t('media.comment')}</span>
+            </DropdownMenuItem>
+          )}
           {!isReadOnly && (
             <>
               <DropdownMenuSeparator />
