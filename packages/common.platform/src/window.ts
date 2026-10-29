@@ -12,7 +12,7 @@ export interface AppInfo {
 export async function getAppInfo(): Promise<AppInfo> {
   if (!isNativeShell()) {
     return {
-      name: 'Sovlium',
+      name: 'sovlium',
       version: '0.0.0',
       platform: 'unknown',
       isDebug: typeof import.meta !== 'undefined' && Boolean(import.meta.env?.DEV),

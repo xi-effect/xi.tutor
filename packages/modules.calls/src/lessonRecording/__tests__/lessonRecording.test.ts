@@ -9,7 +9,7 @@ describe('formatLessonRecordingFilename', () => {
   it('собирает имя из локальной даты', () => {
     const date = new Date(2026, 9, 2, 16, 30, 45);
     expect(formatLessonRecordingFilename(date, 'webm')).toBe(
-      'Sovlium lesson 02.10.2026 16-30.webm',
+      'sovlium lesson 02.10.2026 16-30.webm',
     );
   });
 });

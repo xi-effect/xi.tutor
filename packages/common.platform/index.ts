@@ -103,6 +103,7 @@ export {
 
 export {
   isElectronCallOverlayOpen,
+  electronCallOverlayDocument,
   closeElectronCallOverlay,
   CALL_OVERLAY_CHANGE_EVENT,
 } from './src/electronCallOverlay';

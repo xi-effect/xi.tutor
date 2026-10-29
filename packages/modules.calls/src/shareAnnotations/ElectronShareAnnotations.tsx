@@ -266,7 +266,7 @@ function openPopups(): Popups | null {
   const canvas = openPopup(
     SHARE_ANNOTATION_CANVAS_FRAME_NAME,
     `popup,left=${left},top=${top},width=${width},height=${height}`,
-    'Sovlium — рисование',
+    'sovlium — рисование',
     CANVAS_CSS,
   );
   if (!canvas) return null;
@@ -275,7 +275,7 @@ function openPopups(): Popups | null {
   const toolbar = openPopup(
     SHARE_ANNOTATION_TOOLBAR_FRAME_NAME,
     `popup,left=${Math.round(left + (availWidth - bar.width) / 2)},top=${top + 16},width=${bar.width},height=${bar.height}`,
-    'Sovlium — демонстрация',
+    'sovlium — демонстрация',
     TOOLBAR_CSS,
   );
   if (!toolbar) {
@@ -518,8 +518,8 @@ function RemoteControlPanel({
       <div className="panel" role="alertdialog" aria-label="Запрос управления">
         <div className="panel-title">{nameOf(people, pending)} просит управление компьютером</div>
         <div className="panel-text">
-          Участник сможет двигать курсор, кликать и печатать на этом экране. Забрать управление
-          можно в любой момент.
+          У участника на демонстрации появится рамка. Пока курсор над ней, мышь и клавиатура
+          управляют этим компьютером. Забрать управление можно в любой момент.
         </div>
         <div className="panel-actions">
           <button type="button" className="btn" onClick={remote.deny}>
@@ -571,7 +571,7 @@ function RemoteControlPanel({
       <div className="panel">
         <div className="panel-title">Нужно разрешение macOS</div>
         <div className="panel-text">
-          Включите Sovlium в «Системные настройки → Конфиденциальность и безопасность →
+          Включите sovlium в «Системные настройки → Конфиденциальность и безопасность →
           Универсальный доступ». Панель обновится сама.
         </div>
         <div className="panel-actions">
@@ -607,6 +607,9 @@ function RemoteControlPanel({
   return (
     <div className="panel">
       <div className="panel-title">Передать управление компьютером</div>
+      <div className="panel-text">
+        Участник управляет этим экраном со своей стороны: водит мышью по вашей демонстрации.
+      </div>
       {people.length === 0 ? (
         <div className="panel-text">В звонке пока нет других участников.</div>
       ) : (

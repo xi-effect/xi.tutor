@@ -1,6 +1,6 @@
 # xi.electron
 
-Desktop-оболочка Sovlium на Electron для **macOS** и **Windows**. Renderer — существующий `apps/xi.web`. Отдельной копии приложения, роутов, доски, редактора, звонков или API-клиентов здесь нет.
+Desktop-оболочка sovlium на Electron для **macOS** и **Windows**. Renderer — существующий `apps/xi.web`. Отдельной копии приложения, роутов, доски, редактора, звонков или API-клиентов здесь нет.
 
 ```
                     xi.web
@@ -39,7 +39,7 @@ Production **не** делает `loadURL('https://app.sovlium.ru')` как ед
 Сборка `xi.web` кладётся в пакет:
 
 ```
-Sovlium.app/Contents/Resources/web/
+sovlium.app/Contents/Resources/web/
   index.html
   assets/
   math-bank/
@@ -103,7 +103,7 @@ pnpm electron:build:windows
 Сначала собирается `xi.web` в режиме `electron` (`vite build --mode electron`): minify и code splitting как в production, **без** PWA Service Worker.
 
 macOS: DMG и ZIP, arm64 и x64. Universal по-прежнему отдельно: `pnpm electron:build:macos:universal`.  
-Windows: NSIS `.exe` x64 (`Sovlium-Setup-<version>.exe`), uninstall, AppUserModelId `ru.sovlium.electron.dev`.  
+Windows: NSIS `.exe` x64 (`sovlium-Setup-<version>.exe`), uninstall, AppUserModelId `ru.sovlium.electron.dev`.  
 Linux на первом этапе не собирается.
 
 Публикация в GitHub Releases `xi-effect/xi.tutor` (draft, тег `electron-vX.Y.Z`):
@@ -115,7 +115,7 @@ pnpm electron:publish:macos
 
 Обычно это делает `.github/workflows/electron-release.yml` после `git push origin electron-vX.Y.Z`. Версия тега должна совпадать с `apps/xi.electron/package.json`.
 
-Подпись macOS пока ad-hoc (`mac.identity: '-'`), без Developer ID и нотаризации. Без подписи вообще Gatekeeper называет скачанное приложение «повреждённым». С ad-hoc подписью при первом запуске macOS пишет, что не может проверить разработчика. Открыть: «Системные настройки» → «Конфиденциальность и безопасность» → «Всё равно открыть». Или через терминал: `xattr -dr com.apple.quarantine /Applications/Sovlium.app`.
+Подпись macOS пока ad-hoc (`mac.identity: '-'`), без Developer ID и нотаризации. Без подписи вообще Gatekeeper называет скачанное приложение «повреждённым». С ad-hoc подписью при первом запуске macOS пишет, что не может проверить разработчика. Открыть: «Системные настройки» → «Конфиденциальность и безопасность» → «Всё равно открыть». Или через терминал: `xattr -dr com.apple.quarantine /Applications/sovlium.app`.
 
 ## Conference WebContentsView
 

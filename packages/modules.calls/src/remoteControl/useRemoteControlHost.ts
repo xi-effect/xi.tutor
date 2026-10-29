@@ -96,6 +96,16 @@ export function useRemoteControlHost(enabled: boolean): RemoteControlHost {
     publish({ type: 'state', available: true, controller });
   }, [available, controller, publish]);
 
+  // A participant who missed the first packet (or joined the tile late) still
+  // learns who is allowed to control.
+  useEffect(() => {
+    if (!available) return;
+    const timer = window.setInterval(() => {
+      publish({ type: 'state', available: true, controller: controllerRef.current });
+    }, 2000);
+    return () => window.clearInterval(timer);
+  }, [available, publish]);
+
   useEffect(() => {
     if (!available) return;
     return () => publish({ type: 'state', available: false, controller: null });
