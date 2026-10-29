@@ -116,7 +116,6 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   const navigate = useNavigate();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-
   const options: ItemT[] = useMemo(
     () => [
       {
@@ -181,6 +180,7 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
 
   const handleMenuItem = (index: number, query: string) => {
     if (query === 'subscription') {
+      useSubscriptionUiStore.getState().setAnalyticsSource('settings');
       useSubscriptionUiStore.getState().openOverview();
     }
     setActiveQuery(query);

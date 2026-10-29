@@ -1,8 +1,15 @@
 import i18n from 'i18next';
 import { toast } from 'sonner';
-import { bytesToMb, getCurrentTariff, tryStartUpload, type UploadKind } from 'common.subscription';
+import {
+  formatMegabytes,
+  getCurrentTariff,
+  isCurrentUserTutor,
+  tryStartUpload,
+  type UploadKind,
+} from 'common.subscription';
 import {
   rejectFileUploadFromEvaluation,
+  trackSubscriptionPaywallShown,
   trackUploadEvaluationLimit,
   type FileUploadAttempt,
 } from 'common.utils';
@@ -17,7 +24,7 @@ export const getPlanSizeLimitMessage = (kind: UploadKind): string => {
     kind: i18n.t(kind === 'image' ? 'limits.fileKindImage' : 'limits.fileKindOther', {
       ns: 'subscription',
     }),
-    size: `${bytesToMb(maxBytes)} МБ`,
+    size: formatMegabytes(maxBytes),
   });
 };
 
@@ -35,6 +42,9 @@ export const assertBoardUploadAllowed = (
   }
 
   if (result.reason === 'size') {
+    if (isCurrentUserTutor()) {
+      trackSubscriptionPaywallShown({ limitType: 'file_size', currentPlan: result.planId }, 5000);
+    }
     toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {
       description: getPlanSizeLimitMessage(kind),
       duration: 5000,

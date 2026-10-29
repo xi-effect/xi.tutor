@@ -9,7 +9,9 @@ import { getLibraryFileDisplayName } from 'pages.materials';
 import { toast } from 'sonner';
 import i18n from 'i18next';
 import type { ActiveBlockT } from '../types';
+import { tryStartUpload } from 'common.subscription';
 import { insertEditorAsset } from './insertEditorAsset';
+import { toastEditorUploadRejected } from './insertMedia';
 
 const EXT_MIME: Record<string, string> = {
   pdf: 'application/pdf',
@@ -62,6 +64,14 @@ export async function insertLibraryFileToEditor(
         max: MAX_FILENAME_LENGTH,
       }),
     });
+    return;
+  }
+
+  const expectedMime = EXT_MIME[libraryFile.extension.replace(/^\./, '').toLowerCase()];
+  const kind = expectedMime?.startsWith('image/') ? 'image' : 'other';
+  const evaluation = tryStartUpload({ size: libraryFile.size_bytes }, kind);
+  if (!evaluation.ok) {
+    toastEditorUploadRejected(evaluation, kind);
     return;
   }
 

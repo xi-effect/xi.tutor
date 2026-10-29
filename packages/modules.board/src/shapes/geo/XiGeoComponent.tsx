@@ -10,6 +10,7 @@ import {
   useEditor,
   useValue,
 } from '@ibodr/draw';
+import { runWithoutHistory } from '../../utils/runWithoutHistory';
 import { getFillColor, getSizeInPixels } from './geoUtils';
 import type { XiGeoShape, XiGeoShapeProps } from './type';
 
@@ -32,14 +33,16 @@ export const XiGeoComponent: React.FC<XiGeoComponentT> = ({ shape }) => {
   // Проверяем есть ли контент в text, если он есть, значит фигуру ранее не использовали с richText,
   // если контент в text есть, то ставим text в richText, а text удаляем.
   if (text) {
-    editor.updateShape({
-      id: shape.id,
-      type: shape.type,
-      props: {
-        ...shape.props,
-        richText: toRichText(text),
-        text: '', // для обратной совместимости со старыми фигурами
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape({
+        id: shape.id,
+        type: shape.type,
+        props: {
+          ...shape.props,
+          richText: toRichText(text),
+          text: '',
+        },
+      });
     });
   }
 

@@ -1,40 +1,41 @@
-import { classroomsApiConfig, ClassroomsQueryKey, ClassroomT } from 'common.api';
+import {
+  classroomsQueryKeys,
+  normalizeClassroomsSearchLimit,
+  type ClassroomStatusT,
+  type ClassroomT,
+} from 'common.api';
 import { useQuery } from '@tanstack/react-query';
-import { getAxiosInstance } from 'common.config';
+import {
+  mergeMonetizationClassrooms,
+  useMonetizationDevStore,
+} from '../subscription/monetizationDevtools';
+import { searchTutorClassrooms } from './searchTutorClassrooms';
+
+const DEFAULT_LIMIT = 20;
 
 export const useFetchClassrooms = (
   searchParams?: {
     limit?: number;
-    lastOpenedBefore?: string;
+    statuses?: ClassroomStatusT[];
   },
   disabled?: boolean,
 ) => {
+  const catalog = useMonetizationDevStore((state) => state.override.classroomCatalog);
+  const limit = normalizeClassroomsSearchLimit(searchParams?.limit ?? DEFAULT_LIMIT);
+  const statuses = searchParams?.statuses;
+
   const { data, isError, isLoading, ...rest } = useQuery({
-    queryKey: [ClassroomsQueryKey.GetClassrooms, searchParams],
-    queryFn: async () => {
-      const axiosInst = await getAxiosInstance();
-
-      const response = await axiosInst({
-        method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
-        url: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].getUrl(),
-        params: {
-          limit: searchParams?.limit || 20,
-          last_opened_before: searchParams?.lastOpenedBefore,
-        },
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      return response.data as ClassroomT[];
-    },
+    queryKey: classroomsQueryKeys.list(limit, statuses),
+    queryFn: () => searchTutorClassrooms(null, limit, { statuses }),
     enabled: !disabled,
   });
 
   return {
-    data,
-    isError,
-    isLoading,
+    data: catalog
+      ? mergeMonetizationClassrooms((data as ClassroomT[] | undefined) ?? [], catalog, statuses)
+      : (data as ClassroomT[] | undefined),
+    isError: catalog ? false : isError,
+    isLoading: catalog ? false : isLoading,
     ...rest,
   };
 };

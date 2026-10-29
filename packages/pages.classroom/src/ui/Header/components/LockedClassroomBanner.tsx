@@ -2,7 +2,7 @@
 import { Button } from '@xipkg/button';
 import { InfoCircle } from '@xipkg/icons';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { SUBSCRIPTION_BILLING_ENABLED, useCurrentTariff } from 'common.subscription';
+import { useCurrentPlan } from 'common.services';
 import { useTranslation } from 'react-i18next';
 import type { SearchParams } from '../../../types/router';
 
@@ -11,8 +11,8 @@ export const LockedClassroomBanner = ({ isTutor }: { isTutor: boolean }) => {
   const navigate = useNavigate();
   const search: SearchParams = useSearch({ strict: false });
   const isOnInfoTab = search.tab === 'info';
-  const tariff = useCurrentTariff();
-  const limit = isTutor && SUBSCRIPTION_BILLING_ENABLED ? tariff.maxActiveClassrooms : undefined;
+  const planQuery = useCurrentPlan({ enabled: isTutor });
+  const limit = planQuery.data?.max_active_classrooms;
 
   const handleChangeStatus = () => {
     navigate({

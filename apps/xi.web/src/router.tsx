@@ -66,6 +66,10 @@ declare module '@tanstack/react-router' {
     role?: 'tutor' | 'student';
     recipient_invoice_id?: string;
     read_notification_id?: string;
+    /** Возврат из ЮKassa на страницу результата оплаты */
+    payment_id?: string;
+    /** Срок с лендинга тарифов: month | year */
+    period?: string;
     /** Диплинк расписания кабинета — см. validateSearch маршрута кабинета */
     focused_at?: string;
     schedule_dl?: string;

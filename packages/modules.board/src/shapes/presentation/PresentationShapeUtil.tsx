@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 
 import { PresentationShape, presentationShapeProps } from './PresentationShape';
 
@@ -8,6 +9,10 @@ import { PRESENTATION_MAX_SIZE, PRESENTATION_MIN_SIZE } from './consts';
 export class PresentationShapeUtil extends BaseBoxShapeUtil<PresentationShape> {
   static override props = presentationShapeProps;
   static override type = 'presentation' as const;
+
+  override getLodStyle() {
+    return cardLodStyle();
+  }
 
   override getDefaultProps(): PresentationShape['props'] {
     return {

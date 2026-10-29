@@ -24,7 +24,11 @@ async function ingestFiles(files: File[], getEditor: () => Editor | null, getTok
   if (!editor || editor.isDestroyed || !editor.isEditable || !token) return;
 
   for (const file of files) {
-    await insertEditorAsset(editor, file, token);
+    try {
+      await insertEditorAsset(editor, file, token);
+    } catch (err) {
+      console.error('[editorFileDrop] insert failed', err);
+    }
   }
 }
 

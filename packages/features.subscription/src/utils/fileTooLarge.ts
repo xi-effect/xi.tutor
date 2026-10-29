@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 import type { PlanId, UploadKind } from 'common.subscription';
-import { bytesToMb } from 'common.subscription';
+import { formatMegabytes, getTariff } from 'common.subscription';
 
 export const getFileTooLargeMessage = (
   planId: PlanId,
@@ -13,5 +13,11 @@ export const getFileTooLargeMessage = (
     kind: i18n.t(kind === 'image' ? 'limits.fileKindImage' : 'limits.fileKindOther', {
       ns: 'subscription',
     }),
-    size: `${bytesToMb(maxBytes)} МБ`,
+    size: formatMegabytes(maxBytes),
+  });
+
+export const getImageUpgradeMessage = (): string =>
+  i18n.t('limits.imageUpgradeInline', {
+    ns: 'subscription',
+    proSize: formatMegabytes(getTariff('pro').maxImageBytes),
   });

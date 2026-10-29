@@ -1,11 +1,13 @@
 import { Close } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
+import { useMediaQuery } from '@xipkg/utils';
 import { driver, type DriveStep } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import { setOnboardingSurfaceActive } from './onboardingSurface';
 import { useTranslation } from 'react-i18next';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -26,6 +28,11 @@ type OnboardingPopupT = {
 
 const SESSION_STORAGE_KEY = 'onboarding_menu_hidden';
 const SHOW_FOR_COMPLETED_KEY = 'show_onboarding_for_completed';
+const MOBILE_QUERY = '(max-width: 960px)';
+const SUPPORT_URL = 'https://support.sovlium.ru';
+
+const isMobileViewport = () =>
+  typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches;
 
 function trackOnboardingTourCompleteLegacy(layout: string | undefined) {
   if (typeof window === 'undefined') {
@@ -54,9 +61,11 @@ function isDestroyedOnLastTourStep(step: DriveStep | undefined, validSteps: Driv
 export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopupT) => {
   const { t } = useTranslation('commonUi');
   const { data: user, isLoading } = useCurrentUser();
+  const isMobile = useMediaQuery(MOBILE_QUERY);
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showForCompleted, setShowForCompleted] = useState(false);
+  const [tourRunning, setTourRunning] = useState(false);
   const { transitionStage } = useOnboardingTransition('completed', 'forwards');
 
   useEffect(() => {
@@ -159,6 +168,9 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   const shouldShowForTraining = user?.onboarding_stage === 'training';
 
   const driverAction = useCallback(() => {
+    if (isMobileViewport()) return;
+
+    setTourRunning(true);
     hideMenuForSession();
 
     const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
@@ -193,6 +205,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
 
     if (validSteps.length === 0) {
       console.warn('Нет валидных шагов для обучения, автоматически завершаем онбординг');
+      setTourRunning(false);
 
       if (user?.onboarding_stage === 'completed') {
         sessionStorage.removeItem(SESSION_STORAGE_KEY);
@@ -244,6 +257,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
       doneBtnText: t('onboarding.done'),
       progressText: t('onboarding.progress'),
       onDestroyed: (_element, step) => {
+        setTourRunning(false);
         if (isTransitioning) return;
 
         if (user?.onboarding_stage === 'completed') {
@@ -283,10 +297,34 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   }, [steps, user, isTransitioning, transitionStage, t]);
 
   useEffect(() => {
+    if (isMobileViewport()) return;
     if (shouldShowForCompleted) {
       driverAction();
     }
   }, [shouldShowForCompleted, driverAction]);
+
+  useLayoutEffect(() => {
+    const hiddenInSession = sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true';
+    const welcomeVisible =
+      !isLoading &&
+      !!user &&
+      shouldShowForTraining &&
+      !showForCompleted &&
+      !isHidden &&
+      !isTransitioning &&
+      !hiddenInSession;
+
+    setOnboardingSurfaceActive(welcomeVisible || tourRunning);
+    return () => setOnboardingSurfaceActive(false);
+  }, [
+    isLoading,
+    user,
+    shouldShowForTraining,
+    showForCompleted,
+    isHidden,
+    isTransitioning,
+    tourRunning,
+  ]);
 
   if (isLoading) {
     return null;
@@ -306,7 +344,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
 
   return (
     <div className="bg-background-overlay fixed inset-0 z-100 flex items-center justify-center p-4">
-      <div className="bg-background-surface border-border-default relative flex w-full max-w-[500px] flex-col items-center gap-6 rounded-[20px] border p-8 shadow-[0px_16px_16px_0px_rgba(16,16,16,0.08),0px_24px_32px_0px_rgba(16,16,16,0.08)]">
+      <div className="bg-background-surface border-border-default relative flex w-full max-w-[500px] min-w-0 flex-col items-center gap-6 rounded-[20px] border p-5 shadow-[0px_16px_16px_0px_rgba(16,16,16,0.08),0px_24px_32px_0px_rgba(16,16,16,0.08)] sm:p-8">
         <Button
           variant="none"
           size="s"
@@ -324,16 +362,20 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           />
         </div>
 
-        <div className="flex w-full flex-col items-start gap-2">
-          <h2 className="text-text-primary w-full text-3xl leading-9 font-semibold whitespace-nowrap">
+        <div className="flex w-full min-w-0 flex-col items-start gap-2">
+          <h2 className="text-text-primary w-full min-w-0 text-3xl leading-9 font-semibold">
             {t('onboarding.welcome')}
           </h2>
-          <p className="text-text-secondary w-full text-base leading-5 font-normal">
-            {isTutor ? t('onboarding.tutorDescription') : t('onboarding.studentDescription')}
+          <p className="text-text-secondary w-full min-w-0 text-base leading-5 font-normal">
+            {isMobile
+              ? t('onboarding.mobileDescription')
+              : isTutor
+                ? t('onboarding.tutorDescription')
+                : t('onboarding.studentDescription')}
           </p>
         </div>
 
-        <div className="flex w-full items-center justify-end gap-3">
+        <div className="flex w-full min-w-0 flex-wrap items-center justify-end gap-3">
           <Button
             variant="none"
             type="button"
@@ -342,15 +384,28 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           >
             {isTutor ? t('onboarding.laterTutor') : t('onboarding.laterStudent')}
           </Button>
-          <Button
-            variant="brand"
-            type="button"
-            disabled={disabled}
-            onClick={() => driverAction()}
-            className="bg-action-primary-background-default text-text-on-accent hover:bg-action-primary-background-hover h-12 rounded-xl px-6 text-base font-medium hover:cursor-pointer"
-          >
-            {isTutor ? t('onboarding.startTourTutor') : t('onboarding.startTourStudent')}
-          </Button>
+          {isMobile ? (
+            <a
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-action-primary-background-default text-text-on-accent hover:bg-action-primary-background-hover inline-flex h-12 items-center justify-center rounded-xl px-6 text-base font-medium"
+              data-umami-event="onboarding-help-link"
+              data-umami-event-url={SUPPORT_URL}
+            >
+              {t('onboarding.helpLink')}
+            </a>
+          ) : (
+            <Button
+              variant="brand"
+              type="button"
+              disabled={disabled}
+              onClick={() => driverAction()}
+              className="bg-action-primary-background-default text-text-on-accent hover:bg-action-primary-background-hover h-12 rounded-xl px-6 text-base font-medium hover:cursor-pointer"
+            >
+              {isTutor ? t('onboarding.startTourTutor') : t('onboarding.startTourStudent')}
+            </Button>
+          )}
         </div>
       </div>
     </div>

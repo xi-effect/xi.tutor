@@ -136,10 +136,6 @@ export const MobileTutorActionButton = ({
 
     switch (actionId) {
       case 'invite':
-        if (!tryStartClassroomCreate()) {
-          trackClassroomLimitReached(variant === 'classrooms' ? 'classroom' : 'other');
-          break;
-        }
         setInviteModalOpen(true);
         break;
       case 'group':

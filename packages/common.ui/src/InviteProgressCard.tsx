@@ -85,8 +85,8 @@ export const InviteProgressCard = ({
   if (!progress) return null;
 
   const content = (
-    <div className={cn('flex w-full min-w-0 flex-col gap-3', className)}>
-      <p className="text-text-secondary text-center text-sm text-pretty">
+    <div className={cn('flex w-full min-w-0 flex-col gap-2 sm:gap-3', className)}>
+      <p className="text-text-secondary hidden text-center text-sm text-pretty sm:block">
         {t('inviteProgress.hint')}
       </p>
       <div
@@ -122,7 +122,7 @@ export const InviteProgressCard = ({
           );
         })}
       </div>
-      <p className="text-text-secondary text-center text-sm text-pretty">
+      <p className="text-text-secondary hidden text-center text-sm text-pretty sm:block">
         {t('inviteProgress.remaining', {
           count: progress.remaining,
         })}
@@ -132,7 +132,7 @@ export const InviteProgressCard = ({
 
   if (placement === 'pageTop') {
     return (
-      <div className="bg-background-surface sticky top-0 z-10 w-full shrink-0 px-4 pt-5 pb-3 sm:pt-6">
+      <div className="bg-background-surface w-full shrink-0 px-4 pt-3 pb-2 sm:sticky sm:top-0 sm:z-10 sm:pt-6 sm:pb-3">
         <div className="mx-auto w-full max-w-105">{content}</div>
       </div>
     );

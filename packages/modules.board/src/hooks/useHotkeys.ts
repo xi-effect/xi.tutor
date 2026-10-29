@@ -8,7 +8,7 @@ import { useDrawStyles } from './useDrawStyles';
 export const useHotkeys = () => {
   const editor = useEditor();
   const { selectedElementId, selectElement, setSelectedTool } = useDrawStore();
-  const { undo, redo } = useYjsContext();
+  const { isReadonly } = useYjsContext();
   const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
     useDrawStyles();
 
@@ -23,17 +23,26 @@ export const useHotkeys = () => {
       const { code, ctrlKey, shiftKey, metaKey, altKey } = event;
       const modKey = ctrlKey || metaKey;
 
-      // Undo
-      if (code === 'KeyZ' && modKey && !shiftKey && !altKey) {
+      // Cmd/Ctrl+Z и Cmd/Ctrl+Shift+Z уже обрабатывает редактор, когда канвас в фокусе.
+      // Повторный вызов здесь откатывал бы тот же жест второй раз.
+      const editorHandlesHistory = editor.getInstanceState().isFocused;
+
+      if (code === 'KeyZ' && modKey && !altKey) {
+        if (editorHandlesHistory || isReadonly) return;
         event.preventDefault();
-        undo();
+        if (shiftKey) {
+          if (editor.canRedo()) editor.redo();
+        } else if (editor.canUndo()) {
+          editor.undo();
+        }
         return;
       }
 
-      // Redo
-      if ((code === 'KeyZ' && modKey && shiftKey) || (code === 'KeyY' && modKey && !shiftKey)) {
+      // Cmd/Ctrl+Y добавлен в action redo. В фокусе его обрабатывает редактор.
+      if (code === 'KeyY' && modKey && !shiftKey && !altKey) {
+        if (editorHandlesHistory || isReadonly) return;
         event.preventDefault();
-        redo();
+        if (editor.canRedo()) editor.redo();
         return;
       }
 
@@ -103,6 +112,15 @@ export const useHotkeys = () => {
         resetToDefaults();
         editor.setCurrentTool('eraser');
         setSelectedTool('eraser');
+        return;
+      }
+
+      if (code === 'KeyK' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
+        event.preventDefault();
+        resetToDefaults();
+        editor.setCurrentTool('laser');
+        setSelectedTool('laser');
         return;
       }
 
@@ -243,8 +261,7 @@ export const useHotkeys = () => {
     selectedElementId,
     selectElement,
     setSelectedTool,
-    undo,
-    redo,
+    isReadonly,
     resetToDefaults,
     setColor,
     setThickness,

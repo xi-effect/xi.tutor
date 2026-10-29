@@ -68,6 +68,7 @@ export const WelcomeRolePage = () => {
         </ul>
       </div>
       <WelcomeButtons
+        customText={t('buttons.start_button', { ns: 'welcome' })}
         continueButtonHandler={() => onForwards(activeButton.value)}
         backButtonHandler={onBackwards}
         isLoading={isLoading}

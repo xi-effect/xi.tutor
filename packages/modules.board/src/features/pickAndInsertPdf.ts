@@ -7,7 +7,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { getFileExtension, isPdfMime } from '../constants/mimeTypes';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
 import { resolveShapeCoordinates } from '../utils';
-import { getBoardUploadErrorToast } from '../utils/boardUploadError';
+import { runWithoutHistory } from '../utils/runWithoutHistory';
+import { toastBoardUploadError } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 import { getMaxFileBytes } from 'common.subscription';
 import {
@@ -133,6 +134,11 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    attempt.reject('unknown');
+    return;
+  }
+
   editor.setSelectedShapes([shapeId]);
   Promise.resolve().then(() => {
     editor.zoomToSelection({ animation: { duration: 200 } });
@@ -143,10 +149,12 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
     try {
       const serverUrl = await uploadFileIdRequest({ file, token });
 
-      editor.updateShape<PdfShape>({
-        id: shapeId,
-        type: 'pdf',
-        props: { src: serverUrl },
+      runWithoutHistory(editor, () => {
+        editor.updateShape<PdfShape>({
+          id: shapeId,
+          type: 'pdf',
+          props: { src: serverUrl },
+        });
       });
       attempt.succeed();
     } catch (err) {
@@ -155,17 +163,15 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
         fileSize: file.size,
         maxBytes: getMaxFileBytes(),
       });
-      const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
+      toastBoardUploadError(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.pdfSizeDesc',
         failedTitleKey: 'toast.pdfUploadError',
         failedDescKey: 'toast.pdfUploadFailed',
         formatDescKey: 'toast.pdfFormatDesc',
       });
-      toast.error(title, {
-        description,
-        duration: 5000,
+      runWithoutHistory(editor, () => {
+        editor.deleteShapes([shapeId]);
       });
-      editor.deleteShapes([shapeId]);
     }
   })();
 }

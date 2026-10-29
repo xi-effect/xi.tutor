@@ -1,5 +1,6 @@
 import type { Editor } from '@ibodr/draw';
 import { hasCheckableAnswers } from '../primitives/evaluate';
+import { shuffleGapAttempt, syncAttemptOrder } from '../primitives/bankOrder';
 import { resetAttempt, revealAttempt } from '../primitives/reset';
 import type { ActivityStudentAccessKey } from '../model/studentAccess';
 import { normalizeStudentAccess } from '../model/studentAccess';
@@ -22,7 +23,7 @@ function normalizeDefinition(definition: ActivityDefinition): ActivityDefinition
 export function applyActivityAction(
   editor: Editor,
   shapes: ActivityShape[],
-  action: 'edit' | 'check' | 'reset' | 'reveal',
+  action: 'edit' | 'check' | 'reset' | 'shuffle' | 'reveal',
 ) {
   const current = shapes
     .map((shape) => asActivity(editor, shape))
@@ -36,12 +37,18 @@ export function applyActivityAction(
     if (!nextEditing) {
       const updates = current.flatMap((shape) => {
         const definition = normalizeDefinition(shape.props.definition);
-        if (definition === shape.props.definition) return [];
+        const attempt = syncAttemptOrder(definition, shape.props.attempt);
+        const definitionChanged = definition !== shape.props.definition;
+        const attemptChanged = attempt !== shape.props.attempt;
+        if (!definitionChanged && !attemptChanged) return [];
         return [
           {
             id: shape.id,
             type: 'activity' as const,
-            props: { definition },
+            props: {
+              ...(definitionChanged ? { definition } : {}),
+              ...(attemptChanged ? { attempt } : {}),
+            },
           },
         ];
       });
@@ -79,6 +86,22 @@ export function applyActivityAction(
         },
       })),
     );
+    return;
+  }
+
+  if (action === 'shuffle') {
+    const updates = current.flatMap((shape) => {
+      const attempt = shuffleGapAttempt(shape.props.definition, shape.props.attempt);
+      if (!attempt) return [];
+      return [
+        {
+          id: shape.id,
+          type: 'activity' as const,
+          props: { attempt },
+        },
+      ];
+    });
+    if (updates.length > 0) editor.updateShapes(updates);
     return;
   }
 

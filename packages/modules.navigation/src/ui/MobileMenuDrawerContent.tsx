@@ -5,6 +5,7 @@ import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { cn } from '@xipkg/utils';
+import { MaintenanceNotice } from './MaintenanceNotice';
 
 const menuRowClassName = cn(
   'flex h-[48px] w-full items-center gap-3 rounded-xl border px-4 text-left transition-colors',
@@ -101,6 +102,8 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
           );
         })}
       </div>
+
+      <MaintenanceNotice collapsedFallback={false} />
 
       <div className="flex items-center justify-between gap-3">
         <span className="text-m-base text-text-primary font-medium">{t('menu')}</span>

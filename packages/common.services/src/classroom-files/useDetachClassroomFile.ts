@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { classroomFilesApiConfig, ClassroomFilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError } from '../utils';
+import { invalidateStorageUsage } from '../storageLimit/storageLimitReached';
 import { invalidateClassroomFiles } from './useUploadClassroomFile';
 
 export type DetachClassroomFileVars = {
@@ -31,6 +32,7 @@ export const useDetachClassroomFile = () => {
       handleError(err, 'files');
     },
     onSuccess: (_data, { classroomId }) => {
+      invalidateStorageUsage();
       invalidateClassroomFiles(queryClient, classroomId);
     },
   });

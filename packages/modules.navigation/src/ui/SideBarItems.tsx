@@ -21,6 +21,7 @@ import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
 import { getFooterMenuConfig, getTopMenuConfig } from './config/sidebarMenuConfig';
+import { MaintenanceNotice } from './MaintenanceNotice';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -205,7 +206,8 @@ export const SideBarItems = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="gap-2">
+      <SidebarFooter className="bg-background-page gap-2">
+        <MaintenanceNotice />
         <SidebarMenu className="bg-background-page">
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey} className="cursor-pointer">

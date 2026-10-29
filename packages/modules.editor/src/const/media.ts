@@ -1,5 +1,3 @@
-export const MAX_MEDIA_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
-
 export const MAX_AUDIO_BLOCKS = 20;
 export const MAX_PDF_BLOCKS = 50;
 export const MAX_PRESENTATION_BLOCKS = 20;

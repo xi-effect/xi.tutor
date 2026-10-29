@@ -1,5 +1,6 @@
 import { useEditor } from '@ibodr/draw';
 import { useLayoutEffect, useRef } from 'react';
+import { runWithoutHistory } from '../../utils/runWithoutHistory';
 import { ACTIVITY_MIN_SIZE } from '../model/kinds';
 import type { ActivityShape } from '../shape/ActivityShape';
 
@@ -19,10 +20,12 @@ export function useActivityAutoSize(shape: ActivityShape) {
       if (!current || current.type !== 'activity') return;
       if (height <= current.props.h + 1) return;
 
-      editor.updateShape({
-        id: shape.id,
-        type: 'activity',
-        props: { h: height },
+      runWithoutHistory(editor, () => {
+        editor.updateShape({
+          id: shape.id,
+          type: 'activity',
+          props: { h: height },
+        });
       });
     };
 

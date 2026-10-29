@@ -11,10 +11,8 @@ import { FileShape } from '../shapes/file';
 import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
 import { ALLOWED_FILE_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
-import {
-  getBoardUploadErrorToast,
-  isNonRetryableBoardUploadError,
-} from '../utils/boardUploadError';
+import { runWithoutHistory } from '../utils/runWithoutHistory';
+import { isNonRetryableBoardUploadError, toastBoardUploadError } from '../utils/boardUploadError';
 import { tryStartUpload } from 'common.subscription';
 import { getMaxFileBytes } from 'common.subscription';
 import { getPlanSizeLimitMessage } from '../utils/planUploadLimit';
@@ -69,6 +67,11 @@ export async function insertFile(
     },
   ]);
 
+  if (!editor.getShape(shapeId)) {
+    attempt.reject('unknown');
+    return;
+  }
+
   editor.setSelectedShapes([shapeId]);
   Promise.resolve().then(() => {
     editor.zoomToSelection({ animation: { duration: 200 } });
@@ -79,26 +82,32 @@ export async function insertFile(
   try {
     if (!editor.getShape(shapeId)) {
       attempt.reject('unknown');
+      void deleteFileFromDB(shapeId);
       return;
     }
 
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        status: 'loading',
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape<FileShape>({
+        id: shapeId,
+        type: 'file',
+        props: {
+          status: 'loading',
+        },
+      });
     });
 
     const fileId = await uploadFileIdRequest({ file, token });
+    void deleteFileFromDB(shapeId);
 
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        src: fileId,
-        status: 'uploaded',
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape<FileShape>({
+        id: shapeId,
+        type: 'file',
+        props: {
+          src: fileId,
+          status: 'uploaded',
+        },
+      });
     });
 
     attempt.succeed();
@@ -112,23 +121,26 @@ export async function insertFile(
     const isOffline = !navigator.onLine;
 
     if (!isOffline && isNonRetryableBoardUploadError(err, file, getMaxFileBytes())) {
-      editor.deleteShapes([shapeId]);
+      runWithoutHistory(editor, () => {
+        editor.deleteShapes([shapeId]);
+      });
       void deleteFileFromDB(shapeId);
-      const { title, description } = getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
+      toastBoardUploadError(err, file, getMaxFileBytes(), {
         sizeDescKey: 'toast.fileSizeDesc',
         failedTitleKey: 'toast.fileUploadError',
         failedDescKey: 'toast.fileUploadFailed',
       });
-      toast.error(title, { description, duration: 5000 });
       return;
     }
 
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        status: isOffline ? 'offline' : 'error',
-      },
+    runWithoutHistory(editor, () => {
+      editor.updateShape<FileShape>({
+        id: shapeId,
+        type: 'file',
+        props: {
+          status: isOffline ? 'offline' : 'error',
+        },
+      });
     });
 
     addToQueue({
@@ -140,20 +152,18 @@ export async function insertFile(
 
     console.error('[insertFile] Upload failed:', err);
 
-    const { title, description } = isOffline
-      ? {
-          title: i18n.t('toast.fileUploadError', { ns: 'board' }),
-          description: i18n.t('toast.offlineUpload', { ns: 'board' }),
-        }
-      : getBoardUploadErrorToast(err, file, getMaxFileBytes(), {
-          sizeDescKey: 'toast.fileSizeDesc',
-          failedTitleKey: 'toast.fileUploadError',
-          failedDescKey: 'toast.fileUploadFailed',
-        });
-    toast.error(title, {
-      description,
-      duration: 5000,
-    });
+    if (isOffline) {
+      toast.error(i18n.t('toast.fileUploadError', { ns: 'board' }), {
+        description: i18n.t('toast.offlineUpload', { ns: 'board' }),
+        duration: 5000,
+      });
+    } else {
+      toastBoardUploadError(err, file, getMaxFileBytes(), {
+        sizeDescKey: 'toast.fileSizeDesc',
+        failedTitleKey: 'toast.fileUploadError',
+        failedDescKey: 'toast.fileUploadFailed',
+      });
+    }
   }
 }
 

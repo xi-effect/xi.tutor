@@ -36,7 +36,11 @@ export const hiddenComponents: Required<any> = {
   SharePanel: null,
   MenuPanel: null,
   ImageToolbar: null,
+  VideoToolbar: null,
   TopPanel: null,
+  Toasts: null,
+  Dialogs: null,
+  FollowingIndicator: null,
 };
 
 export const DEFAULT_FILL_TYPE = 'semi';

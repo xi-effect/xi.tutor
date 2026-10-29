@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 import {
   FILE_MIN_WIDTH,
   FILE_SHAPE_HEIGHT,
@@ -23,6 +24,10 @@ export class FileShapeUtil extends BaseBoxShapeUtil<FileShape> {
       h: FILE_SHAPE_HEIGHT,
       status: 'loading',
     };
+  }
+
+  override getLodStyle() {
+    return cardLodStyle();
   }
 
   override canEdit() {

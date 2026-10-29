@@ -43,7 +43,7 @@ export const codeEditorLanguages: CodeEditorLanguage[] = [
   'yaml',
 ];
 
-// Константы для UI компонентов
+// Константы для UI компонентов, тест
 export const defaultLanguage = 'typescript';
 
 export const languages = {

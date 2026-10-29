@@ -49,12 +49,18 @@
     "files": "Files",
     "noBoards": "Create your first board",
     "noBoardsDescription": "You can add images, presentations, audio, and other files to a board",
+    "noBoardsStudent": "No boards yet",
+    "noBoardsStudentDescription": "Boards will appear here when the tutor adds them",
     "noNotes": "Create your first note",
     "noNotesDescription": "You can add text, lists, checklists, and images to a note",
+    "noNotesStudent": "No notes yet",
+    "noNotesStudentDescription": "Notes will appear here when the tutor adds them",
     "noFiles": "No files yet",
     "noFilesDescription": "Files shared with this classroom will appear here",
     "noMaterials": "No materials",
     "emptyDescription": "To jot down ideas for lessons",
+    "noMaterialsStudent": "No materials yet",
+    "emptyStudentDescription": "Materials will appear here when the tutor adds them",
     "loadError": "Failed to load materials",
     "noteCollaborative": "Note: can edit",
     "noteCollaborativeHint": "The student can see the note and edit it",
@@ -72,7 +78,8 @@
   "files": {
     "upload": "Upload file",
     "emptyTitle": "No files yet",
-    "emptyDescription": "Upload a file to see it here"
+    "emptyDescription": "Upload a file to see it here",
+    "emptyStudentDescription": "Files will appear here when the tutor adds them"
   },
   "overview": {
     "materials": "Materials",
@@ -83,6 +90,8 @@
     "noLessonsDescription": "When lessons appear in the classroom schedule, they will show up here",
     "paymentsEmpty": "No payments",
     "paymentsEmptyDescription": "Invoices will appear here after they are issued",
+    "paymentsEmptyStudent": "No invoices yet",
+    "paymentsEmptyStudentDescription": "Invoices will appear here when the tutor issues them",
     "addStudentTitle": "Add a student to the group",
     "studentsEmptyDescription": "Add students to the group",
     "studentDeleted": "Student removed from the group",

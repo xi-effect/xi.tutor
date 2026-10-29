@@ -17,6 +17,7 @@ import { FlipCardShapeUtil } from './flipCard';
 import { ActivityShapeUtil } from '../activities';
 import { boardEmbedDefinitions } from './embed/embeddefinitions';
 import { BoardEmbedShapeUtil } from './embed/BoardEmbedShapeUtil';
+import { DrawShapeUtil, HighlightShapeUtil, LineShapeUtil } from './lodShapeUtils';
 import './lineStyles/extendedLineStyles';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
@@ -38,6 +39,9 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   ArrowShapeUtil,
   ActivityShapeUtil,
   BoardEmbedShapeUtil.configure({ embedDefinitions: boardEmbedDefinitions }),
+  DrawShapeUtil,
+  HighlightShapeUtil,
+  LineShapeUtil,
 ];
 
 function mergeShapeUtilsByType(

@@ -14,6 +14,11 @@ import { useYjsContext } from '../../../../providers/YjsProvider';
 import { saveBlob } from 'common.platform';
 import { useTranslation } from 'react-i18next';
 import { PNG_EXPORT_PIXEL_RATIO } from '../../../../utils/shapeSvgExport';
+import { isStorageQuotaReached, requestStorageLimitDialog } from 'common.subscription';
+import {
+  getRemainingBoardElements,
+  showBoardElementsLimitToast,
+} from '../../../../utils/boardElementLimit';
 
 type BoardSnapshotJson = {
   records?: DrRecord[];
@@ -177,6 +182,16 @@ export const useDropdownActions = () => {
 
         if (toPut.length === 0) {
           toast.error(t('toast.importNoShapes'));
+          return;
+        }
+
+        const newShapes = toPut.filter((r) => r.typeName === 'shape' && !editor.store.has(r.id));
+        if (newShapes.length > 0 && isStorageQuotaReached()) {
+          requestStorageLimitDialog();
+          return;
+        }
+        if (newShapes.length > getRemainingBoardElements(editor)) {
+          showBoardElementsLimitToast();
           return;
         }
 

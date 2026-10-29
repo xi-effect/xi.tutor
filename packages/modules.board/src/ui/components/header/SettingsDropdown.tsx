@@ -36,6 +36,7 @@ import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
 import {
   SUBSCRIPTION_BILLING_ENABLED,
+  BOARD_ELEMENTS_PERFORMANCE_NOTICE,
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   useSubscriptionStore,
@@ -55,6 +56,7 @@ import {
   normalizeBoardBackgroundType,
 } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
+import { showBoardElementsLimitToast } from '../../../utils/boardElementLimit';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'common.ui';
 import {
@@ -67,6 +69,7 @@ import {
 } from '../../boardTheme';
 import { useBoardIsMobile } from '../shared/useBoardIsMobile';
 import { SettingsMobileDrawer } from './SettingsMobileDrawer';
+import { useBoardChrome } from '../../useBoardChrome';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -135,6 +138,7 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
 
 export const SettingsDropdown = () => {
   const { t } = useTranslation('board');
+  const chrome = useBoardChrome();
   const isMobile = useBoardIsMobile();
   const editor = useEditor();
   const boardAtLimit = useSubscriptionStore((s) => s.mock.boardAtLimit);
@@ -163,6 +167,7 @@ export const SettingsDropdown = () => {
   const importInputRef = useRef<HTMLInputElement>(null);
   const shownWarningToastRef = useRef(false);
   const shownLimitToastRef = useRef(false);
+  const shownPerformanceToastRef = useRef(false);
 
   const effectiveCount =
     SUBSCRIPTION_BILLING_ENABLED && boardAtLimit ? BOARD_ELEMENTS_LIMIT : elementsCount;
@@ -207,16 +212,28 @@ export const SettingsDropdown = () => {
   }, [editor]);
 
   useEffect(() => {
+    if (isReadonly) return;
+
     if (effectiveCount >= BOARD_ELEMENTS_LIMIT) {
       if (!shownLimitToastRef.current) {
-        toast.error(t('settings.limitReachedTitle'), {
-          description: t('settings.limitReachedDesc', { limit: BOARD_ELEMENTS_LIMIT }),
-          duration: 6000,
-        });
+        showBoardElementsLimitToast();
         shownLimitToastRef.current = true;
       }
       shownWarningToastRef.current = true;
       return;
+    }
+
+    if (
+      effectiveCount >= BOARD_ELEMENTS_PERFORMANCE_NOTICE &&
+      effectiveCount < BOARD_ELEMENTS_LIMIT &&
+      !shownPerformanceToastRef.current
+    ) {
+      toast.info(t('settings.performanceNoticeTitle'), {
+        id: 'board-elements-performance',
+        description: t('settings.performanceNoticeDesc'),
+        duration: 6000,
+      });
+      shownPerformanceToastRef.current = true;
     }
 
     if (effectiveCount >= BOARD_ELEMENTS_WARNING_THRESHOLD) {
@@ -236,7 +253,10 @@ export const SettingsDropdown = () => {
 
     shownWarningToastRef.current = false;
     shownLimitToastRef.current = false;
-  }, [effectiveCount, BOARD_ELEMENTS_LIMIT, BOARD_ELEMENTS_WARNING_THRESHOLD, t]);
+    if (effectiveCount < BOARD_ELEMENTS_PERFORMANCE_NOTICE) {
+      shownPerformanceToastRef.current = false;
+    }
+  }, [effectiveCount, BOARD_ELEMENTS_LIMIT, BOARD_ELEMENTS_WARNING_THRESHOLD, isReadonly, t]);
 
   const settingsTrigger = (
     <Button
@@ -299,6 +319,7 @@ export const SettingsDropdown = () => {
         <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
           <DropdownMenuTrigger asChild>{settingsTrigger}</DropdownMenuTrigger>
           <DropdownMenuContent
+            side={chrome.mirrored ? 'top' : 'bottom'}
             sideOffset={12}
             align="end"
             className={cn(

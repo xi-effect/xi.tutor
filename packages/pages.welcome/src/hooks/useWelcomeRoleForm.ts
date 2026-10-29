@@ -8,6 +8,7 @@ import {
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
 } from 'common.utils';
+import { schedulePostOnboardingNavigation } from './postOnboardingNavigation';
 import { runWelcomeRoleBack, runWelcomeRoleForward } from './welcomeRoleSubmitLogic';
 
 export const useWelcomeRoleForm = () => {
@@ -23,7 +24,7 @@ export const useWelcomeRoleForm = () => {
   );
 
   const { transitionStage: transitionStageForward } = useOnboardingTransition(
-    'notifications',
+    'training',
     'forwards',
   );
 
@@ -40,8 +41,14 @@ export const useWelcomeRoleForm = () => {
       transitionForward: () => transitionStageForward.mutateAsync(),
       trackFailed: trackOnboardingStepFailed,
       trackCompleted: trackOnboardingStepCompleted,
-      navigateToSocials: (nextSearch) => {
-        navigate({ to: '/welcome/socials', search: nextSearch });
+      navigateAfterRole: (nextSearch) => {
+        schedulePostOnboardingNavigation(nextSearch.invite, (options) => {
+          if (options.to === '/invite/$inviteId') {
+            void navigate({ to: options.to, params: options.params });
+            return;
+          }
+          void navigate({ to: options.to });
+        });
       },
       search,
     });

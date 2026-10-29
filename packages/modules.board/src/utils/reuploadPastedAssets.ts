@@ -5,9 +5,11 @@
  */
 import type { DrContent, Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { uploadFileIdRequest } from 'common.services';
+import { evaluateUpload } from 'common.subscription';
 import { resolveAssetUrl, getCachedBlobUrl } from './resolveAssetUrl';
 import { getRegisteredTokens } from './tokenRegistry';
 import { isInlineAssetSrc } from './storedFileSrc';
+import { runWithoutHistory } from './runWithoutHistory';
 /**
  * Описание одной "единицы работы" для фоновой докачки. Снимок props/meta
  * берётся ДО putContentOntoCurrentPage, чтобы избежать гонки чтения из
@@ -136,19 +138,23 @@ export function uploadPastedAssetsInBackground(
     if (task.kind === 'asset') {
       const existing = editor.getAsset(task.id as DrAssetId);
       if (!existing) return;
-      editor.updateAssets([
-        {
-          ...existing,
-          props: { ...existing.props, src: newSrc } as any,
-        },
-      ]);
+      runWithoutHistory(editor, () => {
+        editor.updateAssets([
+          {
+            ...existing,
+            props: { ...existing.props, src: newSrc } as any,
+          },
+        ]);
+      });
     } else {
       const shape = editor.getShape(task.id as DrShapeId);
       if (!shape) return;
-      editor.updateShape({
-        id: task.id as DrShapeId,
-        type: shape.type,
-        props: { ...(shape.props as any), src: newSrc },
+      runWithoutHistory(editor, () => {
+        editor.updateShape({
+          id: task.id as DrShapeId,
+          type: shape.type,
+          props: { ...(shape.props as any), src: newSrc },
+        });
       });
     }
   };
@@ -182,21 +188,25 @@ function reconcilePasteInlineSources(editor: Editor, tasks: PasteUploadTask[]): 
       if (!asset) continue;
       const src = (asset.props as any)?.src as string | undefined;
       if (!src || !isInlineAssetSrc(src) || src === fallback) continue;
-      editor.updateAssets([
-        {
-          ...asset,
-          props: { ...asset.props, src: fallback } as any,
-        },
-      ]);
+      runWithoutHistory(editor, () => {
+        editor.updateAssets([
+          {
+            ...asset,
+            props: { ...asset.props, src: fallback } as any,
+          },
+        ]);
+      });
     } else {
       const shape = editor.getShape(task.id as DrShapeId);
       if (!shape) continue;
       const src = (shape.props as any)?.src as string | undefined;
       if (!src || !isInlineAssetSrc(src) || src === fallback) continue;
-      editor.updateShape({
-        id: task.id as DrShapeId,
-        type: shape.type,
-        props: { ...(shape.props as any), src: fallback },
+      runWithoutHistory(editor, () => {
+        editor.updateShape({
+          id: task.id as DrShapeId,
+          type: shape.type,
+          props: { ...(shape.props as any), src: fallback },
+        });
       });
     }
   }
@@ -306,6 +316,9 @@ async function doResolveAndUpload(
     const mimeType = await resolveMimeType(blob, rawName);
     const name = ensureFileExtension(rawName, mimeType);
     const file = new File([blob], name, { type: mimeType });
+
+    // Без диалогов: в фоне просто оставляем ссылку на исходный файл.
+    if (!evaluateUpload(file, mimeType.startsWith('image/') ? 'image' : 'other').ok) return null;
 
     const fileId = await uploadFileIdRequest({ file, token: destToken });
     // Контракт персиста: только id — см. utils/storedFileSrc.ts

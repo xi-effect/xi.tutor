@@ -1,7 +1,12 @@
 import { Editor } from '@tiptap/core';
 import { toast } from 'sonner';
 import i18n from 'i18next';
-import { isFileNameTooLong, MAX_FILENAME_LENGTH, uploadFileIdRequest } from 'common.services';
+import {
+  getFileUploadErrorKind,
+  isFileNameTooLong,
+  MAX_FILENAME_LENGTH,
+  uploadFileIdRequest,
+} from 'common.services';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
   getFileExtension,
@@ -19,13 +24,22 @@ import { checkAudioMagicBytes } from './checkAudioMagicBytes';
 import { countNodes } from './countNodes';
 import { getAudioDuration } from './getAudioDuration';
 import { insertAtomBlock } from './insertAtomBlock';
-import { tryStartUpload, getMaxFileBytes, getMaxImageBytes } from 'common.subscription';
+import {
+  formatMegabytes,
+  getMaxFileBytes,
+  getMaxImageBytes,
+  isCurrentUserTutor,
+  tryStartUpload,
+  type UploadEvaluation,
+  type UploadKind,
+} from 'common.subscription';
 import {
   beginFileUploadAttempt,
   rejectFileUploadFromError,
   rejectFileUploadFromEvaluation,
   trackFileSizeLimitFromUploadError,
   trackProductLimitReached,
+  trackSubscriptionPaywallShown,
   trackUploadEvaluationLimit,
   type FileUploadAttempt,
   type ProductLimitObjectKind,
@@ -38,27 +52,29 @@ function t(key: string, options?: Record<string, unknown>) {
   return i18n.t(key, { ns: 'editor', ...options });
 }
 
-function assertEditorUpload(
-  file: File,
-  kind: 'image' | 'other',
-  attempt: FileUploadAttempt,
-): boolean {
+export function toastEditorUploadRejected(result: UploadEvaluation, kind: UploadKind) {
+  if (result.ok || result.reason !== 'size') return;
+  if (isCurrentUserTutor()) {
+    trackSubscriptionPaywallShown({ limitType: 'file_size', currentPlan: result.planId }, 5000);
+  }
+  toast.error(t('toast.fileTooLarge'), {
+    description: i18n.t('limits.fileTooLarge', {
+      ns: 'subscription',
+      plan: i18n.t(`plans.${result.planId}`, { ns: 'subscription' }),
+      kind: i18n.t(kind === 'image' ? 'limits.fileKindImage' : 'limits.fileKindOther', {
+        ns: 'subscription',
+      }),
+      size: formatMegabytes(result.maxBytes),
+    }),
+  });
+}
+
+function assertEditorUpload(file: File, kind: UploadKind, attempt: FileUploadAttempt): boolean {
   const result = tryStartUpload(file, kind);
   if (result.ok) return true;
   trackUploadEvaluationLimit(result, file, 'other');
   rejectFileUploadFromEvaluation(attempt, result);
-  if (result.reason === 'size') {
-    toast.error(t('toast.fileTooLarge'), {
-      description: i18n.t('limits.fileTooLarge', {
-        ns: 'subscription',
-        plan: i18n.t(`plans.${result.planId}`, { ns: 'subscription' }),
-        kind: i18n.t(kind === 'image' ? 'limits.fileKindImage' : 'limits.fileKindOther', {
-          ns: 'subscription',
-        }),
-        size: `${Math.round(result.maxBytes / (1024 * 1024))} МБ`,
-      }),
-    });
-  }
+  toastEditorUploadRejected(result, kind);
   return false;
 }
 
@@ -108,7 +124,9 @@ export async function insertImageFile(
 
   try {
     const optimized = await optimizeImage(file);
-    const src = await uploadFileIdRequest({ file: optimized, token });
+    // Лимит проверен по исходнику: «оптимизированный» файл больше него не отправляем.
+    const toUpload = optimized.size <= file.size ? optimized : file;
+    const src = await uploadFileIdRequest({ file: toUpload, token });
     attempt.succeed();
     return insertAtomBlock(
       editor,
@@ -125,7 +143,9 @@ export async function insertImageFile(
       maxBytes: getMaxImageBytes(),
     });
     trackFileSizeLimitFromUploadError(err, file, 'other', getMaxImageBytes());
-    toast.error(t('toast.imageUploadError'));
+    if (getFileUploadErrorKind(err) !== 'storage') {
+      toast.error(t('toast.imageUploadError'));
+    }
     return false;
   }
 }

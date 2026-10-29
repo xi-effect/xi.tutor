@@ -1,1 +1,1 @@
-export { useOnboardingTransition } from './useOnboardingTransition';
+export { useOnboardingTransition, useSkipRoleOnboardingStage } from './useOnboardingTransition';

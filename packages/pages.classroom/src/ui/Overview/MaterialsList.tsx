@@ -62,8 +62,10 @@ export const MaterialsList = () => {
   if (!visibleMaterials.length) {
     return (
       <SectionEmptyState
-        title={t('materials.noMaterials')}
-        description={t('materials.emptyDescription')}
+        title={t(isTutor ? 'materials.noMaterials' : 'materials.noMaterialsStudent')}
+        description={t(
+          isTutor ? 'materials.emptyDescription' : 'materials.emptyStudentDescription',
+        )}
         minHeightClass="min-h-[160px]"
         illustration={<EmptyMaterials className={sectionEmptyStateIllustrationClass} />}
       />

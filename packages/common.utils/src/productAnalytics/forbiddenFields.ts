@@ -46,4 +46,11 @@ export const FORBIDDEN_ANALYTICS_FIELDS = new Set([
   'size_bytes',
   'file_size',
   'exact_size',
+  'promo_code',
+  'promocode',
+  'confirmation_url',
+  'provider_payment_id',
+  'payment_token',
+  'card_number',
+  'cancellation_reason',
 ]);

@@ -1,4 +1,5 @@
 import type { DrShapeId, Editor } from '@ibodr/draw';
+import { runWithoutHistory } from './runWithoutHistory';
 
 const DRAW_LIKE_TYPES = new Set(['draw', 'highlight']);
 
@@ -30,6 +31,8 @@ export function resetInflatedDrawScale(editor: Editor): number {
   }
 
   if (updates.length === 0) return 0;
-  editor.updateShapes(updates);
+  runWithoutHistory(editor, () => {
+    editor.updateShapes(updates);
+  });
   return updates.length;
 }

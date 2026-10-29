@@ -1,5 +1,6 @@
 export {
   getFileTooLargeMessage,
+  getImageUpgradeMessage,
   ProBadge,
   SubscriptionDialogs,
   SubscriptionHeaderCta,

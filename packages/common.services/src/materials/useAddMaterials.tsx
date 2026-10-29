@@ -1,7 +1,12 @@
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess, findNextAvailableName } from 'common.services';
+import {
+  handleError,
+  showSuccess,
+  findNextAvailableName,
+  preventStorageWrite,
+} from 'common.services';
 import i18n from 'i18next';
 
 interface MaterialsResponseT {
@@ -42,6 +47,8 @@ export const useAddMaterials = () => {
     MutationContext
   >({
     mutationFn: async (materialsData: MaterialsDataT) => {
+      preventStorageWrite();
+
       if (!validateKind(materialsData.content_kind)) {
         throw new Error('Invalid material kind');
       }

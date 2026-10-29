@@ -71,7 +71,7 @@ async function ensureHomeMock(page: Page) {
       ...current.user,
       onboarding_stage: stage,
       default_layout:
-        stage === 'notifications' || stage === 'training' || stage === 'completed'
+        stage === 'training' || stage === 'completed'
           ? (current.user.default_layout ?? 'tutor')
           : current.user.default_layout,
     });

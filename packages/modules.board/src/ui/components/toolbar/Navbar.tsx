@@ -13,10 +13,16 @@ import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
+import { getMaxFileBytes, isStorageQuotaReached } from 'common.subscription';
 import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
+import { useBoardChrome } from '../../useBoardChrome';
+import { BoardToolPortal } from '../../boardToolLayer';
+import { ToolbarDockFrame } from './ToolbarDockFrame';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
+import { filterAllowedEmojis, isAllowedEmoji } from '../../../utils/allowedEmojis';
 import { stickers } from '../../../config';
 import { AssetUploadControl } from './AssetUploadControl';
+import { runWithoutHistory } from '../../../utils/runWithoutHistory';
 import { EmbedInsertDialog } from '../../../shapes/embed/EmbedInsertDialog';
 
 const toolMapping: Record<string, string> = {
@@ -27,6 +33,7 @@ const toolMapping: Record<string, string> = {
   geo: 'xi-geo',
   arrow: 'arrow',
   eraser: 'eraser',
+  laser: 'laser',
   sticker: 'note',
   frame: 'frame',
   emoji: 'emoji',
@@ -46,56 +53,54 @@ const toolPopupIdByAction: Record<string, string> = {
   emoji: 'emoji',
 };
 
-export const Navbar = track(
-  ({
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-    token,
-  }: {
-    undo: () => void;
-    redo: () => void;
-    canUndo: boolean;
-    canRedo: boolean;
-    token: string;
-  }) => {
-    const {
-      pencilColor,
-      pencilThickness,
-      pencilOpacity,
-      stickerColor,
-      recentEmojis,
-      addRecentEmoji,
-    } = useDrawStore();
-    const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
-      useDrawStyles();
-    const [activePopup, setActivePopup] = React.useState<string | null>(null);
-    const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
+export const Navbar = track(({ token }: { token: string }) => {
+  const {
+    pencilColor,
+    pencilThickness,
+    pencilOpacity,
+    stickerColor,
+    recentEmojis,
+    addRecentEmoji,
+  } = useDrawStore();
+  const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
+    useDrawStyles();
+  const [activePopup, setActivePopup] = React.useState<string | null>(null);
+  const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
 
-    const [embedDialogOpen, setEmbedDialogOpen] = React.useState(false);
+  const [embedDialogOpen, setEmbedDialogOpen] = React.useState(false);
 
-    const editor = useEditor();
-    const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
-    const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
-    const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
+  const editor = useEditor();
+  const { wide, dock } = useBoardChrome();
+  const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
+  const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
+  const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
 
-    const closeToolbarPanel = useCallback(() => {
-      if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
-      setActivePopup(null);
-    }, [activePopup, resetToDefaults]);
+  const closeToolbarPanel = useCallback(() => {
+    if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
+    setActivePopup(null);
+  }, [activePopup, resetToDefaults]);
 
-    useCloseToolbarPanel(activePopup, closeToolbarPanel);
+  useCloseToolbarPanel(activePopup, closeToolbarPanel);
 
-    useEffect(() => {
-      if (!isOnline) return;
+  useEffect(() => {
+    setActivePopup(null);
+    setActivityPickerOpen(false);
+  }, [dock]);
 
-      (async () => {
-        const fileQueue = await processQueue();
+  useEffect(() => {
+    if (!isOnline) return;
 
-        fileQueue?.forEach(({ fileId, shapeId }) => {
-          if (!editor.getShape(shapeId)) return;
+    (async () => {
+      const { uploaded, failed } = await processQueue({
+        hasShape: (shapeId) => Boolean(editor.getShape(shapeId)),
+        canUpload: () => !isStorageQuotaReached(),
+        maxBytes: getMaxFileBytes,
+      });
 
+      uploaded.forEach(({ fileId, shapeId }) => {
+        if (!editor.getShape(shapeId)) return;
+
+        runWithoutHistory(editor, () => {
           editor.updateShape({
             id: shapeId,
             type: 'file',
@@ -105,176 +110,220 @@ export const Navbar = track(
             },
           });
         });
-      })();
-    }, [isOnline, processQueue, editor]);
+      });
 
-    useEffect(() => {
-      initFileDB();
-    }, []);
+      failed.forEach((shapeId) => {
+        if (!editor.getShape(shapeId)) return;
 
-    useHotkeys();
+        runWithoutHistory(editor, () => {
+          editor.updateShape({
+            id: shapeId,
+            type: 'file',
+            props: { status: 'error' },
+          });
+        });
+      });
+    })();
+  }, [isOnline, processQueue, editor]);
 
-    const handleSelectTool = (toolName: string) => {
-      editor.selectNone();
-      setPlacingComment(false);
+  useEffect(() => {
+    initFileDB();
+  }, []);
 
-      if (toolName === 'embed') {
-        if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
+  useHotkeys();
+
+  const handleSelectTool = (toolName: string) => {
+    editor.selectNone();
+    setPlacingComment(false);
+
+    if (toolName === 'activity') {
+      if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
+      setActivePopup(null);
+      setActivityPickerOpen((open) => !open);
+      editor.setCurrentTool('select');
+      return;
+    }
+
+    setActivityPickerOpen(false);
+
+    const popupId = toolPopupIdByAction[toolName] ?? null;
+
+    if (popupId) {
+      if (activePopup === popupId) {
+        if (!NO_RESET_ON_CLOSE_POPUPS.has(popupId)) resetToDefaults();
         setActivePopup(null);
-        setActivityPickerOpen(false);
-        setEmbedDialogOpen(true);
-        editor.setCurrentTool('select');
-        return;
-      }
-
-      if (toolName === 'activity') {
-        if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
-        setActivePopup(null);
-        setActivityPickerOpen((open) => !open);
-        editor.setCurrentTool('select');
-        return;
-      }
-
-      setActivityPickerOpen(false);
-
-      const popupId = toolPopupIdByAction[toolName] ?? null;
-
-      if (popupId) {
-        if (activePopup === popupId) {
-          if (!NO_RESET_ON_CLOSE_POPUPS.has(popupId)) resetToDefaults();
-          setActivePopup(null);
-        } else {
-          setActivePopup(popupId);
-        }
       } else {
-        if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
-        setActivePopup(null);
+        setActivePopup(popupId);
       }
+    } else {
+      if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
+      setActivePopup(null);
+    }
 
-      if (toolName === 'pen') {
-        applyStoreStylesForShape('pen');
-        setColor(pencilColor);
-        setThickness(pencilThickness);
-        setOpacity(pencilOpacity);
-      } else if (toolName === 'sticker') {
-        setColor(stickerColor);
-      } else if (!popupId) {
-        resetToDefaults();
-      }
+    if (toolName === 'pen') {
+      applyStoreStylesForShape('pen');
+      setColor(pencilColor);
+      setThickness(pencilThickness);
+      setOpacity(pencilOpacity);
+    } else if (toolName === 'sticker') {
+      setColor(stickerColor);
+    } else if (!popupId) {
+      resetToDefaults();
+    }
 
-      const mappedTool = toolMapping[toolName];
-      if (mappedTool) {
-        editor.setCurrentTool(mappedTool);
-      }
+    if (toolName === 'embed') {
+      if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
+      setActivePopup(null);
+      setActivityPickerOpen(false);
+      setEmbedDialogOpen(true);
+      editor.setCurrentTool('select');
+      return;
+    }
+
+    const mappedTool = toolMapping[toolName];
+    if (mappedTool) {
+      editor.setCurrentTool(mappedTool);
+    }
+  };
+
+  const getCurrentTool = () => {
+    const currentToolId = editor.getCurrentToolId();
+    const reverseMapping: Record<string, string> = {
+      select: 'select',
+      hand: 'hand',
+      draw: 'pen',
+      text: 'text',
+      'xi-geo': 'geo',
+      arrow: 'arrow',
+      eraser: 'eraser',
+      laser: 'laser',
+      note: 'sticker',
+      frame: 'frame',
+      emoji: 'emoji',
+      'emoji-sticker': 'emoji-sticker',
+      'coordinate-axes': 'coordinate-axes',
+      'flip-card': 'flip-card',
+      'math-figure': 'geo',
     };
 
-    const getCurrentTool = () => {
-      const currentToolId = editor.getCurrentToolId();
-      const reverseMapping: Record<string, string> = {
-        select: 'select',
-        hand: 'hand',
-        draw: 'pen',
-        text: 'text',
-        'xi-geo': 'geo',
-        arrow: 'arrow',
-        eraser: 'eraser',
-        note: 'sticker',
-        frame: 'frame',
-        emoji: 'emoji',
-        'emoji-sticker': 'emoji-sticker',
-        'coordinate-axes': 'coordinate-axes',
-        'flip-card': 'flip-card',
-        'math-figure': 'geo',
-      };
+    return reverseMapping[currentToolId] || 'select';
+  };
 
-      return reverseMapping[currentToolId] || 'select';
-    };
+  const currentTool = getCurrentTool();
 
-    const currentTool = getCurrentTool();
+  const renderToolbarItem = (item: NavbarElementT) => {
+    const isActive =
+      item.action === 'activity'
+        ? activityPickerOpen
+        : item.action === 'embed'
+          ? embedDialogOpen
+          : item.action === currentTool;
 
-    const renderToolbarItem = (item: NavbarElementT) => {
-      const isActive =
-        item.action === 'activity'
-          ? activityPickerOpen
-          : item.action === 'embed'
-            ? embedDialogOpen
-            : item.action === currentTool;
-
-      if (item.action === 'asset') {
-        return (
-          <AssetUploadControl
-            icon={item.icon}
-            title={item.title}
-            isActive={isActive}
-            editor={editor}
-            token={token}
-            addToQueue={addToQueue}
-          />
-        );
-      }
-
-      if (
-        item.action === 'select' ||
-        item.action === 'hand' ||
-        item.action === 'eraser' ||
-        item.action === 'text'
-      ) {
-        return (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <NavbarButton
-                  icon={item.icon}
-                  title={item.title}
-                  isActive={isActive}
-                  data-board-tool={item.action}
-                  onClick={() => handleSelectTool(item.action)}
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{item.title}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        );
-      }
-
+    if (item.action === 'asset') {
       return (
-        <NavbarButton
+        <AssetUploadControl
           icon={item.icon}
           title={item.title}
           isActive={isActive}
-          data-board-tool={item.action}
-          onClick={() => handleSelectTool(item.action)}
+          editor={editor}
+          token={token}
+          addToQueue={addToQueue}
+          dock={dock}
         />
       );
-    };
+    }
 
-    const toolbarSlides = [
-      ...navBarElements.map((item) => ({
-        key: item.action,
-        node: renderToolbarItem(item),
-      })),
-      {
-        key: COMMENT_ACTION,
-        node: <CommentPlaceButton />,
-      },
-    ];
-
-    const activeSlideIndex = (() => {
-      if (isPlacingComment) {
-        return toolbarSlides.findIndex((slide) => slide.key === COMMENT_ACTION);
-      }
-
-      const toolIndex = toolbarSlides.findIndex((slide) => slide.key === currentTool);
-      return toolIndex >= 0 ? toolIndex : 0;
-    })();
+    if (
+      item.action === 'select' ||
+      item.action === 'hand' ||
+      item.action === 'eraser' ||
+      item.action === 'laser' ||
+      item.action === 'text'
+    ) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavbarButton
+                icon={item.icon}
+                title={item.title}
+                isActive={isActive}
+                data-board-tool={item.action}
+                onClick={() => handleSelectTool(item.action)}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{item.title}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
 
     return (
-      <>
-        <EmbedInsertDialog open={embedDialogOpen} onOpenChange={setEmbedDialogOpen} />
+      <NavbarButton
+        icon={item.icon}
+        title={item.title}
+        isActive={isActive}
+        data-board-tool={item.action}
+        onClick={() => handleSelectTool(item.action)}
+      />
+    );
+  };
 
-        <ActivityPicker open={activityPickerOpen} onOpenChange={setActivityPickerOpen} />
+  const toolbarSlides = [
+    ...navBarElements.map((item) => ({
+      key: item.action,
+      node: renderToolbarItem(item),
+    })),
+    {
+      key: COMMENT_ACTION,
+      node: <CommentPlaceButton />,
+    },
+  ];
+
+  const activeSlideIndex = (() => {
+    if (isPlacingComment) {
+      return toolbarSlides.findIndex((slide) => slide.key === COMMENT_ACTION);
+    }
+
+    const toolIndex = toolbarSlides.findIndex((slide) => slide.key === currentTool);
+    return toolIndex >= 0 ? toolIndex : 0;
+  })();
+
+  const optionsPanel = (
+    <ToolbarOptionsPanel
+      activePopup={activePopup}
+      dock={dock}
+      recentEmojis={filterAllowedEmojis(recentEmojis)}
+      stickers={stickers}
+      onEmojiSelect={(emoji) => {
+        if (!isAllowedEmoji(emoji)) return;
+        editor.setStyleForNextShapes(EmojiStyle, emoji);
+        addRecentEmoji(emoji);
+      }}
+      onEmojiStickerSelect={(sticker) => {
+        editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+        editor.setCurrentTool('emoji-sticker');
+        setActivePopup(null);
+      }}
+      onClose={closeToolbarPanel}
+    />
+  );
+
+  const desktopTools = toolbarSlides.map(({ key, node }) => (
+    <div key={key} className="shrink-0">
+      {node}
+    </div>
+  ));
+
+  return (
+    <BoardToolPortal>
+      <EmbedInsertDialog open={embedDialogOpen} onOpenChange={setEmbedDialogOpen} />
+      <ActivityPicker open={activityPickerOpen} onOpenChange={setActivityPickerOpen} />
+      {wide ? (
+        <ToolbarDockFrame dock={dock} options={optionsPanel} tools={desktopTools} />
+      ) : (
         <div className="pointer-events-none absolute inset-0">
           <div
             className={cn(
@@ -290,34 +339,14 @@ export const Navbar = track(
                   boardChromeZClass,
                 )}
               >
-                <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
+                <UndoRedo />
               </div>
               <div
                 data-board-toolbar-ui
                 className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
               >
-                <ToolbarOptionsPanel
-                  activePopup={activePopup}
-                  recentEmojis={recentEmojis}
-                  stickers={stickers}
-                  onEmojiSelect={(emoji) => {
-                    editor.setStyleForNextShapes(EmojiStyle, emoji);
-                    addRecentEmoji(emoji);
-                  }}
-                  onEmojiStickerSelect={(sticker) => {
-                    editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
-                    editor.setCurrentTool('emoji-sticker');
-                    setActivePopup(null);
-                  }}
-                  onClose={closeToolbarPanel}
-                />
-                <div className="hidden items-center gap-1 p-1 sm:flex">
-                  {toolbarSlides.map(({ key, node }) => (
-                    <div key={key} className="shrink-0">
-                      {node}
-                    </div>
-                  ))}
-                </div>
+                {optionsPanel}
+                <div className="hidden items-center gap-1 p-1 sm:flex">{desktopTools}</div>
                 <div className="p-1 sm:hidden">
                   <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
                 </div>
@@ -325,7 +354,7 @@ export const Navbar = track(
             </div>
           </div>
         </div>
-      </>
-    );
-  },
-);
+      )}
+    </BoardToolPortal>
+  );
+});

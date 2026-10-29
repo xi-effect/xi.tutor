@@ -15,6 +15,7 @@ export type ToolType =
   | 'sticker'
   | 'text'
   | 'eraser'
+  | 'laser'
   | 'rectangle'
   | 'image'
   | 'select'

@@ -74,6 +74,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=8192
           SOVLIUM_BUILD_SHA: ${{ github.sha }}
         run: pnpm --filter xi.electron ${{ matrix.publish_script }}

@@ -1,1 +1,1 @@
-export const SUBSCRIPTION_BILLING_ENABLED = false;
+export const SUBSCRIPTION_BILLING_ENABLED = true;

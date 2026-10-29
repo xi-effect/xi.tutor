@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import i18n from 'i18next';
 import {
   cloneDroppedFile,
+  getFileUploadErrorKind,
   isFileNameTooLong,
   MAX_FILENAME_LENGTH,
   beginFileUploadAttempt,
@@ -76,15 +77,15 @@ export async function insertEditorAsset(
   try {
     switch (type) {
       case 'image':
-        return insertImageFile(editor, file, token, activeBlock, attempt);
+        return await insertImageFile(editor, file, token, activeBlock, attempt);
       case 'audio':
-        return insertAudioFile(editor, file, token, activeBlock, attempt);
+        return await insertAudioFile(editor, file, token, activeBlock, attempt);
       case 'pdf':
-        return insertPdfFile(editor, file, token, activeBlock, attempt);
+        return await insertPdfFile(editor, file, token, activeBlock, attempt);
       case 'presentation':
-        return insertPresentationFile(editor, file, token, activeBlock, attempt);
+        return await insertPresentationFile(editor, file, token, activeBlock, attempt);
       case 'file':
-        return insertFileBlock(editor, file, token, activeBlock, attempt);
+        return await insertFileBlock(editor, file, token, activeBlock, attempt);
       default:
         attempt.reject('unsupported_type');
         toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'editor' }), {
@@ -99,7 +100,9 @@ export async function insertEditorAsset(
       maxBytes: getMaxFileBytes(),
     });
     trackFileSizeLimitFromUploadError(err, file, 'other', getMaxFileBytes());
-    toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
+    if (getFileUploadErrorKind(err) !== 'storage') {
+      toast.error(i18n.t('toast.uploadFailed', { ns: 'editor' }));
+    }
     return false;
   }
 }

@@ -4,12 +4,7 @@ export type MaterialsKindT = 'note' | 'board';
 export type YDocContentKind = MaterialsKindT;
 
 export type OnboardingStageT =
-  | 'email-confirmation'
-  | 'user-information'
-  | 'default-layout'
-  | 'notifications'
-  | 'training'
-  | 'completed';
+  'email-confirmation' | 'user-information' | 'default-layout' | 'training' | 'completed';
 
 export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 

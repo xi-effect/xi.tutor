@@ -1,4 +1,5 @@
 import { StateNode, createShapeId, VecLike } from '@ibodr/draw';
+import { isAllowedEmoji } from '../../utils/allowedEmojis';
 import { EmojiStyle } from '../shapeStyles';
 
 export class EmojiTool extends StateNode {
@@ -13,7 +14,8 @@ export class EmojiTool extends StateNode {
       y: this.editor.inputs.currentPagePoint.y,
     };
     const size = 80;
-    const emoji = this.editor.getStyleForNextShape(EmojiStyle);
+    const nextEmoji = this.editor.getStyleForNextShape(EmojiStyle);
+    const emoji = isAllowedEmoji(nextEmoji) ? nextEmoji : '😀';
     const id = createShapeId();
 
     this.editor.createShape({

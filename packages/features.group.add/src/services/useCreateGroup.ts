@@ -1,7 +1,7 @@
 import { classroomsApiConfig, ClassroomsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError } from 'common.services';
+import { handleError, invalidateClassroomCounts } from 'common.services';
 
 export interface CreateGroupRequest {
   subject_id: number | null;
@@ -59,11 +59,13 @@ export const useCreateGroup = () => {
         queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousClassrooms);
       }
 
+      void invalidateClassroomCounts(queryClient);
       handleError(err, 'createGroup');
     },
     onSuccess: () => {
       // При успешном создании инвалидируем кэш для получения актуальных данных
       queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
+      void invalidateClassroomCounts(queryClient);
     },
   });
 

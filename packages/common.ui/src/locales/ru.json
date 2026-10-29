@@ -10,6 +10,8 @@
     "welcome": "Добро пожаловать в\u00A0sovlium!",
     "tutorDescription": "За 2 минуты покажем, как создать кабинет, пригласить ученика и назначить первое занятие",
     "studentDescription": "Подсказать, как всё устроено?",
+    "mobileDescription": "Подсказать, как всё устроено?",
+    "helpLink": "Открыть справку",
     "startTourTutor": "Начать знакомство",
     "startTourStudent": "Смотреть подсказки",
     "laterTutor": "Позже",

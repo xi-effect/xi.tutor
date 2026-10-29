@@ -1,5 +1,6 @@
 import { createElement } from 'react';
 import { NoteShapeUtil, type DrNoteShape } from '@ibodr/draw';
+import { resolveLodStyle } from '../../utils/resolveLodStyle';
 import { StickerShapeComponent } from './StickerShapeComponent';
 import { applyStickerFontMetrics } from './stickerTextStyle';
 
@@ -10,6 +11,10 @@ const BaseNoteShapeUtil = NoteShapeUtil.configure({
 export class StickerShapeUtil extends BaseNoteShapeUtil {
   override component(shape: DrNoteShape) {
     return createElement(StickerShapeComponent, { util: this, shape });
+  }
+
+  override getLodStyle(shape: DrNoteShape) {
+    return resolveLodStyle(super.getLodStyle(shape));
   }
 
   override onBeforeCreate(next: DrNoteShape) {

@@ -67,14 +67,7 @@ export type InviteFunnelTrack = 'signup' | 'signin' | 'already_auth';
 
 /** Шаг UI-воронки. `accept_direct` — авторизованный ученик сразу на принятии, без signup/signin. */
 export type InviteFunnelStep =
-  | 'invite_open'
-  | 'auth'
-  | 'email'
-  | 'welcome_user'
-  | 'welcome_role'
-  | 'welcome_socials'
-  | 'accept'
-  | 'accept_direct';
+  'invite_open' | 'auth' | 'email' | 'welcome_user' | 'welcome_role' | 'accept' | 'accept_direct';
 
 export type SignupValidationFailureReason =
   'required_field' | 'invalid_email' | 'weak_password' | 'terms_not_accepted' | 'multiple_fields';
@@ -116,7 +109,7 @@ export type PermissionFailureReason =
 export type HttpStatusGroup = '4xx' | '5xx' | 'none';
 
 export type OnboardingStepName =
-  'email_confirmation' | 'profile' | 'role_selection' | 'notifications' | 'training' | 'completed';
+  'email_confirmation' | 'profile' | 'role_selection' | 'training' | 'completed';
 
 export type OnboardingStepFailReason =
   'validation_error' | 'network_error' | 'server_error' | 'unknown';
@@ -203,6 +196,38 @@ export type ProductAnalyticsFeedbackUsageDurationBucket =
   '15_30m' | '30_45m' | '45_60m' | '60m_plus';
 
 export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
+
+export type SubscriptionBillingPeriod = 'month' | 'year';
+
+export type SubscriptionAnalyticsSource =
+  | 'announcement'
+  | 'settings'
+  | 'pricing'
+  | 'product_limit'
+  | 'classrooms_limit'
+  | 'board_objects_limit'
+  | 'file_size_limit'
+  | 'storage_limit'
+  | 'other';
+
+export type SubscriptionActivationType = 'new' | 'upgrade' | 'resume';
+
+export type SubscriptionCheckoutFailureReason =
+  'payment_create_failed' | 'invalid_plan' | 'already_subscribed' | 'network_error' | 'unknown';
+
+export type SubscriptionPaymentReturnResult =
+  'success' | 'pending' | 'cancelled' | 'failed' | 'unknown';
+
+export type SubscriptionRenewalFailureReason =
+  'insufficient_funds' | 'payment_method_failed' | 'provider_error' | 'internal_error' | 'unknown';
+
+export type SubscriptionDowngradeReason = 'expired' | 'cancelled' | 'payment_failed' | 'manual';
+
+export type SubscriptionPaywallLimitType =
+  'file_size' | 'board_objects' | 'classrooms' | 'storage' | 'other';
+
+export type SubscriptionPromoFailureReason =
+  'invalid' | 'expired' | 'not_applicable' | 'already_used' | 'unknown';
 
 export type UmamiPrimitive = string | number | boolean;
 export type UmamiEventPayload = Record<

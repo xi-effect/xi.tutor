@@ -18,8 +18,9 @@ import {
   getLibraryUploadMaxBytes,
   type LibraryUploadErrorKind,
 } from './libraryUpload';
-import { getFileTooLargeMessage } from 'features.subscription';
+import { getFileTooLargeMessage, getImageUpgradeMessage } from 'features.subscription';
 import {
+  isCurrentUserTutor,
   isStorageQuotaReached,
   requestStorageLimitDialog,
   tryStartUpload,
@@ -30,6 +31,7 @@ import {
   rejectFileUploadFromEvaluation,
   trackFileSizeLimitFromUploadError,
   trackProductLimitReached,
+  trackSubscriptionPaywallShown,
   trackUploadEvaluationLimit,
   type FileUploadAttempt,
 } from 'common.utils';
@@ -240,6 +242,12 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
         if (!evaluation.ok) {
           trackUploadEvaluationLimit(evaluation, file, source);
           rejectFileUploadFromEvaluation(attempt, evaluation);
+          if (evaluation.reason === 'size' && isCurrentUserTutor()) {
+            trackSubscriptionPaywallShown(
+              { limitType: 'file_size', currentPlan: evaluation.planId },
+              5000,
+            );
+          }
         }
 
         if (!evaluation.ok && evaluation.reason === 'storage') {
@@ -247,7 +255,10 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
           return;
         }
 
-        if (!evaluation.ok && evaluation.reason === 'size') {
+        if (
+          !evaluation.ok &&
+          (evaluation.reason === 'size' || evaluation.reason === 'imageUpgrade')
+        ) {
           nextItems.push({
             id: createItemId(),
             file,
@@ -255,11 +266,10 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
             progress: 0,
             status: 'error',
             errorKind: 'tooLarge',
-            errorMessage: getFileTooLargeMessage(
-              evaluation.planId,
-              evaluation.kind,
-              evaluation.maxBytes,
-            ),
+            errorMessage:
+              evaluation.reason === 'imageUpgrade'
+                ? getImageUpgradeMessage()
+                : getFileTooLargeMessage(evaluation.planId, evaluation.kind, evaluation.maxBytes),
           });
           return;
         }

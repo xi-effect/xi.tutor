@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, PdfShape, pdfShapeProps } from './PdfShape';
 import { PdfViewer } from './PdfViewer';
 import { renderPdfShapeToDataUrl } from './renderPdfShapeToDataUrl';
@@ -23,6 +24,10 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
       studentCanFlip: true,
       pagesVisible: 1,
     };
+  }
+
+  override getLodStyle() {
+    return cardLodStyle();
   }
 
   override canEdit() {

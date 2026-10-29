@@ -48,15 +48,16 @@ export const CommentsOverlay = track(function CommentsOverlay() {
 
   if (!commentsVisible) return null;
 
-  const container = editor.getContainer();
-  const rect = container.getBoundingClientRect();
+  // pageToViewport matches the overlay, which fills the editor. getBoundingClientRect
+  // here would force a layout on every camera tick.
   const zoom = editor.getZoomLevel();
+  const toLocal = (point: { x: number; y: number }) => editor.pageToViewport(point);
 
   const threads = getAllCommentThreads(editor.store).filter(
     (t) => t.pageId === editor.getCurrentPageId(),
   );
 
-  const draftScreenPoint = draftPoint ? editor.pageToScreen(draftPoint) : null;
+  const draftScreenPoint = draftPoint ? toLocal(draftPoint) : null;
 
   const handleSubmitDraft = (text: string) => {
     if (!draftPoint || !author) return;
@@ -84,9 +85,9 @@ export const CommentsOverlay = track(function CommentsOverlay() {
       {threads.map((thread) => {
         // Позицию пина считаем один раз и переиспользуем для рамки области того же треда.
         const pagePoint = getCommentThreadPagePoint(editor, thread);
-        const screenPoint = editor.pageToScreen(pagePoint);
-        const pinLeft = screenPoint.x - rect.left;
-        const pinTop = screenPoint.y - rect.top;
+        const screenPoint = toLocal(pagePoint);
+        const pinLeft = screenPoint.x;
+        const pinTop = screenPoint.y;
 
         const isResizing = regionDrag?.threadId === thread.id;
         const showRegion =
@@ -98,9 +99,9 @@ export const CommentsOverlay = track(function CommentsOverlay() {
           if (bounds) {
             // При resize берём живой прямоугольник из regionDrag (двигаться может любой угол).
             const live = isResizing ? regionDrag! : bounds;
-            const topLeft = editor.pageToScreen({ x: live.x, y: live.y });
-            const boxLeft = topLeft.x - rect.left;
-            const boxTop = topLeft.y - rect.top;
+            const topLeft = toLocal({ x: live.x, y: live.y });
+            const boxLeft = topLeft.x;
+            const boxTop = topLeft.y;
 
             regionUi = (
               <>
@@ -128,8 +129,8 @@ export const CommentsOverlay = track(function CommentsOverlay() {
 
       {draftPoint && draftRegion && draftScreenPoint && (
         <CommentRegionBox
-          left={draftScreenPoint.x - rect.left - draftRegion.w * zoom}
-          top={draftScreenPoint.y - rect.top - draftRegion.h * zoom}
+          left={draftScreenPoint.x - draftRegion.w * zoom}
+          top={draftScreenPoint.y - draftRegion.h * zoom}
           width={draftRegion.w * zoom}
           height={draftRegion.h * zoom}
         />
@@ -137,8 +138,8 @@ export const CommentsOverlay = track(function CommentsOverlay() {
 
       {draftScreenPoint && author && (
         <CommentComposer
-          left={draftScreenPoint.x - rect.left}
-          top={draftScreenPoint.y - rect.top}
+          left={draftScreenPoint.x}
+          top={draftScreenPoint.y}
           authorId={author.authorId}
           authorName={author.authorName}
           variant={draftRegion ? 'region' : 'point'}
