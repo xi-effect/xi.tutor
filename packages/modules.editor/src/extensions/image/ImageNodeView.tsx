@@ -13,11 +13,13 @@ import { StrokeT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
 import { DrawingToolbar, DrawingOverlay, DrawSwitchButton } from '../../ui/components/drawing';
 import { MediaBlockMenu } from '../media/MediaBlockMenu';
+import { useNodeComment } from '../../comments/hooks/useNodeComment';
 
 export const ImageNodeView = ({ node, getPos, updateAttributes, selected }: NodeViewProps) => {
   const src = node.attrs.src;
   const { editor, storageToken, isReadOnly } = useYjsContext();
   const { isDrawing, toggle, close } = useDrawingToggle(editor, getPos);
+  const { startComment } = useNodeComment(editor, getPos);
 
   const getActiveBlock = useNodeActiveBlock(editor, getPos, 'image');
   const { downloadImage } = useBlockMenuActions(editor, getActiveBlock);
@@ -71,6 +73,7 @@ export const ImageNodeView = ({ node, getPos, updateAttributes, selected }: Node
             getActiveBlock={getActiveBlock}
             isReadOnly={isReadOnly}
             onDownload={() => downloadImage(imageSrc)}
+            onComment={startComment}
           />
         </div>
       </div>

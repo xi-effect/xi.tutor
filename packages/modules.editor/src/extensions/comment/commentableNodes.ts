@@ -8,6 +8,7 @@ export const COMMENTABLE_NODE_TYPES = [
   'presentation',
   'file',
   'activity',
+  'codeBlock',
 ] as const;
 
 const COMMENTABLE_SET = new Set<string>(COMMENTABLE_NODE_TYPES);
@@ -21,4 +22,15 @@ export function getCommentableNodeAt(
   const node = doc.nodeAt(range.from);
   if (!node || node.isText || !COMMENTABLE_SET.has(node.type.name)) return null;
   return range.from + node.nodeSize === range.to ? node : null;
+}
+
+/** Все commentable-ноды, которые пересекает диапазон (внутрь атомов и блоков кода не спускаемся). */
+export function getAnchorNodesInRange(doc: PMNode, range: { from: number; to: number }): number[] {
+  const positions: number[] = [];
+  doc.nodesBetween(range.from, range.to, (node, pos) => {
+    if (node.isText || !COMMENTABLE_SET.has(node.type.name)) return true;
+    positions.push(pos);
+    return false;
+  });
+  return positions;
 }

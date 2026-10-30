@@ -6,8 +6,11 @@ import {
   type EditorCommentThread,
 } from './commentRecords';
 import { generateUserColor } from '../utils/userColor';
-import { getCommentableNodeAt } from '../extensions/comment/commentableNodes';
-import { NodeSelection } from '@tiptap/pm/state';
+import {
+  getAnchorNodesInRange,
+  getCommentableNodeAt,
+} from '../extensions/comment/commentableNodes';
+import { NodeSelection, Selection } from '@tiptap/pm/state';
 
 export type NewCommentAuthor = { authorId: string; authorName: string };
 
@@ -59,9 +62,9 @@ export function createCommentThreadAt(
 ): EditorCommentThread {
   const color = generateUserColor(author.authorId);
   applyCommentAnchor(editor, range, threadId, color);
-  // для ноды выделение не трогаем: setTextSelection на границе блоков невалиден
   if (!getCommentableNodeAt(editor.state.doc, range)) {
-    editor.commands.setTextSelection(range.to);
+    const { doc, tr } = editor.state;
+    editor.view.dispatch(tr.setSelection(Selection.near(doc.resolve(range.to), -1)));
   }
 
   editor.chain().setTextSelection(range).setComment(threadId, color).run();
@@ -160,17 +163,33 @@ export function cancelDraftComment(editor: Editor, threadId: string): void {
 }
 
 /** Ставит якорь треда: attr для блочной ноды или mark для текста. */
-export function applyCommentAnchor(
+function applyCommentAnchor(
   editor: Editor,
   range: { from: number; to: number },
   threadId: string,
   color: string,
 ): void {
-  if (getCommentableNodeAt(editor.state.doc, range)) {
-    editor.chain().setNodeComment(range.from, threadId, color).run();
-    return;
-  }
-  editor.chain().setTextSelection(range).setComment(threadId, color).run();
+  const { doc } = editor.state;
+  const nodePositions = getAnchorNodesInRange(doc, range);
+
+  editor
+    .chain()
+    .command(({ tr, state }) => {
+      // Текст: марка (в commentable-нодах схема сама её пропустит)
+      if (doc.textBetween(range.from, range.to).length > 0) {
+        tr.addMark(range.from, range.to, state.schema.marks.comment.create({ threadId, color }));
+      }
+      return true;
+    })
+    // Ноды: атрибут. Позиции не сдвигаются ни маркой, ни setNodeAttribute.
+    .command(({ tr }) => {
+      for (const pos of nodePositions) {
+        tr.setNodeAttribute(pos, 'commentThreadId', threadId);
+        tr.setNodeAttribute(pos, 'commentColor', color);
+      }
+      return true;
+    })
+    .run();
 }
 
 /** Снимает якорь треда и с текста, и с нод. */

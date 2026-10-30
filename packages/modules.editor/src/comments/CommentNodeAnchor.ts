@@ -1,5 +1,5 @@
 import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey, type Transaction } from '@tiptap/pm/state';
+import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import { COMMENTABLE_NODE_TYPES } from '../extensions/comment/commentableNodes';
@@ -109,23 +109,25 @@ export const CommentNodeAnchor = Extension.create({
           if (!transactions.some((t) => t.docChanged)) return null;
 
           const seen = new Set<string>();
-          let tr: Transaction | null = null;
+          const duplicates: number[] = [];
 
           newState.doc.descendants((node, pos) => {
             const id = node.attrs.commentThreadId as string | null | undefined;
             if (id) {
-              if (seen.has(id)) {
-                tr ??= newState.tr;
-                tr.setNodeAttribute(pos, 'commentThreadId', null);
-                tr.setNodeAttribute(pos, 'commentColor', null);
-              } else {
-                seen.add(id);
-              }
+              if (seen.has(id)) duplicates.push(pos);
+              else seen.add(id);
             }
             return !node.isTextblock;
           });
 
-          // return tr ? tr.setMeta('addToHistory', false) : null;
+          if (!duplicates.length) return null;
+
+          const tr = newState.tr;
+          for (const pos of duplicates) {
+            tr.setNodeAttribute(pos, 'commentThreadId', null);
+            tr.setNodeAttribute(pos, 'commentColor', null);
+          }
+          return tr.setMeta('addToHistory', false);
         },
       }),
     ];

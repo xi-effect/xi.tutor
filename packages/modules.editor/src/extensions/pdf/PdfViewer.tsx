@@ -77,7 +77,7 @@ export const PdfViewer = ({
   }, []);
 
   useEffect(() => {
-    if (!blobUrl || containerSize.w <= 0 || containerSize.h <= 0) return;
+    if (containerSize.w <= 0 || containerSize.h <= 0) return;
 
     let cancelled = false;
 
@@ -135,6 +135,7 @@ export const PdfViewer = ({
       renderTaskRef.current?.cancel();
     };
   }, [blobUrl, page, containerSize.w, containerSize.h, t]);
+  //something caused a lor of renders
 
   const handleExtract = useCallback(async () => {
     const canvas = canvasRef.current;
