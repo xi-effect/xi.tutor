@@ -23,7 +23,7 @@ export class SovliumDesktopApp {
     const gotLock = app.requestSingleInstanceLock();
     if (!gotLock) {
       console.error(
-        '[xi.electron] another Sovlium instance is already running. Close it and try again.',
+        '[xi.electron] another sovlium instance is already running. Close it and try again.',
       );
       app.quit();
       return;

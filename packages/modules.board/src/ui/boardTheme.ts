@@ -77,7 +77,7 @@ export const boardTextToolbarClass =
  */
 export const boardChromeZClass = 'z-40';
 
-/** z-index выпадающих меню/попапов доски (часто portal в body) — выше chrome, ниже modal */
+/** z-index меню инструментов: выше тулбара (z-30), ниже модалок (z-50). */
 export const boardDropdownZClass = 'z-[45]';
 
 /**

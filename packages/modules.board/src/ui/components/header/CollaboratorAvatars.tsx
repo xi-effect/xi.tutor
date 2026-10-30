@@ -14,6 +14,7 @@ import type { DrInstancePresence } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
+import { useBoardChrome } from '../../useBoardChrome';
 import {
   boardDropdownZClass,
   boardMenuSurfaceClass,
@@ -29,6 +30,7 @@ const MAX_VISIBLE_AVATARS_BROADCASTING = 1;
 
 export const CollaboratorAvatars = () => {
   const { t } = useTranslation('board');
+  const chrome = useBoardChrome();
   const isMobile = useBoardIsMobile();
   const { store, myPresenceId, status, provider } = useYjsContext();
   const {
@@ -319,7 +321,7 @@ export const CollaboratorAvatars = () => {
             <PopoverTrigger asChild>{avatarTrigger}</PopoverTrigger>
             <PopoverContent
               align="end"
-              side="bottom"
+              side={chrome.mirrored ? 'top' : 'bottom'}
               sideOffset={12}
               onOpenAutoFocus={(event) => event.preventDefault()}
               className={cn(

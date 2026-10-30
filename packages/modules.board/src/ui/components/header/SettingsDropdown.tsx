@@ -69,6 +69,7 @@ import {
 } from '../../boardTheme';
 import { useBoardIsMobile } from '../shared/useBoardIsMobile';
 import { SettingsMobileDrawer } from './SettingsMobileDrawer';
+import { useBoardChrome } from '../../useBoardChrome';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -137,6 +138,7 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
 
 export const SettingsDropdown = () => {
   const { t } = useTranslation('board');
+  const chrome = useBoardChrome();
   const isMobile = useBoardIsMobile();
   const editor = useEditor();
   const boardAtLimit = useSubscriptionStore((s) => s.mock.boardAtLimit);
@@ -317,6 +319,7 @@ export const SettingsDropdown = () => {
         <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
           <DropdownMenuTrigger asChild>{settingsTrigger}</DropdownMenuTrigger>
           <DropdownMenuContent
+            side={chrome.mirrored ? 'top' : 'bottom'}
             sideOffset={12}
             align="end"
             className={cn(

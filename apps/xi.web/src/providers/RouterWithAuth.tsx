@@ -19,6 +19,25 @@ const isBoardRoute = (pathname: string) =>
 const BOARD_TOAST_OFFSET = { bottom: 64, right: 16 } as const;
 const BOARD_TOAST_MOBILE_OFFSET = { bottom: 112, right: 16 } as const;
 
+function useBoardToastOffset(name: string, fallback: number) {
+  return useSyncExternalStore(
+    (onChange) => {
+      const observer = new MutationObserver(onChange);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['style'],
+      });
+      return () => observer.disconnect();
+    },
+    () => {
+      const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      const value = Number.parseFloat(raw);
+      return Number.isFinite(value) ? value : fallback;
+    },
+    () => fallback,
+  );
+}
+
 const useRouterPathname = () =>
   useSyncExternalStore(
     (onChange) => router.subscribe('onResolved', onChange),
@@ -66,6 +85,8 @@ const AppToaster = () => {
   const pathname = useRouterPathname();
   const onBoard = isBoardRoute(pathname);
   const theme = useDocumentTheme();
+  const toastBottom = useBoardToastOffset('--board-toast-bottom', BOARD_TOAST_OFFSET.bottom);
+  const toastRight = useBoardToastOffset('--board-toast-right', BOARD_TOAST_OFFSET.right);
 
   return (
     <Toaster
@@ -73,7 +94,7 @@ const AppToaster = () => {
       visibleToasts={3}
       expand
       closeButton
-      offset={onBoard ? BOARD_TOAST_OFFSET : undefined}
+      offset={onBoard ? { bottom: toastBottom, right: toastRight } : undefined}
       mobileOffset={onBoard ? BOARD_TOAST_MOBILE_OFFSET : undefined}
       style={SONNER_THEME_STYLE}
     />

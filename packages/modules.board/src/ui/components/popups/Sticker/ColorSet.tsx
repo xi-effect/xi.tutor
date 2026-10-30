@@ -12,7 +12,13 @@ const stickerColors = [
   ),
 ];
 
-export const ColorSet = ({ className }: { className?: string }) => {
+export const ColorSet = ({
+  className,
+  vertical = false,
+}: {
+  className?: string;
+  vertical?: boolean;
+}) => {
   const editor = useEditor();
   const { setStickerColor, stickerColor } = useDrawStore();
   const { setColor } = useDrawStyles();
@@ -31,7 +37,8 @@ export const ColorSet = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        'border-border-default bg-background-surface flex flex-wrap gap-2 rounded-xl border p-1',
+        'border-border-default bg-background-surface flex gap-2 rounded-xl border p-1',
+        vertical ? 'flex-col' : 'flex-wrap',
         className,
       )}
     >

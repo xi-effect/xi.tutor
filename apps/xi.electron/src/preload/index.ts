@@ -139,6 +139,7 @@ const api: SovliumDesktopAPI = {
     unminimize: () => ipcRenderer.invoke(IPC.windowUnminimize),
     isMinimized: () => ipcRenderer.invoke(IPC.windowIsMinimized),
     setTitle: (title: string) => ipcRenderer.invoke(IPC.windowSetTitle, title),
+    resizeCallOverlay: (size) => ipcRenderer.invoke(IPC.windowResizeCallOverlay, size),
     onFocusChanged: (handler) =>
       subscribe(EVENTS.windowFocus, (payload) => handler(Boolean(payload))),
   },

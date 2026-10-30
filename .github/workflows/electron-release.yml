@@ -62,7 +62,7 @@ jobs:
             if gh release create "$TAG" \
               --repo "$REPO" \
               --draft \
-              --title "Sovlium ${VERSION}" \
+              --title "sovlium ${VERSION}" \
               --notes "Electron ${VERSION}. Publish this draft after the Windows and macOS assets are attached."; then
               exit 0
             fi

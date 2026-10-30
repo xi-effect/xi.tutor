@@ -8,6 +8,7 @@ export const IPC = {
   windowUnminimize: 'sovlium:window:unminimize',
   windowIsMinimized: 'sovlium:window:is-minimized',
   windowSetTitle: 'sovlium:window:set-title',
+  windowResizeCallOverlay: 'sovlium:window:resize-call-overlay',
   conferenceStart: 'sovlium:conference:start',
   conferenceLeave: 'sovlium:conference:leave',
   conferenceSetSlotBounds: 'sovlium:conference:set-slot-bounds',

@@ -2,7 +2,7 @@ import path from 'node:path';
 import { app, dialog } from 'electron';
 import { SovliumDesktopApp } from './app';
 
-app.setName('Sovlium');
+app.setName('sovlium');
 
 // Chromium otherwise drops notification and call sounds until a click in this
 // window, so they stay silent in the shell while the site plays them.
@@ -13,9 +13,11 @@ app.commandLine.appendSwitch(
   'MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride,PulseaudioLoopbackForScreenShare',
 );
 
-if (!app.isPackaged) {
-  app.setPath('userData', path.join(app.getPath('appData'), 'Sovlium-dev'));
-}
+// Keep the existing data folder: the visible rename must not sign the user out.
+app.setPath(
+  'userData',
+  path.join(app.getPath('appData'), app.isPackaged ? 'Sovlium' : 'Sovlium-dev'),
+);
 
 const desktop = new SovliumDesktopApp();
 void desktop.start().catch(async (error) => {
@@ -25,7 +27,7 @@ void desktop.start().catch(async (error) => {
       await app.whenReady();
     }
     dialog.showErrorBox(
-      'Sovlium',
+      'sovlium',
       error instanceof Error ? (error.stack ?? error.message) : String(error),
     );
   } catch {

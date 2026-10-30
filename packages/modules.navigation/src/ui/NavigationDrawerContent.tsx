@@ -5,7 +5,7 @@ import { NAV_DRAWER_Z_CLASS } from './constants';
 type NavigationDrawerContentProps = React.ComponentProps<typeof DrawerPrimitive.Content>;
 
 /**
- * Drawer на уровне @xipkg/modal (z-50). UI доски изолирован в z-0 и не перекрывает меню.
+ * Drawer на уровне @xipkg/modal (z-50). UI канваса изолирован в z-0 и не перекрывает меню.
  * overflow не вешать на Content — vaul считает высоту и translateY от этого узла.
  * pb-16 поднимает пункты над нижней панелью (64px).
  */

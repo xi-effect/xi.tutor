@@ -51,7 +51,52 @@ const PresetButton = ({ preset, isActive, onClick }: PresetButtonProps) => {
   );
 };
 
-export const OpacitySizeMenu = ({ className }: { className?: string }) => {
+const HORIZONTAL_SLIDER_LENGTH = 'w-20 sm:w-24';
+/** Та же длина, что у горизонтального слайдера, только по вертикали. */
+const VERTICAL_SLIDER_LENGTH = 'h-24';
+
+const PenSlider = ({
+  vertical,
+  value,
+  min,
+  max,
+  step,
+  label,
+  onValueChange,
+}: {
+  vertical: boolean;
+  value: number[];
+  min: number;
+  max: number;
+  step: number;
+  label: string;
+  onValueChange: (value: number[]) => void;
+}) => (
+  <div className={cn('flex gap-2', vertical ? 'flex-col items-center' : 'items-center')}>
+    <div className={vertical ? VERTICAL_SLIDER_LENGTH : HORIZONTAL_SLIDER_LENGTH}>
+      <Slider
+        orientation={vertical ? 'vertical' : 'horizontal'}
+        onValueChange={onValueChange}
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        className={vertical ? 'h-full w-4 flex-col' : undefined}
+        trackClassName={vertical ? 'h-full w-1' : undefined}
+        rangeClassName={vertical ? 'w-full' : undefined}
+      />
+    </div>
+    <span className={cn('text-text-primary shrink-0 text-xs', !vertical && 'w-5')}>{label}</span>
+  </div>
+);
+
+export const OpacitySizeMenu = ({
+  className,
+  vertical = false,
+}: {
+  className?: string;
+  vertical?: boolean;
+}) => {
   const {
     pencilColor,
     pencilThickness,
@@ -96,13 +141,23 @@ export const OpacitySizeMenu = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        'border-border-default bg-background-surface w-full rounded-xl border shadow-none',
+        'border-border-default bg-background-surface rounded-xl border shadow-none',
+        vertical ? 'w-fit' : 'w-full',
         className,
       )}
     >
-      <div className="flex w-full flex-col items-stretch gap-3 p-3 sm:flex-row sm:items-center">
-        {/* Пресеты */}
-        <div className="flex shrink-0 items-center gap-1.5">
+      <div
+        className={cn(
+          'flex w-full flex-col items-stretch gap-3 p-3',
+          vertical ? 'w-fit items-center' : 'sm:flex-row sm:items-center',
+        )}
+      >
+        <div
+          className={cn(
+            'flex shrink-0 gap-1.5',
+            vertical ? 'flex-col items-center' : 'items-center',
+          )}
+        >
           {penPresets.map((preset, index) => (
             <PresetButton
               key={index}
@@ -113,42 +168,44 @@ export const OpacitySizeMenu = ({ className }: { className?: string }) => {
           ))}
         </div>
 
-        <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
+        <div
+          className={cn(
+            'bg-border-default shrink-0',
+            vertical ? 'h-px w-full' : 'hidden h-8 w-px sm:block',
+          )}
+        />
 
-        {/* Слайдеры */}
-        <div className="flex min-w-0 flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-20 shrink-0 sm:w-24">
-              <Slider
-                onValueChange={handleSize}
-                value={[getSizeIndex(pencilThickness)]}
-                min={1}
-                max={5}
-                step={1}
-              />
-            </div>
-            <span className="text-text-primary w-5 shrink-0 text-xs">
-              {pencilThickness.toUpperCase()}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-20 shrink-0 sm:w-24">
-              <Slider
-                onValueChange={handleOpacity}
-                value={[pencilOpacity]}
-                min={10}
-                max={100}
-                step={10}
-              />
-            </div>
-            <span className="text-text-primary w-5 shrink-0 text-xs">{pencilOpacity}</span>
-          </div>
+        <div className={cn('flex min-w-0 gap-3', vertical ? 'items-end' : 'flex-col')}>
+          <PenSlider
+            vertical={vertical}
+            value={[getSizeIndex(pencilThickness)]}
+            min={1}
+            max={5}
+            step={1}
+            label={pencilThickness.toUpperCase()}
+            onValueChange={handleSize}
+          />
+          <PenSlider
+            vertical={vertical}
+            value={[pencilOpacity]}
+            min={10}
+            max={100}
+            step={10}
+            label={String(pencilOpacity)}
+            onValueChange={handleOpacity}
+          />
         </div>
 
-        <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
+        <div
+          className={cn(
+            'bg-border-default shrink-0',
+            vertical ? 'h-px w-full' : 'hidden h-8 w-px sm:block',
+          )}
+        />
 
-        {/* Цвета */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div
+          className={cn('flex items-center gap-1.5', vertical ? 'grid grid-cols-2' : 'flex-wrap')}
+        >
           {BOARD_COLORS.map(({ name, class: colorClass, cssVar }) => (
             <ColorDot
               key={name}

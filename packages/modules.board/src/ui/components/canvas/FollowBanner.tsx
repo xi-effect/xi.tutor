@@ -4,6 +4,7 @@ import type { DrInstancePresence, DrInstancePresenceID } from '@ibodr/draw';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
 import { boardChromeZClass } from '../../boardTheme';
+import { useBoardChrome } from '../../useBoardChrome';
 import { useTranslation } from 'react-i18next';
 
 export const FollowBanner = () => {
@@ -11,6 +12,8 @@ export const FollowBanner = () => {
   const { store } = useYjsContext();
   const { followingPresenceId, setFollowingPresenceId, broadcasterPresenceId } =
     useFollowUserStore();
+
+  const chrome = useBoardChrome();
 
   if (!followingPresenceId) return null;
 
@@ -23,7 +26,8 @@ export const FollowBanner = () => {
 
   return (
     <div
-      className={`pointer-events-auto absolute top-1 left-1/2 ${boardChromeZClass} -translate-x-1/2`}
+      className={`pointer-events-auto absolute left-1/2 ${boardChromeZClass} -translate-x-1/2`}
+      style={chrome.mirrored ? { bottom: chrome.followOffset } : { top: chrome.followOffset }}
       role="status"
       aria-live="polite"
     >
