@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.1.1",
   "type": "module",
-  "description": "Electron desktop shell for Sovlium. Reuses apps/xi.web as the renderer.",
-  "author": "xi.effect",
+  "description": "Electron desktop shell for sovlium. Reuses apps/xi.web as the renderer.",
+  "author": "sovlium",
   "main": "out/main/index.js",
   "scripts": {
     "dev": "node scripts/dev.mjs",

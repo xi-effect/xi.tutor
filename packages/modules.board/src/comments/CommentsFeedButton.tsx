@@ -24,10 +24,12 @@ import type { DrCommentThread } from './commentRecords';
 import { useTranslation } from 'react-i18next';
 import { BoardDrawer } from '../ui/components/shared/BoardDrawer';
 import { useBoardIsMobile } from '../ui/components/shared/useBoardIsMobile';
+import { useBoardChrome } from '../ui/useBoardChrome';
 
 /** Кнопка в шапке доски + выпадающая лента всех комментариев (прочитанных и непрочитанных). */
 export const CommentsFeedButton = track(function CommentsFeedButton() {
   const { t } = useTranslation('board');
+  const chrome = useBoardChrome();
   const isMobile = useBoardIsMobile();
   const editor = useEditor();
   const [open, setOpen] = useState(false);
@@ -147,7 +149,7 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
       <PopoverTrigger asChild>{feedTrigger}</PopoverTrigger>
       <PopoverContent
         align="end"
-        side="bottom"
+        side={chrome.mirrored ? 'top' : 'bottom'}
         sideOffset={12}
         data-comment-ui
         className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-80 rounded-xl border-2 p-2')}

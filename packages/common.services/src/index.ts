@@ -73,6 +73,7 @@ export {
   trackClassroomLimitReached,
   trackFileSizeLimitFromUploadError,
   trackProductLimitReached,
+  trackSubscriptionPaywallShown,
   trackUploadEvaluationLimit,
   type FileUploadAttempt,
   type ProductLimitObjectKind,

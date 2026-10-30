@@ -12,5 +12,7 @@ export { randomCursorData } from './utils/randomCursorData';
 export { checkImageUrl } from './utils/checkImageUrl';
 export { getCurrentBlock } from './utils/getCurrentBlock';
 
+export { CommentToggleButton } from './comments';
+
 export * from './const/codeEditorLanguages';
 export { editorEn, editorRu } from './locales';

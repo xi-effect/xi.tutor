@@ -1,20 +1,34 @@
 import { useEffect, useState } from 'react';
+import { electronCallOverlayDocument } from 'common.platform';
 import { containBox, type ContainBox } from './drawAnnotations';
+
+function documentsToSearch(): Document[] {
+  const overlay = electronCallOverlayDocument();
+  return overlay && overlay !== document ? [document, overlay] : [document];
+}
 
 /**
  * Screen-share tiles live in `@xipkg/calls-ui`, so overlays are attached
  * imperatively to the `<video>` element that carries the matching track.
+ * A track can be mounted more than once (thumbnail plus the main tile, or the
+ * always-on-top call window); the largest visible picture is the one on screen.
  */
 function findVideoElement(mediaStreamTrackId: string): HTMLVideoElement | null {
-  const videos = document.querySelectorAll('video');
-  for (const video of videos) {
-    const stream = video.srcObject;
-    if (!(stream instanceof MediaStream)) continue;
-    if (stream.getVideoTracks().some((track) => track.id === mediaStreamTrackId)) {
-      return video;
+  let best: HTMLVideoElement | null = null;
+  let bestArea = -1;
+  for (const root of documentsToSearch()) {
+    for (const video of root.querySelectorAll('video')) {
+      const stream = video.srcObject;
+      if (!(stream instanceof MediaStream)) continue;
+      if (!stream.getVideoTracks().some((track) => track.id === mediaStreamTrackId)) continue;
+      const area = Math.max(0, video.clientWidth) * Math.max(0, video.clientHeight);
+      if (area > bestArea) {
+        best = video;
+        bestArea = area;
+      }
     }
   }
-  return null;
+  return best;
 }
 
 export function useVideoElement(mediaStreamTrackId: string | undefined): HTMLVideoElement | null {

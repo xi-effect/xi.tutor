@@ -9,7 +9,8 @@ import {
 import { getLibraryFileDisplayName } from 'pages.materials';
 import { toast } from 'sonner';
 import i18n from 'i18next';
-import { tryStartUpload } from 'common.subscription';
+import { isCurrentUserTutor, tryStartUpload } from 'common.subscription';
+import { trackSubscriptionPaywallShown } from 'common.utils';
 import { insertAsset } from './uploadAsset';
 import { getPlanSizeLimitMessage } from './planUploadLimit';
 
@@ -69,6 +70,12 @@ export async function insertLibraryFileToBoard(
   const evaluation = tryStartUpload({ size: libraryFile.size_bytes }, kind);
   if (!evaluation.ok) {
     if (evaluation.reason === 'size') {
+      if (isCurrentUserTutor()) {
+        trackSubscriptionPaywallShown(
+          { limitType: 'file_size', currentPlan: evaluation.planId },
+          5000,
+        );
+      }
       toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {
         description: getPlanSizeLimitMessage(kind),
         duration: 5000,

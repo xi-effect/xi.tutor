@@ -1,6 +1,6 @@
 appId: ru.sovlium.electron.dev
-productName: Sovlium
-copyright: Copyright © Sovlium
+productName: sovlium
+copyright: Copyright © sovlium
 asar: true
 directories:
   output: release
@@ -31,13 +31,13 @@ mac:
   entitlements: resources/entitlements.mac.plist
   entitlementsInherit: resources/entitlements.mac.plist
   extendInfo:
-    NSCameraUsageDescription: Sovlium uses the camera for video lessons.
-    NSMicrophoneUsageDescription: Sovlium uses the microphone for video lessons.
-    NSScreenCaptureUsageDescription: Sovlium captures the screen when you share it in a lesson.
-    NSAudioCaptureUsageDescription: Sovlium records computer audio during a lesson.
-    NSUserNotificationsUsageDescription: Sovlium shows lesson and message notifications.
+    NSCameraUsageDescription: sovlium uses the camera for video lessons.
+    NSMicrophoneUsageDescription: sovlium uses the microphone for video lessons.
+    NSScreenCaptureUsageDescription: sovlium captures the screen when you share it in a lesson.
+    NSAudioCaptureUsageDescription: sovlium records computer audio during a lesson.
+    NSUserNotificationsUsageDescription: sovlium shows lesson and message notifications.
     CFBundleURLTypes:
-      - CFBundleURLName: Sovlium
+      - CFBundleURLName: sovlium
         CFBundleURLSchemes:
           - sovlium
   target:
@@ -65,8 +65,8 @@ nsis:
   perMachine: false
   allowToChangeInstallationDirectory: true
   deleteAppDataOnUninstall: false
-  shortcutName: Sovlium
-  uninstallDisplayName: Sovlium
+  shortcutName: sovlium
+  uninstallDisplayName: sovlium
   artifactName: ${productName}-Setup-${version}.${ext}
 publish:
   provider: github

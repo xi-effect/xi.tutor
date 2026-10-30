@@ -1,9 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from '@tanstack/react-router';
-import { USER_FLAG_KEYS, useCurrentUser, useDismissibleUserFlag } from 'common.services';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+import {
+  USER_FLAG_KEYS,
+  useCurrentSubscription,
+  useCurrentUser,
+  useDismissibleUserFlag,
+} from 'common.services';
+import { isSubscriptionPeriodActive, useSubscriptionUiStore } from 'common.subscription';
 import { isOnboardingSurfaceActive, subscribeOnboardingSurface } from 'common.ui';
 import { useCallStore } from 'modules.calls';
-import { PRODUCT_ANALYTICS_EVENTS, trackOnce, trackProductEvent } from 'common.utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  setSubscriptionAnalyticsSource,
+  trackOnce,
+  trackProductEvent,
+} from 'common.utils';
 import { SubscriptionReleaseNoteModal } from './SubscriptionReleaseNoteModal';
 
 /** Пауза после онбординга, чтобы новость не открывалась в тот же кадр. */
@@ -18,8 +29,17 @@ export const SubscriptionReleaseNoteHost = () => {
   const { data: user } = useCurrentUser();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const search = useSearch({ strict: false }) as { profile?: string };
+  const onSubscriptionSurface =
+    pathname.startsWith(PAYMENT_RESULT_PATH) ||
+    pathname.includes('/settings/subscription') ||
+    search.profile === 'subscription';
   const inCall = useCallStore((state) => Boolean(state.token));
-  const ready = isReadyTutor(user) && !inCall && !pathname.startsWith(PAYMENT_RESULT_PATH);
+  const ready = isReadyTutor(user) && !inCall && !onSubscriptionSurface;
+  const subscriptionQuery = useCurrentSubscription({ enabled: ready });
+  const hasActivePaidSubscription = isSubscriptionPeriodActive(
+    subscriptionQuery.data?.subscription.ends_at,
+  );
   const { visible, dismiss } = useDismissibleUserFlag(
     USER_FLAG_KEYS.SUBSCRIPTION_RELEASE_NOTE_DISMISSED,
     { enabled: ready },
@@ -70,7 +90,13 @@ export const SubscriptionReleaseNoteHost = () => {
     };
   }, [isNewRegistration, user?.id]);
 
-  const open = visible && ready && !closedThisVisit && !deferNews;
+  const open =
+    visible &&
+    ready &&
+    !closedThisVisit &&
+    !deferNews &&
+    (subscriptionQuery.isSuccess || subscriptionQuery.isError) &&
+    !hasActivePaidSubscription;
 
   useEffect(() => {
     if (!open || user?.id == null) return;
@@ -107,12 +133,15 @@ export const SubscriptionReleaseNoteHost = () => {
         setClosedThisVisit(true);
       }}
       onActivatePromo={() => {
+        setSubscriptionAnalyticsSource('announcement');
+        useSubscriptionUiStore.getState().setAnalyticsSource('announcement');
         setClosedThisVisit(true);
         void navigate({ to: '/', search: { profile: 'subscription' } });
       }}
       onArticleOpen={() => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.SUBSCRIPTION_ANNOUNCEMENT_ARTICLE_OPENED, {
           user_role: 'tutor',
+          source: 'announcement',
           onboarding_stage: user?.onboarding_stage,
         });
       }}

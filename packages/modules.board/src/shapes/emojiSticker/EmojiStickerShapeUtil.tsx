@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, HTMLContainer, Rectangle2d, T } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 
 import { EmojiStickerShape } from './EmojiStickerShape';
 import { EmojiStickerStyle } from '../shapeStyles';
@@ -12,6 +13,10 @@ export class EmojiStickerShapeUtil extends BaseBoxShapeUtil<EmojiStickerShape> {
     w: T.number,
     h: T.number,
   };
+
+  override getLodStyle() {
+    return cardLodStyle();
+  }
 
   override getDefaultProps() {
     return {

@@ -5,7 +5,6 @@ export const ONBOARDING_STEPS = [
   'email_confirmation',
   'profile',
   'role_selection',
-  'notifications',
   'training',
   'completed',
 ] as const satisfies readonly OnboardingStepName[];
@@ -14,7 +13,6 @@ const BACKEND_STAGE_TO_STEP: Record<string, OnboardingStepName> = {
   'email-confirmation': 'email_confirmation',
   'user-information': 'profile',
   'default-layout': 'role_selection',
-  notifications: 'notifications',
   training: 'training',
   completed: 'completed',
 };

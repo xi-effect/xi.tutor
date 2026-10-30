@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Button } from '@xipkg/button';
 import {
   formatRub,
@@ -9,6 +10,7 @@ import {
 } from 'common.subscription';
 import { useCurrentSubscription } from 'common.services';
 import { getAppLanguage, useAppTimeZone } from 'common.ui';
+import { toSubscriptionBillingPeriod, trackSubscriptionManagementOpened } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { formatRenewalDate } from '../utils/dates';
 import { CancelSubscriptionButton } from './CancelSubscriptionButton';
@@ -22,6 +24,19 @@ export const SubscriptionManage = () => {
   const { planId, tariff, isPlanError, refetchPlan } = useSubscriptionPlan();
   const subscriptionQuery = useCurrentSubscription();
   const openOverview = useSubscriptionUiStore((state) => state.openOverview);
+  const managementTracked = useRef(false);
+
+  useEffect(() => {
+    if (!planId || managementTracked.current) return;
+    if (!subscriptionQuery.isSuccess && !subscriptionQuery.isError) return;
+    managementTracked.current = true;
+    trackSubscriptionManagementOpened({
+      plan: planId,
+      billingPeriod: toSubscriptionBillingPeriod(
+        subscriptionQuery.data?.auto_renewal?.renewal_period,
+      ),
+    });
+  }, [planId, subscriptionQuery.data, subscriptionQuery.isError, subscriptionQuery.isSuccess]);
 
   const subscription = subscriptionQuery.data;
   const endsAt = subscription?.subscription.ends_at;

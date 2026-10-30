@@ -20,6 +20,7 @@ import {
 } from './libraryUpload';
 import { getFileTooLargeMessage, getImageUpgradeMessage } from 'features.subscription';
 import {
+  isCurrentUserTutor,
   isStorageQuotaReached,
   requestStorageLimitDialog,
   tryStartUpload,
@@ -30,6 +31,7 @@ import {
   rejectFileUploadFromEvaluation,
   trackFileSizeLimitFromUploadError,
   trackProductLimitReached,
+  trackSubscriptionPaywallShown,
   trackUploadEvaluationLimit,
   type FileUploadAttempt,
 } from 'common.utils';
@@ -240,6 +242,12 @@ export const useLibraryFileUploads = (open: boolean, classroomId?: string) => {
         if (!evaluation.ok) {
           trackUploadEvaluationLimit(evaluation, file, source);
           rejectFileUploadFromEvaluation(attempt, evaluation);
+          if (evaluation.reason === 'size' && isCurrentUserTutor()) {
+            trackSubscriptionPaywallShown(
+              { limitType: 'file_size', currentPlan: evaluation.planId },
+              5000,
+            );
+          }
         }
 
         if (!evaluation.ok && evaluation.reason === 'storage') {

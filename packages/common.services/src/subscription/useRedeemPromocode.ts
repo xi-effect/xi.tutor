@@ -1,4 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  mapSubscriptionPromoFailure,
+  markSubscriptionPeriodExtendedLocally,
+  trackSubscriptionPromoCodeApplied,
+  trackSubscriptionPromoCodeFailed,
+  trackSubscriptionPromoCodeSubmitted,
+} from 'common.utils';
 import { invalidateSubscriptionBilling } from './invalidateSubscriptionBilling';
 import { redeemPromocode } from './subscriptionApi';
 
@@ -7,6 +14,16 @@ export const useRedeemPromocode = () => {
 
   return useMutation({
     mutationFn: redeemPromocode,
-    onSuccess: () => invalidateSubscriptionBilling(queryClient),
+    onMutate: () => {
+      trackSubscriptionPromoCodeSubmitted();
+    },
+    onSuccess: () => {
+      markSubscriptionPeriodExtendedLocally();
+      trackSubscriptionPromoCodeApplied();
+      return invalidateSubscriptionBilling(queryClient);
+    },
+    onError: (error) => {
+      trackSubscriptionPromoCodeFailed(mapSubscriptionPromoFailure(error));
+    },
   });
 };

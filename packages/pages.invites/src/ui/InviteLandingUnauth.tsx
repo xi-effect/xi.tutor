@@ -66,7 +66,7 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
 
       <div className="flex flex-col justify-center gap-2">
         <Button
-          className="h-auto min-h-12 w-full rounded-xl whitespace-normal"
+          className="h-auto min-h-12 w-full rounded-xl py-3 leading-6 whitespace-normal"
           onClick={() => goToAuth('/signup')}
           data-umami-event="invite-signup"
         >

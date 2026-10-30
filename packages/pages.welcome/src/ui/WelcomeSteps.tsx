@@ -10,7 +10,7 @@ const colors = {
 export const WelcomeSteps = ({ step }: Pick<WelcomePageLayoutPropsT, 'step'>) => {
   return (
     <div className="xs:mt-16 mt-1 flex w-full flex-row items-start justify-between gap-4">
-      {[1, 2, 3].map((item) => (
+      {[1, 2].map((item) => (
         <div key={item} className={`${colors.default} h-1.5 w-full overflow-hidden rounded`}>
           <div
             className={cn(

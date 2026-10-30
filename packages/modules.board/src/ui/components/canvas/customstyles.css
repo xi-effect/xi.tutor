@@ -8,6 +8,18 @@
   z-index: var(--dr-layer-canvas-shapes);
 }
 
+/* Нотный стан темнее обычной линовки, как на нотной бумаге. */
+.dr-bg-staff-line {
+  stroke: hsl(220, 6%, 46%);
+  stroke-width: 1px;
+  fill: none;
+}
+
+.dr-theme__dark .dr-bg-staff-line,
+[data-theme='dark'] .dr-bg-staff-line {
+  stroke: hsl(0 0% 100% / 34%);
+}
+
 [data-board-control],
 [data-audio-control] {
   touch-action: manipulation;

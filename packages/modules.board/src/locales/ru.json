@@ -13,6 +13,7 @@
     "shapes": "Фигуры",
     "arrow": "Стрелка",
     "eraser": "Ластик",
+    "laser": "Указка",
     "frame": "Фрейм",
     "selectAll": "Выбрать все",
     "deselect": "Отменить выбор",
@@ -62,7 +63,9 @@
     "limitReachedTitle": "Место на доске закончилось",
     "limitReachedDesc": "Достигнут лимит в {{limit}} элементов.",
     "almostFullTitle": "Доска почти заполнена",
-    "almostFullDesc": "На доске уже {{count}} элементов из {{limit}}."
+    "almostFullDesc": "На доске уже {{count}} элементов из {{limit}}.",
+    "performanceNoticeTitle": "Много элементов на доске",
+    "performanceNoticeDesc": "При большом количестве элементов на слабых устройствах доска может работать медленнее."
   },
   "background": {
     "none": "Без фона",
@@ -70,6 +73,7 @@
     "grid": "Сетка",
     "hexGrid": "Гексагональная сетка",
     "lined": "Тетрадь в линию",
+    "staff": "Нотная бумага",
     "doubleLine": "Двойная линия",
     "doubleLineSlash": "Двойная линия с косой чертой",
     "checkered": "Тетрадь в клетку",
@@ -115,6 +119,7 @@
     "hand": "Рука",
     "pen": "Перо",
     "eraser": "Ластик",
+    "laser": "Указка",
     "text": "Текст",
     "shapes": "Фигуры",
     "arrow": "Стрелка",

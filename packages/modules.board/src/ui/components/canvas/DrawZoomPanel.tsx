@@ -11,6 +11,7 @@ import {
 } from '../../boardTheme';
 import { useTranslation } from 'react-i18next';
 import { BoardMinimap } from './BoardMinimap';
+import { useBoardChrome } from '../../useBoardChrome';
 
 const MINIMAP_STORAGE_KEY = 'board.minimap.open';
 
@@ -31,6 +32,7 @@ export const DrawZoomPanel = track(() => {
   const editor = useEditor();
   const resetZoomClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [minimapOpen, setMinimapOpen] = useState(readMinimapOpen);
+  const chrome = useBoardChrome();
 
   const toggleMinimap = () => {
     setMinimapOpen((open) => {
@@ -81,7 +83,11 @@ export const DrawZoomPanel = track(() => {
 
   return (
     <div
-      className={`absolute right-4 bottom-20 ${boardChromeZClass} flex flex-col items-end gap-2 sm:bottom-4`}
+      className={cn(
+        `absolute ${boardChromeZClass} flex items-end gap-2`,
+        chrome.mirrored ? 'top-4 flex-col-reverse' : 'bottom-20 flex-col sm:bottom-4',
+      )}
+      style={{ right: chrome.zoomRight }}
     >
       {minimapOpen && <BoardMinimap />}
       <div className={`${boardPanelClass} flex items-center justify-center gap-2 p-1`}>

@@ -182,7 +182,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
       <div className="flex flex-col justify-center gap-2">
         {errorVariant === 'not_found' ? null : (
           <Button
-            className="h-auto min-h-12 w-full rounded-xl whitespace-normal"
+            className="h-auto min-h-12 w-full rounded-xl py-3 leading-6 whitespace-normal"
             onClick={
               errorVariant === 'network' || errorVariant === 'generic' ? retryAccept : acceptInvite
             }

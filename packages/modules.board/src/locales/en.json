@@ -13,6 +13,7 @@
     "shapes": "Shapes",
     "arrow": "Arrow",
     "eraser": "Eraser",
+    "laser": "Laser pointer",
     "frame": "Frame",
     "selectAll": "Select all",
     "deselect": "Deselect",
@@ -62,7 +63,9 @@
     "limitReachedTitle": "Board is full",
     "limitReachedDesc": "The limit of {{limit}} elements has been reached.",
     "almostFullTitle": "Board is almost full",
-    "almostFullDesc": "The board already has {{count}} of {{limit}} elements."
+    "almostFullDesc": "The board already has {{count}} of {{limit}} elements.",
+    "performanceNoticeTitle": "Many elements on the board",
+    "performanceNoticeDesc": "With this many elements, the board may run slowly on less powerful devices."
   },
   "background": {
     "none": "None",
@@ -70,6 +73,7 @@
     "grid": "Grid",
     "hexGrid": "Hexagonal grid",
     "lined": "Lined notebook",
+    "staff": "Staff paper",
     "doubleLine": "Double line",
     "doubleLineSlash": "Double line with slash",
     "checkered": "Squared notebook",
@@ -115,6 +119,7 @@
     "hand": "Hand",
     "pen": "Pen",
     "eraser": "Eraser",
+    "laser": "Laser pointer",
     "text": "Text",
     "shapes": "Shapes",
     "arrow": "Arrow",

@@ -3,6 +3,7 @@ export { GB, getTariff, MB, TARIFFS, type PlanId, type TariffLimits } from './sr
 export {
   canCreateClassroom,
   evaluateUpload,
+  BOARD_ELEMENTS_PERFORMANCE_NOTICE,
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   getCurrentTariff,
@@ -28,6 +29,7 @@ export {
   formatRub,
 } from './src/format';
 export { getRemainingSubscriptionDays, isSubscriptionPeriodActive } from './src/period';
+export { readCachedPlanId } from './src/planCache';
 export { useSubscriptionStore } from './src/store';
 export {
   requestClassroomLimitDialog,

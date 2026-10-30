@@ -4,6 +4,7 @@ import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
+import { runWithoutHistory } from '../utils/runWithoutHistory';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
 import { toastBoardUploadError } from '../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
@@ -136,27 +137,33 @@ export async function insertImage(
       await waitForResolvedAssetUrl(src, token);
 
       if (!editor.getAsset(tempAssetId) || !editor.getShape(shapeId)) {
-        if (editor.getAsset(tempAssetId)) editor.deleteAssets([tempAssetId]);
+        if (editor.getAsset(tempAssetId)) {
+          runWithoutHistory(editor, () => {
+            editor.deleteAssets([tempAssetId]);
+          });
+        }
         return;
       }
 
       // Контракт персиста: только storage file id — см. utils/storedFileSrc.ts
-      editor.updateAssets([
-        {
-          id: tempAssetId,
-          type: 'image',
-          typeName: 'asset',
-          props: {
-            src,
-            w,
-            h,
-            mimeType: file.type,
-            name: file.name,
-            isAnimated: false,
+      runWithoutHistory(editor, () => {
+        editor.updateAssets([
+          {
+            id: tempAssetId,
+            type: 'image',
+            typeName: 'asset',
+            props: {
+              src,
+              w,
+              h,
+              mimeType: file.type,
+              name: file.name,
+              isAnimated: false,
+            },
+            meta: {},
           },
-          meta: {},
-        },
-      ]);
+        ]);
+      });
       attempt.succeed();
     } catch (err) {
       console.error('Image upload failed:', err);
@@ -169,8 +176,10 @@ export async function insertImage(
         failedTitleKey: 'toast.imageUploadError',
         failedDescKey: 'toast.imageUploadFailed',
       });
-      editor.deleteShapes([shapeId]);
-      editor.deleteAssets([tempAssetId]);
+      runWithoutHistory(editor, () => {
+        editor.deleteShapes([shapeId]);
+        editor.deleteAssets([tempAssetId]);
+      });
     }
   })();
 }

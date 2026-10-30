@@ -1,6 +1,10 @@
-import type { DrBoardBackgroundType, Editor } from '@ibodr/draw';
+import type { Editor } from '@ibodr/draw';
 import { useCallback, useEffect, useState } from 'react';
-import type { BoardBackgroundColorId, BoardColorAppearance } from '../config';
+import type {
+  BoardBackgroundColorId,
+  BoardBackgroundPattern,
+  BoardColorAppearance,
+} from '../config';
 import { applyBoardBackgroundToEditor, type BoardBackgroundState } from '../utils/boardBackground';
 import { useYjsContext } from '../providers/YjsProvider';
 
@@ -26,7 +30,7 @@ export function useBoardBackgroundState() {
   }, [boardBackgroundMap, getBoardBackground]);
 
   const updateBackgroundType = useCallback(
-    (type: DrBoardBackgroundType) => {
+    (type: BoardBackgroundPattern) => {
       setBoardBackgroundType(type);
     },
     [setBoardBackgroundType],

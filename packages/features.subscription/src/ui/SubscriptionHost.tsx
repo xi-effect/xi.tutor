@@ -1,23 +1,28 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import {
+  hasMonetizationOverride,
   setFileTooLargeMessage,
   setStorageWriteGuard,
   setTutorClassroomLimitHandler,
   setTutorStorageLimitHandler,
   useClassroomCounts,
   useCurrentPlan,
+  useCurrentSubscription,
   useCurrentUser,
+  useMonetizationDevStore,
   useStorageUsage,
 } from 'common.services';
 import {
   getFileTooLargeLimitMessage,
   isStorageQuotaReached,
   isSubscriptionDebugEnabled,
+  isSubscriptionPeriodActive,
   requestClassroomLimitDialog,
   requestStorageLimitDialog,
   useSubscriptionUiStore,
 } from 'common.subscription';
+import { observeSubscriptionLifecycle, toSubscriptionBillingPeriod } from 'common.utils';
 import { SubscriptionDebugPanel } from './SubscriptionDebugPanel';
 import { SubscriptionDialogs } from './SubscriptionDialogs';
 
@@ -32,9 +37,39 @@ export const SubscriptionHost = () => {
     (state) => state.consumeSettingsOpenRequest,
   );
 
-  useCurrentPlan();
+  const planQuery = useCurrentPlan();
+  const subscriptionQuery = useCurrentSubscription();
+  const monetizationOverride = useMonetizationDevStore((state) => state.override);
   useStorageUsage();
   useClassroomCounts();
+
+  useEffect(() => {
+    if (user?.default_layout !== 'tutor' || userId === null) return;
+    if (hasMonetizationOverride(monetizationOverride)) return;
+    if (!planQuery.isSuccess || !planQuery.data || !subscriptionQuery.isSuccess) return;
+
+    const subscription = subscriptionQuery.data;
+    observeSubscriptionLifecycle(
+      String(userId),
+      {
+        plan: planQuery.data.kind === 'pro' ? 'pro' : 'basic',
+        active: isSubscriptionPeriodActive(subscription?.subscription.ends_at),
+        endsAt: subscription?.subscription.ends_at ?? null,
+        billingPeriod: toSubscriptionBillingPeriod(subscription?.auto_renewal?.renewal_period),
+        autoRenew: Boolean(subscription?.auto_renewal),
+      },
+      { deferActivation: pathname.includes('/settings/subscription/payment-result') },
+    );
+  }, [
+    monetizationOverride,
+    pathname,
+    planQuery.data,
+    planQuery.isSuccess,
+    subscriptionQuery.data,
+    subscriptionQuery.isSuccess,
+    user?.default_layout,
+    userId,
+  ]);
 
   useEffect(() => {
     if (prevUserIdRef.current === userId) return;

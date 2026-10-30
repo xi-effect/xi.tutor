@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Button } from '@xipkg/button';
 import { Modal, ModalBody, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { cn } from '@xipkg/utils';
@@ -21,6 +22,12 @@ import {
   modalTitleClass,
 } from 'common.ui';
 import { useTranslation } from 'react-i18next';
+import {
+  subscriptionSourceForPaywall,
+  trackSubscriptionPaywallShown,
+  trackSubscriptionPaywallUpgradeClicked,
+  type SubscriptionPaywallLimitType,
+} from 'common.utils';
 
 type DialogId = Exclude<SubscriptionDialog, null>;
 
@@ -33,6 +40,13 @@ type DialogCopy = {
 
 const imageSize = (plan: PlanId) => formatMegabytes(getTariff(plan).maxImageBytes);
 
+const limitTypeForDialog = (dialog: DialogId): SubscriptionPaywallLimitType => {
+  if (dialog === 'classroom') return 'classrooms';
+  if (dialog === 'storage') return 'storage';
+  if (dialog === 'imageUpgrade') return 'file_size';
+  return 'other';
+};
+
 export const SubscriptionDialogs = () => {
   const { t } = useTranslation('subscription');
   const dialog = useSubscriptionUiStore((s) => s.dialog);
@@ -41,6 +55,20 @@ export const SubscriptionDialogs = () => {
   const { planId, tariff, isPro } = useSubscriptionPlan();
   const limits = tariff ?? (planId ? getTariff(planId) : null);
   const planName = planId ? t(`plans.${planId}`) : '';
+  const seenDialog = useRef<DialogId | null>(null);
+
+  useEffect(() => {
+    if (!dialog) {
+      seenDialog.current = null;
+      return;
+    }
+    if (!planId || seenDialog.current === dialog) return;
+    seenDialog.current = dialog;
+    trackSubscriptionPaywallShown({
+      limitType: limitTypeForDialog(dialog),
+      currentPlan: planId,
+    });
+  }, [dialog, planId]);
   const limitActions = {
     closeLabel: t('limits.close'),
     confirmLabel: t('limits.viewPro'),
@@ -108,7 +136,18 @@ export const SubscriptionDialogs = () => {
                 variant="primary"
                 size="m"
                 className={modalConfirmButtonClass}
-                onClick={() => openCompare(true)}
+                onClick={() => {
+                  if (!dialog) return;
+                  const limitType = limitTypeForDialog(dialog);
+                  trackSubscriptionPaywallUpgradeClicked({
+                    limitType,
+                    currentPlan: planId ?? undefined,
+                  });
+                  useSubscriptionUiStore
+                    .getState()
+                    .setAnalyticsSource(subscriptionSourceForPaywall(limitType));
+                  openCompare(true);
+                }}
               >
                 {copy?.confirmLabel}
               </Button>

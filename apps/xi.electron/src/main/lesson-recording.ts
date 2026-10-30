@@ -43,7 +43,7 @@ function asRecord(value: unknown): Record<string, unknown> {
 
 function safeName(name: string): string {
   const cleaned = name.replace(/[/\\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 180);
-  return cleaned || 'Sovlium lesson.webm';
+  return cleaned || 'sovlium lesson.webm';
 }
 
 function readBytes(value: unknown): Buffer | null {

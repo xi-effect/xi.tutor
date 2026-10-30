@@ -75,7 +75,7 @@ async function resolveLatestTag(): Promise<string | null> {
     const response = await fetch(releasesApiUrl(page), {
       headers: {
         Accept: 'application/vnd.github+json',
-        'User-Agent': 'Sovlium',
+        'User-Agent': 'sovlium',
       },
       signal: AbortSignal.timeout(20_000),
     });

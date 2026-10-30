@@ -9,6 +9,7 @@ import {
   isSubscriptionPeriodActive,
   TRIAL_PROMO_CODE,
   useSubscriptionPlan,
+  useSubscriptionUiStore,
 } from 'common.subscription';
 import {
   useClassroomCounts,
@@ -17,6 +18,11 @@ import {
   useStorageUsage,
 } from 'common.services';
 import { getAppLanguage, useAppTimeZone } from 'common.ui';
+import {
+  getSubscriptionAnalyticsSource,
+  isSubscriptionAnalyticsSource,
+  trackSubscriptionPricingViewed,
+} from 'common.utils';
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { getRenewalHoverDate } from '../utils/dates';
@@ -232,8 +238,22 @@ export const SubscriptionOverview = () => {
   useAppTimeZone();
   const { planId, tariff, isBasic, isPlanError, isPlanLoading, refetchPlan } =
     useSubscriptionPlan();
+  const analyticsSource = useSubscriptionUiStore((state) => state.analyticsSource);
   const subscriptionQuery = useCurrentSubscription({ enabled: !isPlanLoading && !isPlanError });
   const storageQuery = useStorageUsage();
+  const pricingTrackedKey = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!planId) return;
+    const stored = isSubscriptionAnalyticsSource(analyticsSource)
+      ? analyticsSource
+      : getSubscriptionAnalyticsSource();
+    const source = stored === 'other' ? 'settings' : stored;
+    const key = `${source}:${planId}`;
+    if (pricingTrackedKey.current === key) return;
+    pricingTrackedKey.current = key;
+    trackSubscriptionPricingViewed({ source, currentPlan: planId });
+  }, [analyticsSource, planId]);
 
   if (isPlanLoading || !planId || !tariff) {
     if (isPlanError) {

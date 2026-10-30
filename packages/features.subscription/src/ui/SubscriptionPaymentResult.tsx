@@ -9,8 +9,21 @@ import {
   invalidateSubscriptionBilling,
   useCurrentUser,
   useMonetizationDevStore,
+  getCurrentSubscription,
 } from 'common.services';
-import { isSubscriptionDebugEnabled, useSubscriptionUiStore } from 'common.subscription';
+import {
+  isSubscriptionDebugEnabled,
+  isSubscriptionPeriodActive,
+  useSubscriptionUiStore,
+} from 'common.subscription';
+import {
+  billingPeriodFromSubscriptionDays,
+  mapSubscriptionPaymentReturnResult,
+  markSubscriptionPeriodExtendedLocally,
+  trackOnce,
+  trackConfirmedSubscriptionActivation,
+  trackSubscriptionPaymentReturned,
+} from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { isConfirmationUrl } from '../pendingPayment';
 
@@ -40,6 +53,10 @@ const ResultBlock = ({
 );
 
 const resultButtonClass = 'h-12 w-full rounded-xl font-medium';
+const ACTIVATION_CHECK_ATTEMPTS = 4;
+const ACTIVATION_CHECK_INTERVAL_MS = 1000;
+
+const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 export const SubscriptionPaymentResult = () => {
   const { t } = useTranslation('subscription');
@@ -63,6 +80,13 @@ export const SubscriptionPaymentResult = () => {
       void navigate({ to: '/' });
     }
   }, [isTutor, isUserLoading, navigate, user]);
+
+  useEffect(() => {
+    if (preview || isUserLoading || !user || !isTutor || paymentId) return;
+    trackOnce('subscription_payment_returned:missing', () => {
+      trackSubscriptionPaymentReturned({ result: 'unknown', targetPlan: 'pro' });
+    });
+  }, [isTutor, isUserLoading, paymentId, preview, user]);
 
   useEffect(() => {
     if (preview) {
@@ -95,15 +119,43 @@ export const SubscriptionPaymentResult = () => {
         const status = getSubscriptionPaymentStatus(payment);
 
         if (status === 'success') {
+          const result = mapSubscriptionPaymentReturnResult(payment);
+          trackOnce(`subscription_payment_returned:${paymentId}:${result}`, () => {
+            trackSubscriptionPaymentReturned({
+              result,
+              targetPlan: 'pro',
+              subscriptionDays: payment.subscription_days,
+            });
+          });
           await invalidateSubscriptionBilling(queryClient);
           if (!cancelled) setPhase('success');
+
+          for (let attempt = 0; attempt < ACTIVATION_CHECK_ATTEMPTS && !cancelled; attempt += 1) {
+            const subscription = await getCurrentSubscription();
+            if (cancelled) return;
+            if (subscription && isSubscriptionPeriodActive(subscription.subscription.ends_at)) {
+              markSubscriptionPeriodExtendedLocally();
+              trackConfirmedSubscriptionActivation({
+                paymentId,
+                plan: subscription.subscription.plan_kind,
+                billingPeriod: billingPeriodFromSubscriptionDays(payment.subscription_days),
+              });
+              return;
+            }
+            await wait(ACTIVATION_CHECK_INTERVAL_MS);
+          }
           return;
         }
 
         if (status === 'cancelled') {
-          if (payment.cancellation_reason) {
-            console.debug('Subscription payment cancelled', payment.cancellation_reason);
-          }
+          const result = mapSubscriptionPaymentReturnResult(payment);
+          trackOnce(`subscription_payment_returned:${paymentId}:${result}`, () => {
+            trackSubscriptionPaymentReturned({
+              result,
+              targetPlan: 'pro',
+              subscriptionDays: payment.subscription_days,
+            });
+          });
           if (!cancelled) setPhase('cancelled');
           return;
         }
@@ -114,6 +166,9 @@ export const SubscriptionPaymentResult = () => {
           : null;
 
         if (attempts >= PAYMENT_CHECK_ATTEMPTS) {
+          trackOnce(`subscription_payment_returned:${paymentId}:pending`, () => {
+            trackSubscriptionPaymentReturned({ result: 'pending', targetPlan: 'pro' });
+          });
           showPending();
           return;
         }
@@ -121,13 +176,25 @@ export const SubscriptionPaymentResult = () => {
         if (cancelled) return;
 
         if (error instanceof SubscriptionPaymentLookupError) {
+          trackOnce(`subscription_payment_returned:${paymentId}:unknown`, () => {
+            trackSubscriptionPaymentReturned({ result: 'unknown', targetPlan: 'pro' });
+          });
           setPhase('error');
           return;
         }
 
         if (attempts >= PAYMENT_CHECK_ATTEMPTS) {
-          if (sawPending) showPending();
-          else setPhase('error');
+          if (sawPending) {
+            trackOnce(`subscription_payment_returned:${paymentId}:pending`, () => {
+              trackSubscriptionPaymentReturned({ result: 'pending', targetPlan: 'pro' });
+            });
+            showPending();
+          } else {
+            trackOnce(`subscription_payment_returned:${paymentId}:unknown`, () => {
+              trackSubscriptionPaymentReturned({ result: 'unknown', targetPlan: 'pro' });
+            });
+            setPhase('error');
+          }
           return;
         }
       }
