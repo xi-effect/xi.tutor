@@ -17,8 +17,9 @@ import { NavbarButton } from '../shared';
 import { boardDropdownZClass, boardMenuItemClass, boardMenuSurfaceClass } from '../../boardTheme';
 import { pickAndInsertComputerFiles } from '../../../utils/pickAndInsertComputerFiles';
 import { insertLibraryFileToBoard } from '../../../utils/insertLibraryFileToBoard';
-import { CloudFilesDrawer } from './CloudFilesDrawer';
+import { boardToolbarPopupSide, type BoardToolbarDock } from '../../../utils/boardToolbarDock';
 import { insertMathTaskToBoard } from '../../../utils/insertMathTaskToBoard';
+import { CloudFilesDrawer } from './CloudFilesDrawer';
 
 const MathBankDrawer = lazy(() =>
   import('./MathBankDrawer').then((module) => ({ default: module.MathBankDrawer })),
@@ -35,6 +36,7 @@ type AssetUploadControlProps = {
   editor: Editor;
   token: string;
   addToQueue: (request: Omit<RetryRequest, 'id' | 'timestamp'>) => void;
+  dock?: BoardToolbarDock;
 };
 
 export const AssetUploadControl = ({
@@ -44,6 +46,7 @@ export const AssetUploadControl = ({
   editor,
   token,
   addToQueue,
+  dock = 'bottom',
 }: AssetUploadControlProps) => {
   const { t } = useTranslation('board');
   const { data: user } = useCurrentUser();
@@ -113,7 +116,7 @@ export const AssetUploadControl = ({
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          side="top"
+          side={boardToolbarPopupSide(dock)}
           align="center"
           sideOffset={10}
           className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'min-w-52 rounded-2xl p-2')}

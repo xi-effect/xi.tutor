@@ -7,6 +7,7 @@
  * opener's MediaStreams — the same approach Discord uses for pop-outs.
  */
 
+import { getSovliumDesktop } from './electron';
 import { focusAppWindow } from './window';
 
 /** Must match `CALL_OVERLAY_FRAME_NAME` in apps/xi.electron/src/shared/constants.ts. */
@@ -134,7 +135,7 @@ function button(
 
 function prepareOverlay(popup: Window): void {
   const doc = popup.document;
-  doc.title = 'Звонок — Sovlium';
+  doc.title = 'Звонок — sovlium';
 
   if (!doc.getElementById(OVERLAY_STYLE_ID)) {
     const style = doc.createElement('style');
@@ -187,6 +188,19 @@ function requestWindow(options: PipRequestOptions = {}): Promise<Window> {
   }
 
   prepareOverlay(popup);
+  // Chromium's resizeTo paints a frameless Windows window black and can crash
+  // the GPU process. CompactView calls this when the chat opens.
+  const nativeResizeTo = popup.resizeTo.bind(popup);
+  popup.resizeTo = (width: number, height: number) => {
+    const resize = getSovliumDesktop()?.window.resizeCallOverlay;
+    if (!resize) {
+      nativeResizeTo(width, height);
+      return;
+    }
+    void resize({ width: Math.round(width), height: Math.round(height) }).catch(() => {
+      nativeResizeTo(width, height);
+    });
+  };
   overlay = popup;
   popup.addEventListener('pagehide', () => {
     if (overlay !== popup) return;
@@ -199,6 +213,11 @@ function requestWindow(options: PipRequestOptions = {}): Promise<Window> {
 
 export function isElectronCallOverlayOpen(): boolean {
   return activeOverlay() !== null;
+}
+
+/** Document of the always-on-top call window, when it is open. */
+export function electronCallOverlayDocument(): Document | null {
+  return activeOverlay()?.document ?? null;
 }
 
 export function closeElectronCallOverlay(): void {

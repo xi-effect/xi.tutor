@@ -44,9 +44,8 @@ import {
 } from '../utils/yjsStoreRecords';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
-import type { BoardBackgroundColorId } from '../config';
+import type { BoardBackgroundColorId, BoardBackgroundPattern } from '../config';
 import { parseBoardBackgroundFromYMap, type BoardBackgroundState } from '../utils/boardBackground';
-import type { DrBoardBackgroundType } from '@ibodr/draw';
 import i18n from 'i18next';
 
 type UseYjsStoreArgs = Partial<{
@@ -101,7 +100,7 @@ export type ExtendedStoreStatus = {
   /** Общий фон доски: type — паттерн, color — preset цвета */
   boardBackgroundMap: Y.Map<string>;
   getBoardBackground: () => BoardBackgroundState;
-  setBoardBackgroundType: (type: DrBoardBackgroundType) => void;
+  setBoardBackgroundType: (type: BoardBackgroundPattern) => void;
   setBoardBackgroundColor: (color: BoardBackgroundColorId) => void;
   /** Hocuspocus-провайдер (awareness — эфемерное состояние, не в персисте Y.Doc) */
   provider: HocuspocusProvider;
@@ -610,7 +609,10 @@ export function useYjsStore({
           defaultUserPreferences.name;
         const userColor = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);
 
-        setUserPreferences({ id: drawUserId, name: userName, color: userColor });
+        // id здесь сырой: с 0.2.7 getRecordId() сам добавляет префикс `user:`.
+        // Если положить уже готовый drawUserId, свой presence не совпадёт с текущим
+        // пользователем и доска нарисует собственный курсор.
+        setUserPreferences({ id: yClientId, name: userName, color: userColor });
 
         const $boardUser = computed<DrUser | null>('boardUser', () => {
           const prefs = getUserPreferences();
@@ -745,6 +747,28 @@ export function useYjsStore({
           rafId = requestAnimationFrame(flushRemotePresence);
         };
 
+        const prunePresencesNotInAwareness = () => {
+          const states = awareness.getStates() as Map<number, PresenceState>;
+          if (states.size === 0) return;
+
+          const live = new Set<string>([presenceId]);
+          for (const state of states.values()) {
+            const id = state?.presence?.id;
+            if (id) live.add(id);
+          }
+
+          const staleIds: DrInstancePresence['id'][] = [];
+          for (const record of store.allRecords()) {
+            if (record.typeName !== 'instance_presence') continue;
+            if (!live.has(record.id)) staleIds.push(record.id as DrInstancePresence['id']);
+          }
+          if (staleIds.length === 0) return;
+
+          store.mergeRemoteChanges(() => {
+            store.remove(staleIds);
+          });
+        };
+
         const onAwarenessChange = ({ added, updated, removed }: AwarenessChange) => {
           const states = awareness.getStates() as Map<number, PresenceState>;
 
@@ -771,9 +795,11 @@ export function useYjsStore({
           }
 
           scheduleFlushRemote();
+          if (added.length > 0 || removed.length > 0) prunePresencesNotInAwareness();
         };
 
         awareness.on('change', onAwarenessChange);
+        prunePresencesNotInAwareness();
         unsubs.push(() => awareness.off('change', onAwarenessChange));
 
         unsubs.push(() => {
@@ -971,7 +997,7 @@ export function useYjsStore({
   }, [boardBackgroundMap]);
 
   const setBoardBackgroundType = useCallback(
-    (type: DrBoardBackgroundType) => {
+    (type: BoardBackgroundPattern) => {
       yDoc.transact(() => {
         boardBackgroundMap.set('type', type);
       }, 'board-background');

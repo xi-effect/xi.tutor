@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 import {
   AUDIO_MIN_WIDTH,
   AUDIO_SHAPE_HEIGHT,
@@ -14,6 +15,10 @@ import { SVG_CARD, truncateForSvg } from '../../utils/shapeSvgExport';
 export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
   static override type = 'audio' as const;
   static override props = audioShapeProps;
+
+  override getLodStyle() {
+    return cardLodStyle();
+  }
 
   override getDefaultProps(): AudioShape['props'] {
     return {

@@ -115,6 +115,15 @@ export const useHotkeys = () => {
         return;
       }
 
+      if (code === 'KeyK' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
+        event.preventDefault();
+        resetToDefaults();
+        editor.setCurrentTool('laser');
+        setSelectedTool('laser');
+        return;
+      }
+
       if (code === 'KeyF' && !modKey && !shiftKey && !altKey) {
         if (deferToLabelEditOnType) return;
         event.preventDefault();

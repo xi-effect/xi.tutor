@@ -15,7 +15,11 @@ import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import { getMaxFileBytes, isStorageQuotaReached } from 'common.subscription';
 import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
+import { useBoardChrome } from '../../useBoardChrome';
+import { BoardToolPortal } from '../../boardToolLayer';
+import { ToolbarDockFrame } from './ToolbarDockFrame';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
+import { filterAllowedEmojis, isAllowedEmoji } from '../../../utils/allowedEmojis';
 import { stickers } from '../../../config';
 import { AssetUploadControl } from './AssetUploadControl';
 import { runWithoutHistory } from '../../../utils/runWithoutHistory';
@@ -28,6 +32,7 @@ const toolMapping: Record<string, string> = {
   geo: 'xi-geo',
   arrow: 'arrow',
   eraser: 'eraser',
+  laser: 'laser',
   sticker: 'note',
   frame: 'frame',
   emoji: 'emoji',
@@ -61,6 +66,7 @@ export const Navbar = track(({ token }: { token: string }) => {
   const [activePopup, setActivePopup] = React.useState<string | null>(null);
   const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
   const editor = useEditor();
+  const { wide, dock } = useBoardChrome();
   const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
   const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
   const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
@@ -71,6 +77,11 @@ export const Navbar = track(({ token }: { token: string }) => {
   }, [activePopup, resetToDefaults]);
 
   useCloseToolbarPanel(activePopup, closeToolbarPanel);
+
+  useEffect(() => {
+    setActivePopup(null);
+    setActivityPickerOpen(false);
+  }, [dock]);
 
   useEffect(() => {
     if (!isOnline) return;
@@ -172,6 +183,7 @@ export const Navbar = track(({ token }: { token: string }) => {
       'xi-geo': 'geo',
       arrow: 'arrow',
       eraser: 'eraser',
+      laser: 'laser',
       note: 'sticker',
       frame: 'frame',
       emoji: 'emoji',
@@ -198,6 +210,7 @@ export const Navbar = track(({ token }: { token: string }) => {
           editor={editor}
           token={token}
           addToQueue={addToQueue}
+          dock={dock}
         />
       );
     }
@@ -206,6 +219,7 @@ export const Navbar = track(({ token }: { token: string }) => {
       item.action === 'select' ||
       item.action === 'hand' ||
       item.action === 'eraser' ||
+      item.action === 'laser' ||
       item.action === 'text'
     ) {
       return (
@@ -259,59 +273,69 @@ export const Navbar = track(({ token }: { token: string }) => {
     return toolIndex >= 0 ? toolIndex : 0;
   })();
 
+  const optionsPanel = (
+    <ToolbarOptionsPanel
+      activePopup={activePopup}
+      dock={dock}
+      recentEmojis={filterAllowedEmojis(recentEmojis)}
+      stickers={stickers}
+      onEmojiSelect={(emoji) => {
+        if (!isAllowedEmoji(emoji)) return;
+        editor.setStyleForNextShapes(EmojiStyle, emoji);
+        addRecentEmoji(emoji);
+      }}
+      onEmojiStickerSelect={(sticker) => {
+        editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+        editor.setCurrentTool('emoji-sticker');
+        setActivePopup(null);
+      }}
+      onClose={closeToolbarPanel}
+    />
+  );
+
+  const desktopTools = toolbarSlides.map(({ key, node }) => (
+    <div key={key} className="shrink-0">
+      {node}
+    </div>
+  ));
+
   return (
-    <>
+    <BoardToolPortal>
       <ActivityPicker open={activityPickerOpen} onOpenChange={setActivityPickerOpen} />
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className={cn(
-            'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
-            boardChromeZClass,
-          )}
-        >
-          <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
-            <div
-              className={cn(
-                boardPanelClass,
-                'absolute -left-[115px] hidden p-1 sm:flex',
-                boardChromeZClass,
-              )}
-            >
-              <UndoRedo />
-            </div>
-            <div
-              data-board-toolbar-ui
-              className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
-            >
-              <ToolbarOptionsPanel
-                activePopup={activePopup}
-                recentEmojis={recentEmojis}
-                stickers={stickers}
-                onEmojiSelect={(emoji) => {
-                  editor.setStyleForNextShapes(EmojiStyle, emoji);
-                  addRecentEmoji(emoji);
-                }}
-                onEmojiStickerSelect={(sticker) => {
-                  editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
-                  editor.setCurrentTool('emoji-sticker');
-                  setActivePopup(null);
-                }}
-                onClose={closeToolbarPanel}
-              />
-              <div className="hidden items-center gap-1 p-1 sm:flex">
-                {toolbarSlides.map(({ key, node }) => (
-                  <div key={key} className="shrink-0">
-                    {node}
-                  </div>
-                ))}
+      {wide ? (
+        <ToolbarDockFrame dock={dock} options={optionsPanel} tools={desktopTools} />
+      ) : (
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className={cn(
+              'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
+              boardChromeZClass,
+            )}
+          >
+            <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
+              <div
+                className={cn(
+                  boardPanelClass,
+                  'absolute -left-[115px] hidden p-1 sm:flex',
+                  boardChromeZClass,
+                )}
+              >
+                <UndoRedo />
               </div>
-              <div className="p-1 sm:hidden">
-                <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+              <div
+                data-board-toolbar-ui
+                className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
+              >
+                {optionsPanel}
+                <div className="hidden items-center gap-1 p-1 sm:flex">{desktopTools}</div>
+                <div className="p-1 sm:hidden">
+                  <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </BoardToolPortal>
   );
 });

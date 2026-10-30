@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 import {
   getMathFigureDefaultProps,
   MathFigureShape,
@@ -15,6 +16,10 @@ export class MathFigureShapeUtil extends BaseBoxShapeUtil<MathFigureShape> {
 
   override getDefaultProps(): MathFigureShape['props'] {
     return getMathFigureDefaultProps('cube');
+  }
+
+  override getLodStyle() {
+    return cardLodStyle();
   }
 
   override canEdit() {

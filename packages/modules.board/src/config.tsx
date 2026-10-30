@@ -1,104 +1,47 @@
-import type { DrBoardBackgroundType } from '@ibodr/draw';
 import type { InputMode } from './store/useDrawStore';
 import { Cursor, Pen } from '@xipkg/icons';
 import i18n from 'i18next';
+import {
+  BOARD_BACKGROUND_COLOR_CHOICES,
+  BOARD_BACKGROUND_TYPE_CHOICES,
+  normalizeBoardBackgroundType,
+  type BoardBackgroundColorId,
+  type BoardBackgroundPattern,
+} from './utils/boardBackgroundCatalog';
 
-export const DEFAULT_BOARD_BACKGROUND_TYPE: DrBoardBackgroundType = 'dots';
-export const DEFAULT_BOARD_BACKGROUND_COLOR = 'white' as const;
+export {
+  DEFAULT_BOARD_BACKGROUND_COLOR,
+  DEFAULT_BOARD_BACKGROUND_TYPE,
+  STAFF_BOARD_BACKGROUND_TYPE,
+  isBoardBackgroundColorId,
+  isBoardBackgroundType,
+  type BoardBackgroundColorId,
+  type BoardBackgroundPattern,
+} from './utils/boardBackgroundCatalog';
 
-export type BoardBackgroundColorId = 'white' | 'gray' | 'cream' | 'green' | 'blue';
+export { normalizeBoardBackgroundType };
 
 const t = (key: string) => String(i18n.t(key, { ns: 'board' }));
 
 export const BOARD_BACKGROUND_TYPE_OPTIONS: {
-  value: DrBoardBackgroundType;
+  value: BoardBackgroundPattern;
   label: string;
-}[] = [
-  {
-    value: 'none',
-    get label() {
-      return t('background.none');
-    },
+}[] = BOARD_BACKGROUND_TYPE_CHOICES.map((choice) => ({
+  value: choice.value,
+  get label() {
+    return t(choice.labelKey);
   },
-  {
-    value: 'dots',
-    get label() {
-      return t('background.dots');
-    },
-  },
-  {
-    value: 'grid',
-    get label() {
-      return t('background.grid');
-    },
-  },
-  {
-    value: 'hex-grid',
-    get label() {
-      return t('background.hexGrid');
-    },
-  },
-  {
-    value: 'lined',
-    get label() {
-      return t('background.lined');
-    },
-  },
-  {
-    value: 'double-line',
-    get label() {
-      return t('background.doubleLine');
-    },
-  },
-  {
-    value: 'double-line-slash',
-    get label() {
-      return t('background.doubleLineSlash');
-    },
-  },
-  {
-    value: 'checkered',
-    get label() {
-      return t('background.checkered');
-    },
-  },
-];
+}));
 
 export const BOARD_BACKGROUND_COLOR_OPTIONS: {
   value: BoardBackgroundColorId;
   label: string;
-}[] = [
-  {
-    value: 'white',
-    get label() {
-      return t('background.white');
-    },
+}[] = BOARD_BACKGROUND_COLOR_CHOICES.map((choice) => ({
+  value: choice.value,
+  get label() {
+    return t(choice.labelKey);
   },
-  {
-    value: 'gray',
-    get label() {
-      return t('background.gray');
-    },
-  },
-  {
-    value: 'cream',
-    get label() {
-      return t('background.cream');
-    },
-  },
-  {
-    value: 'green',
-    get label() {
-      return t('background.green');
-    },
-  },
-  {
-    value: 'blue',
-    get label() {
-      return t('background.blue');
-    },
-  },
-];
+}));
 
 export const BOARD_BACKGROUND_COLOR_VALUES: Record<BoardBackgroundColorId, string> = {
   white: 'hsl(210, 20%, 98%)',
@@ -128,30 +71,7 @@ export function getBoardBackgroundColorValue(
     : BOARD_BACKGROUND_COLOR_VALUES[color];
 }
 
-const BOARD_BACKGROUND_TYPE_SET = new Set<DrBoardBackgroundType>(
-  BOARD_BACKGROUND_TYPE_OPTIONS.map(({ value }) => value),
-);
-
-const BOARD_BACKGROUND_COLOR_SET = new Set<BoardBackgroundColorId>(
-  BOARD_BACKGROUND_COLOR_OPTIONS.map(({ value }) => value),
-);
-
-export function isBoardBackgroundType(value: unknown): value is DrBoardBackgroundType {
-  return typeof value === 'string' && BOARD_BACKGROUND_TYPE_SET.has(value as DrBoardBackgroundType);
-}
-
-export function isBoardBackgroundColorId(value: unknown): value is BoardBackgroundColorId {
-  return (
-    typeof value === 'string' && BOARD_BACKGROUND_COLOR_SET.has(value as BoardBackgroundColorId)
-  );
-}
-
-export function normalizeBoardBackgroundType(type: unknown): DrBoardBackgroundType {
-  if (isBoardBackgroundType(type)) return type;
-  return DEFAULT_BOARD_BACKGROUND_TYPE;
-}
-
-export function getBoardBackgroundTypeLabel(type: DrBoardBackgroundType): string {
+export function getBoardBackgroundTypeLabel(type: BoardBackgroundPattern): string {
   return (
     BOARD_BACKGROUND_TYPE_OPTIONS.find(({ value }) => value === normalizeBoardBackgroundType(type))
       ?.label ?? type

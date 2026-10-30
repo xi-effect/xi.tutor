@@ -3,6 +3,7 @@ export { GB, getTariff, MB, TARIFFS, type PlanId, type TariffLimits } from './sr
 export {
   canCreateClassroom,
   evaluateUpload,
+  BOARD_ELEMENTS_PERFORMANCE_NOTICE,
   getBoardElementsLimit,
   getBoardElementsWarningThreshold,
   getCurrentTariff,

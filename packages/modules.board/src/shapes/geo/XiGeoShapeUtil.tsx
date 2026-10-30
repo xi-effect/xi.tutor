@@ -12,6 +12,7 @@ import {
   T,
   DrGeoShape,
 } from '@ibodr/draw';
+import { resolveLodStyle } from '../../utils/resolveLodStyle';
 import { BorderColorStyle } from '../shapeStyles';
 import { XiGeoComponent } from './XiGeoComponent';
 import type { XiGeoShape } from './type';
@@ -52,6 +53,10 @@ export class XiGeoShapeUtil extends GeoShapeUtil {
       borderColor: 'black',
       text: '',
     };
+  }
+
+  override getLodStyle(shape: DrGeoShape) {
+    return resolveLodStyle(super.getLodStyle(shape));
   }
 
   override component(shape: DrGeoShape) {

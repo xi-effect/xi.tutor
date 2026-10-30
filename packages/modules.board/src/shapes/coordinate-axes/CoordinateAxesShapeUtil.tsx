@@ -1,4 +1,5 @@
 import { BaseBoxShapeUtil, DrResizeInfo, resizeBox } from '@ibodr/draw';
+import { cardLodStyle } from '../../utils/resolveLodStyle';
 import {
   COORDINATE_AXES_DEFAULT_HEIGHT,
   COORDINATE_AXES_DEFAULT_WIDTH,
@@ -12,6 +13,10 @@ import { buildCoordinateAxesSvgProps, CoordinateAxesSvgContent } from './Coordin
 export class CoordinateAxesShapeUtil extends BaseBoxShapeUtil<CoordinateAxesShape> {
   static override type = 'coordinate-axes' as const;
   static override props = coordinateAxesShapeProps;
+
+  override getLodStyle() {
+    return cardLodStyle('var(--xi-gray-0)');
+  }
 
   override getDefaultProps(): CoordinateAxesShape['props'] {
     return {

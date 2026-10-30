@@ -14,6 +14,7 @@ import {
   normalizeRecordForYjsPersistence,
 } from './yjsStoreRecords';
 import { pruneBoardRecordsForPersistence } from './boardAssetHygiene';
+import { writePreferredBoardBackground } from './preferredBoardBackground';
 
 type HydrateBoardStoreArgs = {
   store: DrStore;
@@ -47,6 +48,7 @@ export function hydrateBoardStoreFromYjs({
       }
       meta.set('schema', docSnapshot.schema);
       meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
+      writePreferredBoardBackground(yDoc);
     }, 'init');
 
     return 'seeded';

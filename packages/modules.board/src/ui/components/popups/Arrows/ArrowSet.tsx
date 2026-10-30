@@ -40,7 +40,13 @@ const optionClass = (active: boolean) =>
     active ? 'border-border-focus' : 'border-transparent',
   );
 
-export const ArrowSet = ({ className }: { className?: string }) => {
+export const ArrowSet = ({
+  className,
+  vertical = false,
+}: {
+  className?: string;
+  vertical?: boolean;
+}) => {
   const { t } = useTranslation('board');
   const editor = useEditor();
   const start = useValue(
@@ -63,7 +69,8 @@ export const ArrowSet = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        'border-border-default bg-background-surface flex w-max max-w-full flex-wrap items-center gap-1 rounded-xl border p-1 shadow-none',
+        'border-border-default bg-background-surface flex w-max max-w-full items-center gap-1 rounded-xl border p-1 shadow-none',
+        vertical ? 'flex-col' : 'flex-wrap',
         className,
       )}
     >
@@ -84,7 +91,7 @@ export const ArrowSet = ({ className }: { className?: string }) => {
         <ArrowDouble />
       </button>
 
-      <span className="w-2 shrink-0" aria-hidden />
+      <span className={cn('shrink-0', vertical ? 'h-2' : 'w-2')} aria-hidden />
 
       {lineStyles.map((style) => {
         const Icon = LINE_ICONS[style];

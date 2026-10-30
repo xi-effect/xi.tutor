@@ -1,6 +1,5 @@
 import { Fragment, useCallback, useLayoutEffect, useRef } from 'react';
 import {
-  DrawUiTooltip,
   getDisplayValues,
   NoteShapeUtil,
   renderPlaintextFromRichText,
@@ -29,7 +28,8 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
   const editor = useEditor();
   const containerRef = useRef<HTMLDivElement>(null);
   const { id, type, props } = shape;
-  const { scale, richText, fontSizeAdjustment, textFirstEditedBy } = props;
+  const { scale, richText, fontSizeAdjustment, textLastEditedBy } = props;
+  const fittedTextRef = useRef<typeof richText | null>(null);
 
   const rotation = useValue(
     'shape rotation',
@@ -96,6 +96,14 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
     const limits = getStickerTextLimits(dv.noteWidth, dv.noteHeight, dv.labelPadding);
     const renderedPx = Math.round((fontSizeAdjustment ?? 1) * dv.labelFontSize);
 
+    // Кегль уже лежит в документе. Повторный scrollHeight на каждой фигурке
+    // при открытии доски — это тысячи синхронных layout.
+    if (fontSizeAdjustment != null && fittedTextRef.current === null) {
+      fittedTextRef.current = richText;
+      return;
+    }
+    if (fittedTextRef.current === richText && fontSizeAdjustment != null) return;
+
     const commit = (px: number, growY: number) => {
       if (px === renderedPx && Math.abs(growY - shape.props.growY) <= 1) return;
       if (dv.labelFontSize <= 0) return;
@@ -117,6 +125,7 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
 
     if (isEmpty && !isEditing) {
       commit(preferredFontSize, 0);
+      fittedTextRef.current = richText;
       return;
     }
 
@@ -125,11 +134,65 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
     const content = root?.querySelector(
       '.dr-text.tl-text-content .dr-rich-text',
     ) as HTMLElement | null;
-    if (!inner || !content) return;
+    const label = inner?.closest('.dr-text-label') as HTMLElement | null;
+    if (!root || !inner || !content) return;
 
-    const previousFontSize = inner.style.fontSize;
+    const previous = {
+      rootHeight: root.style.height,
+      rootOverflow: root.style.overflow,
+      labelPosition: label?.style.position ?? '',
+      labelInset: label?.style.inset ?? '',
+      labelHeight: label?.style.height ?? '',
+      labelMaxHeight: label?.style.maxHeight ?? '',
+      innerFontSize: inner.style.fontSize,
+      innerLineHeight: inner.style.lineHeight,
+      innerHeight: inner.style.height,
+      innerMaxHeight: inner.style.maxHeight,
+      contentHeight: content.style.height,
+      contentMaxHeight: content.style.maxHeight,
+      contentOverflow: content.style.overflow,
+    };
+
+    // Контейнер стикера фиксированной высоты с overflow: hidden, а line-height
+    // с 0.2.7 задан в пикселях и не следует за font-size. Иначе scrollHeight
+    // равен уже обрезанной коробке: кегль не уменьшается и стикер не растёт.
+    const release = () => {
+      root.style.height = 'auto';
+      root.style.overflow = 'visible';
+      if (label) {
+        label.style.position = 'relative';
+        label.style.inset = 'auto';
+        label.style.height = 'auto';
+        label.style.maxHeight = 'none';
+      }
+      inner.style.height = 'auto';
+      inner.style.maxHeight = 'none';
+      content.style.height = 'auto';
+      content.style.maxHeight = 'none';
+      content.style.overflow = 'visible';
+    };
+    const restore = () => {
+      root.style.height = previous.rootHeight;
+      root.style.overflow = previous.rootOverflow;
+      if (label) {
+        label.style.position = previous.labelPosition;
+        label.style.inset = previous.labelInset;
+        label.style.height = previous.labelHeight;
+        label.style.maxHeight = previous.labelMaxHeight;
+      }
+      inner.style.fontSize = previous.innerFontSize;
+      inner.style.lineHeight = previous.innerLineHeight;
+      inner.style.height = previous.innerHeight;
+      inner.style.maxHeight = previous.innerMaxHeight;
+      content.style.height = previous.contentHeight;
+      content.style.maxHeight = previous.contentMaxHeight;
+      content.style.overflow = previous.contentOverflow;
+    };
+
     const measure = (px: number) => {
       inner.style.fontSize = `${px}px`;
+      inner.style.lineHeight = `${Math.round(px * dv.labelLineHeight)}px`;
+      release();
       return content.scrollHeight;
     };
 
@@ -141,13 +204,16 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
         measure,
       });
     } finally {
-      inner.style.fontSize = previousFontSize;
+      restore();
     }
+
+    if (fitted.contentHeight <= 0) return;
 
     commit(
       fitted.px,
       stickerGrowYForContent(fitted.contentHeight, dv.labelPadding, dv.noteHeight, limits.maxGrowY),
     );
+    fittedTextRef.current = richText;
   }, [
     editor,
     id,
@@ -158,6 +224,7 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
     preferredFontSize,
     textAlign,
     dv.labelFontSize,
+    dv.labelLineHeight,
     dv.labelPadding,
     dv.noteWidth,
     dv.noteHeight,
@@ -171,13 +238,14 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
   const attribution = useValue(
     'attribution',
     () => {
-      if (!textFirstEditedBy || isEmpty) return null;
-      const name = editor.getAttributionDisplayName(textFirstEditedBy);
+      if (!textLastEditedBy || isEmpty) return null;
+      const name = editor.getAttributionDisplayName(textLastEditedBy);
       if (!name) return null;
       return { short: name.split(' ')[0], full: name };
     },
-    [textFirstEditedBy, isEmpty, editor],
+    [textLastEditedBy, isEmpty, editor],
   );
+  const NoteShapeAttribution = util.options.AttributionComponent;
 
   const showRichTextLabel = !isEmpty || isReadyForEditing || isEditing;
   const showEmptyCaret = isSelected && isEmpty && !isEditing;
@@ -199,20 +267,15 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
           boxShadow: hideShadows ? 'none' : getStickerNoteShadow(scale, rotation),
         }}
       >
-        {attribution && (
-          <DrawUiTooltip content={attribution.full} side="bottom">
-            <div
-              className="dr-note__attribution"
-              style={{
-                ['--note-attribution-scale' as string]: scale,
-                fontSize: 11 * scale,
-                color: dv.labelColor,
-                opacity: 0.6,
-              }}
-            >
-              {attribution.short}
-            </div>
-          </DrawUiTooltip>
+        {attribution && NoteShapeAttribution && (
+          <NoteShapeAttribution
+            shape={shape}
+            name={attribution.full}
+            firstName={attribution.short}
+            color={dv.labelColor}
+            scale={scale}
+            variant="canvas"
+          />
         )}
         {showEmptyCaret && (
           <EmptyLabelCaret

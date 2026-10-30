@@ -1,4 +1,4 @@
-import type { DrBoardBackgroundType, Editor } from '@ibodr/draw';
+import type { Editor } from '@ibodr/draw';
 import * as Y from 'yjs';
 import {
   DEFAULT_BOARD_BACKGROUND_COLOR,
@@ -6,12 +6,14 @@ import {
   getBoardBackgroundColorValue,
   isBoardBackgroundColorId,
   normalizeBoardBackgroundType,
+  STAFF_BOARD_BACKGROUND_TYPE,
   type BoardBackgroundColorId,
+  type BoardBackgroundPattern,
   type BoardColorAppearance,
 } from '../config';
 
 export type BoardBackgroundState = {
-  type: DrBoardBackgroundType;
+  type: BoardBackgroundPattern;
   color: BoardBackgroundColorId;
 };
 
@@ -36,11 +38,13 @@ export function applyBoardBackgroundToEditor(
   appearance: BoardColorAppearance = 'light',
 ) {
   const type = normalizeBoardBackgroundType(background.type);
+  const isStaff = type === STAFF_BOARD_BACKGROUND_TYPE;
 
-  // При backgroundType === 'none' draw показывает DefaultGrid, если isGridMode включён.
+  // Нотный стан не входит в enum ядра: узор рисует наш Background, а редактору
+  // отдаём пустой фон без точечной сетки.
   editor.updateInstanceState({
-    backgroundType: type,
-    isGridMode: type !== 'none',
+    backgroundType: isStaff ? 'none' : type,
+    isGridMode: !isStaff && type !== 'none',
   });
 
   const backgroundColor = getBoardBackgroundColorValue(background.color, appearance);
