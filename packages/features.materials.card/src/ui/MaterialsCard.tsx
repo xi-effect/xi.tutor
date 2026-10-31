@@ -98,7 +98,16 @@ export const MaterialsCard = ({
 
   const handleDuplicate = () => {
     if (!onDuplicate) return;
-    onDuplicate(id);
+
+    const parsedClassroomId = classroomId == null ? null : Number(classroomId);
+
+    onDuplicate({
+      id,
+      name,
+      contentKind: content_kind,
+      sourceClassroomId:
+        parsedClassroomId != null && Number.isFinite(parsedClassroomId) ? parsedClassroomId : null,
+    });
   };
 
   const handleAccessModeUpdate = (newMode: AccessModeT) => {

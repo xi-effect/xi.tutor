@@ -1,9 +1,16 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useRef, useState, ReactNode } from 'react';
+
+type MaterialDuplicateTarget = {
+  id: string;
+  name?: string;
+  contentKind: 'note' | 'board';
+  sourceClassroomId?: number | null;
+};
 
 type MaterialsDuplicateContextType = {
-  materialId: string | null;
+  target: MaterialDuplicateTarget | null;
   open: boolean;
-  openModal: (materialId: string) => void;
+  openModal: (target: MaterialDuplicateTarget) => void;
   closeModal: () => void;
 };
 
@@ -12,24 +19,35 @@ const MaterialsDuplicateContext = createContext<MaterialsDuplicateContextType | 
 );
 
 export const MaterialsDuplicateProvider = ({ children }: { children: ReactNode }) => {
-  const [materialId, setMaterialId] = useState<string | null>(null);
+  const [target, setTarget] = useState<MaterialDuplicateTarget | null>(null);
   const [open, setOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const openModal = (id: string) => {
-    setMaterialId(id);
+  const openModal = (nextTarget: MaterialDuplicateTarget) => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+
+    setTarget(nextTarget);
     setOpen(true);
   };
 
   const closeModal = () => {
     setOpen(false);
-    // Очищаем materialId после закрытия модалки (небольшая задержка для плавности)
-    setTimeout(() => {
-      setMaterialId(null);
+
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+    }
+
+    closeTimer.current = setTimeout(() => {
+      setTarget(null);
+      closeTimer.current = null;
     }, 200);
   };
 
   return (
-    <MaterialsDuplicateContext.Provider value={{ materialId, open, openModal, closeModal }}>
+    <MaterialsDuplicateContext.Provider value={{ target, open, openModal, closeModal }}>
       {children}
     </MaterialsDuplicateContext.Provider>
   );

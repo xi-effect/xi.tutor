@@ -12,6 +12,8 @@
   "error": "Failed to load classrooms",
   "emptyTitle": "Nothing here yet",
   "emptyDescription": "Create classrooms by inviting students to the platform",
+  "emptyOtherTitle": "No other classrooms yet",
+  "emptyOtherDescription": "Create another classroom to duplicate this material",
   "accessLabel": "What the student can do",
   "accessPlaceholder": "Choose student access",
   "access": {

@@ -15,7 +15,7 @@ import {
   useGetMaterial,
   useDuplicateMaterial,
 } from 'common.services';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { cn } from '@xipkg/utils';
@@ -40,6 +40,9 @@ type MaterialsDuplicateProps = {
   materialId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  materialName?: string;
+  contentKind?: 'note' | 'board';
+  excludeClassroomId?: number | null;
 };
 
 type ClassroomCardProps = {
@@ -54,6 +57,7 @@ type ClassroomsListProps = {
   classrooms: ClassroomT[] | undefined;
   selectedClassroomId: number | null;
   onClassroomSelect: (classroomId: number) => void;
+  emptyVariant?: 'default' | 'noOther';
 };
 
 const ClassroomsList = ({
@@ -62,6 +66,7 @@ const ClassroomsList = ({
   classrooms,
   selectedClassroomId,
   onClassroomSelect,
+  emptyVariant = 'default',
 }: ClassroomsListProps) => {
   const { t } = useTranslation('materialsDuplicate');
 
@@ -82,12 +87,14 @@ const ClassroomsList = ({
   }
 
   if (!classrooms || classrooms.length === 0) {
+    const titleKey = emptyVariant === 'noOther' ? 'emptyOtherTitle' : 'emptyTitle';
+    const descriptionKey =
+      emptyVariant === 'noOther' ? 'emptyOtherDescription' : 'emptyDescription';
+
     return (
       <div className="flex h-[300px] w-full flex-col items-center justify-center gap-2">
-        <p className="text-m-base text-text-secondary w-full text-center">{t('emptyTitle')}</p>
-        <p className="text-m-base text-text-secondary w-full text-center">
-          {t('emptyDescription')}
-        </p>
+        <p className="text-m-base text-text-secondary w-full text-center">{t(titleKey)}</p>
+        <p className="text-m-base text-text-secondary w-full text-center">{t(descriptionKey)}</p>
       </div>
     );
   }
@@ -153,14 +160,24 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
   );
 };
 
-export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: MaterialsDuplicateProps) => {
+export const MaterialsDuplicate = ({
+  materialId,
+  open,
+  onOpenChange,
+  materialName,
+  contentKind,
+  excludeClassroomId = null,
+}: MaterialsDuplicateProps) => {
   const { t } = useTranslation('materialsDuplicate');
   const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
   const [studentAccessMode, setStudentAccessMode] = useState<AccessModeT>('read_write');
 
-  const { data: material, isLoading: isMaterialLoading } = useGetMaterial({
+  const excludedClassroomId =
+    excludeClassroomId != null && Number.isFinite(excludeClassroomId) ? excludeClassroomId : null;
+
+  const { data: material } = useGetMaterial({
     id: materialId,
-    disabled: !open || !materialId,
+    disabled: !open || !materialId || contentKind != null,
   });
 
   const { duplicateMaterial } = useDuplicateMaterial();
@@ -177,24 +194,35 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
     limit: 100,
   });
 
+  const visibleClassrooms = useMemo(() => {
+    if (!classrooms || excludedClassroomId == null) {
+      return classrooms;
+    }
+
+    return classrooms.filter((classroom) => Number(classroom.id) !== excludedClassroomId);
+  }, [classrooms, excludedClassroomId]);
+
+  const resolvedKind = material?.content_kind ?? contentKind;
+  const resolvedName = material?.name ?? materialName;
+
   const getMaterialTypeLabel = () => {
-    if (!material) return t('type.material');
-    return material.content_kind === 'board' ? t('type.board') : t('type.note');
+    if (!resolvedKind) return t('type.material');
+    return resolvedKind === 'board' ? t('type.board') : t('type.note');
   };
 
   const getModalTitle = () => {
-    if (isMaterialLoading || !material) {
+    if (!resolvedKind) {
       return t('title');
     }
-    return material.content_kind === 'board' ? t('titleBoard') : t('titleNote');
+    return resolvedKind === 'board' ? t('titleBoard') : t('titleNote');
   };
 
   const handleConfirm = () => {
-    if (selectedClassroomId) {
+    if (selectedClassroomId && selectedClassroomId !== excludedClassroomId) {
       duplicateMaterial.mutate(
         {
           classroomId: selectedClassroomId.toString(),
-          ...(material?.name ? { name: material.name } : {}),
+          ...(resolvedName ? { name: resolvedName } : {}),
           student_access_mode: studentAccessMode,
           source_id: materialId,
         },
@@ -232,9 +260,10 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
           <ClassroomsList
             isLoading={isLoading}
             isError={isError}
-            classrooms={classrooms}
+            classrooms={visibleClassrooms}
             selectedClassroomId={selectedClassroomId}
             onClassroomSelect={handleClassroomSelect}
+            emptyVariant={excludedClassroomId != null ? 'noOther' : 'default'}
           />
         </div>
         <ModalFooter className="border-border-default flex flex-col gap-4 border-t">

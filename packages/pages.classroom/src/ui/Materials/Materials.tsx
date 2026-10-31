@@ -15,7 +15,12 @@ import { LibraryTagsUiProvider } from 'features.tags';
 import { useTranslation } from 'react-i18next';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 import { isClassroomOnPause } from 'common.api';
-import { FilesFilteredEmpty, FilesTagsFilter, type FilesTagOptionT } from 'pages.materials';
+import {
+  FilesFilteredEmpty,
+  FilesTagsFilter,
+  useMaterialsDuplicate,
+  type FilesTagOptionT,
+} from 'pages.materials';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
@@ -58,6 +63,7 @@ const ClassroomMaterialsGallery = ({
     isError: isClassroomError,
   } = useGetClassroom(Number(classroomId));
 
+  const { openModal } = useMaterialsDuplicate();
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const isPaused = isClassroomOnPause(classroom?.status);
@@ -151,7 +157,12 @@ const ClassroomMaterialsGallery = ({
             maxColumns={4}
             isSingleColumn={isMobile}
             renderItem={(material) => (
-              <MaterialsCard {...material} layout="gallery" className="w-full" />
+              <MaterialsCard
+                {...material}
+                onDuplicate={openModal}
+                layout="gallery"
+                className="w-full"
+              />
             )}
           />
         )}

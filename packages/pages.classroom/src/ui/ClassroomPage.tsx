@@ -2,11 +2,12 @@ import { cn, useMediaQuery } from '@xipkg/utils';
 import { useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import { NotFoundPage } from 'common.ui';
+import { MaterialsDuplicateModal, MaterialsDuplicateProvider } from 'pages.materials';
 import { Header } from './Header';
 import { Tabs } from './Tabs';
 import { ClassroomScheduleRoot } from './Calendar/ClassroomScheduleRoot';
 
-export const ClassroomPage = () => {
+const ClassroomPageContent = () => {
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { classroomId } = useParams({ strict: false });
   const classroomIdNum = Number(classroomId);
@@ -37,6 +38,13 @@ export const ClassroomPage = () => {
         <Header />
         <Tabs />
       </div>
+      <MaterialsDuplicateModal />
     </ClassroomScheduleRoot>
   );
 };
+
+export const ClassroomPage = () => (
+  <MaterialsDuplicateProvider>
+    <ClassroomPageContent />
+  </MaterialsDuplicateProvider>
+);

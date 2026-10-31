@@ -5,12 +5,9 @@ import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
 import { useCurrentUser } from 'common.services';
 import { NotFoundPage } from 'common.ui';
-import {
-  MaterialsDuplicateProvider,
-  useMaterialsDuplicate,
-} from '../provider/MaterialsDuplicateContext';
+import { MaterialsDuplicateProvider } from '../provider/MaterialsDuplicateContext';
 import { LibraryTagsUiProvider, useLibraryTags } from 'features.tags';
-import { MaterialsDuplicate } from 'features.materials.duplicate';
+import { MaterialsDuplicateModal } from './MaterialsDuplicateModal';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import {
   MaterialScopeFilterT,
@@ -93,7 +90,6 @@ const MaterialsPageContent = () => {
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const { materialId, open, closeModal } = useMaterialsDuplicate();
   const { tags, isFetched } = useLibraryTags();
 
   useEffect(() => {
@@ -214,17 +210,7 @@ const MaterialsPageContent = () => {
 
       <MobileTutorActionButton variant="materials" />
 
-      {materialId !== null && (
-        <MaterialsDuplicate
-          materialId={materialId}
-          open={open}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) {
-              closeModal();
-            }
-          }}
-        />
-      )}
+      <MaterialsDuplicateModal />
     </>
   );
 };

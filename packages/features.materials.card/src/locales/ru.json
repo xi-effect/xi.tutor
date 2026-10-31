@@ -29,6 +29,7 @@
   "menu": {
     "changeAccess": "Доступ для ученика",
     "duplicateToClassroom": "Дублировать в кабинет",
+    "duplicateToAnotherClassroom": "Дублировать в другой кабинет",
     "editTags": "Изменить теги",
     "rename": "Переименовать",
     "delete": "Удалить"
