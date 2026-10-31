@@ -11,7 +11,7 @@ export class PresentationShapeUtil extends BaseBoxShapeUtil<PresentationShape> {
   static override type = 'presentation' as const;
 
   override getLodStyle() {
-    return cardLodStyle();
+    return cardLodStyle(undefined, { snapshot: true });
   }
 
   override getDefaultProps(): PresentationShape['props'] {

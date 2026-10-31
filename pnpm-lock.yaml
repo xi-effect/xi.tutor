@@ -3737,11 +3737,11 @@ importers:
         specifier: ^5.2.2
         version: 5.9.1(@standard-schema/spec@1.1.0)(ajv@8.20.0)(react-hook-form@7.87.0(react@19.2.8))(zod@4.5.4)
       '@ibodr/draw':
-        specifier: ^0.2.14
-        version: 0.2.14(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^0.2.15
+        version: 0.2.15(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@ibodr/schema':
-        specifier: ^0.2.14
-        version: 0.2.14(react@19.2.8)
+        specifier: ^0.2.15
+        version: 0.2.15(react@19.2.8)
       '@paddleocr/paddleocr-js':
         specifier: ^0.4.2
         version: 0.4.2
@@ -8070,43 +8070,43 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@ibodr/draw@0.2.14':
-    resolution: {integrity: sha512-OLL3KHkSVcZgXpDoxCyAQKYIoO5Dl/PwY4uu1DK3adCAd7R60J2g71Ctwk++ifg0W2ZOTIExgMYITB4TCRr56A==}
+  '@ibodr/draw@0.2.15':
+    resolution: {integrity: sha512-Lhlvup9KVGJQfK/sDb9MnZPVfwv/RI9RAeP193+6Fz0O1qO/Vqe3aGazOmkD/glnHi1rO3v+sx4cinaPiUvILQ==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
       react-dom: ^18.2.0 || ^19.2.1
 
-  '@ibodr/driver@0.2.14':
-    resolution: {integrity: sha512-b8Yubyn2WYovCk+mBTrXr6zjDV7NslW5ighkh49SxJzlQlK2KeRKT0f05kiweSV1JAT3nhQgtYSypS4nMJjcow==}
+  '@ibodr/driver@0.2.15':
+    resolution: {integrity: sha512-IEv/X1Aduok9/mHRsm+xi/aKqTaMIR4hJKHsBQ5cyou8f/8GTjL+lv08DVDTotLiCLrBU7DZhtPNdXjbQ47fXw==}
 
-  '@ibodr/editor@0.2.14':
-    resolution: {integrity: sha512-Rg4CGG5qv3xNY60n+UUjyUk9zk93YRcBmnhoNiWjzQ5zwZIAmrPnVsxcBCQloV7j+wvpMX3qJFGjmj+WaAaUeA==}
+  '@ibodr/editor@0.2.15':
+    resolution: {integrity: sha512-Gpd99c4EsMEuglz1cEOtH84LHbQJwD+AEjll4p8TKY76ZZ0ShcgrEoDeuC8V5avKWGg6omVMcphs3KcjXqxAXA==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
       react-dom: ^18.2.0 || ^19.2.1
 
-  '@ibodr/schema@0.2.14':
-    resolution: {integrity: sha512-O4yxr7vQ0N7WO7wkNX2FYIQzzqzwQBe4fzIqVQmxpC1oQP79HOtuSb2R4+rxxf22x7cON5j71kjwFLVp8Ozbmg==}
+  '@ibodr/schema@0.2.15':
+    resolution: {integrity: sha512-80eftxxYXzwLbUY4wlrnk7GPV9QfWjkWlOZmZ6105c3ixKkVX6NZOZVFvX/EnX571P7W2itjDZ2XmZiN2Rlqgg==}
 
-  '@ibodr/state-react@0.2.14':
-    resolution: {integrity: sha512-5Dp+hMIALrShkS0/umehpV8mFK3fOITzpOyoycElusKtiPkv/k1zES2OgTuX8AR29PVC/F449TTyIkxoLnrskA==}
+  '@ibodr/state-react@0.2.15':
+    resolution: {integrity: sha512-tc4lU8eLr5dSiyYtPOOA/GmFdum+7n2H+9efOfjde57suhCE7g8HY0aGnzpHy0QdTnq+siqqlZMvYqFNVg9kAg==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
       react-dom: ^18.2.0 || ^19.2.1
 
-  '@ibodr/state@0.2.14':
-    resolution: {integrity: sha512-Kkl7o3nBKd3VHCC16Z4nm+xeq1ohxbZ8V2aCNwAqpw8vtn4etRCVGgaZUOJEyfl0p8t0/9ycqEYGNfPjDMfQWw==}
+  '@ibodr/state@0.2.15':
+    resolution: {integrity: sha512-DF1RE3+ckBBwGf3Rnvf6PBBm1Mg1d9G+0VVT9D7oO9dl8szcGBD26N/A9qYfSzu7h4Jx8iYRQq+Zs3NvJhW7dg==}
 
-  '@ibodr/store@0.2.14':
-    resolution: {integrity: sha512-TccCQVLrSCHoXKUKqPiZI/giA3mRu/61tmKVRPbP6d4J/W9030vPK604iiYeU4oJyazrELC2z7zWrk/6BmgH7g==}
+  '@ibodr/store@0.2.15':
+    resolution: {integrity: sha512-VITocuAGmKkBTUXRdpZms0zShM27B8JrH9E448mN6bwW1sIsgZb4CaNQ7GtyiIM7LGSeBBtWyDR64f1+56y3tQ==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
 
-  '@ibodr/utils@0.2.14':
-    resolution: {integrity: sha512-HOzh4oHUJrl0gGM32pd0Z/NmvaqWLtPGpaGC01dbMaHfn8Jm2AYLRwDQ1Y7cgCZ1cjaIc8UhX4MTf+/OJyvuGQ==}
+  '@ibodr/utils@0.2.15':
+    resolution: {integrity: sha512-4kopGsGdAlvddLVxY0hpBWpCPHZSzml8gtmjdm9SMGy+/KQ76a8VDd7fZzt5O0DY1coiFVyP/aWwTpwoo0Rd1w==}
 
-  '@ibodr/validate@0.2.14':
-    resolution: {integrity: sha512-qOtpdeX5GJNJaZFgg93Mo3J+GLJoOPvEdAdoMVJ4L9S90ncfg7FhPICKRJbKY2TjTvpjqnGcE40zT+W0ZJtolw==}
+  '@ibodr/validate@0.2.15':
+    resolution: {integrity: sha512-4W1cREl6ESW6ZJLkDRs8ERKu1/F0yjY+lXQKkuxcBfe5gvR6ULU6AB+MLTm/v6pi0VNxbRFrCQXTyocje1KyIg==}
 
   '@isaacs/cliui@9.0.0':
     resolution: {integrity: sha512-AokJm4tuBHillT+FpMtxQ60n8ObyXBatq7jD2/JA9dxbDDokKQm8KMht5ibGzLVU9IJDIKK4TPKgMHEYMn3lMg==}
@@ -15964,13 +15964,13 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@ibodr/draw@0.2.14(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/draw@0.2.15(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/driver': 0.2.14(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/editor': 0.2.14(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/schema': 0.2.14(react@19.2.8)
-      '@ibodr/state': 0.2.14
-      '@ibodr/store': 0.2.14(react@19.2.8)
+      '@ibodr/driver': 0.2.15(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/editor': 0.2.15(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/schema': 0.2.15(react@19.2.8)
+      '@ibodr/state': 0.2.15
+      '@ibodr/store': 0.2.15(react@19.2.8)
       '@tiptap/core': 3.30.1(@tiptap/pm@3.30.1)
       '@tiptap/extension-code': 3.31.2(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
       '@tiptap/extension-highlight': 3.31.2(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
@@ -15988,10 +15988,10 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  '@ibodr/driver@0.2.14(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/driver@0.2.15(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/editor': 0.2.14(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/utils': 0.2.14
+      '@ibodr/editor': 0.2.15(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/utils': 0.2.15
     transitivePeerDependencies:
       - '@floating-ui/dom'
       - '@types/react'
@@ -15999,14 +15999,14 @@ snapshots:
       - react
       - react-dom
 
-  '@ibodr/editor@0.2.14(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/editor@0.2.15(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/schema': 0.2.14(react@19.2.8)
-      '@ibodr/state': 0.2.14
-      '@ibodr/state-react': 0.2.14(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/store': 0.2.14(react@19.2.8)
-      '@ibodr/utils': 0.2.14
-      '@ibodr/validate': 0.2.14
+      '@ibodr/schema': 0.2.15(react@19.2.8)
+      '@ibodr/state': 0.2.15
+      '@ibodr/state-react': 0.2.15(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/store': 0.2.15(react@19.2.8)
+      '@ibodr/utils': 0.2.15
+      '@ibodr/validate': 0.2.15
       '@tiptap/core': 3.30.1(@tiptap/pm@3.30.1)
       '@tiptap/pm': 3.30.1
       '@tiptap/react': 3.30.1(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -16021,42 +16021,42 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  '@ibodr/schema@0.2.14(react@19.2.8)':
+  '@ibodr/schema@0.2.15(react@19.2.8)':
     dependencies:
-      '@ibodr/state': 0.2.14
-      '@ibodr/store': 0.2.14(react@19.2.8)
-      '@ibodr/utils': 0.2.14
-      '@ibodr/validate': 0.2.14
+      '@ibodr/state': 0.2.15
+      '@ibodr/store': 0.2.15(react@19.2.8)
+      '@ibodr/utils': 0.2.15
+      '@ibodr/validate': 0.2.15
     transitivePeerDependencies:
       - react
 
-  '@ibodr/state-react@0.2.14(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/state-react@0.2.15(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/state': 0.2.14
-      '@ibodr/utils': 0.2.14
+      '@ibodr/state': 0.2.15
+      '@ibodr/utils': 0.2.15
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@ibodr/state@0.2.14':
+  '@ibodr/state@0.2.15':
     dependencies:
-      '@ibodr/utils': 0.2.14
+      '@ibodr/utils': 0.2.15
 
-  '@ibodr/store@0.2.14(react@19.2.8)':
+  '@ibodr/store@0.2.15(react@19.2.8)':
     dependencies:
-      '@ibodr/state': 0.2.14
-      '@ibodr/utils': 0.2.14
+      '@ibodr/state': 0.2.15
+      '@ibodr/utils': 0.2.15
       react: 19.2.8
 
-  '@ibodr/utils@0.2.14':
+  '@ibodr/utils@0.2.15':
     dependencies:
       lodash.isequal: 4.5.0
       lodash.isequalwith: 4.4.0
       lodash.throttle: 4.1.1
       lodash.uniq: 4.5.0
 
-  '@ibodr/validate@0.2.14':
+  '@ibodr/validate@0.2.15':
     dependencies:
-      '@ibodr/utils': 0.2.14
+      '@ibodr/utils': 0.2.15
 
   '@isaacs/cliui@9.0.0': {}
 

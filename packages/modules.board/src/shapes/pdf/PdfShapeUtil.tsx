@@ -27,7 +27,7 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
   }
 
   override getLodStyle() {
-    return cardLodStyle();
+    return cardLodStyle(undefined, { snapshot: true });
   }
 
   override canEdit() {

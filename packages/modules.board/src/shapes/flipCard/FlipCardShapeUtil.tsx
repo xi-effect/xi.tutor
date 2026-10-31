@@ -21,7 +21,7 @@ export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
 
   override getLodStyle(shape: FlipCardShape) {
     const color = shape.props.isFlipped ? shape.props.backColor : shape.props.frontColor;
-    return cardLodStyle(getBoardColorOption(color)?.cssVar);
+    return cardLodStyle(getBoardColorOption(color)?.cssVar, { snapshot: true });
   }
 
   override getDefaultProps(): FlipCardShape['props'] {
