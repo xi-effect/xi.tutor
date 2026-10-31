@@ -12,7 +12,12 @@ import { Skeleton } from 'common.ui';
 import { EditableTitle } from './EditableTitle';
 import { Button } from '@xipkg/button';
 import { ArrowLeft } from '@xipkg/icons';
-import { useCollaborators, useYjsContext, NoteActivitiesMenu } from 'modules.editor';
+import {
+  useCollaborators,
+  useYjsContext,
+  NoteActivitiesMenu,
+  CommentToggleButton,
+} from 'modules.editor';
 import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { UndoRedo } from './UndoRedo';
 import { getAvatarUrlByUserId } from '../utils';
@@ -74,7 +79,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="bg-background-surface border-border-default sticky top-0 z-10 flex h-[56px] min-h-[56px] w-full items-center rounded-2xl border px-2">
+    <div className="bg-background-surface border-border-default sticky top-0 z-20 flex h-[56px] min-h-[56px] w-full items-center rounded-2xl border px-2">
       <div className="relative flex h-full w-full items-center justify-center">
         <Button
           variant="none"
@@ -97,6 +102,7 @@ export const Header = () => {
         </div>
         <div className="absolute inset-y-0 right-0 flex items-center gap-2 pr-1">
           {!isReadOnly ? <UndoRedo /> : null}
+          <CommentToggleButton />
           <CollaboratorAvatars collaborators={collaboratorsWithAvatars} currentUserId={user.id} />
           <NoteActivitiesMenu />
         </div>

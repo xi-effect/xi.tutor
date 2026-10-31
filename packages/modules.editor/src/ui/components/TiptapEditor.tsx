@@ -3,11 +3,14 @@ import { DocumentOutline } from './DocumentOutline';
 import { EditorToolkit } from './EditorToolkit';
 import { EditorLoading, EditorSyncError } from './EditorLoading';
 import { useYjsContext } from '../../hooks/useYjsContext';
-
+import { CommentsOverlay } from '../../comments';
+import { useEditorDeepLinkFocus } from '../../hooks/useEditorDeepLinkFocus';
 import '../editor.css';
 
 export const TiptapEditor = () => {
-  const { editor, isReadOnly, isSynced, hasSyncError } = useYjsContext();
+  const { editor, isReadOnly, isSynced, hasSyncError, commentThreadsMap } = useYjsContext();
+
+  useEditorDeepLinkFocus({ editor, commentThreadsMap, ready: isSynced });
 
   if (hasSyncError) {
     return <EditorSyncError />;
@@ -18,10 +21,11 @@ export const TiptapEditor = () => {
   }
 
   return (
-    <div className="xi-editor relative w-full min-w-0 p-4">
+    <div className="xi-editor relative w-full min-w-0 p-4 pr-15 md:pr-40">
       <EditorContent editor={editor} className="max-w-none focus:outline-none" />
       <DocumentOutline editor={editor} />
       <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
+      <CommentsOverlay />
     </div>
   );
 };

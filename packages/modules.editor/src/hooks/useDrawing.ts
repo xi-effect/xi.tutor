@@ -25,7 +25,8 @@ export function useDrawingToggle(
   const toggle = useCallback(() => {
     const next = !isDrawing;
     setIsDrawing(next);
-  }, [isDrawing]);
+    editor?.commands.blur();
+  }, [isDrawing, editor]);
   const close = useCallback(() => setIsDrawing(false), []);
 
   // Любой посторонний UI (блок-меню, модалка) поверх ноды -> выходим из режима рисования
