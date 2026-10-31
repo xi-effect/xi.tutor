@@ -1,0 +1,91 @@
+{
+  "title": "Homework",
+  "create": "Create assignment",
+  "draftTitle": "New assignment",
+  "kind": {
+    "assignment": "Assignment",
+    "template": "Template"
+  },
+  "tabs": {
+    "active": "Active",
+    "templates": "Templates",
+    "archive": "Archive"
+  },
+  "status": {
+    "draft": "Draft",
+    "assigned": "Assigned",
+    "awaiting_review": "Needs review",
+    "overdue": "Overdue",
+    "completed": "Completed"
+  },
+  "studentState": {
+    "not_submitted": "Not submitted",
+    "submitted": "Needs review",
+    "reviewed": "Reviewed"
+  },
+  "meta": {
+    "notAssigned": "Not assigned yet",
+    "assignees_one": "Assigned to {{count}} student",
+    "assignees_other": "Assigned to {{count}} students",
+    "questions_one": "{{count}} question",
+    "questions_other": "{{count}} questions",
+    "due": "due {{date}}",
+    "created": "Created {{date}}",
+    "updated": "Updated {{date}}"
+  },
+  "date": {
+    "justNow": "just now",
+    "minutesAgo_one": "a minute ago",
+    "minutesAgo_other": "{{count}} minutes ago",
+    "hoursAgo_one": "an hour ago",
+    "hoursAgo_other": "{{count}} hours ago",
+    "yesterday": "yesterday",
+    "daysAgo_one": "a day ago",
+    "daysAgo_other": "{{count}} days ago"
+  },
+  "menu": {
+    "open": "Open",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "createFromTemplate": "Create from template",
+    "archive": "Move to archive",
+    "restore": "Restore from archive"
+  },
+  "empty": {
+    "activeTitle": "No homework yet",
+    "activeDescription": "Create an assignment and it will appear in this list.",
+    "templatesTitle": "You have no templates yet",
+    "templatesDescription": "Saved templates will appear in this list.",
+    "archiveTitle": "Archive is empty",
+    "archiveDescription": "Assignments you archive will appear here.",
+    "helpLink": "Open the knowledge base"
+  },
+  "details": {
+    "students": "Students",
+    "close": "Close",
+    "edit": "Edit"
+  },
+  "form": {
+    "createTitle": "New assignment",
+    "editTitle": "Edit assignment",
+    "editTemplateTitle": "Edit template",
+    "name": "Title",
+    "description": "Description",
+    "descriptionPlaceholder": "A short note about the assignment",
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
+    "tooLong": "Title cannot be longer than {{max}} characters",
+    "counter": "{{current}}/{{max}}"
+  },
+  "toast": {
+    "created": "Draft created",
+    "saved": "Changes saved",
+    "duplicated": "Copy created",
+    "archived": "Assignment moved to archive",
+    "templateArchived": "Template moved to archive",
+    "restored": "Assignment is active again",
+    "templateRestored": "Template restored",
+    "createdFromTemplate": "Assignment created from template"
+  }
+}

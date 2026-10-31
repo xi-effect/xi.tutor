@@ -1,0 +1,115 @@
+.homework-rich {
+  color: var(--xi-text-primary);
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.homework-rich h1,
+.homework-rich h2,
+.homework-rich h3,
+.homework-rich p,
+.homework-rich li,
+.homework-rich strong,
+.homework-rich em {
+  color: inherit;
+}
+
+.homework-rich h1 {
+  margin: 1rem 0 0.35rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.homework-rich h2 {
+  margin: 0.85rem 0 0.35rem;
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.homework-rich h3 {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.homework-rich p {
+  margin: 0.35rem 0;
+}
+
+.homework-rich ul,
+.homework-rich ol {
+  margin: 0.35rem 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.homework-rich ul > li,
+.homework-rich ol > li {
+  position: relative;
+  margin: 0.2rem 0;
+  padding-left: 1.25rem;
+}
+
+.homework-rich ul > li::before,
+.homework-rich ol > li::before {
+  position: absolute;
+  left: 0;
+  width: 1.25rem;
+  line-height: 1.6;
+}
+
+.homework-rich ul > li::before {
+  content: '•';
+}
+
+.homework-rich ol {
+  counter-reset: homework-ol;
+}
+
+.homework-rich ol > li {
+  counter-increment: homework-ol;
+}
+
+.homework-rich ol > li::before {
+  content: counter(homework-ol) '.';
+}
+
+.homework-rich li p {
+  margin: 0;
+}
+
+.homework-rich a {
+  color: var(--xi-text-link);
+  text-decoration: underline;
+}
+
+.homework-rich img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.homework-prompt .ProseMirror {
+  min-height: 1.6em;
+  outline: none;
+}
+
+.homework-prompt .ProseMirror > :first-child {
+  margin-top: 0;
+}
+
+.homework-prompt .ProseMirror > :last-child {
+  margin-bottom: 0;
+}
+
+.homework-rich p.is-editor-empty:first-child::before {
+  float: left;
+  height: 0;
+  color: var(--xi-text-disabled);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}

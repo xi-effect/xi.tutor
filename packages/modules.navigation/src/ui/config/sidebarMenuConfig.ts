@@ -8,13 +8,14 @@ import {
   MessageHeartCircle,
   Payments,
   Task,
+  TaskFile,
 } from '@xipkg/icons';
 import { type ComponentType } from 'react';
 
 type TopMenuItem = {
   id: string;
-  titleKey: 'home' | 'schedule' | 'classrooms' | 'materials' | 'mathBank' | 'payments';
-  url: '/' | '/schedule' | '/classrooms' | '/materials' | '/bank' | '/payments';
+  titleKey: 'home' | 'schedule' | 'classrooms' | 'materials' | 'homework' | 'mathBank' | 'payments';
+  url: '/' | '/schedule' | '/classrooms' | '/materials' | '/homework' | '/bank' | '/payments';
   icon: ComponentType<{ className?: string; theme?: string }>;
 };
 
@@ -53,6 +54,12 @@ export const getTopMenuConfig = (isTutor: boolean): TopMenuItem[] => {
         titleKey: 'materials',
         url: '/materials',
         icon: BookOpened,
+      },
+      {
+        id: 'homework-menu-item',
+        titleKey: 'homework',
+        url: '/homework',
+        icon: TaskFile,
       },
       {
         id: 'bank-menu-item',

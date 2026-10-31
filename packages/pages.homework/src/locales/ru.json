@@ -1,0 +1,101 @@
+{
+  "title": "Домашние задания",
+  "create": "Создать задание",
+  "draftTitle": "Новое задание",
+  "kind": {
+    "assignment": "Задание",
+    "template": "Шаблон"
+  },
+  "tabs": {
+    "active": "Активные",
+    "templates": "Шаблоны",
+    "archive": "Архив"
+  },
+  "status": {
+    "draft": "Черновик",
+    "assigned": "Назначено",
+    "awaiting_review": "Ожидает проверки",
+    "overdue": "Просрочено",
+    "completed": "Завершено"
+  },
+  "studentState": {
+    "not_submitted": "Не сдано",
+    "submitted": "На проверке",
+    "reviewed": "Проверено"
+  },
+  "meta": {
+    "notAssigned": "Пока не назначено",
+    "assignees_one": "Назначено {{count}} ученику",
+    "assignees_few": "Назначено {{count}} ученикам",
+    "assignees_many": "Назначено {{count}} ученикам",
+    "assignees_other": "Назначено {{count}} ученикам",
+    "questions_one": "{{count}} вопрос",
+    "questions_few": "{{count}} вопроса",
+    "questions_many": "{{count}} вопросов",
+    "questions_other": "{{count}} вопросов",
+    "due": "сдать до {{date}}",
+    "created": "Создано {{date}}",
+    "updated": "Обновлено {{date}}"
+  },
+  "date": {
+    "justNow": "только что",
+    "minutesAgo_one": "минуту назад",
+    "minutesAgo_few": "{{count}} минуты назад",
+    "minutesAgo_many": "{{count}} минут назад",
+    "minutesAgo_other": "{{count}} минут назад",
+    "hoursAgo_one": "час назад",
+    "hoursAgo_few": "{{count}} часа назад",
+    "hoursAgo_many": "{{count}} часов назад",
+    "hoursAgo_other": "{{count}} часов назад",
+    "yesterday": "вчера",
+    "daysAgo_one": "день назад",
+    "daysAgo_few": "{{count}} дня назад",
+    "daysAgo_many": "{{count}} дней назад",
+    "daysAgo_other": "{{count}} дней назад"
+  },
+  "menu": {
+    "open": "Открыть",
+    "edit": "Редактировать",
+    "duplicate": "Дублировать",
+    "createFromTemplate": "Создать по шаблону",
+    "archive": "Переместить в архив",
+    "restore": "Восстановить из архива"
+  },
+  "empty": {
+    "activeTitle": "Домашних заданий пока нет",
+    "activeDescription": "Создайте задание — оно появится в этом списке.",
+    "templatesTitle": "У вас пока нет шаблонов",
+    "templatesDescription": "Сохранённые шаблоны появятся в этом списке.",
+    "archiveTitle": "Архив пуст",
+    "archiveDescription": "Задания, которые вы отправите в архив, появятся здесь.",
+    "helpLink": "Подробнее в базе знаний"
+  },
+  "details": {
+    "students": "Ученики",
+    "close": "Закрыть",
+    "edit": "Редактировать"
+  },
+  "form": {
+    "createTitle": "Новое задание",
+    "editTitle": "Редактировать задание",
+    "editTemplateTitle": "Редактировать шаблон",
+    "name": "Название",
+    "description": "Описание",
+    "descriptionPlaceholder": "Кратко, о чём задание",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "save": "Сохранить",
+    "tooLong": "Название не может быть длиннее {{max}} символов",
+    "counter": "{{current}}/{{max}}"
+  },
+  "toast": {
+    "created": "Черновик создан",
+    "saved": "Изменения сохранены",
+    "duplicated": "Создана копия",
+    "archived": "Задание перемещено в архив",
+    "templateArchived": "Шаблон перемещён в архив",
+    "restored": "Задание снова в списке активных",
+    "templateRestored": "Шаблон восстановлен",
+    "createdFromTemplate": "Задание создано по шаблону"
+  }
+}
