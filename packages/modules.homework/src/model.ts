@@ -1,6 +1,7 @@
 import {
   HOMEWORK_DESCRIPTION_MAX,
   HOMEWORK_TITLE_MAX,
+  QUESTION_TYPES,
   isChoiceQuestionType,
   isHomeworkQuestionType,
   type HomeworkContent,
@@ -22,6 +23,7 @@ export const emptyHomeworkContent = (): HomeworkContent => ({
   estimatedMinutes: null,
   allowRetake: false,
   showCorrectAnswers: false,
+  descriptionHtml: '',
   questions: [],
 });
 
@@ -44,6 +46,12 @@ export const cloneHomeworkContent = (content: HomeworkContent): HomeworkContent 
   ...content,
   questions: content.questions.map(duplicateQuestion),
 });
+
+export const questionsByType = (questions: HomeworkQuestion[]) =>
+  QUESTION_TYPES.flatMap((type) => {
+    const items = questions.filter((question) => question.type === type);
+    return items.length > 0 ? [{ type, items }] : [];
+  });
 
 const keepSingleCorrectOption = (options: HomeworkOption[]) => {
   let kept = false;
@@ -165,6 +173,15 @@ export const normalizeHomeworkContent = (value: unknown): HomeworkContent => {
       })
     : [];
 
+  const storedDescription =
+    typeof content.descriptionHtml === 'string' ? content.descriptionHtml : '';
+  const descriptionHtml = promptPlainText(storedDescription)
+    ? storedDescription
+    : questions
+        .map((question) => question.promptHtml)
+        .filter((html) => promptPlainText(html))
+        .join('');
+
   return {
     estimatedMinutes:
       typeof minutes === 'number' && Number.isFinite(minutes) && minutes > 0
@@ -172,7 +189,8 @@ export const normalizeHomeworkContent = (value: unknown): HomeworkContent => {
         : null,
     allowRetake: content.allowRetake === true,
     showCorrectAnswers: content.showCorrectAnswers === true,
-    questions,
+    descriptionHtml,
+    questions: questions.map((question) => ({ ...question, promptHtml: '' })),
   };
 };
 

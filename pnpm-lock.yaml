@@ -4526,6 +4526,9 @@ importers:
       '@tiptap/extension-mathematics':
         specifier: ^3.31.3
         version: 3.31.3(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)(katex@0.18.7)
+      '@tiptap/extension-text-align':
+        specifier: ^3.23.6
+        version: 3.31.2(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
       '@tiptap/extensions':
         specifier: 3.30.1
         version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)
@@ -11147,6 +11150,11 @@ packages:
 
   '@xipkg/icons@2.7.2':
     resolution: {integrity: sha512-Zg5FwD9i6R8ggHNpZbVpLHYTjR93ujB3HiHtsqQWXr96IWVjzi+KlDWMbgNPsagvWNKnbnqwdi3gY3S6ACp1rw==}
+    peerDependencies:
+      react: ^19
+
+  '@xipkg/icons@3.1.8':
+    resolution: {integrity: sha512-B5cSgXvEqN+Ll2pMxCbWL4+CRnX23Nr4quyr08A5D2T1SomQMjf3jWzvC0/ZrzP05uNlxbTkrGjV10YwM+N4cw==}
     peerDependencies:
       react: ^19
 
@@ -19338,6 +19346,13 @@ snapshots:
       - react-dom
 
   '@xipkg/icons@2.7.2(react@19.2.8)':
+    dependencies:
+      '@xipkg/utils': 1.8.0(react@19.2.8)
+      class-variance-authority: 0.7.1
+      lucide-react: 0.485.0(react@19.2.8)
+      react: 19.2.8
+
+  '@xipkg/icons@3.1.8(react@19.2.8)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.8)
       class-variance-authority: 0.7.1

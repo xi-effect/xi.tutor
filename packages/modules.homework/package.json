@@ -18,6 +18,7 @@
     "@dnd-kit/utilities": "3.2.2",
     "@tiptap/core": "^3.23.6",
     "@tiptap/extension-image": "^3.23.6",
+    "@tiptap/extension-text-align": "^3.23.6",
     "@tiptap/extension-mathematics": "^3.31.3",
     "@tiptap/extensions": "^3.23.6",
     "@tiptap/pm": "^3.23.6",

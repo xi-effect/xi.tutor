@@ -23,16 +23,16 @@
   "allowRetake": "Allow another attempt",
   "showCorrectAnswers": "Show correct answers after completion",
   "questions": "Questions",
-  "emptyQuestions": "This assignment has no questions yet",
+  "emptyQuestions": "No answer blocks yet",
   "addQuestion": "Add question",
   "emptyPrompt": "Question without a prompt",
-  "promptPlaceholder": "Question prompt",
-  "required": "Required question",
-  "questionType": "Question type",
+  "promptPlaceholder": "Assignment description",
+  "required": "Required answer",
+  "questionType": "Answer type",
   "duplicate": "Duplicate",
   "delete": "Delete",
   "more": "More",
-  "deleted": "Question deleted",
+  "deleted": "Answer block deleted",
   "undo": "Undo",
   "correctAnswer": "Correct answer",
   "correctAnswerPlaceholder": "Can be left empty",
@@ -52,6 +52,21 @@
     "dropdown": "Dropdown",
     "number": "Number",
     "file": "File upload"
+  },
+  "addBlock": "Add a block",
+  "blocks": {
+    "hint": "Choose a block type — it appears below the current one",
+    "text": "Text",
+    "heading1": "Heading 1",
+    "heading2": "Heading 2",
+    "heading3": "Heading 3"
+  },
+  "align": {
+    "menu": "Alignment",
+    "left": "Align left",
+    "center": "Align center",
+    "right": "Align right",
+    "justify": "Justify"
   },
   "toolbar": {
     "bold": "Bold",

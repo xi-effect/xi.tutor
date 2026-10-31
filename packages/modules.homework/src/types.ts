@@ -29,6 +29,7 @@ export type HomeworkContent = {
   estimatedMinutes: number | null;
   allowRetake: boolean;
   showCorrectAnswers: boolean;
+  descriptionHtml: string;
   questions: HomeworkQuestion[];
 };
 

@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import {
   createQuestion,
   duplicateQuestion,
+  normalizeHomeworkContent,
   normalizeHomeworkDraft,
   serializeHomeworkDraft,
 } from '../model';
@@ -28,11 +29,20 @@ type HomeworkEditorProps = {
 
 export const HomeworkEditor = ({ initial, fallbackTitle, onSave, onBack }: HomeworkEditorProps) => {
   const { t } = useTranslation('homeworkEditor');
-  const [draft, setDraft] = useState(initial);
-  const [saved, setSaved] = useState(() => serializeHomeworkDraft(initial));
+  const [draft, setDraft] = useState(() => ({
+    ...initial,
+    content: normalizeHomeworkContent(initial.content),
+  }));
+  const [saved, setSaved] = useState(() =>
+    serializeHomeworkDraft({
+      ...initial,
+      content: normalizeHomeworkContent(initial.content),
+    }),
+  );
   const [mode, setMode] = useState<EditorMode>('edit');
-  const [activeId, setActiveId] = useState<string | null>(initial.content.questions[0]?.id ?? null);
-  const initialQuestions = useRef(JSON.stringify(initial.content.questions));
+  const initialQuestions = useRef(
+    JSON.stringify(normalizeHomeworkContent(initial.content).questions),
+  );
   const draftRef = useRef(draft);
   const savedRef = useRef(saved);
   const onSaveRef = useRef(onSave);
@@ -96,7 +106,6 @@ export const HomeworkEditor = ({ initial, fallbackTitle, onSave, onBack }: Homew
       ...current,
       content: { ...current.content, questions: [...current.content.questions, question] },
     }));
-    setActiveId(question.id);
   };
 
   const duplicate = (id: string) => {
@@ -110,7 +119,6 @@ export const HomeworkEditor = ({ initial, fallbackTitle, onSave, onBack }: Homew
       questions.splice(index + 1, 0, copy);
       return { ...current, content: { ...current.content, questions } };
     });
-    setActiveId(copy.id);
   };
 
   const removeQuestion = (id: string) => {
@@ -124,7 +132,6 @@ export const HomeworkEditor = ({ initial, fallbackTitle, onSave, onBack }: Homew
         questions: current.content.questions.filter((question) => question.id !== id),
       },
     }));
-    if (activeId === id) setActiveId(null);
     toast(t('deleted'), {
       action: {
         label: t('undo'),
@@ -134,7 +141,6 @@ export const HomeworkEditor = ({ initial, fallbackTitle, onSave, onBack }: Homew
             questions.splice(Math.min(index, questions.length), 0, removed);
             return { ...current, content: { ...current.content, questions } };
           });
-          setActiveId(removed.id);
         },
       },
     });
@@ -174,9 +180,14 @@ export const HomeworkEditor = ({ initial, fallbackTitle, onSave, onBack }: Homew
               <HomeworkPreview draft={draft} />
             ) : (
               <QuestionList
+                descriptionHtml={draft.content.descriptionHtml}
                 questions={draft.content.questions}
-                activeId={activeId}
-                onSelect={setActiveId}
+                onDescription={(descriptionHtml) =>
+                  setDraft((current) => ({
+                    ...current,
+                    content: { ...current.content, descriptionHtml },
+                  }))
+                }
                 onChange={updateQuestion}
                 onAdd={addQuestion}
                 onDuplicate={duplicate}

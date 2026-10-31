@@ -26,7 +26,7 @@ export const RichText = ({ html, className }: RichTextProps) => {
   return (
     <div
       ref={ref}
-      className={cn('homework-rich text-text-primary text-sm leading-5', className)}
+      className={cn('homework-rich', className)}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
