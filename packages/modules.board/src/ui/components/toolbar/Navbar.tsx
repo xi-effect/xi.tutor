@@ -23,6 +23,7 @@ import { filterAllowedEmojis, isAllowedEmoji } from '../../../utils/allowedEmoji
 import { stickers } from '../../../config';
 import { AssetUploadControl } from './AssetUploadControl';
 import { runWithoutHistory } from '../../../utils/runWithoutHistory';
+import { EmbedInsertDialog } from '../../../shapes/embed/EmbedInsertDialog';
 
 const toolMapping: Record<string, string> = {
   select: 'select',
@@ -65,6 +66,9 @@ export const Navbar = track(({ token }: { token: string }) => {
     useDrawStyles();
   const [activePopup, setActivePopup] = React.useState<string | null>(null);
   const [activityPickerOpen, setActivityPickerOpen] = React.useState(false);
+
+  const [embedDialogOpen, setEmbedDialogOpen] = React.useState(false);
+
   const editor = useEditor();
   const { wide, dock } = useBoardChrome();
   const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
@@ -167,6 +171,15 @@ export const Navbar = track(({ token }: { token: string }) => {
       resetToDefaults();
     }
 
+    if (toolName === 'embed') {
+      if (activePopup && !NO_RESET_ON_CLOSE_POPUPS.has(activePopup)) resetToDefaults();
+      setActivePopup(null);
+      setActivityPickerOpen(false);
+      setEmbedDialogOpen(true);
+      editor.setCurrentTool('select');
+      return;
+    }
+
     const mappedTool = toolMapping[toolName];
     if (mappedTool) {
       editor.setCurrentTool(mappedTool);
@@ -199,7 +212,12 @@ export const Navbar = track(({ token }: { token: string }) => {
   const currentTool = getCurrentTool();
 
   const renderToolbarItem = (item: NavbarElementT) => {
-    const isActive = item.action === 'activity' ? activityPickerOpen : item.action === currentTool;
+    const isActive =
+      item.action === 'activity'
+        ? activityPickerOpen
+        : item.action === 'embed'
+          ? embedDialogOpen
+          : item.action === currentTool;
 
     if (item.action === 'asset') {
       return (
@@ -301,6 +319,7 @@ export const Navbar = track(({ token }: { token: string }) => {
 
   return (
     <BoardToolPortal>
+      <EmbedInsertDialog open={embedDialogOpen} onOpenChange={setEmbedDialogOpen} />
       <ActivityPicker open={activityPickerOpen} onOpenChange={setActivityPickerOpen} />
       {wide ? (
         <ToolbarDockFrame dock={dock} options={optionsPanel} tools={desktopTools} />

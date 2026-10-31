@@ -15,6 +15,8 @@ import { ArrowShapeUtil } from './arrow';
 import { PresentationShapeUtil } from './presentation';
 import { FlipCardShapeUtil } from './flipCard';
 import { ActivityShapeUtil } from '../activities';
+import { boardEmbedDefinitions } from './embed/embeddefinitions';
+import { BoardEmbedShapeUtil } from './embed/BoardEmbedShapeUtil';
 import { DrawShapeUtil, HighlightShapeUtil, LineShapeUtil } from './lodShapeUtils';
 import './lineStyles/extendedLineStyles';
 
@@ -36,6 +38,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   TextShapeUtil,
   ArrowShapeUtil,
   ActivityShapeUtil,
+  BoardEmbedShapeUtil.configure({ embedDefinitions: boardEmbedDefinitions }),
   DrawShapeUtil,
   HighlightShapeUtil,
   LineShapeUtil,
