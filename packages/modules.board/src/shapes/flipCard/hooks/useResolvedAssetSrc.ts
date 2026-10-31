@@ -2,8 +2,17 @@ import { useEffect, useState } from 'react';
 import { Editor, DrAssetId, useValue } from '@ibodr/draw';
 import { myAssetStore } from '../../../features/imageStore';
 import { isDisplayableAssetUrl } from '../../../utils/storedFileSrc';
+import { zoomStepCeil } from '../../../utils/rasterBudget';
+import { useRetainedBlobUrl } from '../../../utils/useRetainedBlobUrl';
 
-export function useResolvedAssetSrc(editor: Editor, assetId: DrAssetId | null, token: string) {
+export function useResolvedAssetSrc(
+  editor: Editor,
+  assetId: DrAssetId | null,
+  token: string,
+  displayCssWidth: number,
+) {
+  const zoom = useValue('resolved-asset-zoom', () => editor.getZoomLevel(), [editor]);
+  const zoomStep = zoomStepCeil(zoom);
   const storedSrc = useValue(
     'flip-card-asset-src',
     () => {
@@ -13,7 +22,17 @@ export function useResolvedAssetSrc(editor: Editor, assetId: DrAssetId | null, t
     },
     [editor, assetId],
   );
+  const assetSize = useValue(
+    'flip-card-asset-size',
+    () => {
+      if (!assetId) return 0;
+      const asset = editor.getAsset(assetId);
+      return asset?.type === 'image' ? asset.props.w : 0;
+    },
+    [editor, assetId],
+  );
   const [src, setSrc] = useState<string | null>(null);
+  useRetainedBlobUrl(src);
 
   useEffect(() => {
     if (!assetId) {
@@ -40,11 +59,13 @@ export function useResolvedAssetSrc(editor: Editor, assetId: DrAssetId | null, t
     }
 
     let cancelled = false;
+    const screenScale =
+      assetSize > 0 && displayCssWidth > 0 ? zoomStep * (displayCssWidth / assetSize) : 1;
 
     Promise.resolve(
       myAssetStore(token).resolve?.(asset, {
-        screenScale: 1,
-        steppedScreenScale: 1,
+        screenScale,
+        steppedScreenScale: zoomStepCeil(screenScale),
         dpr: window.devicePixelRatio || 1,
         networkEffectiveType: null,
         shouldResolveToOriginal: false,
@@ -56,7 +77,7 @@ export function useResolvedAssetSrc(editor: Editor, assetId: DrAssetId | null, t
     return () => {
       cancelled = true;
     };
-  }, [editor, assetId, token, storedSrc]);
+  }, [editor, assetId, token, storedSrc, assetSize, displayCssWidth, zoomStep]);
 
   return src;
 }

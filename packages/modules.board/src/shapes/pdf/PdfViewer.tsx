@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useEditor } from '@ibodr/draw';
+import { useEditor, useValue } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import * as pdfjsLib from 'pdfjs-dist';
-import type { RenderTask } from 'pdfjs-dist';
+import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import { useYjsContext } from '../../providers/YjsContext';
-import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { resolveAssetUrl, retainBlobUrl } from '../../utils/resolveAssetUrl';
 import { insertImage } from '../../features/pickAndInsertImage';
 import {
-  canvasToOcrBlob,
   OcrImageLoadError,
   recognizeBoardPdfPageText,
   useOcrProcessingStore,
   type OcrLanguage,
 } from '../../ocr';
 import { pdfDocCache } from './pdfDocCache';
+import { fitPdfPagePixels, renderPdfSliceToPngBlob, startPdfPagePaint } from './fitPdfPage';
+import { zoomStepCeil } from '../../utils/rasterBudget';
 import { PdfPageControls } from './PdfPageControls';
 import type { PdfShape } from './PdfShape';
 import { PDF_PAGES_VISIBLE_MAX, PDF_PAGES_VISIBLE_MIN } from './PdfShape';
@@ -23,9 +24,6 @@ import i18n from 'i18next';
 
 // Используем CDN для worker файла, чтобы избежать проблем с бандлингом в продакшене
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
-
-/** Множитель разрешения рендера (supersampling). 1 = только dpr, 1.5–2 = выше качество, больше память/CPU. */
-const PDF_RENDER_QUALITY_SCALE = 2;
 
 type PdfViewerProps = {
   shape: PdfShape;
@@ -44,6 +42,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const renderTasksRef = useRef<(RenderTask | null)[]>([]);
   const loadKeyRef = useRef<string | null>(null);
   const hasRenderedOnceRef = useRef(false);
+  const docGenerationRef = useRef(0);
 
   const [localPage, setLocalPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
@@ -76,6 +75,8 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   }, []);
 
   const { src, totalPages, currentPage: tutorPage, studentCanFlip } = shape.props;
+  const zoom = useValue('pdf-zoom', () => editor.getZoomLevel(), [editor]);
+  const zoomStep = zoomStepCeil(zoom);
   const pagesVisible = Math.min(
     PDF_PAGES_VISIBLE_MAX,
     Math.max(PDF_PAGES_VISIBLE_MIN, shape.props.pagesVisible ?? 1),
@@ -110,10 +111,60 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     return () => pdfPagesMap.unobserve(handler);
   }, [pdfPagesMap, userId, shape.id, totalPages, localPage]);
 
-  useEffect(() => {
-    if (!src || !token) return;
+  const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
 
-    const loadKey = `${src}-${displayPage}-${pagesVisible}-${containerSize.w}-${containerSize.h}`;
+  useEffect(() => {
+    if (!src || !token) {
+      setPdfDoc(null);
+      return;
+    }
+
+    let cancelled = false;
+    let heldUrl: string | null = null;
+    let releaseBlob: (() => void) | null = null;
+
+    const releaseHeld = () => {
+      if (!heldUrl) return;
+      pdfDocCache.release(heldUrl);
+      releaseBlob?.();
+      heldUrl = null;
+      releaseBlob = null;
+    };
+
+    const load = async () => {
+      try {
+        const blobUrl = await resolveAssetUrl(src, token);
+        if (cancelled) return;
+        const doc = await pdfDocCache.get(blobUrl);
+        if (cancelled) {
+          pdfDocCache.release(blobUrl);
+          return;
+        }
+        heldUrl = blobUrl;
+        releaseBlob = retainBlobUrl(blobUrl);
+        setPdfDoc(doc);
+      } catch (err) {
+        if (cancelled) return;
+        console.error('[PdfViewer] load error:', err);
+        setError(i18n.t('pdf.renderError', { ns: 'board' }));
+        setLoading(false);
+      }
+    };
+
+    void load();
+
+    return () => {
+      cancelled = true;
+      docGenerationRef.current += 1;
+      releaseHeld();
+      setPdfDoc(null);
+    };
+  }, [src, token]);
+
+  useEffect(() => {
+    if (!src || !pdfDoc) return;
+
+    const loadKey = `${src}-${displayPage}-${pagesVisible}-${containerSize.w}-${containerSize.h}-${zoomStep}`;
     const isNewDocumentView =
       loadKeyRef.current === null ||
       !loadKeyRef.current.startsWith(`${src}-${displayPage}-${pagesVisible}-`);
@@ -125,27 +176,24 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     }
 
     let cancelled = false;
-    const tasks: (RenderTask | null)[] = [];
+    const generation = docGenerationRef.current;
+    const paints: Array<{ discard: () => void } | null> = [];
 
     const render = async () => {
       try {
         if (!hasRenderedOnceRef.current) setLoading(true);
-        const blobUrl = await resolveAssetUrl(src, token);
-        if (cancelled) return;
-
-        const pdfDoc = await pdfDocCache.get(blobUrl);
-        if (cancelled) return;
 
         const displayW = containerSize.w;
         const displayHTotal = containerSize.h;
         if (displayW <= 0 || displayHTotal <= 0) return;
 
         const cellH = displayHTotal / pagesVisible;
+        const dpr = window.devicePixelRatio || 1;
         let anyRendered = false;
 
         for (let i = 0; i < renderTasksRef.current.length; i++) {
-          const t = renderTasksRef.current[i];
-          if (t) t.cancel();
+          const task = renderTasksRef.current[i];
+          if (task) task.cancel();
         }
         renderTasksRef.current = [];
 
@@ -157,37 +205,20 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
           if (!canvas) continue;
 
           const page = await pdfDoc.getPage(pageNum);
-          if (cancelled) return;
+          if (cancelled || docGenerationRef.current !== generation) return;
 
-          const dpr = window.devicePixelRatio || 1;
           const vp1 = page.getViewport({ scale: 1 });
-          const pageW = vp1.width;
-          const pageH = vp1.height;
-          const baseScale = Math.min(displayW / pageW, cellH / pageH);
-          const scale = baseScale * dpr * PDF_RENDER_QUALITY_SCALE;
+          const fitted = fitPdfPagePixels(vp1.width, vp1.height, displayW, cellH, zoomStep, dpr);
+          const paint = startPdfPagePaint(page, canvas, fitted);
+          if (!paint) continue;
+          paints[i] = paint;
+          renderTasksRef.current[i] = paint.task;
 
-          const viewport = page.getViewport({ scale });
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-          const fittedW = pageW * baseScale;
-          const fittedH = pageH * baseScale;
-          canvas.style.width = `${fittedW}px`;
-          canvas.style.height = `${fittedH}px`;
-
-          const ctx = canvas.getContext('2d');
-          if (!ctx) continue;
-
-          const renderTask = page.render({
-            canvasContext: ctx,
-            viewport,
-            intent: 'print',
-          });
-          renderTasksRef.current[i] = renderTask;
-          tasks.push(renderTask);
-
-          await renderTask.promise;
+          await paint.task.promise;
+          if (cancelled || docGenerationRef.current !== generation) return;
+          paint.commit();
+          page.cleanup();
           anyRendered = true;
-          if (cancelled) return;
         }
 
         if (!cancelled && anyRendered) {
@@ -203,16 +234,66 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       }
     };
 
-    render();
+    void render();
 
     return () => {
       cancelled = true;
-      renderTasksRef.current.forEach((t) => {
-        if (t) t.cancel();
+      renderTasksRef.current.forEach((task) => {
+        if (task) task.cancel();
       });
       renderTasksRef.current = [];
+      paints.forEach((paint) => paint?.discard());
     };
-  }, [src, token, displayPage, pagesVisible, shape.props.w, containerSize.w, containerSize.h]);
+  }, [src, pdfDoc, displayPage, pagesVisible, containerSize.w, containerSize.h, zoomStep]);
+
+  useEffect(() => {
+    const canvases = canvasRefs.current;
+    return () => {
+      canvases.forEach((canvas) => {
+        if (!canvas) return;
+        canvas.width = 0;
+        canvas.height = 0;
+      });
+    };
+  }, []);
+
+  const renderSharpSlice = useCallback(
+    async (pageCount: number) => {
+      if (!src || !token) return null;
+      const cellW = containerSize.w || shape.props.w;
+      const cellH = (containerSize.h || shape.props.h) / pagesVisible;
+      if (cellW <= 0 || cellH <= 0) return null;
+
+      const blobUrl = await resolveAssetUrl(src, token);
+      const releaseBlob = retainBlobUrl(blobUrl);
+      const pdfDoc = await pdfDocCache.get(blobUrl);
+      try {
+        return await renderPdfSliceToPngBlob({
+          pdfDoc,
+          startPage: displayPage,
+          pageCount,
+          cellWidth: cellW,
+          cellHeight: cellH,
+          zoom: Math.max(zoom, 1),
+          dpr: window.devicePixelRatio || 1,
+        });
+      } finally {
+        pdfDocCache.release(blobUrl);
+        releaseBlob();
+      }
+    },
+    [
+      containerSize.h,
+      containerSize.w,
+      displayPage,
+      pagesVisible,
+      shape.props.h,
+      shape.props.w,
+      src,
+      token,
+      zoom,
+    ],
+  );
 
   const handleExtractPage = useCallback(async () => {
     if (loading || !token) return;
@@ -220,69 +301,21 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     const bounds = editor.getShapePageBounds(shape.id);
     if (!bounds) return;
 
-    const canvases: HTMLCanvasElement[] = [];
-    for (let i = 0; i < pagesVisible; i++) {
-      if (displayPage + i > totalPages) break;
-      const c = canvasRefs.current[i];
-      if (c && c.width > 0 && c.height > 0) canvases.push(c);
-    }
-    if (canvases.length === 0) return;
+    const visibleCount = Math.min(pagesVisible, Math.max(0, totalPages - displayPage + 1));
+    if (visibleCount <= 0) return;
 
-    let blob: Blob | null;
-    const baseName = shape.props.fileName?.replace(/\.pdf$/i, '') || 'pdf';
-
-    if (canvases.length === 1) {
-      blob = await new Promise<Blob | null>((resolve) => {
-        canvases[0].toBlob(resolve, 'image/png');
-      });
-    } else {
-      const first = canvases[0];
-      const commonW = first.width;
-      let combinedH = 0;
-      const heights: number[] = [];
-      for (let i = 0; i < canvases.length; i++) {
-        const h = (canvases[i].height / canvases[i].width) * commonW;
-        heights.push(h);
-        combinedH += h;
-      }
-      const offscreen = document.createElement('canvas');
-      offscreen.width = commonW;
-      offscreen.height = Math.round(combinedH);
-      const ctx = offscreen.getContext('2d');
-      if (!ctx) return;
-      let y = 0;
-      for (let i = 0; i < canvases.length; i++) {
-        const c = canvases[i];
-        const h = heights[i];
-        ctx.drawImage(c, 0, 0, c.width, c.height, 0, y, commonW, h);
-        y += h;
-      }
-      blob = await new Promise<Blob | null>((resolve) => {
-        offscreen.toBlob(resolve, 'image/png');
-      });
-    }
-
+    const blob = await renderSharpSlice(visibleCount);
     if (!blob) return;
 
-    const pageRange =
-      canvases.length === 1
-        ? `p${displayPage}`
-        : `p${displayPage}-${displayPage + canvases.length - 1}`;
-    const file = new File([blob], `${baseName}_${pageRange}.png`, { type: 'image/png' });
+    const bitmap = await createImageBitmap(blob);
+    const imageH = bounds.h;
+    const imageW = (bitmap.width / bitmap.height) * imageH;
+    bitmap.close();
 
-    const pdfH = bounds.h;
-    const imageH = pdfH;
-    let imageW: number;
-    if (canvases.length === 1) {
-      imageW = (canvases[0].width / canvases[0].height) * pdfH;
-    } else {
-      const commonW = canvases[0].width;
-      let combinedH = 0;
-      for (let i = 0; i < canvases.length; i++) {
-        combinedH += (canvases[i].height / canvases[i].width) * commonW;
-      }
-      imageW = (commonW / combinedH) * pdfH;
-    }
+    const baseName = shape.props.fileName?.replace(/\.pdf$/i, '') || 'pdf';
+    const pageRange =
+      visibleCount === 1 ? `p${displayPage}` : `p${displayPage}-${displayPage + visibleCount - 1}`;
+    const file = new File([blob], `${baseName}_${pageRange}.png`, { type: 'image/png' });
     const gap = 24;
 
     await insertImage(editor, file, token, {
@@ -300,17 +333,16 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     totalPages,
     pagesVisible,
     editor,
+    renderSharpSlice,
   ]);
 
   const isOcrProcessing = useOcrProcessingStore((state) => state.isProcessing(shape.id));
 
   const getCurrentPageBlob = useCallback(async () => {
-    const canvas = canvasRefs.current[0];
-    if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
-      throw new OcrImageLoadError('Current PDF page is not rendered');
-    }
-    return canvasToOcrBlob(canvas);
-  }, []);
+    const blob = await renderSharpSlice(1);
+    if (!blob) throw new OcrImageLoadError('Current PDF page is not rendered');
+    return blob;
+  }, [renderSharpSlice]);
 
   const handleRecognizePrintedText = useCallback(
     (language: OcrLanguage) => {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useYjsContext } from '../../../providers/YjsContext';
 import { resolveAssetUrl } from '../../../utils/resolveAssetUrl';
+import { useRetainedBlobUrl } from '../../../utils/useRetainedBlobUrl';
 import { audioWaveformCache } from '../audioWaveformCache';
 import type { AudioShape } from '../AudioShape';
 import i18n from 'i18next';
@@ -46,6 +47,8 @@ export function useAudioLoad(shape: AudioShape, shouldLoad: boolean) {
       cancelled = true;
     };
   }, [shouldLoad, src, token]);
+
+  useRetainedBlobUrl(blobUrl);
 
   return { blobUrl, waveform, status, error };
 }

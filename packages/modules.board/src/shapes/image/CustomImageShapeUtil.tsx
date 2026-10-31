@@ -20,6 +20,7 @@ import {
 } from '../../utils/shapeSvgExport';
 import { isDisplayableAssetUrl } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { useRetainedBlobUrl } from '../../utils/useRetainedBlobUrl';
 import { useOcrProcessingStore } from '../../ocr';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
@@ -342,6 +343,8 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   const showError = (isMissing || retryExhausted || (imgError && !isResolving)) && !loadedSrc;
 
   const crossOrigin = isAnimated ? ('anonymous' as const) : undefined;
+
+  useRetainedBlobUrl(resolvedUrl);
 
   const handleLoad = useCallback((src: string) => {
     setLoadedUrl(src);

@@ -46,8 +46,8 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
   const frontTextColor = getBoardColorOption(frontColor)?.noteTextCssVar ?? 'var(--xi-gray-0)';
   const backTextColor = getBoardColorOption(backColor)?.noteTextCssVar ?? 'var(--xi-gray-0)';
 
-  const frontResolvedSrc = useResolvedAssetSrc(editor, frontImageAssetId, token);
-  const backResolvedSrc = useResolvedAssetSrc(editor, backImageAssetId, token);
+  const frontResolvedSrc = useResolvedAssetSrc(editor, frontImageAssetId, token, w);
+  const backResolvedSrc = useResolvedAssetSrc(editor, backImageAssetId, token, w);
 
   const frontAssetRecord = useValue(
     'frontAssetRecord',

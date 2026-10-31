@@ -23,7 +23,10 @@ import i18n from 'i18next';
 import { useActivityEventGuard, useActivitySession } from './activityHostContext';
 import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
-import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { useEditor, useValue } from '@ibodr/draw';
+import { resolveDisplayImageUrl } from '../../utils/displayImage';
+import { zoomStepCeil } from '../../utils/rasterBudget';
+import { useRetainedBlobUrl } from '../../utils/useRetainedBlobUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
 import { toastBoardUploadError } from '../../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../../utils/planUploadLimit';
@@ -33,12 +36,17 @@ import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils'
 const coverToolbarButtonClass =
   'bg-background-surface/95 text-text-primary hover:bg-background-hover border-border-default flex size-8 shrink-0 items-center justify-center rounded-lg border shadow-sm backdrop-blur-sm';
 
-export function useActivityImageSrc(src?: string) {
+export function useActivityImageSrc(src?: string, cssWidth?: number) {
   const { token } = useActivitySession();
+  const editor = useEditor();
+  const zoom = useValue('activity-image-zoom', () => editor.getZoomLevel(), [editor]);
+  const zoomStep = zoomStepCeil(zoom);
+  const layoutWidth = cssWidth === undefined ? 960 : cssWidth;
   const [url, setUrl] = useState<string | null>(null);
+  useRetainedBlobUrl(url);
 
   useEffect(() => {
-    if (!src) {
+    if (!src || layoutWidth <= 0) {
       setUrl(null);
       return;
     }
@@ -48,7 +56,11 @@ export function useActivityImageSrc(src?: string) {
     }
 
     let cancelled = false;
-    resolveAssetUrl(src, token)
+    const maxEdge = Math.max(
+      1,
+      Math.round(layoutWidth * zoomStep * (window.devicePixelRatio || 1)),
+    );
+    resolveDisplayImageUrl(src, token, maxEdge)
       .then((next) => {
         if (!cancelled) setUrl(next);
       })
@@ -59,7 +71,7 @@ export function useActivityImageSrc(src?: string) {
     return () => {
       cancelled = true;
     };
-  }, [src, token]);
+  }, [src, token, layoutWidth, zoomStep]);
 
   return url;
 }
@@ -73,9 +85,38 @@ export function ActivityImage({
   className?: string;
   alt?: string;
 }) {
-  const url = useActivityImageSrc(src);
-  if (!url) return null;
-  return <img src={url} alt={alt} draggable={false} className={className} />;
+  const frameRef = useRef<HTMLImageElement>(null);
+  const [cssWidth, setCssWidth] = useState(0);
+
+  useEffect(() => {
+    const el = frameRef.current;
+    if (!el) return;
+    const read = () => {
+      const width = Math.round(el.clientWidth || el.parentElement?.clientWidth || 0);
+      setCssWidth((prev) => (Math.abs(prev - width) < 2 ? prev : width));
+    };
+    read();
+    const observer = new ResizeObserver(read);
+    observer.observe(el);
+    const fallback = window.setTimeout(() => {
+      setCssWidth((prev) => (prev > 0 ? prev : 480));
+    }, 0);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallback);
+    };
+  }, []);
+
+  const url = useActivityImageSrc(src, cssWidth);
+  return (
+    <img
+      ref={frameRef}
+      {...(url ? { src: url } : {})}
+      alt={alt}
+      draggable={false}
+      className={className}
+    />
+  );
 }
 
 function boardToast(key: string, options?: Record<string, unknown>) {
