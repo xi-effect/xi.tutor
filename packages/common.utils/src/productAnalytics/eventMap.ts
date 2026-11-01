@@ -31,6 +31,8 @@ import type {
   ProductAnalyticsBoardTrigger,
   MathBankAnalyticsSource,
   MathBankFavoriteAction,
+  TaskReportCommentLengthBucket,
+  TaskReportFailureReason,
   ProductLimitBlockedOn,
   ProductLimitFileCategory,
   ProductLimitObjectKind,
@@ -711,17 +713,31 @@ export type ProductAnalyticsEventMap = {
     task_type?: string;
     difficulty?: number;
   };
-  math_task_report: {
+  task_report_opened: {
     event_version?: number;
-    source: MathBankAnalyticsSource;
-    session_id?: string;
     task_id: string;
     subject: string;
-    grade: number;
+    grade?: string | number;
     topic_id?: string;
     task_type?: string;
-    difficulty?: number;
-    comment: string;
+    source?: string;
+  };
+  task_report_submitted: {
+    event_version?: number;
+    task_id: string;
+    subject: string;
+    grade?: string | number;
+    topic_id?: string;
+    task_type?: string;
+    source?: string;
+    has_comment: boolean;
+    comment_length_bucket?: TaskReportCommentLengthBucket;
+  };
+  task_report_failed: {
+    event_version?: number;
+    task_id: string;
+    subject: string;
+    reason: TaskReportFailureReason;
   };
 
   product_limit_reached: {

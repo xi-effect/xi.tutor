@@ -46,10 +46,11 @@ import {
   trackMathTaskNextVariant,
   trackMathTaskOpen,
   trackMathTaskSolutionOpen,
+  trackTaskReportOpened,
 } from 'common.utils';
 import { useToggleMathBankFavorite } from '../hooks/useToggleMathBankFavorite';
 import { useMathBankUserStore } from '../store/useMathBankUserStore';
-import { toMathBankTaskSnapshot } from '../utils/analytics';
+import { toMathBankTaskSnapshot, toTaskReportContext } from '../utils/analytics';
 import { formatExamBadge, pickVisibleExamMappings } from '../utils/exam';
 import { formatRussianAnswerLines, isMathTask } from '../utils/answer';
 import { FavoriteHeart } from './FavoriteHeart';
@@ -238,9 +239,14 @@ export const MathBankTaskModal = ({
                 {task ? (
                   <HeaderIconButton
                     tooltip={t('task.report')}
-                    umamiEvent="math-bank-task-report"
                     pressed={reportOpen}
-                    onClick={() => setReportOpen((current) => !current)}
+                    onClick={() => {
+                      const willOpen = !reportOpen;
+                      setReportOpen(willOpen);
+                      if (willOpen) {
+                        trackTaskReportOpened(toTaskReportContext(task, subject, 'page'));
+                      }
+                    }}
                   >
                     <Flag className="fill-icon-secondary size-5" />
                   </HeaderIconButton>
@@ -262,7 +268,11 @@ export const MathBankTaskModal = ({
           </div>
 
           {task && reportOpen ? (
-            <MathBankTaskReportForm task={task} onClose={() => setReportOpen(false)} />
+            <MathBankTaskReportForm
+              task={task}
+              subject={subject}
+              onClose={() => setReportOpen(false)}
+            />
           ) : null}
 
           {task ? (

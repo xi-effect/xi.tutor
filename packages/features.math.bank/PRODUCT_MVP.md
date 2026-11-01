@@ -95,6 +95,6 @@
 - `math_task_solution_open`;
 - `math_task_favorite_toggle`;
 - `math_task_next_variant`;
-- `math_task_report` — комментарий по заданию (`task_id`, без текста условия).
+- `task_report_opened` / `task_report_submitted` / `task_report_failed` — репорт по заданию (`task_id`, `subject`, без текста комментария и без текста условия).
 
 Главная продуктовая метрика — доля сессий банка, закончившихся `math_task_insert_board` или `math_task_insert_note`, плюс median time от `math_bank_open` до вставки (`time_to_insert_ms`, связь по `session_id`). Реализация: [`docs/analytics/math-bank-events.md`](../../docs/analytics/math-bank-events.md).

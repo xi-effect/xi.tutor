@@ -105,6 +105,7 @@
     "reportSubmit": "Send",
     "reportCancel": "Cancel",
     "reportSent": "Thanks, we received your report",
+    "reportError": "Could not send the report",
     "loading": "Loading task...",
     "error": "Could not open the task"
   },

@@ -149,6 +149,11 @@ export type MathBankAnalyticsSource = 'page' | 'board' | 'editor';
 
 export type MathBankFavoriteAction = 'add' | 'remove';
 
+export type TaskReportCommentLengthBucket = '1_50' | '51_150' | '151_300' | '300_plus';
+
+export type TaskReportFailureReason =
+  'network_error' | 'server_error' | 'validation_error' | 'unknown';
+
 export type ProductLimitType = 'file_size' | 'storage' | 'board_objects' | 'classrooms' | 'other';
 
 export type ProductLimitSource = 'materials' | 'classroom' | 'board' | 'other';
