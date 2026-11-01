@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Group, Home, Payments, BookOpened, Calendar, Close, Task } from '@xipkg/icons';
+import { Group, Home, Payments, BookOpened, Calendar, Close, Task, TaskFile } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
@@ -37,6 +37,7 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
     ...(isTutor
       ? [
           { id: 'materials-menu-item', titleKey: 'materials', url: '/materials', icon: BookOpened },
+          { id: 'homework-menu-item', titleKey: 'homework', url: '/homework', icon: TaskFile },
           { id: 'bank-menu-item', titleKey: 'mathBank', url: '/bank', icon: Task },
         ]
       : []),
@@ -52,13 +53,14 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
 
   const handleClick = (url: string) => {
     const filteredSearch = isStarted && search.call ? { call: search.call } : {};
+    const sectionTabSearch = url === '/homework' ? { tab: 'active' } : {};
     if (isStarted && mode === 'full') {
       navigate({
         to: url,
-        search: () => ({ ...filteredSearch, call: callId }),
+        search: () => ({ ...filteredSearch, ...sectionTabSearch, call: callId }),
       });
     } else {
-      navigate({ to: url, search: () => filteredSearch });
+      navigate({ to: url, search: () => ({ ...filteredSearch, ...sectionTabSearch }) });
     }
     close();
     onClose();

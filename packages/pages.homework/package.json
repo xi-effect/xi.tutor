@@ -1,0 +1,55 @@
+{
+  "name": "pages.homework",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --watch",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.166.6",
+    "@xipkg/badge": "2.1.0",
+    "@xipkg/button": "4.3.0",
+    "@xipkg/dropdown": "3.1.0",
+    "@xipkg/gridvirtualizer": "1.0.2",
+    "@xipkg/icons": "3.1.8",
+    "@xipkg/input": "2.3.0",
+    "@xipkg/modal": "4.6.0",
+    "@xipkg/switcher-animate": "1.1.0",
+    "@xipkg/textarea": "1.3.0",
+    "@xipkg/utils": "1.8.0",
+    "common.services": "workspace:*",
+    "common.ui": "workspace:*",
+    "modules.homework": "workspace:*",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/node": "^20.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@xipkg/eslint": "4.6.0",
+    "@xipkg/tailwind": "1.0.0",
+    "@xipkg/typescript": "latest",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0"
+  },
+  "peerDependencies": {
+    "react": "19"
+  },
+  "description": "homework page",
+  "author": "xi.effect"
+}

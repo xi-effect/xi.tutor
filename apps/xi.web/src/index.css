@@ -114,6 +114,8 @@
 @source "../../../packages/pages.signup/src";
 @source "../../../packages/pages.welcome/src";
 @source "../../../packages/pages.materials/src";
+@source "../../../packages/pages.homework/src";
+@source "../../../packages/modules.homework/src";
 @source "../../../packages/features.materials.add/src";
 @source "../../../packages/features.materials.edit/src";
 @source "../../../packages/features.materials.card/src";
