@@ -26,6 +26,7 @@ export function resolveLodStyle<T extends DrLodStyle | null>(style: T): T {
     ...style,
     fill: style.fill ? resolveBoardCssColor(style.fill) : style.fill,
     stroke: style.stroke ? resolveBoardCssColor(style.stroke) : style.stroke,
+    labelColor: style.labelColor ? resolveBoardCssColor(style.labelColor) : style.labelColor,
   };
 }
 

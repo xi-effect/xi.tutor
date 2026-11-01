@@ -18,7 +18,7 @@ export class ActivityShapeUtil extends BaseBoxShapeUtil<ActivityShape> {
   }
 
   override getLodStyle() {
-    return cardLodStyle(undefined, { snapshot: true });
+    return cardLodStyle();
   }
 
   override canEdit() {
