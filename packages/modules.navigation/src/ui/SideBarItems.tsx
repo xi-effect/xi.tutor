@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState } from 'react';
 import {
   SidebarContent,
   SidebarFooter,
@@ -20,12 +20,9 @@ import { ConfirmDialog, Logo, useSupportModalStore } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
+import { pickSettingsSearch } from 'modules.profile/sections';
 import { getFooterMenuConfig, getTopMenuConfig } from './config/sidebarMenuConfig';
 import { MaintenanceNotice } from './MaintenanceNotice';
-
-const UserSettings = lazy(() =>
-  import('modules.profile').then((module) => ({ default: module.UserSettings })),
-);
 
 export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
@@ -117,24 +114,16 @@ export const SideBarItems = () => {
 
   const { logout } = useAuth();
 
-  const [open, setOpen] = useState(false);
-
-  // Синхронизируем состояние модалки с URL
-  useEffect(() => {
-    const profileParam = search.profile;
-
-    const hasProfileParam = !!profileParam;
-    if (hasProfileParam !== open) {
-      setOpen(hasProfileParam);
-    }
-  }, [search.profile, open]);
-
   const handleOpenProfile = () => {
-    navigate({
-      to: pathname,
-      search: { profile: 'personalInfo' },
+    const callFromRoute =
+      isStarted && mode === 'full' && typeof callId === 'string' ? callId : undefined;
+
+    void navigate({
+      to: '/settings/$section',
+      params: { section: 'personal' },
+      search: pickSettingsSearch(search, callFromRoute),
     });
-    setOpen(true);
+    close();
   };
 
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
@@ -147,7 +136,7 @@ export const SideBarItems = () => {
   return (
     <>
       <SidebarContent className="bg-background-page overflow-visible group-data-[collapsible=icon]:overflow-visible">
-        {/* Верхняя секция: триггер, логотип (только при открытом сайдбаре), профиль */}
+        {/* Верхняя секция: триггер и логотип. Аккаунт — внизу сайдбара. */}
         <div className="flex flex-col gap-4 pt-5">
           <div className="flex w-full items-center justify-between">
             <div
@@ -165,19 +154,6 @@ export const SideBarItems = () => {
             >
               <LayoutLeft className="text-text-secondary group-hover:text-text-primary group-focus:text-text-primary group-active:text-text-primary h-5 w-5" />
             </SidebarTrigger>
-          </div>
-
-          <div className="flex w-full min-w-0 items-center overflow-visible">
-            {user?.id ? (
-              <DesktopUserMenu
-                withOutText={isCollapsed}
-                userId={user.id}
-                onOpenProfile={handleOpenProfile}
-                onLogout={() => setLogoutConfirmOpen(true)}
-                profileText={t('profile')}
-                logoutText={t('logout')}
-              />
-            ) : null}
           </div>
         </div>
         {/* Основное меню */}
@@ -228,11 +204,19 @@ export const SideBarItems = () => {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
+        {user?.id ? (
+          <div className="border-border-default mt-1 overflow-visible border-t pt-2">
+            <DesktopUserMenu
+              withOutText={isCollapsed}
+              userId={user.id}
+              onOpenProfile={handleOpenProfile}
+              onLogout={() => setLogoutConfirmOpen(true)}
+              profileText={t('profile')}
+              logoutText={t('logout')}
+            />
+          </div>
+        ) : null}
       </SidebarFooter>
-
-      <Suspense fallback={null}>
-        <UserSettings open={open} setOpen={setOpen} />
-      </Suspense>
 
       <ConfirmDialog
         open={logoutConfirmOpen}

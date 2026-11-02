@@ -26,6 +26,7 @@ import {
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { isConfirmationUrl } from '../pendingPayment';
+import { subscriptionSettingsSearch } from '../settingsLocation';
 
 const PAYMENT_CHECK_ATTEMPTS = 8;
 const PAYMENT_CHECK_INTERVAL_MS = 2000;
@@ -219,8 +220,9 @@ export const SubscriptionPaymentResult = () => {
     else openOverview();
 
     void navigate({
-      to: '/',
-      search: { profile: 'subscription' },
+      to: '/settings/$section',
+      params: { section: 'subscription' },
+      search: subscriptionSettingsSearch(search),
     });
   };
 

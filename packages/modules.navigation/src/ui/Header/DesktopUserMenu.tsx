@@ -22,17 +22,17 @@ import {
 
 import { UserPlanBadge } from './UserPlanBadge';
 import { useCurrentUser } from 'common.services';
-import { ChevronUp, Download, Exit, Settings } from '@xipkg/icons';
+import { Download, Exit, MenuDots, Settings } from '@xipkg/icons';
 import { usePWAInstall } from 'common.services';
-import { useMenuStore } from '../../store/useMenuStore';
 
 interface DesktopUserMenuProps {
   withOutText: boolean;
   userId: number;
-  onOpenProfile: () => void;
+  onOpenProfile?: () => void;
   onLogout: () => void;
   profileText: string;
   logoutText: string;
+  showPlanOnTrigger?: boolean;
 }
 
 export const DesktopUserMenu = ({
@@ -42,10 +42,9 @@ export const DesktopUserMenu = ({
   onLogout,
   profileText,
   logoutText,
+  showPlanOnTrigger = false,
 }: DesktopUserMenuProps) => {
   const { t } = useTranslation('navigation');
-  const { isDesktopOpen } = useMenuStore();
-
   const { data: user } = useCurrentUser();
   const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
@@ -81,9 +80,8 @@ export const DesktopUserMenu = ({
         classNameText="block w-full pl-1 text-left text-text-primary"
         classNameLabel="block w-full pl-1 text-left text-text-secondary"
       />
-      {!withOutText && (
-        <ChevronUp className="fill-icon-secondary mr-1 ml-1 h-4 w-4 shrink-0 rotate-x-180 group-data-[state=open]:rotate-x-0" />
-      )}
+      {!withOutText && showPlanOnTrigger ? <UserPlanBadge className="shrink-0" /> : null}
+      {!withOutText ? <MenuDots className="fill-icon-secondary mr-1 ml-1 size-4 shrink-0" /> : null}
     </Button>
   );
 
@@ -138,11 +136,20 @@ export const DesktopUserMenu = ({
 
       <DropdownMenuContent
         className={cn(cardMenuSurfaceClass, 'z-100 flex w-[240px] flex-col gap-2 p-2')}
-        side="bottom"
+        side="top"
         sideOffset={8}
-        align={isDesktopOpen ? 'center' : 'start'}
+        align="start"
       >
-        <div className="flex items-center justify-between gap-2 px-2 pt-2">
+        <div className="flex flex-col gap-0.5 px-2 pt-2 pb-1">
+          <span className="text-text-primary truncate text-sm font-medium">
+            {displayName || username}
+          </span>
+          {user?.email ? (
+            <span className="text-text-secondary truncate text-xs">{user.email}</span>
+          ) : null}
+        </div>
+
+        <div className="flex items-center justify-between gap-2 px-2">
           <span className="text-text-secondary text-xs leading-4 font-medium">
             {t('plan.label')}
           </span>
@@ -150,14 +157,16 @@ export const DesktopUserMenu = ({
         </div>
 
         <div className="flex flex-col">
-          <DropdownMenuItem
-            onSelect={onOpenProfile}
-            className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
-            data-umami-event="header-profile-open"
-          >
-            <Settings />
-            <span>{profileText}</span>
-          </DropdownMenuItem>
+          {onOpenProfile ? (
+            <DropdownMenuItem
+              onSelect={onOpenProfile}
+              className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+              data-umami-event="header-profile-open"
+            >
+              <Settings />
+              <span>{profileText}</span>
+            </DropdownMenuItem>
+          ) : null}
 
           {!isInstalled && (
             <DropdownMenuItem

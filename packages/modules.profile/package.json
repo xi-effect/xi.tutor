@@ -4,7 +4,8 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
-    "./locales": "./src/locales/index.ts"
+    "./locales": "./src/locales/index.ts",
+    "./sections": "./src/model/settingsSections.ts"
   },
   "license": "MIT",
   "scripts": {

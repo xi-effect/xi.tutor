@@ -23,6 +23,8 @@ import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_lay
 import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
 import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
 import { Route as appLayoutScheduleIndexRouteImport } from './pages/(app)/_layout/schedule/index'
+import { Route as appLayoutSettingsIndexRouteImport } from './pages/(app)/_layout/settings/index'
+import { Route as appLayoutSettingsSectionRouteImport } from './pages/(app)/_layout/settings/$section'
 import { Route as authLayoutResetPasswordIndexRouteImport } from './pages/(auth)/_layout/reset-password/index'
 import { Route as authLayoutSigninIndexRouteImport } from './pages/(auth)/_layout/signin/index'
 import { Route as authLayoutSignupIndexRouteImport } from './pages/(auth)/_layout/signup/index'
@@ -108,6 +110,17 @@ const appLayoutScheduleIndexRoute = appLayoutScheduleIndexRouteImport.update({
   path: '/schedule/',
   getParentRoute: () => appLayoutRoute,
 } as any)
+const appLayoutSettingsIndexRoute = appLayoutSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
+const appLayoutSettingsSectionRoute =
+  appLayoutSettingsSectionRouteImport.update({
+    id: '/settings/$section',
+    path: '/settings/$section',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
 const authLayoutResetPasswordIndexRoute =
   authLayoutResetPasswordIndexRouteImport.update({
     id: '/reset-password/',
@@ -194,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
+  '/settings/$section': typeof appLayoutSettingsSectionRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
   '/bank/': typeof appLayoutBankIndexRoute
   '/call/': typeof appLayoutCallIndexRoute
@@ -201,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/materials/': typeof appLayoutMaterialsIndexRoute
   '/payments/': typeof appLayoutPaymentsIndexRoute
   '/schedule/': typeof appLayoutScheduleIndexRoute
+  '/settings/': typeof appLayoutSettingsIndexRoute
   '/reset-password/': typeof authLayoutResetPasswordIndexRoute
   '/signin/': typeof authLayoutSigninIndexRoute
   '/signup/': typeof authLayoutSignupIndexRoute
@@ -221,6 +236,7 @@ export interface FileRoutesByTo {
   '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
+  '/settings/$section': typeof appLayoutSettingsSectionRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
   '/bank': typeof appLayoutBankIndexRoute
   '/call': typeof appLayoutCallIndexRoute
@@ -228,6 +244,7 @@ export interface FileRoutesByTo {
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
   '/schedule': typeof appLayoutScheduleIndexRoute
+  '/settings': typeof appLayoutSettingsIndexRoute
   '/reset-password': typeof authLayoutResetPasswordIndexRoute
   '/signin': typeof authLayoutSigninIndexRoute
   '/signup': typeof authLayoutSignupIndexRoute
@@ -252,6 +269,7 @@ export interface FileRoutesById {
   '/(app)/_layout/': typeof appLayoutIndexRoute
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
+  '/(app)/_layout/settings/$section': typeof appLayoutSettingsSectionRoute
   '/(common)/_layout/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
   '/(app)/_layout/bank/': typeof appLayoutBankIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
@@ -259,6 +277,7 @@ export interface FileRoutesById {
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
   '/(app)/_layout/schedule/': typeof appLayoutScheduleIndexRoute
+  '/(app)/_layout/settings/': typeof appLayoutSettingsIndexRoute
   '/(auth)/_layout/reset-password/': typeof authLayoutResetPasswordIndexRoute
   '/(auth)/_layout/signin/': typeof authLayoutSigninIndexRoute
   '/(auth)/_layout/signup/': typeof authLayoutSignupIndexRoute
@@ -281,6 +300,7 @@ export interface FileRouteTypes {
     | '/'
     | '/board/$boardId'
     | '/call/$callId'
+    | '/settings/$section'
     | '/invite/$inviteId'
     | '/bank/'
     | '/call/'
@@ -288,6 +308,7 @@ export interface FileRouteTypes {
     | '/materials/'
     | '/payments/'
     | '/schedule/'
+    | '/settings/'
     | '/reset-password/'
     | '/signin/'
     | '/signup/'
@@ -308,6 +329,7 @@ export interface FileRouteTypes {
     | '/'
     | '/board/$boardId'
     | '/call/$callId'
+    | '/settings/$section'
     | '/invite/$inviteId'
     | '/bank'
     | '/call'
@@ -315,6 +337,7 @@ export interface FileRouteTypes {
     | '/materials'
     | '/payments'
     | '/schedule'
+    | '/settings'
     | '/reset-password'
     | '/signin'
     | '/signup'
@@ -338,6 +361,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
+    | '/(app)/_layout/settings/$section'
     | '/(common)/_layout/invite/$inviteId'
     | '/(app)/_layout/bank/'
     | '/(app)/_layout/call/'
@@ -345,6 +369,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
     | '/(app)/_layout/schedule/'
+    | '/(app)/_layout/settings/'
     | '/(auth)/_layout/reset-password/'
     | '/(auth)/_layout/signin/'
     | '/(auth)/_layout/signup/'
@@ -471,6 +496,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutScheduleIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/(app)/_layout/settings/': {
+      id: '/(app)/_layout/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof appLayoutSettingsIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/settings/$section': {
+      id: '/(app)/_layout/settings/$section'
+      path: '/settings/$section'
+      fullPath: '/settings/$section'
+      preLoaderRoute: typeof appLayoutSettingsSectionRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
     '/(auth)/_layout/reset-password/': {
       id: '/(auth)/_layout/reset-password/'
       path: '/reset-password'
@@ -576,12 +615,14 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute
+  appLayoutSettingsSectionRoute: typeof appLayoutSettingsSectionRoute
   appLayoutBankIndexRoute: typeof appLayoutBankIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute
   appLayoutScheduleIndexRoute: typeof appLayoutScheduleIndexRoute
+  appLayoutSettingsIndexRoute: typeof appLayoutSettingsIndexRoute
   appLayoutSettingsSubscriptionPaymentResultRoute: typeof appLayoutSettingsSubscriptionPaymentResultRoute
   appLayoutClassroomsClassroomIdIndexRoute: typeof appLayoutClassroomsClassroomIdIndexRoute
   appLayoutClassroomsClassroomIdBoardsBoardIdRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
@@ -594,12 +635,14 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
+  appLayoutSettingsSectionRoute: appLayoutSettingsSectionRoute,
   appLayoutBankIndexRoute: appLayoutBankIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
   appLayoutScheduleIndexRoute: appLayoutScheduleIndexRoute,
+  appLayoutSettingsIndexRoute: appLayoutSettingsIndexRoute,
   appLayoutSettingsSubscriptionPaymentResultRoute:
     appLayoutSettingsSubscriptionPaymentResultRoute,
   appLayoutClassroomsClassroomIdIndexRoute:

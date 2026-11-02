@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import {
   USER_FLAG_KEYS,
   useCurrentSubscription,
@@ -16,6 +16,7 @@ import {
   trackProductEvent,
 } from 'common.utils';
 import { SubscriptionReleaseNoteModal } from './SubscriptionReleaseNoteModal';
+import { useSettingsSearch } from '../useSettingsSearch';
 
 /** Пауза после онбординга, чтобы новость не открывалась в тот же кадр. */
 const NEWS_AFTER_ONBOARDING_MS = 600;
@@ -28,12 +29,10 @@ const isReadyTutor = (user: { default_layout: string; onboarding_stage: string }
 export const SubscriptionReleaseNoteHost = () => {
   const { data: user } = useCurrentUser();
   const navigate = useNavigate();
+  const settingsSearch = useSettingsSearch();
   const { pathname } = useLocation();
-  const search = useSearch({ strict: false }) as { profile?: string };
   const onSubscriptionSurface =
-    pathname.startsWith(PAYMENT_RESULT_PATH) ||
-    pathname.includes('/settings/subscription') ||
-    search.profile === 'subscription';
+    pathname.startsWith(PAYMENT_RESULT_PATH) || pathname.includes('/settings/subscription');
   const inCall = useCallStore((state) => Boolean(state.token));
   const ready = isReadyTutor(user) && !inCall && !onSubscriptionSurface;
   const subscriptionQuery = useCurrentSubscription({ enabled: ready });
@@ -136,7 +135,11 @@ export const SubscriptionReleaseNoteHost = () => {
         setSubscriptionAnalyticsSource('announcement');
         useSubscriptionUiStore.getState().setAnalyticsSource('announcement');
         setClosedThisVisit(true);
-        void navigate({ to: '/', search: { profile: 'subscription' } });
+        void navigate({
+          to: '/settings/$section',
+          params: { section: 'subscription' },
+          search: settingsSearch,
+        });
       }}
       onArticleOpen={() => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.SUBSCRIPTION_ANNOUNCEMENT_ARTICLE_OPENED, {
