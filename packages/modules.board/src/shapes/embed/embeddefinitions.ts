@@ -12,6 +12,14 @@ const SIZES: Record<EmbedProviderId, { width: number; height: number }> = {
   miro: { width: 800, height: 500 },
   codepen: { width: 700, height: 450 },
   'yandex-docs': { width: 800, height: 600 },
+  wordwall: { width: 640, height: 480 },
+  abctest: { width: 640, height: 480 },
+  quizlet: { width: 700, height: 500 },
+  learningapps: { width: 700, height: 500 },
+  genially: { width: 800, height: 500 },
+  padlet: { width: 800, height: 600 },
+  canva: { width: 800, height: 500 },
+  phet: { width: 800, height: 600 },
 };
 
 const VIDEO = new Set<EmbedProviderId>(['youtube', 'rutube', 'vk']);

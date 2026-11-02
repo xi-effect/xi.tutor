@@ -1,4 +1,4 @@
-import { KeyboardEvent, RefObject, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { KeyboardEvent, RefObject, useId, useMemo, useRef, useState } from 'react';
 import { Editor, createShapeId, useEditor } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
 import {
@@ -12,7 +12,7 @@ import {
 import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { EMBED_PROVIDER_LABELS, parseEmbedInput } from './embedProviders';
-import { EMBED_MIN_HEIGHT, EMBED_MIN_WIDTH, PORTAL_Z } from './consts';
+import { EMBED_MIN_HEIGHT, EMBED_MIN_WIDTH } from './consts';
 import type { ResolvedEmbed } from './types';
 
 export function insertEmbed(editor: Editor, embed: ResolvedEmbed) {
@@ -41,22 +41,6 @@ export const EmbedInsertDialog = ({ open, onOpenChange }: DialogProps) => {
   const descId = useId();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [portalReady, setPortalReady] = useState(false);
-
-  useEffect(() => {
-    const el = document.createElement('div');
-    el.style.position = 'relative';
-    el.style.zIndex = String(PORTAL_Z);
-    document.body.appendChild(el);
-    containerRef.current = el;
-    setPortalReady(true);
-    return () => {
-      document.body.removeChild(el);
-      containerRef.current = null;
-    };
-  }, []);
-
-  if (!portalReady) return null;
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>

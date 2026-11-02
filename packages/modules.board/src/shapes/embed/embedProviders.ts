@@ -69,19 +69,44 @@ const PROVIDERS: readonly ProviderDef[] = [
   {
     id: 'vk',
     label: 'VK Видео',
-    hosts: ['vk.com', 'www.vk.com', 'vkvideo.ru', 'www.vkvideo.ru'],
+    hosts: [
+      'vk.com',
+      'www.vk.com',
+      'm.vk.com',
+      'vk.ru',
+      'www.vk.ru',
+      'm.vk.ru',
+      'vkvideo.ru',
+      'www.vkvideo.ru',
+      'm.vkvideo.ru',
+    ],
     allow: VIDEO_ALLOW,
     resolve: (u, parts) => {
-      // Только embed-ссылка video_ext.php (с hash) — обычные ссылки на видео не встраиваются
-      if (parts.length !== 1 || parts[0] !== 'video_ext.php') return null;
-      const oid = u.searchParams.get('oid');
-      const id = u.searchParams.get('id');
-      const hash = u.searchParams.get('hash');
+      let oid: string | null = null;
+      let id: string | null = null;
+
+      if (parts.length === 1 && parts[0] === 'video_ext.php') {
+        oid = u.searchParams.get('oid');
+        id = u.searchParams.get('id');
+      } else {
+        // Обычные ссылки: /video-123_456 или /video?z=video-123_456/…
+        const candidate =
+          parts.length === 1 ? (parts[0] === 'video' ? u.searchParams.get('z') : parts[0]) : null;
+        const m = candidate ? /^video(-?\d{1,12})_(\d{1,12})(?:\/|$)/.exec(candidate) : null;
+        if (!m) return null;
+        oid = m[1];
+        id = m[2];
+      }
+
       if (!oid || !/^-?\d{1,12}$/.test(oid)) return null;
       if (!id || !/^\d{1,12}$/.test(id)) return null;
-      if (!hash || !/^[0-9a-f]{8,32}$/i.test(hash)) return null;
+
+      // hash у VK индивидуален и нужен только для закрытых видео; публичные работают без него
+      const rawHash = u.searchParams.get('hash');
+      const hash = rawHash && /^[0-9a-f]{8,32}$/i.test(rawHash) ? rawHash : '';
+
       return {
-        src: `https://vk.com/video_ext.php?oid=${oid}&id=${id}&hash=${hash}`,
+        src: `https://vk.com/video_ext.php?oid=${oid}&id=${id}${hash ? `&hash=${hash}` : ''}&hd=2`,
         openUrl: `https://vk.com/video${oid}_${id}`,
         w: 560,
         h: 315,
@@ -174,7 +199,6 @@ const PROVIDERS: readonly ProviderDef[] = [
     hosts: ['www.google.com'],
     allow: 'fullscreen',
     resolve: (u, parts) => {
-      // Строго /maps/embed — остальные пути google.com (в т.ч. /url?...) не принимаем
       if (parts.length !== 2 || parts[0] !== 'maps' || parts[1] !== 'embed') return null;
       const pb = u.searchParams.get('pb');
       if (!pb || pb.length > 2500 || !/^[\w!.\-:,;=+~*@$%\s]+$/.test(pb)) return null;
@@ -244,7 +268,164 @@ const PROVIDERS: readonly ProviderDef[] = [
         return null;
       }
       if (!id || !/^[\w-]{8,64}$/.test(id)) return null;
+      // yadi.sk → всегда канонический disk.yandex.ru
       const src = `https://disk.yandex.ru/${kind}/${id}`;
+      return { src, openUrl: src, w: 800, h: 600 };
+    },
+  },
+  {
+    id: 'wordwall',
+    label: 'Wordwall',
+    hosts: ['wordwall.net', 'www.wordwall.net'],
+    allow: 'fullscreen',
+    resolve: (u, parts) => {
+      let rest = parts;
+      let locale = '';
+      if (rest.length === 3 && /^[a-z]{2}(?:-[a-z]{2,4})?$/i.test(rest[0])) {
+        locale = rest[0].toLowerCase();
+        rest = rest.slice(1);
+      }
+      if (rest.length !== 2 || rest[0] !== 'embed') return null;
+      const id = rest[1];
+      if (!/^[0-9a-f]{32}$/i.test(id)) return null;
+
+      const qs = new URLSearchParams();
+      const params: [string, RegExp][] = [
+        ['themeId', /^\d{1,4}$/],
+        ['templateId', /^\d{1,4}$/],
+        ['fontStackId', /^\d{1,3}$/],
+      ];
+      for (const [key, pattern] of params) {
+        const v = u.searchParams.get(key);
+        if (v && pattern.test(v)) qs.set(key, v);
+      }
+      const q = qs.toString();
+      const src = `https://wordwall.net/${locale ? `${locale}/` : ''}embed/${id.toLowerCase()}${q ? `?${q}` : ''}`;
+      return { src, openUrl: src, w: 640, h: 480 };
+    },
+  },
+  {
+    id: 'abctest',
+    label: 'ABCtest',
+    hosts: ['abctest.ru', 'www.abctest.ru'],
+    allow: 'fullscreen',
+    resolve: (_u, parts) => {
+      if (parts[0] !== 'embed' || parts.length < 2 || parts.length > 3) return null;
+      const id = parts[1];
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return null;
+      // slug — произвольное название упражнения (может быть кириллицей), сохраняем безопасно закодированным
+      const slug = parts[2] ?? '';
+      if (slug.length > 120) return null;
+      const src = `https://abctest.ru/embed/${id.toLowerCase()}${slug ? `/${encodeURIComponent(slug)}` : ''}`;
+      return { src, openUrl: src, w: 640, h: 480 };
+    },
+  },
+  {
+    id: 'quizlet',
+    label: 'Quizlet',
+    hosts: ['quizlet.com', 'www.quizlet.com'],
+    allow: 'fullscreen',
+    resolve: (u, parts) => {
+      if (parts.length !== 3 || parts[2] !== 'embed') return null;
+      const [setId, mode] = parts;
+      if (!/^\d{3,15}$/.test(setId)) return null;
+      if (!['flashcards', 'learn', 'match', 'test', 'spell', 'scatter', 'gravity'].includes(mode)) {
+        return null;
+      }
+      const qs = new URLSearchParams();
+      for (const key of ['i', 'x']) {
+        const v = u.searchParams.get(key);
+        if (v && /^[a-z0-9]{2,12}$/i.test(v)) qs.set(key, v);
+      }
+      const q = qs.toString();
+      return {
+        src: `https://quizlet.com/${setId}/${mode}/embed${q ? `?${q}` : ''}`,
+        openUrl: `https://quizlet.com/${setId}`,
+        w: 700,
+        h: 500,
+      };
+    },
+  },
+  {
+    id: 'learningapps',
+    label: 'LearningApps',
+    hosts: ['learningapps.org', 'www.learningapps.org'],
+    allow: 'fullscreen',
+    resolve: (u, parts) => {
+      if (parts.length !== 1 || parts[0] !== 'watch') return null;
+      const v = u.searchParams.get('v');
+      const app = u.searchParams.get('app');
+      let src: string;
+      if (v && /^[a-z0-9]{6,20}$/i.test(v)) src = `https://learningapps.org/watch?v=${v}`;
+      else if (app && /^\d{3,10}$/.test(app)) src = `https://learningapps.org/watch?app=${app}`;
+      else return null;
+      return { src, openUrl: src, w: 700, h: 500 };
+    },
+  },
+  {
+    id: 'genially',
+    label: 'Genially',
+    hosts: ['view.genial.ly', 'view.genially.com'],
+    allow: 'fullscreen',
+    resolve: (_u, parts) => {
+      if (parts.length !== 1 || !/^[0-9a-f]{24}$/i.test(parts[0])) return null;
+      const src = `https://view.genial.ly/${parts[0].toLowerCase()}`;
+      return { src, openUrl: src, w: 800, h: 500 };
+    },
+  },
+  {
+    id: 'padlet',
+    label: 'Padlet',
+    hosts: ['padlet.com', 'www.padlet.com'],
+    allow: 'fullscreen; clipboard-write',
+    resolve: (_u, parts) => {
+      if (parts.length !== 2 || parts[0] !== 'embed' || !/^[a-z0-9]{8,24}$/i.test(parts[1])) {
+        return null;
+      }
+      const src = `https://padlet.com/embed/${parts[1]}`;
+      return { src, openUrl: src, w: 800, h: 600 };
+    },
+  },
+  {
+    id: 'canva',
+    label: 'Canva',
+    hosts: ['canva.com', 'www.canva.com'],
+    allow: 'fullscreen',
+    resolve: (_u, parts) => {
+      if (parts[0] !== 'design') return null;
+      const id = parts[1];
+      const rest = parts.slice(2);
+      if (!id || !/^[A-Za-z0-9_-]{8,16}$/.test(id)) return null;
+      if (rest.length < 1 || rest.length > 2 || rest[rest.length - 1] !== 'view') return null;
+      const token = rest.length === 2 ? rest[0] : '';
+      if (token && !/^[A-Za-z0-9_-]{8,40}$/.test(token)) return null;
+      const path = `https://www.canva.com/design/${id}/${token ? `${token}/` : ''}view`;
+      return { src: `${path}?embed`, openUrl: path, w: 800, h: 500 };
+    },
+  },
+  {
+    id: 'phet',
+    label: 'PhET',
+    hosts: ['phet.colorado.edu'],
+    allow: 'fullscreen',
+    resolve: (_u, parts) => {
+      const namePattern = /^[a-z0-9-]{2,60}$/;
+
+      const simIdx = parts.indexOf('simulation');
+      if (simIdx >= 0 && simIdx <= 1 && parts.length === simIdx + 2) {
+        const lang = simIdx === 1 ? parts[0] : 'en';
+        const name = parts[simIdx + 1];
+        if (!/^[a-z]{2}$/i.test(lang) || !namePattern.test(name)) return null;
+        const src = `https://phet.colorado.edu/sims/html/${name}/latest/${name}_${lang.toLowerCase()}.html`;
+        return { src, openUrl: src, w: 800, h: 600 };
+      }
+
+      if (parts.length !== 5 || parts[0] !== 'sims' || parts[1] !== 'html') return null;
+      const [, , name, version, file] = parts;
+      if (!namePattern.test(name)) return null;
+      if (version !== 'latest' && !/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(version)) return null;
+      if (!new RegExp(`^${name}_[a-z]{2,3}(?:_[A-Za-z]{2,4})?\\.html$`).test(file)) return null;
+      const src = `https://phet.colorado.edu/sims/html/${name}/${version}/${file}`;
       return { src, openUrl: src, w: 800, h: 600 };
     },
   },

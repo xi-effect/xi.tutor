@@ -7,7 +7,15 @@ export type EmbedProviderId =
   | 'google-maps'
   | 'miro'
   | 'codepen'
-  | 'yandex-docs';
+  | 'yandex-docs'
+  | 'wordwall'
+  | 'abctest'
+  | 'quizlet'
+  | 'learningapps'
+  | 'genially'
+  | 'padlet'
+  | 'canva'
+  | 'phet';
 
 export type EmbedErrorCode =
   | 'empty'
@@ -15,8 +23,8 @@ export type EmbedErrorCode =
   | 'invalid_url'
   | 'insecure_protocol'
   | 'forbidden_url_parts'
-  | 'unsupported_markup'
   | 'unsupported_host'
+  | 'unsupported_markup'
   | 'unsupported_link';
 
 export interface ResolvedEmbed {
