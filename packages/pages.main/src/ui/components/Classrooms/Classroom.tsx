@@ -17,7 +17,7 @@ import {
 import { Edit, MoreVert, Trash } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
+import { useCurrentUser, useDeleteClassroom } from 'common.services';
 import {
   ConfirmDialog,
   cardMenuButtonClass,
@@ -35,41 +35,28 @@ import { useTranslation } from 'react-i18next';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
-  isLoading: boolean;
+  label: string;
 };
-
-type RoleT = 'student' | 'tutor';
 
 const avatarSize = 'l';
 
-const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
-  const { data: user } = useCurrentUser();
-  const isTutor = user?.default_layout === 'tutor';
-
-  const userRole: RoleT = isTutor ? 'student' : 'tutor';
-  const { data } = useUserByRole(userRole, classroom.tutor_id ?? classroom.student_id ?? 0);
+const UserAvatar = ({ classroom, label }: UserAvatarPropsT) => {
+  const userId = classroom.tutor_id ?? classroom.student_id ?? 0;
+  const letter = label.trim()[0]?.toUpperCase() ?? '';
 
   return (
     <Avatar size={avatarSize}>
-      <AvatarImage
-        src={`https://api.sovlium.ru/files/users/${classroom.tutor_id ?? classroom.student_id ?? 0}/avatar.webp`}
-        alt="user avatar"
-      />
-      {isLoading || !data ? (
-        <AvatarFallback size={avatarSize} loading />
-      ) : (
-        <AvatarFallback size={avatarSize}>{data?.display_name[0].toUpperCase()}</AvatarFallback>
-      )}
+      <AvatarImage src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`} alt="" />
+      <AvatarFallback size={avatarSize}>{letter}</AvatarFallback>
     </Avatar>
   );
 };
 
 type ClassroomProps = {
-  isLoading: boolean;
   classroom: ClassroomT;
 };
 
-export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
+export const Classroom = ({ classroom }: ClassroomProps) => {
   const { t } = useTranslation('main');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
@@ -148,7 +135,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
         <div className="flex flex-row items-center gap-2">
           {classroom.kind === 'individual' && (
-            <UserAvatar classroom={classroom} isLoading={isLoading} />
+            <UserAvatar classroom={classroom} label={displayName} />
           )}
 
           {classroom.kind === 'group' && (

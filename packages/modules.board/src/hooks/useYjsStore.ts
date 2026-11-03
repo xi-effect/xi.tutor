@@ -7,7 +7,13 @@ import {
   type onStatusParameters,
   type onSyncedParameters,
 } from '@hocuspocus/provider';
-import { useCurrentUser } from 'common.services';
+import { queryClient } from 'common.config';
+import {
+  recoverCollabSocket,
+  shareCollabRecovery,
+  useCurrentUser,
+  type CollabRecovery,
+} from 'common.services';
 import { useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import {
@@ -160,6 +166,9 @@ type SharedEntry = {
   yjsDocumentHydrated: boolean;
   storageToken: string;
   releaseTimer: number | null;
+  /** Одно восстановление на отклонённый content_token, общее для всех потребителей сокета. */
+  tokenRecovery: CollabRecovery | null;
+  authFailureNotified: boolean;
 };
 
 const shared = new Map<ProviderKey, SharedEntry>();
@@ -222,6 +231,8 @@ function getOrCreateShared(
     yjsDocumentHydrated: false,
     storageToken,
     releaseTimer: null,
+    tokenRecovery: null,
+    authFailureNotified: false,
   };
 
   const websocketProvider = new HocuspocusProviderWebsocket({
@@ -407,17 +418,52 @@ export function useYjsStore({
       }, FLUSH_MS);
     };
 
-    const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
+    const reportAuthFailure = (reason: string) => {
       setStoreWithStatus({
         status: 'error',
         store,
         error: new Error(`Authentication failed: ${reason}`),
         connectionStatus: 'offline',
       });
+    };
 
-      if (reason === 'permission-denied') {
-        toast(i18n.t('toast.collabAccessError', { ns: 'board' }));
+    const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
+      if (reason !== 'permission-denied') {
+        reportAuthFailure(reason);
+        return;
       }
+
+      const failedToken = sharedEntry.storageToken;
+      const socket = provider.configuration.websocketProvider;
+      // Ответ на уже заменённый токен не должен гасить новое соединение.
+      if (sharedEntry.tokenRecovery && sharedEntry.tokenRecovery.token !== failedToken) return;
+      // Повторный mount эффекта не должен оставлять сокет с тем же токеном.
+      socket.disconnect();
+      sharedEntry.tokenRecovery = shareCollabRecovery(sharedEntry.tokenRecovery, failedToken, () =>
+        recoverCollabSocket({
+          socket,
+          rejectedToken: failedToken,
+          ydocId,
+          queryClient,
+          applyToken: (token) => {
+            sharedEntry.storageToken = token;
+          },
+          shouldReconnect: () => sharedEntry.refs > 0,
+        }),
+      );
+
+      void sharedEntry.tokenRecovery.promise.then((outcome) => {
+        if (outcome === 'refreshed') {
+          sharedEntry.authFailureNotified = false;
+          return;
+        }
+        if (outcome === 'cancelled') return;
+
+        reportAuthFailure(reason);
+        if (sharedEntry.authFailureNotified) return;
+        sharedEntry.authFailureNotified = true;
+        toast(i18n.t('toast.collabAccessError', { ns: 'board' }));
+      });
     };
 
     const handleAuthenticated = ({ scope }: onAuthenticatedParameters) => {

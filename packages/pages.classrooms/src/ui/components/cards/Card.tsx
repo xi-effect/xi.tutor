@@ -17,12 +17,7 @@ import { Edit, Flag, MoreVert, Trash } from '@xipkg/icons';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import {
-  useCurrentUser,
-  useDeleteClassroom,
-  useUpdateClassroomStatus,
-  useUserByRole,
-} from 'common.services';
+import { useCurrentUser, useDeleteClassroom, useUpdateClassroomStatus } from 'common.services';
 import { tryChangeClassroomStatus, useCanActivateClassroom } from 'common.subscription';
 import {
   ConfirmDialog,
@@ -50,18 +45,14 @@ const CLASSROOM_STATUS_OPTIONS: Exclude<ClassroomStatusT, 'locked'>[] = [
 ];
 
 type UserAvatarPropsT = {
-  kind: string;
   student_id: string;
+  name?: string | null;
 };
 
 const avatarSize = 'l';
 
-const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
-  const { data: currentUser } = useCurrentUser();
-  const isTutor = currentUser?.default_layout === 'tutor';
-  // Используем useUserByRole с userId напрямую
-  const userRole = isTutor ? 'student' : 'tutor';
-  const { data: user, isLoading } = useUserByRole(userRole, Number(student_id));
+const UserAvatar = ({ student_id, name }: UserAvatarPropsT) => {
+  const letter = name?.trim()[0]?.toUpperCase() ?? '';
 
   return (
     <Avatar size={avatarSize}>
@@ -69,11 +60,7 @@ const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
         src={`https://api.sovlium.ru/files/users/${student_id}/avatar.webp`}
         alt="user avatar"
       />
-      {isLoading ? (
-        <AvatarFallback size={avatarSize} loading />
-      ) : (
-        <AvatarFallback size={avatarSize}>{user?.display_name[0].toUpperCase()}</AvatarFallback>
-      )}
+      <AvatarFallback size={avatarSize}>{letter}</AvatarFallback>
     </Avatar>
   );
 };
@@ -168,7 +155,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
           </div>
           <div className="flex flex-row items-center gap-2">
             {kind === 'individual' && (
-              <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
+              <UserAvatar student_id={student_id?.toString() ?? ''} name={name} />
             )}
             {kind === 'group' && (
               <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">

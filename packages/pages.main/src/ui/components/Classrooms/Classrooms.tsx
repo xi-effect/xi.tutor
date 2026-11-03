@@ -188,7 +188,7 @@ export const Classrooms = () => {
         <WidgetCardsCarousel>
           {filteredClassrooms.map((classroom) => (
             <div key={classroom.id} className={widgetCardSlotClass}>
-              <Classroom classroom={classroom} isLoading={isLoading} />
+              <Classroom classroom={classroom} />
             </div>
           ))}
         </WidgetCardsCarousel>
