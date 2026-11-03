@@ -60,7 +60,7 @@ export const SettingsMobileMenu = () => {
         >
           <ArrowLeft className="fill-icon-secondary size-6" />
         </button>
-        <h1 className="text-text-primary min-w-0 flex-1 truncate text-xl font-medium">
+        <h1 className="text-text-primary min-w-0 flex-1 truncate text-2xl leading-8 font-medium">
           {t('settingsTitle')}
         </h1>
       </div>

@@ -1,12 +1,22 @@
 import { BANK_BASE_URL, MATH_BANK_BASE_URL, type BankSubject } from '../model/constants';
+import type { PhysicsSearchDocument, PhysicsTask } from '../model/physics';
+import type { RussianTask } from '../model/russian';
 import type {
   MathBankCatalogItem,
   MathBankExamIndexItem,
   MathGrade,
   MathTask,
 } from '../model/schema';
-import type { RussianTask } from '../model/russian';
+import { readGzipJson, readJson } from './fetchJson';
 import {
+  clearPhysicsBankCache,
+  loadPhysicsGrade,
+  loadPhysicsManifest,
+  loadPhysicsTask,
+} from './physics';
+import {
+  adaptPhysicsSearchDocument,
+  physicsTaskToSearchDocument,
   russianTaskToSearchDocument,
   taskToSearchDocument,
   type MathTaskSearchDocument,
@@ -25,40 +35,6 @@ type RussianSearchDocument = {
   aliases: string[];
   tags: string[];
   examTerms: string[];
-};
-
-const readJson = async <T>(url: string): Promise<T> => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load ${url}: ${response.status}`);
-  }
-
-  return response.json() as Promise<T>;
-};
-
-const readGzipJson = async <T>(url: string): Promise<T> => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load ${url}: ${response.status}`);
-  }
-
-  // If CDN/server decoded Content-Encoding already, JSON can be read directly.
-  if (response.headers.get('content-encoding')?.includes('gzip')) {
-    return response.json() as Promise<T>;
-  }
-
-  if (!('DecompressionStream' in globalThis)) {
-    throw new Error(
-      'DecompressionStream is unavailable. Serve .gz with Content-Encoding: gzip or add a decoder fallback.',
-    );
-  }
-
-  const body = response.body?.pipeThrough(new DecompressionStream('gzip'));
-  if (!body) {
-    throw new Error(`Empty response body for ${url}`);
-  }
-
-  return JSON.parse(await new Response(body).text()) as T;
 };
 
 const EXAM_TERM = /^(OGE|EGE)\s+(\d+)\s+(\d+)$/;
@@ -146,14 +122,41 @@ export const catalogFromSearchDocuments = (
     );
 };
 
-export const loadMathSearchDocuments = async (baseUrl = MATH_BANK_BASE_URL) => {
-  const documents = await readGzipJson<MathTaskSearchDocument[]>(
+const searchDocumentCache = new Map<BankSubject, Promise<MathTaskSearchDocument[]>>();
+
+const rememberSearchDocuments = (
+  subject: BankSubject,
+  request: Promise<MathTaskSearchDocument[]>,
+) => {
+  searchDocumentCache.set(subject, request);
+  request.catch(() => {
+    if (searchDocumentCache.get(subject) === request) {
+      searchDocumentCache.delete(subject);
+    }
+  });
+  return request;
+};
+
+export const loadMathSearchDocuments = (baseUrl = MATH_BANK_BASE_URL) => {
+  const cached = searchDocumentCache.get('mathematics');
+  if (cached && baseUrl === MATH_BANK_BASE_URL) {
+    return cached;
+  }
+
+  const request = readGzipJson<MathTaskSearchDocument[]>(
     `${baseUrl}/search_documents.json.gz`,
+  ).then((documents) =>
+    documents.map((document) => ({
+      ...document,
+      subject: document.subject ?? ('mathematics' as const),
+    })),
   );
-  return documents.map((document) => ({
-    ...document,
-    subject: document.subject ?? 'mathematics',
-  }));
+
+  if (baseUrl === MATH_BANK_BASE_URL) {
+    return rememberSearchDocuments('mathematics', request);
+  }
+
+  return request;
 };
 
 export const loadMathCatalog = (baseUrl = MATH_BANK_BASE_URL) =>
@@ -185,15 +188,60 @@ export const loadMathTaskById = async (
   return tasks.find((task) => task.id === id) ?? null;
 };
 
-export const loadBankSearchDocuments = async (subject: BankSubject) => {
+export const examIndexFromSearchDocuments = (
+  documents: MathTaskSearchDocument[],
+): MathBankExamIndexItem[] => {
+  const counts = new Map<string, MathBankExamIndexItem>();
+
+  for (const document of documents) {
+    for (const mapping of document.examMappings) {
+      if (mapping.year !== 2026) {
+        continue;
+      }
+
+      for (const taskNumber of mapping.taskNumbers) {
+        const key = `${mapping.exam}:${taskNumber}`;
+        const current = counts.get(key) ?? {
+          exam: mapping.exam,
+          year: mapping.year,
+          taskNumber,
+          count: 0,
+        };
+        current.count += 1;
+        counts.set(key, current);
+      }
+    }
+  }
+
+  return [...counts.values()].sort(
+    (a, b) => a.exam.localeCompare(b.exam) || a.taskNumber - b.taskNumber,
+  );
+};
+
+export const loadBankSearchDocuments = (subject: BankSubject) => {
+  const cached = searchDocumentCache.get(subject);
+  if (cached) {
+    return cached;
+  }
+
   if (subject === 'mathematics') {
     return loadMathSearchDocuments();
   }
 
-  const documents = await readGzipJson<RussianSearchDocument[]>(
+  if (subject === 'physics') {
+    const request = loadPhysicsManifest().then(async (manifest) => {
+      const documents = await readGzipJson<PhysicsSearchDocument[]>(
+        `${BANK_BASE_URL.physics}/${manifest.search}`,
+      );
+      return documents.map(adaptPhysicsSearchDocument);
+    });
+    return rememberSearchDocuments('physics', request);
+  }
+
+  const request = readGzipJson<RussianSearchDocument[]>(
     `${BANK_BASE_URL.russian}/search_documents.json.gz`,
-  );
-  return documents.map(adaptRussianSearchDocument);
+  ).then((documents) => documents.map(adaptRussianSearchDocument));
+  return rememberSearchDocuments('russian', request);
 };
 
 export const loadBankCatalog = async (
@@ -211,9 +259,16 @@ export const loadBankCatalog = async (
   return catalogFromSearchDocuments(await loadBankSearchDocuments(subject));
 };
 
-export const loadBankExamIndex = async (subject: BankSubject) => {
+export const loadBankExamIndex = async (
+  subject: BankSubject,
+  documents?: MathTaskSearchDocument[],
+) => {
   if (subject === 'mathematics') {
     return loadMathExamIndex();
+  }
+
+  if (subject === 'physics') {
+    return examIndexFromSearchDocuments(documents ?? (await loadBankSearchDocuments('physics')));
   }
 
   const index = await readJson<Record<string, string[]>>(
@@ -250,7 +305,11 @@ export const loadBankGrade = (subject: BankSubject, grade: MathGrade) => {
     return loadMathGrade(grade);
   }
 
-  return loadRussianGrade(grade);
+  if (subject === 'russian') {
+    return loadRussianGrade(grade);
+  }
+
+  return loadPhysicsGrade(grade);
 };
 
 export const loadBankTaskById = async (subject: BankSubject, id: string, grade: MathGrade) => {
@@ -258,11 +317,17 @@ export const loadBankTaskById = async (subject: BankSubject, id: string, grade: 
     return loadMathTaskById(id, grade);
   }
 
+  if (subject === 'physics') {
+    return loadPhysicsTask(id);
+  }
+
   const tasks = await loadRussianGrade(grade);
   return tasks.find((task) => task.id === id) ?? null;
 };
 
-export const getBankTaskStatement = (task: MathTask | RussianTask | MathTaskSearchDocument) => {
+type BankTask = MathTask | RussianTask | PhysicsTask;
+
+export const getBankTaskStatement = (task: BankTask | MathTaskSearchDocument) => {
   if (typeof task.statement === 'string') {
     return task.statement;
   }
@@ -270,13 +335,44 @@ export const getBankTaskStatement = (task: MathTask | RussianTask | MathTaskSear
   return task.statement.text;
 };
 
-export const toBankSearchDocument = (task: MathTask | RussianTask): MathTaskSearchDocument =>
-  task.subject === 'russian' ? russianTaskToSearchDocument(task) : taskToSearchDocument(task);
+export const toBankSearchDocument = (task: BankTask): MathTaskSearchDocument => {
+  if (task.subject === 'russian') {
+    return russianTaskToSearchDocument(task);
+  }
 
-export const getBankVariantGroupId = (task: MathTask | RussianTask) =>
-  task.generator.variantGroupId;
+  if (task.subject === 'physics') {
+    return physicsTaskToSearchDocument(task);
+  }
+
+  return taskToSearchDocument(task);
+};
+
+export const getBankVariantGroupId = (task: BankTask) =>
+  task.subject === 'physics' ? task.variantGroup : task.generator.variantGroupId;
+
+export const loadNextBankVariant = async (
+  task: BankTask,
+): Promise<MathTaskSearchDocument | null> => {
+  if (task.subject === 'physics') {
+    const documents = await loadBankSearchDocuments('physics');
+    const variants = documents.filter(
+      (item) => item.variantGroup === task.variantGroup && item.id !== task.id,
+    );
+    return variants[Math.floor(Math.random() * variants.length)] ?? null;
+  }
+
+  const gradeTasks = await loadBankGrade(task.subject, task.grade);
+  const variantGroupId = getBankVariantGroupId(task);
+  const variants = gradeTasks.filter(
+    (item) => getBankVariantGroupId(item) === variantGroupId && item.id !== task.id,
+  );
+  const next = variants[Math.floor(Math.random() * variants.length)];
+  return next ? toBankSearchDocument(next) : null;
+};
 
 export const clearMathBankCache = () => {
   mathGradeCache.clear();
   russianGradeCache.clear();
+  searchDocumentCache.clear();
+  clearPhysicsBankCache();
 };

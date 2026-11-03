@@ -23,7 +23,9 @@ export const Header = ({ title, action, onBack }: HeaderPropsT) => {
           <ArrowLeft className="fill-icon-secondary size-6" />
         </button>
       ) : null}
-      <h1 className="text-text-primary min-w-0 flex-1 truncate text-xl font-medium">{title}</h1>
+      <h1 className="text-text-primary min-w-0 flex-1 truncate text-2xl leading-8 font-medium">
+        {title}
+      </h1>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>
   );

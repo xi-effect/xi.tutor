@@ -4,10 +4,13 @@ export {
   MATH_BANK_BASE_URL,
   MATH_DIFFICULTIES,
   MATH_GRADES,
+  PHYSICS_BANK_BASE_URL,
   RUSSIAN_BANK_BASE_URL,
   RUSSIAN_TASK_TYPES,
 } from './model/constants';
 export type { BankSubject } from './model/constants';
+export { checkPhysicsAnswer, formatPhysicsAnswer } from './model/physics';
+export type { PhysicsAnswer, PhysicsFigure, PhysicsTask, PhysicsTaskType } from './model/physics';
 export type {
   RussianExamKind,
   RussianExamMapping,

@@ -16,19 +16,18 @@ import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
-import { ConfirmDialog, Logo, useSupportModalStore } from 'common.ui';
-import { useMediaQuery } from '@xipkg/utils';
+import { ConfirmDialog, Logo } from 'common.ui';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
 import { pickSettingsSearch } from 'modules.profile/sections';
-import { getFooterMenuConfig, getTopMenuConfig } from './config/sidebarMenuConfig';
+import { getTopMenuConfig } from './config/sidebarMenuConfig';
 import { MaintenanceNotice } from './MaintenanceNotice';
 
 export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
   const { close, isDesktopOpen } = useMenuStore();
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const openSupportModal = useSupportModalStore((state) => state.open);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -45,24 +44,6 @@ export const SideBarItems = () => {
   const mode = useCallStore((state) => state.mode);
 
   const topMenu = getTopMenuConfig(Boolean(isTutor));
-
-  const handleOnboardingClick = async () => {
-    try {
-      sessionStorage.removeItem('onboarding_menu_hidden');
-
-      if (user?.onboarding_stage === 'completed') {
-        sessionStorage.setItem('show_onboarding_for_completed', 'true');
-        window.dispatchEvent(new Event('onboarding-show-requested'));
-      }
-
-      navigate({ to: '/' });
-      close();
-    } catch (error) {
-      console.error('Ошибка при запуске обучения:', error);
-    }
-  };
-
-  const footerMenu = getFooterMenuConfig(handleOnboardingClick, openSupportModal);
 
   const getIsActiveItem = (url: string) => {
     if (url === '/') {
@@ -138,19 +119,35 @@ export const SideBarItems = () => {
       <SidebarContent className="bg-background-page overflow-visible group-data-[collapsible=icon]:overflow-visible">
         {/* Верхняя секция: триггер и логотип. Аккаунт — внизу сайдбара. */}
         <div className="flex flex-col gap-4 pt-5">
-          <div className="flex w-full items-center justify-between">
+          <div className="relative flex h-10 w-full items-center">
             <div
-              className="h-10 shrink-0 overflow-hidden transition-[width] duration-300 ease-out"
-              style={{ width: isCollapsed ? 0 : 135 }}
+              className={cn(
+                'group/mark relative h-10 shrink-0 overflow-hidden transition-[width] duration-200 ease-linear',
+                isCollapsed && 'group-hover/mark:bg-background-subtle rounded-lg',
+              )}
+              style={{ width: isCollapsed ? 40 : 135 }}
             >
-              <div className="flex h-10 w-[135px] shrink-0 items-center">
+              <div
+                className={cn(
+                  'flex h-10 w-[135px] items-center transition-opacity duration-150',
+                  isCollapsed && 'group-focus-within/mark:opacity-0 group-hover/mark:opacity-0',
+                )}
+              >
                 <Logo width={135} height={40} />
               </div>
+              {isCollapsed ? (
+                <SidebarTrigger className="focus-visible:bg-background-subtle absolute inset-0 rounded-lg bg-transparent">
+                  <LayoutLeft className="text-text-secondary h-5 w-5 opacity-0 transition-opacity duration-150 group-focus-within/mark:opacity-100 group-hover/mark:opacity-100" />
+                </SidebarTrigger>
+              ) : null}
             </div>
             <SidebarTrigger
-              className={`group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg ${
-                isCollapsed ? '' : '-mr-2'
-              }`}
+              tabIndex={isCollapsed ? -1 : 0}
+              aria-hidden={isCollapsed}
+              className={cn(
+                'group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle -mr-2 ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg transition-opacity duration-200',
+                isCollapsed && 'pointer-events-none absolute opacity-0',
+              )}
             >
               <LayoutLeft className="text-text-secondary group-hover:text-text-primary group-focus:text-text-primary group-active:text-text-primary h-5 w-5" />
             </SidebarTrigger>
@@ -184,28 +181,8 @@ export const SideBarItems = () => {
       </SidebarContent>
       <SidebarFooter className="bg-background-page gap-2">
         <MaintenanceNotice />
-        <SidebarMenu className="bg-background-page">
-          {footerMenu.map((item) => (
-            <SidebarMenuItem key={item.titleKey} className="cursor-pointer">
-              <SidebarMenuButton
-                id={item.titleKey === 'hints' ? 'hints-button' : undefined}
-                variant="none"
-                onClick={item.onClick}
-                type="button"
-                className="bg-background-page hover:bg-background-surface focus:bg-background-subtle active:bg-background-subtle gap-5 rounded-lg!"
-                title={t(item.titleKey)}
-                data-umami-event={`navigation-${item.titleKey}`}
-              >
-                <item.icon theme="muted" className="size-6" />
-                <div className="text-text-muted h-[24px] text-base font-medium whitespace-nowrap">
-                  {t(item.titleKey)}
-                </div>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
         {user?.id ? (
-          <div className="border-border-default mt-1 overflow-visible border-t pt-2">
+          <div className="mt-1 overflow-visible pt-2">
             <DesktopUserMenu
               withOutText={isCollapsed}
               userId={user.id}

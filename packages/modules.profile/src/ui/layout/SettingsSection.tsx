@@ -41,27 +41,29 @@ export const SettingsSection = ({ slug }: SettingsSectionProps) => {
   const title = t(section.titleKey);
 
   return (
-    <div className="bg-background-page flex h-full min-h-0 w-full flex-col">
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col px-4 py-4 md:px-8 md:py-6">
-        <Header
-          title={title}
-          action={section.id === 'subscription' ? <SubscriptionHeaderCta /> : null}
-          onBack={
-            isMobile
-              ? () => {
-                  void navigate({
-                    to: '/settings',
-                    search: pickSettingsSearch(search),
-                  });
-                }
-              : undefined
-          }
-        />
-        <div className="mt-6 min-h-0 flex-1 overflow-y-auto overscroll-contain">
-          <Content activeQuery={section.id} />
-          <div className="pt-8">
-            <DesktopAbout />
-          </div>
+    <div className="bg-background-page h-full min-h-0 w-full overflow-y-auto overscroll-contain">
+      <div className="bg-background-page sticky top-0 z-10">
+        <div className="mx-auto w-full max-w-4xl px-4 pt-4 pb-8 md:px-8 md:pt-6">
+          <Header
+            title={title}
+            action={section.id === 'subscription' ? <SubscriptionHeaderCta /> : null}
+            onBack={
+              isMobile
+                ? () => {
+                    void navigate({
+                      to: '/settings',
+                      search: pickSettingsSearch(search),
+                    });
+                  }
+                : undefined
+            }
+          />
+        </div>
+      </div>
+      <div className="mx-auto w-full max-w-4xl px-4 pb-6 md:px-8">
+        <Content activeQuery={section.id} />
+        <div className="pt-8">
+          <DesktopAbout />
         </div>
       </div>
     </div>

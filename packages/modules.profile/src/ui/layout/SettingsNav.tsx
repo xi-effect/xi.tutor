@@ -11,7 +11,7 @@ import {
   Star,
   WhiteBoard,
 } from '@xipkg/icons';
-import { cn } from '@xipkg/utils';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@xipkg/sidebar';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useCurrentUser } from 'common.services';
 import { useSubscriptionUiStore } from 'common.subscription';
@@ -24,11 +24,8 @@ import {
   type SettingsSectionId,
 } from '../../model/settingsSections';
 
-const iconClassName = (active: boolean) =>
-  cn('size-5 shrink-0', active ? 'fill-icon-brand' : 'fill-icon-secondary');
-
-const SectionIcon = ({ id, active }: { id: SettingsSectionId; active: boolean }) => {
-  const className = iconClassName(active);
+const SectionIcon = ({ id }: { id: SettingsSectionId }) => {
+  const className = 'text-text-muted h-6 w-6';
 
   switch (id) {
     case 'personalInfo':
@@ -72,43 +69,37 @@ export const SettingsNav = () => {
   });
 
   return (
-    <nav className="flex flex-col gap-0.5" aria-label={t('settingsTitle')}>
+    <SidebarMenu aria-label={t('settingsTitle')}>
       {sections.map((section) => {
         const isActive = active?.id === section.id;
 
         return (
-          <button
-            key={section.slug}
-            type="button"
-            aria-current={isActive ? 'page' : undefined}
-            data-umami-event={`settings-open-${section.slug}`}
-            onClick={() => {
-              if (section.id === 'subscription') {
-                useSubscriptionUiStore.getState().setAnalyticsSource('settings');
-                useSubscriptionUiStore.getState().openOverview();
-              }
+          <SidebarMenuItem key={section.slug} className="cursor-pointer">
+            <SidebarMenuButton
+              isActive={isActive}
+              className="group gap-5 rounded-lg!"
+              data-umami-event={`settings-open-${section.slug}`}
+              onClick={() => {
+                if (section.id === 'subscription') {
+                  useSubscriptionUiStore.getState().setAnalyticsSource('settings');
+                  useSubscriptionUiStore.getState().openOverview();
+                }
 
-              void navigate({
-                to: '/settings/$section',
-                params: { section: section.slug },
-                search: pickSettingsSearch(search),
-              });
-            }}
-            className={cn(
-              'flex h-10 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-left transition-colors',
-              'group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0',
-              isActive
-                ? 'bg-selection-background text-text-link'
-                : 'text-text-secondary hover:bg-background-subtle hover:text-text-primary',
-            )}
-          >
-            <SectionIcon id={section.id} active={isActive} />
-            <span className="truncate text-sm group-data-[collapsible=icon]:hidden">
-              {t(section.titleKey)}
-            </span>
-          </button>
+                void navigate({
+                  to: '/settings/$section',
+                  params: { section: section.slug },
+                  search: pickSettingsSearch(search),
+                });
+              }}
+            >
+              <SectionIcon id={section.id} />
+              <span className="text-s-base group-data-[active=true]:font-medium">
+                {t(section.titleKey)}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         );
       })}
-    </nav>
+    </SidebarMenu>
   );
 };

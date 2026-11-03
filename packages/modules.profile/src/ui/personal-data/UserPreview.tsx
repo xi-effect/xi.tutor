@@ -138,7 +138,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="ml-4 flex flex-col justify-center gap-0.5">
-        <span className="dark:text-text-primary text-2xl leading-[32px] font-semibold">
+        <span className="text-text-primary text-xl leading-7 font-medium">
           {user?.display_name}
         </span>
         <span className="text-text-primary dark:text-text-primary text-[16px] leading-[22px]">

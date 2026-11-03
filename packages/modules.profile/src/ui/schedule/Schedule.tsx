@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { LessonDurationPicker } from './LessonDurationPicker';
 import { TimeZonePicker } from './TimeZonePicker';
 import { WorkingHoursTimePicker } from './WorkingHoursTimePicker';
+import { SettingsGroup, settingsRowTitleClass } from '../layout/SettingsGroup';
 
 const SCHEDULE_VIEW_MODE_KEY = 'xi_schedule_view_mode';
 const SCHEDULE_VIEW_MODE_CHANGE_EVENT = 'xi:schedule-view-mode-change';
@@ -58,104 +59,77 @@ export const Schedule = () => {
       <TimeZonePicker />
 
       {!isMobile && (
-        <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
-          <div className="flex w-full flex-col p-3">
-            <span className="dark:text-text-primary text-xl font-semibold">
-              {t('schedule.view')}
-            </span>
-          </div>
-          <div className="mt-2 flex w-full flex-col gap-3 p-3">
-            <div className="flex w-full flex-row items-center justify-between gap-4">
-              <div className="flex flex-row gap-4">
-                <Calendar className="fill-icon-brand" />
-                <div className="flex flex-col gap-0.5">
-                  <span className="dark:text-text-primary text-base leading-6 font-semibold">
-                    {t('schedule.showAllDays')}
-                  </span>
-                  <span className="text-text-secondary text-s-base">
-                    {t('schedule.showAllDaysHint')}
-                  </span>
-                </div>
+        <SettingsGroup title={t('schedule.view')}>
+          <div className="flex w-full flex-row items-center justify-between gap-4">
+            <div className="flex min-w-0 flex-row gap-4">
+              <Calendar className="fill-icon-brand shrink-0" />
+              <div className="flex flex-col gap-0.5">
+                <span className={settingsRowTitleClass}>{t('schedule.showAllDays')}</span>
+                <span className="text-text-secondary text-s-base">
+                  {t('schedule.showAllDaysHint')}
+                </span>
               </div>
-              <Toggle
-                checked={isFullWeek}
-                size="s"
-                onCheckedChange={handleFullWeekToggle}
-                className="shrink-0"
-                data-umami-event="profile-schedule-full-week"
-                data-umami-event-state={isFullWeek ? 'on' : 'off'}
-              />
             </div>
+            <Toggle
+              checked={isFullWeek}
+              size="s"
+              onCheckedChange={handleFullWeekToggle}
+              className="shrink-0"
+              data-umami-event="profile-schedule-full-week"
+              data-umami-event-state={isFullWeek ? 'on' : 'off'}
+            />
           </div>
-        </div>
+        </SettingsGroup>
       )}
 
-      <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
-        <div className="flex w-full flex-col p-3">
-          <span className="dark:text-text-primary text-xl font-semibold">
-            {t('schedule.workingHours')}
-          </span>
+      <SettingsGroup title={t('schedule.workingHours')}>
+        <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
+          <div className="flex min-w-0 flex-row gap-4">
+            <Clock className="fill-icon-brand shrink-0" />
+            <div className="flex flex-col gap-0.5">
+              <span className={settingsRowTitleClass}>{t('schedule.period')}</span>
+              <span className="text-text-secondary text-s-base">{t('schedule.periodHint')}</span>
+            </div>
+          </div>
+          <div className="flex w-full flex-row items-center gap-2 sm:ml-auto sm:w-auto">
+            <WorkingHoursTimePicker
+              value={workingHours.from}
+              onChange={handleFromChange}
+              maxExclusive={workingHours.to}
+              data-umami-event="profile-schedule-working-hours-from"
+            />
+            <span className="text-text-secondary shrink-0">—</span>
+            <WorkingHoursTimePicker
+              value={workingHours.to}
+              onChange={handleToChange}
+              minExclusive={workingHours.from}
+              data-umami-event="profile-schedule-working-hours-to"
+            />
+          </div>
         </div>
-        <div className="mt-2 flex w-full flex-col gap-3 p-3">
+      </SettingsGroup>
+
+      {isTutor ? (
+        <SettingsGroup title={t('schedule.lessonDuration')}>
           <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
-            <div className="flex flex-row gap-4">
+            <div className="flex min-w-0 flex-row gap-4">
               <Clock className="fill-icon-brand shrink-0" />
               <div className="flex flex-col gap-0.5">
-                <span className="dark:text-text-primary text-base leading-6 font-semibold">
-                  {t('schedule.period')}
+                <span className={settingsRowTitleClass}>{t('schedule.typicalDuration')}</span>
+                <span className="text-text-secondary text-s-base">
+                  {t('schedule.lessonDurationHint')}
                 </span>
-                <span className="text-text-secondary text-s-base">{t('schedule.periodHint')}</span>
               </div>
             </div>
             <div className="flex w-full flex-row items-center gap-2 sm:ml-auto sm:w-auto">
-              <WorkingHoursTimePicker
-                value={workingHours.from}
-                onChange={handleFromChange}
-                maxExclusive={workingHours.to}
-                data-umami-event="profile-schedule-working-hours-from"
-              />
-              <span className="text-text-secondary shrink-0">—</span>
-              <WorkingHoursTimePicker
-                value={workingHours.to}
-                onChange={handleToChange}
-                minExclusive={workingHours.from}
-                data-umami-event="profile-schedule-working-hours-to"
+              <LessonDurationPicker
+                valueMinutes={durationMinutes}
+                onChange={setDurationMinutes}
+                data-umami-event="profile-schedule-typical-duration"
               />
             </div>
           </div>
-        </div>
-      </div>
-
-      {isTutor ? (
-        <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
-          <div className="flex w-full flex-col p-3">
-            <span className="dark:text-text-primary text-xl font-semibold">
-              {t('schedule.lessonDuration')}
-            </span>
-          </div>
-          <div className="mt-2 flex w-full flex-col gap-3 p-3">
-            <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
-              <div className="flex flex-row gap-4">
-                <Clock className="fill-icon-brand shrink-0" />
-                <div className="flex flex-col gap-0.5">
-                  <span className="dark:text-text-primary text-base leading-6 font-semibold">
-                    {t('schedule.typicalDuration')}
-                  </span>
-                  <span className="text-text-secondary text-s-base">
-                    {t('schedule.lessonDurationHint')}
-                  </span>
-                </div>
-              </div>
-              <div className="flex w-full flex-row items-center gap-2 sm:ml-auto sm:w-auto">
-                <LessonDurationPicker
-                  valueMinutes={durationMinutes}
-                  onChange={setDurationMinutes}
-                  data-umami-event="profile-schedule-typical-duration"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        </SettingsGroup>
       ) : null}
     </>
   );

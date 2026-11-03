@@ -5,6 +5,7 @@ import { writeText } from 'common.platform';
 import { toast } from 'sonner';
 import { Copy } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
+import { settingsSectionTitleClass } from '../layout/SettingsGroup';
 
 interface TechnicalReportBodyProps {
   isMobile: boolean;
@@ -47,9 +48,7 @@ export const TechnicalReportBody = ({ isMobile, app }: TechnicalReportBodyProps)
   return (
     <div className="flex flex-col gap-4 rounded-2xl">
       <div className="flex items-center justify-between">
-        <h2 className="dark:text-text-primary text-lg font-semibold">
-          {t('report.technicalInfo')}
-        </h2>
+        <h2 className={settingsSectionTitleClass}>{t('report.technicalInfo')}</h2>
         <Button
           onClick={handleCopy}
           disabled={isLoading || sections.length === 0}

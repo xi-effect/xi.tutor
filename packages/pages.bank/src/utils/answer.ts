@@ -1,10 +1,12 @@
-import type { MathTask, RussianTask, RussianTaskAnswer } from 'features.math.bank';
+import type { MathTask, PhysicsTask, RussianTask, RussianTaskAnswer } from 'features.math.bank';
 
-export const isMathTask = (task: MathTask | RussianTask): task is MathTask =>
-  task.subject === 'mathematics';
+export type BankTask = MathTask | RussianTask | PhysicsTask;
 
-export const isRussianTask = (task: MathTask | RussianTask): task is RussianTask =>
-  task.subject === 'russian';
+export const isMathTask = (task: BankTask): task is MathTask => task.subject === 'mathematics';
+
+export const isRussianTask = (task: BankTask): task is RussianTask => task.subject === 'russian';
+
+export const isPhysicsTask = (task: BankTask): task is PhysicsTask => task.subject === 'physics';
 
 const optionAt = (options: string[] | undefined, index: number) => {
   const option = options?.[index - 1];

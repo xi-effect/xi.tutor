@@ -6,7 +6,7 @@ export const SettingsSidebarNav = () => (
     <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
       <SettingsNav />
     </div>
-    <div className="shrink-0 pt-3 group-data-[collapsible=icon]:hidden">
+    <div className="mb-3 shrink-0 pt-2 group-data-[collapsible=icon]:hidden">
       <ProfileRoleSwitcher />
     </div>
   </div>

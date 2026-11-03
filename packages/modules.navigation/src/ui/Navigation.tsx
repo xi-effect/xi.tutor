@@ -131,6 +131,8 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
 
 export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const { pathname } = useLocation();
+  const onSettings = !isMobile && isSettingsPath(pathname);
   const { isOpen, toggle, isDesktopOpen, setDesktopOpen } = useMenuStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
   const setFocusMode = useFocusModeStore((s) => s.setFocusMode);
@@ -149,8 +151,13 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const stableChildren = useMemo(() => children, [children]);
 
   // Динамически выбираем пропсы для SidebarProvider в зависимости от размера экрана
-  const sidebarOpen = isMobile ? isOpen : isDesktopOpen;
-  const sidebarOnOpenChange = isMobile ? toggle : setDesktopOpen;
+  const sidebarOpen = isMobile ? isOpen : onSettings || isDesktopOpen;
+  const sidebarOnOpenChange = isMobile
+    ? toggle
+    : (open: boolean) => {
+        if (onSettings) return;
+        setDesktopOpen(open);
+      };
 
   // Используем один SidebarProvider с динамическими пропсами вместо условного рендеринга
   // Это предотвращает пересоздание всего дерева компонентов при изменении размера окна

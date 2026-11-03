@@ -36,5 +36,5 @@ type ContentPropsT = {
 export const Content = ({ activeQuery }: ContentPropsT) => {
   const activeItem = componentMap[activeQuery] || <PersonalData />;
 
-  return <div className="w-full min-w-0 pb-4">{activeItem}</div>;
+  return <div className="flex w-full min-w-0 flex-col gap-10 pb-8">{activeItem}</div>;
 };
