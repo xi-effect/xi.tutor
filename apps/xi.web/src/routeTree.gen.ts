@@ -25,6 +25,7 @@ import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layou
 import { Route as appLayoutScheduleIndexRouteImport } from './pages/(app)/_layout/schedule/index'
 import { Route as appLayoutSettingsIndexRouteImport } from './pages/(app)/_layout/settings/index'
 import { Route as appLayoutSettingsSectionRouteImport } from './pages/(app)/_layout/settings/$section'
+import { Route as appLayoutStudentsIndexRouteImport } from './pages/(app)/_layout/students/index'
 import { Route as authLayoutResetPasswordIndexRouteImport } from './pages/(auth)/_layout/reset-password/index'
 import { Route as authLayoutSigninIndexRouteImport } from './pages/(auth)/_layout/signin/index'
 import { Route as authLayoutSignupIndexRouteImport } from './pages/(auth)/_layout/signup/index'
@@ -121,6 +122,11 @@ const appLayoutSettingsSectionRoute =
     path: '/settings/$section',
     getParentRoute: () => appLayoutRoute,
   } as any)
+const appLayoutStudentsIndexRoute = appLayoutStudentsIndexRouteImport.update({
+  id: '/students/',
+  path: '/students/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
 const authLayoutResetPasswordIndexRoute =
   authLayoutResetPasswordIndexRouteImport.update({
     id: '/reset-password/',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/payments/': typeof appLayoutPaymentsIndexRoute
   '/schedule/': typeof appLayoutScheduleIndexRoute
   '/settings/': typeof appLayoutSettingsIndexRoute
+  '/students/': typeof appLayoutStudentsIndexRoute
   '/reset-password/': typeof authLayoutResetPasswordIndexRoute
   '/signin/': typeof authLayoutSigninIndexRoute
   '/signup/': typeof authLayoutSignupIndexRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/payments': typeof appLayoutPaymentsIndexRoute
   '/schedule': typeof appLayoutScheduleIndexRoute
   '/settings': typeof appLayoutSettingsIndexRoute
+  '/students': typeof appLayoutStudentsIndexRoute
   '/reset-password': typeof authLayoutResetPasswordIndexRoute
   '/signin': typeof authLayoutSigninIndexRoute
   '/signup': typeof authLayoutSignupIndexRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
   '/(app)/_layout/schedule/': typeof appLayoutScheduleIndexRoute
   '/(app)/_layout/settings/': typeof appLayoutSettingsIndexRoute
+  '/(app)/_layout/students/': typeof appLayoutStudentsIndexRoute
   '/(auth)/_layout/reset-password/': typeof authLayoutResetPasswordIndexRoute
   '/(auth)/_layout/signin/': typeof authLayoutSigninIndexRoute
   '/(auth)/_layout/signup/': typeof authLayoutSignupIndexRoute
@@ -309,6 +318,7 @@ export interface FileRouteTypes {
     | '/payments/'
     | '/schedule/'
     | '/settings/'
+    | '/students/'
     | '/reset-password/'
     | '/signin/'
     | '/signup/'
@@ -338,6 +348,7 @@ export interface FileRouteTypes {
     | '/payments'
     | '/schedule'
     | '/settings'
+    | '/students'
     | '/reset-password'
     | '/signin'
     | '/signup'
@@ -370,6 +381,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/payments/'
     | '/(app)/_layout/schedule/'
     | '/(app)/_layout/settings/'
+    | '/(app)/_layout/students/'
     | '/(auth)/_layout/reset-password/'
     | '/(auth)/_layout/signin/'
     | '/(auth)/_layout/signup/'
@@ -510,6 +522,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutSettingsSectionRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/(app)/_layout/students/': {
+      id: '/(app)/_layout/students/'
+      path: '/students'
+      fullPath: '/students/'
+      preLoaderRoute: typeof appLayoutStudentsIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
     '/(auth)/_layout/reset-password/': {
       id: '/(auth)/_layout/reset-password/'
       path: '/reset-password'
@@ -623,6 +642,7 @@ interface appLayoutRouteChildren {
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute
   appLayoutScheduleIndexRoute: typeof appLayoutScheduleIndexRoute
   appLayoutSettingsIndexRoute: typeof appLayoutSettingsIndexRoute
+  appLayoutStudentsIndexRoute: typeof appLayoutStudentsIndexRoute
   appLayoutSettingsSubscriptionPaymentResultRoute: typeof appLayoutSettingsSubscriptionPaymentResultRoute
   appLayoutClassroomsClassroomIdIndexRoute: typeof appLayoutClassroomsClassroomIdIndexRoute
   appLayoutClassroomsClassroomIdBoardsBoardIdRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
@@ -643,6 +663,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
   appLayoutScheduleIndexRoute: appLayoutScheduleIndexRoute,
   appLayoutSettingsIndexRoute: appLayoutSettingsIndexRoute,
+  appLayoutStudentsIndexRoute: appLayoutStudentsIndexRoute,
   appLayoutSettingsSubscriptionPaymentResultRoute:
     appLayoutSettingsSubscriptionPaymentResultRoute,
   appLayoutClassroomsClassroomIdIndexRoute:

@@ -29,7 +29,6 @@ import { SectionEmptyState } from '../SectionEmptyState';
 import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
 import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
 import { emptyInviteButtonClass } from '../galleryShadowClass';
-import { cn } from '@xipkg/utils';
 
 type StudentsListPropsT = {
   classroomId: string;
@@ -98,12 +97,7 @@ export const StudentsList = ({ classroomId, readOnly = false }: StudentsListProp
       <WidgetCardsCarousel>
         {students.map(({ user_id, display_name }: GroupStudentsListSchema) => (
           <div key={user_id} className={widgetCardSlotClass}>
-            <div
-              className={cn(
-                'bg-background-surface relative flex h-full min-h-[120px] w-full flex-col justify-between rounded-2xl p-5',
-                'shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
-              )}
-            >
+            <div className="bg-background-surface relative flex h-full min-h-[120px] w-full flex-col justify-between rounded-2xl p-5">
               <div className="flex items-center gap-2 pr-8">
                 <UserProfile
                   userId={user_id}

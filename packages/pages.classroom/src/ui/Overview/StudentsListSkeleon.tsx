@@ -9,7 +9,7 @@ type StudentsListSkeletonPropsT = {
 export const StudentsListSkeleton = ({ className }: StudentsListSkeletonPropsT) => (
   <div
     className={cn(
-      'bg-background-surface flex min-h-[120px] flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
+      'bg-background-surface flex min-h-[120px] flex-col justify-between rounded-2xl p-5',
       className,
     )}
   >

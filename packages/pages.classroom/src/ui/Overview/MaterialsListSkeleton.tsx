@@ -1,5 +1,5 @@
 export const MaterialsListSkeleton = () => (
-  <div className="bg-background-surface flex h-44 w-full flex-col rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
+  <div className="bg-background-surface flex h-44 w-full flex-col rounded-2xl p-5">
     <div className="flex w-full items-center gap-2">
       <div className="bg-background-subtle size-10 shrink-0 animate-pulse rounded-[10px]" />
       <div className="bg-background-subtle h-7 w-24 animate-pulse rounded-lg" />

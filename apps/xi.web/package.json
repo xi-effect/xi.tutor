@@ -71,6 +71,7 @@
     "pages.bank": "workspace:*",
     "pages.payments": "workspace:*",
     "pages.signin": "workspace:*",
+    "pages.students": "workspace:*",
     "pages.signup": "workspace:*",
     "pages.reset-password": "workspace:*",
     "pages.welcome": "workspace:*",

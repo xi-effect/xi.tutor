@@ -54,6 +54,8 @@
     "studentEmptyDescription": "To add a new classroom",
     "openClassroom": "Open classroom",
     "menuAria": "Classroom actions",
+    "individual": "Individual classroom",
+    "group": "Group classroom",
     "rename": "Rename",
     "delete": "Delete",
     "deleting": "Deleting...",

@@ -1,6 +1,15 @@
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Group, Home, Payments, BookOpened, Calendar, Close, Task } from '@xipkg/icons';
+import {
+  Group,
+  Home,
+  Payments,
+  BookOpened,
+  Calendar,
+  Close,
+  PersonalData,
+  Task,
+} from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
@@ -36,6 +45,7 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
     { id: 'calendar-menu-item', titleKey: 'schedule', url: '/schedule', icon: Calendar },
     ...(isTutor
       ? [
+          { id: 'students-menu-item', titleKey: 'students', url: '/students', icon: PersonalData },
           { id: 'materials-menu-item', titleKey: 'materials', url: '/materials', icon: BookOpened },
           { id: 'bank-menu-item', titleKey: 'mathBank', url: '/bank', icon: Task },
         ]

@@ -1,10 +1,10 @@
-import { BookOpened, Calendar, Group, Home, Payments, Task } from '@xipkg/icons';
+import { BookOpened, Calendar, Group, Home, Payments, PersonalData, Task } from '@xipkg/icons';
 import { type ComponentType } from 'react';
 
 type TopMenuItem = {
   id: string;
-  titleKey: 'home' | 'schedule' | 'classrooms' | 'materials' | 'mathBank' | 'payments';
-  url: '/' | '/schedule' | '/classrooms' | '/materials' | '/bank' | '/payments';
+  titleKey: 'home' | 'schedule' | 'classrooms' | 'students' | 'materials' | 'mathBank' | 'payments';
+  url: '/' | '/schedule' | '/classrooms' | '/students' | '/materials' | '/bank' | '/payments';
   icon: ComponentType<{ className?: string; theme?: string }>;
 };
 
@@ -32,6 +32,12 @@ export const getTopMenuConfig = (isTutor: boolean): TopMenuItem[] => {
 
   if (isTutor) {
     topMenu.push(
+      {
+        id: 'students-menu-item',
+        titleKey: 'students',
+        url: '/students',
+        icon: PersonalData,
+      },
       {
         id: 'materials-menu-item',
         titleKey: 'materials',
