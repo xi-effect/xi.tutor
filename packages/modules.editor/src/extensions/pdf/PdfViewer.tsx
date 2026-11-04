@@ -135,7 +135,6 @@ export const PdfViewer = ({
       renderTaskRef.current?.cancel();
     };
   }, [blobUrl, page, containerSize.w, containerSize.h, t]);
-  //something caused a lor of renders
 
   const handleExtract = useCallback(async () => {
     const canvas = canvasRef.current;

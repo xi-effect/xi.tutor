@@ -102,7 +102,7 @@ export const CommentNodeAnchor = Extension.create({
       }),
 
       // Защита от дублей: «Дублировать», копипаст или drag-copy ноды не должны
-      // создавать вторую ноду с тем же threadId. Остаётся первая в порядке документа.
+      // создавать вторую ноду с тем же threadId
       new Plugin({
         key: new PluginKey('commentNodeDedupe'),
         appendTransaction(transactions, _old, newState) {

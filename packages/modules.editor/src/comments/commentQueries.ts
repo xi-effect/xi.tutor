@@ -175,13 +175,11 @@ function applyCommentAnchor(
   editor
     .chain()
     .command(({ tr, state }) => {
-      // Текст: марка (в commentable-нодах схема сама её пропустит)
       if (doc.textBetween(range.from, range.to).length > 0) {
         tr.addMark(range.from, range.to, state.schema.marks.comment.create({ threadId, color }));
       }
       return true;
     })
-    // Ноды: атрибут. Позиции не сдвигаются ни маркой, ни setNodeAttribute.
     .command(({ tr }) => {
       for (const pos of nodePositions) {
         tr.setNodeAttribute(pos, 'commentThreadId', threadId);
