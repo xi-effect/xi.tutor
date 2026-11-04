@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { TutorStudentSchemaMarshal } from 'common.types';
-import { findStudentProfile, shouldRequestStudentById } from '../studentProfileLookup';
+import {
+  collectTutorStudentPages,
+  findStudentProfile,
+  nextStudentsPageCursor,
+  shouldRequestStudentById,
+  STUDENTS_LIST_PAGE_LIMIT,
+} from '../studentProfileLookup';
 
 const students: TutorStudentSchemaMarshal[] = [
   {
@@ -60,5 +66,37 @@ describe('shouldRequestStudentById', () => {
     expect(shouldRequestStudentById({ skip: true, listSettled: true, hasProfile: false })).toBe(
       false,
     );
+  });
+});
+
+const pageOf = (count: number, createdAt: string): TutorStudentSchemaMarshal[] =>
+  Array.from({ length: count }, (_, index) => ({
+    tutorship: {
+      student_id: index + 1,
+      created_at: createdAt,
+      active_classroom_count: 0,
+    },
+    user: { username: `user-${index}`, display_name: null },
+  }));
+
+describe('nextStudentsPageCursor', () => {
+  it('листает дальше, только если страница заполнена до лимита', () => {
+    const fullPage = pageOf(STUDENTS_LIST_PAGE_LIMIT, '2026-03-01T00:00:00Z');
+    expect(nextStudentsPageCursor(fullPage)).toBe('2026-03-01T00:00:00Z');
+    expect(nextStudentsPageCursor(fullPage.slice(0, 50))).toBeUndefined();
+  });
+});
+
+describe('collectTutorStudentPages', () => {
+  it('склеивает страницы по created_before и останавливается на короткой', async () => {
+    const cursors: Array<string | undefined> = [];
+    const students = await collectTutorStudentPages(async (cursor) => {
+      cursors.push(cursor);
+      if (!cursor) return pageOf(STUDENTS_LIST_PAGE_LIMIT, '2026-03-02T00:00:00Z');
+      return pageOf(2, '2026-03-01T00:00:00Z');
+    });
+
+    expect(cursors).toEqual([undefined, '2026-03-02T00:00:00Z']);
+    expect(students).toHaveLength(STUDENTS_LIST_PAGE_LIMIT + 2);
   });
 });
