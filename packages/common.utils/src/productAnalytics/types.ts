@@ -205,7 +205,7 @@ export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
 export type SubscriptionBillingPeriod = 'month' | 'year';
 
 export type SubscriptionAnalyticsSource =
-  | 'announcement'
+  | 'expiry_notice'
   | 'settings'
   | 'pricing'
   | 'product_limit'

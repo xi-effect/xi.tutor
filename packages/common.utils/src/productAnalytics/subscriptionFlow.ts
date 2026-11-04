@@ -9,7 +9,7 @@ const SOURCE_KEY = 'subscription_analytics_source';
 const LOCAL_EXTENSION_KEY = 'subscription_local_period_extension';
 
 const SOURCES: readonly SubscriptionAnalyticsSource[] = [
-  'announcement',
+  'expiry_notice',
   'settings',
   'pricing',
   'product_limit',

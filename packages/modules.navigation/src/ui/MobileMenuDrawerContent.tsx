@@ -15,6 +15,7 @@ import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { cn } from '@xipkg/utils';
 import { MaintenanceNotice } from './MaintenanceNotice';
+import { SubscriptionExpiryNotice } from './SubscriptionExpiryNotice';
 
 const menuRowClassName = cn(
   'flex h-[48px] w-full items-center gap-3 rounded-xl border px-4 text-left transition-colors',
@@ -113,6 +114,13 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
         })}
       </div>
 
+      <SubscriptionExpiryNotice
+        collapsedFallback={false}
+        onNavigate={() => {
+          close();
+          onClose();
+        }}
+      />
       <MaintenanceNotice collapsedFallback={false} />
 
       <div className="flex items-center justify-between gap-3">

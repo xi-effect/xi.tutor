@@ -126,12 +126,6 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   // Payments
   PAYMENT_CONFIRMED: 'payment_confirmed',
 
-  // Subscription announcement (testing end)
-  SUBSCRIPTION_ANNOUNCEMENT_SHOWN: 'subscription_announcement_shown',
-  SUBSCRIPTION_ANNOUNCEMENT_ARTICLE_OPENED: 'subscription_announcement_article_opened',
-  SUBSCRIPTION_ANNOUNCEMENT_CLOSED: 'subscription_announcement_closed',
-  SUBSCRIPTION_ANNOUNCEMENT_DISMISSED: 'subscription_announcement_dismissed',
-
   // Subscription monetization funnel
   SUBSCRIPTION_PRICING_VIEWED: 'subscription_pricing_viewed',
   SUBSCRIPTION_PLAN_SELECTED: 'subscription_plan_selected',
@@ -149,6 +143,9 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   SUBSCRIPTION_RENEWAL_FAILED: 'subscription_renewal_failed',
   SUBSCRIPTION_EXPIRED: 'subscription_expired',
   SUBSCRIPTION_DOWNGRADED: 'subscription_downgraded',
+  SUBSCRIPTION_EXPIRY_NOTICE_SHOWN: 'subscription_expiry_notice_shown',
+  SUBSCRIPTION_EXPIRY_NOTICE_RENEW_CLICKED: 'subscription_expiry_notice_renew_clicked',
+  SUBSCRIPTION_EXPIRY_NOTICE_DISMISSED: 'subscription_expiry_notice_dismissed',
   SUBSCRIPTION_PAYWALL_SHOWN: 'subscription_paywall_shown',
   SUBSCRIPTION_PAYWALL_UPGRADE_CLICKED: 'subscription_paywall_upgrade_clicked',
   SUBSCRIPTION_PROMO_CODE_SUBMITTED: 'subscription_promo_code_submitted',

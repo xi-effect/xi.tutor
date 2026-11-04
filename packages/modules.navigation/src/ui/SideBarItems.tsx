@@ -23,6 +23,7 @@ import { useAuth } from 'common.auth';
 import { pickSettingsSearch } from 'modules.profile/sections';
 import { getTopMenuConfig } from './config/sidebarMenuConfig';
 import { MaintenanceNotice } from './MaintenanceNotice';
+import { SubscriptionExpiryNotice } from './SubscriptionExpiryNotice';
 
 export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
@@ -180,6 +181,7 @@ export const SideBarItems = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="bg-background-page gap-2">
+        <SubscriptionExpiryNotice />
         <MaintenanceNotice />
         {user?.id ? (
           <div className="mt-1 overflow-visible pt-2">

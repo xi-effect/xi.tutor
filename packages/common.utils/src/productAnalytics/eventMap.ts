@@ -780,13 +780,6 @@ export type ProductAnalyticsEventMap = {
         size_bucket: FileUploadSizeBucket;
       };
 
-  subscription_announcement_shown: BaseProps & {
-    user_role: 'tutor';
-  };
-  subscription_announcement_article_opened: BaseProps & {
-    user_role: 'tutor';
-    source: 'announcement';
-  };
   subscription_pricing_viewed: {
     event_version?: number;
     source: SubscriptionAnalyticsSource;
@@ -882,6 +875,18 @@ export type ProductAnalyticsEventMap = {
     new_plan: string;
     reason: SubscriptionDowngradeReason;
   };
+  subscription_expiry_notice_shown: {
+    event_version?: number;
+    hours_left: number;
+  };
+  subscription_expiry_notice_renew_clicked: {
+    event_version?: number;
+    hours_left: number;
+  };
+  subscription_expiry_notice_dismissed: {
+    event_version?: number;
+    hours_left: number;
+  };
   subscription_paywall_shown: {
     event_version?: number;
     source: 'product_limit';
@@ -904,13 +909,6 @@ export type ProductAnalyticsEventMap = {
     event_version?: number;
     reason: SubscriptionPromoFailureReason;
   };
-  subscription_announcement_closed: BaseProps & {
-    user_role: 'tutor';
-  };
-  subscription_announcement_dismissed: BaseProps & {
-    user_role: 'tutor';
-  };
-
   payment_confirmed: {
     event_version?: number;
     revenue: number;
