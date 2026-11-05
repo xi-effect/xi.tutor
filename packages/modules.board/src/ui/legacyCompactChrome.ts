@@ -37,7 +37,7 @@ export function startLegacyCompactChromeSync(insets: BoardChromeInsets): () => v
 
     const seen = new Set<HTMLElement>();
     for (const element of document.querySelectorAll<HTMLElement>('.z-20, .z-100')) {
-      const overrides = compactChromeOverrides(element.className, insets);
+      const overrides = compactChromeOverrides(element.getAttribute('class') ?? '', insets);
       if (!overrides) continue;
       seen.add(element);
       patched.add(element);
