@@ -42,6 +42,7 @@ export type {
   AccessModeT,
   ContentYDocItem,
   MaterialActionsMenuPropsT,
+  MaterialDuplicateTarget,
   MaterialPropsT,
   ModalEditMaterialNamePropsT,
 } from './materials';

@@ -3,7 +3,8 @@
   "subjects": {
     "label": "Предмет",
     "mathematics": "Математика",
-    "russian": "Русский язык"
+    "russian": "Русский язык",
+    "physics": "Физика"
   },
   "disclaimer": {
     "aria": "О банке заданий и отметках ОГЭ/ЕГЭ",
@@ -67,7 +68,9 @@
       "restore_punctuation": "Пунктуация",
       "multiple_choice": "Выбор ответа",
       "multi_choice": "Несколько ответов",
-      "open_rubric": "Открытый ответ"
+      "open_rubric": "Открытый ответ",
+      "numeric": "Числовой ответ",
+      "multi-step": "В несколько действий"
     },
     "favorites": "Только избранное"
   },
@@ -105,8 +108,13 @@
     "reportSubmit": "Отправить",
     "reportCancel": "Отмена",
     "reportSent": "Спасибо, мы получили сообщение",
+    "reportError": "Не удалось отправить сообщение",
     "loading": "Загрузка задания...",
-    "error": "Не удалось открыть задание"
+    "error": "Не удалось открыть задание",
+    "figureSeries": "Резисторы соединены последовательно",
+    "figureParallel": "Резисторы соединены параллельно",
+    "figureResistor": "{{label}} — {{value}} Ом",
+    "figureGraph": "График: {{x}}, {{y}}"
   },
   "empty": {
     "title": "Ничего не найдено",

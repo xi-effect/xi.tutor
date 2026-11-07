@@ -6,7 +6,7 @@ export const cardMenuButtonClass =
 
 /** Иконка типа, бейдж доступа и троеточие на карточках материалов и файлов — 36px. */
 export const cardTypeIconBoxClass =
-  'bg-status-info-background flex size-9 shrink-0 items-center justify-center rounded-[10px] [&>svg]:size-5 [&>svg]:fill-icon-brand';
+  'bg-status-info-background flex size-9 shrink-0 items-center justify-center rounded-[10px] [&>svg]:size-5 [&>svg]:fill-icon-brand [&>svg]:text-icon-brand';
 
 export const cardAccessBadgeClass =
   'inline-flex h-9 max-h-9 min-h-9 min-w-0 shrink items-center truncate rounded-[10px] px-2.5 py-0 text-s-base leading-4 font-medium';

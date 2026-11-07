@@ -109,7 +109,11 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   MATH_TASK_HINT_OPEN: 'math_task_hint_open',
   MATH_TASK_FAVORITE_TOGGLE: 'math_task_favorite_toggle',
   MATH_TASK_NEXT_VARIANT: 'math_task_next_variant',
-  MATH_TASK_REPORT: 'math_task_report',
+
+  // Task report (all subjects)
+  TASK_REPORT_OPENED: 'task_report_opened',
+  TASK_REPORT_SUBMITTED: 'task_report_submitted',
+  TASK_REPORT_FAILED: 'task_report_failed',
 
   // Product limits (baseline before subscription)
   PRODUCT_LIMIT_REACHED: 'product_limit_reached',
@@ -121,12 +125,6 @@ export const PRODUCT_ANALYTICS_EVENTS = {
 
   // Payments
   PAYMENT_CONFIRMED: 'payment_confirmed',
-
-  // Subscription announcement (testing end)
-  SUBSCRIPTION_ANNOUNCEMENT_SHOWN: 'subscription_announcement_shown',
-  SUBSCRIPTION_ANNOUNCEMENT_ARTICLE_OPENED: 'subscription_announcement_article_opened',
-  SUBSCRIPTION_ANNOUNCEMENT_CLOSED: 'subscription_announcement_closed',
-  SUBSCRIPTION_ANNOUNCEMENT_DISMISSED: 'subscription_announcement_dismissed',
 
   // Subscription monetization funnel
   SUBSCRIPTION_PRICING_VIEWED: 'subscription_pricing_viewed',
@@ -145,6 +143,9 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   SUBSCRIPTION_RENEWAL_FAILED: 'subscription_renewal_failed',
   SUBSCRIPTION_EXPIRED: 'subscription_expired',
   SUBSCRIPTION_DOWNGRADED: 'subscription_downgraded',
+  SUBSCRIPTION_EXPIRY_NOTICE_SHOWN: 'subscription_expiry_notice_shown',
+  SUBSCRIPTION_EXPIRY_NOTICE_RENEW_CLICKED: 'subscription_expiry_notice_renew_clicked',
+  SUBSCRIPTION_EXPIRY_NOTICE_DISMISSED: 'subscription_expiry_notice_dismissed',
   SUBSCRIPTION_PAYWALL_SHOWN: 'subscription_paywall_shown',
   SUBSCRIPTION_PAYWALL_UPGRADE_CLICKED: 'subscription_paywall_upgrade_clicked',
   SUBSCRIPTION_PROMO_CODE_SUBMITTED: 'subscription_promo_code_submitted',
@@ -168,7 +169,11 @@ export const PRODUCT_ANALYTICS_EVENTS = {
 export type ProductAnalyticsEventName =
   (typeof PRODUCT_ANALYTICS_EVENTS)[keyof typeof PRODUCT_ANALYTICS_EVENTS];
 
-/** Устаревшие declarative-события (data-umami-event). Пока не удаляем. */
+/** Устаревшие события. Не отправлять: канонические имена их заменяют. */
 export const DEPRECATED_ANALYTICS_EVENTS = {
   AUTH_SIGNUP_BUTTON: 'auth-signup-button',
+  /** Клик по флагу без свойств. Заменён на `task_report_opened`. */
+  MATH_BANK_TASK_REPORT: 'math-bank-task-report',
+  /** Отправка с текстом комментария. Заменена на `task_report_submitted`. */
+  MATH_TASK_REPORT: 'math_task_report',
 } as const;

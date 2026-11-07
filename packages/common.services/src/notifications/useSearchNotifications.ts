@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { notificationsApiConfig, NotificationsQueryKey } from 'common.api';
-import { getAxiosInstance } from 'common.config';
+import { getAxiosInstance, QUERY_FRESHNESS_MS } from 'common.config';
 import type {
   NotificationT,
   NotificationsSearchResponse,
@@ -95,8 +95,8 @@ export const useSearchNotifications = ({
       return lastNotification.created_at;
     },
     enabled,
-    staleTime: 5 * 60 * 1000, // 5 минут
-    gcTime: 10 * 60 * 1000, // 10 минут
+    staleTime: QUERY_FRESHNESS_MS,
+    gcTime: QUERY_FRESHNESS_MS,
   });
 
   // Объединяем все страницы в один массив (по аналогии с useInfiniteQuery из materials)

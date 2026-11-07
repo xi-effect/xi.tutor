@@ -57,6 +57,7 @@ declare module '@tanstack/react-router' {
   // Расширяем параметры поиска для всех маршрутов
   interface SearchParams {
     redirect?: string;
+    /** Устаревший диплинк настроек (?profile=personalInfo). Навигация открывает /settings. */
     profile?: string;
     carouselType?: 'horizontal' | 'vertical';
     tab?: string;

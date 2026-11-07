@@ -406,11 +406,13 @@
 | `math-bank-task-solution`        | `data-umami-event` — аккордеон «Решение»                   | Показ / скрытие решения                     |
 | `math-bank-task-hint`            | `data-umami-event` — аккордеон «Подсказки»                 | Показ / скрытие подсказок                   |
 | `math-bank-task-next-variant`    | `data-umami-event` — иконка «Ещё вариант» в шапке модалки  | Другое задание той же группы                |
-| `math-bank-task-report`          | `data-umami-event` — иконка флага в шапке модалки          | Открытие формы репорта                      |
+| `task_report_opened`             | код — флаг в шапке, форма была закрыта                     | Форма репорта открыта                       |
+| `task_report_submitted`          | код — успешная отправка формы                              | Репорт принят, без текста комментария       |
+| `task_report_failed`             | код — ошибка отправки формы                                | `reason` без сырого текста ошибки           |
 | `editor-math-bank-open`          | `data-umami-event` — пункт «Из банка заданий» в меню блока | Открытие пикера банка в заметке             |
 | `editor-math-bank-task-add`      | `data-umami-event` — клик по заданию в пикере              | Вставка условия в заметку, свойство: `task` |
 
-Продуктовая воронка (`math_bank_open`, поиск без текста запроса, открытие карточки, вставка на доску/в заметку): [`docs/analytics/math-bank-events.md`](./analytics/math-bank-events.md). Клики в таблице выше **не** равны outcome-событиям.
+Продуктовая воронка (`math_bank_open`, поиск без текста запроса, открытие карточки, вставка на доску/в заметку, репорт задания): [`docs/analytics/math-bank-events.md`](./analytics/math-bank-events.md). Клики `data-umami-event` в таблице выше **не** равны outcome-событиям. `task_report_*` отправляются из кода.
 
 ---
 

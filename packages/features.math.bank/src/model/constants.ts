@@ -6,13 +6,15 @@ const BANK_STATIC_ORIGIN = env.VITE_BANK_STATIC_ORIGIN.replace(/\/$/, '');
 
 export const MATH_BANK_BASE_URL = `${BANK_STATIC_ORIGIN}/math-bank`;
 export const RUSSIAN_BANK_BASE_URL = `${BANK_STATIC_ORIGIN}/task-bank/russian`;
+export const PHYSICS_BANK_BASE_URL = `${BANK_STATIC_ORIGIN}/task-bank/physics`;
 
-export const BANK_SUBJECTS = ['mathematics', 'russian'] as const;
+export const BANK_SUBJECTS = ['mathematics', 'russian', 'physics'] as const;
 export type BankSubject = (typeof BANK_SUBJECTS)[number];
 
 export const BANK_BASE_URL: Record<BankSubject, string> = {
   mathematics: MATH_BANK_BASE_URL,
   russian: RUSSIAN_BANK_BASE_URL,
+  physics: PHYSICS_BANK_BASE_URL,
 };
 
 export const RUSSIAN_TASK_TYPES = [

@@ -31,6 +31,8 @@ import type {
   ProductAnalyticsBoardTrigger,
   MathBankAnalyticsSource,
   MathBankFavoriteAction,
+  TaskReportCommentLengthBucket,
+  TaskReportFailureReason,
   ProductLimitBlockedOn,
   ProductLimitFileCategory,
   ProductLimitObjectKind,
@@ -711,17 +713,31 @@ export type ProductAnalyticsEventMap = {
     task_type?: string;
     difficulty?: number;
   };
-  math_task_report: {
+  task_report_opened: {
     event_version?: number;
-    source: MathBankAnalyticsSource;
-    session_id?: string;
     task_id: string;
     subject: string;
-    grade: number;
+    grade?: string | number;
     topic_id?: string;
     task_type?: string;
-    difficulty?: number;
-    comment: string;
+    source?: string;
+  };
+  task_report_submitted: {
+    event_version?: number;
+    task_id: string;
+    subject: string;
+    grade?: string | number;
+    topic_id?: string;
+    task_type?: string;
+    source?: string;
+    has_comment: boolean;
+    comment_length_bucket?: TaskReportCommentLengthBucket;
+  };
+  task_report_failed: {
+    event_version?: number;
+    task_id: string;
+    subject: string;
+    reason: TaskReportFailureReason;
   };
 
   product_limit_reached: {
@@ -764,13 +780,6 @@ export type ProductAnalyticsEventMap = {
         size_bucket: FileUploadSizeBucket;
       };
 
-  subscription_announcement_shown: BaseProps & {
-    user_role: 'tutor';
-  };
-  subscription_announcement_article_opened: BaseProps & {
-    user_role: 'tutor';
-    source: 'announcement';
-  };
   subscription_pricing_viewed: {
     event_version?: number;
     source: SubscriptionAnalyticsSource;
@@ -866,6 +875,18 @@ export type ProductAnalyticsEventMap = {
     new_plan: string;
     reason: SubscriptionDowngradeReason;
   };
+  subscription_expiry_notice_shown: {
+    event_version?: number;
+    hours_left: number;
+  };
+  subscription_expiry_notice_renew_clicked: {
+    event_version?: number;
+    hours_left: number;
+  };
+  subscription_expiry_notice_dismissed: {
+    event_version?: number;
+    hours_left: number;
+  };
   subscription_paywall_shown: {
     event_version?: number;
     source: 'product_limit';
@@ -888,13 +909,6 @@ export type ProductAnalyticsEventMap = {
     event_version?: number;
     reason: SubscriptionPromoFailureReason;
   };
-  subscription_announcement_closed: BaseProps & {
-    user_role: 'tutor';
-  };
-  subscription_announcement_dismissed: BaseProps & {
-    user_role: 'tutor';
-  };
-
   payment_confirmed: {
     event_version?: number;
     revenue: number;

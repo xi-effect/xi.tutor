@@ -6,7 +6,6 @@ import {
   toMathBankSearchProps,
   trackMathBankOpen,
   trackMathTaskInsertBoard,
-  trackMathTaskReport,
 } from '../mathBank';
 
 vi.mock('../umami', () => ({
@@ -117,11 +116,5 @@ describe('math bank session', () => {
     const openPayload = trackMock.mock.calls[0]?.[1] as { session_id: string };
     const insertPayload = trackMock.mock.calls[1]?.[1] as { session_id: string };
     expect(openPayload.session_id).toBe(insertPayload.session_id);
-  });
-
-  it('не шлёт math_task_report без комментария', () => {
-    trackMathBankOpen('page');
-    expect(trackMathTaskReport({ id: 'task-1', grade: 8 }, '   ', 'page')).toBe(false);
-    expect(trackMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,5 +1,6 @@
 import MiniSearch from 'minisearch';
 import type { BankSubject } from '../model/constants';
+import type { PhysicsSearchDocument, PhysicsTask } from '../model/physics';
 import type { ExamKind, MathTask, MathTaskExamMapping } from '../model/schema';
 import type { RussianTask } from '../model/russian';
 import { normalizeSearchText } from './normalize';
@@ -31,6 +32,7 @@ export type MathTaskSearchDocument = {
   tags: string[];
   aliases: string[];
   examMappings: MathTaskExamMapping[];
+  variantGroup?: string;
 };
 
 type IndexedDocument = {
@@ -77,6 +79,90 @@ export const russianTaskToSearchDocument = (task: RussianTask): MathTaskSearchDo
   tags: task.tags,
   aliases: task.search.aliases,
   examMappings: task.examMappings,
+});
+
+const PHYSICS_EXAM_TERM = /^(oge|ege):(\d+):(\d+)$/;
+
+export const physicsTopicLabel = (topic: string) => topic.replace(/-/g, ' ');
+
+export const physicsSubtopicLabel = (topic: string, subtopic: string, aliases: string[]) =>
+  aliases.find((alias) => alias !== topic) ?? subtopic;
+
+export const examMappingsFromPhysicsTerms = (terms: string[]): MathTaskExamMapping[] => {
+  const grouped = new Map<string, MathTaskExamMapping>();
+
+  for (const term of terms) {
+    const match = term.match(PHYSICS_EXAM_TERM);
+    if (!match) {
+      continue;
+    }
+
+    const exam = match[1] === 'oge' ? 'OGE' : 'EGE';
+    const year = Number(match[2]);
+    const taskNumber = Number(match[3]);
+    const key = `${exam}:${year}`;
+    const current = grouped.get(key) ?? {
+      exam,
+      year,
+      taskNumbers: [],
+      relation: 'foundation',
+    };
+
+    if (!current.taskNumbers.includes(taskNumber)) {
+      current.taskNumbers.push(taskNumber);
+    }
+
+    grouped.set(key, current);
+  }
+
+  return [...grouped.values()];
+};
+
+export const adaptPhysicsSearchDocument = (
+  document: PhysicsSearchDocument,
+): MathTaskSearchDocument => {
+  const examMappings = examMappingsFromPhysicsTerms(document.examTerms);
+  const examAliases = examMappings.flatMap((mapping) =>
+    mapping.taskNumbers.map((number) => `${mapping.exam === 'OGE' ? 'ОГЭ' : 'ЕГЭ'} ${number}`),
+  );
+  return {
+    id: document.id,
+    subject: 'physics',
+    statement: document.statementPreview,
+    grade: document.grade,
+    difficulty: document.difficulty,
+    topicId: document.topic,
+    topic: physicsTopicLabel(document.topic),
+    subtopic: physicsSubtopicLabel(document.topic, document.subtopic, document.aliases),
+    taskType: document.taskType,
+    skills: document.skills,
+    tags: document.tags,
+    aliases: [...document.aliases, ...examAliases],
+    examMappings,
+    variantGroup: document.variantGroup,
+  };
+};
+
+export const physicsTaskToSearchDocument = (task: PhysicsTask): MathTaskSearchDocument => ({
+  id: task.id,
+  subject: 'physics',
+  statement: task.statement,
+  grade: task.grade,
+  difficulty: task.difficulty,
+  topicId: task.topic,
+  topic: physicsTopicLabel(task.topic),
+  subtopic: physicsSubtopicLabel(task.topic, task.subtopic, task.aliases),
+  taskType: task.taskType,
+  skills: task.skills,
+  tags: task.tags,
+  aliases: task.aliases,
+  examMappings: task.examMappings.map((mapping) => ({
+    exam: mapping.exam === 'oge' ? 'OGE' : 'EGE',
+    year: mapping.year,
+    taskNumbers: mapping.taskNumbers,
+    relation: mapping.relation,
+  })),
+  variantGroup: task.variantGroup,
 });
 
 const toIndexedDocument = (task: MathTaskSearchDocument): IndexedDocument => ({
@@ -168,18 +254,38 @@ export const createMathTaskSearch = (documents: MathTaskSearchDocument[]) => {
 
   index.addAll(documents.map(toIndexedDocument));
 
-  const search = (query: string, filters: SearchFilters = {}, limit = 200) => {
-    const normalizedQuery = normalizeSearchText(query);
-    if (!normalizedQuery) {
-      return documents.filter((task) => matchesFilters(task, filters)).slice(0, limit);
+  const takeDiverse = (tasks: MathTaskSearchDocument[], limit: number) => {
+    const seenGroups = new Set<string>();
+    const result: MathTaskSearchDocument[] = [];
+
+    for (const task of tasks) {
+      if (task.variantGroup) {
+        if (seenGroups.has(task.variantGroup)) {
+          continue;
+        }
+        seenGroups.add(task.variantGroup);
+      }
+
+      result.push(task);
+      if (result.length >= limit) {
+        break;
+      }
     }
 
-    return index
-      .search(normalizedQuery)
-      .map((result) => documentById.get(String(result.id)))
-      .filter((task): task is MathTaskSearchDocument => Boolean(task))
-      .filter((task) => matchesFilters(task, filters))
-      .slice(0, limit);
+    return result;
+  };
+
+  const search = (query: string, filters: SearchFilters = {}, limit = 200) => {
+    const normalizedQuery = normalizeSearchText(query);
+    const matched = normalizedQuery
+      ? index
+          .search(normalizedQuery)
+          .map((result) => documentById.get(String(result.id)))
+          .filter((task): task is MathTaskSearchDocument => Boolean(task))
+          .filter((task) => matchesFilters(task, filters))
+      : documents.filter((task) => matchesFilters(task, filters));
+
+    return takeDiverse(matched, limit);
   };
 
   return { search, index };

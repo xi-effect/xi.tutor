@@ -36,6 +36,6 @@
     "typescript-eslint": "^8.22.0",
     "zod": "^4.3.6"
   },
-  "description": "Task bank: mathematics and russian schemas, search and runtime loaders",
+  "description": "Task bank: mathematics, russian and physics schemas, search and runtime loaders",
   "author": "xi.effect"
 }

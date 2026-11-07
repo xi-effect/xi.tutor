@@ -13,6 +13,7 @@ import { useSupportModalStore } from 'common.ui';
 import { type AppLanguage } from 'common.ui/language';
 import { useTranslation } from 'react-i18next';
 import { useProfileLanguage } from '../../hooks';
+import { SettingsGroup, settingsRowTitleClass } from '../layout/SettingsGroup';
 
 const ThemeOptionLabel = ({ item, label }: { item: ThemeItemT; label: string }) => (
   <span className="flex items-center gap-2">
@@ -40,91 +41,77 @@ export const Customization = () => {
 
   return (
     <>
-      <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
-        <div className="flex w-full flex-col p-3">
-          <span className="dark:text-text-primary text-xl font-semibold">
-            {t('customization.appearance')}
-          </span>
-        </div>
-        <div className="mt-2 flex w-full flex-col gap-3 p-3">
-          <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
-            <div className="flex flex-row gap-4">
-              <Palette className="fill-icon-brand" />
-              <span className="dark:text-text-primary text-base leading-[24px] font-semibold">
-                {t('customization.theme')}
-              </span>
-            </div>
-            <Select value={theme} onValueChange={(value: ThemeT) => setTheme(value)}>
-              <SelectTrigger className="dark:text-text-primary ml-0 w-[250px] sm:ml-auto">
-                <SelectValue placeholder={t('customization.themePlaceholder')}>
-                  {selectedTheme ? (
-                    <ThemeOptionLabel
-                      item={selectedTheme}
-                      label={themeLabel(selectedTheme.value)}
-                    />
-                  ) : null}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {themes.map((themeItem) => {
-                    const label = themeLabel(themeItem.value);
-                    return (
-                      <SelectItem
-                        key={themeItem.value}
-                        value={themeItem.value}
-                        textValue={themeItem.badge ? `${label} ${themeItem.badge}` : label}
-                        className="dark:text-text-primary"
-                      >
-                        <ThemeOptionLabel item={themeItem} label={label} />
-                      </SelectItem>
-                    );
-                  })}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+      <SettingsGroup title={t('customization.appearance')}>
+        <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
+          <div className="flex min-w-0 flex-row gap-4">
+            <Palette className="fill-icon-brand" />
+            <span className={settingsRowTitleClass}>{t('customization.theme')}</span>
           </div>
-          <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
-            <div className="flex flex-row gap-4">
-              <Flag className="fill-icon-brand" />
-              <span className="dark:text-text-primary text-base leading-[24px] font-semibold">
-                {t('customization.language')}
-              </span>
-            </div>
-            <Select
-              value={language}
-              onValueChange={(value: AppLanguage) => {
-                void setLanguage(value);
-              }}
-            >
-              <SelectTrigger className="dark:text-text-primary ml-0 w-[250px] sm:ml-auto">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="ru" className="dark:text-text-primary">
-                    {t('customization.languageRu')}
-                  </SelectItem>
-                  <SelectItem value="en" className="dark:text-text-primary">
-                    {t('customization.languageEn')}
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <p className="text-text-secondary text-s-base max-w-[560px]">
-            {t('customization.themeBetaNote')}{' '}
-            <button
-              type="button"
-              onClick={openSupportModal}
-              className="text-text-link hover:text-text-link font-inherit inline cursor-pointer border-0 bg-transparent p-0 hover:underline"
-            >
-              {t('customization.support')}
-            </button>
-            .
-          </p>
+          <Select value={theme} onValueChange={(value: ThemeT) => setTheme(value)}>
+            <SelectTrigger className="dark:text-text-primary ml-0 w-[250px] sm:ml-auto">
+              <SelectValue placeholder={t('customization.themePlaceholder')}>
+                {selectedTheme ? (
+                  <ThemeOptionLabel item={selectedTheme} label={themeLabel(selectedTheme.value)} />
+                ) : null}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {themes.map((themeItem) => {
+                  const label = themeLabel(themeItem.value);
+                  return (
+                    <SelectItem
+                      key={themeItem.value}
+                      value={themeItem.value}
+                      textValue={themeItem.badge ? `${label} ${themeItem.badge}` : label}
+                      className="dark:text-text-primary"
+                    >
+                      <ThemeOptionLabel item={themeItem} label={label} />
+                    </SelectItem>
+                  );
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
-      </div>
+        <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-row gap-4">
+            <Flag className="fill-icon-brand" />
+            <span className={settingsRowTitleClass}>{t('customization.language')}</span>
+          </div>
+          <Select
+            value={language}
+            onValueChange={(value: AppLanguage) => {
+              void setLanguage(value);
+            }}
+          >
+            <SelectTrigger className="dark:text-text-primary ml-0 w-[250px] sm:ml-auto">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="ru" className="dark:text-text-primary">
+                  {t('customization.languageRu')}
+                </SelectItem>
+                <SelectItem value="en" className="dark:text-text-primary">
+                  {t('customization.languageEn')}
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <p className="text-text-secondary text-s-base max-w-[560px]">
+          {t('customization.themeBetaNote')}{' '}
+          <button
+            type="button"
+            onClick={openSupportModal}
+            className="text-text-link hover:text-text-link font-inherit inline cursor-pointer border-0 bg-transparent p-0 hover:underline"
+          >
+            {t('customization.support')}
+          </button>
+          .
+        </p>
+      </SettingsGroup>
     </>
   );
 };

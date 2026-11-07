@@ -1,7 +1,8 @@
 import { prepareContentUpload, uploadFileIdRequest } from 'common.services';
 import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { resolveAssetUrl } from '../utils/resolveAssetUrl';
+import { displayPixelSize } from '../utils/rasterBudget';
+import { resolveDisplayImageUrl, staticImagePixels } from '../utils/displayImage';
 import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
@@ -170,8 +171,7 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
       };
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async resolve(asset: DrAsset, _ctx: DrAssetContextT) {
+    async resolve(asset: DrAsset, ctx: DrAssetContextT) {
       const src = asset.props.src;
 
       if (!src) return src;
@@ -179,8 +179,18 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
       const token = holder.get() || (await holder.whenReady());
       if (!token) return src;
 
+      const pixels = staticImagePixels(asset);
+      const target =
+        ctx.shouldResolveToOriginal || !pixels
+          ? null
+          : displayPixelSize(pixels.w, pixels.h, ctx.steppedScreenScale, ctx.dpr);
+
       try {
-        return await resolveAssetUrl(src, token);
+        return await resolveDisplayImageUrl(
+          src,
+          token,
+          target ? Math.max(target.width, target.height) : null,
+        );
       } catch (error) {
         // ВАЖНО: возвращаем именно `src`, а не null. Внутри tldraw `useImageOrVideoAsset`
         // есть guard `if (previousUrl.current === url) return`, из-за которого при `url === null`

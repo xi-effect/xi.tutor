@@ -55,24 +55,37 @@ describe('trackProductEvent feedback comment', () => {
     });
   });
 
-  it('пропускает comment в math_task_report и маскирует PII', () => {
+  it('не пропускает текст репорта в task_report_submitted', () => {
     vi.stubEnv('VITE_ENABLE_PRODUCT_ANALYTICS', 'true');
     const track = vi.fn();
     (globalThis as { window?: { umami?: { track: typeof track } } }).window = {
       umami: { track },
     };
 
-    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_REPORT, {
-      source: 'page',
+    const comment = 'ошибка в ответе, пишите tutor@mail.ru';
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.TASK_REPORT_SUBMITTED, {
       task_id: 'task-1',
+      subject: 'russian',
       grade: 8,
-      comment: 'ошибка в ответе, пишите tutor@mail.ru',
-    });
+      has_comment: true,
+      comment_length_bucket: '1_50',
+      comment,
+      message: comment,
+      raw_text: comment,
+    } as never);
 
-    expect(track.mock.calls[0]?.[1]).toMatchObject({
+    const payload = track.mock.calls[0]?.[1] as Record<string, unknown>;
+    expect(payload).toMatchObject({
       task_id: 'task-1',
+      subject: 'russian',
       grade: 8,
-      comment: 'ошибка в ответе, пишите [email]',
+      has_comment: true,
+      comment_length_bucket: '1_50',
     });
+    expect(payload).not.toHaveProperty('comment');
+    expect(payload).not.toHaveProperty('message');
+    expect(payload).not.toHaveProperty('raw_text');
+    expect(JSON.stringify(payload)).not.toContain('tutor@mail.ru');
+    expect(JSON.stringify(payload)).not.toContain('ошибка в ответе');
   });
 });

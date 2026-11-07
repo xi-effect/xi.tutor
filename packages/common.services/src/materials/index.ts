@@ -3,6 +3,14 @@ export { useDeleteMaterials } from './useDeleteMaterials';
 export { useGetMaterial } from './useGetMaterial';
 export { useUpdateMaterial } from './useUpdateMaterial';
 export { useGetStorageItem } from './useGetStorageItem';
+export {
+  fetchFreshContentToken,
+  recoverCollabSocket,
+  shareCollabRecovery,
+  type CollabRecovery,
+  type CollabRecoveryOutcome,
+  type CollabSocket,
+} from './collabTokenRecovery';
 export { useDuplicateMaterial } from './useDuplicateMaterial';
 export { useGetMaterialsList } from './useGetMaterialsList';
 export { useSetMaterialTags, setMaterialTagsRequest } from './useSetMaterialTags';

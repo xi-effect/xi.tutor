@@ -12,21 +12,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Edit, Flag, MoreVert, Trash } from '@xipkg/icons';
+import { Edit, Flag, Group, MoreVert, PersonalData, Trash } from '@xipkg/icons';
 
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import {
-  useCurrentUser,
-  useDeleteClassroom,
-  useUpdateClassroomStatus,
-  useUserByRole,
-} from 'common.services';
+import { useCurrentUser, useDeleteClassroom, useUpdateClassroomStatus } from 'common.services';
 import { tryChangeClassroomStatus, useCanActivateClassroom } from 'common.subscription';
 import {
   ConfirmDialog,
+  CardTooltipContent,
   cardMenuButtonClass,
+  cardTypeIconBoxClass,
   cardMenuCheckboxItemClass,
   cardMenuDeleteItemClass,
   cardMenuIconClass,
@@ -36,7 +33,7 @@ import {
   cardMenuSubTriggerClass,
   cardMenuSurfaceClass,
 } from 'common.ui';
-import { StatusBadge, SubjectBadge } from 'features.classroom';
+import { StatusBadge, SubjectLabel } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
 import { isClassroomOnPause, type ClassroomStatusT } from 'common.api';
 import { useTranslation } from 'react-i18next';
@@ -50,18 +47,14 @@ const CLASSROOM_STATUS_OPTIONS: Exclude<ClassroomStatusT, 'locked'>[] = [
 ];
 
 type UserAvatarPropsT = {
-  kind: string;
   student_id: string;
+  name?: string | null;
 };
 
 const avatarSize = 'l';
 
-const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
-  const { data: currentUser } = useCurrentUser();
-  const isTutor = currentUser?.default_layout === 'tutor';
-  // Используем useUserByRole с userId напрямую
-  const userRole = isTutor ? 'student' : 'tutor';
-  const { data: user, isLoading } = useUserByRole(userRole, Number(student_id));
+const UserAvatar = ({ student_id, name }: UserAvatarPropsT) => {
+  const letter = name?.trim()[0]?.toUpperCase() ?? '';
 
   return (
     <Avatar size={avatarSize}>
@@ -69,11 +62,7 @@ const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
         src={`https://api.sovlium.ru/files/users/${student_id}/avatar.webp`}
         alt="user avatar"
       />
-      {isLoading ? (
-        <AvatarFallback size={avatarSize} loading />
-      ) : (
-        <AvatarFallback size={avatarSize}>{user?.display_name[0].toUpperCase()}</AvatarFallback>
-      )}
+      <AvatarFallback size={avatarSize}>{letter}</AvatarFallback>
     </Avatar>
   );
 };
@@ -151,40 +140,39 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
     <div data-umami-event="classroom-card-open" data-umami-event-type={student_id}>
       <div
         onClick={handleClick}
-        className="group bg-background-surface relative flex h-40 w-full cursor-pointer justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
+        className="group bg-background-surface relative flex h-40 w-full cursor-pointer justify-between rounded-2xl p-5"
       >
         <div className="flex h-full min-w-0 flex-1 flex-col justify-between">
           <div className="mr-8 flex min-w-0 items-center gap-2">
+            <div className={cardTypeIconBoxClass}>
+              {kind === 'group' ? (
+                <Group aria-label={t('filters.group')} />
+              ) : (
+                <PersonalData aria-label={t('filters.individual')} />
+              )}
+            </div>
             <StatusBadge status={status} kind={kind} deleted={deleted} />
-
-            {subject_id && (
-              <SubjectBadge
-                subjectId={subject_id}
-                className="min-w-0 overflow-hidden"
-                textClassName="truncate"
-                isTooltip
-              />
-            )}
           </div>
-          <div className="flex flex-row items-center gap-2">
-            {kind === 'individual' && (
-              <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
-            )}
-            {kind === 'group' && (
-              <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
-                {name?.[0]?.toUpperCase() ?? ''}
-              </div>
-            )}
-            <Tooltip delayDuration={2000}>
-              <TooltipTrigger asChild>
-                <div className="flex h-full w-full flex-row items-center justify-center gap-2">
-                  <h3 className="text-s-base text-text-primary line-clamp-2 w-full text-left font-medium">
+          <div className="flex w-full min-w-0 flex-col gap-2">
+            <div className="flex flex-row items-center gap-2">
+              {kind === 'individual' && (
+                <UserAvatar student_id={student_id?.toString() ?? ''} name={name} />
+              )}
+              {kind === 'group' && (
+                <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
+                  {name?.[0]?.toUpperCase() ?? ''}
+                </div>
+              )}
+              <Tooltip delayDuration={2000}>
+                <TooltipTrigger asChild>
+                  <h3 className="text-s-base text-text-primary line-clamp-2 min-w-0 flex-1 text-left font-medium">
                     {name}
                   </h3>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>{name}</TooltipContent>
-            </Tooltip>
+                </TooltipTrigger>
+                <CardTooltipContent>{name}</CardTooltipContent>
+              </Tooltip>
+            </div>
+            {subject_id ? <SubjectLabel subjectId={subject_id} /> : null}
           </div>
         </div>
 

@@ -1,26 +1,10 @@
-import {
-  BookOpened,
-  Calendar,
-  Group,
-  HelpCircle,
-  Home,
-  InfoCircle,
-  MessageHeartCircle,
-  Payments,
-  Task,
-} from '@xipkg/icons';
+import { BookOpened, Calendar, Group, Home, Payments, PersonalData, Task } from '@xipkg/icons';
 import { type ComponentType } from 'react';
 
 type TopMenuItem = {
   id: string;
-  titleKey: 'home' | 'schedule' | 'classrooms' | 'materials' | 'mathBank' | 'payments';
-  url: '/' | '/schedule' | '/classrooms' | '/materials' | '/bank' | '/payments';
-  icon: ComponentType<{ className?: string; theme?: string }>;
-};
-
-type FooterMenuItem = {
-  titleKey: 'support' | 'wiki' | 'hints';
-  onClick: () => void;
+  titleKey: 'home' | 'schedule' | 'classrooms' | 'students' | 'materials' | 'mathBank' | 'payments';
+  url: '/' | '/schedule' | '/classrooms' | '/students' | '/materials' | '/bank' | '/payments';
   icon: ComponentType<{ className?: string; theme?: string }>;
 };
 
@@ -49,6 +33,12 @@ export const getTopMenuConfig = (isTutor: boolean): TopMenuItem[] => {
   if (isTutor) {
     topMenu.push(
       {
+        id: 'students-menu-item',
+        titleKey: 'students',
+        url: '/students',
+        icon: PersonalData,
+      },
+      {
         id: 'materials-menu-item',
         titleKey: 'materials',
         url: '/materials',
@@ -72,26 +62,3 @@ export const getTopMenuConfig = (isTutor: boolean): TopMenuItem[] => {
 
   return topMenu;
 };
-
-export const getFooterMenuConfig = (
-  onHintsClick: () => void,
-  onSupportClick: () => void,
-): FooterMenuItem[] => [
-  {
-    titleKey: 'support',
-    onClick: onSupportClick,
-    icon: MessageHeartCircle,
-  },
-  {
-    titleKey: 'wiki',
-    onClick: () => {
-      window.open('https://support.sovlium.ru', '_blank');
-    },
-    icon: HelpCircle,
-  },
-  {
-    titleKey: 'hints',
-    onClick: onHintsClick,
-    icon: InfoCircle,
-  },
-];

@@ -1,10 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  USER_FLAG_KEYS,
-  userFlagsApiConfig,
-  UserFlagsQueryKey,
-  parseUserFlagValue,
-} from 'common.api';
+import { userFlagsApiConfig, UserFlagsQueryKey, parseUserFlagValue } from 'common.api';
 
 vi.mock('common.config', () => ({
   getAxiosInstance: vi.fn(),
@@ -23,7 +18,7 @@ describe('UserFlag API', () => {
   });
 
   it('строит URL GET/PUT с key и trailing slash', () => {
-    const key = USER_FLAG_KEYS.SUBSCRIPTION_ANNOUNCEMENT_DISMISSED;
+    const key = 'example_flag';
     const url = userFlagsApiConfig[UserFlagsQueryKey.GetCurrentFlag].getUrl(key);
 
     expect(url).toContain(`/api/protected/user-service/users/current/flags/${key}/`);
@@ -36,26 +31,20 @@ describe('UserFlag API', () => {
   it('GET нормализует UserFlagValueSchema в boolean', async () => {
     axiosMock.mockResolvedValue({ status: 200, data: { value: false } });
 
-    await expect(
-      getCurrentUserFlag(USER_FLAG_KEYS.SUBSCRIPTION_ANNOUNCEMENT_DISMISSED),
-    ).resolves.toBe(false);
+    await expect(getCurrentUserFlag('example_flag')).resolves.toBe(false);
 
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'GET',
       }),
     );
-    expect(String(axiosMock.mock.calls[0][0].url)).toContain(
-      `/flags/${USER_FLAG_KEYS.SUBSCRIPTION_ANNOUNCEMENT_DISMISSED}/`,
-    );
+    expect(String(axiosMock.mock.calls[0][0].url)).toContain('/flags/example_flag/');
   });
 
   it('PUT отправляет { value } и возвращает boolean', async () => {
     axiosMock.mockResolvedValue({ status: 200, data: { value: true } });
 
-    await expect(
-      updateCurrentUserFlag(USER_FLAG_KEYS.SUBSCRIPTION_RELEASE_NOTE_DISMISSED, true),
-    ).resolves.toBe(true);
+    await expect(updateCurrentUserFlag('example_flag', true)).resolves.toBe(true);
 
     expect(axiosMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -79,8 +68,6 @@ describe('UserFlag API', () => {
   it('GET error не превращается в false', async () => {
     axiosMock.mockRejectedValue(new Error('network'));
 
-    await expect(
-      getCurrentUserFlag(USER_FLAG_KEYS.SUBSCRIPTION_ANNOUNCEMENT_DISMISSED),
-    ).rejects.toThrow('network');
+    await expect(getCurrentUserFlag('example_flag')).rejects.toThrow('network');
   });
 });
