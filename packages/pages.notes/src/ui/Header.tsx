@@ -12,15 +12,11 @@ import { Skeleton } from 'common.ui';
 import { EditableTitle } from './EditableTitle';
 import { Button } from '@xipkg/button';
 import { ArrowLeft } from '@xipkg/icons';
-import {
-  useCollaborators,
-  useYjsContext,
-  NoteActivitiesMenu,
-  CommentToggleButton,
-} from 'modules.editor';
+import { useCollaborators, useYjsContext, NoteActivitiesMenu } from 'modules.editor';
 import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { UndoRedo } from './UndoRedo';
 import { getAvatarUrlByUserId } from '../utils';
+import { CommentsFeedButton } from '../../../modules.editor/src/comments';
 
 export const Header = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
@@ -102,7 +98,7 @@ export const Header = () => {
         </div>
         <div className="absolute inset-y-0 right-0 flex items-center gap-2 pr-1">
           {!isReadOnly ? <UndoRedo /> : null}
-          <CommentToggleButton />
+          <CommentsFeedButton />
           <CollaboratorAvatars collaborators={collaboratorsWithAvatars} currentUserId={user.id} />
           <NoteActivitiesMenu />
         </div>

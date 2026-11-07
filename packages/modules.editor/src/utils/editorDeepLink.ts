@@ -6,7 +6,7 @@ import type { Editor } from '@tiptap/react';
 import { getThreadMarkRange } from '../comments/commentQueries';
 import type { EditorCommentThread } from '../comments/commentRecords';
 import type * as Y from 'yjs';
-import { useCommentsUiStore } from '../comments';
+import { useCommentsUiStore } from '../comments/commentsUiStore';
 import { keepCommentCentered } from './scrollToComment';
 
 export type EditorDeepLinkSearch = {
