@@ -7,6 +7,7 @@ import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
 import i18n from 'i18next';
+import { reportBoardProblem } from '../utils/boardProblem';
 import { assertBoardUploadAllowed } from '../utils/planUploadLimit';
 
 export type DrAssetContextT = {
@@ -200,7 +201,7 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
         // истечь через 30 с — и всё начинается снова). Отдавая src, мы получаем максимум
         // один лишний <img src> запрос на shape, после чего CustomImageShape ловит onError
         // и показывает placeholder; повторных axios-запросов не будет из-за negative cache.
-        console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', error);
+        reportBoardProblem('asset-resolve', error);
         return src;
       }
     },

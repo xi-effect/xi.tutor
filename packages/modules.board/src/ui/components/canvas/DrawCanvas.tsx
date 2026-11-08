@@ -7,6 +7,7 @@ import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps, type DrUiOverrides } from '@ibodr/draw';
 import { useSearch } from '@tanstack/react-router';
+import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { cloneDroppedFile, useRetryFileQueue } from 'common.services';
 import { usePlanLimits } from 'common.subscription';
@@ -419,6 +420,13 @@ export const DrawCanvas = ({
   }, [editor, status]);
 
   if (status === 'loading') return <LoadingScreen />;
+  if (status === 'error') {
+    return (
+      <div className="text-text-secondary flex h-full w-full items-center justify-center p-6 text-center text-sm">
+        {i18n.t('problem.board', { ns: 'board' })}
+      </div>
+    );
+  }
 
   return (
     <BoardChromeProvider toolbarVisible={!isReadonly}>

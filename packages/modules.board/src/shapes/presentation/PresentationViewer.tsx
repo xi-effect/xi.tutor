@@ -10,6 +10,7 @@ import { rasterPixelsForCssSize, zoomStepCeil } from '../../utils/rasterBudget';
 
 import type { PresentationShape } from './PresentationShape';
 import { PresentationControls } from './PresentationControls';
+import { reportBoardProblem } from '../../utils/boardProblem';
 import { insertImage } from '../../features/pickAndInsertImage';
 
 export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
@@ -57,7 +58,7 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
         quality: 'high',
       });
     } catch (err) {
-      console.error(err);
+      reportBoardProblem('presentation-render', err, { shapeId: shape.id });
       return;
     }
 
@@ -135,7 +136,7 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
 
         resizeCanvasRef.current();
       } catch (err) {
-        console.error(err);
+        reportBoardProblem('presentation-load', err, { shapeId: shape.id });
 
         if (!cancelled) {
           setError(err as Error);

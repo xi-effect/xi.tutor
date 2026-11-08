@@ -7,7 +7,8 @@
     "./warmup": "./src/warmup/index.ts",
     "./locales": "./src/locales/index.ts",
     "./preferences": "./src/store/useBoardPreferencesStore.ts",
-    "./activities": "./src/activities/document.ts"
+    "./activities": "./src/activities/document.ts",
+    "./problems": "./src/utils/boardProblem.ts"
   },
   "license": "MIT",
   "scripts": {

@@ -637,5 +637,9 @@
       "mystery-tiles": "Mystery tiles",
       "random-card": "Random card"
     }
+  },
+  "problem": {
+    "board": "The board failed to open. Refresh the page.",
+    "activity": "The activity failed to open"
   }
 }

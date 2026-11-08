@@ -21,6 +21,7 @@ import { PDF_PAGES_VISIBLE_MAX, PDF_PAGES_VISIBLE_MIN } from './PdfShape';
 import { RecognizePrintedTextControl } from '../../ui/components/toolbar/RecognizeTextMenu';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
+import { reportBoardProblem } from '../../utils/boardProblem';
 
 // Используем CDN для worker файла, чтобы избежать проблем с бандлингом в продакшене
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -145,7 +146,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         setPdfDoc(doc);
       } catch (err) {
         if (cancelled) return;
-        console.error('[PdfViewer] load error:', err);
+        reportBoardProblem('pdf-load', err, { shapeId: shape.id });
         setError(i18n.t('pdf.renderError', { ns: 'board' }));
         setLoading(false);
       }
@@ -228,7 +229,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       } catch (err) {
         if (cancelled) return;
         if ((err as { name?: string })?.name === 'RenderingCancelledException') return;
-        console.error('[PdfViewer] render error:', err);
+        reportBoardProblem('pdf-render', err, { shapeId: shape.id });
         setError(i18n.t('pdf.renderError', { ns: 'board' }));
         setLoading(false);
       }

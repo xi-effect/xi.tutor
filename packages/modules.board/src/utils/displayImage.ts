@@ -1,6 +1,7 @@
 import type { DrAsset } from '@ibodr/draw';
 import { edgeBucket } from './rasterBudget';
 import { getCachedBlobUrl, rememberBlob, resolveAssetUrl } from './resolveAssetUrl';
+import { reportBoardProblem } from './boardProblem';
 
 const MAX_PARALLEL_RESIZE = 2;
 
@@ -111,7 +112,7 @@ export async function resolveDisplayImageUrl(
 
   const promise = withResizeSlot(() => buildDisplayUrl(cacheKey, original, bucket))
     .catch((error) => {
-      console.error('[resolveDisplayImageUrl] resize failed:', error);
+      reportBoardProblem('image-display', error);
       return original;
     })
     .finally(() => {
