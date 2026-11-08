@@ -32,6 +32,7 @@
     "common.utils": "workspace:*",
     "features.avatar.editor": "workspace:*",
     "modules.navigation": "workspace:*",
+    "pages.main": "workspace:*",
     "react-hook-form": "^7.73.1",
     "zod": "^4.3.6"
   },

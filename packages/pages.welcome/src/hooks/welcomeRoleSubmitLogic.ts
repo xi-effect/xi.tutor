@@ -18,6 +18,8 @@ export type WelcomeRoleForwardDeps = {
   trackCompleted: (step: 'role_selection', role: OnboardingAnalyticsRole, stage?: string) => void;
   navigateAfterRole: (search: { invite?: string }) => void;
   search: { invite?: string };
+  /** Кабинет репетитора создаётся сразу после сохранения роли, не дожидаясь экрана знакомства. */
+  prepareTutorDemo?: (userId: number) => void;
 };
 
 export type WelcomeRoleBackDeps = {
@@ -54,6 +56,10 @@ export async function runWelcomeRoleForward(
   }
 
   deps.trackRoleSelected?.(deps.role, deps.userId);
+
+  if (deps.role === 'tutor' && deps.userId != null) {
+    deps.prepareTutorDemo?.(deps.userId);
+  }
 
   try {
     await deps.transitionForward();

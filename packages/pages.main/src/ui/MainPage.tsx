@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
+import { FirstSteps } from './components/FirstSteps/FirstSteps';
 import { MobileTutorActionButton } from 'features.invites';
 import { OnboardingPopup } from 'common.ui';
-import { useCurrentUser } from 'common.services';
+import { shouldShowFirstSteps, useCurrentUser } from 'common.services';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { NearestLessonCard, useStudentSchedule, useTutorSchedule } from 'modules.calendar';
 import { MovingLessonModal } from 'features.lesson.move';
@@ -31,6 +32,9 @@ export const MainPage = () => {
   const { t } = useTranslation('main');
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const [previewHidden, setPreviewHidden] = useState(false);
+  const showFirstSteps =
+    !previewHidden && !isUserLoading && shouldShowFirstSteps(user?.onboarding_stage);
 
   const isMobile = useMediaQuery('(max-width: 960px)');
   const [moveLessonOpen, setMoveLessonOpen] = useState(false);
@@ -38,11 +42,11 @@ export const MainPage = () => {
   const range = useMemo(getNearestLessonRange, []);
   const tutorScheduleQuery = useTutorSchedule({
     ...range,
-    enabled: isMobile && !isUserLoading && isTutor === true,
+    enabled: isMobile && !isUserLoading && isTutor === true && !showFirstSteps,
   });
   const studentScheduleQuery = useStudentSchedule({
     ...range,
-    enabled: isMobile && !isUserLoading && isTutor === false,
+    enabled: isMobile && !isUserLoading && isTutor === false && !showFirstSteps,
   });
   const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
 
@@ -138,6 +142,19 @@ export const MainPage = () => {
     ],
     [isTutor, t],
   );
+
+  if (showFirstSteps && user) {
+    return (
+      <div className="bg-background-page h-full min-h-0 overflow-x-hidden overflow-y-auto">
+        <FirstSteps
+          userId={user.id}
+          role={user.default_layout === 'tutor' ? 'tutor' : 'student'}
+          localPreview={user.onboarding_stage !== 'training'}
+          onLocalPreviewClose={() => setPreviewHidden(true)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

@@ -73,6 +73,39 @@ describe('runWelcomeRoleForward', () => {
     expect(ok).toBe('ok');
     expect(trackRoleSelected).toHaveBeenCalledWith('tutor', 7);
   });
+
+  it('запускает демокабинет после сохранения роли репетитора и не запускает его ученику', async () => {
+    const prepareTutorDemo = vi.fn();
+
+    await runWelcomeRoleForward({
+      ...base,
+      userId: 7,
+      updateProfile: vi.fn().mockResolvedValue({}),
+      transitionForward: vi.fn().mockResolvedValue({}),
+      trackFailed: vi.fn(),
+      trackCompleted: vi.fn(),
+      navigateAfterRole: vi.fn(),
+      prepareTutorDemo,
+    });
+
+    expect(prepareTutorDemo).toHaveBeenCalledWith(7);
+
+    prepareTutorDemo.mockClear();
+    await runWelcomeRoleForward({
+      ...base,
+      role: 'student',
+      userRole: 'student',
+      userId: 7,
+      updateProfile: vi.fn().mockResolvedValue({}),
+      transitionForward: vi.fn().mockResolvedValue({}),
+      trackFailed: vi.fn(),
+      trackCompleted: vi.fn(),
+      navigateAfterRole: vi.fn(),
+      prepareTutorDemo,
+    });
+
+    expect(prepareTutorDemo).not.toHaveBeenCalled();
+  });
 });
 
 describe('runWelcomeRoleBack', () => {

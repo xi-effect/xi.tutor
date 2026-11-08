@@ -3,7 +3,8 @@ import { Drawer } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
-import { useFocusModeStore, useSupportModalStore } from 'common.ui';
+import { FIRST_STEPS_EXPAND_SIDEBAR_EVENT } from 'common.services';
+import { FirstStepsTourHost, useFocusModeStore, useSupportModalStore } from 'common.ui';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { SupportModal } from './SupportModal';
 import { SubscriptionReleaseNoteHost } from './announcements/SubscriptionReleaseNoteHost';
@@ -35,7 +36,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const latestLocation = useRef({ location, settingsSearch });
   latestLocation.current = { location, settingsSearch };
   const onSettings = isSettingsPath(pathname);
-  const { isOpen, open: openMenu, close } = useMenuStore();
+  const { isOpen, isDesktopOpen, open: openMenu, close } = useMenuStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
   const isSupportOpen = useSupportModalStore((s) => s.isOpen);
   const setSupportOpen = useSupportModalStore((s) => s.setOpen);
@@ -105,6 +106,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       {!isMobile && !focusMode && (
         <Sidebar
           id="sidebar"
+          data-sidebar-expanded={onSettings || isDesktopOpen ? 'true' : 'false'}
           collapsible="icon"
           className="bg-background-page border-r-border-default absolute w-full border-r md:w-(--sidebar-width)"
         >
@@ -121,6 +123,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Мобильная нижняя панель — скрыта в фокусе и на доске */}
       {isMobile && !hideMobileNav && <MobileBottomBar />}
 
+      <FirstStepsTourHost />
       <SupportModal open={isSupportOpen} onOpenChange={setSupportOpen} />
       <SubscriptionReleaseNoteHost />
       <PostLessonFeedbackHost />
@@ -138,6 +141,12 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const setFocusMode = useFocusModeStore((s) => s.setFocusMode);
 
   // В режиме фокуса — выход по Esc
+  useEffect(() => {
+    const expand = () => setDesktopOpen(true);
+    window.addEventListener(FIRST_STEPS_EXPAND_SIDEBAR_EVENT, expand);
+    return () => window.removeEventListener(FIRST_STEPS_EXPAND_SIDEBAR_EVENT, expand);
+  }, [setDesktopOpen]);
+
   useEffect(() => {
     if (!focusMode) return;
     const handleKeyDown = (e: KeyboardEvent) => {

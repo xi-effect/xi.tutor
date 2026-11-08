@@ -5874,12 +5874,21 @@ importers:
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
+      modules.board:
+        specifier: workspace:*
+        version: link:../modules.board
       modules.calendar:
         specifier: workspace:*
         version: link:../modules.calendar
       modules.calls:
         specifier: workspace:*
         version: link:../modules.calls
+      modules.editor:
+        specifier: workspace:*
+        version: link:../modules.editor
+      motion:
+        specifier: ^13.1.1
+        version: 13.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       pages.classrooms:
         specifier: workspace:*
         version: link:../pages.classrooms
@@ -6836,6 +6845,9 @@ importers:
       modules.navigation:
         specifier: workspace:*
         version: link:../modules.navigation
+      pages.main:
+        specifier: workspace:*
+        version: link:../pages.main
       react:
         specifier: '19'
         version: 19.2.8
@@ -15615,7 +15627,7 @@ snapshots:
       cac: 7.0.0
       devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
     optionalDependencies:
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
 
   '@devframes/plugin-messages@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)':
     dependencies:
@@ -15624,7 +15636,7 @@ snapshots:
       cac: 7.0.0
       devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
     optionalDependencies:
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
 
   '@devframes/plugin-terminals@1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)':
     dependencies:
@@ -15633,7 +15645,7 @@ snapshots:
       devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
       zigpty: 0.2.1
     optionalDependencies:
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
     transitivePeerDependencies:
       - '@devframes/hub'
       - '@devframes/hub-ui'
@@ -15650,7 +15662,7 @@ snapshots:
     optionalDependencies:
       '@devframes/hub': 1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)
       '@devframes/hub-ui': 1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(devframe@1.2.0)
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
 
   '@dnd-kit/accessibility@3.1.1(react@19.2.8)':
     dependencies:
@@ -18643,7 +18655,7 @@ snapshots:
       local-pkg: 1.2.1
       nostics: 1.3.0
       package-manager-detector: 1.9.0
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
     transitivePeerDependencies:
       - '@devframes/agentic'
       - cac
@@ -18668,7 +18680,7 @@ snapshots:
       nostics: 1.3.0
       obug: 3.0.0
       pathe: 2.0.3
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
     transitivePeerDependencies:
       - '@devframes/json-render'
       - '@devframes/plugin-inspect--assets'

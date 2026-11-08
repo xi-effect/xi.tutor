@@ -4,12 +4,14 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./locales": "./src/locales/index.ts"
+    "./locales": "./src/locales/index.ts",
+    "./demo": "./src/demo/seedDemoNote.ts"
   },
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",

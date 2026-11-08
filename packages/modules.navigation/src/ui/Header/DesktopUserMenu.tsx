@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -26,7 +26,11 @@ import {
 } from 'common.ui';
 
 import { UserPlanBadge } from './UserPlanBadge';
-import { useCurrentUser } from 'common.services';
+import {
+  FIRST_STEPS_CLOSE_USER_MENU_EVENT,
+  FIRST_STEPS_OPEN_USER_MENU_EVENT,
+  useCurrentUser,
+} from 'common.services';
 import {
   Download,
   Exit,
@@ -64,6 +68,9 @@ export const DesktopUserMenu = ({
   const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const tourLockRef = useRef(false);
+  const supportLockRef = useRef(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const allowTooltipRef = useRef(true);
 
@@ -85,6 +92,29 @@ export const DesktopUserMenu = ({
       console.error('Ошибка при запуске обучения:', error);
     }
   };
+
+  useEffect(() => {
+    const openMenu = (event: Event) => {
+      const support = (event as CustomEvent<{ support?: boolean }>).detail?.support === true;
+      tourLockRef.current = true;
+      supportLockRef.current = support;
+      setMenuOpen(true);
+      setSupportOpen(support);
+    };
+    const closeMenu = () => {
+      tourLockRef.current = false;
+      supportLockRef.current = false;
+      setSupportOpen(false);
+      setMenuOpen(false);
+    };
+
+    window.addEventListener(FIRST_STEPS_OPEN_USER_MENU_EVENT, openMenu);
+    window.addEventListener(FIRST_STEPS_CLOSE_USER_MENU_EVENT, closeMenu);
+    return () => {
+      window.removeEventListener(FIRST_STEPS_OPEN_USER_MENU_EVENT, openMenu);
+      window.removeEventListener(FIRST_STEPS_CLOSE_USER_MENU_EVENT, closeMenu);
+    };
+  }, []);
 
   const triggerButton = (
     <Button
@@ -118,9 +148,12 @@ export const DesktopUserMenu = ({
 
   return (
     <DropdownMenu
+      modal={false}
       open={menuOpen}
       onOpenChange={(open) => {
+        if (!open && tourLockRef.current) return;
         setMenuOpen(open);
+        if (!open) setSupportOpen(false);
         setTooltipOpen(false);
         if (open) allowTooltipRef.current = false;
       }}
@@ -164,10 +197,17 @@ export const DesktopUserMenu = ({
       )}
 
       <DropdownMenuContent
+        data-first-step="user-menu"
         className={cn(cardMenuSurfaceClass, 'z-100 w-[240px] overflow-visible p-2')}
         side="top"
         sideOffset={8}
         align="start"
+        onInteractOutside={(event) => {
+          if (tourLockRef.current) event.preventDefault();
+        }}
+        onFocusOutside={(event) => {
+          if (tourLockRef.current) event.preventDefault();
+        }}
       >
         <div className="mb-2 flex w-full items-center justify-between gap-3 px-2 pt-2 pb-1">
           <span className="text-text-secondary shrink-0 text-xs leading-4 font-medium">
@@ -181,6 +221,7 @@ export const DesktopUserMenu = ({
             <DropdownMenuItem
               onSelect={onOpenProfile}
               className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+              data-first-step="settings-item"
               data-umami-event="header-profile-open"
             >
               <Settings />
@@ -188,7 +229,13 @@ export const DesktopUserMenu = ({
             </DropdownMenuItem>
           ) : null}
 
-          <DropdownMenuSub>
+          <DropdownMenuSub
+            open={supportOpen}
+            onOpenChange={(open) => {
+              if (!open && supportLockRef.current) return;
+              setSupportOpen(open);
+            }}
+          >
             <DropdownMenuSubTrigger
               className={cn(
                 cardMenuItemClass,
@@ -208,6 +255,7 @@ export const DesktopUserMenu = ({
             >
               <DropdownMenuItem
                 className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+                data-first-step="support-item"
                 data-umami-event="navigation-support"
                 onSelect={() => {
                   window.setTimeout(() => openSupportModal(), 0);

@@ -45,6 +45,8 @@ const env = {
   /** Временный откат к старой модалке приглашений (таблица со списком ссылок) вместо
    * нового сценария «одна актуальная ссылка + готовое сообщение». По умолчанию выключено. */
   VITE_LEGACY_INVITES_MODAL_ENABLED: asBoolean(viteEnv.VITE_LEGACY_INVITES_MODAL_ENABLED, false),
+  /** Локальный просмотр «Первых шагов» без смены onboarding_stage. Только .env.local. */
+  VITE_FIRST_STEPS_PREVIEW: asBoolean(viteEnv.VITE_FIRST_STEPS_PREVIEW, false),
   VITE_DEVTOOLS_ENABLED: asBoolean(viteEnv.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),
   VITE_ENABLE_X_TESTING: asBoolean(viteEnv.VITE_ENABLE_X_TESTING, false),
   VITE_ENABLE_PERFORMANCE_PROFILING: asBoolean(viteEnv.VITE_ENABLE_PERFORMANCE_PROFILING, false),

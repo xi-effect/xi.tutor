@@ -19,6 +19,158 @@
     "done": "Close",
     "progress": "{{current}} of {{total}}"
   },
+  "firstStepsTour": {
+    "navigation": {
+      "home": {
+        "title": "Home",
+        "body": "This is the dashboard: a summary of the important events and pieces of the app. You can tailor it to yourself."
+      },
+      "schedule": {
+        "title": "Schedule",
+        "body": "The shared schedule of all your lessons. It gathers lessons with every student and group."
+      },
+      "classrooms": {
+        "title": "Classrooms",
+        "body": "Lessons with students and groups happen here. Materials, files, boards, and notes that should be available to specific students are kept here too."
+      },
+      "students": {
+        "title": "Students",
+        "body": "Your students are gathered here. You can invite them or remove them from your space."
+      },
+      "materials": {
+        "title": "Materials",
+        "body": "These are your materials. Create templates here and reuse them later in classrooms. Your file cloud lives here too."
+      },
+      "bank": {
+        "title": "Task bank",
+        "body": "Look up a ready-made task for your subjects and add it to a board or a note."
+      },
+      "payments": {
+        "title": "Payments",
+        "body": "Issue invoices here and track payments from students."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "body": "The most important events, changes, and reminders arrive in notifications."
+      },
+      "sidebar-toggle": {
+        "title": "Navigation panel",
+        "body": "Collapse or expand the panel with the button at the top to free room for the main work area."
+      }
+    },
+    "settings": {
+      "user-menu": {
+        "title": "Profile menu",
+        "body": "This menu opens from your name at the bottom of the panel. Next, each item."
+      },
+      "settings-item": {
+        "title": "Settings",
+        "body": "Email, password, and notifications are here. The theme lives inside settings too."
+      },
+      "support-item": {
+        "title": "Support",
+        "body": "Help includes contacting support, the knowledge base, and starting the hints again."
+      },
+      "theme": {
+        "title": "Theme",
+        "body": "Light and dark theme are switched in Appearance."
+      }
+    },
+    "cabinet": {
+      "classrooms": {
+        "title": "Classrooms",
+        "body": "Every classroom is listed here. We'll open the demo classroom and look through it."
+      },
+      "classroom-header": {
+        "title": "Classroom header",
+        "body": "This is the classroom name, subject, and the lesson button. Your student sees the same classroom."
+      },
+      "classroom-lessons": {
+        "title": "Lessons",
+        "body": "Upcoming lessons show up in this block. It is empty for now: a lesson is scheduled at the end of the guide."
+      },
+      "classroom-materials": {
+        "title": "Classroom materials",
+        "body": "The demo board and note are already here. You can open them from this list."
+      }
+    },
+    "call": {
+      "start-call": {
+        "title": "Start a call",
+        "body": "This button starts the classroom video call. Press it to complete the step. There is no student yet, so you can leave the call right away."
+      }
+    },
+    "workspace": {
+      "classroom-materials": {
+        "title": "Board and note",
+        "body": "The demo materials live in the classroom. We'll open the board first, then the note."
+      },
+      "board": {
+        "title": "Board",
+        "body": "This is the shared classroom board. Move the pieces, and add new ones from this toolbar."
+      },
+      "note": {
+        "title": "Note",
+        "body": "A note holds the lesson plan: headings, lists, and a link to the board."
+      }
+    },
+    "invite": {
+      "students": {
+        "title": "Students",
+        "body": "Invitations and the student list live in this section."
+      },
+      "invite-action": {
+        "title": "Invitation",
+        "body": "The invitation form opens next. The step counts once an invitation exists."
+      }
+    },
+    "material": {
+      "materials": {
+        "title": "Materials",
+        "body": "Boards and notes are collected here, not only inside a classroom."
+      },
+      "material-action": {
+        "title": "New material",
+        "body": "Choose a board or a note. Closing the list without a choice does not count."
+      }
+    },
+    "lesson": {
+      "schedule": {
+        "title": "Schedule",
+        "body": "All lessons open from here. Next we'll schedule the first one."
+      },
+      "lesson-action": {
+        "title": "New lesson",
+        "body": "Pick a student and a time. The step counts once the lesson appears on the schedule."
+      }
+    },
+    "join": {
+      "classrooms": {
+        "title": "How to join",
+        "body": "The classroom appears after you open your tutor's link in this account."
+      }
+    },
+    "classroom": {
+      "classrooms": {
+        "title": "Classrooms",
+        "body": "Your classrooms are listed here. We'll open yours now."
+      },
+      "classroom-header": {
+        "title": "Classroom",
+        "body": "This is where lessons with your tutor happen: materials, schedule, and the call."
+      }
+    },
+    "schedule": {
+      "schedule": {
+        "title": "Schedule",
+        "body": "Lesson dates and times open from this section."
+      },
+      "schedule-page": {
+        "title": "Your lessons",
+        "body": "An empty calendar is fine. Opening the schedule completes this step."
+      }
+    }
+  },
   "errorPage": {
     "notFoundTitle": "Page not\u00A0found",
     "notFoundText": "The address is\u00A0incorrect or\u00A0the page has been deleted",
