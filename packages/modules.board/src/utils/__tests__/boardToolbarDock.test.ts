@@ -106,5 +106,6 @@ describe('boardToolbarDock', () => {
     );
 
     expect(compactChromeOverrides('absolute z-40 left-4 bottom-4', insets)).toBeNull();
+    expect(compactChromeOverrides({} as string, insets)).toBeNull();
   });
 });

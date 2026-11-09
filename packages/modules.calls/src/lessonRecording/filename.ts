@@ -8,8 +8,8 @@ export function formatRecordingClock(totalSeconds: number): string {
   return `${pad(minutes)}:${pad(rest)}`;
 }
 
-/** `Sovlium lesson 02.10.2026 16-30.webm` */
+/** `sovlium lesson 02.10.2026 16-30.webm` */
 export function formatLessonRecordingFilename(date: Date, extension: string): string {
   const pad = (value: number) => String(value).padStart(2, '0');
-  return `Sovlium lesson ${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}-${pad(date.getMinutes())}.${extension}`;
+  return `sovlium lesson ${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}-${pad(date.getMinutes())}.${extension}`;
 }

@@ -160,6 +160,9 @@ export function compactChromeOverrides(
   className: string,
   insets: BoardChromeInsets,
 ): Partial<Record<CompactChromeEdge, string>> | null {
+  // У SVG `className` — это SVGAnimatedString, не строка. `.split` на нём роняет доску.
+  if (typeof className !== 'string') return null;
+
   const tokens = new Set(className.split(/\s+/).filter(Boolean));
   if (!tokens.has('z-100') && !tokens.has('z-20')) return null;
   if (!tokens.has('absolute') && !tokens.has('fixed')) return null;

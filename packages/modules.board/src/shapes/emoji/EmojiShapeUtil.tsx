@@ -6,7 +6,6 @@ import {
   HTMLContainer,
   Rectangle2d,
 } from '@ibodr/draw';
-import { cardLodStyle } from '../../utils/resolveLodStyle';
 import { Emoji, getEmojiIconId } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../shapeStyles';
 import { TEmoji } from '../../types';
@@ -63,8 +62,16 @@ export class EmojiShapeUtil extends BaseBoxShapeUtil<EmojiShape> {
     };
   }
 
-  override getLodStyle() {
-    return cardLodStyle();
+  override getLodStyle(shape: EmojiShape) {
+    const edge = Math.min(shape.props.w, shape.props.h);
+    return {
+      fill: 'rgba(0, 0, 0, 0)',
+      stroke: null,
+      strokeWidth: 0,
+      label: shape.props.emoji,
+      labelSize: edge * 0.72,
+      labelColor: '#1d1d1d',
+    };
   }
 
   override getGeometry(shape: EmojiShape) {

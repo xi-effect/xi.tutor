@@ -4,7 +4,14 @@
  * and keyboard to the sharer. Works in the browser app as well as in the shell.
  */
 
-import { useCallback, useEffect, useRef, useState, type ReactElement } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactElement,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { useLocalParticipant, useRoomContext, useTracks } from '@livekit/components-react';
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
@@ -138,14 +145,15 @@ function useInputStream(surface: HTMLDivElement | null, send: Send): void {
     const swallowed = ['click', 'dblclick', 'auxclick', 'pointerdown', 'pointerup'];
     const stop = (event: Event) => event.stopPropagation();
 
+    const view = surface.ownerDocument.defaultView ?? window;
     surface.addEventListener('mousedown', onDown);
     surface.addEventListener('wheel', onWheel, { passive: false });
     surface.addEventListener('keydown', onKeyDown);
     surface.addEventListener('keyup', block);
     surface.addEventListener('contextmenu', block);
     for (const type of swallowed) surface.addEventListener(type, stop);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    view.addEventListener('mousemove', onMove);
+    view.addEventListener('mouseup', onUp);
     surface.focus({ preventScroll: true });
 
     return () => {
@@ -155,8 +163,8 @@ function useInputStream(surface: HTMLDivElement | null, send: Send): void {
       surface.removeEventListener('keyup', block);
       surface.removeEventListener('contextmenu', block);
       for (const type of swallowed) surface.removeEventListener(type, stop);
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
+      view.removeEventListener('mousemove', onMove);
+      view.removeEventListener('mouseup', onUp);
       if (frame) window.cancelAnimationFrame(frame);
       for (const which of pressed) {
         input({
@@ -200,16 +208,54 @@ const ControlLayer = ({
 }: LayerProps) => {
   const box = useVideoContentBox(video);
   const [surface, setSurface] = useState<HTMLDivElement | null>(null);
+  const [frame, setFrame] = useState<{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  } | null>(null);
   useInputStream(controlling ? surface : null, send);
 
-  const parent = video.parentElement;
-  if (!parent || !box) return null;
+  useLayoutEffect(() => {
+    if (!box) return;
+    const place = () => {
+      const rect = video.getBoundingClientRect();
+      const next = {
+        left: rect.left + box.left,
+        top: rect.top + box.top,
+        width: box.width,
+        height: box.height,
+      };
+      setFrame((current) =>
+        current &&
+        current.left === next.left &&
+        current.top === next.top &&
+        current.width === next.width &&
+        current.height === next.height
+          ? current
+          : next,
+      );
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(video);
+    const view = video.ownerDocument.defaultView;
+    view?.addEventListener('scroll', place, true);
+    view?.addEventListener('resize', place);
+    return () => {
+      observer.disconnect();
+      view?.removeEventListener('scroll', place, true);
+      view?.removeEventListener('resize', place);
+    };
+  }, [video, box]);
+
+  if (!box || !frame) return null;
 
   let pill: ReactElement;
   if (controlling) {
     pill = (
       <div className={`${pillClass} pr-1`}>
-        <span>Вы управляете экраном</span>
+        <span>Вы управляете этим компьютером — водите мышью по картинке</span>
         <button type="button" className={pillButtonClass} onClick={onRelease}>
           Завершить
         </button>
@@ -231,15 +277,17 @@ const ControlLayer = ({
     );
   }
 
+  // Fixed on the viewport: an absolute layer inside the tile is clipped and
+  // easy to miss, so the student sees no change after control is granted.
   return createPortal(
     <div
       style={{
-        position: 'absolute',
-        left: video.offsetLeft + box.left,
-        top: video.offsetTop + box.top,
-        width: box.width,
-        height: box.height,
-        zIndex: 2,
+        position: 'fixed',
+        left: frame.left,
+        top: frame.top,
+        width: frame.width,
+        height: frame.height,
+        zIndex: 80,
         pointerEvents: 'none',
       }}
     >
@@ -254,7 +302,7 @@ const ControlLayer = ({
       ) : null}
       <div className="absolute top-2 left-1/2 -translate-x-1/2">{pill}</div>
     </div>,
-    parent,
+    video.ownerDocument.body,
   );
 };
 
@@ -371,23 +419,74 @@ export const RemoteControlViewer = () => {
         const controllerName = controller
           ? (room.getParticipantByIdentity(controller)?.name ?? controller)
           : null;
+        const controlling = controller === localIdentity;
+        const sharerName = participant.name || identity;
         return (
-          <SharerControl
-            key={trackReference.publication?.trackSid ?? identity}
-            trackReference={trackReference}
-            controlling={controller === localIdentity}
-            controllerName={controller === localIdentity ? null : controllerName}
-            request={requests[identity]}
-            onRequest={() => {
-              setRequest(identity, 'pending');
-              publishTo(identity, { type: 'request' });
-            }}
-            onRelease={() => {
-              publishTo(identity, { type: 'release' });
-              setHosts((current) => ({ ...current, [identity]: { ...host, controller: null } }));
-            }}
-            send={(message, reliable) => publishTo(identity, message, reliable)}
-          />
+          <span key={trackReference.publication?.trackSid ?? identity}>
+            <SharerControl
+              trackReference={trackReference}
+              controlling={controlling}
+              controllerName={controlling ? null : controllerName}
+              request={requests[identity]}
+              onRequest={() => {
+                setRequest(identity, 'pending');
+                publishTo(identity, { type: 'request' });
+              }}
+              onRelease={() => {
+                publishTo(identity, { type: 'release' });
+                setHosts((current) => ({ ...current, [identity]: { ...host, controller: null } }));
+              }}
+              send={(message, reliable) => publishTo(identity, message, reliable)}
+            />
+            {createPortal(
+              <div
+                className={`${pillClass} fixed top-4 left-1/2 z-[90] max-w-[min(640px,calc(100vw-32px))] -translate-x-1/2 flex-wrap justify-center pr-1 text-center`}
+              >
+                {controlling ? (
+                  <>
+                    <span>
+                      Вы управляете компьютером {sharerName}. Водите мышью по демонстрации экрана —
+                      клики и клавиатура сработают там.
+                    </span>
+                    <button
+                      type="button"
+                      className={pillButtonClass}
+                      onClick={() => {
+                        publishTo(identity, { type: 'release' });
+                        setHosts((current) => ({
+                          ...current,
+                          [identity]: { ...host, controller: null },
+                        }));
+                      }}
+                    >
+                      Завершить
+                    </button>
+                  </>
+                ) : controllerName ? (
+                  <span className="pr-2">Управляет {controllerName}</span>
+                ) : requests[identity] === 'pending' ? (
+                  <span className="pr-2">Ждём, пока {sharerName} разрешит управление…</span>
+                ) : (
+                  <>
+                    {requests[identity] === 'denied' ? <span>Запрос отклонён</span> : null}
+                    <span>{sharerName} показывает экран</span>
+                    <button
+                      type="button"
+                      className={pillButtonClass}
+                      onClick={() => {
+                        setRequest(identity, 'pending');
+                        publishTo(identity, { type: 'request' });
+                      }}
+                    >
+                      <Hand className="h-3.5 w-3.5 fill-current" />
+                      Запросить управление
+                    </button>
+                  </>
+                )}
+              </div>,
+              document.body,
+            )}
+          </span>
         );
       })}
     </>

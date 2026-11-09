@@ -4,29 +4,65 @@ import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
 import { useFocusModeStore, useSupportModalStore } from 'common.ui';
-import { useLocation } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import { SupportModal } from './SupportModal';
 import { SubscriptionReleaseNoteHost } from './announcements/SubscriptionReleaseNoteHost';
 import { PostLessonFeedbackHost } from './feedback/PostLessonFeedbackHost';
 import { SubscriptionHost } from 'features.subscription';
 import { useMenuStore } from '../store';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { MobileBottomBar } from './MobileBottomBar';
 import { MobileMenuDrawerContent } from './MobileMenuDrawerContent';
 import { NavigationDrawerContent } from './NavigationDrawerContent';
 import { DRAWER_CONTENT_ABOVE_BAR_CLASS, MOBILE_BOTTOM_BAR_HEIGHT, isBoardPath } from './constants';
+import { SettingsSidebar } from './SettingsSidebar';
+import { useSettingsSearch } from './useSettingsSearch';
+import {
+  isSettingsPath,
+  rememberSettingsReturn,
+  resolveSettingsSlug,
+} from 'modules.profile/sections';
 
 const SIDEBAR_WIDTH_EXPANDED = '260px';
 const SIDEBAR_WIDTH_COLLAPSED = '72px';
 
 const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
+  const navigate = useNavigate();
+  const settingsSearch = useSettingsSearch();
+  const latestLocation = useRef({ location, settingsSearch });
+  latestLocation.current = { location, settingsSearch };
+  const onSettings = isSettingsPath(pathname);
   const { isOpen, open: openMenu, close } = useMenuStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
   const isSupportOpen = useSupportModalStore((s) => s.isOpen);
   const setSupportOpen = useSupportModalStore((s) => s.setOpen);
   const hideMobileNav = isMobile && (focusMode || isBoardPath(pathname));
+
+  // Старые ссылки ?profile=personalInfo открывают страницу настроек.
+  // Путь, с которого ушли, запоминаем для кнопки «Назад».
+  useLayoutEffect(() => {
+    const current = latestLocation.current.location;
+    const profile =
+      current.search && typeof current.search === 'object' && 'profile' in current.search
+        ? current.search.profile
+        : undefined;
+
+    if (!isSettingsPath(current.pathname)) {
+      rememberSettingsReturn(current.pathname, current.search);
+    }
+
+    if (typeof profile !== 'string' || profile.length === 0) return;
+
+    void navigate({
+      to: '/settings/$section',
+      params: { section: resolveSettingsSlug(profile) },
+      search: latestLocation.current.settingsSearch,
+      replace: true,
+    });
+  }, [location.href, navigate]);
 
   // Мемоизируем children, чтобы они не пересоздавались при изменении isMobile
   const stableChildren = useMemo(() => children, [children]);
@@ -72,7 +108,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
           collapsible="icon"
           className="bg-background-page border-r-border-default absolute w-full border-r md:w-(--sidebar-width)"
         >
-          <SideBarItems />
+          {onSettings ? <SettingsSidebar /> : <SideBarItems />}
         </Sidebar>
       )}
 
@@ -95,6 +131,8 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
 
 export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const { pathname } = useLocation();
+  const onSettings = !isMobile && isSettingsPath(pathname);
   const { isOpen, toggle, isDesktopOpen, setDesktopOpen } = useMenuStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
   const setFocusMode = useFocusModeStore((s) => s.setFocusMode);
@@ -113,8 +151,13 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const stableChildren = useMemo(() => children, [children]);
 
   // Динамически выбираем пропсы для SidebarProvider в зависимости от размера экрана
-  const sidebarOpen = isMobile ? isOpen : isDesktopOpen;
-  const sidebarOnOpenChange = isMobile ? toggle : setDesktopOpen;
+  const sidebarOpen = isMobile ? isOpen : onSettings || isDesktopOpen;
+  const sidebarOnOpenChange = isMobile
+    ? toggle
+    : (open: boolean) => {
+        if (onSettings) return;
+        setDesktopOpen(open);
+      };
 
   // Используем один SidebarProvider с динамическими пропсами вместо условного рендеринга
   // Это предотвращает пересоздание всего дерева компонентов при изменении размера окна

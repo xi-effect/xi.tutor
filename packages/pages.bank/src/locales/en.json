@@ -3,7 +3,8 @@
   "subjects": {
     "label": "Subject",
     "mathematics": "Mathematics",
-    "russian": "Russian"
+    "russian": "Russian",
+    "physics": "Physics"
   },
   "disclaimer": {
     "aria": "About the task bank and OGE/EGE labels",
@@ -67,7 +68,9 @@
       "restore_punctuation": "Punctuation",
       "multiple_choice": "Multiple choice",
       "multi_choice": "Several answers",
-      "open_rubric": "Open response"
+      "open_rubric": "Open response",
+      "numeric": "Numeric answer",
+      "multi-step": "Multi-step"
     },
     "favorites": "Favorites only"
   },
@@ -105,8 +108,13 @@
     "reportSubmit": "Send",
     "reportCancel": "Cancel",
     "reportSent": "Thanks, we received your report",
+    "reportError": "Could not send the report",
     "loading": "Loading task...",
-    "error": "Could not open the task"
+    "error": "Could not open the task",
+    "figureSeries": "Resistors are connected in series",
+    "figureParallel": "Resistors are connected in parallel",
+    "figureResistor": "{{label}} — {{value}} Ω",
+    "figureGraph": "Graph: {{x}}, {{y}}"
   },
   "empty": {
     "title": "Nothing found",

@@ -9,6 +9,7 @@ import { getMediaPermissionStatus, requestMediaPermission } from '../permissions
 import { getShellTheme, setShellTheme } from '../theme';
 import { broadcastShareOverlayStop, hideShareOverlayWindow } from '../windows/share-overlay-window';
 import { showMainWindow } from '../windows/main-window';
+import { resizeCallOverlay } from '../call-pip';
 import {
   layoutShareAnnotations,
   setShareAnnotationDrawing,
@@ -134,6 +135,11 @@ export function registerIpc(options: {
   handle(IPC.windowSetTitle, async (_event, title) => {
     const next = asString(title, PRODUCT_NAME);
     getMainWindow()?.setTitle(next);
+  });
+
+  handle(IPC.windowResizeCallOverlay, async (_event, size) => {
+    const record = asRecord(size);
+    resizeCallOverlay(asNumber(record.width), asNumber(record.height));
   });
 
   handle(IPC.conferenceStart, async (_event, input) => {

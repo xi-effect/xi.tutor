@@ -6,6 +6,7 @@ export {
   MATH_BANK_BASE_URL,
   MATH_DIFFICULTIES,
   MATH_GRADES,
+  PHYSICS_BANK_BASE_URL,
   RUSSIAN_BANK_BASE_URL,
   type BankSubject,
 } from './constants';

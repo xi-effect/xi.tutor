@@ -10,6 +10,8 @@ import {
   useCurrentUser,
   useMonetizationDevStore,
   getCurrentSubscription,
+  subscriptionQueryKeys,
+  type CurrentSubscription,
 } from 'common.services';
 import {
   isSubscriptionDebugEnabled,
@@ -26,6 +28,7 @@ import {
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { isConfirmationUrl } from '../pendingPayment';
+import { subscriptionSettingsSearch } from '../settingsLocation';
 
 const PAYMENT_CHECK_ATTEMPTS = 8;
 const PAYMENT_CHECK_INTERVAL_MS = 2000;
@@ -57,6 +60,22 @@ const ACTIVATION_CHECK_ATTEMPTS = 4;
 const ACTIVATION_CHECK_INTERVAL_MS = 1000;
 
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+/**
+ * Алёрт в меню смотрит на текущую подписку. Пока период уже был активен,
+ * одной «подписка ещё действует» недостаточно: ждём более поздний `ends_at`
+ * или включённое автопродление, иначе плашка останется со старой датой.
+ */
+const subscriptionSettlesExpiryNotice = (
+  subscription: CurrentSubscription | null,
+  previousEndsAt: string | null,
+): boolean => {
+  const endsAt = subscription?.subscription.ends_at;
+  if (!subscription || !endsAt || !isSubscriptionPeriodActive(endsAt)) return false;
+  if (subscription.auto_renewal) return true;
+  if (!previousEndsAt || !isSubscriptionPeriodActive(previousEndsAt)) return true;
+  return endsAt > previousEndsAt;
+};
 
 export const SubscriptionPaymentResult = () => {
   const { t } = useTranslation('subscription');
@@ -95,7 +114,7 @@ export const SubscriptionPaymentResult = () => {
       return;
     }
 
-    if (!isTutor || !paymentId) return;
+    if (!user || !isTutor || !paymentId) return;
 
     let cancelled = false;
     let timeoutId = 0;
@@ -127,13 +146,29 @@ export const SubscriptionPaymentResult = () => {
               subscriptionDays: payment.subscription_days,
             });
           });
+          const previousEndsAt =
+            typeof user.id === 'number'
+              ? (queryClient.getQueryData<CurrentSubscription | null>(
+                  subscriptionQueryKeys.currentSubscription(user.id),
+                )?.subscription.ends_at ?? null)
+              : null;
+          const waitForExtension = Boolean(
+            previousEndsAt && isSubscriptionPeriodActive(previousEndsAt),
+          );
           await invalidateSubscriptionBilling(queryClient);
           if (!cancelled) setPhase('success');
 
-          for (let attempt = 0; attempt < ACTIVATION_CHECK_ATTEMPTS && !cancelled; attempt += 1) {
+          const attemptsLimit = waitForExtension ? 8 : ACTIVATION_CHECK_ATTEMPTS;
+          for (let attempt = 0; attempt < attemptsLimit && !cancelled; attempt += 1) {
             const subscription = await getCurrentSubscription();
             if (cancelled) return;
-            if (subscription && isSubscriptionPeriodActive(subscription.subscription.ends_at)) {
+            if (subscription && subscriptionSettlesExpiryNotice(subscription, previousEndsAt)) {
+              if (typeof user.id === 'number') {
+                queryClient.setQueryData(
+                  subscriptionQueryKeys.currentSubscription(user.id),
+                  subscription,
+                );
+              }
               markSubscriptionPeriodExtendedLocally();
               trackConfirmedSubscriptionActivation({
                 paymentId,
@@ -212,15 +247,16 @@ export const SubscriptionPaymentResult = () => {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [checkToken, isTutor, paymentId, preview, queryClient]);
+  }, [checkToken, isTutor, paymentId, preview, queryClient, user]);
 
   const openSubscription = (screen: 'overview' | 'checkout') => {
     if (screen === 'checkout') openCheckout();
     else openOverview();
 
     void navigate({
-      to: '/',
-      search: { profile: 'subscription' },
+      to: '/settings/$section',
+      params: { section: 'subscription' },
+      search: subscriptionSettingsSearch(search),
     });
   };
 

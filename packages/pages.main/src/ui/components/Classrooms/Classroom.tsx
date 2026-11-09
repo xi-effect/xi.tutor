@@ -14,13 +14,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Edit, MoreVert, Trash } from '@xipkg/icons';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { Edit, Group, MoreVert, PersonalData, Trash } from '@xipkg/icons';
+import { Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
+import { useCurrentUser, useDeleteClassroom } from 'common.services';
 import {
   ConfirmDialog,
+  CardTooltipContent,
   cardMenuButtonClass,
+  cardTypeIconBoxClass,
   cardMenuDeleteItemClass,
   cardMenuIconClass,
   cardMenuItemClass,
@@ -28,48 +30,35 @@ import {
   cardMenuSeparatorClass,
   cardMenuSurfaceClass,
 } from 'common.ui';
-import { StatusBadge, SubjectBadge } from 'features.classroom';
+import { StatusBadge, SubjectLabel } from 'features.classroom';
 import { ModalEditClassroomName } from 'pages.classrooms';
 import { StartLessonButton } from 'features.lesson.start';
 import { useTranslation } from 'react-i18next';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
-  isLoading: boolean;
+  label: string;
 };
-
-type RoleT = 'student' | 'tutor';
 
 const avatarSize = 'l';
 
-const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
-  const { data: user } = useCurrentUser();
-  const isTutor = user?.default_layout === 'tutor';
-
-  const userRole: RoleT = isTutor ? 'student' : 'tutor';
-  const { data } = useUserByRole(userRole, classroom.tutor_id ?? classroom.student_id ?? 0);
+const UserAvatar = ({ classroom, label }: UserAvatarPropsT) => {
+  const userId = classroom.tutor_id ?? classroom.student_id ?? 0;
+  const letter = label.trim()[0]?.toUpperCase() ?? '';
 
   return (
     <Avatar size={avatarSize}>
-      <AvatarImage
-        src={`https://api.sovlium.ru/files/users/${classroom.tutor_id ?? classroom.student_id ?? 0}/avatar.webp`}
-        alt="user avatar"
-      />
-      {isLoading || !data ? (
-        <AvatarFallback size={avatarSize} loading />
-      ) : (
-        <AvatarFallback size={avatarSize}>{data?.display_name[0].toUpperCase()}</AvatarFallback>
-      )}
+      <AvatarImage src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`} alt="" />
+      <AvatarFallback size={avatarSize}>{letter}</AvatarFallback>
     </Avatar>
   );
 };
 
 type ClassroomProps = {
-  isLoading: boolean;
   classroom: ClassroomT;
 };
 
-export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
+export const Classroom = ({ classroom }: ClassroomProps) => {
   const { t } = useTranslation('main');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
@@ -121,7 +110,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     <>
       <div
         onClick={handleClick}
-        className="group bg-background-surface relative flex h-48 w-full cursor-pointer flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
+        className="group bg-background-surface relative flex h-48 w-full cursor-pointer flex-col justify-between rounded-2xl p-5"
         data-umami-event="classroom-open"
         data-umami-event-classroom-id={classroom.id}
         role="button"
@@ -135,38 +124,38 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         aria-label={t('classrooms.openClassroom')}
       >
         <div className="mr-8 flex min-w-0 items-center gap-2 overflow-hidden">
+          <div className={cardTypeIconBoxClass}>
+            {classroom.kind === 'group' ? (
+              <Group aria-label={t('classrooms.group')} />
+            ) : (
+              <PersonalData aria-label={t('classrooms.individual')} />
+            )}
+          </div>
           <StatusBadge status={classroom.status} kind={classroom.kind} />
-          {classroom.subject_id && (
-            <SubjectBadge
-              subjectId={classroom.subject_id}
-              isTooltip
-              className="min-w-0 overflow-hidden"
-              textClassName="truncate"
-            />
-          )}
         </div>
 
-        <div className="flex flex-row items-center gap-2">
-          {classroom.kind === 'individual' && (
-            <UserAvatar classroom={classroom} isLoading={isLoading} />
-          )}
+        <div className="flex w-full min-w-0 flex-col gap-2">
+          <div className="flex flex-row items-center gap-2">
+            {classroom.kind === 'individual' && (
+              <UserAvatar classroom={classroom} label={displayName} />
+            )}
 
-          {classroom.kind === 'group' && (
-            <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
-              {displayName?.[0]?.toUpperCase() ?? ''}
-            </div>
-          )}
+            {classroom.kind === 'group' && (
+              <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
+                {displayName?.[0]?.toUpperCase() ?? ''}
+              </div>
+            )}
 
-          <Tooltip delayDuration={2000}>
-            <TooltipTrigger asChild>
-              <div className="flex min-w-0 flex-1 flex-row items-center">
-                <h3 className="text-s-base text-text-primary line-clamp-1 text-left font-medium">
+            <Tooltip delayDuration={2000}>
+              <TooltipTrigger asChild>
+                <h3 className="text-s-base text-text-primary min-w-0 flex-1 truncate text-left font-medium">
                   {displayName}
                 </h3>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>{displayName}</TooltipContent>
-          </Tooltip>
+              </TooltipTrigger>
+              <CardTooltipContent>{displayName}</CardTooltipContent>
+            </Tooltip>
+          </div>
+          {classroom.subject_id ? <SubjectLabel subjectId={classroom.subject_id} /> : null}
         </div>
 
         <div

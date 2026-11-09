@@ -174,7 +174,7 @@
       "errorTitle": "Could not open the file",
       "errorDescription": "An error occurred while loading the preview. Try again or download the file",
       "unsupportedTitle": "Preview is not available",
-      "unsupportedDescription": "This file type cannot be previewed in Sovlium. Download the file to open it on your device",
+      "unsupportedDescription": "This file type cannot be previewed in sovlium. Download the file to open it on your device",
       "retry": "Retry",
       "downloadFile": "Download file",
       "fullscreen": "Full screen",

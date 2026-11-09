@@ -14,7 +14,7 @@ const OVERLAY_HTML = `<!doctype html>
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'"
     />
-    <title>Sovlium</title>
+    <title>sovlium</title>
     <style>
       html, body {
         margin: 0;

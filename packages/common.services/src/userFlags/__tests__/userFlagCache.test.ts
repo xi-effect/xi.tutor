@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { describe, expect, it } from 'vitest';
-import { USER_FLAG_KEYS, userFlagsQueryKeys } from 'common.api';
+import { userFlagsQueryKeys } from 'common.api';
 import {
   applyUserFlagOptimisticUpdate,
   isUserFlagContentVisible,
@@ -19,22 +19,19 @@ describe('isUserFlagContentVisible', () => {
 });
 
 describe('UserFlag query cache', () => {
-  const keyA = userFlagsQueryKeys.current(1, USER_FLAG_KEYS.SUBSCRIPTION_ANNOUNCEMENT_DISMISSED);
-  const keyB = userFlagsQueryKeys.current(2, USER_FLAG_KEYS.SUBSCRIPTION_ANNOUNCEMENT_DISMISSED);
-  const releaseNoteKey = userFlagsQueryKeys.current(
-    1,
-    USER_FLAG_KEYS.SUBSCRIPTION_RELEASE_NOTE_DISMISSED,
-  );
+  const keyA = userFlagsQueryKeys.current(1, 'flag_a');
+  const keyB = userFlagsQueryKeys.current(2, 'flag_a');
+  const otherFlagKey = userFlagsQueryKeys.current(1, 'flag_b');
 
   it('разделяет cache по userId и по ключу флага', () => {
     const queryClient = new QueryClient();
     queryClient.setQueryData(keyA, true);
     queryClient.setQueryData(keyB, false);
-    queryClient.setQueryData(releaseNoteKey, false);
+    queryClient.setQueryData(otherFlagKey, false);
 
     expect(queryClient.getQueryData(keyA)).toBe(true);
     expect(queryClient.getQueryData(keyB)).toBe(false);
-    expect(queryClient.getQueryData(releaseNoteKey)).toBe(false);
+    expect(queryClient.getQueryData(otherFlagKey)).toBe(false);
   });
 
   it('оптимистично ставит новое значение и откатывает его при ошибке', async () => {

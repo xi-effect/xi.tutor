@@ -66,7 +66,7 @@ export const PersonalData = () => {
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="border-border-strong mt-8 flex w-full flex-col rounded-2xl border p-6"
+          className="border-border-strong flex w-full flex-col rounded-2xl border p-6"
         >
           <div className="flex w-full flex-col gap-8 md:flex-row">
             <div className="w-full">

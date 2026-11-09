@@ -144,6 +144,8 @@ export interface SovliumDesktopAPI {
     isMinimized(): Promise<boolean>;
     setTitle(title: string): Promise<void>;
     onFocusChanged(handler: (focused: boolean) => void): () => void;
+    /** CompactView grows the always-on-top call window through this, not `resizeTo`. */
+    resizeCallOverlay(size: { width: number; height: number }): Promise<void>;
   };
   conference: {
     start(input: { classroomId: string }): Promise<ConferenceState>;

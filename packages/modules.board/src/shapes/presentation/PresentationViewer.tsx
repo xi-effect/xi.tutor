@@ -1,21 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PPTXViewer } from 'pptxviewjs';
+import { useEditor, useValue } from '@ibodr/draw';
 
 import { useYjsContext } from '../../providers/YjsContext';
 import { loadPptxViewer } from '../../utils/loadPptxViewer';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { rasterPixelsForCssSize, zoomStepCeil } from '../../utils/rasterBudget';
 
 import type { PresentationShape } from './PresentationShape';
 import { PresentationControls } from './PresentationControls';
+import { reportBoardProblem } from '../../utils/boardProblem';
 import { insertImage } from '../../features/pickAndInsertImage';
-import { useEditor } from '@ibodr/draw';
 
 export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
   const { token } = useYjsContext();
   const { t } = useTranslation('board');
 
   const editor = useEditor();
+  const zoom = useValue('presentation-zoom', () => editor.getZoomLevel(), [editor]);
+  const zoomStep = zoomStepCeil(zoom);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -43,21 +47,31 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
       return;
     }
 
-    canvas.width = Math.floor(width * window.devicePixelRatio);
-    canvas.height = Math.floor(height * window.devicePixelRatio);
+    const pixels = rasterPixelsForCssSize(width, height, zoomStep, window.devicePixelRatio || 1, {
+      supersample: 2,
+    });
+    canvas.width = pixels.width;
+    canvas.height = pixels.height;
 
     try {
       await viewer.render(canvas, {
         quality: 'high',
       });
     } catch (err) {
-      console.error(err);
+      reportBoardProblem('presentation-render', err, { shapeId: shape.id });
       return;
     }
 
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
-  }, []);
+  }, [zoomStep]);
+
+  const resizeCanvasRef = useRef(resizeCanvas);
+  resizeCanvasRef.current = resizeCanvas;
+
+  useEffect(() => {
+    void resizeCanvas();
+  }, [resizeCanvas]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -78,6 +92,7 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
       return;
     }
 
+    const canvas = canvasRef.current;
     let cancelled = false;
 
     async function load() {
@@ -119,9 +134,9 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
 
         setTotalSlides(viewer.getSlideCount());
 
-        resizeCanvas();
+        resizeCanvasRef.current();
       } catch (err) {
-        console.error(err);
+        reportBoardProblem('presentation-load', err, { shapeId: shape.id });
 
         if (!cancelled) {
           setError(err as Error);
@@ -140,8 +155,10 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
 
       viewerRef.current?.destroy();
       viewerRef.current = null;
+      canvas.width = 0;
+      canvas.height = 0;
     };
-  }, [shape.props.src, token, resizeCanvas]);
+  }, [shape.props.src, token]);
 
   const handlePageChange = async (page: number) => {
     const viewer = viewerRef.current;

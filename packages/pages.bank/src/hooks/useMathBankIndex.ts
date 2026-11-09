@@ -27,9 +27,9 @@ export const useMathBankIndex = (subject: BankSubject, enabled = true) => {
 
   const examIndexQuery = useQuery({
     queryKey: ['task-bank', subject, 'exam-index'],
-    queryFn: () => loadBankExamIndex(subject),
+    queryFn: () => loadBankExamIndex(subject, documentsQuery.data?.documents),
     staleTime: Infinity,
-    enabled,
+    enabled: enabled && (subject !== 'physics' || Boolean(documentsQuery.data)),
   });
 
   return {

@@ -7,7 +7,7 @@
 
 Первые 9 000 задач (`math-ru-00001` … `math-ru-09000`) сохранены. Ещё 12 000 (`math-ru-09001` … `math-ru-21000`) построены по историческим архетипам (Киселёв, Рыбкин, Шапошников–Вальцов), без копирования текстов источников. Подробности — в `HISTORICAL_EXPANSION.md`.
 
-Клиент загружает runtime-файлы с `https://app-static.sovlium.ru/math-bank` и `https://app-static.sovlium.ru/task-bank/russian`. Локальный каталог `content/` в пакет не входит.
+Клиент загружает runtime-файлы с `https://app-static.sovlium.ru/math-bank`, `https://app-static.sovlium.ru/task-bank/russian` и `https://app-static.sovlium.ru/task-bank/physics`. Локальный каталог `content/` в пакет не входит: исходники и gzip лежат в `apps/xi.static`.
 
 Повторно дописать исторические задачи в source (уже включены в этот релиз):
 
@@ -23,6 +23,8 @@ pnpm --filter features.math.bank math-bank:append-historical
 - `exam_index_2026.json`
 
 `tasks.json` / `tasks.jsonl` в CDN не публикуются.
+
+Физика берёт `manifest.json`, `search_documents.json.gz`, `locator.json.gz` и шарды `grade-*-***.json.gz` из `/task-bank/physics`. В списке остаётся одно задание на учебную модель; остальные числовые варианты открываются через «Ещё вариант».
 
 ## Поиск
 

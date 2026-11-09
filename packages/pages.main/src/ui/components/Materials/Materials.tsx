@@ -11,8 +11,11 @@ import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
 import { useCurrentUser, useGetMaterialsList } from 'common.services';
-import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materials';
-import { MaterialsDuplicate } from 'features.materials.duplicate';
+import {
+  MaterialsDuplicateModal,
+  MaterialsDuplicateProvider,
+  useMaterialsDuplicate,
+} from 'pages.materials';
 import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
 import {
@@ -39,7 +42,7 @@ const MaterialsContent = () => {
   const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { createMaterial } = useCreateMaterial();
-  const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
+  const { openModal } = useMaterialsDuplicate();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'note' | 'board'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
@@ -230,17 +233,7 @@ const MaterialsContent = () => {
         )}
       </div>
 
-      {materialId !== null && (
-        <MaterialsDuplicate
-          materialId={materialId}
-          open={open}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) {
-              closeModal();
-            }
-          }}
-        />
-      )}
+      <MaterialsDuplicateModal />
     </>
   );
 };

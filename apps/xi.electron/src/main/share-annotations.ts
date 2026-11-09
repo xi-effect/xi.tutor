@@ -150,7 +150,7 @@ export function shareAnnotationsWindowOpen(
 ): WindowOpenHandlerResponse | null {
   const kind = kindOf(details);
   if (!kind) return null;
-  const title = kind === 'canvas' ? 'Sovlium — рисование' : 'Sovlium — демонстрация';
+  const title = kind === 'canvas' ? 'sovlium — рисование' : 'sovlium — демонстрация';
   return { action: 'allow', overrideBrowserWindowOptions: { ...baseOptions(), title } };
 }
 

@@ -28,7 +28,12 @@ export {
   formatPlanStorage,
   formatRub,
 } from './src/format';
-export { getRemainingSubscriptionDays, isSubscriptionPeriodActive } from './src/period';
+export {
+  getRemainingSubscriptionDays,
+  isSubscriptionExpiryNoticeDue,
+  isSubscriptionPeriodActive,
+  SUBSCRIPTION_EXPIRY_NOTICE_WINDOW_MS,
+} from './src/period';
 export { readCachedPlanId } from './src/planCache';
 export { useSubscriptionStore } from './src/store';
 export {

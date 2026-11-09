@@ -1,4 +1,4 @@
-export const PRODUCT_NAME = 'Sovlium';
+export const PRODUCT_NAME = 'sovlium';
 
 /** GitHub Releases feed for the Electron shell. Tags are `electron-vX.Y.Z`. */
 export const ELECTRON_GITHUB_RELEASE = {

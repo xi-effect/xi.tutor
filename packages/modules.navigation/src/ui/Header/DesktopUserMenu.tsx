@@ -5,12 +5,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { UserProfile } from '@xipkg/userprofile';
 import { Portal as TooltipPortal } from '@radix-ui/react-tooltip';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
+import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,21 +22,30 @@ import {
   cardMenuItemClass,
   cardMenuSeparatorClass,
   cardMenuSurfaceClass,
+  useSupportModalStore,
 } from 'common.ui';
 
 import { UserPlanBadge } from './UserPlanBadge';
 import { useCurrentUser } from 'common.services';
-import { ChevronUp, Download, Exit, Settings } from '@xipkg/icons';
+import {
+  Download,
+  Exit,
+  HelpCircle,
+  InfoCircle,
+  MenuDots,
+  MessageHeartCircle,
+  Settings,
+} from '@xipkg/icons';
 import { usePWAInstall } from 'common.services';
-import { useMenuStore } from '../../store/useMenuStore';
 
 interface DesktopUserMenuProps {
   withOutText: boolean;
   userId: number;
-  onOpenProfile: () => void;
+  onOpenProfile?: () => void;
   onLogout: () => void;
   profileText: string;
   logoutText: string;
+  showPlanOnTrigger?: boolean;
 }
 
 export const DesktopUserMenu = ({
@@ -42,11 +55,12 @@ export const DesktopUserMenu = ({
   onLogout,
   profileText,
   logoutText,
+  showPlanOnTrigger = false,
 }: DesktopUserMenuProps) => {
   const { t } = useTranslation('navigation');
-  const { isDesktopOpen } = useMenuStore();
-
+  const navigate = useNavigate();
   const { data: user } = useCurrentUser();
+  const openSupportModal = useSupportModalStore((state) => state.open);
   const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,6 +71,21 @@ export const DesktopUserMenu = ({
   const username = user?.username?.trim() || '';
   const showTooltip = !withOutText && Boolean(displayName || username);
 
+  const openHints = async () => {
+    try {
+      sessionStorage.removeItem('onboarding_menu_hidden');
+
+      if (user?.onboarding_stage === 'completed') {
+        sessionStorage.setItem('show_onboarding_for_completed', 'true');
+        window.dispatchEvent(new Event('onboarding-show-requested'));
+      }
+
+      await navigate({ to: '/' });
+    } catch (error) {
+      console.error('Ошибка при запуске обучения:', error);
+    }
+  };
+
   const triggerButton = (
     <Button
       variant="none"
@@ -65,6 +94,7 @@ export const DesktopUserMenu = ({
         'group flex h-10 w-full min-w-0 items-center justify-start overflow-visible rounded-lg !p-0',
         'hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0',
       )}
+      id="hints-button"
       data-umami-event="header-user-menu-open"
     >
       <UserProfile
@@ -81,9 +111,8 @@ export const DesktopUserMenu = ({
         classNameText="block w-full pl-1 text-left text-text-primary"
         classNameLabel="block w-full pl-1 text-left text-text-secondary"
       />
-      {!withOutText && (
-        <ChevronUp className="fill-icon-secondary mr-1 ml-1 h-4 w-4 shrink-0 rotate-x-180 group-data-[state=open]:rotate-x-0" />
-      )}
+      {!withOutText && showPlanOnTrigger ? <UserPlanBadge className="shrink-0" /> : null}
+      {!withOutText ? <MenuDots className="fill-icon-secondary mr-1 ml-1 size-4 shrink-0" /> : null}
     </Button>
   );
 
@@ -124,9 +153,7 @@ export const DesktopUserMenu = ({
                   {displayName ? (
                     <span className="font-medium wrap-break-word">{displayName}</span>
                   ) : null}
-                  {username ? (
-                    <span className="text-text-secondary break-all">{username}</span>
-                  ) : null}
+                  {username ? <span className="break-all opacity-70">{username}</span> : null}
                 </div>
               </TooltipContent>
             </TooltipPortal>
@@ -137,27 +164,80 @@ export const DesktopUserMenu = ({
       )}
 
       <DropdownMenuContent
-        className={cn(cardMenuSurfaceClass, 'z-100 flex w-[240px] flex-col gap-2 p-2')}
-        side="bottom"
+        className={cn(cardMenuSurfaceClass, 'z-100 w-[240px] overflow-visible p-2')}
+        side="top"
         sideOffset={8}
-        align={isDesktopOpen ? 'center' : 'start'}
+        align="start"
       >
-        <div className="flex items-center justify-between gap-2 px-2 pt-2">
-          <span className="text-text-secondary text-xs leading-4 font-medium">
+        <div className="mb-2 flex w-full items-center justify-between gap-3 px-2 pt-2 pb-1">
+          <span className="text-text-secondary shrink-0 text-xs leading-4 font-medium">
             {t('plan.label')}
           </span>
-          <UserPlanBadge />
+          <UserPlanBadge className="shrink-0" />
         </div>
 
         <div className="flex flex-col">
-          <DropdownMenuItem
-            onSelect={onOpenProfile}
-            className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
-            data-umami-event="header-profile-open"
-          >
-            <Settings />
-            <span>{profileText}</span>
-          </DropdownMenuItem>
+          {onOpenProfile ? (
+            <DropdownMenuItem
+              onSelect={onOpenProfile}
+              className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+              data-umami-event="header-profile-open"
+            >
+              <Settings />
+              <span>{profileText}</span>
+            </DropdownMenuItem>
+          ) : null}
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger
+              className={cn(
+                cardMenuItemClass,
+                'relative w-full !pr-8 !pl-2',
+                'data-[state=open]:bg-status-info-background data-[state=open]:text-text-link data-[state=open]:font-medium',
+                '[&>svg:last-child]:pointer-events-none [&>svg:last-child]:absolute [&>svg:last-child]:top-1/2 [&>svg:last-child]:right-2 [&>svg:last-child]:!m-0 [&>svg:last-child]:size-4 [&>svg:last-child]:-translate-y-1/2',
+                '[&>svg:last-child]:!fill-none [&>svg:last-child]:stroke-current',
+              )}
+              data-umami-event="navigation-support-menu"
+            >
+              <MessageHeartCircle />
+              <span>{t('help')}</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent
+              className={cn(cardMenuSurfaceClass, 'z-100 flex min-w-[220px] flex-col gap-1 p-2')}
+              sideOffset={8}
+            >
+              <DropdownMenuItem
+                className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+                data-umami-event="navigation-support"
+                onSelect={() => {
+                  window.setTimeout(() => openSupportModal(), 0);
+                }}
+              >
+                <MessageHeartCircle />
+                <span>{t('support')}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+                data-umami-event="navigation-wiki"
+                onSelect={() => {
+                  window.open('https://support.sovlium.ru', '_blank');
+                }}
+              >
+                <HelpCircle />
+                <span>{t('wiki')}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+                data-umami-event="navigation-hints"
+                onSelect={() => {
+                  void openHints();
+                }}
+              >
+                <InfoCircle />
+                <span>{t('hints')}</span>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
 
           {!isInstalled && (
             <DropdownMenuItem
