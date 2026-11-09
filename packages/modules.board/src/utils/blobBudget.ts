@@ -1,5 +1,16 @@
+import { isMemoryConstrainedDevice } from './deviceBudget';
+
 /** Сжатые файлы доски. Декодированные растры живут отдельно и ограничены сильнее. */
 export const BLOB_CACHE_BUDGET_BYTES = 128 * 1024 * 1024;
+
+/** На iPad и слабых устройствах держим вдвое меньше: blob в памяти + декодированная копия. */
+export const BLOB_CACHE_BUDGET_CONSTRAINED_BYTES = 48 * 1024 * 1024;
+
+export function defaultBlobBudgetBytes(): number {
+  return isMemoryConstrainedDevice()
+    ? BLOB_CACHE_BUDGET_CONSTRAINED_BYTES
+    : BLOB_CACHE_BUDGET_BYTES;
+}
 
 /** Свежий blob не выкидываем: его могут читать вставка, экспорт или только что открытый файл. */
 export const BLOB_CACHE_MIN_AGE_MS = 3 * 60 * 1000;
@@ -19,7 +30,7 @@ export function pickBlobKeysToEvict(
   entries: BlobCacheEntry[],
   pinnedUrls: ReadonlySet<string>,
   now: number,
-  budgetBytes = BLOB_CACHE_BUDGET_BYTES,
+  budgetBytes = defaultBlobBudgetBytes(),
   minAgeMs = BLOB_CACHE_MIN_AGE_MS,
 ): string[] {
   let total = 0;

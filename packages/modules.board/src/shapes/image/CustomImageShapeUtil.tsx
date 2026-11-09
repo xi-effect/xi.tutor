@@ -345,6 +345,8 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   const crossOrigin = isAnimated ? ('anonymous' as const) : undefined;
 
   useRetainedBlobUrl(resolvedUrl);
+  // Пока новая копия догружается, на экране ещё старая: её blob отзывать нельзя.
+  useRetainedBlobUrl(loadedUrl);
 
   const handleLoad = useCallback((src: string) => {
     setLoadedUrl(src);

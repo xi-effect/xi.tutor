@@ -1,8 +1,14 @@
-/** Больше этого холст одной картинки или страницы не растим: 16 Мп ≈ 64 МБ RGBA. */
-export const MAX_RASTER_PIXELS = 16_777_216;
+import { isMemoryConstrainedDevice } from './deviceBudget';
+
+/**
+ * Больше этого холст одной картинки или страницы не растим: 16 Мп ≈ 64 МБ RGBA.
+ * На iPad и слабых устройствах — 6 Мп (≈ 24 МБ): суммарный лимит canvas в Safari общий
+ * на вкладку, и несколько страниц PDF по 64 МБ его выбивают.
+ */
+export const MAX_RASTER_PIXELS = isMemoryConstrainedDevice() ? 6_291_456 : 16_777_216;
 
 /** Длинная сторона растра. Выше неё на экране страница всё равно не помещается целиком. */
-export const MAX_RASTER_EDGE = 8192;
+export const MAX_RASTER_EDGE = isMemoryConstrainedDevice() ? 4096 : 8192;
 
 const MIN_ZOOM_STEP = 0.125;
 const MAX_ZOOM_STEP = 4;

@@ -191,6 +191,7 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
           src,
           token,
           target ? Math.max(target.width, target.height) : null,
+          pixels ?? undefined,
         );
       } catch (error) {
         // ВАЖНО: возвращаем именно `src`, а не null. Внутри tldraw `useImageOrVideoAsset`

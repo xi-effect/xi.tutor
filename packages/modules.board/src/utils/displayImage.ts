@@ -2,12 +2,31 @@ import type { DrAsset } from '@ibodr/draw';
 import { edgeBucket } from './rasterBudget';
 import { getCachedBlobUrl, rememberBlob, resolveAssetUrl } from './resolveAssetUrl';
 import { reportBoardProblem } from './boardProblem';
+import { isMemoryConstrainedDevice } from './deviceBudget';
 
-const MAX_PARALLEL_RESIZE = 2;
+/** На iPad одновременно декодируем один файл: пик памяти = один полноразмерный растр. */
+const MAX_PARALLEL_RESIZE = isMemoryConstrainedDevice() ? 1 : 2;
+
+/** Сколько решений «оставить оригинал» помним. Каждое — одна короткая строка. */
+const KEEP_ORIGINAL_LIMIT = 500;
 
 let running = 0;
 const waiters: Array<() => void> = [];
 const inflight = new Map<string, Promise<string>>();
+/**
+ * Ключи, для которых уменьшать нечего или не получилось.
+ * Без этой памяти каждый резолв (размонтирование за экраном, смена зума, второй экземпляр)
+ * заново качал и целиком декодировал файл только ради того, чтобы снова отказаться от ресайза.
+ */
+const keepOriginal = new Set<string>();
+
+function rememberKeepOriginal(key: string) {
+  keepOriginal.add(key);
+  if (keepOriginal.size > KEEP_ORIGINAL_LIMIT) {
+    const oldest = keepOriginal.values().next().value;
+    if (oldest !== undefined) keepOriginal.delete(oldest);
+  }
+}
 
 function withResizeSlot<T>(job: () => Promise<T>): Promise<T> {
   return new Promise((resolve, reject) => {
@@ -35,26 +54,52 @@ export function staticImagePixels(asset: DrAsset): { w: number; h: number } | nu
   return { w, h };
 }
 
-async function resizeToBlob(blob: Blob, maxEdge: number): Promise<Blob | null> {
-  if (typeof createImageBitmap !== 'function') return null;
+export type ImagePixelsHint = { w: number; h: number };
 
-  const source = await createImageBitmap(blob);
+function targetSize(w: number, h: number, maxEdge: number) {
+  const scale = maxEdge / Math.max(w, h);
+  return {
+    width: Math.max(1, Math.round(w * scale)),
+    height: Math.max(1, Math.round(h * scale)),
+  };
+}
+
+/**
+ * Уменьшает blob до `maxEdge` по длинной стороне. `null` — уменьшать не нужно.
+ * С `hint` (размеры из ассета) декодируем сразу в целевой размер, не держа в памяти
+ * полноразмерный растр рядом с уменьшенным.
+ */
+async function resizeToBlob(
+  blob: Blob,
+  maxEdge: number,
+  hint?: ImagePixelsHint,
+): Promise<Blob | null> {
+  if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas === 'undefined') {
+    return null;
+  }
+
+  let source: ImageBitmap | null = null;
   let resized: ImageBitmap | null = null;
   try {
-    const long = Math.max(source.width, source.height);
-    if (long <= maxEdge) return null;
+    let width: number;
+    let height: number;
+    if (hint) {
+      if (Math.max(hint.w, hint.h) <= maxEdge) return null;
+      ({ width, height } = targetSize(hint.w, hint.h, maxEdge));
+    } else {
+      source = await createImageBitmap(blob);
+      if (Math.max(source.width, source.height) <= maxEdge) return null;
+      ({ width, height } = targetSize(source.width, source.height, maxEdge));
+    }
 
-    const scale = maxEdge / long;
-    const width = Math.max(1, Math.round(source.width * scale));
-    const height = Math.max(1, Math.round(source.height * scale));
-    resized = await createImageBitmap(source, {
+    resized = await createImageBitmap(source ?? blob, {
       resizeWidth: width,
       resizeHeight: height,
       resizeQuality: 'high',
     });
-    source.close();
+    source?.close();
+    source = null;
 
-    if (typeof OffscreenCanvas === 'undefined') return null;
     const canvas = new OffscreenCanvas(width, height);
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
@@ -64,25 +109,42 @@ async function resizeToBlob(blob: Blob, maxEdge: number): Promise<Blob | null> {
 
     const keepLossless = blob.type === 'image/png' || blob.type === 'image/webp';
     const type = keepLossless ? blob.type : 'image/jpeg';
-    return await canvas.convertToBlob({
+    const result = await canvas.convertToBlob({
       type,
       quality: type === 'image/jpeg' ? 0.92 : undefined,
     });
+    // Освобождаем backing store сразу, Safari сам делает это поздно.
+    canvas.width = 0;
+    canvas.height = 0;
+    return result;
   } finally {
-    source.close();
+    source?.close();
     resized?.close();
   }
 }
 
-async function buildDisplayUrl(cacheKey: string, originalUrl: string, maxEdge: number) {
+async function buildDisplayUrl(
+  cacheKey: string,
+  originalUrl: string,
+  maxEdge: number,
+  hint?: ImagePixelsHint,
+) {
   const cached = getCachedBlobUrl(cacheKey);
   if (cached) return cached;
 
   const response = await fetch(originalUrl);
   if (!response.ok) return originalUrl;
   const blob = await response.blob();
-  const resized = await resizeToBlob(blob, maxEdge);
-  if (!resized) return originalUrl;
+  const resized = await resizeToBlob(blob, maxEdge, hint);
+  if (!resized) {
+    rememberKeepOriginal(cacheKey);
+    return originalUrl;
+  }
+  // Уменьшенная копия больше оригинала бессмысленна (перекодированный PNG).
+  if (resized.size >= blob.size) {
+    rememberKeepOriginal(cacheKey);
+    return originalUrl;
+  }
   return rememberBlob(cacheKey, resized);
 }
 
@@ -94,6 +156,7 @@ export async function resolveDisplayImageUrl(
   src: string,
   token: string,
   maxEdge: number | null,
+  hint?: ImagePixelsHint,
 ): Promise<string> {
   const original = await resolveAssetUrl(src, token);
   if (!maxEdge || maxEdge < 32) return original;
@@ -103,15 +166,21 @@ export async function resolveDisplayImageUrl(
   const bucket = edgeBucket(maxEdge);
   if (bucket >= 4096) return original;
 
+  // Известные размеры: файл не крупнее корзины — уменьшать нечего, даже не качаем.
+  if (hint && Math.max(hint.w, hint.h) <= bucket) return original;
+
   const cacheKey = `${src}@@${bucket}`;
   const cached = getCachedBlobUrl(cacheKey);
   if (cached) return cached;
+  if (keepOriginal.has(cacheKey)) return original;
 
   const pending = inflight.get(cacheKey);
   if (pending) return pending;
 
-  const promise = withResizeSlot(() => buildDisplayUrl(cacheKey, original, bucket))
+  const promise = withResizeSlot(() => buildDisplayUrl(cacheKey, original, bucket, hint))
     .catch((error) => {
+      // Падение ресайза не повторяем на каждом резолве: оставляем оригинал.
+      rememberKeepOriginal(cacheKey);
       reportBoardProblem('image-display', error);
       return original;
     })

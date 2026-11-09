@@ -349,7 +349,7 @@ importers:
         version: 19.2.7(@types/react@19.2.18)
       '@vitejs/devtools':
         specifier: ^0.7.6
-        version: 0.7.6(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(crossws@0.4.12(srvx@1.0.5))(srvx@1.0.5)(vite@8.3.2)
+        version: 0.7.6(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(crossws@0.4.12(srvx@1.0.5))(srvx@1.0.5)(vite@8.3.2)
       '@vitejs/plugin-react':
         specifier: ^6.0.5
         version: 6.1.1(@rolldown/plugin-babel@0.2.4(@babel/core@8.1.0)(@babel/runtime@7.29.7)(rolldown@1.2.12)(vite@8.3.2))(babel-plugin-react-compiler@1.0.0)(vite@8.3.2)
@@ -3749,11 +3749,11 @@ importers:
         specifier: ^5.2.2
         version: 5.9.1(@standard-schema/spec@1.1.0)(ajv@8.20.0)(react-hook-form@7.87.0(react@19.2.8))(zod@4.5.4)
       '@ibodr/draw':
-        specifier: ^0.2.17
-        version: 0.2.17(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^0.2.18
+        version: 0.2.18(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@ibodr/schema':
-        specifier: ^0.2.17
-        version: 0.2.17(react@19.2.8)
+        specifier: ^0.2.18
+        version: 0.2.18(react@19.2.8)
       '@paddleocr/paddleocr-js':
         specifier: ^0.4.2
         version: 0.4.2
@@ -8236,43 +8236,43 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@ibodr/draw@0.2.17':
-    resolution: {integrity: sha512-4ENXf2aJoSEQWot1pu4YzVhy5kwhqUtK4QZj4qvspi09VRcvvgi2S64wd3u6S2t6LlrNnarIHxmJRD8lOOHFyA==}
+  '@ibodr/draw@0.2.18':
+    resolution: {integrity: sha512-m2FVz5CiqbhFTJq8QEBUiEQDnj+WD3bK55ldfoZvt7x85ry8Xt9u6TKjxfq4Wm6yvWirA6eOg4pi8iAjjITAhA==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
       react-dom: ^18.2.0 || ^19.2.1
 
-  '@ibodr/driver@0.2.17':
-    resolution: {integrity: sha512-z9Yfsmqu5PxmBapd8Nbu08irlFo+/M92enECW2/CaS9Ryef1qhUqp+B0Rf3fA9YXxxxWPqNm0OMemtU4HtMxBw==}
+  '@ibodr/driver@0.2.18':
+    resolution: {integrity: sha512-6PUqOp9R07Un7i5i3NdwOUupPtZZOYluuFcaD9qa8zILmRkpiqnKVeZBhWOPXeAjHfAz7CyWniqMIBRPbk/bkg==}
 
-  '@ibodr/editor@0.2.17':
-    resolution: {integrity: sha512-UZxPEyJv0WTsm4xhLd7atXeM9ahCfzU1D2g0EKWczSWBYqiHfzkdrmZ1z6K6OBf0MVxyiU1ByEbQXCKKlNbkIg==}
+  '@ibodr/editor@0.2.18':
+    resolution: {integrity: sha512-CE9jSFZ4ep2M4FnAl/VWjGpjn5xbTlN71yzc/KOYeRBAUs2loNmlFgfFiP0bHQgfEO9Hfz66l6JmT1t18/lLNw==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
       react-dom: ^18.2.0 || ^19.2.1
 
-  '@ibodr/schema@0.2.17':
-    resolution: {integrity: sha512-fU16ccYSp1RzDng+NMmed3WIjc4zf8JzhjqErGtFRjGyYkumruITazgkqXqk3BT3h28CGSXEBnXbp56kcFm7KA==}
+  '@ibodr/schema@0.2.18':
+    resolution: {integrity: sha512-f38mhVcqrFus3vnWZCMl7+qASf1xR550fx5Mhly+6lGTHUK/ImdqoQkGFCLKeTr/IY40QE1JvUycZoRcgEB1rg==}
 
-  '@ibodr/state-react@0.2.17':
-    resolution: {integrity: sha512-55D48rRh2nXeJt2FoSu8hizc5/JZ4DsJ3Zj8BY64+9wGvHSRoPhPgDMlqIRt22vXcRMaXV09OQKzdhptncDr0g==}
+  '@ibodr/state-react@0.2.18':
+    resolution: {integrity: sha512-yYoAK3SqDX8n2g08uB6CXL+CLGJVW9WXSyPjrIqm2PyS5xtesfwXvxX0tTAoAiQ3JoPwXJdvALgEbvmtD7dj7Q==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
       react-dom: ^18.2.0 || ^19.2.1
 
-  '@ibodr/state@0.2.17':
-    resolution: {integrity: sha512-0Gg/ln0M8rNfFlM349TnfyYjYA5i7in7dDgW/wGNMbXMJHsDxBRlLgDJwWS4zZOlugXVpYLzITFtSuzPb9SX9w==}
+  '@ibodr/state@0.2.18':
+    resolution: {integrity: sha512-ZWsq/iV8Tf2ucQssfICTQK4F1IGJxI2vfnLbxYO9prSPE42bGjRTRHDe/G+PESUsaQDWtucU3WwRa2uq77Rs6Q==}
 
-  '@ibodr/store@0.2.17':
-    resolution: {integrity: sha512-FlpY81xWjxU+7ov67+wSDLSi5XrLBuSprwBngOmGRZxR9aZMR3aCaEZvkSaLOYc2s/VUNgovVDGIXBL5YFAdag==}
+  '@ibodr/store@0.2.18':
+    resolution: {integrity: sha512-3zltRxH7lCtTuSGonaNey2ZIHaJXv3puvbRyXWJ0U07viHSm6NSGrE2ryQjzzOH8OQLrG0YuQfBGdONiwGTclg==}
     peerDependencies:
       react: ^18.2.0 || ^19.2.1
 
-  '@ibodr/utils@0.2.17':
-    resolution: {integrity: sha512-zKdo1cMBRk+zFZO8lTXN9AzDpU7cm0wMScZ63ZJZ9CYStXhvtsqcmW6dvStbuZTE7EyJaGBEV3/i06sLueZITw==}
+  '@ibodr/utils@0.2.18':
+    resolution: {integrity: sha512-pMJanXdtVkW8hOYbjUBDTBT4UxxYCyhv5/R2p/KrDVL7p+1WSe3HE5HAGUU269gCnys7ZOTGqA0PsQvydmlLIA==}
 
-  '@ibodr/validate@0.2.17':
-    resolution: {integrity: sha512-MeZ0ERQ6ss/yhL1164mnmqpgWAyM4I6Fxnrpt7hXTLk+LdRVj1zpedc3XEnfZbFdg/fFLoLoRwtbG/KvGpSGcg==}
+  '@ibodr/validate@0.2.18':
+    resolution: {integrity: sha512-dy2qSkzpoFxVsBIZtffnwbnR4mxtTCymDBJDIw1lbkhIb/F1xH4pyQQnKKspDcaZtfTHVHtjvUrcjjzh0msL+Q==}
 
   '@isaacs/cliui@9.0.0':
     resolution: {integrity: sha512-AokJm4tuBHillT+FpMtxQ60n8ObyXBatq7jD2/JA9dxbDDokKQm8KMht5ibGzLVU9IJDIKK4TPKgMHEYMn3lMg==}
@@ -15736,17 +15736,6 @@ snapshots:
 
   '@date-fns/tz@1.5.0': {}
 
-  '@devframes/agentic@1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))':
-    dependencies:
-      '@modelcontextprotocol/client': 2.3.1
-      '@modelcontextprotocol/server': 2.3.1
-      devframe: 0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)
-      h3: 2.0.1(crossws@0.4.12(srvx@1.0.5))
-      pathe: 2.0.3
-    transitivePeerDependencies:
-      - crossws
-      - ocache
-
   '@devframes/agentic@1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)':
     dependencies:
       '@modelcontextprotocol/client': 2.3.1
@@ -15757,14 +15746,6 @@ snapshots:
     transitivePeerDependencies:
       - crossws
       - ocache
-    optional: true
-
-  '@devframes/hub-ui@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))':
-    dependencies:
-      '@devframes/hub': 0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
-      devframe: 0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)
-    optionalDependencies:
-      '@devframes/json-render': 1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
 
   '@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(devframe@1.2.0)':
     dependencies:
@@ -15772,7 +15753,6 @@ snapshots:
       devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
     optionalDependencies:
       '@devframes/json-render': 1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)
-    optional: true
 
   '@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))':
     dependencies:
@@ -15794,7 +15774,7 @@ snapshots:
       tinyexec: 1.3.1
       zigpty: 0.2.1
     optionalDependencies:
-      '@devframes/agentic': 1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
+      '@devframes/agentic': 1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)
     transitivePeerDependencies:
       - crossws
       - ocache
@@ -15812,15 +15792,6 @@ snapshots:
       zod: 4.5.4
     optionalDependencies:
       '@devframes/hub': 0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
-
-  '@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))':
-    dependencies:
-      '@json-render/core': 0.21.0(zod@4.6.5)
-      devframe: 0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)
-      zod: 4.6.5
-    optionalDependencies:
-      '@devframes/hub': 0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
-    optional: true
 
   '@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)':
     dependencies:
@@ -15846,18 +15817,6 @@ snapshots:
     optionalDependencies:
       vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
 
-  '@devframes/plugin-terminals@1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)':
-    dependencies:
-      '@devframes/vite': 1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)
-      cac: 7.0.0
-      devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
-      zigpty: 0.2.1
-    optionalDependencies:
-      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
-    transitivePeerDependencies:
-      - '@devframes/hub'
-      - '@devframes/hub-ui'
-
   '@devframes/plugin-terminals@1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)':
     dependencies:
       '@devframes/vite': 1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)
@@ -15865,25 +15824,15 @@ snapshots:
       devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
       zigpty: 0.2.1
     optionalDependencies:
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
     transitivePeerDependencies:
       - '@devframes/hub'
       - '@devframes/hub-ui'
-    optional: true
 
   '@devframes/service-open@1.2.0(devframe@1.2.0)':
     dependencies:
       devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
       pathe: 2.0.3
-
-  '@devframes/vite@1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)':
-    dependencies:
-      devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
-      pathe: 2.0.3
-    optionalDependencies:
-      '@devframes/hub': 1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)
-      '@devframes/hub-ui': 1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
-      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
 
   '@devframes/vite@1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)':
     dependencies:
@@ -15892,8 +15841,7 @@ snapshots:
     optionalDependencies:
       '@devframes/hub': 1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)
       '@devframes/hub-ui': 1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(devframe@1.2.0)
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
-    optional: true
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
 
   '@dnd-kit/accessibility@3.1.1(react@19.2.8)':
     dependencies:
@@ -16307,13 +16255,13 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@ibodr/draw@0.2.17(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/draw@0.2.18(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/driver': 0.2.17(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/editor': 0.2.17(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/schema': 0.2.17(react@19.2.8)
-      '@ibodr/state': 0.2.17
-      '@ibodr/store': 0.2.17(react@19.2.8)
+      '@ibodr/driver': 0.2.18(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/editor': 0.2.18(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/schema': 0.2.18(react@19.2.8)
+      '@ibodr/state': 0.2.18
+      '@ibodr/store': 0.2.18(react@19.2.8)
       '@tiptap/core': 3.30.1(@tiptap/pm@3.30.1)
       '@tiptap/extension-code': 3.31.2(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
       '@tiptap/extension-highlight': 3.31.2(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
@@ -16331,10 +16279,10 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  '@ibodr/driver@0.2.17(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/driver@0.2.18(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/editor': 0.2.17(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/utils': 0.2.17
+      '@ibodr/editor': 0.2.18(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/utils': 0.2.18
     transitivePeerDependencies:
       - '@floating-ui/dom'
       - '@types/react'
@@ -16342,14 +16290,14 @@ snapshots:
       - react
       - react-dom
 
-  '@ibodr/editor@0.2.17(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/editor@0.2.18(@floating-ui/dom@1.8.0)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/schema': 0.2.17(react@19.2.8)
-      '@ibodr/state': 0.2.17
-      '@ibodr/state-react': 0.2.17(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@ibodr/store': 0.2.17(react@19.2.8)
-      '@ibodr/utils': 0.2.17
-      '@ibodr/validate': 0.2.17
+      '@ibodr/schema': 0.2.18(react@19.2.8)
+      '@ibodr/state': 0.2.18
+      '@ibodr/state-react': 0.2.18(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@ibodr/store': 0.2.18(react@19.2.8)
+      '@ibodr/utils': 0.2.18
+      '@ibodr/validate': 0.2.18
       '@tiptap/core': 3.30.1(@tiptap/pm@3.30.1)
       '@tiptap/pm': 3.30.1
       '@tiptap/react': 3.30.1(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -16364,42 +16312,42 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  '@ibodr/schema@0.2.17(react@19.2.8)':
+  '@ibodr/schema@0.2.18(react@19.2.8)':
     dependencies:
-      '@ibodr/state': 0.2.17
-      '@ibodr/store': 0.2.17(react@19.2.8)
-      '@ibodr/utils': 0.2.17
-      '@ibodr/validate': 0.2.17
+      '@ibodr/state': 0.2.18
+      '@ibodr/store': 0.2.18(react@19.2.8)
+      '@ibodr/utils': 0.2.18
+      '@ibodr/validate': 0.2.18
     transitivePeerDependencies:
       - react
 
-  '@ibodr/state-react@0.2.17(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ibodr/state-react@0.2.18(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@ibodr/state': 0.2.17
-      '@ibodr/utils': 0.2.17
+      '@ibodr/state': 0.2.18
+      '@ibodr/utils': 0.2.18
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@ibodr/state@0.2.17':
+  '@ibodr/state@0.2.18':
     dependencies:
-      '@ibodr/utils': 0.2.17
+      '@ibodr/utils': 0.2.18
 
-  '@ibodr/store@0.2.17(react@19.2.8)':
+  '@ibodr/store@0.2.18(react@19.2.8)':
     dependencies:
-      '@ibodr/state': 0.2.17
-      '@ibodr/utils': 0.2.17
+      '@ibodr/state': 0.2.18
+      '@ibodr/utils': 0.2.18
       react: 19.2.8
 
-  '@ibodr/utils@0.2.17':
+  '@ibodr/utils@0.2.18':
     dependencies:
       lodash.isequal: 4.5.0
       lodash.isequalwith: 4.4.0
       lodash.throttle: 4.1.1
       lodash.uniq: 4.5.0
 
-  '@ibodr/validate@0.2.17':
+  '@ibodr/validate@0.2.18':
     dependencies:
-      '@ibodr/utils': 0.2.17
+      '@ibodr/utils': 0.2.18
 
   '@isaacs/cliui@9.0.0': {}
 
@@ -18912,33 +18860,6 @@ snapshots:
       - ocache
       - srvx
 
-  '@vitejs/devtools@0.7.6(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(crossws@0.4.12(srvx@1.0.5))(srvx@1.0.5)(vite@8.3.2)':
-    dependencies:
-      '@devframes/agentic': 1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
-      '@devframes/hub': 1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)
-      '@devframes/hub-ui': 1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
-      '@devframes/json-render-ui': 1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)
-      '@devframes/plugin-inspect': 1.2.0(devframe@1.2.0)(vite@8.3.2)
-      '@devframes/plugin-messages': 1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)
-      '@devframes/plugin-terminals': 1.2.0(@devframes/hub-ui@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@1.2.0))(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0)(vite@8.3.2)
-      '@vitejs/devtools-kit': 0.7.6(@devframes/agentic@1.2.0)(cac@7.0.0)(crossws@0.4.12(srvx@1.0.5))(srvx@1.0.5)(vite@8.3.2)
-      cac: 7.0.0
-      devframe: 1.2.0(@devframes/agentic@1.2.0)(cac@7.0.0)(srvx@1.0.5)
-      h3: 2.0.1(crossws@0.4.12(srvx@1.0.5))
-      local-pkg: 1.2.1
-      nostics: 1.3.0
-      obug: 3.0.0
-      pathe: 2.0.3
-      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
-    transitivePeerDependencies:
-      - '@devframes/json-render'
-      - '@devframes/plugin-inspect--assets'
-      - '@devframes/plugin-messages--assets'
-      - '@devframes/plugin-terminals--assets'
-      - crossws
-      - ocache
-      - srvx
-
   '@vitejs/devtools@0.7.6(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(crossws@0.4.12(srvx@1.0.5))(srvx@1.0.5)(vite@8.3.2)':
     dependencies:
       '@devframes/agentic': 1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)
@@ -18956,7 +18877,7 @@ snapshots:
       nostics: 1.3.0
       obug: 3.0.0
       pathe: 2.0.3
-      vite: 8.3.2(@types/node@20.19.43)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
+      vite: 8.3.2(@types/node@22.20.2)(@vitejs/devtools@0.7.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)
     transitivePeerDependencies:
       - '@devframes/json-render'
       - '@devframes/plugin-inspect--assets'
@@ -18965,7 +18886,6 @@ snapshots:
       - crossws
       - ocache
       - srvx
-    optional: true
 
   '@vitejs/plugin-react@6.1.1(@rolldown/plugin-babel@0.2.4(@babel/core@8.1.0)(@babel/runtime@7.29.7)(rolldown@1.2.12)(vite@8.3.2))(babel-plugin-react-compiler@1.0.0)(vite@8.3.2)':
     dependencies:
@@ -20357,7 +20277,7 @@ snapshots:
       nostics: 1.3.0
       pathe: 2.0.3
     optionalDependencies:
-      '@devframes/agentic': 1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5))
+      '@devframes/agentic': 1.2.0(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0)
       cac: 7.0.0
     transitivePeerDependencies:
       - ocache
@@ -23240,7 +23160,7 @@ snapshots:
       tinyglobby: 0.2.17
     optionalDependencies:
       '@types/node': 22.20.2
-      '@vitejs/devtools': 0.7.6(@devframes/json-render@1.2.0(@devframes/hub@0.8.2(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(devframe@0.8.2(@modelcontextprotocol/client@2.3.1)(@modelcontextprotocol/server@2.3.1)(cac@7.0.0)(srvx@1.0.5)))(crossws@0.4.12(srvx@1.0.5))(srvx@1.0.5)(vite@8.3.2)
+      '@vitejs/devtools': 0.7.6(@devframes/json-render@1.2.0(@devframes/hub@1.2.0(@devframes/agentic@1.2.0)(crossws@0.4.12(srvx@1.0.5))(devframe@1.2.0))(devframe@1.2.0))(crossws@0.4.12(srvx@1.0.5))(srvx@1.0.5)(vite@8.3.2)
       esbuild: 0.28.2
       fsevents: 2.3.3
       jiti: 2.7.0
