@@ -54,6 +54,7 @@ coverage
 .next/
 out/
 build
+build-electron
 dist
 
 
