@@ -1,7 +1,8 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ConfigEnv, defineConfig, loadEnv, mergeConfig, searchForWorkspaceRoot } from 'vite';
-import react from '@vitejs/plugin-react';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import babel from '@rolldown/plugin-babel';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -74,6 +75,8 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
       }),
 
       react(),
+
+      babel({ presets: [reactCompilerPreset()] }),
 
       tailwindcss(),
 
@@ -198,7 +201,7 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
     build: {
       chunkSizeWarningLimit: 1000,
       minify: shouldMinify,
-      outDir: 'build',
+      outDir: isElectron ? 'build-electron' : 'build',
       sourcemap: mode === 'debug',
       reportCompressedSize: false,
 
