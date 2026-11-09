@@ -60,6 +60,7 @@ import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
+import { registerEmbedGuard } from '../../../shapes/embed/embedProviders';
 
 /** Ctrl/Cmd+Y в шорткатах редактора нет, а Ctrl/Cmd+Shift+Z есть. Добавляем Y в тот же action, чтобы жест откатывался один раз. */
 const boardUiOverrides: DrUiOverrides = {
@@ -494,6 +495,7 @@ export const DrawCanvas = ({
                 });
 
                 registerBoardAssetHygiene(editor);
+                registerEmbedGuard(editor);
 
                 editor.registerExternalContentHandler('files', async ({ files }) => {
                   const dropped = files.map(cloneDroppedFile);
