@@ -397,7 +397,9 @@
     "downloadStarted": "Download started...",
     "noConnection": "No connection",
     "loading": "Loading...",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "heavyImage": "Image hidden to keep the device responsive. Select it or zoom in",
+    "crashedImage": "Couldn't display: the tab crashed last time. Tap to try again"
   },
   "embed": {
     "tool": "Embed from website",

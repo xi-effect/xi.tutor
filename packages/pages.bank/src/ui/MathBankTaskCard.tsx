@@ -44,7 +44,7 @@ export const MathBankTaskCard = ({
     <div
       role="button"
       tabIndex={0}
-      className="group bg-background-surface relative flex h-52 min-h-52 w-full min-w-0 shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
+      className="group bg-background-surface relative flex h-52 min-h-52 w-full min-w-0 shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-5"
       onClick={() => onOpen(task)}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
