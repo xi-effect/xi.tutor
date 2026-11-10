@@ -1,4 +1,4 @@
-import type { PPTXViewer } from 'pptxviewjs';
+import type { RenderOptions } from 'pptxviewjs';
 
 type Paint = {
   width: number;
@@ -9,7 +9,10 @@ type Paint = {
 };
 /** Serial rendering: pending requests collapse to the latest, stale frames never reach the screen. */
 export function createPresentationPainter(
-  viewer: Pick<PPTXViewer, 'render' | 'destroy'>,
+  viewer: {
+    render: (canvas: HTMLCanvasElement, options: RenderOptions) => Promise<unknown>;
+    destroy: () => void;
+  },
   target: HTMLCanvasElement,
   onCommit: (page: number) => void,
   onError: (error: unknown) => void,
