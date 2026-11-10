@@ -11,6 +11,12 @@ type PendingLoad = {
   refs: number;
 };
 
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+let sharedWorker: InstanceType<typeof pdfjsLib.PDFWorker> | undefined;
+function worker() {
+  return (sharedWorker ??= new pdfjsLib.PDFWorker());
+}
+
 const cache = new Map<string, CacheEntry>();
 const pendingLoads = new Map<string, PendingLoad>();
 
@@ -33,7 +39,7 @@ export const pdfDocCache = {
       promise: null as unknown as Promise<PDFDocumentProxy>,
     };
     load.promise = pdfjsLib
-      .getDocument(blobUrl)
+      .getDocument({ url: blobUrl, worker: worker() })
       .promise.then((doc) => {
         pendingLoads.delete(blobUrl);
         if (load.refs <= 0) {
