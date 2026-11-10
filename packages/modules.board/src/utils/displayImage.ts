@@ -2,7 +2,8 @@ import type { DrAsset } from '@ibodr/draw';
 import { edgeBucket } from './rasterBudget';
 import { getCachedBlobUrl, rememberBlob, resolveAssetUrl } from './resolveAssetUrl';
 import { reportBoardProblem } from './boardProblem';
-import { isMemoryConstrainedDevice } from './deviceBudget';
+import { isMemoryConstrainedDevice, maxDecodePixels } from './deviceBudget';
+import { readImageSize } from './imageHeader';
 
 /** На iPad одновременно декодируем один файл: пик памяти = один полноразмерный растр. */
 const MAX_PARALLEL_RESIZE = isMemoryConstrainedDevice() ? 1 : 2;
@@ -78,14 +79,30 @@ async function resizeToBlob(
     return null;
   }
 
+  // Заголовок файла говорит, сколько в нём пикселей, ещё до декодирования. Число пикселей
+  // не зависит от EXIF-поворота, поэтому годится для решения «можно ли декодировать».
+  // А вот ширину и высоту из заголовка брать нельзя: у повёрнутого JPEG они поменяны местами.
+  const header = await readImageSize(blob);
+  const guard = header ?? hint ?? null;
+  if (guard) {
+    // Огромный растр (скриншот длинной страницы на 80+ Мп) целиком в память не берём:
+    // на iPhone это сотни МБ за один вызов и падение вкладки. `<img>` покажет оригинал сам.
+    if (guard.w * guard.h > maxDecodePixels()) return null;
+  } else if (isMemoryConstrainedDevice()) {
+    // Размер неизвестен, безопасность декодирования не доказана.
+    return null;
+  }
+  // Размеры после поворота знает только ассет (их записал createImageBitmap при вставке).
+  const dims = hint ?? null;
+
   let source: ImageBitmap | null = null;
   let resized: ImageBitmap | null = null;
   try {
     let width: number;
     let height: number;
-    if (hint) {
-      if (Math.max(hint.w, hint.h) <= maxEdge) return null;
-      ({ width, height } = targetSize(hint.w, hint.h, maxEdge));
+    if (dims) {
+      if (Math.max(dims.w, dims.h) <= maxEdge) return null;
+      ({ width, height } = targetSize(dims.w, dims.h, maxEdge));
     } else {
       source = await createImageBitmap(blob);
       if (Math.max(source.width, source.height) <= maxEdge) return null;
@@ -168,6 +185,8 @@ export async function resolveDisplayImageUrl(
 
   // Известные размеры: файл не крупнее корзины — уменьшать нечего, даже не качаем.
   if (hint && Math.max(hint.w, hint.h) <= bucket) return original;
+  // Огромный файл не декодируем ради ресайза, даже не скачиваем его повторно.
+  if (hint && hint.w * hint.h > maxDecodePixels()) return original;
 
   const cacheKey = `${src}@@${bucket}`;
   const cached = getCachedBlobUrl(cacheKey);

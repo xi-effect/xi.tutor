@@ -4,7 +4,8 @@
     "label": "Subject",
     "mathematics": "Mathematics",
     "russian": "Russian",
-    "physics": "Physics"
+    "physics": "Physics",
+    "english": "English"
   },
   "disclaimer": {
     "aria": "About the task bank and OGE/EGE labels",
@@ -70,7 +71,13 @@
       "multi_choice": "Several answers",
       "open_rubric": "Open response",
       "numeric": "Numeric answer",
-      "multi-step": "Multi-step"
+      "multi-step": "Multi-step",
+      "gap": "Gap fill",
+      "transformation": "Transformation",
+      "error-correction": "Error correction",
+      "choice": "Multiple choice",
+      "reading": "Reading",
+      "writing": "Writing"
     },
     "favorites": "Favorites only"
   },
@@ -92,6 +99,7 @@
     "answer": "Answer",
     "rubric": "Rubric",
     "rubricHint": "This is an open task: use the rubric, not a single exact wording.",
+    "wordRange": "{{min}}–{{max}} words",
     "solution": "Solution",
     "explanation": "Explanation",
     "hints": "Hints",

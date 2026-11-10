@@ -1,19 +1,29 @@
 import type {
   BankSubject,
+  EnglishTaskType,
   ExamKind,
   MathTaskType,
   PhysicsTaskType,
   RussianTaskType,
-} from 'features.math.bank';
-import { RUSSIAN_TASK_TYPES } from 'features.math.bank';
+} from 'features.bank';
+import { RUSSIAN_TASK_TYPES } from 'features.bank';
 
 export const MATH_BANK_SEARCH_LIMIT = 200;
 
 export type MathDifficultyGroup = 'basic' | 'medium' | 'advanced';
 
-export type BankTaskType = MathTaskType | RussianTaskType | PhysicsTaskType;
+export type BankTaskType = MathTaskType | RussianTaskType | PhysicsTaskType | EnglishTaskType;
 
 export const PHYSICS_TASK_TYPES: readonly PhysicsTaskType[] = ['numeric', 'multi-step'];
+
+export const ENGLISH_TASK_TYPES: readonly EnglishTaskType[] = [
+  'gap',
+  'transformation',
+  'error-correction',
+  'choice',
+  'reading',
+  'writing',
+];
 
 export type MathBankFiltersT = {
   search: string;
@@ -61,10 +71,12 @@ export const TASK_TYPES_BY_SUBJECT: Record<BankSubject, readonly BankTaskType[]>
   mathematics: MATH_TASK_TYPES,
   russian: RUSSIAN_TASK_TYPES,
   physics: PHYSICS_TASK_TYPES,
+  english: ENGLISH_TASK_TYPES,
 };
 
 export const EXAM_KINDS_BY_SUBJECT: Record<BankSubject, readonly ExamKind[]> = {
   mathematics: ['OGE', 'EGE_BASE', 'EGE_PROFILE'],
   russian: ['OGE', 'EGE'],
   physics: ['OGE', 'EGE'],
+  english: ['OGE', 'EGE'],
 };

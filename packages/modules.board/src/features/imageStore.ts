@@ -3,6 +3,7 @@ import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { displayPixelSize } from '../utils/rasterBudget';
 import { resolveDisplayImageUrl, staticImagePixels } from '../utils/displayImage';
+import { readImageSize } from '../utils/imageHeader';
 import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
@@ -35,6 +36,24 @@ export type DrAssetStoreT = {
 };
 
 const MAX_IMAGE_SIDE = 4096; // макс. сторона в пикселях
+
+/**
+ * Проверка размеров по заголовку файла, до декодирования.
+ * Раньше лимит проверялся только после полной декодировки (`new Image`/`createImageBitmap`),
+ * и огромный скриншот мог уронить вкладку ещё до сообщения об ошибке.
+ * Возвращает текст ошибки или `null`, если файл проходит (или размер узнать не удалось).
+ */
+export async function getOversizedImageMessage(file: File): Promise<string | null> {
+  const size = await readImageSize(file);
+  if (!size) return null;
+  if (size.w <= MAX_IMAGE_SIDE && size.h <= MAX_IMAGE_SIDE) return null;
+  return i18n.t('toast.imageSideDesc', {
+    ns: 'board',
+    max: MAX_IMAGE_SIDE,
+    width: size.w,
+    height: size.h,
+  });
+}
 
 /** Узнать размеры изображения (без тяжёлых операций) */
 async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl: string }> {
@@ -136,6 +155,16 @@ export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
 
       if (!assertBoardUploadAllowed(file, 'image')) {
         throw new Error(i18n.t('toast.fileTooLarge', { ns: 'board' }));
+      }
+
+      // Сначала по заголовку: огромный файл не должен доходить до декодирования.
+      const oversizedMessage = await getOversizedImageMessage(file);
+      if (oversizedMessage) {
+        toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+          description: oversizedMessage,
+          duration: 5000,
+        });
+        throw new Error(oversizedMessage);
       }
 
       // Проверка сторон (макс. 4096×4096)

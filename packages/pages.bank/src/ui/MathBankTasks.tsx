@@ -1,7 +1,7 @@
 import { type RefObject, useEffect, useMemo, useState } from 'react';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
-import type { MathTaskSearch, MathTaskSearchDocument, BankSubject } from 'features.math.bank';
+import type { MathTaskSearch, MathTaskSearchDocument, BankSubject } from 'features.bank';
 import { hasActiveMathBankFilters, searchMathBank } from '../utils/filters';
 import { useMathBankUserStore } from '../store/useMathBankUserStore';
 import { useToggleMathBankFavorite } from '../hooks/useToggleMathBankFavorite';

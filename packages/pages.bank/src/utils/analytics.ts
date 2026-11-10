@@ -1,5 +1,5 @@
 import type { MathBankTaskSnapshot, TaskReportContext } from 'common.utils';
-import type { BankSubject } from 'features.math.bank';
+import type { BankSubject } from 'features.bank';
 
 export const toMathBankTaskSnapshot = (task: {
   id: string;

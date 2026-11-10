@@ -65,7 +65,7 @@
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
     "features.math": "workspace:*",
-    "features.math.bank": "workspace:*",
+    "features.bank": "workspace:*",
     "features.materials.card": "workspace:*",
     "features.materials.edit": "workspace:*",
     "file-type": "^19.0.0",

@@ -3182,7 +3182,7 @@ importers:
         specifier: ^4.1.10
         version: 4.1.11(@types/node@20.19.43)(vite@8.3.2)
 
-  packages/features.math.bank:
+  packages/features.bank:
     dependencies:
       common.env:
         specifier: workspace:*
@@ -3886,9 +3886,9 @@ importers:
       features.math:
         specifier: workspace:*
         version: link:../features.math
-      features.math.bank:
+      features.bank:
         specifier: workspace:*
-        version: link:../features.math.bank
+        version: link:../features.bank
       file-type:
         specifier: ^19.0.0
         version: 19.6.0
@@ -4958,9 +4958,9 @@ importers:
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
-      features.math.bank:
+      features.bank:
         specifier: workspace:*
-        version: link:../features.math.bank
+        version: link:../features.bank
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)

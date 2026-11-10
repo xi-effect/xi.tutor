@@ -1,4 +1,4 @@
-import type { PhysicsFigure as PhysicsFigureData } from 'features.math.bank';
+import type { PhysicsFigure as PhysicsFigureData } from 'features.bank';
 import { useTranslation } from 'react-i18next';
 
 type PhysicsFigureProps = {

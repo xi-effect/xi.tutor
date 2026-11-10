@@ -1,7 +1,7 @@
 import { Button } from '@xipkg/button';
 import { Task } from '@xipkg/icons';
 import { cardTypeIconBoxClass } from 'common.ui';
-import type { ExamKind, MathTaskSearchDocument } from 'features.math.bank';
+import type { ExamKind, MathTaskSearchDocument } from 'features.bank';
 import { useTranslation } from 'react-i18next';
 import { formatExamBadge, pickVisibleExamMappings } from '../utils/exam';
 import { DIFFICULTY_GROUP_VALUES, type MathDifficultyGroup } from '../types';
