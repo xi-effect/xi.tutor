@@ -1,9 +1,7 @@
-import type { DEMO_CABINET_TEMPLATE_VERSION } from './template';
-
 export type DemoCabinetPhase = 'in_progress' | 'ready' | 'removed';
 
 export type DemoCabinetProgress = {
-  templateVersion: typeof DEMO_CABINET_TEMPLATE_VERSION;
+  templateVersion: number;
   phase: DemoCabinetPhase;
   classroomId: string | null;
   boardId: string | null;

@@ -15,6 +15,7 @@ import type * as Y from 'yjs';
 import {
   DEMO_CABINET_BOARD_COPY,
   DEMO_CABINET_TEMPLATE_VERSION,
+  DEMO_SAMPLE_PDF,
   readClassroomStorageItem,
 } from 'common.services';
 import { createEmptyAttempt } from '../activities/model/defaults';
@@ -157,6 +158,28 @@ const addNote = (
     },
   });
   return id;
+};
+
+const addPdf = (editor: Editor, parentId: DrParentId, area: LayoutBox) => {
+  const defaults = editor.getShapeUtil('pdf').getDefaultProps();
+  editor.createShape({
+    id: createShapeId(),
+    type: 'pdf',
+    parentId,
+    x: area.x,
+    y: area.y,
+    props: {
+      ...defaults,
+      src: DEMO_SAMPLE_PDF.path,
+      fileName: DEMO_SAMPLE_PDF.fileName,
+      totalPages: DEMO_SAMPLE_PDF.totalPages,
+      currentPage: 1,
+      w: area.w,
+      h: area.h,
+      studentCanFlip: true,
+      pagesVisible: 1,
+    },
+  });
 };
 
 const addEmoji = (editor: Editor, parentId: DrParentId, area: LayoutBox, emoji: string) => {
@@ -320,6 +343,12 @@ const buildDemoBoard = (editor: Editor) => {
   }
   addText(editor, workflowId, child(workflow, 'workflow-hint'), copy.workflowHint, 's');
 
+  const pdfId = addFrame(editor, pageId, demoBoardLayout.pdf.frame, copy.pdfTitle);
+  const pdf = demoBoardLayout.pdf.children;
+  addText(editor, pdfId, child(pdf, 'pdf-title'), copy.pdfTitle, 'l');
+  addPdf(editor, pdfId, child(pdf, 'pdf-file'));
+  addText(editor, pdfId, child(pdf, 'pdf-hint'), copy.pdfHint, 's');
+
   const activity = demoBoardLayout.activity;
   const options = copy.activityOptions.map((option) => ({
     id: createActivityId(),
@@ -351,8 +380,21 @@ const buildDemoBoard = (editor: Editor) => {
   });
 };
 
-const documentHasShapes = (yStore: YKeyValue<DrRecord>): boolean =>
-  yStore.yarray.toJSON().some((item) => item.val?.typeName === 'shape');
+const editorHasSamplePdf = (editor: Editor): boolean =>
+  editor.getCurrentPageShapes().some((shape) => {
+    if (shape.type !== 'pdf') return false;
+    const src = shape.props.src;
+    return typeof src === 'string' && src.includes(DEMO_SAMPLE_PDF.path);
+  });
+
+const addSamplePdfFrame = (editor: Editor) => {
+  const pageId = editor.getCurrentPageId();
+  const pdfId = addFrame(editor, pageId, demoBoardLayout.pdf.frame, copy.pdfTitle);
+  const pdf = demoBoardLayout.pdf.children;
+  addText(editor, pdfId, child(pdf, 'pdf-title'), copy.pdfTitle, 'l');
+  addPdf(editor, pdfId, child(pdf, 'pdf-file'));
+  addText(editor, pdfId, child(pdf, 'pdf-hint'), copy.pdfHint, 's');
+};
 
 const persistBoard = (
   yDoc: Y.Doc,
@@ -384,7 +426,6 @@ const persistBoard = (
 const fillBoardDocument = (yDoc: Y.Doc, ydocId: string) => {
   const yStore = new YKeyValue<DrRecord>(yDoc.getArray(`tl_${ydocId}`));
   const meta = yDoc.getMap<SerializedSchema | string>('meta');
-  if (documentHasShapes(yStore)) return;
 
   let editor = createDemoEditor();
   try {
@@ -399,7 +440,13 @@ const fillBoardDocument = (yDoc: Y.Doc, ydocId: string) => {
           ydocId,
           seedIfEmpty: false,
         });
-        if (result === 'hydrated' && shapeCount(editor) > 0) return;
+        if (result === 'hydrated' && shapeCount(editor) > 0) {
+          if (!editorHasSamplePdf(editor)) {
+            addSamplePdfFrame(editor);
+            persistBoard(yDoc, yStore, meta, editor, false);
+          }
+          return;
+        }
         if (result === 'migration-error') throw new Error('board-migration');
       } catch (error) {
         if (shapeCount(editor) > 0) throw error;

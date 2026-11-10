@@ -56,6 +56,14 @@ export const demoBoardLayout = {
     ],
   },
   activity: box('activity', 864, 904, 480, 360),
+  pdf: {
+    frame: box('pdf', 1860, 48, 680, 1000),
+    children: [
+      box('pdf-title', 24, 24, 632, 48),
+      box('pdf-file', 24, 104, 632, 760),
+      box('pdf-hint', 24, 896, 632, 72),
+    ],
+  },
 } as const;
 
 export const demoBoardTopLevelBoxes = (): LayoutBox[] => [
@@ -63,6 +71,7 @@ export const demoBoardTopLevelBoxes = (): LayoutBox[] => [
   demoBoardLayout.elements.frame,
   demoBoardLayout.workflow.frame,
   demoBoardLayout.activity,
+  demoBoardLayout.pdf.frame,
 ];
 
 const separated = (a: LayoutBox, b: LayoutBox, minGap: number): boolean =>

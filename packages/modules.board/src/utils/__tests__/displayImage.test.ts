@@ -150,3 +150,51 @@ describe('resolveDisplayImageUrl', () => {
     expect(rememberBlob).not.toHaveBeenCalled();
   });
 });
+
+it('cancels one image consumer without aborting another consumer of the same resize', async () => {
+  const { resolveDisplayImageUrl } = await import('../displayImage');
+  let finish!: (value: unknown) => void;
+  fetchMock.mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const first = new AbortController();
+  const a = resolveDisplayImageUrl('shared', 'token', 900, { w: 3000, h: 2000 }, first.signal);
+  const rejected = expect(a).rejects.toMatchObject({ name: 'AbortError' });
+  const b = resolveDisplayImageUrl('shared', 'token', 900, { w: 3000, h: 2000 });
+  await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+  first.abort();
+  await rejected;
+  expect(fetchMock.mock.calls[0][1].signal.aborted).toBe(false);
+  finish({ ok: false });
+  expect(await b).toBe('blob:original');
+});
+it('skips abandoned queued resizes without poisoning the original-image fallback', async () => {
+  const { resolveDisplayImageUrl } = await import('../displayImage');
+  const finishes: Array<(value: unknown) => void> = [];
+  fetchMock.mockImplementation(() => new Promise((resolve) => finishes.push(resolve)));
+  const a = resolveDisplayImageUrl('active-a', 'token', 900, { w: 3000, h: 2000 });
+  const b = resolveDisplayImageUrl('active-b', 'token', 900, { w: 3000, h: 2000 });
+  await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+  const controller = new AbortController();
+  const stale = resolveDisplayImageUrl(
+    'stale',
+    'token',
+    900,
+    { w: 3000, h: 2000 },
+    controller.signal,
+  );
+  const rejected = expect(stale).rejects.toMatchObject({ name: 'AbortError' });
+  await Promise.resolve();
+  controller.abort();
+  await rejected;
+  finishes.forEach((finish) => finish({ ok: false }));
+  await Promise.all([a, b]);
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+  fetchMock.mockResolvedValue({ ok: false });
+  await resolveDisplayImageUrl('stale', 'token', 900, { w: 3000, h: 2000 });
+  expect(fetchMock).toHaveBeenCalledTimes(3);
+});

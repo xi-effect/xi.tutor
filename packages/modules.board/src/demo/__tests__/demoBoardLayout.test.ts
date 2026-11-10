@@ -16,6 +16,7 @@ describe('раскладка демонстрационной доски', () =>
       demoBoardLayout.welcome,
       demoBoardLayout.elements,
       demoBoardLayout.workflow,
+      demoBoardLayout.pdf,
     ]) {
       expect(layoutOverflows(section.frame, section.children, 24)).toEqual([]);
       expect(layoutOverlaps(section.children, 32)).toEqual([]);

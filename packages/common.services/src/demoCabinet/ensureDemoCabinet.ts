@@ -18,7 +18,7 @@ import {
   readDemoCabinetProgress,
   writeDemoCabinetProgress,
 } from './progress';
-import { DEMO_CABINET_FLAG_KEY } from './template';
+import { DEMO_CABINET_FLAG_KEY, DEMO_CABINET_TEMPLATE_VERSION } from './template';
 import type {
   DemoCabinetPorts,
   DemoCabinetProgress,
@@ -89,11 +89,51 @@ const persist = (storage: DemoCabinetStorage, userId: number, progress: DemoCabi
   writeDemoCabinetProgress(storage, userId, progress);
 };
 
+const refreshDemoTemplate = async (
+  userId: number,
+  ports: ResolvedPorts,
+  progress: DemoCabinetProgress,
+): Promise<DemoCabinetProgress> => {
+  if (
+    progress.phase === 'removed' ||
+    !progress.classroomId ||
+    !progress.noteId ||
+    progress.templateVersion >= DEMO_CABINET_TEMPLATE_VERSION
+  ) {
+    return progress;
+  }
+
+  try {
+    if (progress.boardId) {
+      await ports.seedBoard({
+        classroomId: progress.classroomId,
+        boardId: progress.boardId,
+      });
+    }
+    await ports.seedNote({
+      classroomId: progress.classroomId,
+      noteId: progress.noteId,
+      boardId: progress.boardId,
+    });
+  } catch (error) {
+    console.error('Не удалось обновить демонстрационные материалы', error);
+    return progress;
+  }
+
+  const next = { ...progress, templateVersion: DEMO_CABINET_TEMPLATE_VERSION };
+  persist(ports.storage, userId, next);
+  return next;
+};
+
 const executeDemoCabinet = async (
   userId: number,
   ports: ResolvedPorts,
 ): Promise<DemoCabinetResult> => {
-  const stored = readDemoCabinetProgress(ports.storage, userId);
+  const stored = await refreshDemoTemplate(
+    userId,
+    ports,
+    readDemoCabinetProgress(ports.storage, userId) ?? emptyDemoCabinetProgress(),
+  );
   const initialized = await ports.readInitialized();
 
   if (initialized) {

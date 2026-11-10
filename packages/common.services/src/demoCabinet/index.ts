@@ -8,6 +8,8 @@ export {
   DEMO_CABINET_NAMES,
   DEMO_CABINET_NOTE_COPY,
   DEMO_CABINET_TEMPLATE_VERSION,
+  DEMO_SAMPLE_PDF,
+  isPublicAssetSrc,
   buildDemoNoteDocument,
 } from './template';
 export type { DemoNoteNode } from './template';

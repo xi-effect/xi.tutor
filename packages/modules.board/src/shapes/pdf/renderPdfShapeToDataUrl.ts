@@ -1,4 +1,5 @@
 import * as pdfjsLib from 'pdfjs-dist';
+import { isPublicAssetSrc } from 'common.services';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { pdfDocCache } from './pdfDocCache';
 
@@ -16,7 +17,8 @@ export async function renderPdfShapeToDataUrl(opts: {
   qualityScale?: number;
 }): Promise<string | null> {
   const { src, token, startPage, pagesVisible, width, height, qualityScale = 2 } = opts;
-  if (!src || !token || width <= 0 || height <= 0) return null;
+  if (!src || width <= 0 || height <= 0) return null;
+  if (!token && !isPublicAssetSrc(src)) return null;
 
   const blobUrl = await resolveAssetUrl(src, token);
   const pdfDoc = await pdfDocCache.get(blobUrl);

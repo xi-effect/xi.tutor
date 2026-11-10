@@ -39,8 +39,9 @@ const coverToolbarButtonClass =
 export function useActivityImageSrc(src?: string, cssWidth?: number) {
   const { token } = useActivitySession();
   const editor = useEditor();
-  const zoom = useValue('activity-image-zoom', () => editor.getZoomLevel(), [editor]);
-  const zoomStep = zoomStepCeil(zoom);
+  const zoomStep = useValue('activity-image-zoom-step', () => zoomStepCeil(editor.getZoomLevel()), [
+    editor,
+  ]);
   const layoutWidth = cssWidth === undefined ? 960 : cssWidth;
   const [url, setUrl] = useState<string | null>(null);
   useRetainedBlobUrl(url);
@@ -56,11 +57,12 @@ export function useActivityImageSrc(src?: string, cssWidth?: number) {
     }
 
     let cancelled = false;
+    const controller = new AbortController();
     const maxEdge = Math.max(
       1,
       Math.round(layoutWidth * zoomStep * (window.devicePixelRatio || 1)),
     );
-    resolveDisplayImageUrl(src, token, maxEdge)
+    resolveDisplayImageUrl(src, token, maxEdge, undefined, controller.signal)
       .then((next) => {
         if (!cancelled) setUrl(next);
       })
@@ -70,6 +72,7 @@ export function useActivityImageSrc(src?: string, cssWidth?: number) {
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [src, token, layoutWidth, zoomStep]);
 

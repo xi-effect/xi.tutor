@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DEMO_CABINET_NAMES, DEMO_CABINET_TEMPLATE_VERSION } from '../template';
+import { DEMO_CABINET_TEMPLATE_VERSION } from '../template';
 import { readCreatedId } from '../ids';
 import { demoCabinetStorageKey, writeDemoCabinetProgress } from '../progress';
 import { ensureDemoCabinet, resetDemoCabinetInflightForTests } from '../ensureDemoCabinet';
@@ -57,14 +57,19 @@ describe('демонстрационный кабинет', () => {
     const document = buildDemoNoteDocument('https://sovlium.ru/classrooms/1/boards/2');
     const serialized = JSON.stringify(document);
 
-    expect(serialized).toContain(DEMO_CABINET_NAMES.note);
+    expect(serialized).toContain('Знакомство с заметкой');
     expect(serialized).toContain('"type":"heading"');
     expect(serialized).toContain('"type":"bulletList"');
     expect(serialized).toContain('"type":"orderedList"');
     expect(serialized).toContain('"type":"taskList"');
     expect(serialized).toContain('"type":"blockquote"');
     expect(serialized).toContain('"type":"codeBlock"');
+    expect(serialized).toContain('"type":"activity"');
+    expect(serialized).toContain('"kind":"matching"');
+    expect(serialized).toContain('"kind":"multiple-choice"');
     expect(serialized).toContain('https://sovlium.ru/classrooms/1/boards/2');
+    expect(serialized).toContain('"type":"pdf"');
+    expect(serialized).toContain('/assets/test_recipes_2_pages.pdf');
     expect(serialized).not.toContain('lorem');
   });
 
@@ -220,6 +225,40 @@ describe('демонстрационный кабинет', () => {
     });
     expect(setup.createClassroom).not.toHaveBeenCalled();
     expect(setup.markInitialized).not.toHaveBeenCalled();
+  });
+
+  it('дописывает PDF в уже готовый кабинет прошлой версии', async () => {
+    const storage = memoryStorage();
+    storage.setItem(
+      demoCabinetStorageKey(12),
+      JSON.stringify({
+        templateVersion: DEMO_CABINET_TEMPLATE_VERSION - 1,
+        phase: 'ready',
+        classroomId: 'classroom-1',
+        boardId: 'board-1',
+        noteId: 'note-1',
+        boardSettled: true,
+        noteSettled: true,
+      }),
+    );
+    const setup = portsWith(storage, {
+      readInitialized: async () => true,
+    });
+
+    const result = await ensureDemoCabinet(12, setup.ports);
+
+    expect(result).toMatchObject({
+      status: 'ready',
+      classroomId: 'classroom-1',
+      boardId: 'board-1',
+      noteId: 'note-1',
+    });
+    expect(setup.seedBoard).toHaveBeenCalledTimes(1);
+    expect(setup.seedNote).toHaveBeenCalledTimes(1);
+    expect(setup.createClassroom).not.toHaveBeenCalled();
+    expect(storage.getItem(demoCabinetStorageKey(12))).toContain(
+      `"templateVersion":${DEMO_CABINET_TEMPLATE_VERSION}`,
+    );
   });
 
   it('не начинает создание, когда лимит кабинетов закрыт', async () => {

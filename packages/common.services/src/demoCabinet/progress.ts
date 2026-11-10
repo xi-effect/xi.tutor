@@ -36,7 +36,7 @@ export const readDemoCabinetProgress = (
     }
 
     return {
-      templateVersion: DEMO_CABINET_TEMPLATE_VERSION,
+      templateVersion: typeof parsed.templateVersion === 'number' ? parsed.templateVersion : 0,
       phase: parsed.phase,
       classroomId: readId(parsed.classroomId),
       boardId: readId(parsed.boardId),
