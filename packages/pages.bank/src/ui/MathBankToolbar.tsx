@@ -1,6 +1,6 @@
 import { Button } from '@xipkg/button';
 import { useTranslation } from 'react-i18next';
-import type { BankSubject, MathBankCatalogItem, MathBankExamIndexItem } from 'features.math.bank';
+import type { BankSubject, MathBankCatalogItem, MathBankExamIndexItem } from 'features.bank';
 import { hasActiveMathBankFilters } from '../utils/filters';
 import { EXAM_KINDS_BY_SUBJECT, TASK_TYPES_BY_SUBJECT, type MathBankFiltersT } from '../types';
 import { GradeFilter } from './GradeFilter';

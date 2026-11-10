@@ -42,6 +42,7 @@ import { createAssetTokenHolder, myAssetStore } from '../features/imageStore';
 import { boardStoreShapeUtils } from '../shapes/boardShapeUtils';
 import { commentCustomRecords } from '../comments/commentRecords';
 import { putCachedBoardDoc } from '../utils/boardDocCache';
+import { reportBoardProblem } from '../utils/boardProblem';
 import { hydrateBoardStoreFromYjs } from '../utils/hydrateBoardStoreFromYjs';
 import {
   deleteYjsRecordFully,
@@ -419,10 +420,14 @@ export function useYjsStore({
     };
 
     const reportAuthFailure = (reason: string) => {
+      const error = reportBoardProblem('yjs-auth', `Authentication failed: ${reason}`, {
+        ydocId,
+        reason,
+      });
       setStoreWithStatus({
         status: 'error',
         store,
-        error: new Error(`Authentication failed: ${reason}`),
+        error,
         connectionStatus: 'offline',
       });
     };
@@ -859,17 +864,39 @@ export function useYjsStore({
 
       /** 5) initial seed / migrate (один раз на комнату — повторный loadSnapshot сбрасывает выделение) */
       if (!sharedEntry.yjsDocumentHydrated) {
-        const result = hydrateBoardStoreFromYjs({
-          store,
-          yDoc,
-          yStore,
-          meta,
-          ydocId,
-          seedIfEmpty: true,
-        });
+        try {
+          const result = hydrateBoardStoreFromYjs({
+            store,
+            yDoc,
+            yStore,
+            meta,
+            ydocId,
+            seedIfEmpty: true,
+          });
 
-        if (result === 'migration-error') return;
-        sharedEntry.yjsDocumentHydrated = true;
+          if (result === 'migration-error') {
+            const problem = reportBoardProblem('yjs-hydrate', 'Schema migration failed', {
+              ydocId,
+            });
+            setStoreWithStatus({
+              status: 'error',
+              store,
+              error: problem,
+              connectionStatus: 'offline',
+            });
+            return;
+          }
+          sharedEntry.yjsDocumentHydrated = true;
+        } catch (error) {
+          const problem = reportBoardProblem('yjs-hydrate', error, { ydocId, source: 'sync' });
+          setStoreWithStatus({
+            status: 'error',
+            store,
+            error: problem,
+            connectionStatus: 'offline',
+          });
+          return;
+        }
       }
 
       setStoreWithStatus({
@@ -951,7 +978,8 @@ export function useYjsStore({
         if (result !== 'hydrated') return false;
         sharedEntry.yjsDocumentHydrated = true;
         return true;
-      } catch {
+      } catch (error) {
+        reportBoardProblem('yjs-hydrate', error, { ydocId, source: 'cache' });
         return false;
       }
     };

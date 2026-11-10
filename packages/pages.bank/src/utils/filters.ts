@@ -1,4 +1,4 @@
-import type { MathTaskSearch, SearchFilters } from 'features.math.bank';
+import type { MathTaskSearch, SearchFilters } from 'features.bank';
 import {
   DEFAULT_MATH_BANK_FILTERS,
   DIFFICULTY_GROUP_VALUES,

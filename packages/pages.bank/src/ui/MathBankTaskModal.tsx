@@ -32,7 +32,7 @@ import {
   type ExamKind,
   type MathGrade,
   type MathTaskSearchDocument,
-} from 'features.math.bank';
+} from 'features.bank';
 import { AnimatePresence, motion, type Transition } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -50,7 +50,9 @@ import { useMathBankUserStore } from '../store/useMathBankUserStore';
 import { toMathBankTaskSnapshot, toTaskReportContext } from '../utils/analytics';
 import { formatExamBadge, pickVisibleExamMappings } from '../utils/exam';
 import {
+  formatEnglishAnswerLines,
   formatRussianAnswerLines,
+  isEnglishTask,
   isMathTask,
   isPhysicsTask,
   isRussianTask,
@@ -152,12 +154,14 @@ export const MathBankTaskModal = ({
 
   const handleCopy = async () => {
     const statement = details ? getBankTaskStatement(details) : task?.statement;
-    if (!statement) {
+    const passage = details && isEnglishTask(details) ? details.passage : undefined;
+    const text = [passage, statement].filter(Boolean).join('\n\n');
+    if (!text) {
       return;
     }
 
     try {
-      await copyStatement(statement);
+      await copyStatement(text);
       toast.success(t('task.copied'));
       if (task) {
         trackMathTaskCopy(toMathBankTaskSnapshot(task), 'page');
@@ -375,11 +379,21 @@ const TaskDetails = ({
   const { t } = useTranslation('mathBank');
   const subject = details?.subject ?? preview.subject ?? 'mathematics';
   const statement = details ? getBankTaskStatement(details) : preview.statement;
-  const passage = details && isRussianTask(details) ? details.text : undefined;
-  const options = details && isRussianTask(details) ? details.options : undefined;
+  const passage =
+    details && isRussianTask(details)
+      ? details.text
+      : details && isEnglishTask(details)
+        ? details.passage
+        : undefined;
+  const options =
+    details && isRussianTask(details)
+      ? details.options
+      : details && isEnglishTask(details)
+        ? details.options?.map((option) => option.text)
+        : undefined;
   const examMappings = !details
     ? preview.examMappings
-    : isPhysicsTask(details)
+    : isPhysicsTask(details) || isEnglishTask(details)
       ? details.examMappings.map((mapping) => ({
           exam: mapping.exam === 'oge' ? ('OGE' as const) : ('EGE' as const),
           year: mapping.year,
@@ -390,9 +404,10 @@ const TaskDetails = ({
   const badges = pickVisibleExamMappings(examMappings);
   const showHints = !details || details.hints.length > 0;
   const isRubric =
-    details &&
-    isRussianTask(details) &&
-    (details.taskType === 'open_rubric' || details.answer.kind === 'rubric');
+    (details &&
+      isRussianTask(details) &&
+      (details.taskType === 'open_rubric' || details.answer.kind === 'rubric')) ||
+    (details && isEnglishTask(details) && details.taskType === 'writing');
 
   return (
     <div className="flex flex-col gap-4">
@@ -403,7 +418,7 @@ const TaskDetails = ({
       <p className="text-m-base text-text-primary leading-6 whitespace-pre-wrap">
         <BankStatement text={statement} subject={subject} />
       </p>
-      {details && isPhysicsTask(details) && details.instruction ? (
+      {details && (isPhysicsTask(details) || isEnglishTask(details)) && details.instruction ? (
         <p className="text-s-base text-text-secondary leading-5">{details.instruction}</p>
       ) : null}
       {details && isPhysicsTask(details) && details.figure ? (
@@ -457,6 +472,25 @@ const TaskDetails = ({
             </p>
           ) : details && isPhysicsTask(details) ? (
             <p className="text-m-base text-text-primary">{formatPhysicsAnswer(details.answer)}</p>
+          ) : details && isEnglishTask(details) ? (
+            <div className="flex flex-col gap-2">
+              {isRubric && details.rubric ? (
+                <>
+                  <p className="text-s-base text-text-secondary">{t('task.rubricHint')}</p>
+                  <p className="text-s-base text-text-secondary">
+                    {t('task.wordRange', {
+                      min: details.rubric.wordRange[0],
+                      max: details.rubric.wordRange[1],
+                    })}
+                  </p>
+                </>
+              ) : null}
+              {formatEnglishAnswerLines(details).map((line) => (
+                <p key={line} className="text-m-base text-text-primary whitespace-pre-wrap">
+                  {line}
+                </p>
+              ))}
+            </div>
           ) : details && isRussianTask(details) ? (
             <div className="flex flex-col gap-2">
               {isRubric ? (
@@ -497,6 +531,21 @@ const TaskDetails = ({
                 </li>
               ))}
             </ol>
+          ) : details && isEnglishTask(details) ? (
+            <div className="flex flex-col gap-2.5">
+              <ol className="text-s-base text-text-primary flex list-decimal flex-col gap-2.5 pl-5">
+                {details.solution.map((step, index) => (
+                  <li key={`${index}-${step}`} className="pl-1">
+                    <BankStatement text={step} subject="english" />
+                  </li>
+                ))}
+              </ol>
+              {details.evidence ? (
+                <p className="text-s-base text-text-secondary whitespace-pre-wrap">
+                  {details.evidence}
+                </p>
+              ) : null}
+            </div>
           ) : details && isRussianTask(details) ? (
             <p className="text-s-base text-text-primary leading-5 whitespace-pre-wrap">
               {details.explanation}

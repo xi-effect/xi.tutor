@@ -7,6 +7,7 @@ import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps, type DrUiOverrides } from '@ibodr/draw';
 import { useSearch } from '@tanstack/react-router';
+import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { cloneDroppedFile, useRetryFileQueue } from 'common.services';
 import { usePlanLimits } from 'common.subscription';
@@ -59,6 +60,7 @@ import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
+import { registerEmbedGuard } from '../../../shapes/embed/embedProviders';
 
 /** Ctrl/Cmd+Y в шорткатах редактора нет, а Ctrl/Cmd+Shift+Z есть. Добавляем Y в тот же action, чтобы жест откатывался один раз. */
 const boardUiOverrides: DrUiOverrides = {
@@ -419,6 +421,13 @@ export const DrawCanvas = ({
   }, [editor, status]);
 
   if (status === 'loading') return <LoadingScreen />;
+  if (status === 'error') {
+    return (
+      <div className="text-text-secondary flex h-full w-full items-center justify-center p-6 text-center text-sm">
+        {i18n.t('problem.board', { ns: 'board' })}
+      </div>
+    );
+  }
 
   return (
     <BoardChromeProvider toolbarVisible={!isReadonly}>
@@ -486,6 +495,7 @@ export const DrawCanvas = ({
                 });
 
                 registerBoardAssetHygiene(editor);
+                registerEmbedGuard(editor);
 
                 editor.registerExternalContentHandler('files', async ({ files }) => {
                   const dropped = files.map(cloneDroppedFile);

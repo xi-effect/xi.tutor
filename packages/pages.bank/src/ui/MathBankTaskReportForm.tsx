@@ -9,7 +9,7 @@ import {
   trackTaskReportFailed,
   trackTaskReportSubmitted,
 } from 'common.utils';
-import type { BankSubject, MathTaskSearchDocument } from 'features.math.bank';
+import type { BankSubject, MathTaskSearchDocument } from 'features.bank';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { toTaskReportContext } from '../utils/analytics';

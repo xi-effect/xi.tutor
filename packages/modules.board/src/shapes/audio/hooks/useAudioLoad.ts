@@ -4,6 +4,7 @@ import { resolveAssetUrl } from '../../../utils/resolveAssetUrl';
 import { useRetainedBlobUrl } from '../../../utils/useRetainedBlobUrl';
 import { audioWaveformCache } from '../audioWaveformCache';
 import type { AudioShape } from '../AudioShape';
+import { reportBoardProblem } from '../../../utils/boardProblem';
 import i18n from 'i18next';
 
 export type AudioLoadStatus = 'idle' | 'loading' | 'ready' | 'error';
@@ -35,7 +36,7 @@ export function useAudioLoad(shape: AudioShape, shouldLoad: boolean) {
 
         setStatus('ready');
       } catch (err) {
-        console.error('[AudioPlayer] Load failed:', err);
+        reportBoardProblem('audio-load', err, { shapeId: shape.id });
         if (!cancelled) {
           setError(i18n.t('audio.loadError', { ns: 'board' }));
           setStatus('error');

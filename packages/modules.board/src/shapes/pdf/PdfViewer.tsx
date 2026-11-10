@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useEditor, useValue } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
-import * as pdfjsLib from 'pdfjs-dist';
-import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
+import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { useYjsContext } from '../../providers/YjsContext';
 import { resolveAssetUrl, retainBlobUrl } from '../../utils/resolveAssetUrl';
 import { insertImage } from '../../features/pickAndInsertImage';
@@ -13,7 +12,7 @@ import {
   type OcrLanguage,
 } from '../../ocr';
 import { pdfDocCache } from './pdfDocCache';
-import { fitPdfPagePixels, renderPdfSliceToPngBlob, startPdfPagePaint } from './fitPdfPage';
+import { renderPdfSliceToPngBlob } from './fitPdfPage';
 import { zoomStepCeil } from '../../utils/rasterBudget';
 import { PdfPageControls } from './PdfPageControls';
 import type { PdfShape } from './PdfShape';
@@ -21,9 +20,9 @@ import { PDF_PAGES_VISIBLE_MAX, PDF_PAGES_VISIBLE_MIN } from './PdfShape';
 import { RecognizePrintedTextControl } from '../../ui/components/toolbar/RecognizeTextMenu';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
+import { reportBoardProblem } from '../../utils/boardProblem';
 
-// Используем CDN для worker файла, чтобы избежать проблем с бандлингом в продакшене
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+import { PdfPageImage } from './PdfPageImage';
 
 type PdfViewerProps = {
   shape: PdfShape;
@@ -38,11 +37,6 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const userId = user?.id?.toString() ?? '';
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
-  const renderTasksRef = useRef<(RenderTask | null)[]>([]);
-  const loadKeyRef = useRef<string | null>(null);
-  const hasRenderedOnceRef = useRef(false);
-  const docGenerationRef = useRef(0);
 
   const [localPage, setLocalPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
@@ -75,15 +69,20 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   }, []);
 
   const { src, totalPages, currentPage: tutorPage, studentCanFlip } = shape.props;
-  const zoom = useValue('pdf-zoom', () => editor.getZoomLevel(), [editor]);
-  const zoomStep = zoomStepCeil(zoom);
+  const zoomStep = useValue('pdf-zoom-step', () => zoomStepCeil(editor.getZoomLevel()), [editor]);
   const pagesVisible = Math.min(
     PDF_PAGES_VISIBLE_MAX,
     Math.max(PDF_PAGES_VISIBLE_MIN, shape.props.pagesVisible ?? 1),
   );
 
-  const canFlip = isTutor || studentCanFlip;
   const displayPage = !isTutor && !studentCanFlip ? tutorPage : localPage;
+  const readyPages = useRef(new Set<number>());
+  useEffect(() => {
+    readyPages.current.clear();
+    setLoading(true);
+  }, [src, displayPage, pagesVisible]);
+
+  const canFlip = isTutor || studentCanFlip;
 
   useEffect(() => {
     if (!pdfPagesMap || !userId || !shape.id) return;
@@ -111,6 +110,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     return () => pdfPagesMap.unobserve(handler);
   }, [pdfPagesMap, userId, shape.id, totalPages, localPage]);
 
+  const [sourceUrl, setSourceUrl] = useState<string | null>(null);
   const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
 
   useEffect(() => {
@@ -119,6 +119,8 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       return;
     }
 
+    setError(null);
+    setLoading(true);
     let cancelled = false;
     let heldUrl: string | null = null;
     let releaseBlob: (() => void) | null = null;
@@ -135,17 +137,20 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       try {
         const blobUrl = await resolveAssetUrl(src, token);
         if (cancelled) return;
+        releaseBlob = retainBlobUrl(blobUrl);
         const doc = await pdfDocCache.get(blobUrl);
         if (cancelled) {
           pdfDocCache.release(blobUrl);
+          releaseBlob?.();
           return;
         }
         heldUrl = blobUrl;
-        releaseBlob = retainBlobUrl(blobUrl);
+        setSourceUrl(blobUrl);
         setPdfDoc(doc);
       } catch (err) {
+        releaseBlob?.();
         if (cancelled) return;
-        console.error('[PdfViewer] load error:', err);
+        reportBoardProblem('pdf-load', err, { shapeId: shape.id });
         setError(i18n.t('pdf.renderError', { ns: 'board' }));
         setLoading(false);
       }
@@ -155,107 +160,11 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
     return () => {
       cancelled = true;
-      docGenerationRef.current += 1;
+      setSourceUrl(null);
       releaseHeld();
       setPdfDoc(null);
     };
-  }, [src, token]);
-
-  useEffect(() => {
-    if (!src || !pdfDoc) return;
-
-    const loadKey = `${src}-${displayPage}-${pagesVisible}-${containerSize.w}-${containerSize.h}-${zoomStep}`;
-    const isNewDocumentView =
-      loadKeyRef.current === null ||
-      !loadKeyRef.current.startsWith(`${src}-${displayPage}-${pagesVisible}-`);
-    if (loadKeyRef.current !== loadKey) {
-      loadKeyRef.current = loadKey;
-      if (isNewDocumentView) {
-        hasRenderedOnceRef.current = false;
-      }
-    }
-
-    let cancelled = false;
-    const generation = docGenerationRef.current;
-    const paints: Array<{ discard: () => void } | null> = [];
-
-    const render = async () => {
-      try {
-        if (!hasRenderedOnceRef.current) setLoading(true);
-
-        const displayW = containerSize.w;
-        const displayHTotal = containerSize.h;
-        if (displayW <= 0 || displayHTotal <= 0) return;
-
-        const cellH = displayHTotal / pagesVisible;
-        const dpr = window.devicePixelRatio || 1;
-        let anyRendered = false;
-
-        for (let i = 0; i < renderTasksRef.current.length; i++) {
-          const task = renderTasksRef.current[i];
-          if (task) task.cancel();
-        }
-        renderTasksRef.current = [];
-
-        for (let i = 0; i < pagesVisible; i++) {
-          const pageNum = displayPage + i;
-          if (pageNum > pdfDoc.numPages) break;
-
-          const canvas = canvasRefs.current[i];
-          if (!canvas) continue;
-
-          const page = await pdfDoc.getPage(pageNum);
-          if (cancelled || docGenerationRef.current !== generation) return;
-
-          const vp1 = page.getViewport({ scale: 1 });
-          const fitted = fitPdfPagePixels(vp1.width, vp1.height, displayW, cellH, zoomStep, dpr);
-          const paint = startPdfPagePaint(page, canvas, fitted);
-          if (!paint) continue;
-          paints[i] = paint;
-          renderTasksRef.current[i] = paint.task;
-
-          await paint.task.promise;
-          if (cancelled || docGenerationRef.current !== generation) return;
-          paint.commit();
-          page.cleanup();
-          anyRendered = true;
-        }
-
-        if (!cancelled && anyRendered) {
-          hasRenderedOnceRef.current = true;
-          setLoading(false);
-        }
-      } catch (err) {
-        if (cancelled) return;
-        if ((err as { name?: string })?.name === 'RenderingCancelledException') return;
-        console.error('[PdfViewer] render error:', err);
-        setError(i18n.t('pdf.renderError', { ns: 'board' }));
-        setLoading(false);
-      }
-    };
-
-    void render();
-
-    return () => {
-      cancelled = true;
-      renderTasksRef.current.forEach((task) => {
-        if (task) task.cancel();
-      });
-      renderTasksRef.current = [];
-      paints.forEach((paint) => paint?.discard());
-    };
-  }, [src, pdfDoc, displayPage, pagesVisible, containerSize.w, containerSize.h, zoomStep]);
-
-  useEffect(() => {
-    const canvases = canvasRefs.current;
-    return () => {
-      canvases.forEach((canvas) => {
-        if (!canvas) return;
-        canvas.width = 0;
-        canvas.height = 0;
-      });
-    };
-  }, []);
+  }, [src, token, shape.id]);
 
   const renderSharpSlice = useCallback(
     async (pageCount: number) => {
@@ -266,19 +175,20 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
       const blobUrl = await resolveAssetUrl(src, token);
       const releaseBlob = retainBlobUrl(blobUrl);
-      const pdfDoc = await pdfDocCache.get(blobUrl);
+      let pdfDoc: PDFDocumentProxy | null = null;
       try {
+        pdfDoc = await pdfDocCache.get(blobUrl);
         return await renderPdfSliceToPngBlob({
           pdfDoc,
           startPage: displayPage,
           pageCount,
           cellWidth: cellW,
           cellHeight: cellH,
-          zoom: Math.max(zoom, 1),
+          zoom: Math.max(editor.getZoomLevel(), 1),
           dpr: window.devicePixelRatio || 1,
         });
       } finally {
-        pdfDocCache.release(blobUrl);
+        if (pdfDoc) pdfDocCache.release(blobUrl);
         releaseBlob();
       }
     },
@@ -291,7 +201,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       shape.props.w,
       src,
       token,
-      zoom,
+      editor,
     ],
   );
 
@@ -426,16 +336,31 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
           const inRange = pageNum <= totalPages;
           return (
             <div
-              key={i}
+              key={`${src}:${displayPage}:${pagesVisible}:${pageNum}`}
               className="flex min-h-0 flex-1 items-center justify-center"
               style={{ opacity: loading ? 0.3 : 1 }}
             >
-              {inRange ? (
-                <canvas
-                  ref={(el) => {
-                    canvasRefs.current[i] = el;
+              {inRange && sourceUrl && pdfDoc ? (
+                <PdfPageImage
+                  source={sourceUrl}
+                  page={pageNum}
+                  width={containerSize.w}
+                  height={containerSize.h / pagesVisible}
+                  zoom={zoomStep}
+                  dpr={window.devicePixelRatio || 1}
+                  onReady={() => {
+                    readyPages.current.add(pageNum);
+                    if (
+                      readyPages.current.size >=
+                      Math.min(pagesVisible, totalPages - displayPage + 1)
+                    )
+                      setLoading(false);
                   }}
-                  className="block max-h-full max-w-full transition-opacity duration-200"
+                  onError={(err) => {
+                    reportBoardProblem('pdf-render', err, { shapeId: shape.id });
+                    setError(i18n.t('pdf.renderError', { ns: 'board' }));
+                    setLoading(false);
+                  }}
                 />
               ) : null}
             </div>

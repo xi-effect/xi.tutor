@@ -1,6 +1,6 @@
 import { Task } from '@xipkg/icons';
 import { cardTypeIconBoxClass } from 'common.ui';
-import type { MathTaskSearchDocument } from 'features.math.bank';
+import type { MathTaskSearchDocument } from 'features.bank';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 import { BankStatement } from './BankStatement';

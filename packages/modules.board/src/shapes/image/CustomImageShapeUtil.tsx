@@ -21,6 +21,11 @@ import {
 import { isDisplayableAssetUrl } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { useRetainedBlobUrl } from '../../utils/useRetainedBlobUrl';
+import { useImageBudget } from '../../utils/useImageBudget';
+import { imageCrashGuard } from '../../utils/imageCrashGuard';
+import { useIsCrashSuspect, useTrackImageActive } from '../../utils/useImageCrashGuard';
+import { estimateImageDisplayPixels } from '../../utils/imageBudget';
+import { staticImagePixels } from '../../utils/displayImage';
 import { useOcrProcessingStore } from '../../ocr';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
@@ -244,8 +249,112 @@ function ImageOcrOverlay({ shapeId }: { shapeId: DrImageShape['id'] }) {
   );
 }
 
+function ImageHeavyPlaceholder({
+  shape,
+  crashed = false,
+}: {
+  shape: DrImageShape;
+  /** Прошлая сессия умерла, пока эта картинка была на экране. */
+  crashed?: boolean;
+}) {
+  const containerStyle = getCroppedContainerStyle(shape);
+  return (
+    <HTMLContainer
+      id={shape.id}
+      style={{
+        overflow: 'hidden',
+        width: shape.props.w,
+        height: shape.props.h,
+      }}
+    >
+      <div
+        className="border-border-default bg-background-subtle flex size-full items-center justify-center rounded border border-dashed"
+        style={containerStyle}
+      >
+        <div className="text-text-secondary pointer-events-none flex max-w-[80%] flex-col items-center gap-1.5 text-center">
+          {crashed ? <BrokenImageIcon /> : <ImagePlaceholderIcon />}
+          <span className="text-[11px] select-none">
+            {i18n.t(crashed ? 'file.crashedImage' : 'file.heavyImage', { ns: 'board' })}
+          </span>
+        </div>
+      </div>
+    </HTMLContainer>
+  );
+}
+
+/**
+ * На iPhone/iPad картинки делят общий бюджет декодированных пикселей. Доска, открытая
+ * с зумом «вписать всё», иначе декодирует все файлы разом и вкладка падает без ошибки.
+ * Картинка сверх бюджета остаётся плейсхолдером: выделение или приближение (когда
+ * остальные уходят за экран и освобождают место) загружают её. Пока решения нет,
+ * файл не запрашивается.
+ */
 const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrImageShape }) {
   const editor = useEditor();
+  const { w } = getUncroppedSize(shape.props, shape.props.crop);
+
+  const cost = useValue(
+    'image budget cost',
+    () => {
+      const asset = shape.props.assetId ? editor.getAsset(shape.props.assetId) : undefined;
+      if (!asset || asset.type !== 'image' || !asset.props.w || !asset.props.h) return 0;
+      // Тот же шаг зума, что у резолвера картинок: значение меняется только на границе шага.
+      const screenScale = editor.getEfficientZoomLevel() * (w / asset.props.w);
+      const steppedScreenScale = screenScale > 0 ? 2 ** Math.ceil(Math.log2(screenScale)) : 1;
+      return estimateImageDisplayPixels({
+        assetWidth: asset.props.w,
+        assetHeight: asset.props.h,
+        steppedScreenScale,
+        dpr: window.devicePixelRatio || 1,
+        resizable: staticImagePixels(asset) !== null,
+      });
+    },
+    [editor, shape.props.assetId, w],
+  );
+  const isSelected = useValue(
+    'image is selected',
+    () => editor.getSelectedShapeIds().includes(shape.id),
+    [editor, shape.id],
+  );
+
+  // Картинка была на экране, когда прошлая сессия умерла: не грузим её, пока
+  // пользователь сам не выделит. Бюджет она при этом не занимает.
+  const isSuspect = useIsCrashSuspect(shape.props.assetId);
+  const blockedByCrash = isSuspect && !isSelected;
+
+  useEffect(() => {
+    if (isSuspect && isSelected) imageCrashGuard.clearSuspect(shape.props.assetId ?? '');
+  }, [isSuspect, isSelected, shape.props.assetId]);
+
+  const status = useImageBudget(shape.id, blockedByCrash ? 0 : cost, isSelected);
+
+  if (blockedByCrash) return <ImageHeavyPlaceholder shape={shape} crashed />;
+  if (status === 'denied') return <ImageHeavyPlaceholder shape={shape} />;
+  if (status === 'none') return <ImageBudgetPending shape={shape} />;
+  return <CustomImageShapeContent shape={shape} />;
+});
+
+function ImageBudgetPending({ shape }: { shape: DrImageShape }) {
+  return (
+    <HTMLContainer
+      id={shape.id}
+      style={{ overflow: 'hidden', width: shape.props.w, height: shape.props.h }}
+    >
+      <div
+        className="bg-background-subtle size-full animate-pulse rounded"
+        style={getCroppedContainerStyle(shape)}
+      />
+    </HTMLContainer>
+  );
+}
+
+const CustomImageShapeContent = memo(function CustomImageShapeContent({
+  shape,
+}: {
+  shape: DrImageShape;
+}) {
+  const editor = useEditor();
+  useTrackImageActive(shape.props.assetId);
 
   const { w } = getUncroppedSize(shape.props, shape.props.crop);
   const { asset, url } = useImageOrVideoAsset({
@@ -345,6 +454,8 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   const crossOrigin = isAnimated ? ('anonymous' as const) : undefined;
 
   useRetainedBlobUrl(resolvedUrl);
+  // Пока новая копия догружается, на экране ещё старая: её blob отзывать нельзя.
+  useRetainedBlobUrl(loadedUrl);
 
   const handleLoad = useCallback((src: string) => {
     setLoadedUrl(src);

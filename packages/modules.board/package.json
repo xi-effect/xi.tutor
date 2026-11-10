@@ -9,7 +9,8 @@
     "./collab-session": "./src/demo/collabSession.ts",
     "./locales": "./src/locales/index.ts",
     "./preferences": "./src/store/useBoardPreferencesStore.ts",
-    "./activities": "./src/activities/document.ts"
+    "./activities": "./src/activities/document.ts",
+    "./problems": "./src/utils/boardProblem.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -22,8 +23,8 @@
   "dependencies": {
     "@hocuspocus/provider": "4.7.0",
     "@hookform/resolvers": "^5.2.2",
-    "@ibodr/draw": "^0.2.17",
-    "@ibodr/schema": "^0.2.17",
+    "@ibodr/draw": "^0.2.19",
+    "@ibodr/schema": "^0.2.19",
     "@paddleocr/paddleocr-js": "^0.4.2",
     "@radix-ui/react-context-menu": "^2.2.6",
     "@radix-ui/react-popover": "^1.1.6",
@@ -66,7 +67,7 @@
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
     "features.math": "workspace:*",
-    "features.math.bank": "workspace:*",
+    "features.bank": "workspace:*",
     "features.materials.card": "workspace:*",
     "features.materials.edit": "workspace:*",
     "file-type": "^19.0.0",

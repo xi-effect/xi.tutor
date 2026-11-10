@@ -9,7 +9,7 @@ import {
   type MathBankAnalyticsSource,
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
-import type { BankSubject, MathTaskSearchDocument } from 'features.math.bank';
+import type { BankSubject, MathTaskSearchDocument } from 'features.bank';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useMathBankIndex } from '../hooks/useMathBankIndex';
 import { useMathBankSurfaceAnalytics } from '../hooks/useMathBankSurfaceAnalytics';

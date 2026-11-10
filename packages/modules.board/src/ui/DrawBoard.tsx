@@ -1,5 +1,6 @@
 import { YjsProvider } from '../providers/YjsProvider';
 import { DrawCanvas } from './components';
+import { BoardProblemBoundary } from './BoardProblemBoundary';
 import { useParams, useSearch } from '@tanstack/react-router';
 import {
   useCurrentUser,
@@ -21,7 +22,13 @@ const localYdocDumpUrl = import.meta.env.VITE_BOARD_LOCAL_YDOC_URL as string | u
 const localYdocDumpMode = import.meta.env.DEV && Boolean(localYdocDumpUrl);
 const localYdocStorageToken = import.meta.env.VITE_BOARD_LOCAL_STORAGE_TOKEN as string | undefined;
 
-export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
+export const DrawBoard = (props: DrawBoardProps) => (
+  <BoardProblemBoundary area="board-render">
+    <DrawBoardContent {...props} />
+  </BoardProblemBoundary>
+);
+
+const DrawBoardContent = ({ isDemo = false }: DrawBoardProps) => {
   const { classroomId, boardId, materialId } = useParams({ strict: false });
   const search = useSearch({ strict: false }) as { demo?: string | number };
   const isOfflineDemo = isDemo || (import.meta.env.DEV && String(search.demo) === '1');

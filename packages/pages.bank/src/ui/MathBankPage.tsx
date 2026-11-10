@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { NotFoundPage } from 'common.ui';
 import { useCurrentUser } from 'common.services';
-import type { BankSubject } from 'features.math.bank';
+import type { BankSubject } from 'features.bank';
 import { DEFAULT_MATH_BANK_FILTERS, type MathBankFiltersT } from '../types';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useMathBankIndex } from '../hooks/useMathBankIndex';
