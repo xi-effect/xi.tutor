@@ -94,6 +94,14 @@ export const boardImageBudget: ImageBudget = createImageBudget(
 );
 
 /**
+ * Файл настолько велик, что на слабом устройстве его оригинал нельзя декодировать
+ * ни целиком, ни ради уменьшенной копии: показываем только по явному выбору пользователя.
+ */
+export function isOversizedForDevice(width: number, height: number): boolean {
+  return isMemoryConstrainedDevice() && width * height > maxDecodePixels();
+}
+
+/**
  * Во сколько пикселей декодированной памяти обойдётся картинка на экране.
  * Если файл уменьшается под зум (пайплайн `resolveDisplayImageUrl`), считаем уменьшенный растр.
  * Огромные файлы, GIF и SVG показываются оригиналом, их считаем целиком.

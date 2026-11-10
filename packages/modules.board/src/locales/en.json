@@ -399,7 +399,8 @@
     "loading": "Loading...",
     "loadFailed": "Failed to load",
     "heavyImage": "Image hidden to keep the device responsive. Select it or zoom in",
-    "crashedImage": "Couldn't display: the tab crashed last time. Tap to try again"
+    "crashedImage": "Couldn't display: the tab crashed last time. Tap to try again",
+    "oversizedImage": "Image is too large for this device. Tap to open"
   },
   "embed": {
     "tool": "Embed from website",
