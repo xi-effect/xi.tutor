@@ -102,6 +102,7 @@ export {
   cardMenuSubTriggerClass,
   cardMenuSurfaceClass,
 } from './src/cardMenuClass';
+export { CardTooltipContent } from './src/CardTooltipContent';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
 export { useSupportModalStore } from './src/store/useSupportModalStore';
 export {

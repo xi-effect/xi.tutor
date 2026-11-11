@@ -1,4 +1,4 @@
-import type { MathTaskSearchDocument } from 'features.math.bank';
+import type { MathTaskSearchDocument } from 'features.bank';
 import { MathBankPicker } from 'pages.bank/picker';
 import { useTranslation } from 'react-i18next';
 import { boardChromeZClass, boardDropdownZClass } from '../../boardTheme';

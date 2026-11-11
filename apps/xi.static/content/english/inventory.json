@@ -1,0 +1,32 @@
+{
+  "total": 30000,
+  "changedRecords": 29000,
+  "independentlyAuthoredReplacements": 84,
+  "topics": {
+    "grammar": 22970,
+    "vocabulary": 25,
+    "word-formation": 2005,
+    "reading": 4000,
+    "writing": 1000
+  },
+  "grades": {
+    "5": 4048,
+    "6": 5109,
+    "7": 7901,
+    "8": 4131,
+    "9": 5410,
+    "10": 2201,
+    "11": 1200
+  },
+  "taskTypes": {
+    "gap": 18440,
+    "choice": 560,
+    "transformation": 4500,
+    "error-correction": 1500,
+    "reading": 4000,
+    "writing": 1000
+  },
+  "readingBaseNarratives": 44,
+  "fullEditorialReview": false,
+  "status": "editorial-draft"
+}

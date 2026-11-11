@@ -1,0 +1,10 @@
+{
+  "revision": 2,
+  "baselineSha256": "e7d31c941764863d655614f0dfac893d0f795f79a11ada900547cea999265078",
+  "count": 30000,
+  "changedRecords": 29000,
+  "newlyAuthored": 84,
+  "remainingOriginalRecords": 29916,
+  "publicationStatus": "editorial-draft",
+  "reason": "Unpublished baseline; rewrite authorised by user. This is a whole-bank repair, not completion of the planned content rewrite."
+}

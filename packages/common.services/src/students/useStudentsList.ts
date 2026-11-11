@@ -1,25 +1,35 @@
 import { studentsApiConfig, StudentsQueryKey } from 'common.api';
-import { useFetching } from 'common.config';
+import { getAxiosInstance } from 'common.config';
+import type { TutorStudentSchemaMarshal } from 'common.types';
+import { useQuery } from '@tanstack/react-query';
+import { collectTutorStudentPages, STUDENTS_LIST_PAGE_LIMIT } from './studentProfileLookup';
 
-export const useStudentsList = (options?: { disabled?: boolean }) => {
+const fetchAllTutorStudents = async (signal?: AbortSignal) => {
+  const axiosInstance = await getAxiosInstance();
   const { method, getUrl } = studentsApiConfig[StudentsQueryKey.AllStudents];
 
-  const { data, isError, isLoading, ...rest } = useFetching({
-    apiConfig: {
+  return collectTutorStudentPages(async (cursor) => {
+    const response = await axiosInstance.request<TutorStudentSchemaMarshal[]>({
       method,
-      getUrl,
+      url: getUrl(),
+      signal,
       headers: {
         'Content-Type': 'application/json',
       },
-    },
-    queryKey: [StudentsQueryKey.AllStudents],
-    disabled: options?.disabled,
-  });
+      params: {
+        limit: STUDENTS_LIST_PAGE_LIMIT,
+        ...(cursor ? { created_before: cursor } : {}),
+      },
+    });
 
-  return {
-    data,
-    isError,
-    isLoading,
-    ...rest,
-  };
+    return response.data;
+  });
+};
+
+export const useStudentsList = (options?: { disabled?: boolean }) => {
+  return useQuery({
+    queryKey: [StudentsQueryKey.AllStudents],
+    enabled: !options?.disabled,
+    queryFn: ({ signal }) => fetchAllTutorStudents(signal),
+  });
 };

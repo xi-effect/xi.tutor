@@ -20,6 +20,12 @@ import {
 } from '../../utils/shapeSvgExport';
 import { isDisplayableAssetUrl } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { useRetainedBlobUrl } from '../../utils/useRetainedBlobUrl';
+import { useImageBudget } from '../../utils/useImageBudget';
+import { imageCrashGuard } from '../../utils/imageCrashGuard';
+import { useIsCrashSuspect, useTrackImageActive } from '../../utils/useImageCrashGuard';
+import { estimateImageDisplayPixels, isOversizedForDevice } from '../../utils/imageBudget';
+import { staticImagePixels } from '../../utils/displayImage';
 import { useOcrProcessingStore } from '../../ocr';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
@@ -243,8 +249,141 @@ function ImageOcrOverlay({ shapeId }: { shapeId: DrImageShape['id'] }) {
   );
 }
 
+function ImageHeavyPlaceholder({
+  shape,
+  reason = 'budget',
+}: {
+  shape: DrImageShape;
+  /**
+   * `crashed` — прошлая сессия умерла, пока картинка была на экране;
+   * `oversized` — файл слишком велик для устройства; `budget` — не хватило общего бюджета.
+   */
+  reason?: 'budget' | 'oversized' | 'crashed';
+}) {
+  const containerStyle = getCroppedContainerStyle(shape);
+  return (
+    <HTMLContainer
+      id={shape.id}
+      style={{
+        overflow: 'hidden',
+        width: shape.props.w,
+        height: shape.props.h,
+      }}
+    >
+      <div
+        className="border-border-default bg-background-subtle flex size-full items-center justify-center rounded border border-dashed"
+        style={containerStyle}
+      >
+        <div className="text-text-secondary pointer-events-none flex max-w-[80%] flex-col items-center gap-1.5 text-center">
+          {reason === 'crashed' ? <BrokenImageIcon /> : <ImagePlaceholderIcon />}
+          <span className="text-[11px] select-none">
+            {i18n.t(
+              reason === 'crashed'
+                ? 'file.crashedImage'
+                : reason === 'oversized'
+                  ? 'file.oversizedImage'
+                  : 'file.heavyImage',
+              { ns: 'board' },
+            )}
+          </span>
+        </div>
+      </div>
+    </HTMLContainer>
+  );
+}
+
+/**
+ * На iPhone/iPad картинки делят общий бюджет декодированных пикселей. Доска, открытая
+ * с зумом «вписать всё», иначе декодирует все файлы разом и вкладка падает без ошибки.
+ * Картинка сверх бюджета остаётся плейсхолдером: выделение или приближение (когда
+ * остальные уходят за экран и освобождают место) загружают её. Пока решения нет,
+ * файл не запрашивается.
+ */
 const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrImageShape }) {
   const editor = useEditor();
+  const { w } = getUncroppedSize(shape.props, shape.props.crop);
+
+  const cost = useValue(
+    'image budget cost',
+    () => {
+      const asset = shape.props.assetId ? editor.getAsset(shape.props.assetId) : undefined;
+      if (!asset || asset.type !== 'image' || !asset.props.w || !asset.props.h) return 0;
+      // Тот же шаг зума, что у резолвера картинок: значение меняется только на границе шага.
+      const screenScale = editor.getEfficientZoomLevel() * (w / asset.props.w);
+      const steppedScreenScale = screenScale > 0 ? 2 ** Math.ceil(Math.log2(screenScale)) : 1;
+      return estimateImageDisplayPixels({
+        assetWidth: asset.props.w,
+        assetHeight: asset.props.h,
+        steppedScreenScale,
+        dpr: window.devicePixelRatio || 1,
+        resizable: staticImagePixels(asset) !== null,
+      });
+    },
+    [editor, shape.props.assetId, w],
+  );
+  const isOversized = useValue(
+    'image is oversized',
+    () => {
+      const asset = shape.props.assetId ? editor.getAsset(shape.props.assetId) : undefined;
+      if (!asset || asset.type !== 'image') return false;
+      return isOversizedForDevice(asset.props.w, asset.props.h);
+    },
+    [editor, shape.props.assetId],
+  );
+  // «Выделить всё» не должно обходить лимиты и грузить все картинки разом.
+  const isSelected = useValue(
+    'image is selected',
+    () => {
+      const selected = editor.getSelectedShapeIds();
+      return selected.length <= 3 && selected.includes(shape.id);
+    },
+    [editor, shape.id],
+  );
+
+  // Картинка была на экране, когда прошлая сессия умерла: не грузим её, пока
+  // пользователь сам не выделит. Бюджет она при этом не занимает.
+  const isSuspect = useIsCrashSuspect(shape.props.assetId);
+  const blockedByCrash = isSuspect && !isSelected;
+  const blockedByOversize = isOversized && !isSelected;
+
+  useEffect(() => {
+    if (isSuspect && isSelected) imageCrashGuard.clearSuspect(shape.props.assetId ?? '');
+  }, [isSuspect, isSelected, shape.props.assetId]);
+
+  const status = useImageBudget(
+    shape.id,
+    blockedByCrash || blockedByOversize ? 0 : cost,
+    isSelected,
+  );
+
+  if (blockedByCrash) return <ImageHeavyPlaceholder shape={shape} reason="crashed" />;
+  if (blockedByOversize) return <ImageHeavyPlaceholder shape={shape} reason="oversized" />;
+  if (status === 'denied') return <ImageHeavyPlaceholder shape={shape} />;
+  if (status === 'none') return <ImageBudgetPending shape={shape} />;
+  return <CustomImageShapeContent shape={shape} />;
+});
+
+function ImageBudgetPending({ shape }: { shape: DrImageShape }) {
+  return (
+    <HTMLContainer
+      id={shape.id}
+      style={{ overflow: 'hidden', width: shape.props.w, height: shape.props.h }}
+    >
+      <div
+        className="bg-background-subtle size-full animate-pulse rounded"
+        style={getCroppedContainerStyle(shape)}
+      />
+    </HTMLContainer>
+  );
+}
+
+const CustomImageShapeContent = memo(function CustomImageShapeContent({
+  shape,
+}: {
+  shape: DrImageShape;
+}) {
+  const editor = useEditor();
+  useTrackImageActive(shape.props.assetId);
 
   const { w } = getUncroppedSize(shape.props, shape.props.crop);
   const { asset, url } = useImageOrVideoAsset({
@@ -342,6 +481,10 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   const showError = (isMissing || retryExhausted || (imgError && !isResolving)) && !loadedSrc;
 
   const crossOrigin = isAnimated ? ('anonymous' as const) : undefined;
+
+  useRetainedBlobUrl(resolvedUrl);
+  // Пока новая копия догружается, на экране ещё старая: её blob отзывать нельзя.
+  useRetainedBlobUrl(loadedUrl);
 
   const handleLoad = useCallback((src: string) => {
     setLoadedUrl(src);

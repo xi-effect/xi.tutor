@@ -3,7 +3,9 @@
   "subjects": {
     "label": "Subject",
     "mathematics": "Mathematics",
-    "russian": "Russian"
+    "russian": "Russian",
+    "physics": "Physics",
+    "english": "English"
   },
   "disclaimer": {
     "aria": "About the task bank and OGE/EGE labels",
@@ -67,7 +69,15 @@
       "restore_punctuation": "Punctuation",
       "multiple_choice": "Multiple choice",
       "multi_choice": "Several answers",
-      "open_rubric": "Open response"
+      "open_rubric": "Open response",
+      "numeric": "Numeric answer",
+      "multi-step": "Multi-step",
+      "gap": "Gap fill",
+      "transformation": "Transformation",
+      "error-correction": "Error correction",
+      "choice": "Multiple choice",
+      "reading": "Reading",
+      "writing": "Writing"
     },
     "favorites": "Favorites only"
   },
@@ -89,6 +99,7 @@
     "answer": "Answer",
     "rubric": "Rubric",
     "rubricHint": "This is an open task: use the rubric, not a single exact wording.",
+    "wordRange": "{{min}}–{{max}} words",
     "solution": "Solution",
     "explanation": "Explanation",
     "hints": "Hints",
@@ -105,8 +116,13 @@
     "reportSubmit": "Send",
     "reportCancel": "Cancel",
     "reportSent": "Thanks, we received your report",
+    "reportError": "Could not send the report",
     "loading": "Loading task...",
-    "error": "Could not open the task"
+    "error": "Could not open the task",
+    "figureSeries": "Resistors are connected in series",
+    "figureParallel": "Resistors are connected in parallel",
+    "figureResistor": "{{label}} — {{value}} Ω",
+    "figureGraph": "Graph: {{x}}, {{y}}"
   },
   "empty": {
     "title": "Nothing found",

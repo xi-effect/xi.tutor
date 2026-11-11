@@ -1,1 +1,1 @@
-export { UserSettings } from './layout';
+export { SettingsSection, SettingsEntry, SettingsSidebarNav } from './layout';

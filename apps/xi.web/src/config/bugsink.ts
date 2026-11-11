@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/browser';
 import type { ErrorEvent, EventHint } from '@sentry/browser';
 import { env } from 'common.env';
 import { isStaleChunkError } from 'common.utils';
+import { setBoardProblemReporter } from 'modules.board/problems';
 
 /**
  * Проверяет, является ли ошибка CORS ошибкой
@@ -221,5 +222,12 @@ export const initBugsink = () => {
     sampleRate: env.DEV ? 1.0 : 0.7,
     // Фильтр ошибок перед отправкой
     beforeSend,
+  });
+
+  setBoardProblemReporter((problem) => {
+    Sentry.captureException(problem, {
+      tags: { board_problem: problem.area },
+      extra: problem.details,
+    });
   });
 };

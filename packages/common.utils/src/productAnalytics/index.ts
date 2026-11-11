@@ -140,11 +140,18 @@ export {
   trackMathTaskInsertNote,
   trackMathTaskNextVariant,
   trackMathTaskOpen,
-  trackMathTaskReport,
   trackMathTaskSolutionOpen,
   type MathBankSearchSnapshot,
   type MathBankTaskSnapshot,
 } from './mathBank';
+export {
+  getTaskReportCommentLengthBucket,
+  mapTaskReportFailure,
+  trackTaskReportFailed,
+  trackTaskReportOpened,
+  trackTaskReportSubmitted,
+  type TaskReportContext,
+} from './taskReport';
 export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
 export {
   beginSubscriptionFlow,

@@ -70,6 +70,12 @@ type SupportModalProps = {
 
 type ModalView = 'support' | 'devtools' | 'confirm-logout' | 'confirm-clear';
 
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
+
 const headerIconButtonClass =
   'group flex size-6 shrink-0 items-center justify-center bg-transparent p-0';
 const headerIconClass =
@@ -83,10 +89,12 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
   const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
-    if (!open) {
-      setView('support');
-      setIsPending(false);
-    }
+    if (open) return;
+
+    setView('support');
+    setIsPending(false);
+    const timeoutId = window.setTimeout(cleanupBodyScrollLock, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [open]);
 
   const trackSupportContact = (channel: 'telegram' | 'vk' | 'email') => {
@@ -132,7 +140,14 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className={modalContentClass} aria-describedby={undefined}>
+      <ModalContent
+        className={modalContentClass}
+        aria-describedby={undefined}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          cleanupBodyScrollLock();
+        }}
+      >
         <ModalBody className={modalBodyClass}>
           <div className={modalHeaderRowClass}>
             <div className="flex min-w-0 flex-1 items-center gap-3">

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { ConfirmDialog, Logo, LinkTanstack } from 'common.ui';
@@ -8,12 +8,9 @@ import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
 import { MobileUserMenu } from './Header/MobileUserMenu';
 import { MOBILE_BOTTOM_BAR_HEIGHT } from './constants';
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useState } from 'react';
 import { Burger } from '@xipkg/icons';
-
-const UserSettings = lazy(() =>
-  import('modules.profile').then((module) => ({ default: module.UserSettings })),
-);
+import { useSettingsSearch } from './useSettingsSearch';
 
 export { MOBILE_BOTTOM_BAR_HEIGHT };
 
@@ -21,28 +18,16 @@ export const MobileBottomBar = () => {
   const { data: user } = useCurrentUser();
   const { t } = useTranslation('navigation');
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const search = useSearch({ strict: false });
+  const settingsSearch = useSettingsSearch();
   const { logout } = useAuth();
   const { open: openMenu } = useMenuStore();
-
-  const [open, setOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
-  useEffect(() => {
-    const profileParam = search.profile;
-    const hasProfileParam = !!profileParam;
-    if (hasProfileParam !== open) {
-      setOpen(hasProfileParam);
-    }
-  }, [search.profile, open]);
-
   const handleOpenProfile = () => {
-    navigate({
-      to: pathname,
-      search: { profile: 'personalInfo' },
+    void navigate({
+      to: '/settings',
+      search: settingsSearch,
     });
-    setOpen(true);
   };
 
   const handleLogout = async () => {
@@ -91,10 +76,6 @@ export const MobileBottomBar = () => {
           </div>
         </div>
       </nav>
-
-      <Suspense fallback={null}>
-        <UserSettings open={open} setOpen={setOpen} />
-      </Suspense>
 
       <ConfirmDialog
         open={logoutConfirmOpen}

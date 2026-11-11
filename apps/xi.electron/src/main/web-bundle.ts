@@ -26,14 +26,14 @@ export function resolveWebBundle(): string {
 
   const bundled = app.isPackaged
     ? path.join(process.resourcesPath, 'web')
-    : path.resolve(getResourcesDir(), '../..', 'xi.web', 'build');
+    : path.resolve(getResourcesDir(), '../..', 'xi.web', 'build-electron');
 
   if (hasIndexHtml(bundled)) {
     return bundled;
   }
 
   if (isDev()) {
-    const webBuild = path.resolve(getResourcesDir(), '../../xi.web/build');
+    const webBuild = path.resolve(getResourcesDir(), '../../xi.web/build-electron');
     if (hasIndexHtml(webBuild)) return webBuild;
   }
 

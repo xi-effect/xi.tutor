@@ -1,1 +1,0 @@
-export { ModalStudentsList } from './ModalStudentsList';

@@ -111,12 +111,6 @@ enum ClassroomsQueryKey {
 }
 
 const classroomsApiConfig = {
-  [ClassroomsQueryKey.GetClassrooms]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/`,
-    method: HttpMethod.GET,
-  },
-
   [ClassroomsQueryKey.SearchClassrooms]: {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/searches/`,

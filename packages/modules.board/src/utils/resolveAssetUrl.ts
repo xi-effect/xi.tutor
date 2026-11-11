@@ -4,6 +4,7 @@
  */
 import { getAxiosInstance } from 'common.config';
 import { getFileUrl } from 'common.api';
+import { pickBlobKeysToEvict } from './blobBudget';
 import { blobToDataUrl } from './blobToDataUrl';
 import { getRegisteredTokens, unregisterToken } from './tokenRegistry';
 
@@ -13,9 +14,67 @@ function getAxiosStatus(err: unknown): number | undefined {
   return response?.status;
 }
 
-/** Успешно загруженные blob URL — живут до закрытия вкладки.
- *  Ключ — `src`: blob URL валиден независимо от того, каким токеном он был получен. */
-const blobUrlCache = new Map<string, string>();
+type BlobSlot = {
+  url: string;
+  bytes: number;
+  touched: number;
+};
+
+/**
+ * Сжатые файлы доски. Ключ — `src` или `src@@размер` для уменьшенной копии.
+ * URL живёт, пока его показывает фигура (`retainBlobUrl`) или пока кэш в бюджете.
+ */
+const blobSlots = new Map<string, BlobSlot>();
+const blobPins = new Map<string, number>();
+
+const DATA_URL_CACHE_LIMIT = 12;
+
+function evictBlobSlots() {
+  const pinned = new Set(blobPins.keys());
+  const keys = pickBlobKeysToEvict(
+    [...blobSlots.entries()].map(([key, slot]) => ({ key, ...slot })),
+    pinned,
+    Date.now(),
+  );
+  for (const key of keys) {
+    const slot = blobSlots.get(key);
+    if (!slot || blobPins.has(slot.url)) continue;
+    URL.revokeObjectURL(slot.url);
+    blobSlots.delete(key);
+  }
+}
+
+/** Фигура держит URL, пока он стоит в `<img>`, `<canvas>` или `<audio>`. */
+export function retainBlobUrl(url: string | null | undefined): () => void {
+  if (!url?.startsWith('blob:')) return () => {};
+  blobPins.set(url, (blobPins.get(url) ?? 0) + 1);
+  return () => {
+    const next = (blobPins.get(url) ?? 1) - 1;
+    if (next <= 0) blobPins.delete(url);
+    else blobPins.set(url, next);
+    evictBlobSlots();
+  };
+}
+
+/** Кладёт blob в общий бюджет. Повтор того же ключа возвращает уже созданный URL. */
+export function rememberBlob(key: string, blob: Blob): string {
+  const existing = blobSlots.get(key);
+  if (existing) {
+    existing.touched = Date.now();
+    return existing.url;
+  }
+  const url = URL.createObjectURL(blob);
+  blobSlots.set(key, { url, bytes: blob.size, touched: Date.now() });
+  evictBlobSlots();
+  return url;
+}
+
+function readBlob(key: string): string | undefined {
+  const slot = blobSlots.get(key);
+  if (!slot) return undefined;
+  slot.touched = Date.now();
+  return slot.url;
+}
 
 /**
  * In-flight дедупликация: если для пары `src + token` уже идёт запрос,
@@ -88,7 +147,7 @@ export async function resolveAssetUrl(
 
   if (src.startsWith('data:') || src.startsWith('blob:')) return src;
 
-  const cached = blobUrlCache.get(src);
+  const cached = readBlob(src);
   if (cached) return cached;
 
   const primaryKey = makeCacheKey(src, token);
@@ -163,13 +222,11 @@ async function fetchAndCacheBlobUrl(url: string, cacheKey: string, token: string
 
   if (response.status !== 200) throw new Error(`Unexpected status ${response.status}`);
 
-  const blobUrl = URL.createObjectURL(response.data);
-  blobUrlCache.set(cacheKey, blobUrl);
-  return blobUrl;
+  return rememberBlob(cacheKey, response.data as Blob);
 }
 
 export function getCachedBlobUrl(src: string): string | undefined {
-  return blobUrlCache.get(src);
+  return readBlob(src);
 }
 
 /** Конвертирует blob URL (или любой URL, доступный fetch'у) в data:URL (base64).
@@ -182,9 +239,19 @@ async function blobUrlToDataUrl(blobUrl: string): Promise<string> {
   return blobToDataUrl(blob);
 }
 
-/** Кэш data:URL для src — отдельный от blobUrlCache, потому что data:URL не зависит
- *  от документ-контекста и сериализуется в clipboard. */
+/** Кэш data:URL для src — отдельный от blob-кэша: data:URL не зависит от документа
+ *  и сериализуется в clipboard. Держим только последние копии. */
 const dataUrlCache = new Map<string, string>();
+
+function rememberDataUrl(src: string, dataUrl: string) {
+  if (dataUrlCache.has(src)) dataUrlCache.delete(src);
+  dataUrlCache.set(src, dataUrl);
+  while (dataUrlCache.size > DATA_URL_CACHE_LIMIT) {
+    const oldest = dataUrlCache.keys().next().value;
+    if (oldest === undefined) break;
+    dataUrlCache.delete(oldest);
+  }
+}
 
 /** Получить data:URL для src — либо из кэша, либо скачать (используя blobUrlCache
  *  если он там есть, иначе пройти через обычный resolveAssetUrl). */
@@ -193,13 +260,16 @@ export async function resolveAssetAsDataUrl(src: string, token: string): Promise
   if (src.startsWith('data:')) return src;
 
   const cachedData = dataUrlCache.get(src);
-  if (cachedData) return cachedData;
+  if (cachedData) {
+    rememberDataUrl(src, cachedData);
+    return cachedData;
+  }
 
   try {
     const blobUrl = await resolveAssetUrl(src, token);
     if (blobUrl.startsWith('data:')) return blobUrl;
     const dataUrl = await blobUrlToDataUrl(blobUrl);
-    dataUrlCache.set(src, dataUrl);
+    rememberDataUrl(src, dataUrl);
     return dataUrl;
   } catch {
     return null;

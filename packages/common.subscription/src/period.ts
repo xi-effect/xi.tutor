@@ -1,5 +1,8 @@
 const MS_DAY = 24 * 60 * 60 * 1000;
 
+/** За сколько до конца оплаченных дней показываем предупреждение в меню. */
+export const SUBSCRIPTION_EXPIRY_NOTICE_WINDOW_MS = 72 * 60 * 60 * 1000;
+
 const startOfLocalDay = (value: number): number => {
   const date = new Date(value);
   date.setHours(0, 0, 0, 0);
@@ -17,6 +20,25 @@ export const getRemainingSubscriptionDays = (
   if (Number.isNaN(end)) return 0;
 
   return Math.max(0, Math.round((startOfLocalDay(end) - startOfLocalDay(now)) / MS_DAY));
+};
+
+/**
+ * Предупреждение нужно, пока оплаченные дни ещё действуют, до конца не больше 72 часов
+ * и автопродление выключено. После оплаты, промокода или включения автопродления
+ * скрывается само: у периода сдвигается `ends_at` либо появляется `auto_renewal`.
+ */
+export const isSubscriptionExpiryNoticeDue = (
+  endsAt: string | null | undefined,
+  autoRenewalEnabled: boolean,
+  now = Date.now(),
+): boolean => {
+  if (autoRenewalEnabled || !endsAt) return false;
+
+  const end = new Date(endsAt).getTime();
+  if (!Number.isFinite(end)) return false;
+
+  const remaining = end - now;
+  return remaining > 0 && remaining <= SUBSCRIPTION_EXPIRY_NOTICE_WINDOW_MS;
 };
 
 /** Подписка с прошедшим `ends_at` всё ещё приходит объектом, но период уже не действует. */

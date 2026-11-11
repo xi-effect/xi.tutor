@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { BankSubject } from 'features.math.bank';
+import type { BankSubject } from 'features.bank';
 
 const MAX_RECENT = 30;
 
