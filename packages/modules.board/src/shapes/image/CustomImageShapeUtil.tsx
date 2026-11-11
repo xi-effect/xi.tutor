@@ -3,13 +3,13 @@ import {
   DrImageShape,
   HTMLContainer,
   useEditor,
-  useImageOrVideoAsset,
   getUncroppedSize,
   usePrefersReducedMotion,
   useValue,
   DrAssetId,
   Editor,
 } from '@ibodr/draw';
+import { useBoardImageAsset } from './useBoardImageAsset';
 import { memo, useCallback, useEffect, useState } from 'react';
 import i18n from 'i18next';
 import {
@@ -386,7 +386,7 @@ const CustomImageShapeContent = memo(function CustomImageShapeContent({
   useTrackImageActive(shape.props.assetId);
 
   const { w } = getUncroppedSize(shape.props, shape.props.crop);
-  const { asset, url } = useImageOrVideoAsset({
+  const { asset, url } = useBoardImageAsset({
     shapeId: shape.id,
     assetId: shape.props.assetId,
     width: w,
@@ -400,6 +400,13 @@ const CustomImageShapeContent = memo(function CustomImageShapeContent({
   const [retryExhausted, setRetryExhausted] = useState(false);
   const isAnimated = asset && getIsAnimated(editor, asset.id);
   const assetSrc = typeof asset?.props.src === 'string' ? asset.props.src : '';
+  useEffect(() => {
+    setLoadedUrl(null);
+    setRetryUrl(null);
+    setStaticFrameSrc('');
+    setRetryExhausted(false);
+    setImgError(false);
+  }, [assetSrc, shape.props.assetId]);
   const hookUrl = isDisplayableAssetUrl(url) ? url : null;
   const resolvedUrl = hookUrl ?? retryUrl;
 

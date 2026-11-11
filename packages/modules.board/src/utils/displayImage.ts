@@ -13,7 +13,37 @@ const KEEP_ORIGINAL_LIMIT = 500;
 
 let running = 0;
 const waiters: Array<() => void> = [];
-const inflight = new Map<string, Promise<string>>();
+type ResizeJob = { promise: Promise<string>; controller: AbortController; consumers: number };
+const inflight = new Map<string, ResizeJob>();
+function joinResize(key: string, job: ResizeJob, signal?: AbortSignal): Promise<string> {
+  job.consumers++;
+  return new Promise((resolve, reject) => {
+    let done = false;
+    const finish = () => {
+      if (done) return false;
+      done = true;
+      signal?.removeEventListener('abort', cancel);
+      if (--job.consumers === 0) {
+        if (inflight.get(key) === job) inflight.delete(key);
+        job.controller.abort();
+      }
+      return true;
+    };
+    const cancel = () => {
+      if (finish()) reject(new DOMException('Image request cancelled', 'AbortError'));
+    };
+    job.promise.then(
+      (value) => {
+        if (finish()) resolve(value);
+      },
+      (error) => {
+        if (finish()) reject(error);
+      },
+    );
+    signal?.addEventListener('abort', cancel, { once: true });
+    if (signal?.aborted) cancel();
+  });
+}
 /**
  * Ключи, для которых уменьшать нечего или не получилось.
  * Без этой памяти каждый резолв (размонтирование за экраном, смена зума, второй экземпляр)
@@ -74,6 +104,7 @@ async function resizeToBlob(
   blob: Blob,
   maxEdge: number,
   hint?: ImagePixelsHint,
+  signal?: AbortSignal,
 ): Promise<Blob | null> {
   if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas === 'undefined') {
     return null;
@@ -82,7 +113,9 @@ async function resizeToBlob(
   // Заголовок файла говорит, сколько в нём пикселей, ещё до декодирования. Число пикселей
   // не зависит от EXIF-поворота, поэтому годится для решения «можно ли декодировать».
   // А вот ширину и высоту из заголовка брать нельзя: у повёрнутого JPEG они поменяны местами.
+  signal?.throwIfAborted();
   const header = await readImageSize(blob);
+  signal?.throwIfAborted();
   const guard = header ?? hint ?? null;
   if (guard) {
     // Огромный растр (скриншот длинной страницы на 80+ Мп) целиком в память не берём:
@@ -97,6 +130,7 @@ async function resizeToBlob(
 
   let source: ImageBitmap | null = null;
   let resized: ImageBitmap | null = null;
+  let canvas: OffscreenCanvas | undefined;
   try {
     let width: number;
     let height: number;
@@ -105,6 +139,7 @@ async function resizeToBlob(
       ({ width, height } = targetSize(dims.w, dims.h, maxEdge));
     } else {
       source = await createImageBitmap(blob);
+      signal?.throwIfAborted();
       if (Math.max(source.width, source.height) <= maxEdge) return null;
       ({ width, height } = targetSize(source.width, source.height, maxEdge));
     }
@@ -114,10 +149,11 @@ async function resizeToBlob(
       resizeHeight: height,
       resizeQuality: 'high',
     });
+    signal?.throwIfAborted();
     source?.close();
     source = null;
 
-    const canvas = new OffscreenCanvas(width, height);
+    canvas = new OffscreenCanvas(width, height);
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
     ctx.drawImage(resized, 0, 0, width, height);
@@ -135,6 +171,10 @@ async function resizeToBlob(
     canvas.height = 0;
     return result;
   } finally {
+    if (canvas) {
+      canvas.width = 0;
+      canvas.height = 0;
+    }
     source?.close();
     resized?.close();
   }
@@ -145,14 +185,17 @@ async function buildDisplayUrl(
   originalUrl: string,
   maxEdge: number,
   hint?: ImagePixelsHint,
+  signal?: AbortSignal,
 ) {
+  signal?.throwIfAborted();
   const cached = getCachedBlobUrl(cacheKey);
   if (cached) return cached;
 
-  const response = await fetch(originalUrl);
+  const response = await fetch(originalUrl, { signal });
   if (!response.ok) return originalUrl;
   const blob = await response.blob();
-  const resized = await resizeToBlob(blob, maxEdge, hint);
+  const resized = await resizeToBlob(blob, maxEdge, hint, signal);
+  signal?.throwIfAborted();
   if (!resized) {
     rememberKeepOriginal(cacheKey);
     return originalUrl;
@@ -174,8 +217,11 @@ export async function resolveDisplayImageUrl(
   token: string,
   maxEdge: number | null,
   hint?: ImagePixelsHint,
+  signal?: AbortSignal,
 ): Promise<string> {
+  signal?.throwIfAborted();
   const original = await resolveAssetUrl(src, token);
+  signal?.throwIfAborted();
   if (!maxEdge || maxEdge < 32) return original;
   if (!original.startsWith('blob:')) return original;
 
@@ -194,18 +240,17 @@ export async function resolveDisplayImageUrl(
   if (keepOriginal.has(cacheKey)) return original;
 
   const pending = inflight.get(cacheKey);
-  if (pending) return pending;
+  if (pending) return joinResize(cacheKey, pending, signal);
 
-  const promise = withResizeSlot(() => buildDisplayUrl(cacheKey, original, bucket, hint))
-    .catch((error) => {
-      // Падение ресайза не повторяем на каждом резолве: оставляем оригинал.
-      rememberKeepOriginal(cacheKey);
-      reportBoardProblem('image-display', error);
-      return original;
-    })
-    .finally(() => {
-      inflight.delete(cacheKey);
-    });
-  inflight.set(cacheKey, promise);
-  return promise;
+  const job: ResizeJob = { promise: null!, controller: new AbortController(), consumers: 0 };
+  job.promise = withResizeSlot(() =>
+    buildDisplayUrl(cacheKey, original, bucket, hint, job.controller.signal),
+  ).catch((error) => {
+    if (job.controller.signal.aborted) throw error;
+    rememberKeepOriginal(cacheKey);
+    reportBoardProblem('image-display', error);
+    return original;
+  });
+  inflight.set(cacheKey, job);
+  return joinResize(cacheKey, job, signal);
 }
