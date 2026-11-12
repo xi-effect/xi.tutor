@@ -4,6 +4,7 @@
  */
 import { getAxiosInstance } from 'common.config';
 import { getFileUrl } from 'common.api';
+import { isPublicAssetSrc } from 'common.services';
 import { pickBlobKeysToEvict } from './blobBudget';
 import { blobToDataUrl } from './blobToDataUrl';
 import { getRegisteredTokens, unregisterToken } from './tokenRegistry';
@@ -138,11 +139,29 @@ export type ResolveAssetUrlOptions = {
   ignoreNegativeCache?: boolean;
 };
 
+const absolutePublicSrc = (src: string): string => {
+  if (src.startsWith('/') && typeof window !== 'undefined')
+    return `${window.location.origin}${src}`;
+  return src;
+};
+
+async function fetchPublicAsset(src: string): Promise<string> {
+  const absolute = absolutePublicSrc(src);
+  const cached = readBlob(absolute);
+  if (cached) return cached;
+  const response = await fetch(absolute);
+  if (!response.ok)
+    throw new Error(`[resolveAssetUrl] public asset ${response.status}: ${absolute}`);
+  return rememberBlob(absolute, await response.blob());
+}
+
 export async function resolveAssetUrl(
   src: string,
   token: string,
   options?: ResolveAssetUrlOptions,
 ): Promise<string> {
+  if (isPublicAssetSrc(src)) return fetchPublicAsset(src);
+
   if (!src || !token) return src;
 
   if (src.startsWith('data:') || src.startsWith('blob:')) return src;

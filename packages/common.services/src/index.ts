@@ -10,6 +10,7 @@ export * from './classroom-notes';
 export * from './payments';
 export * from './utils';
 export * from './onboarding';
+export { isPublicAssetSrc } from './publicAsset';
 export * from './classrooms';
 export * from './notifications';
 export { usePWAInstall } from './usePWAInstall';

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useEditor, useValue } from '@ibodr/draw';
-import { useCurrentUser } from 'common.services';
+import { isPublicAssetSrc, useCurrentUser } from 'common.services';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { useYjsContext } from '../../providers/YjsContext';
 import { resolveAssetUrl, retainBlobUrl } from '../../utils/resolveAssetUrl';
@@ -114,7 +114,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
 
   useEffect(() => {
-    if (!src || !token) {
+    if (!src || (!token && !isPublicAssetSrc(src))) {
       setPdfDoc(null);
       return;
     }
@@ -168,7 +168,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
   const renderSharpSlice = useCallback(
     async (pageCount: number) => {
-      if (!src || !token) return null;
+      if (!src || (!token && !isPublicAssetSrc(src))) return null;
       const cellW = containerSize.w || shape.props.w;
       const cellH = (containerSize.h || shape.props.h) / pagesVisible;
       if (cellW <= 0 || cellH <= 0) return null;
