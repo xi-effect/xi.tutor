@@ -24,9 +24,8 @@ import { useActivityEventGuard, useActivitySession } from './activityHostContext
 import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
 import { useEditor, useValue } from '@ibodr/draw';
-import { resolveDisplayImageUrl } from '../../utils/displayImage';
+import { useBoardImageUrl } from '../../utils/useBoardImageUrl';
 import { zoomStepCeil } from '../../utils/rasterBudget';
-import { useRetainedBlobUrl } from '../../utils/useRetainedBlobUrl';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
 import { toastBoardUploadError } from '../../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../../utils/planUploadLimit';
@@ -42,41 +41,18 @@ export function useActivityImageSrc(src?: string, cssWidth?: number) {
   const zoomStep = useValue('activity-image-zoom-step', () => zoomStepCeil(editor.getZoomLevel()), [
     editor,
   ]);
+  const moving = useValue('activity-image-moving', () => editor.getCameraState() === 'moving', [
+    editor,
+  ]);
   const layoutWidth = cssWidth === undefined ? 960 : cssWidth;
-  const [url, setUrl] = useState<string | null>(null);
-  useRetainedBlobUrl(url);
-
-  useEffect(() => {
-    if (!src || layoutWidth <= 0) {
-      setUrl(null);
-      return;
-    }
-    if (isDisplayableAssetUrl(src)) {
-      setUrl(src);
-      return;
-    }
-
-    let cancelled = false;
-    const controller = new AbortController();
-    const maxEdge = Math.max(
-      1,
-      Math.round(layoutWidth * zoomStep * (window.devicePixelRatio || 1)),
-    );
-    resolveDisplayImageUrl(src, token, maxEdge, undefined, controller.signal)
-      .then((next) => {
-        if (!cancelled) setUrl(next);
-      })
-      .catch(() => {
-        if (!cancelled) setUrl(null);
-      });
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-  }, [src, token, layoutWidth, zoomStep]);
-
-  return url;
+  return useBoardImageUrl({
+    src: src ?? '',
+    direct: isDisplayableAssetUrl(src),
+    token,
+    maxEdge: Math.max(1, Math.round(layoutWidth * zoomStep * (window.devicePixelRatio || 1))),
+    moving,
+    enabled: layoutWidth > 0,
+  });
 }
 
 export function ActivityImage({

@@ -15,7 +15,12 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { MobileBottomBar } from './MobileBottomBar';
 import { MobileMenuDrawerContent } from './MobileMenuDrawerContent';
 import { NavigationDrawerContent } from './NavigationDrawerContent';
-import { DRAWER_CONTENT_ABOVE_BAR_CLASS, MOBILE_BOTTOM_BAR_HEIGHT, isBoardPath } from './constants';
+import {
+  DRAWER_CONTENT_ABOVE_BAR_CLASS,
+  MOBILE_BOTTOM_BAR_HEIGHT,
+  isBoardPath,
+  isCallPath,
+} from './constants';
 import { SettingsSidebar } from './SettingsSidebar';
 import { useSettingsSearch } from './useSettingsSearch';
 import {
@@ -40,7 +45,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const focusMode = useFocusModeStore((s) => s.focusMode);
   const isSupportOpen = useSupportModalStore((s) => s.isOpen);
   const setSupportOpen = useSupportModalStore((s) => s.setOpen);
-  const hideMobileNav = isMobile && (focusMode || isBoardPath(pathname));
+  const hideMobileNav = isMobile && (focusMode || isBoardPath(pathname) || isCallPath(pathname));
 
   // Старые ссылки ?profile=personalInfo открывают страницу настроек.
   // Путь, с которого ушли, запоминаем для кнопки «Назад».
@@ -120,7 +125,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         {stableChildren}
       </SidebarInset>
 
-      {/* Мобильная нижняя панель — скрыта в фокусе и на доске */}
+      {/* Мобильная нижняя панель — скрыта в фокусе, на доске и на экране звонка */}
       {isMobile && !hideMobileNav && <MobileBottomBar />}
 
       <FirstStepsTourHost />

@@ -76,6 +76,8 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
 
       react(),
 
+      // useForm из @xipkg/form компилятор не считает react-hook-form и мемоизирует watch().
+      // В рендере форм нужен useWatch, иначе значения залипают на defaultValues.
       babel({ presets: [reactCompilerPreset()] }),
 
       tailwindcss(),

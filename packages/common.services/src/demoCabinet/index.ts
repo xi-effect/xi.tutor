@@ -2,7 +2,6 @@ export { DemoCabinetError } from './errors';
 export { ensureDemoCabinet, resetDemoCabinetInflightForTests } from './ensureDemoCabinet';
 export { readCreatedId } from './ids';
 export { readClassroomStorageItem } from './api';
-export { browserDemoCabinetStorage, readDemoCabinetProgress } from './progress';
 export {
   DEMO_CABINET_BOARD_COPY,
   DEMO_CABINET_FLAG_KEY,

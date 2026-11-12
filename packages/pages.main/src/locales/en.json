@@ -114,7 +114,6 @@
     "welcomeAction": "Open the guide",
     "progress": "{{count}}/{{total}}",
     "progressAria": "{{count}} of {{total}} reviewed",
-    "next": "Next",
     "skip": "Skip",
     "skipAria": "Skip “{{title}}”",
     "skipped": "Skipped",

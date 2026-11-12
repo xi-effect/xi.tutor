@@ -114,7 +114,6 @@
     "welcomeAction": "Перейти к гайду",
     "progress": "{{count}}/{{total}}",
     "progressAria": "Разобрано {{count}} из {{total}}",
-    "next": "Дальше",
     "skip": "Пропустить",
     "skipAria": "Пропустить шаг «{{title}}»",
     "skipped": "Пропущено",

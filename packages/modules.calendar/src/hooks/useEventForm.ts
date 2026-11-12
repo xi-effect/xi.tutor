@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useForm } from '@xipkg/form';
+import { useForm, useWatch } from '@xipkg/form';
 import { createEventFormSchema, type EventFormData, type EventFormInput } from '../model';
 import { formatDate, parseDateTime } from '../utils/calendarUtils';
 import { useCloseForm, useDefaultValues } from '../store/formEventStore';
@@ -29,11 +29,11 @@ export const useLessonFields = (
 export const useDateFields = (
   form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>,
 ) => {
-  const { control, watch, setValue } = form;
-  const startDate = watch('startDate');
-  const startTime = watch('startTime');
-  const endTime = watch('endTime');
-  const isAllDay = watch('isAllDay');
+  const { control, setValue } = form;
+  const startDate = useWatch({ control, name: 'startDate' });
+  const startTime = useWatch({ control, name: 'startTime' });
+  const endTime = useWatch({ control, name: 'endTime' });
+  const isAllDay = useWatch({ control, name: 'isAllDay' });
 
   const duration = useMemo(() => {
     if (!startTime || !endTime) return { hours: 0, minutes: 0 };
@@ -79,13 +79,12 @@ export const useEventForm = () => {
 
   const {
     control,
-    watch,
     handleSubmit,
     setValue,
     formState: { errors },
   } = form;
 
-  const selectedType = watch('type');
+  const selectedType = useWatch({ control, name: 'type' });
 
   const handleTypeChange = (newType: EventType) => {
     setValue('type', newType);

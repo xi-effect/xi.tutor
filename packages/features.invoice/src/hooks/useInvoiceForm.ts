@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForm, useFieldArray } from '@xipkg/form';
+import { useForm, useFieldArray, useWatch } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from '@tanstack/react-router';
 import { isClassroomOnPause } from 'common.api';
@@ -32,7 +32,7 @@ export const useInvoiceForm = () => {
     },
   });
 
-  const { control, watch, setValue, handleSubmit } = form;
+  const { control, setValue, handleSubmit } = form;
 
   // Обновляем classroomId при изменении URL
   useEffect(() => {
@@ -41,7 +41,7 @@ export const useInvoiceForm = () => {
     }
   }, [classroomIdFromUrl, setValue]);
 
-  const items = watch('items');
+  const items = useWatch({ control, name: 'items' }) ?? [];
 
   const { fields, append } = useFieldArray({
     control,

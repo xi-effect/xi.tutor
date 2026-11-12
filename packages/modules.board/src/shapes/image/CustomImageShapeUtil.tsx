@@ -3,13 +3,13 @@ import {
   DrImageShape,
   HTMLContainer,
   useEditor,
-  useImageOrVideoAsset,
   getUncroppedSize,
   usePrefersReducedMotion,
   useValue,
   DrAssetId,
   Editor,
 } from '@ibodr/draw';
+import { useBoardImageAsset } from './useBoardImageAsset';
 import { memo, useCallback, useEffect, useState } from 'react';
 import i18n from 'i18next';
 import {
@@ -24,7 +24,7 @@ import { useRetainedBlobUrl } from '../../utils/useRetainedBlobUrl';
 import { useImageBudget } from '../../utils/useImageBudget';
 import { imageCrashGuard } from '../../utils/imageCrashGuard';
 import { useIsCrashSuspect, useTrackImageActive } from '../../utils/useImageCrashGuard';
-import { estimateImageDisplayPixels } from '../../utils/imageBudget';
+import { estimateImageDisplayPixels, isOversizedForDevice } from '../../utils/imageBudget';
 import { staticImagePixels } from '../../utils/displayImage';
 import { useOcrProcessingStore } from '../../ocr';
 
@@ -251,11 +251,14 @@ function ImageOcrOverlay({ shapeId }: { shapeId: DrImageShape['id'] }) {
 
 function ImageHeavyPlaceholder({
   shape,
-  crashed = false,
+  reason = 'budget',
 }: {
   shape: DrImageShape;
-  /** Прошлая сессия умерла, пока эта картинка была на экране. */
-  crashed?: boolean;
+  /**
+   * `crashed` — прошлая сессия умерла, пока картинка была на экране;
+   * `oversized` — файл слишком велик для устройства; `budget` — не хватило общего бюджета.
+   */
+  reason?: 'budget' | 'oversized' | 'crashed';
 }) {
   const containerStyle = getCroppedContainerStyle(shape);
   return (
@@ -272,9 +275,16 @@ function ImageHeavyPlaceholder({
         style={containerStyle}
       >
         <div className="text-text-secondary pointer-events-none flex max-w-[80%] flex-col items-center gap-1.5 text-center">
-          {crashed ? <BrokenImageIcon /> : <ImagePlaceholderIcon />}
+          {reason === 'crashed' ? <BrokenImageIcon /> : <ImagePlaceholderIcon />}
           <span className="text-[11px] select-none">
-            {i18n.t(crashed ? 'file.crashedImage' : 'file.heavyImage', { ns: 'board' })}
+            {i18n.t(
+              reason === 'crashed'
+                ? 'file.crashedImage'
+                : reason === 'oversized'
+                  ? 'file.oversizedImage'
+                  : 'file.heavyImage',
+              { ns: 'board' },
+            )}
           </span>
         </div>
       </div>
@@ -311,9 +321,22 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
     },
     [editor, shape.props.assetId, w],
   );
+  const isOversized = useValue(
+    'image is oversized',
+    () => {
+      const asset = shape.props.assetId ? editor.getAsset(shape.props.assetId) : undefined;
+      if (!asset || asset.type !== 'image') return false;
+      return isOversizedForDevice(asset.props.w, asset.props.h);
+    },
+    [editor, shape.props.assetId],
+  );
+  // «Выделить всё» не должно обходить лимиты и грузить все картинки разом.
   const isSelected = useValue(
     'image is selected',
-    () => editor.getSelectedShapeIds().includes(shape.id),
+    () => {
+      const selected = editor.getSelectedShapeIds();
+      return selected.length <= 3 && selected.includes(shape.id);
+    },
     [editor, shape.id],
   );
 
@@ -321,14 +344,20 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   // пользователь сам не выделит. Бюджет она при этом не занимает.
   const isSuspect = useIsCrashSuspect(shape.props.assetId);
   const blockedByCrash = isSuspect && !isSelected;
+  const blockedByOversize = isOversized && !isSelected;
 
   useEffect(() => {
     if (isSuspect && isSelected) imageCrashGuard.clearSuspect(shape.props.assetId ?? '');
   }, [isSuspect, isSelected, shape.props.assetId]);
 
-  const status = useImageBudget(shape.id, blockedByCrash ? 0 : cost, isSelected);
+  const status = useImageBudget(
+    shape.id,
+    blockedByCrash || blockedByOversize ? 0 : cost,
+    isSelected,
+  );
 
-  if (blockedByCrash) return <ImageHeavyPlaceholder shape={shape} crashed />;
+  if (blockedByCrash) return <ImageHeavyPlaceholder shape={shape} reason="crashed" />;
+  if (blockedByOversize) return <ImageHeavyPlaceholder shape={shape} reason="oversized" />;
   if (status === 'denied') return <ImageHeavyPlaceholder shape={shape} />;
   if (status === 'none') return <ImageBudgetPending shape={shape} />;
   return <CustomImageShapeContent shape={shape} />;
@@ -357,7 +386,7 @@ const CustomImageShapeContent = memo(function CustomImageShapeContent({
   useTrackImageActive(shape.props.assetId);
 
   const { w } = getUncroppedSize(shape.props, shape.props.crop);
-  const { asset, url } = useImageOrVideoAsset({
+  const { asset, url } = useBoardImageAsset({
     shapeId: shape.id,
     assetId: shape.props.assetId,
     width: w,
@@ -371,6 +400,13 @@ const CustomImageShapeContent = memo(function CustomImageShapeContent({
   const [retryExhausted, setRetryExhausted] = useState(false);
   const isAnimated = asset && getIsAnimated(editor, asset.id);
   const assetSrc = typeof asset?.props.src === 'string' ? asset.props.src : '';
+  useEffect(() => {
+    setLoadedUrl(null);
+    setRetryUrl(null);
+    setStaticFrameSrc('');
+    setRetryExhausted(false);
+    setImgError(false);
+  }, [assetSrc, shape.props.assetId]);
   const hookUrl = isDisplayableAssetUrl(url) ? url : null;
   const resolvedUrl = hookUrl ?? retryUrl;
 

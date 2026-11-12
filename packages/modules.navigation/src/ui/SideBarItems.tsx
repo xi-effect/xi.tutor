@@ -18,7 +18,6 @@ import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
 import { ConfirmDialog, Logo } from 'common.ui';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { FirstStepsDock } from './FirstStepsDock';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
 import { pickSettingsSearch } from 'modules.profile/sections';
@@ -190,7 +189,6 @@ export const SideBarItems = () => {
       <SidebarFooter className="bg-background-page gap-2">
         <SubscriptionExpiryNotice />
         <MaintenanceNotice />
-        <FirstStepsDock />
         {user?.id ? (
           <div className="mt-1 overflow-visible pt-2">
             <DesktopUserMenu

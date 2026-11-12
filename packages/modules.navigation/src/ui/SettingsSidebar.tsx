@@ -14,7 +14,6 @@ import { ConfirmDialog } from 'common.ui';
 import { useAuth } from 'common.auth';
 import { readSettingsReturn } from 'modules.profile/sections';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
-import { FirstStepsDock } from './FirstStepsDock';
 
 const SettingsSidebarNav = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.SettingsSidebarNav })),
@@ -57,7 +56,6 @@ export const SettingsSidebar = () => {
         </Suspense>
       </SidebarContent>
       <SidebarFooter className="bg-background-page gap-3 overflow-visible">
-        <FirstStepsDock />
         {user?.id ? (
           <DesktopUserMenu
             withOutText={false}
