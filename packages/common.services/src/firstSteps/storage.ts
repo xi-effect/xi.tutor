@@ -20,6 +20,14 @@ type StoredFirstSteps = {
 
 const emptyStored = (): StoredFirstSteps => ({ marks: {}, dirty: [], introSeen: false });
 
+/** Чек-лист перечитывает отметки, не дожидаясь перезагрузки страницы. */
+export const FIRST_STEPS_PROGRESS_EVENT = 'first-steps-progress';
+
+const notifyFirstStepsProgress = (): void => {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new Event(FIRST_STEPS_PROGRESS_EVENT));
+};
+
 export const firstStepsStorageKey = (userId: number, role: FirstStepsRole): string =>
   `sovlium.firstSteps.v1.${userId}.${role}`;
 
@@ -140,6 +148,7 @@ export const commitFirstStep = (
   }
 
   writeStored(storage, userId, role, stored);
+  notifyFirstStepsProgress();
   return true;
 };
 

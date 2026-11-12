@@ -18,6 +18,7 @@ import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
 import { ConfirmDialog, Logo } from 'common.ui';
 import { cn, useMediaQuery } from '@xipkg/utils';
+import { FirstStepsDock } from './FirstStepsDock';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
 import { pickSettingsSearch } from 'modules.profile/sections';
@@ -161,7 +162,7 @@ export const SideBarItems = () => {
         {/* Основное меню */}
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu id="sidebar-sections">
               {topMenu.map((item) => (
                 <SidebarMenuItem id={item.id} className="cursor-pointer" key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={getIsActiveItem(item.url)}>
@@ -179,6 +180,8 @@ export const SideBarItems = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+            <SidebarMenu className="mt-1">
               <Notifications />
             </SidebarMenu>
           </SidebarGroupContent>
@@ -187,6 +190,7 @@ export const SideBarItems = () => {
       <SidebarFooter className="bg-background-page gap-2">
         <SubscriptionExpiryNotice />
         <MaintenanceNotice />
+        <FirstStepsDock />
         {user?.id ? (
           <div className="mt-1 overflow-visible pt-2">
             <DesktopUserMenu

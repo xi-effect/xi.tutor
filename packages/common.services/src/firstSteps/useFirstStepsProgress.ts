@@ -16,6 +16,7 @@ import {
   applyRemoteFirstStep,
   browserFirstStepsStorage,
   commitFirstStep,
+  FIRST_STEPS_PROGRESS_EVENT,
   dirtyFirstStepFlags,
   markIntroSeen,
   readFirstStepMarks,
@@ -70,6 +71,12 @@ export const useFirstStepsProgress = (userId: number, role: FirstStepsRole) => {
     publish();
     setIntroSeen(readIntroSeen(storage, userId, role));
   }, [publish, role, storage, userId]);
+
+  useEffect(() => {
+    const onProgress = () => publish();
+    window.addEventListener(FIRST_STEPS_PROGRESS_EVENT, onProgress);
+    return () => window.removeEventListener(FIRST_STEPS_PROGRESS_EVENT, onProgress);
+  }, [publish]);
 
   useEffect(() => {
     if (!flagsSettled) return;

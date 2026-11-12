@@ -15,6 +15,7 @@ import {
   applyRemoteFirstStep,
   commitFirstStep,
   dirtyFirstStepFlags,
+  FIRST_STEPS_PROGRESS_EVENT,
   markIntroSeen,
   readFirstStepMarks,
   readIntroSeen,
@@ -43,22 +44,27 @@ describe('первые шаги', () => {
     expect(firstStepsTotal('tutor')).toBe(8);
     expect(firstStepsTotal('student')).toBe(3);
     expect(FIRST_STEPS_TOUR_STOPS.navigation.map((stop) => stop.anchor)).toEqual([
-      'home',
-      'schedule',
-      'classrooms',
-      'students',
-      'materials',
-      'bank',
-      'payments',
+      'sidebar-sections',
       'notifications',
+      'user-profile',
       'sidebar-toggle',
     ]);
+    expect(FIRST_STEPS_TOUR_STOPS.navigation[3]?.click).toBe('sidebar-toggle');
+    expect(FIRST_STEPS_TOUR_STOPS.settings.map((stop) => stop.anchor)).toEqual([
+      'user-profile',
+      'user-menu',
+      'settings-item',
+      'support-menu',
+    ]);
+    expect(FIRST_STEPS_TOUR_STOPS.settings[0]?.click).toBe('open-user-menu');
+    expect(FIRST_STEPS_TOUR_STOPS.settings[2]?.click).toBe('hover-support');
     expect(FIRST_STEPS_TOUR_STOPS.cabinet.map((stop) => stop.anchor)).toEqual([
       'classrooms',
-      'classroom-header',
-      'classroom-lessons',
-      'classroom-materials',
+      'demo-classroom-card',
+      'classroom-nav',
     ]);
+    expect(FIRST_STEPS_TOUR_STOPS.cabinet[0]?.click).toBe('open-classrooms');
+    expect(FIRST_STEPS_TOUR_STOPS.cabinet[1]?.click).toBe('open-demo-classroom');
     expect(FIRST_STEPS_TOUR_STOPS.invite[0]?.anchor).toBe('students');
   });
 
@@ -111,6 +117,27 @@ describe('первые шаги', () => {
       'fs.student.join.done',
       'fs.student.schedule.skip',
     ]);
+  });
+
+  it('сообщает открытому чек-листу, что отметка изменилась', () => {
+    const events: string[] = [];
+    const previous = globalThis.window;
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: {
+        dispatchEvent: (event: Event) => {
+          events.push(event.type);
+          return true;
+        },
+      },
+    });
+
+    try {
+      expect(commitFirstStep(memoryStorage(), 7, 'tutor', 'navigation', 'done', true)).toBe(true);
+      expect(events).toEqual([FIRST_STEPS_PROGRESS_EVENT]);
+    } finally {
+      Object.defineProperty(globalThis, 'window', { configurable: true, value: previous });
+    }
   });
 
   it('подтягивает серверную отметку и снимает очередь после подтверждения', () => {

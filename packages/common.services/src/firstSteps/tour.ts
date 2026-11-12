@@ -1,6 +1,8 @@
 import { isStepForRole, type FirstStepId, type FirstStepsRole } from './model';
 
 export type FirstStepsTourAnchor =
+  | 'sidebar-sections'
+  | 'user-profile'
   | 'home'
   | 'classrooms'
   | 'schedule'
@@ -13,10 +15,13 @@ export type FirstStepsTourAnchor =
   | 'user-menu'
   | 'settings-item'
   | 'support-item'
+  | 'support-menu'
   | 'theme'
   | 'classroom-header'
   | 'classroom-lessons'
   | 'classroom-materials'
+  | 'demo-classroom-card'
+  | 'classroom-nav'
   | 'start-call'
   | 'board'
   | 'note'
@@ -26,12 +31,22 @@ export type FirstStepsTourAnchor =
   | 'lesson-action';
 
 export type FirstStepsTourPlace =
-  'current' | 'home' | 'classroom' | 'board' | 'note' | 'schedule' | 'appearance';
+  'current' | 'home' | 'classrooms' | 'classroom' | 'board' | 'note' | 'schedule' | 'appearance';
 
 export type FirstStepsTourStop = {
   anchor: FirstStepsTourAnchor;
   place: FirstStepsTourPlace;
   side?: 'top' | 'right' | 'bottom' | 'left';
+  /**
+   * «Продолжить» показывает действие и выполняет его.
+   * Без флага шаг только объясняет.
+   */
+  click?:
+    | 'sidebar-toggle'
+    | 'open-user-menu'
+    | 'hover-support'
+    | 'open-classrooms'
+    | 'open-demo-classroom';
 };
 
 export type FirstStepsTourSession = {
@@ -53,12 +68,15 @@ export const FIRST_STEPS_EXPAND_SIDEBAR_EVENT = 'first-steps-expand-sidebar';
 const STORAGE_KEY = 'sovlium.firstSteps.tour';
 
 export const FIRST_STEPS_TOUR_SELECTORS: Record<FirstStepsTourAnchor, string> = {
+  'sidebar-sections': '#sidebar-sections',
+  'user-profile': '#hints-button',
   home: '#home-menu-item',
   classrooms: '#classrooms-menu-item',
   schedule: '#calendar-menu-item',
   'user-menu': '[data-first-step="user-menu"]',
   'settings-item': '[data-first-step="settings-item"]',
   'support-item': '[data-first-step="support-item"]',
+  'support-menu': '#first-steps-support-focus',
   theme: '[data-first-step="theme"]',
   materials: '#materials-menu-item',
   students: '#students-menu-item',
@@ -69,6 +87,8 @@ export const FIRST_STEPS_TOUR_SELECTORS: Record<FirstStepsTourAnchor, string> = 
   'classroom-header': '[data-first-step="classroom-header"]',
   'classroom-lessons': '[data-first-step="classroom-lessons"]',
   'classroom-materials': '[data-first-step="classroom-materials"]',
+  'demo-classroom-card': '[data-first-step="demo-classroom-card"]',
+  'classroom-nav': '[data-first-step="classroom-nav"]',
   'start-call': '[data-first-step="start-call"]',
   board: '[data-board-toolbar-dock]',
   note: '[data-first-step="note-editor"]',
@@ -80,31 +100,29 @@ export const FIRST_STEPS_TOUR_SELECTORS: Record<FirstStepsTourAnchor, string> = 
 
 export const FIRST_STEPS_TOUR_STOPS: Record<FirstStepId, readonly FirstStepsTourStop[]> = {
   navigation: [
-    { anchor: 'home', place: 'current', side: 'right' },
-    { anchor: 'schedule', place: 'current', side: 'right' },
-    { anchor: 'classrooms', place: 'current', side: 'right' },
-    { anchor: 'students', place: 'current', side: 'right' },
-    { anchor: 'materials', place: 'current', side: 'right' },
-    { anchor: 'bank', place: 'current', side: 'right' },
-    { anchor: 'payments', place: 'current', side: 'right' },
+    { anchor: 'sidebar-sections', place: 'current', side: 'right' },
     { anchor: 'notifications', place: 'current', side: 'right' },
-    { anchor: 'sidebar-toggle', place: 'current', side: 'right' },
+    { anchor: 'user-profile', place: 'current', side: 'right' },
+    { anchor: 'sidebar-toggle', place: 'current', side: 'bottom', click: 'sidebar-toggle' },
   ],
   settings: [
+    { anchor: 'user-profile', place: 'current', side: 'right', click: 'open-user-menu' },
     { anchor: 'user-menu', place: 'current', side: 'right' },
-    { anchor: 'settings-item', place: 'current', side: 'right' },
-    { anchor: 'support-item', place: 'current', side: 'right' },
-    { anchor: 'theme', place: 'appearance', side: 'bottom' },
+    { anchor: 'settings-item', place: 'current', side: 'right', click: 'hover-support' },
+    { anchor: 'support-menu', place: 'current', side: 'top' },
   ],
   cabinet: [
-    { anchor: 'classrooms', place: 'current' },
-    { anchor: 'classroom-header', place: 'classroom' },
-    { anchor: 'classroom-lessons', place: 'classroom' },
-    { anchor: 'classroom-materials', place: 'classroom' },
+    { anchor: 'classrooms', place: 'current', side: 'right', click: 'open-classrooms' },
+    {
+      anchor: 'demo-classroom-card',
+      place: 'classrooms',
+      side: 'bottom',
+      click: 'open-demo-classroom',
+    },
+    { anchor: 'classroom-nav', place: 'classroom', side: 'bottom' },
   ],
   call: [{ anchor: 'start-call', place: 'classroom' }],
   workspace: [
-    { anchor: 'classroom-materials', place: 'classroom' },
     { anchor: 'board', place: 'board' },
     { anchor: 'note', place: 'note' },
   ],
@@ -151,6 +169,7 @@ export const tourStopPath = (
   if (stop.place === 'current') return null;
   if (stop.place === 'home') return '/';
   if (stop.place === 'schedule') return '/schedule';
+  if (stop.place === 'classrooms') return '/classrooms';
   if (stop.place === 'appearance') return '/settings/appearance';
 
   const classroomId = session.classroomId;

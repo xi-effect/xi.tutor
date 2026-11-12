@@ -244,6 +244,7 @@ export const DesktopUserMenu = ({
                 '[&>svg:last-child]:pointer-events-none [&>svg:last-child]:absolute [&>svg:last-child]:top-1/2 [&>svg:last-child]:right-2 [&>svg:last-child]:!m-0 [&>svg:last-child]:size-4 [&>svg:last-child]:-translate-y-1/2',
                 '[&>svg:last-child]:!fill-none [&>svg:last-child]:stroke-current',
               )}
+              data-first-step="help-item"
               data-umami-event="navigation-support-menu"
             >
               <MessageHeartCircle />
@@ -251,6 +252,7 @@ export const DesktopUserMenu = ({
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent
               className={cn(cardMenuSurfaceClass, 'z-100 flex min-w-[220px] flex-col gap-1 p-2')}
+              data-first-step="support-submenu"
               sideOffset={8}
             >
               <DropdownMenuItem

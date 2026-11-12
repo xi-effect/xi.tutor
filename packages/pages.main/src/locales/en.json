@@ -114,6 +114,7 @@
     "welcomeAction": "Open the guide",
     "progress": "{{count}}/{{total}}",
     "progressAria": "{{count}} of {{total}} reviewed",
+    "next": "Next",
     "skip": "Skip",
     "skipAria": "Skip “{{title}}”",
     "skipped": "Skipped",
@@ -123,17 +124,17 @@
     "tutor": {
       "navigation": {
         "title": "Learn the navigation",
-        "hint": "The hint walks through every section on the left, then shows how to collapse the panel.",
+        "hint": "The hint shows the sections, notifications, and profile menu, then collapses and expands the panel.",
         "action": "Show the navigation"
       },
       "settings": {
         "title": "Open settings",
-        "hint": "Settings live in the profile menu at the bottom of the panel. Click your name and choose Settings.",
+        "hint": "The hint opens the whole menu at the bottom, then shows Settings and the Help submenu.",
         "action": "Show where settings are"
       },
       "cabinet": {
         "title": "Look around the classroom",
-        "hint": "See what a classroom is made of: the header, lessons, and materials.",
+        "hint": "The hint opens Classrooms, shows the demo classroom, and the navigation inside it.",
         "action": "Explore the classroom"
       },
       "call": {

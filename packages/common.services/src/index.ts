@@ -22,6 +22,8 @@ export {
   buildDemoNoteDocument,
   ensureDemoCabinet,
   readClassroomStorageItem,
+  readDemoCabinetProgress,
+  browserDemoCabinetStorage,
   type DemoCabinetPorts,
   type DemoCabinetResult,
 } from './demoCabinet';
