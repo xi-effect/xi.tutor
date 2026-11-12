@@ -7,6 +7,9 @@ export const isBoardPath = (pathname: string) =>
   /\/boards\/[^/]+/.test(pathname) ||
   /\/board\/?$/.test(pathname);
 
+/** Экран звонка: /call/:id. Список /call панель не скрывает. */
+export const isCallPath = (pathname: string) => /^\/call\/[^/]+/.test(pathname);
+
 /** z-index drawer навигации — выше UI доски внутри канваса и нижней панели (z-30). */
 export const NAV_DRAWER_Z_CLASS = 'z-50';
 
