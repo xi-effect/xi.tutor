@@ -5,7 +5,7 @@ import {
   FormItem,
   FormMessage,
   useFieldArray,
-  useFormContext,
+  useWatch,
 } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
@@ -23,17 +23,17 @@ const MIN_VALUE = 1;
 
 export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
   const { t } = useTranslation('invoice');
-  const { watch } = useFormContext();
-  const items = watch('items');
-
-  const item = items[index];
-
-  const totalPrice = roundMoney(item.price * (item.quantity || 0));
+  const items = useWatch({ control, name: 'items' }) ?? [];
 
   const { remove } = useFieldArray({
     control,
     name: 'items',
   });
+
+  const item = items[index];
+  if (!item) return null;
+
+  const totalPrice = roundMoney(item.price * (item.quantity || 0));
 
   return (
     <div className="mb-4 flex flex-col gap-2">

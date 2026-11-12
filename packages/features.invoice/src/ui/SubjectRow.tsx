@@ -1,5 +1,5 @@
 import { Button } from '@xipkg/button';
-import { FormControl, FormField, FormItem, FormMessage, useFormContext } from '@xipkg/form';
+import { FormControl, FormField, FormItem, FormMessage, useWatch } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { useTranslation } from 'react-i18next';
@@ -14,10 +14,10 @@ type SubjectRowPropsT = {
 
 export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
   const { t } = useTranslation('invoice');
-  const { watch } = useFormContext();
-  const items = watch('items');
+  const items = useWatch({ control, name: 'items' }) ?? [];
 
   const item = items[index];
+  if (!item) return null;
 
   const totalPrice = roundMoney(item.price * (item.quantity || 0));
 
