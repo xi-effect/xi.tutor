@@ -1,13 +1,13 @@
 {
-  "@xipkg/calls": "^0.1.59",
-  "@xipkg/calls-chat": "^0.1.59",
-  "@xipkg/calls-compactview": "^0.1.59",
-  "@xipkg/calls-config": "^0.1.59",
-  "@xipkg/calls-hooks": "^0.1.59",
-  "@xipkg/calls-providers": "^0.1.59",
-  "@xipkg/calls-risehand": "^0.1.59",
-  "@xipkg/calls-store": "^0.1.59",
-  "@xipkg/calls-types": "^0.1.59",
-  "@xipkg/calls-ui": "^0.1.59",
-  "@xipkg/calls-utils": "^0.1.59"
+  "@xipkg/calls": "^0.1.60",
+  "@xipkg/calls-chat": "^0.1.60",
+  "@xipkg/calls-compactview": "^0.1.60",
+  "@xipkg/calls-config": "^0.1.60",
+  "@xipkg/calls-hooks": "^0.1.60",
+  "@xipkg/calls-providers": "^0.1.60",
+  "@xipkg/calls-risehand": "^0.1.60",
+  "@xipkg/calls-store": "^0.1.60",
+  "@xipkg/calls-types": "^0.1.60",
+  "@xipkg/calls-ui": "^0.1.60",
+  "@xipkg/calls-utils": "^0.1.60"
 }

@@ -194,7 +194,7 @@ export const BOARD_SHAPE_CATEGORIES: Record<string, ShapeCategoryT> = {
     get label() {
       return t('categories.media');
     },
-    types: ['pdf', 'audio', 'video', 'embed', 'bookmark'],
+    types: ['pdf', 'audio', 'video', 'embed', 'bookmark', 'file', 'presentation'],
   },
 
   activities: {

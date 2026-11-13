@@ -65,10 +65,13 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
       },
       navigateToClassroomNote: (classroomId, noteId, options) => {
         if (isElectronConferenceSurface()) return;
+        const alreadyOnNote = params.classroomId === classroomId && params.noteId === noteId;
         navigate({
           to: '/classrooms/$classroomId/notes/$noteId',
           params: { classroomId, noteId },
-          search: { call: classroomId },
+          search: alreadyOnNote
+            ? { call: classroomId, board_nav: String(Date.now()) }
+            : { call: classroomId },
           replace: options?.replace,
         });
       },
