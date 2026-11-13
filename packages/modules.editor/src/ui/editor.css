@@ -400,6 +400,55 @@
   border-radius: 0.5rem;
 }
 
+/* Стилизация текста, к которому оставлены комментарии */
+.editor-comment-mark {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 30%, transparent);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.editor-comment-mark:hover {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 50%, transparent);
+}
+
+.editor-comment-mark .comment-active {
+  background-color: color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 55%, transparent);
+}
+
+/* Рамка у блочных нод (pdf, аудио, файл, презентация, activity), к которым оставлен комментарий */
+.xi-editor [data-comment-node]:not(.node-image) > [data-node-view-wrapper] {
+  border-radius: 0.75rem;
+  outline: 2px solid color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 70%, transparent);
+  outline-offset: 3px;
+  transition: outline-color 0.15s ease;
+}
+
+.xi-editor [data-comment-node]:not(.node-image):hover > [data-node-view-wrapper] {
+  outline-color: var(--comment-color, var(--xi-gray-50));
+}
+
+.xi-editor
+  [data-comment-node][data-comment-active='true']:not(.node-image)
+  > [data-node-view-wrapper] {
+  outline-width: 3px;
+  outline-color: var(--comment-color, var(--xi-gray-50));
+}
+
+/* Картинка: рамка на самом img, а не на всей flex-строке */
+.xi-editor .node-image[data-comment-node] img {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--comment-color, var(--xi-gray-50)) 70%, transparent);
+  transition: box-shadow 0.15s ease;
+}
+
+.xi-editor .node-image[data-comment-node]:hover img {
+  box-shadow: 0 0 0 3px var(--comment-color, var(--xi-gray-50));
+}
+
+.xi-editor .node-image[data-comment-node][data-comment-active='true'] img {
+  box-shadow: 0 0 0 4px var(--comment-color, var(--xi-gray-50));
+}
+
 /* Оглавление у правого края страницы, как в Tiptap Notion-like */
 .xi-editor .document-outline {
   position: fixed;

@@ -77,7 +77,7 @@ export const PdfViewer = ({
   }, []);
 
   useEffect(() => {
-    if (!blobUrl || containerSize.w <= 0 || containerSize.h <= 0) return;
+    if (containerSize.w <= 0 || containerSize.h <= 0) return;
 
     let cancelled = false;
 
