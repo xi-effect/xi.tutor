@@ -10,6 +10,7 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
     callId?: string;
     classroomId?: string;
     boardId?: string;
+    noteId?: string;
   };
   const search = useSearch({ strict: false }) as Record<string, string | undefined>;
 
@@ -57,6 +58,18 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
           to: '/classrooms/$classroomId/boards/$boardId',
           params: { classroomId, boardId },
           search: alreadyOnBoard
+            ? { call: classroomId, board_nav: String(Date.now()) }
+            : { call: classroomId },
+          replace: options?.replace,
+        });
+      },
+      navigateToClassroomNote: (classroomId, noteId, options) => {
+        if (isElectronConferenceSurface()) return;
+        const alreadyOnNote = params.classroomId === classroomId && params.noteId === noteId;
+        navigate({
+          to: '/classrooms/$classroomId/notes/$noteId',
+          params: { classroomId, noteId },
+          search: alreadyOnNote
             ? { call: classroomId, board_nav: String(Date.now()) }
             : { call: classroomId },
           replace: options?.replace,

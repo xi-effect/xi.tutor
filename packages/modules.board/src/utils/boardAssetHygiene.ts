@@ -98,16 +98,18 @@ export function registerBoardAssetHygiene(editor: Editor): void {
   editor.sideEffects.registerBeforeCreateHandler('asset', (asset) => stripInlineAssetSrc(asset));
   editor.sideEffects.registerBeforeChangeHandler('asset', (_, next) => stripInlineAssetSrc(next));
 
-  editor.sideEffects.registerAfterDeleteHandler('shape', (shape) => {
+  editor.sideEffects.registerAfterDeleteHandler('shape', (shape, source) => {
+    if (source !== 'user') return;
     const candidateIds = collectAssetIdsFromShape(shape);
     if (candidateIds.length === 0) return;
 
-    queueMicrotask(() => {
-      const stillUsed = referencedAssetIdsInEditor(editor);
-      const toDelete = candidateIds.filter((id) => !stillUsed.has(id) && editor.getAsset(id));
-      if (toDelete.length === 0) return;
-      editor.deleteAssets(toDelete);
-    });
+    // В той же транзакции, что и удаление shape. editor.deleteAssets пишет
+    // history: 'ignore' и вызывает это следующим микротаском: undo возвращает
+    // фигуру уже без asset, и картинка больше не грузится.
+    const stillUsed = referencedAssetIdsInEditor(editor);
+    const toDelete = candidateIds.filter((id) => !stillUsed.has(id) && editor.getAsset(id));
+    if (toDelete.length === 0) return;
+    editor.store.remove(toDelete);
   });
 }
 
