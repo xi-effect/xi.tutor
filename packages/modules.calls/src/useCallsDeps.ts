@@ -11,6 +11,7 @@ import {
   useReactivateCall,
   useUpdateConferenceMetadata,
   useUpdateParticipantMetadata,
+  type UpdateConferenceMetadataData,
 } from 'common.services';
 import { env } from 'common.env';
 import { useCallsAddClassroomMaterials } from './useCallsAddClassroomMaterials';
@@ -117,7 +118,10 @@ export const useCallsDeps = (): CallsProviderDepsT => {
       },
       conferenceMetadata: {
         updateConferenceMetadata: async (data) => {
-          await updateConferenceMetadata.mutateAsync(data);
+          // Установленные типы порта ещё со старым active_material_id.
+          // Новый пакет передаёт { classroom_id, active_material }.
+          const payload = data as unknown as UpdateConferenceMetadataData;
+          await updateConferenceMetadata.mutateAsync(payload);
         },
       },
       appConfig: {
