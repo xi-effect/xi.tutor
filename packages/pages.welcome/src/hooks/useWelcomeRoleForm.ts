@@ -1,6 +1,5 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useCurrentUser, useOnboardingTransition, useUpdateProfile } from 'common.services';
-import { startDemoCabinet } from 'pages.main/demoCabinet';
 import { RoleT } from 'common.types';
 import {
   resolveOnboardingAnalyticsRole,
@@ -42,7 +41,6 @@ export const useWelcomeRoleForm = () => {
       transitionForward: () => transitionStageForward.mutateAsync(),
       trackFailed: trackOnboardingStepFailed,
       trackCompleted: trackOnboardingStepCompleted,
-      prepareTutorDemo: startDemoCabinet,
       navigateAfterRole: (nextSearch) => {
         schedulePostOnboardingNavigation(nextSearch.invite, (options) => {
           if (options.to === '/invite/$inviteId') {

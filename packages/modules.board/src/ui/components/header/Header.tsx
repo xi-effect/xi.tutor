@@ -19,6 +19,7 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { stopEvent } from '../../../shapes/audio/constants';
 import { CommentsFeedButton } from '../../../comments';
 import { CollaboratorAvatars } from './CollaboratorAvatars';
+import { DemoBoardGuideHint } from './DemoBoardGuideHint';
 import { SettingsDropdown } from './SettingsDropdown';
 import { unlockBoardTimerAudio } from './boardTimerAudio';
 import { TimerDropdown } from './TimerDropdown';
@@ -331,6 +332,7 @@ export const Header = () => {
           </div>
         </div>
       </div>
+      <DemoBoardGuideHint offset={chrome.headerOffset} />
     </>
   );
 };

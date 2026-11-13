@@ -534,7 +534,10 @@
     "editInputPlaceholder": "Enter board name",
     "editInputAria": "whiteboard name",
     "emptyName": "Untitled",
-    "editInputError": "Name cannot be empty"
+    "editInputError": "Name cannot be empty",
+    "guideTitle": "Demo board",
+    "guideBody": "We prepared a board with all the elements. You can try them and look around. The board works in a familiar way, like other boards of this kind.",
+    "guideHome": "Back to the guide"
   },
   "activity": {
     "edit": "Edit",

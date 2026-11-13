@@ -170,8 +170,6 @@ export const FirstSteps = ({
   const [materialMenuOpen, setMaterialMenuOpen] = useState(false);
 
   const isTutor = role === 'tutor';
-  const demoCabinet = useDemoCabinet(userId, isTutor);
-  const demoClassroomId = demoCabinet.classroomId;
   const range = useMemo(scheduleProbeRange, []);
   const invitations = useInvitationsList(!isTutor);
   const materials = useGetMaterialsList({ disabled: !isTutor });
@@ -181,6 +179,14 @@ export const FirstSteps = ({
 
   const classroomQuery = isTutor ? tutorClassrooms : studentClassrooms;
   const classroomCount = classroomQuery.isLoading ? null : (classroomQuery.data?.length ?? 0);
+  const tutorClassroomsSettled =
+    isTutor && !localPreview && tutorClassrooms.isSuccess && !tutorClassrooms.isError;
+  const demoCabinet = useDemoCabinet(
+    userId,
+    tutorClassroomsSettled,
+    tutorClassroomsSettled && classroomCount === 0,
+  );
+  const demoClassroomId = demoCabinet.classroomId;
 
   useEffect(() => {
     trackFirstStepsViewed(role);

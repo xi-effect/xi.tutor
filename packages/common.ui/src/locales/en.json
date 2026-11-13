@@ -73,7 +73,7 @@
     "call": {
       "start-call": {
         "title": "Start a call",
-        "body": "This button starts the classroom video call. Press it to complete the step. There is no student yet, so you can leave the call right away."
+        "body": "You can start a call from the classroom at any time. When it starts, students in this classroom get a notification that the lesson has begun."
       }
     },
     "workspace": {

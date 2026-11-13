@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureDemoCabinet, reportStorageLimitReached } from 'common.services';
 import { demoCabinetPorts } from './startDemoCabinet';
 
@@ -29,36 +29,54 @@ const readIds = (result: Awaited<ReturnType<typeof ensureDemoCabinet>>): DemoCab
   };
 };
 
+const isClassroomLimit = (error: unknown): boolean =>
+  error instanceof Error && error.message === 'classroom-limit';
+
 /**
- * Демонстрационный кабинет для гайда репетитора.
- * Создаётся без сообщений в интерфейсе. Идентификаторы нужны турам и шагу занятия.
+ * Идентификаторы демонстрационного кабинета для туров.
+ * Новый кабинет создаётся только когда create=true: этап training и ни одного кабинета.
+ * Иначе запрос лишь дочитывает уже начатый кабинет и не создаёт новый.
  */
-export const useDemoCabinet = (userId: number, enabled: boolean): DemoCabinetState => {
+export const useDemoCabinet = (
+  userId: number,
+  enabled: boolean,
+  create: boolean,
+): DemoCabinetState => {
   const [ids, setIds] = useState<DemoCabinetIds>(emptyDemoCabinetIds);
+  const started = useRef(false);
+  const mounted = useRef(true);
+  const createRef = useRef(create);
+  createRef.current = create;
 
   const whenReady = useCallback(async () => {
-    const next = readIds(await ensureDemoCabinet(userId, demoCabinetPorts()));
-    setIds(next);
+    const ports = demoCabinetPorts();
+    const next = readIds(
+      await ensureDemoCabinet(userId, {
+        ...ports,
+        canCreateClassroom: () => createRef.current && (ports.canCreateClassroom?.() ?? true),
+      }),
+    );
+    if (mounted.current) setIds(next);
     return next;
   }, [userId]);
 
   useEffect(() => {
-    if (!enabled) return;
-    let cancelled = false;
-
-    void whenReady()
-      .then((next) => {
-        if (!cancelled) setIds(next);
-      })
-      .catch((error: unknown) => {
-        if (cancelled) return;
-        console.error('Не удалось создать демонстрационный кабинет', error);
-        reportStorageLimitReached(error);
-      });
-
+    mounted.current = true;
     return () => {
-      cancelled = true;
+      mounted.current = false;
     };
+  }, []);
+
+  useEffect(() => {
+    if (!enabled || started.current) return;
+    started.current = true;
+
+    void whenReady().catch((error: unknown) => {
+      if (!mounted.current) return;
+      if (isClassroomLimit(error) && !createRef.current) return;
+      console.error('Не удалось создать демонстрационный кабинет', error);
+      reportStorageLimitReached(error);
+    });
   }, [enabled, whenReady]);
 
   return { ...ids, whenReady };

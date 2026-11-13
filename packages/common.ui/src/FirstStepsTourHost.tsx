@@ -15,10 +15,12 @@ import {
   clearFirstStepsTour,
   isOnTourPath,
   readFirstStepsTour,
+  requestFirstStepsTour,
   tourCompletionMarksStep,
   tourStopOpensAction,
   tourStopPath,
   writeFirstStepsTourIndex,
+  FIRST_STEPS_CALL_COMPLETED_EVENT,
   useCompleteFirstStep,
   type FirstStepId,
   type FirstStepsTourSession,
@@ -350,8 +352,21 @@ export const FirstStepsTourHost = () => {
   }, []);
 
   useEffect(() => {
+    const onCallCompleted = () => setFinishedStep('call');
+    window.addEventListener(FIRST_STEPS_CALL_COMPLETED_EVENT, onCallCompleted);
+    return () => window.removeEventListener(FIRST_STEPS_CALL_COMPLETED_EVENT, onCallCompleted);
+  }, []);
+
+  useEffect(() => {
     const session = readFirstStepsTour();
-    if (!session) return;
+    if (session?.callPhase !== 'board-hint' || !session.classroomId || !session.boardId) return;
+    const boardPath = `/classrooms/${session.classroomId}/boards/${session.boardId}`;
+    if (pathname !== boardPath && pathname !== `${boardPath}/`) clearFirstStepsTour();
+  }, [pathname]);
+
+  useEffect(() => {
+    const session = readFirstStepsTour();
+    if (!session || session.callPhase) return;
 
     const stops = FIRST_STEPS_TOUR_STOPS[session.step];
     let index = session.index;
@@ -460,6 +475,21 @@ export const FirstStepsTourHost = () => {
         }
 
         reasonRef.current = 'done';
+        if (session.step === 'cabinet' && session.role === 'tutor' && session.classroomId != null) {
+          reasonRef.current = 'move';
+          setFinishedStep('cabinet');
+          requestFirstStepsTour({
+            step: 'call',
+            role: session.role,
+            userId: session.userId,
+            classroomId: session.classroomId,
+            boardId: session.boardId,
+            noteId: session.noteId,
+          });
+          syncUserMenu(undefined);
+          tour.destroy();
+          return;
+        }
         if (tourCompletionMarksStep(session.step)) setFinishedStep(session.step);
         if (stop && tourStopOpensAction(stop.anchor)) {
           window.dispatchEvent(
@@ -489,8 +519,8 @@ export const FirstStepsTourHost = () => {
           ...(stop.click ? { nextBtnText: translateRef.current('onboarding.next') } : {}),
           progressText: translateRef
             .current('onboarding.progress')
-            .replace('{{current}}', String(index + groupIndex + 1))
-            .replace('{{total}}', String(stops.length)),
+            .replace('{{current}}', String(session.step === 'call' ? 1 : index + groupIndex + 1))
+            .replace('{{total}}', String(session.step === 'call' ? 7 : stops.length)),
           ...(lastInGroup ? { onDoneClick: finishGroup } : { onNextClick: moveNext }),
         },
       };
@@ -503,9 +533,11 @@ export const FirstStepsTourHost = () => {
       steps,
       nextBtnText: translateRef.current('onboarding.next'),
       prevBtnText: translateRef.current('onboarding.prev'),
-      doneBtnText: tourContinues
-        ? translateRef.current('onboarding.next')
-        : translateRef.current('onboarding.done'),
+      doneBtnText:
+        tourContinues ||
+        (session.step === 'cabinet' && session.role === 'tutor' && session.classroomId != null)
+          ? translateRef.current('onboarding.next')
+          : translateRef.current('onboarding.done'),
       progressText: translateRef.current('onboarding.progress'),
       onDestroyed: () => {
         if (reasonRef.current === 'close') {

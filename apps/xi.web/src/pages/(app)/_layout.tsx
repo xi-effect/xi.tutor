@@ -5,6 +5,7 @@ import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
 import { CallsShell, CompactView, useCallStore, useUmamiActivityHeartbeat } from 'modules.calls';
+import { DemoCabinetOnTraining } from 'pages.main/demoCabinet';
 import { useCurrentUser, useSyncRoleFromSearch, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';
@@ -60,7 +61,12 @@ function LayoutContent() {
     <Outlet />
   );
 
-  return <Navigation>{outlet}</Navigation>;
+  return (
+    <Navigation>
+      <DemoCabinetOnTraining />
+      {outlet}
+    </Navigation>
+  );
 }
 
 const ProtectedLayout = () => {

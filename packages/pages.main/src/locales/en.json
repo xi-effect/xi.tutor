@@ -138,7 +138,7 @@
       },
       "call": {
         "title": "Start a call",
-        "hint": "The video call starts from the classroom. The hint shows the button and waits for a click.",
+        "hint": "The hint shows that a call starts from the classroom and that students are notified when the lesson begins.",
         "action": "Show the call"
       },
       "workspace": {

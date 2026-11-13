@@ -49,6 +49,15 @@ export type FirstStepsTourStop = {
     | 'open-demo-classroom';
 };
 
+export type FirstStepsCallPhase =
+  | 'prejoin-devices'
+  | 'prejoin-join'
+  | 'conference-board'
+  | 'board-modal'
+  | 'board-pick'
+  | 'compact-end'
+  | 'board-hint';
+
 export type FirstStepsTourSession = {
   step: FirstStepId;
   role: FirstStepsRole;
@@ -57,9 +66,12 @@ export type FirstStepsTourSession = {
   boardId: string | null;
   noteId: string | null;
   index: number;
+  /** Продолжение шага звонка внутри конференции. Пока задана, тур на страницах приложения молчит. */
+  callPhase?: FirstStepsCallPhase;
 };
 
 export const FIRST_STEPS_TOUR_EVENT = 'first-steps-tour';
+export const FIRST_STEPS_CALL_COMPLETED_EVENT = 'first-steps-call-completed';
 export const FIRST_STEPS_TOUR_ACTION_EVENT = 'first-steps-tour-action';
 export const FIRST_STEPS_OPEN_USER_MENU_EVENT = 'first-steps-open-user-menu';
 export const FIRST_STEPS_CLOSE_USER_MENU_EVENT = 'first-steps-close-user-menu';
@@ -121,7 +133,7 @@ export const FIRST_STEPS_TOUR_STOPS: Record<FirstStepId, readonly FirstStepsTour
     },
     { anchor: 'classroom-nav', place: 'classroom', side: 'bottom' },
   ],
-  call: [{ anchor: 'start-call', place: 'classroom' }],
+  call: [{ anchor: 'start-call', place: 'classroom', side: 'bottom' }],
   workspace: [
     { anchor: 'board', place: 'board' },
     { anchor: 'note', place: 'note' },
@@ -226,6 +238,13 @@ export const writeFirstStepsTourIndex = (index: number): void => {
   const session = readFirstStepsTour();
   if (!session || typeof sessionStorage === 'undefined') return;
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...session, index }));
+};
+
+export const writeFirstStepsCallPhase = (phase: FirstStepsCallPhase): void => {
+  const session = readFirstStepsTour();
+  if (!session || session.step !== 'call' || typeof sessionStorage === 'undefined') return;
+  sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...session, callPhase: phase }));
+  window.dispatchEvent(new Event(FIRST_STEPS_TOUR_EVENT));
 };
 
 export const clearFirstStepsTour = (): void => {

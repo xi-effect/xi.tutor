@@ -6,7 +6,13 @@ import { useStartCall } from 'modules.calls';
 import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
-import { markFirstStepDone, useCurrentUser, useUpdateUserFlag } from 'common.services';
+import {
+  markFirstStepDone,
+  readFirstStepsTour,
+  useCurrentUser,
+  useUpdateUserFlag,
+  writeFirstStepsCallPhase,
+} from 'common.services';
 import { StartLessonButton } from 'features.lesson.start';
 import { NextLessonChip } from '../NextLessonChip';
 import { EditableClassroomName } from './EditableClassroomName';
@@ -54,7 +60,9 @@ export const Content = ({ classroom }: ContentProps) => {
   }, [search, startCall, classroom.id, classroom.status, updateUserFlag.mutate, user]);
 
   const handleStartCall = useCallback(async () => {
-    markFirstStepDone(user, 'call', updateUserFlag.mutate);
+    const guided = readFirstStepsTour()?.step === 'call';
+    if (guided) writeFirstStepsCallPhase('prejoin-devices');
+    else markFirstStepDone(user, 'call', updateUserFlag.mutate);
     try {
       await startCall({ classroom_id: classroom.id.toString() }, { source: 'classroom' });
     } catch (error) {
