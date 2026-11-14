@@ -1,27 +1,28 @@
-import { useEffect, useSyncExternalStore } from 'react';
-import { boardImageBudget, type ImageBudgetStatus } from './imageBudget';
+import { useLayoutEffect, useSyncExternalStore } from 'react';
+import { boardImageBudget, IMAGE_LOW_QUALITY_PIXELS, type ImageQuality } from './imageBudget';
 
 /**
- * Место под картинку в общем бюджете декодированных пикселей.
- * `none` — решение ещё не принято (один кадр после монтирования), `denied` — места нет.
- * Без ограничения (десктоп) сразу `granted`: лишнего кадра ожидания нет.
+ * Полная резкость, пока картинка влезает в общий бюджет декодированных пикселей.
+ * Иначе уменьшенная копия. Серой карточки нет: картинка видна в обоих случаях.
+ * Без ограничения (десктоп) сразу `full`.
  */
-export function useImageBudget(id: string, cost: number, forced: boolean): ImageBudgetStatus {
-  const status = useSyncExternalStore(
+export function useImageQuality(id: string, fullCost: number): ImageQuality {
+  const enabled = boardImageBudget.enabled;
+  const quality = useSyncExternalStore(
     boardImageBudget.subscribe,
-    () => boardImageBudget.status(id),
-    () => 'none' as const,
+    () => (enabled ? boardImageBudget.quality(id) : 'full'),
+    () => 'full' as const,
   );
 
-  useEffect(() => {
-    if (!boardImageBudget.enabled) return;
-    boardImageBudget.request(id, cost, forced);
-  }, [id, cost, forced]);
+  useLayoutEffect(() => {
+    if (!enabled) return;
+    boardImageBudget.requestQuality(id, fullCost, IMAGE_LOW_QUALITY_PIXELS);
+  }, [id, fullCost, enabled]);
 
-  useEffect(() => {
-    if (!boardImageBudget.enabled) return;
+  useLayoutEffect(() => {
+    if (!enabled) return;
     return () => boardImageBudget.release(id);
-  }, [id]);
+  }, [id, enabled]);
 
-  return boardImageBudget.enabled ? status : 'granted';
+  return enabled ? quality : 'full';
 }

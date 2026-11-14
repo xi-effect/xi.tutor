@@ -14,10 +14,13 @@ export function useBoardImageAsset({
   shapeId,
   assetId,
   width,
+  maxEdgeCap = null,
 }: {
   shapeId: DrShapeId;
   assetId: DrAssetId | null;
   width: number;
+  /** Длинная сторона декодированной копии. `null` — резкость под текущий зум. */
+  maxEdgeCap?: number | null;
 }) {
   const editor = useEditor();
   const { token } = useYjsContext();
@@ -53,9 +56,11 @@ export function useBoardImageAsset({
         stepped,
         editor.getInstanceState().devicePixelRatio,
       );
-      return target ? Math.max(target.width, target.height) : null;
+      const edge = target ? Math.max(target.width, target.height) : null;
+      if (maxEdgeCap && (edge === null || edge > maxEdgeCap)) return maxEdgeCap;
+      return edge;
     },
-    [editor, width, assetWidth, assetHeight],
+    [editor, width, assetWidth, assetHeight, maxEdgeCap],
   );
   const src = asset?.props.src || preview || '';
   const url = useBoardImageUrl({
