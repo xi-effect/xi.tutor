@@ -2,21 +2,33 @@ import { displayPixelSize } from './rasterBudget';
 import { isMemoryConstrainedDevice, maxDecodePixels } from './deviceBudget';
 
 /**
- * Сколько пикселей картинок одновременно держим на экране на iPhone/iPad.
+ * Сколько пикселей картинок одновременно держим в полной резкости на iPhone/iPad.
  * 40 Мп ≈ 160 МБ RGBA: вместе с остальной доской это ниже порога, за которым iOS
- * убивает вкладку. Доска, открытая с зумом «вписать всё», иначе декодирует
- * все картинки сразу, хотя каждая занимает на экране несколько десятков пикселей.
+ * убивает вкладку. Что не влезло, остаётся на экране уменьшенной копией, а не серой карточкой.
  */
 export const IMAGE_BUDGET_PIXELS_CONSTRAINED = 40_000_000;
 
 export type ImageBudgetStatus = 'none' | 'granted' | 'denied';
 
+/** Полный размер не влез в бюджет: картинка остаётся, но не резче этого края. */
+export const IMAGE_LOW_QUALITY_EDGE = 2048;
+export const IMAGE_LOW_QUALITY_PIXELS = IMAGE_LOW_QUALITY_EDGE * IMAGE_LOW_QUALITY_EDGE;
+
+export type ImageQuality = 'full' | 'low';
+
 export type ImageBudget = {
   /** `false` — бюджет не ограничивает (десктоп), всё показываем сразу. */
   readonly enabled: boolean;
   request(id: string, cost: number, forced?: boolean): ImageBudgetStatus;
+  /**
+   * Полная резкость, пока хватает места. Иначе уменьшенная копия.
+   * Картинку это не прячет: оба варианта её показывают.
+   */
+  requestQuality(id: string, fullCost: number, lowCost: number): ImageQuality;
   release(id: string): void;
   status(id: string): ImageBudgetStatus;
+  /** `low`, пока для id ещё не было `requestQuality`. */
+  quality(id: string): ImageQuality;
   subscribe(listener: () => void): () => void;
 };
 
@@ -29,6 +41,8 @@ export function createImageBudget(limit: number): ImageBudget {
   const enabled = Number.isFinite(limit);
   const granted = new Map<string, number>();
   const waiting = new Map<string, number>();
+  const qualityOf = new Map<string, ImageQuality>();
+  const fullCostOf = new Map<string, number>();
   const listeners = new Set<() => void>();
   let used = 0;
 
@@ -61,11 +75,31 @@ export function createImageBudget(limit: number): ImageBudget {
       if (!wasWaiting) notify();
       return 'denied';
     },
+    requestQuality(id, fullCost, lowCost) {
+      const full = Math.max(0, fullCost);
+      const low = Math.max(0, Math.min(lowCost, full > 0 ? full : lowCost));
+      const previous = granted.get(id);
+      const usedWithout = previous === undefined ? used : Math.max(0, used - previous);
+      // Неизвестный размер не зажимаем: оценивать ещё нечего.
+      const wantFull = !enabled || full === 0 || usedWithout + full <= limit;
+      const nextCost = wantFull ? full : low;
+      const next: ImageQuality = wantFull ? 'full' : 'low';
+      const prevQuality = qualityOf.get(id);
+      fullCostOf.set(id, full);
+      waiting.delete(id);
+      granted.set(id, nextCost);
+      qualityOf.set(id, next);
+      used = usedWithout + nextCost;
+      if (previous !== nextCost || prevQuality !== next) notify();
+      return next;
+    },
     release(id) {
       const wasWaiting = waiting.delete(id);
+      fullCostOf.delete(id);
+      const hadQuality = qualityOf.delete(id);
       const current = granted.get(id);
       if (current === undefined) {
-        if (wasWaiting) notify();
+        if (wasWaiting || hadQuality) notify();
         return;
       }
       granted.delete(id);
@@ -73,12 +107,24 @@ export function createImageBudget(limit: number): ImageBudget {
       for (const [waitingId, cost] of waiting) {
         if (used + cost <= limit) grant(waitingId, cost);
       }
+      // Освободившееся место возвращает уменьшенным картинкам полную резкость.
+      for (const [otherId, otherFull] of fullCostOf) {
+        if (qualityOf.get(otherId) !== 'low' || otherFull <= 0) continue;
+        const currentLow = granted.get(otherId) ?? 0;
+        if (used - currentLow + otherFull > limit) continue;
+        used = used - currentLow + otherFull;
+        granted.set(otherId, otherFull);
+        qualityOf.set(otherId, 'full');
+      }
       notify();
     },
     status(id) {
       if (granted.has(id)) return 'granted';
       if (waiting.has(id)) return 'denied';
       return 'none';
+    },
+    quality(id) {
+      return qualityOf.get(id) ?? 'low';
     },
     subscribe(listener) {
       listeners.add(listener);
@@ -92,14 +138,6 @@ export function createImageBudget(limit: number): ImageBudget {
 export const boardImageBudget: ImageBudget = createImageBudget(
   isMemoryConstrainedDevice() ? IMAGE_BUDGET_PIXELS_CONSTRAINED : Number.POSITIVE_INFINITY,
 );
-
-/**
- * Файл настолько велик, что на слабом устройстве его оригинал нельзя декодировать
- * ни целиком, ни ради уменьшенной копии: показываем только по явному выбору пользователя.
- */
-export function isOversizedForDevice(width: number, height: number): boolean {
-  return isMemoryConstrainedDevice() && width * height > maxDecodePixels();
-}
 
 /**
  * Во сколько пикселей декодированной памяти обойдётся картинка на экране.

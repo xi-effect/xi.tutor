@@ -56,7 +56,13 @@ export function useBoardImageUrl(options: {
         releasePending = retainBlobUrl(next);
         const image = new Image();
         image.src = next;
-        await image.decode();
+        try {
+          await image.decode();
+        } catch (error) {
+          signal.throwIfAborted();
+          if (error instanceof DOMException && error.name === 'AbortError') throw error;
+          // Safari часто отклоняет decode() у файлов, которые <img> всё равно рисует.
+        }
         signal.throwIfAborted();
         return next;
       },

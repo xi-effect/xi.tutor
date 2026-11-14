@@ -61,6 +61,35 @@ describe('createImageBudget', () => {
   });
 });
 
+describe('requestQuality', () => {
+  it('показывает картинку целиком, пока хватает места, иначе оставляет уменьшенную копию', () => {
+    const budget = createImageBudget(100);
+    expect(budget.requestQuality('a', 60, 10)).toBe('full');
+    expect(budget.requestQuality('b', 50, 10)).toBe('low');
+    expect(budget.quality('a')).toBe('full');
+    expect(budget.quality('b')).toBe('low');
+    expect(budget.status('b')).toBe('granted');
+  });
+
+  it('после освобождения места возвращает уменьшенной картинке полную резкость', () => {
+    const budget = createImageBudget(100);
+    const listener = vi.fn();
+    budget.subscribe(listener);
+    budget.requestQuality('a', 60, 10);
+    budget.requestQuality('b', 50, 10);
+    listener.mockClear();
+    budget.release('a');
+    expect(budget.quality('b')).toBe('full');
+    expect(listener).toHaveBeenCalled();
+  });
+
+  it('неизвестный размер не зажимает', () => {
+    const budget = createImageBudget(100);
+    budget.requestQuality('a', 100, 10);
+    expect(budget.requestQuality('b', 0, 10)).toBe('full');
+  });
+});
+
 describe('estimateImageDisplayPixels', () => {
   it('на общем плане считает уменьшенный растр, а не весь файл', () => {
     const cost = estimateImageDisplayPixels({
