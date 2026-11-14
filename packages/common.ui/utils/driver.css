@@ -235,3 +235,8 @@
   border-bottom-color: transparent;
   border-top-color: transparent;
 }
+
+.driver-active [data-radix-popper-content-wrapper],
+.driver-active [data-radix-popper-content-wrapper] * {
+  pointer-events: auto;
+}

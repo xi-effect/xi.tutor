@@ -152,11 +152,9 @@
         "action": "Invite a student"
       },
       "material": {
-        "title": "Prepare a material",
-        "hint": "Create a board for working together or a note with the lesson plan.",
-        "action": "Create material",
-        "board": "Board",
-        "note": "Note"
+        "title": "Create a personal material",
+        "hint": "The hint opens personal materials, creates a board, and duplicates it into a classroom. A personal material can be used as a template: the classroom duplicate is independent of it.",
+        "action": "Create a material"
       },
       "lesson": {
         "title": "Schedule a lesson",

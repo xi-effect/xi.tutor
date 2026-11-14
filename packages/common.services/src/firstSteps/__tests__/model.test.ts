@@ -41,7 +41,7 @@ describe('первые шаги', () => {
       'call',
       'workspace',
     ]);
-    expect(firstStepsTotal('tutor')).toBe(8);
+    expect(firstStepsTotal('tutor')).toBe(7);
     expect(firstStepsTotal('student')).toBe(3);
     expect(FIRST_STEPS_TOUR_STOPS.navigation.map((stop) => stop.anchor)).toEqual([
       'sidebar-sections',
@@ -73,17 +73,26 @@ describe('первые шаги', () => {
       'students-invite',
       'invite-link',
     ]);
+    expect(FIRST_STEPS_TOUR_STOPS.material.map((stop) => stop.anchor)).toEqual([
+      'materials',
+      'create-board',
+      'board-back',
+      'template-card',
+      'template-menu',
+      'duplicate-modal',
+      'template-copy',
+    ]);
+    expect(TUTOR_FIRST_STEPS.at(-1)).toBe('material');
   });
 
   it('считает выполненное и пропущенное разобранными', () => {
     const marks: Record<string, FirstStepMark> = {
       invite: 'done',
       material: 'skipped',
-      lesson: 'pending',
     };
 
     expect(countResolvedFirstSteps(marks, 'tutor')).toBe(2);
-    expect(countResolvedFirstSteps({ ...marks, lesson: 'done' }, 'tutor')).toBe(3);
+    expect(countResolvedFirstSteps({ ...marks, navigation: 'done' }, 'tutor')).toBe(3);
   });
 
   it('раскрывает первый доступный шаг и уважает ручной выбор', () => {
@@ -156,10 +165,10 @@ describe('первые шаги', () => {
     expect(readFirstStepMarks(storage, 3, 'tutor').material).toBe('done');
     expect(dirtyFirstStepFlags(storage, 3, 'tutor')).toEqual([]);
 
-    commitFirstStep(storage, 3, 'tutor', 'lesson', 'skipped', true);
-    acknowledgeFirstStepFlag(storage, 3, 'tutor', 'fs.tutor.lesson.skip');
+    commitFirstStep(storage, 3, 'tutor', 'invite', 'skipped', true);
+    acknowledgeFirstStepFlag(storage, 3, 'tutor', 'fs.tutor.invite.skip');
     expect(dirtyFirstStepFlags(storage, 3, 'tutor')).toEqual([]);
-    expect(readFirstStepMarks(storage, 3, 'tutor').lesson).toBe('skipped');
+    expect(readFirstStepMarks(storage, 3, 'tutor').invite).toBe('skipped');
   });
 
   it('приветствие не сбрасывается, когда отмечается шаг', () => {

@@ -3,17 +3,8 @@ import { AnimatePresence, motion, useReducedMotion, type Transition } from 'moti
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { Logo } from 'common.ui';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@xipkg/dropdown';
-import { FileSmall, WhiteBoard } from '@xipkg/icons';
-import { AddingLessonModal } from 'features.lesson.add';
 import { useDemoCabinet } from '../../../demoCabinet/useDemoCabinet';
 import { ModalInvitation } from 'features.invites';
-import { useCreateMaterial } from 'features.materials.add';
 import {
   FIRST_STEPS_COLLAPSED,
   FIRST_STEPS_TOUR_ACTION_EVENT,
@@ -21,7 +12,6 @@ import {
   firstStepsTotal,
   countResolvedFirstSteps,
   isStudentClassroomBlocked,
-  isTutorLessonBlocked,
   pickExpandedStepId,
   stepsForRole,
   useFetchClassrooms,
@@ -35,7 +25,6 @@ import {
   hideFirstStepsPreview,
   requestFirstStepsTour,
   useOnboardingTransition,
-  useTutorSchedule,
   type FirstStepId,
   type FirstStepsRole,
 } from 'common.services';
@@ -46,18 +35,6 @@ type FirstStepsProps = {
   /** Просмотр без этапа training: выход прячет карточку и не вызывает сервер. */
   localPreview?: boolean;
   onLocalPreviewClose?: () => void;
-};
-
-const scheduleProbeRange = () => {
-  const now = new Date();
-  const after = new Date(now);
-  after.setFullYear(after.getFullYear() - 1);
-  const before = new Date(now);
-  before.setFullYear(before.getFullYear() + 2);
-  return {
-    happensAfter: after.toISOString(),
-    happensBefore: before.toISOString(),
-  };
 };
 
 const revealEase = [0.22, 1, 0.36, 1] as const;
@@ -163,18 +140,13 @@ export const FirstSteps = ({
     role,
   );
   const { transitionStage } = useOnboardingTransition('completed', 'forwards');
-  const { createMaterial, isPending: isCreatingMaterial } = useCreateMaterial();
   const [pinnedId, setPinnedId] = useState<string | null>(null);
   const [joinHelpOpen, setJoinHelpOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [lessonOpen, setLessonOpen] = useState(false);
-  const [materialMenuOpen, setMaterialMenuOpen] = useState(false);
 
   const isTutor = role === 'tutor';
-  const range = useMemo(scheduleProbeRange, []);
   const invitations = useInvitationsList(!isTutor);
   const materials = useGetMaterialsList({ disabled: !isTutor });
-  const schedule = useTutorSchedule({ ...range, enabled: isTutor });
   const tutorClassrooms = useFetchClassrooms(undefined, !isTutor);
   const studentClassrooms = useFetchClassroomsByStudent(undefined, isTutor);
 
@@ -231,11 +203,6 @@ export const FirstSteps = ({
   ]);
 
   useEffect(() => {
-    if (!isTutor || !schedule.data || schedule.data.length === 0) return;
-    markDone('lesson');
-  }, [isTutor, markDone, schedule.data]);
-
-  useEffect(() => {
     if (isTutor || classroomQuery.isLoading || classroomCount === 0) return;
     if (classroomCount && classroomCount > 0) markDone('join');
   }, [classroomCount, classroomQuery.isLoading, isTutor, markDone]);
@@ -243,12 +210,7 @@ export const FirstSteps = ({
   const steps = stepsForRole(role).map((id) => ({
     id,
     status: marks[id],
-    blocked:
-      id === 'lesson'
-        ? isTutorLessonBlocked(classroomCount)
-        : id === 'classroom'
-          ? isStudentClassroomBlocked(classroomCount)
-          : false,
+    blocked: id === 'classroom' ? isStudentClassroomBlocked(classroomCount) : false,
   }));
   const expandedId = pickExpandedStepId(steps, pinnedId);
   const resolved = countResolvedFirstSteps(marks, role);
@@ -279,8 +241,6 @@ export const FirstSteps = ({
     const onTourAction = (event: Event) => {
       const step = (event as CustomEvent<string>).detail;
       if (step === 'invite') setInviteOpen(true);
-      if (step === 'lesson') setLessonOpen(true);
-      if (step === 'material') setMaterialMenuOpen(true);
     };
 
     window.addEventListener(FIRST_STEPS_TOUR_ACTION_EVENT, onTourAction);
@@ -304,6 +264,24 @@ export const FirstSteps = ({
       } catch (error) {
         console.error('Не удалось открыть демонстрационный кабинет', error);
         return;
+      }
+    }
+
+    if (step === 'material' && classroomId == null) {
+      try {
+        const ready = await Promise.race([
+          demoCabinet.whenReady(),
+          new Promise<null>((resolve) => {
+            window.setTimeout(() => resolve(null), 400);
+          }),
+        ]);
+        if (ready?.classroomId != null) {
+          classroomId = ready.classroomId.toString();
+          boardId = ready.boardId;
+          noteId = ready.noteId;
+        }
+      } catch {
+        classroomId = null;
       }
     }
 
@@ -401,7 +379,7 @@ export const FirstSteps = ({
                   const open = expandedId === step.id;
                   const title = t(`firstSteps.${role}.${step.id}.title`);
                   const detail =
-                    step.blocked && (step.id === 'lesson' || step.id === 'classroom')
+                    step.blocked && step.id === 'classroom'
                       ? t(`firstSteps.${role}.${step.id}.blocked`)
                       : t(`firstSteps.${role}.${step.id}.hint`);
 
@@ -487,61 +465,14 @@ export const FirstSteps = ({
                                 </GuideButton>
                               )}
                               {step.id === 'material' && (
-                                <DropdownMenu
-                                  open={materialMenuOpen}
-                                  onOpenChange={(nextOpen) => {
-                                    if (!nextOpen) setMaterialMenuOpen(false);
-                                  }}
-                                >
-                                  <DropdownMenuTrigger asChild>
-                                    <GuideButton
-                                      type="button"
-                                      variant="primary"
-                                      size="s"
-                                      className="rounded-full"
-                                      data-first-step="material-action"
-                                      disabled={isCreatingMaterial}
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        startTour('material');
-                                      }}
-                                    >
-                                      {t('firstSteps.tutor.material.action')}
-                                    </GuideButton>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent
-                                    align="start"
-                                    className="border-border-default bg-background-surface w-[min(16rem,calc(100vw-2.5rem))] rounded-xl border p-1"
-                                  >
-                                    <DropdownMenuItem
-                                      className="focus:bg-background-page flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-3 text-sm"
-                                      disabled={isCreatingMaterial}
-                                      onSelect={() => createMaterial('board')}
-                                    >
-                                      <WhiteBoard className="fill-icon-primary size-4 shrink-0" />
-                                      {t('firstSteps.tutor.material.board')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      className="focus:bg-background-page flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-3 text-sm"
-                                      disabled={isCreatingMaterial}
-                                      onSelect={() => createMaterial('note')}
-                                    >
-                                      <FileSmall className="fill-icon-primary size-4 shrink-0" />
-                                      {t('firstSteps.tutor.material.note')}
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              )}
-                              {step.id === 'lesson' && !step.blocked && (
                                 <GuideButton
                                   type="button"
                                   variant="primary"
                                   size="s"
                                   className="rounded-full"
-                                  data-first-step="lesson-action"
-                                  onClick={() => startTour('lesson')}
+                                  onClick={() => startTour('material')}
                                 >
-                                  {t('firstSteps.tutor.lesson.action')}
+                                  {t('firstSteps.tutor.material.action')}
                                 </GuideButton>
                               )}
                               {step.id === 'join' && (
@@ -649,14 +580,6 @@ export const FirstSteps = ({
           open
           analyticsSource="onboarding"
           onOpenChange={(open) => setInviteOpen(open)}
-        />
-      )}
-      {isTutor && (
-        <AddingLessonModal
-          open={lessonOpen}
-          onOpenChange={setLessonOpen}
-          analyticsSource="onboarding"
-          fixedClassroomId={demoClassroomId ?? undefined}
         />
       )}
     </section>

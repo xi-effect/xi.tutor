@@ -181,6 +181,7 @@ export const Header = () => {
             type="button"
             className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-back"
+            data-first-step="board-back"
           >
             <ArrowLeft size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
           </Button>

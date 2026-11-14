@@ -5,7 +5,10 @@ import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
 import { useCurrentUser } from 'common.services';
 import { NotFoundPage } from 'common.ui';
-import { MaterialsDuplicateProvider } from '../provider/MaterialsDuplicateContext';
+import {
+  MaterialsDuplicateProvider,
+  useMaterialsDuplicate,
+} from '../provider/MaterialsDuplicateContext';
 import { LibraryTagsUiProvider, useLibraryTags } from 'features.tags';
 import { MaterialsDuplicateModal } from './MaterialsDuplicateModal';
 import { cn, useMediaQuery } from '@xipkg/utils';
@@ -75,6 +78,7 @@ const replaceSearchParams = (updates: Record<string, string | null>) => {
 };
 
 const MaterialsPageContent = () => {
+  const { openModal } = useMaterialsDuplicate();
   const [activeTab, setActiveTab] = useState<MaterialsTabT>(() => getTabFromUrl());
   const [scopeFilter, setScopeFilter] = useState<MaterialScopeFilterT>(() => getScopeFromUrl());
   const [classroomIds, setClassroomIds] = useState<number[]>(() =>
@@ -110,6 +114,16 @@ const MaterialsPageContent = () => {
       return nextTags.length === current.length ? current : nextTags;
     });
   }, [isFetched, tags]);
+
+  useEffect(() => {
+    const onOpenDuplicate = (event: Event) => {
+      const id = (event as CustomEvent<string>).detail;
+      if (typeof id !== 'string' || id.length === 0) return;
+      openModal({ id, contentKind: 'board', sourceClassroomId: null });
+    };
+    window.addEventListener('first-steps-open-duplicate', onOpenDuplicate);
+    return () => window.removeEventListener('first-steps-open-duplicate', onOpenDuplicate);
+  }, [openModal]);
 
   useEffect(() => {
     const syncFromUrl = () => {

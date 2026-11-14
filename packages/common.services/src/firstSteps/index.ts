@@ -44,6 +44,7 @@ export {
   tourStopPath,
   writeFirstStepsCallPhase,
   writeFirstStepsTourIndex,
+  writeFirstStepsMaterialId,
   type FirstStepsCallPhase,
   type FirstStepsTourAnchor,
   type FirstStepsTourSession,

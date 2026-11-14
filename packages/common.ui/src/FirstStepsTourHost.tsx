@@ -20,6 +20,7 @@ import {
   tourStopOpensAction,
   tourStopPath,
   writeFirstStepsTourIndex,
+  writeFirstStepsMaterialId,
   FIRST_STEPS_CALL_COMPLETED_EVENT,
   useCompleteFirstStep,
   type FirstStepId,
@@ -167,8 +168,8 @@ const syncUserMenu = (anchor: string | undefined) => {
 const sidebarExpanded = () =>
   document.querySelector('#sidebar')?.getAttribute('data-sidebar-expanded') !== 'false';
 
-const waitForTour = async (predicate: () => boolean): Promise<boolean> => {
-  for (let attempt = 0; attempt < 25; attempt += 1) {
+const waitForTour = async (predicate: () => boolean, attempts = 25): Promise<boolean> => {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
     if (predicate()) return true;
     await new Promise((resolve) => window.setTimeout(resolve, 40));
   }
@@ -235,15 +236,27 @@ const demoCardSelector = (session: FirstStepsTourSession): string =>
     ? `[data-classroom-id="${session.classroomId}"]`
     : FIRST_STEPS_TOUR_SELECTORS['demo-classroom-card'];
 
-const stopSelector = (stop: FirstStepsTourStop, session: FirstStepsTourSession): string =>
-  stop.anchor === 'demo-classroom-card'
-    ? demoCardSelector(session)
-    : FIRST_STEPS_TOUR_SELECTORS[stop.anchor];
+const templateCardSelector = (session: FirstStepsTourSession): string =>
+  session.materialId
+    ? `[data-material-id="${session.materialId}"]`
+    : FIRST_STEPS_TOUR_SELECTORS['template-card'];
+
+const stopSelector = (stop: FirstStepsTourStop, session: FirstStepsTourSession): string => {
+  if (stop.anchor === 'demo-classroom-card') return demoCardSelector(session);
+  if (stop.anchor === 'template-card' || stop.anchor === 'template-copy') {
+    return templateCardSelector(session);
+  }
+  if (stop.anchor === 'template-menu') {
+    return `${templateCardSelector(session)} [data-first-step="template-board-menu"]`;
+  }
+  return FIRST_STEPS_TOUR_SELECTORS[stop.anchor];
+};
 
 const navigatesOnClick = (stop: FirstStepsTourStop | undefined): boolean =>
   stop?.click === 'open-classrooms' ||
   stop?.click === 'open-demo-classroom' ||
-  stop?.click === 'open-students';
+  stop?.click === 'open-students' ||
+  stop?.click === 'open-materials';
 
 /** Курсор нажимает цель. Переход делает сам тур, чтобы анимация успела доиграть. */
 const performAnimatedClick = async (selector: string): Promise<boolean> => {
@@ -262,11 +275,100 @@ const performOpenInvite = async (): Promise<boolean> => {
   return true;
 };
 
+const pressButton = (button: HTMLElement) => {
+  const pointer = {
+    bubbles: true,
+    cancelable: true,
+    pointerId: 1,
+    pointerType: 'mouse',
+    isPrimary: true,
+  };
+  button.dispatchEvent(new PointerEvent('pointerdown', pointer));
+  button.dispatchEvent(new PointerEvent('pointerup', pointer));
+  button.click();
+};
+
+const performCreateBoard = async (): Promise<boolean> => {
+  const button = findVisible('[data-first-step="create-board"]');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
+const performLeaveBoard = async (): Promise<boolean> => {
+  const button = findVisible('[data-first-step="board-back"]');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
+const performOpenDuplicate = async (): Promise<boolean> => {
+  const materialId = readFirstStepsTour()?.materialId;
+  const button = materialId
+    ? findVisible(`[data-material-id="${materialId}"] [data-first-step="template-board-menu"]`)
+    : null;
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  pressButton(button);
+  const opened = await waitForTour(
+    () => findVisible('[data-first-step="duplicate-to-classroom"]') != null,
+  );
+  const item = opened ? findVisible('[data-first-step="duplicate-to-classroom"]') : null;
+  if (item instanceof HTMLElement) {
+    item.click();
+    return true;
+  }
+  window.dispatchEvent(new CustomEvent('first-steps-open-duplicate', { detail: materialId }));
+  return true;
+};
+
+const performConfirmDuplicate = async (): Promise<boolean> => {
+  const session = readFirstStepsTour();
+  const preferred = session?.classroomId
+    ? `[data-first-step="duplicate-modal"] [data-classroom-id="${session.classroomId}"]`
+    : null;
+  const anyClassroom = '[data-first-step="duplicate-modal"] [data-classroom-id]';
+  const preferredReady = preferred
+    ? await waitForTour(() => findVisible(preferred) != null, 20)
+    : false;
+  const classroom = findVisible(preferredReady && preferred ? preferred : anyClassroom);
+  if (!(classroom instanceof HTMLElement)) {
+    const appeared = await waitForTour(() => findVisible(anyClassroom) != null, 20);
+    if (!appeared) return false;
+  }
+  const target = classroom instanceof HTMLElement ? classroom : findVisible(anyClassroom);
+  if (target instanceof HTMLElement) {
+    const played = await animateTourClick(target);
+    if (!played) return false;
+    target.click();
+  }
+  const ready = await waitForTour(() => {
+    const button = findVisible('[data-first-step="duplicate-confirm"]');
+    return button instanceof HTMLButtonElement && !button.disabled;
+  }, 20);
+  if (!ready) return false;
+  const confirm = findVisible('[data-first-step="duplicate-confirm"]');
+  if (!(confirm instanceof HTMLElement)) return false;
+  const played = await animateTourClick(confirm);
+  if (!played) return false;
+  confirm.click();
+  return true;
+};
+
 const stopDemo = (stop: FirstStepsTourStop | undefined): (() => Promise<boolean>) | null => {
   if (stop?.click === 'sidebar-toggle') return performSidebarToggleDemo;
   if (stop?.click === 'open-user-menu') return performOpenUserMenu;
   if (stop?.click === 'hover-support') return performSupportHover;
   if (stop?.click === 'open-invite') return performOpenInvite;
+  if (stop?.click === 'create-board') return performCreateBoard;
+  if (stop?.click === 'leave-board') return performLeaveBoard;
+  if (stop?.click === 'open-duplicate') return performOpenDuplicate;
+  if (stop?.click === 'confirm-duplicate') return performConfirmDuplicate;
   return null;
 };
 
@@ -286,6 +388,7 @@ const stopStatus = (
   session: FirstStepsTourSession,
   pathname: string,
 ): StopStatus => {
+  if (stop.place === 'material-board' && !session.materialId) return 'wait';
   const path = tourStopPath(stop, session);
   if (stop.place !== 'current' && path == null) return 'skip';
   if (!isOnTourPath(pathname, path)) return 'navigate';
@@ -307,6 +410,18 @@ const goToPath = (navigate: ReturnType<typeof useNavigate>, path: string) => {
   }
   if (path === '/students') {
     void navigate({ to: '/students' });
+    return;
+  }
+  if (path === '/materials') {
+    void navigate({ to: '/materials', search: { tab: 'boards' } });
+    return;
+  }
+  const materialBoard = path.match(/^\/materials\/([^/]+)\/board$/);
+  if (materialBoard) {
+    void navigate({
+      to: '/materials/$materialId/board',
+      params: { materialId: materialBoard[1] },
+    });
     return;
   }
   if (path === '/settings/appearance') {
@@ -382,6 +497,31 @@ export const FirstStepsTourHost = () => {
 
   useEffect(() => {
     const session = readFirstStepsTour();
+    if (!session || session.step !== 'material') return;
+    const materialBoard = pathname.match(/^\/materials\/([^/]+)\/board\/?$/);
+    if (materialBoard) {
+      const materialId = materialBoard[1];
+      const createIndex = FIRST_STEPS_TOUR_STOPS.material.findIndex(
+        (stop) => stop.click === 'create-board',
+      );
+      const index =
+        createIndex >= 0 && session.index <= createIndex ? createIndex + 1 : session.index;
+      if (session.materialId === materialId && session.index === index) return;
+      writeFirstStepsMaterialId(materialId, index);
+      return;
+    }
+    if ((pathname === '/materials' || pathname === '/materials/') && session.materialId) {
+      const leaveIndex = FIRST_STEPS_TOUR_STOPS.material.findIndex(
+        (stop) => stop.click === 'leave-board',
+      );
+      if (leaveIndex >= 0 && session.index === leaveIndex) {
+        writeFirstStepsMaterialId(session.materialId, leaveIndex + 1);
+      }
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const session = readFirstStepsTour();
     if (!session || session.callPhase) return;
 
     const stops = FIRST_STEPS_TOUR_STOPS[session.step];
@@ -389,8 +529,8 @@ export const FirstStepsTourHost = () => {
 
     const sidebar = document.querySelector('#sidebar');
     const sidebarCollapsed =
-      session.step === 'navigation' &&
       stops[index]?.click !== 'sidebar-toggle' &&
+      (session.step === 'navigation' || stops[index]?.anchor === 'materials') &&
       sidebar?.getAttribute('data-sidebar-expanded') === 'false' &&
       document.querySelector('#home-menu-item') != null;
     if (sidebarCollapsed) {
@@ -565,6 +705,17 @@ export const FirstStepsTourHost = () => {
 
     const keepStepOnHighlightClick = (event: MouseEvent) => {
       if (!event.isTrusted) return;
+      const active = driverRef.current?.getActiveIndex() ?? 0;
+      const stop = group[active];
+      if (
+        stop?.click === 'open-duplicate' &&
+        event.target instanceof Element &&
+        event.target.closest('[data-first-step="duplicate-to-classroom"]')
+      ) {
+        writeFirstStepsTourIndex(index + active + 1);
+        window.setTimeout(() => setNonce((value) => value + 1), 280);
+        return;
+      }
       const activeElement = document.querySelector('.driver-active-element');
       if (
         !activeElement ||
@@ -573,8 +724,21 @@ export const FirstStepsTourHost = () => {
       ) {
         return;
       }
-      const active = driverRef.current?.getActiveIndex() ?? 0;
-      const stop = group[active];
+      if (stop?.anchor === 'template-card' || stop?.anchor === 'template-copy') {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      if (stop?.click === 'confirm-duplicate') {
+        if (
+          event.target instanceof Element &&
+          event.target.closest('[data-first-step="duplicate-confirm"]')
+        ) {
+          writeFirstStepsTourIndex(index + active + 1);
+          window.setTimeout(() => setNonce((value) => value + 1), 280);
+        }
+        return;
+      }
       if (event.target instanceof Element && event.target.closest('[data-classroom-card-menu]')) {
         return;
       }

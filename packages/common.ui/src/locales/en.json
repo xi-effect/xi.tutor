@@ -110,8 +110,32 @@
     },
     "material": {
       "materials": {
-        "title": "Materials",
-        "body": "Boards and notes are collected here, not only inside a classroom."
+        "title": "Personal materials",
+        "body": "Personal boards and notes live here. You can use them as templates and duplicate them into a classroom. We'll open this section now."
+      },
+      "create-board": {
+        "title": "New board",
+        "body": "We'll create a personal board. It stays in personal materials and can be used as a template for a classroom."
+      },
+      "board-back": {
+        "title": "Board is ready",
+        "body": "We'll go back to the personal materials list so this board can be duplicated into a classroom."
+      },
+      "template-card": {
+        "title": "Personal material",
+        "body": "This board can be used as a template and duplicated into a classroom. Students then get their own board for the lesson."
+      },
+      "template-menu": {
+        "title": "Duplication",
+        "body": "The board menu has Duplicate to classroom. We'll open it and duplicate the personal material."
+      },
+      "duplicate-modal": {
+        "title": "Duplicate into a classroom",
+        "body": "Choose a classroom. We'll duplicate this board there now."
+      },
+      "template-copy": {
+        "title": "Independent duplicate",
+        "body": "The classroom now has its own board. Changes there do not change the personal material, and edits to the personal material do not reach the classroom."
       },
       "material-action": {
         "title": "New material",

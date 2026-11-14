@@ -217,6 +217,7 @@ export const MaterialsCard = ({
           )}
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
+          data-material-id={id}
         >
           {hasIcon && <div className={cardTypeIconBoxClass}>{cardIcon[content_kind]}</div>}
           <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
@@ -252,6 +253,7 @@ export const MaterialsCard = ({
           )}
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
+          data-material-id={id}
         >
           <div className="flex w-full min-w-0 shrink-0 items-center gap-2">
             <div className={cardTypeIconBoxClass}>{cardIcon[content_kind]}</div>
@@ -308,6 +310,7 @@ export const MaterialsCard = ({
       )}
       data-umami-event="material-card-open"
       data-umami-event-type={content_kind}
+      data-material-id={id}
     >
       <div className="flex flex-col gap-1 overflow-hidden">
         <div className="flex h-full flex-col justify-between gap-2">

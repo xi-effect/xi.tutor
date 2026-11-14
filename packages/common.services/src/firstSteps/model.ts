@@ -6,7 +6,6 @@ export const TUTOR_FIRST_STEPS = [
   'workspace',
   'invite',
   'material',
-  'lesson',
 ] as const;
 export const STUDENT_FIRST_STEPS = ['join', 'classroom', 'schedule'] as const;
 

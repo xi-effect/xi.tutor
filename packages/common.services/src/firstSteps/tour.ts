@@ -29,6 +29,12 @@ export type FirstStepsTourAnchor =
   | 'invite-action'
   | 'students-invite'
   | 'invite-link'
+  | 'create-board'
+  | 'board-back'
+  | 'template-card'
+  | 'template-menu'
+  | 'duplicate-modal'
+  | 'template-copy'
   | 'material-action'
   | 'lesson-action';
 
@@ -41,7 +47,9 @@ export type FirstStepsTourPlace =
   | 'note'
   | 'schedule'
   | 'appearance'
-  | 'students';
+  | 'students'
+  | 'materials'
+  | 'material-board';
 
 export type FirstStepsTourStop = {
   anchor: FirstStepsTourAnchor;
@@ -58,7 +66,12 @@ export type FirstStepsTourStop = {
     | 'open-classrooms'
     | 'open-demo-classroom'
     | 'open-students'
-    | 'open-invite';
+    | 'open-invite'
+    | 'open-materials'
+    | 'create-board'
+    | 'leave-board'
+    | 'open-duplicate'
+    | 'confirm-duplicate';
 };
 
 export type FirstStepsCallPhase =
@@ -77,6 +90,8 @@ export type FirstStepsTourSession = {
   classroomId: string | null;
   boardId: string | null;
   noteId: string | null;
+  /** Доска-шаблон, созданная в шаге материалов. */
+  materialId?: string | null;
   index: number;
   /** Продолжение шага звонка внутри конференции. Пока задана, тур на страницах приложения молчит. */
   callPhase?: FirstStepsCallPhase;
@@ -120,6 +135,12 @@ export const FIRST_STEPS_TOUR_SELECTORS: Record<FirstStepsTourAnchor, string> = 
   'invite-action': '[data-first-step="invite-action"]',
   'students-invite': '[data-first-step="students-invite"]',
   'invite-link': '[data-first-step="invite-link"]',
+  'create-board': '[data-first-step="create-board"]',
+  'board-back': '[data-first-step="board-back"]',
+  'template-card': '[data-first-step="template-card"]',
+  'template-menu': '[data-first-step="template-board-menu"]',
+  'duplicate-modal': '[data-first-step="duplicate-modal"]',
+  'template-copy': '[data-first-step="template-card"]',
   'material-action': '[data-first-step="material-action"]',
   'lesson-action': '[data-first-step="lesson-action"]',
 };
@@ -158,12 +179,13 @@ export const FIRST_STEPS_TOUR_STOPS: Record<FirstStepId, readonly FirstStepsTour
     { anchor: 'invite-link', place: 'students', side: 'top' },
   ],
   material: [
-    { anchor: 'materials', place: 'current' },
-    { anchor: 'material-action', place: 'home' },
-  ],
-  lesson: [
-    { anchor: 'schedule', place: 'current' },
-    { anchor: 'lesson-action', place: 'home' },
+    { anchor: 'materials', place: 'current', side: 'right', click: 'open-materials' },
+    { anchor: 'create-board', place: 'materials', side: 'bottom', click: 'create-board' },
+    { anchor: 'board-back', place: 'material-board', side: 'bottom', click: 'leave-board' },
+    { anchor: 'template-card', place: 'materials', side: 'bottom' },
+    { anchor: 'template-menu', place: 'materials', side: 'left', click: 'open-duplicate' },
+    { anchor: 'duplicate-modal', place: 'materials', side: 'top', click: 'confirm-duplicate' },
+    { anchor: 'template-copy', place: 'materials', side: 'bottom' },
   ],
   join: [{ anchor: 'classrooms', place: 'current' }],
   classroom: [
@@ -198,6 +220,10 @@ export const tourStopPath = (
   if (stop.place === 'schedule') return '/schedule';
   if (stop.place === 'classrooms') return '/classrooms';
   if (stop.place === 'students') return '/students';
+  if (stop.place === 'materials') return '/materials';
+  if (stop.place === 'material-board' && session.materialId) {
+    return `/materials/${session.materialId}/board`;
+  }
   if (stop.place === 'appearance') return '/settings/appearance';
 
   const classroomId = session.classroomId;
@@ -229,7 +255,8 @@ const isSession = (value: unknown): value is FirstStepsTourSession => {
     typeof session.index === 'number' &&
     (session.classroomId == null || typeof session.classroomId === 'string') &&
     (session.boardId == null || typeof session.boardId === 'string') &&
-    (session.noteId == null || typeof session.noteId === 'string')
+    (session.noteId == null || typeof session.noteId === 'string') &&
+    (session.materialId == null || typeof session.materialId === 'string')
   );
 };
 
@@ -254,6 +281,20 @@ export const writeFirstStepsTourIndex = (index: number): void => {
   const session = readFirstStepsTour();
   if (!session || typeof sessionStorage === 'undefined') return;
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...session, index }));
+};
+
+export const writeFirstStepsMaterialId = (materialId: string, index?: number): void => {
+  const session = readFirstStepsTour();
+  if (!session || session.step !== 'material' || typeof sessionStorage === 'undefined') return;
+  sessionStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      ...session,
+      materialId,
+      ...(index == null ? {} : { index }),
+    }),
+  );
+  window.dispatchEvent(new Event(FIRST_STEPS_TOUR_EVENT));
 };
 
 export const writeFirstStepsCallPhase = (phase: FirstStepsCallPhase): void => {
