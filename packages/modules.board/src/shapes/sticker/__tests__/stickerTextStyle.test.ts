@@ -83,3 +83,38 @@ describe('fitStickerFontSize', () => {
     expect(stickerGrowYForContent(180, 16, 200, 200)).toBe(12);
   });
 });
+
+describe('incremental sticker font fitting', () => {
+  it('uses two layout reads when the fitted size stays the same', () => {
+    const probes: number[] = [];
+    expect(
+      fitStickerFontSize({
+        preferredPx: 48,
+        previousPx: 16,
+        maxContentHeight: 100,
+        measure: (px) => {
+          probes.push(px);
+          return px * 6;
+        },
+      }),
+    ).toEqual({ px: 16, contentHeight: 96 });
+    expect(probes).toEqual([16, 17]);
+  });
+
+  it('matches a full search after growth, deletion and font size changes', () => {
+    for (let preferredPx = 12; preferredPx <= 48; preferredPx++) {
+      for (let previousPx = 12; previousPx <= 48; previousPx++) {
+        for (const maxContentHeight of [0, 80, 100, 240, 1000]) {
+          const options = {
+            preferredPx,
+            maxContentHeight,
+            measure: (px: number) => Math.ceil(px / 3) * 18,
+          };
+          expect(fitStickerFontSize({ ...options, previousPx })).toEqual(
+            fitStickerFontSize(options),
+          );
+        }
+      }
+    }
+  });
+});

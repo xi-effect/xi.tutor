@@ -97,11 +97,37 @@ export function getStickerTextLimits(noteWidth: number, noteHeight: number, padd
  */
 export function fitStickerFontSize(options: {
   preferredPx: number;
+  previousPx?: number;
   maxContentHeight: number;
   measure: (px: number) => number;
 }): { px: number; contentHeight: number } {
   const preferred = clampStickerFontSize(options.preferredPx);
-  const preferredHeight = options.measure(preferred);
+  // Every measurement forces layout. Reuse probes and first try the previous
+  // fit: most keystrokes do not change the largest size that fits.
+  const heights = new Map<number, number>();
+  const measure = (px: number) => {
+    const cached = heights.get(px);
+    if (cached !== undefined) return cached;
+    const height = options.measure(px);
+    heights.set(px, height);
+    return height;
+  };
+  const previous = options.previousPx;
+  if (
+    previous != null &&
+    Number.isInteger(previous) &&
+    previous >= STICKER_FONT_SIZE_MIN &&
+    previous <= preferred
+  ) {
+    const height = measure(previous);
+    if (
+      height <= options.maxContentHeight &&
+      (previous === preferred || measure(previous + 1) > options.maxContentHeight)
+    ) {
+      return { px: previous, contentHeight: height };
+    }
+  }
+  const preferredHeight = measure(preferred);
   if (preferredHeight <= options.maxContentHeight) {
     return { px: preferred, contentHeight: preferredHeight };
   }
@@ -109,11 +135,11 @@ export function fitStickerFontSize(options: {
   let low = STICKER_FONT_SIZE_MIN;
   let high = preferred - 1;
   let bestPx = STICKER_FONT_SIZE_MIN;
-  let bestHeight = options.measure(STICKER_FONT_SIZE_MIN);
+  let bestHeight = measure(STICKER_FONT_SIZE_MIN);
 
   while (low <= high) {
     const mid = Math.floor((low + high) / 2);
-    const height = options.measure(mid);
+    const height = measure(mid);
     if (height <= options.maxContentHeight) {
       bestPx = mid;
       bestHeight = height;
