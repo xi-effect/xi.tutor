@@ -148,7 +148,7 @@
       },
       "invite": {
         "title": "Invite a student",
-        "hint": "Create a link and send it to your student so you can study together.",
+        "hint": "The hint opens Students, the invitation form, and the link to copy and send to a student.",
         "action": "Invite a student"
       },
       "material": {

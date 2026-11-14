@@ -66,6 +66,13 @@ describe('первые шаги', () => {
     expect(FIRST_STEPS_TOUR_STOPS.cabinet[0]?.click).toBe('open-classrooms');
     expect(FIRST_STEPS_TOUR_STOPS.cabinet[1]?.click).toBe('open-demo-classroom');
     expect(FIRST_STEPS_TOUR_STOPS.invite[0]?.anchor).toBe('students');
+    expect(FIRST_STEPS_TOUR_STOPS.invite[0]?.click).toBe('open-students');
+    expect(FIRST_STEPS_TOUR_STOPS.invite[1]?.click).toBe('open-invite');
+    expect(FIRST_STEPS_TOUR_STOPS.invite.map((stop) => stop.anchor)).toEqual([
+      'students',
+      'students-invite',
+      'invite-link',
+    ]);
   });
 
   it('считает выполненное и пропущенное разобранными', () => {

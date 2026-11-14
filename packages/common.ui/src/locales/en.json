@@ -93,7 +93,15 @@
     "invite": {
       "students": {
         "title": "Students",
-        "body": "Invitations and the student list live in this section."
+        "body": "The student list and invitations live here. We'll open this section now."
+      },
+      "students-invite": {
+        "title": "Invite a student",
+        "body": "This button opens the form with a link you can send to a student."
+      },
+      "invite-link": {
+        "title": "Link for a student",
+        "body": "Copy the message or the link and send it to your student. One link can invite several people."
       },
       "invite-action": {
         "title": "Invitation",

@@ -27,11 +27,21 @@ export type FirstStepsTourAnchor =
   | 'note'
   | 'schedule-page'
   | 'invite-action'
+  | 'students-invite'
+  | 'invite-link'
   | 'material-action'
   | 'lesson-action';
 
 export type FirstStepsTourPlace =
-  'current' | 'home' | 'classrooms' | 'classroom' | 'board' | 'note' | 'schedule' | 'appearance';
+  | 'current'
+  | 'home'
+  | 'classrooms'
+  | 'classroom'
+  | 'board'
+  | 'note'
+  | 'schedule'
+  | 'appearance'
+  | 'students';
 
 export type FirstStepsTourStop = {
   anchor: FirstStepsTourAnchor;
@@ -46,7 +56,9 @@ export type FirstStepsTourStop = {
     | 'open-user-menu'
     | 'hover-support'
     | 'open-classrooms'
-    | 'open-demo-classroom';
+    | 'open-demo-classroom'
+    | 'open-students'
+    | 'open-invite';
 };
 
 export type FirstStepsCallPhase =
@@ -106,6 +118,8 @@ export const FIRST_STEPS_TOUR_SELECTORS: Record<FirstStepsTourAnchor, string> = 
   note: '[data-first-step="note-editor"]',
   'schedule-page': '[data-first-step="schedule"]',
   'invite-action': '[data-first-step="invite-action"]',
+  'students-invite': '[data-first-step="students-invite"]',
+  'invite-link': '[data-first-step="invite-link"]',
   'material-action': '[data-first-step="material-action"]',
   'lesson-action': '[data-first-step="lesson-action"]',
 };
@@ -139,8 +153,9 @@ export const FIRST_STEPS_TOUR_STOPS: Record<FirstStepId, readonly FirstStepsTour
     { anchor: 'note', place: 'note' },
   ],
   invite: [
-    { anchor: 'students', place: 'current' },
-    { anchor: 'invite-action', place: 'home' },
+    { anchor: 'students', place: 'current', side: 'right', click: 'open-students' },
+    { anchor: 'students-invite', place: 'students', side: 'bottom', click: 'open-invite' },
+    { anchor: 'invite-link', place: 'students', side: 'top' },
   ],
   material: [
     { anchor: 'materials', place: 'current' },
@@ -182,6 +197,7 @@ export const tourStopPath = (
   if (stop.place === 'home') return '/';
   if (stop.place === 'schedule') return '/schedule';
   if (stop.place === 'classrooms') return '/classrooms';
+  if (stop.place === 'students') return '/students';
   if (stop.place === 'appearance') return '/settings/appearance';
 
   const classroomId = session.classroomId;

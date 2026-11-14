@@ -241,7 +241,9 @@ const stopSelector = (stop: FirstStepsTourStop, session: FirstStepsTourSession):
     : FIRST_STEPS_TOUR_SELECTORS[stop.anchor];
 
 const navigatesOnClick = (stop: FirstStepsTourStop | undefined): boolean =>
-  stop?.click === 'open-classrooms' || stop?.click === 'open-demo-classroom';
+  stop?.click === 'open-classrooms' ||
+  stop?.click === 'open-demo-classroom' ||
+  stop?.click === 'open-students';
 
 /** Курсор нажимает цель. Переход делает сам тур, чтобы анимация успела доиграть. */
 const performAnimatedClick = async (selector: string): Promise<boolean> => {
@@ -251,10 +253,20 @@ const performAnimatedClick = async (selector: string): Promise<boolean> => {
   return animateTourClick(clickable);
 };
 
+const performOpenInvite = async (): Promise<boolean> => {
+  const button = findVisible('[data-first-step="students-invite"]');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
 const stopDemo = (stop: FirstStepsTourStop | undefined): (() => Promise<boolean>) | null => {
   if (stop?.click === 'sidebar-toggle') return performSidebarToggleDemo;
   if (stop?.click === 'open-user-menu') return performOpenUserMenu;
   if (stop?.click === 'hover-support') return performSupportHover;
+  if (stop?.click === 'open-invite') return performOpenInvite;
   return null;
 };
 
@@ -291,6 +303,10 @@ const goToPath = (navigate: ReturnType<typeof useNavigate>, path: string) => {
   }
   if (path === '/classrooms') {
     void navigate({ to: '/classrooms' });
+    return;
+  }
+  if (path === '/students') {
+    void navigate({ to: '/students' });
     return;
   }
   if (path === '/settings/appearance') {
@@ -562,8 +578,10 @@ export const FirstStepsTourHost = () => {
       if (event.target instanceof Element && event.target.closest('[data-classroom-card-menu]')) {
         return;
       }
-      writeFirstStepsTourIndex(index + active + (navigatesOnClick(stop) ? 1 : 0));
-      if (stop?.click === 'sidebar-toggle') {
+      writeFirstStepsTourIndex(
+        index + active + (navigatesOnClick(stop) || stop?.click === 'open-invite' ? 1 : 0),
+      );
+      if (stop?.click === 'sidebar-toggle' || stop?.click === 'open-invite') {
         window.setTimeout(() => setNonce((value) => value + 1), 280);
       }
     };

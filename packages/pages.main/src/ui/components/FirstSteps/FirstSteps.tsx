@@ -17,6 +17,7 @@ import { useCreateMaterial } from 'features.materials.add';
 import {
   FIRST_STEPS_COLLAPSED,
   FIRST_STEPS_TOUR_ACTION_EVENT,
+  DEMO_CABINET_NAMES,
   firstStepsTotal,
   countResolvedFirstSteps,
   isStudentClassroomBlocked,
@@ -199,8 +200,35 @@ export const FirstSteps = ({
 
   useEffect(() => {
     if (!isTutor || !Array.isArray(materials.data) || materials.data.length === 0) return;
+    const demoClassroomId =
+      demoCabinet.classroomId == null ? null : Number(demoCabinet.classroomId);
+    const demoIds = new Set(
+      [demoCabinet.boardId, demoCabinet.noteId].filter((id): id is string => Boolean(id)),
+    );
+    const hasOwnMaterial = materials.data.some((item) => {
+      if (demoIds.has(String(item.id))) return false;
+      if (
+        demoClassroomId != null &&
+        'classroom_id' in item &&
+        item.classroom_id === demoClassroomId
+      ) {
+        return false;
+      }
+      if (item.name === DEMO_CABINET_NAMES.board || item.name === DEMO_CABINET_NAMES.note) {
+        return false;
+      }
+      return true;
+    });
+    if (!hasOwnMaterial) return;
     markDone('material');
-  }, [isTutor, markDone, materials.data]);
+  }, [
+    demoCabinet.boardId,
+    demoCabinet.classroomId,
+    demoCabinet.noteId,
+    isTutor,
+    markDone,
+    materials.data,
+  ]);
 
   useEffect(() => {
     if (!isTutor || !schedule.data || schedule.data.length === 0) return;
@@ -211,11 +239,6 @@ export const FirstSteps = ({
     if (isTutor || classroomQuery.isLoading || classroomCount === 0) return;
     if (classroomCount && classroomCount > 0) markDone('join');
   }, [classroomCount, classroomQuery.isLoading, isTutor, markDone]);
-
-  useEffect(() => {
-    if (!pinnedId || pinnedId === FIRST_STEPS_COLLAPSED) return;
-    if (marks[pinnedId as FirstStepId] === 'done') setPinnedId(null);
-  }, [marks, pinnedId]);
 
   const steps = stepsForRole(role).map((id) => ({
     id,
@@ -420,150 +443,146 @@ export const FirstSteps = ({
                                 </span>
                               )}
                             </p>
-                            {step.status !== 'done' && (
-                              <div className="mt-3 flex flex-wrap items-center gap-2">
-                                {step.status !== 'skipped' && (
-                                  <GuideButton
-                                    type="button"
-                                    variant="none"
-                                    size="s"
-                                    className="text-text-secondary hover:text-text-primary hover:bg-background-page active:text-text-primary active:bg-background-page h-8 rounded-full px-3 font-medium"
-                                    aria-label={t('firstSteps.skipAria', { title })}
-                                    onClick={() => {
-                                      markSkipped(step.id);
-                                      setPinnedId(null);
-                                    }}
-                                  >
-                                    {t('firstSteps.skip')}
-                                  </GuideButton>
-                                )}
-                                {(step.id === 'navigation' ||
-                                  step.id === 'settings' ||
-                                  step.id === 'cabinet' ||
-                                  step.id === 'call' ||
-                                  step.id === 'workspace') && (
-                                  <GuideButton
-                                    type="button"
-                                    variant="primary"
-                                    size="s"
-                                    className="rounded-full"
-                                    onClick={() => void startTour(step.id)}
-                                  >
-                                    {t(`firstSteps.tutor.${step.id}.action`)}
-                                  </GuideButton>
-                                )}
-                                {step.id === 'invite' && (
-                                  <GuideButton
-                                    type="button"
-                                    variant="primary"
-                                    size="s"
-                                    className="rounded-full"
-                                    data-first-step="invite-action"
-                                    onClick={() => startTour('invite')}
-                                  >
-                                    {t('firstSteps.tutor.invite.action')}
-                                  </GuideButton>
-                                )}
-                                {step.id === 'material' && (
-                                  <DropdownMenu
-                                    open={materialMenuOpen}
-                                    onOpenChange={(nextOpen) => {
-                                      if (!nextOpen) setMaterialMenuOpen(false);
-                                    }}
-                                  >
-                                    <DropdownMenuTrigger asChild>
-                                      <GuideButton
-                                        type="button"
-                                        variant="primary"
-                                        size="s"
-                                        className="rounded-full"
-                                        data-first-step="material-action"
-                                        disabled={isCreatingMaterial}
-                                        onClick={(event) => {
-                                          event.preventDefault();
-                                          startTour('material');
-                                        }}
-                                      >
-                                        {t('firstSteps.tutor.material.action')}
-                                      </GuideButton>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent
-                                      align="start"
-                                      className="border-border-default bg-background-surface w-[min(16rem,calc(100vw-2.5rem))] rounded-xl border p-1"
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
+                              {step.status === 'pending' && (
+                                <GuideButton
+                                  type="button"
+                                  variant="none"
+                                  size="s"
+                                  className="text-text-secondary hover:text-text-primary hover:bg-background-page active:text-text-primary active:bg-background-page h-8 rounded-full px-3 font-medium"
+                                  aria-label={t('firstSteps.skipAria', { title })}
+                                  onClick={() => {
+                                    markSkipped(step.id);
+                                    setPinnedId(null);
+                                  }}
+                                >
+                                  {t('firstSteps.skip')}
+                                </GuideButton>
+                              )}
+                              {(step.id === 'navigation' ||
+                                step.id === 'settings' ||
+                                step.id === 'cabinet' ||
+                                step.id === 'call' ||
+                                step.id === 'workspace') && (
+                                <GuideButton
+                                  type="button"
+                                  variant="primary"
+                                  size="s"
+                                  className="rounded-full"
+                                  onClick={() => void startTour(step.id)}
+                                >
+                                  {t(`firstSteps.tutor.${step.id}.action`)}
+                                </GuideButton>
+                              )}
+                              {step.id === 'invite' && (
+                                <GuideButton
+                                  type="button"
+                                  variant="primary"
+                                  size="s"
+                                  className="rounded-full"
+                                  data-first-step="invite-action"
+                                  onClick={() => startTour('invite')}
+                                >
+                                  {t('firstSteps.tutor.invite.action')}
+                                </GuideButton>
+                              )}
+                              {step.id === 'material' && (
+                                <DropdownMenu
+                                  open={materialMenuOpen}
+                                  onOpenChange={(nextOpen) => {
+                                    if (!nextOpen) setMaterialMenuOpen(false);
+                                  }}
+                                >
+                                  <DropdownMenuTrigger asChild>
+                                    <GuideButton
+                                      type="button"
+                                      variant="primary"
+                                      size="s"
+                                      className="rounded-full"
+                                      data-first-step="material-action"
+                                      disabled={isCreatingMaterial}
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        startTour('material');
+                                      }}
                                     >
-                                      <DropdownMenuItem
-                                        className="focus:bg-background-page flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-3 text-sm"
-                                        disabled={isCreatingMaterial}
-                                        onSelect={() => createMaterial('board')}
-                                      >
-                                        <WhiteBoard className="fill-icon-primary size-4 shrink-0" />
-                                        {t('firstSteps.tutor.material.board')}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        className="focus:bg-background-page flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-3 text-sm"
-                                        disabled={isCreatingMaterial}
-                                        onSelect={() => createMaterial('note')}
-                                      >
-                                        <FileSmall className="fill-icon-primary size-4 shrink-0" />
-                                        {t('firstSteps.tutor.material.note')}
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                )}
-                                {step.id === 'lesson' && !step.blocked && (
-                                  <GuideButton
-                                    type="button"
-                                    variant="primary"
-                                    size="s"
-                                    className="rounded-full"
-                                    data-first-step="lesson-action"
-                                    onClick={() => startTour('lesson')}
+                                      {t('firstSteps.tutor.material.action')}
+                                    </GuideButton>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent
+                                    align="start"
+                                    className="border-border-default bg-background-surface w-[min(16rem,calc(100vw-2.5rem))] rounded-xl border p-1"
                                   >
-                                    {t('firstSteps.tutor.lesson.action')}
-                                  </GuideButton>
-                                )}
-                                {step.id === 'join' && (
-                                  <GuideButton
-                                    type="button"
-                                    variant="primary"
-                                    size="s"
-                                    className="rounded-full"
-                                    aria-expanded={joinHelpOpen}
-                                    aria-controls={
-                                      joinHelpOpen ? 'first-steps-join-help' : undefined
-                                    }
-                                    onClick={() => {
-                                      setJoinHelpOpen(true);
-                                      startTour('join');
-                                    }}
-                                  >
-                                    {t('firstSteps.student.join.action')}
-                                  </GuideButton>
-                                )}
-                                {step.id === 'classroom' && !step.blocked && (
-                                  <GuideButton
-                                    type="button"
-                                    variant="primary"
-                                    size="s"
-                                    className="rounded-full"
-                                    onClick={() => startTour('classroom')}
-                                  >
-                                    {t('firstSteps.student.classroom.action')}
-                                  </GuideButton>
-                                )}
-                                {step.id === 'schedule' && (
-                                  <GuideButton
-                                    type="button"
-                                    variant="primary"
-                                    size="s"
-                                    className="rounded-full"
-                                    onClick={() => startTour('schedule')}
-                                  >
-                                    {t('firstSteps.student.schedule.action')}
-                                  </GuideButton>
-                                )}
-                              </div>
-                            )}
+                                    <DropdownMenuItem
+                                      className="focus:bg-background-page flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-3 text-sm"
+                                      disabled={isCreatingMaterial}
+                                      onSelect={() => createMaterial('board')}
+                                    >
+                                      <WhiteBoard className="fill-icon-primary size-4 shrink-0" />
+                                      {t('firstSteps.tutor.material.board')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      className="focus:bg-background-page flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-3 text-sm"
+                                      disabled={isCreatingMaterial}
+                                      onSelect={() => createMaterial('note')}
+                                    >
+                                      <FileSmall className="fill-icon-primary size-4 shrink-0" />
+                                      {t('firstSteps.tutor.material.note')}
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              )}
+                              {step.id === 'lesson' && !step.blocked && (
+                                <GuideButton
+                                  type="button"
+                                  variant="primary"
+                                  size="s"
+                                  className="rounded-full"
+                                  data-first-step="lesson-action"
+                                  onClick={() => startTour('lesson')}
+                                >
+                                  {t('firstSteps.tutor.lesson.action')}
+                                </GuideButton>
+                              )}
+                              {step.id === 'join' && (
+                                <GuideButton
+                                  type="button"
+                                  variant="primary"
+                                  size="s"
+                                  className="rounded-full"
+                                  aria-expanded={joinHelpOpen}
+                                  aria-controls={joinHelpOpen ? 'first-steps-join-help' : undefined}
+                                  onClick={() => {
+                                    setJoinHelpOpen(true);
+                                    startTour('join');
+                                  }}
+                                >
+                                  {t('firstSteps.student.join.action')}
+                                </GuideButton>
+                              )}
+                              {step.id === 'classroom' && !step.blocked && (
+                                <GuideButton
+                                  type="button"
+                                  variant="primary"
+                                  size="s"
+                                  className="rounded-full"
+                                  onClick={() => startTour('classroom')}
+                                >
+                                  {t('firstSteps.student.classroom.action')}
+                                </GuideButton>
+                              )}
+                              {step.id === 'schedule' && (
+                                <GuideButton
+                                  type="button"
+                                  variant="primary"
+                                  size="s"
+                                  className="rounded-full"
+                                  onClick={() => startTour('schedule')}
+                                >
+                                  {t('firstSteps.student.schedule.action')}
+                                </GuideButton>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>

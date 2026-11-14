@@ -128,7 +128,11 @@ export const ModalInvitationLegacy = ({
       }}
     >
       {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
+      <ModalContent
+        className="max-w-[600px]"
+        aria-describedby={undefined}
+        data-first-step="invite-link"
+      >
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-48px)]')}>
