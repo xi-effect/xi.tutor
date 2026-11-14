@@ -137,12 +137,16 @@ export const SideBarItems = () => {
                 <Logo width={135} height={40} />
               </div>
               {isCollapsed ? (
-                <SidebarTrigger className="focus-visible:bg-background-subtle absolute inset-0 rounded-lg bg-transparent">
+                <SidebarTrigger
+                  id="sidebar-toggle"
+                  className="focus-visible:bg-background-subtle absolute inset-0 rounded-lg bg-transparent"
+                >
                   <LayoutLeft className="text-text-secondary h-5 w-5 opacity-0 transition-opacity duration-150 group-focus-within/mark:opacity-100 group-hover/mark:opacity-100" />
                 </SidebarTrigger>
               ) : null}
             </div>
             <SidebarTrigger
+              id={isCollapsed ? undefined : 'sidebar-toggle'}
               tabIndex={isCollapsed ? -1 : 0}
               aria-hidden={isCollapsed}
               className={cn(
@@ -157,7 +161,7 @@ export const SideBarItems = () => {
         {/* Основное меню */}
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu id="sidebar-sections">
               {topMenu.map((item) => (
                 <SidebarMenuItem id={item.id} className="cursor-pointer" key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={getIsActiveItem(item.url)}>
@@ -175,6 +179,8 @@ export const SideBarItems = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+            <SidebarMenu className="mt-1">
               <Notifications />
             </SidebarMenu>
           </SidebarGroupContent>

@@ -41,6 +41,7 @@ export const StudentsPage = () => {
               className="!h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
               onClick={() => setInviteOpen(true)}
               data-umami-event="students-list-invite"
+              data-first-step="students-invite"
             >
               <Plus className="fill-text-on-accent size-4 shrink-0" />
               {t('inviteStudent')}

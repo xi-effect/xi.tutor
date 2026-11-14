@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getAxiosInstance } from 'common.config';
-import { filesApiConfig, FilesQueryKey } from 'common.services';
+import { filesApiConfig, FilesQueryKey, isPublicAssetSrc } from 'common.services';
 
 // Кеш blob URL для уже загруженных изображений (по исходному src)
 const blobUrlCache = new Map<string, string>();
@@ -11,6 +11,15 @@ export const useProtectedImage = (src: string, storageToken: string) => {
   useEffect(() => {
     const loadImageWithToken = async () => {
       // Если нет src или токена — используем исходный src
+      if (isPublicAssetSrc(src)) {
+        const absolute =
+          src.startsWith('/') && typeof window !== 'undefined'
+            ? `${window.location.origin}${src}`
+            : src;
+        setImageSrc(absolute);
+        return;
+      }
+
       if (!src || !storageToken) {
         setImageSrc(src);
         return;

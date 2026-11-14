@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
+    "./demoCabinet": "./src/demoCabinet/index.ts",
     "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
@@ -43,8 +44,11 @@
     "features.materials.card": "workspace:*",
     "features.materials.duplicate": "workspace:*",
     "i18next": "24.2.2",
+    "modules.board": "workspace:*",
     "modules.calendar": "workspace:*",
     "modules.calls": "workspace:*",
+    "modules.editor": "workspace:*",
+    "motion": "^13.1.1",
     "pages.classrooms": "workspace:*",
     "pages.materials": "workspace:*",
     "react-hook-form": "^7.73.1",

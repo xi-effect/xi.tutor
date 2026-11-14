@@ -187,7 +187,7 @@ export const ModalInvitationV2 = ({
       }}
     >
       {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent className="max-w-[600px]">
+      <ModalContent className="max-w-[600px]" data-first-step="invite-link">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-48px)]')}>

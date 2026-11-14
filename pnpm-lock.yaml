@@ -5883,12 +5883,21 @@ importers:
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
+      modules.board:
+        specifier: workspace:*
+        version: link:../modules.board
       modules.calendar:
         specifier: workspace:*
         version: link:../modules.calendar
       modules.calls:
         specifier: workspace:*
         version: link:../modules.calls
+      modules.editor:
+        specifier: workspace:*
+        version: link:../modules.editor
+      motion:
+        specifier: ^13.1.1
+        version: 13.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       pages.classrooms:
         specifier: workspace:*
         version: link:../pages.classrooms

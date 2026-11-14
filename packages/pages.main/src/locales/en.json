@@ -106,5 +106,82 @@
   },
   "assignLesson": {
     "button": "Schedule a lesson"
+  },
+  "firstSteps": {
+    "title": "First steps",
+    "welcomeTitle": "Hello",
+    "welcomeBody": "We, the Sovlium team, prepared short interactive tasks. They take a little time and help you learn how work is organized here.",
+    "welcomeAction": "Open the guide",
+    "progress": "{{count}}/{{total}}",
+    "progressAria": "{{count}} of {{total}} reviewed",
+    "skip": "Skip",
+    "skipAria": "Skip “{{title}}”",
+    "skipped": "Skipped",
+    "goHome": "Go to home",
+    "finishEarly": "Finish introduction",
+    "joinHelp": "Ask your tutor for an invitation link and open it in this account. After you confirm, the classroom appears on its own and the step is checked off.",
+    "tutor": {
+      "navigation": {
+        "title": "Learn the navigation",
+        "hint": "The hint shows the sections, notifications, and profile menu, then collapses and expands the panel.",
+        "action": "Show the navigation"
+      },
+      "settings": {
+        "title": "Open settings",
+        "hint": "The hint opens the whole menu at the bottom, then shows Settings and the Help submenu.",
+        "action": "Show where settings are"
+      },
+      "cabinet": {
+        "title": "Look around the classroom",
+        "hint": "The hint opens Classrooms, shows the demo classroom, and the navigation inside it.",
+        "action": "Explore the classroom"
+      },
+      "call": {
+        "title": "Start a call",
+        "hint": "The hint shows that a call starts from the classroom and that students are notified when the lesson begins.",
+        "action": "Show the call"
+      },
+      "workspace": {
+        "title": "View the board and the note",
+        "hint": "The classroom already has a demo board and a note. The hint opens both.",
+        "action": "Open the board and the note"
+      },
+      "invite": {
+        "title": "Invite a student",
+        "hint": "The hint opens Students, the invitation form, and the link to copy and send to a student.",
+        "action": "Invite a student"
+      },
+      "material": {
+        "title": "Prepare a material",
+        "hint": "Create a board for working together or a note with the lesson plan.",
+        "action": "Create material",
+        "board": "Board",
+        "note": "Note"
+      },
+      "lesson": {
+        "title": "Schedule a lesson",
+        "hint": "Choose a student and set the time of the first lesson.",
+        "action": "Schedule a lesson",
+        "blocked": "Invite a student first. You can schedule a lesson once a classroom exists."
+      }
+    },
+    "student": {
+      "join": {
+        "title": "Join a classroom",
+        "hint": "Open the link from your tutor. If you do not have one yet, ask your tutor to send it.",
+        "action": "How to join"
+      },
+      "classroom": {
+        "title": "Open the classroom",
+        "hint": "This is where you will work with your tutor during lessons.",
+        "action": "Open classroom",
+        "blocked": "Open your tutor’s invitation link first. The classroom appears after you join."
+      },
+      "schedule": {
+        "title": "Check the schedule",
+        "hint": "The lesson date and time will show up here once your tutor schedules it.",
+        "action": "Open schedule"
+      }
+    }
   }
 }

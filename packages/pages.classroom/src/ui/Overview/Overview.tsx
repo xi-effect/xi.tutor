@@ -150,8 +150,11 @@ export const Overview = () => {
 
   return (
     <div className="flex flex-col gap-8 pt-2">
-      <UpcomingLessonsSection />
+      <div data-first-step="classroom-lessons">
+        <UpcomingLessonsSection />
+      </div>
       <SectionContainer
+        stepAnchor="classroom-materials"
         title={t('overview.materials')}
         tabLink="boards"
         actions={isTutor && !isPaused ? <OverviewMaterialsAddButton /> : null}

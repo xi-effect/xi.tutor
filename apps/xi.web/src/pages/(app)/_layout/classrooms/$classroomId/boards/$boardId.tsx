@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 import { LoadingScreen } from 'common.ui';
+import { useFirstStepsWorkspaceVisit } from 'common.services';
 import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
@@ -44,6 +45,7 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/boa
 });
 
 function ClassroomsBoardPage() {
+  useFirstStepsWorkspaceVisit('board');
   return (
     <div
       className="min-h-0"
