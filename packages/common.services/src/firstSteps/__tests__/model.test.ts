@@ -9,7 +9,7 @@ import {
   pickExpandedStepId,
   type FirstStepMark,
 } from '../model';
-import { FIRST_STEPS_TOUR_STOPS } from '../tour';
+import { FIRST_STEPS_TOUR_STOPS, tourCompletionMarksStep } from '../tour';
 import {
   acknowledgeFirstStepFlag,
   applyRemoteFirstStep,
@@ -66,6 +66,8 @@ describe('первые шаги', () => {
       'students-invite',
       'invite-link',
     ]);
+    expect(tourCompletionMarksStep('invite')).toBe(true);
+    expect(tourCompletionMarksStep('call')).toBe(false);
     expect(FIRST_STEPS_TOUR_STOPS.material.map((stop) => stop.anchor)).toEqual([
       'materials',
       'create-board',

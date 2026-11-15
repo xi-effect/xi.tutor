@@ -236,14 +236,14 @@ React Strict Mode: once-ключи в памяти модуля защищают
 
 Отдельно, чтобы видеть сам гайд:
 
-| Событие                     | Когда                                                                                           | Свойства                                                |
-| --------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `first_steps_screen_viewed` | Экран `welcome`, `checklist` или `ready`. Один раз на экран и роль                              | `screen`, `user_role`, `steps_resolved`, `steps_total`  |
-| `first_steps_action`        | Клик: `start`, `open_step`, `start_step`, `review`, `finish`, `finish_early`, `board_hint_home` | `action`, `user_role`, `step`                           |
-| `first_steps_step_resolved` | Пункт чек-листа впервые стал `done` или `skipped`                                               | `step`, `mark`, `source` (`skip` / `auto` / `tour`)     |
-| `first_steps_tour`          | Подсказка: `started` и `finished` один раз на шаг, `advanced` и `closed` на каждое действие     | `action`, `step`, `anchor`, `step_index`, `total_steps` |
-| `first_steps_call_phase`    | Смена фазы гайда звонка. Один раз на фазу                                                       | `phase`                                                 |
-| `first_steps_demo_cabinet`  | Итог подготовки демокабинета на этапе обучения                                                  | `status`: `ready` / `removed` / `failed`                |
+| Событие                     | Когда                                                                                           | Свойства                                                     |
+| --------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `first_steps_screen_viewed` | Экран `welcome`, `checklist` или `ready`. Один раз на экран и роль                              | `screen`, `user_role`, `steps_resolved`, `steps_total`       |
+| `first_steps_action`        | Клик: `start`, `open_step`, `start_step`, `review`, `finish`, `finish_early`, `board_hint_home` | `action`, `user_role`, `step`                                |
+| `first_steps_step_resolved` | Пункт чек-листа впервые стал `done` или `skipped`                                               | `step`, `mark`, `source` (`skip` / `auto` / `tour` / `copy`) |
+| `first_steps_tour`          | Подсказка: `started` и `finished` один раз на шаг, `advanced` и `closed` на каждое действие     | `action`, `step`, `anchor`, `step_index`, `total_steps`      |
+| `first_steps_call_phase`    | Смена фазы гайда звонка. Один раз на фазу                                                       | `phase`                                                      |
+| `first_steps_demo_cabinet`  | Итог подготовки демокабинета на этапе обучения                                                  | `status`: `ready` / `removed` / `failed`                     |
 
 `first_steps_action` — клик. `onboarding_step_completed`, `onboarding_step_skipped` и `onboarding_completed` — ответ сервера. Пропуск отдельного пункта чек-листа не завершает онбординг и шлёт только `first_steps_step_resolved`.
 

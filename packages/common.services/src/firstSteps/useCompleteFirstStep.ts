@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useCurrentUser } from '../user';
 import { useUpdateUserFlag } from '../userFlags';
 import { firstStepFlagKey, isStepForRole, type FirstStepId } from './model';
 import { shouldShowFirstSteps } from './preview';
-import { trackFirstStepsStepResolved } from './analytics';
+import { trackFirstStepsStepResolved, type FirstStepsResolveSource } from './analytics';
 import {
   acknowledgeFirstStepFlag,
   browserFirstStepsStorage,
@@ -25,6 +25,7 @@ export const markFirstStepDone = (
     variables: { key: string; value: boolean },
     options?: { onSuccess?: () => void },
   ) => void,
+  source: FirstStepsResolveSource = 'tour',
 ) => {
   if (!user || typeof user.id !== 'number') return;
   if (!shouldShowFirstSteps(user.onboarding_stage ?? undefined)) return;
@@ -35,7 +36,7 @@ export const markFirstStepDone = (
   const storage = browserFirstStepsStorage();
   const changed = commitFirstStep(storage, user.id, role, step, 'done', true);
   if (changed && user.onboarding_stage === 'training') {
-    trackFirstStepsStepResolved(role, step, 'done', 'tour');
+    trackFirstStepsStepResolved(role, step, 'done', source);
   }
 
   const flagKey = firstStepFlagKey(role, step, 'done');
@@ -60,4 +61,21 @@ export const useCompleteFirstStep = (step: FirstStepId, active: boolean) => {
     if (!active) return;
     markFirstStepDone(user, step, mutateRef.current);
   }, [active, step, user]);
+};
+
+/** Отмечает шаг из обработчика, не дожидаясь ререндера. */
+export const useMarkFirstStepDone = (step: FirstStepId) => {
+  const { data: user } = useCurrentUser();
+  const { updateUserFlag } = useUpdateUserFlag();
+  const userRef = useRef(user);
+  const mutateRef = useRef(updateUserFlag.mutate);
+  userRef.current = user;
+  mutateRef.current = updateUserFlag.mutate;
+
+  return useCallback(
+    (source: FirstStepsResolveSource = 'tour') => {
+      markFirstStepDone(userRef.current, step, mutateRef.current, source);
+    },
+    [step],
+  );
 };

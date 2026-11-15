@@ -18,7 +18,7 @@ export type FirstStepsScreen = 'welcome' | 'checklist' | 'ready';
 export type FirstStepsAction =
   'start' | 'open_step' | 'start_step' | 'review' | 'finish' | 'finish_early' | 'board_hint_home';
 
-export type FirstStepsResolveSource = 'skip' | 'auto' | 'tour';
+export type FirstStepsResolveSource = 'skip' | 'auto' | 'tour' | 'copy';
 
 export type FirstStepsTourAction = 'started' | 'advanced' | 'finished' | 'closed';
 

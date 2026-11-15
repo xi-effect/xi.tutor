@@ -203,9 +203,9 @@ const ACTION_ANCHORS = new Set<FirstStepsTourAnchor>([
 export const tourStopOpensAction = (anchor: FirstStepsTourAnchor): boolean =>
   ACTION_ANCHORS.has(anchor);
 
-/** Тур сам отмечает только обзорные шаги. Остальные засчитываются реальным действием. */
+/** Тур отмечает обзорные шаги и приглашение. Звонок и материал засчитываются действием. */
 export const tourCompletionMarksStep = (step: FirstStepId): boolean =>
-  step === 'navigation' || step === 'settings' || step === 'cabinet';
+  step === 'navigation' || step === 'settings' || step === 'cabinet' || step === 'invite';
 
 export const tourStopPath = (
   stop: FirstStepsTourStop,

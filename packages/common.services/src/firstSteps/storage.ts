@@ -152,6 +152,26 @@ export const commitFirstStep = (
   return true;
 };
 
+/** Снимает отметку «выполнено». Пропуск не трогает. */
+export const clearFirstStepDone = (
+  storage: FirstStepsStorage,
+  userId: number,
+  role: FirstStepsRole,
+  step: FirstStepId,
+): boolean => {
+  const stored = readStored(storage, userId, role);
+  if (stored.marks[step] !== 'done') return false;
+
+  delete stored.marks[step];
+  const flagKey = firstStepFlagKey(role, step, 'done');
+  writeStored(storage, userId, role, {
+    ...stored,
+    dirty: stored.dirty.filter((key) => key !== flagKey),
+  });
+  notifyFirstStepsProgress();
+  return true;
+};
+
 export const applyRemoteFirstStep = (
   storage: FirstStepsStorage,
   userId: number,

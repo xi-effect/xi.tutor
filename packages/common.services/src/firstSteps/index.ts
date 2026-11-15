@@ -30,7 +30,11 @@ export {
   trackFirstStepsViewed,
 } from './analytics';
 export { hideFirstStepsPreview, isFirstStepsPreviewEnabled, shouldShowFirstSteps } from './preview';
-export { markFirstStepDone, useCompleteFirstStep } from './useCompleteFirstStep';
+export {
+  markFirstStepDone,
+  useCompleteFirstStep,
+  useMarkFirstStepDone,
+} from './useCompleteFirstStep';
 export { useFirstStepsProgress } from './useFirstStepsProgress';
 export {
   FIRST_STEPS_CLOSE_USER_MENU_EVENT,

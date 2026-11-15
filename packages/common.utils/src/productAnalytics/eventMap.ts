@@ -275,7 +275,7 @@ export type ProductAnalyticsEventMap = {
   first_steps_step_resolved: BaseProps & {
     step: string;
     mark: 'done' | 'skipped';
-    source: 'skip' | 'auto' | 'tour';
+    source: 'skip' | 'auto' | 'tour' | 'copy';
     user_role: 'tutor' | 'student' | 'unknown';
   };
   first_steps_tour: BaseProps & {

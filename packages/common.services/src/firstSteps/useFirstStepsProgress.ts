@@ -16,6 +16,7 @@ import {
   acknowledgeFirstStepFlag,
   applyRemoteFirstStep,
   browserFirstStepsStorage,
+  clearFirstStepDone,
   commitFirstStep,
   FIRST_STEPS_PROGRESS_EVENT,
   dirtyFirstStepFlags,
@@ -38,6 +39,8 @@ const flagKeysForRole = (role: FirstStepsRole): string[] =>
     firstStepFlagKey(role, step, 'done'),
     firstStepFlagKey(role, step, 'skip'),
   ]);
+
+const inviteTourMarkKey = (userId: number) => `sovlium.firstSteps.inviteMarkedByTour.${userId}`;
 
 export const useFirstStepsProgress = (
   userId: number,
@@ -84,15 +87,42 @@ export const useFirstStepsProgress = (
     return () => window.removeEventListener(FIRST_STEPS_PROGRESS_EVENT, onProgress);
   }, [publish]);
 
+  const allowRemoteInviteDone = useRef<boolean | null>(null);
+  const inviteWasDoneAtStart = useRef(
+    role === 'tutor' && readFirstStepMarks(storage, userId, role).invite === 'done',
+  );
+
   useEffect(() => {
     if (!flagsSettled) return;
+
+    if (allowRemoteInviteDone.current == null) {
+      let allowed = true;
+      if (role === 'tutor' && typeof window !== 'undefined') {
+        const key = inviteTourMarkKey(userId);
+        try {
+          allowed = window.localStorage.getItem(key) === '1';
+          if (!allowed) {
+            window.localStorage.setItem(key, '1');
+            if (inviteWasDoneAtStart.current) clearFirstStepDone(storage, userId, role, 'invite');
+            mutateRef.current({
+              key: firstStepFlagKey(role, 'invite', 'done'),
+              value: false,
+            });
+          }
+        } catch {
+          allowed = true;
+        }
+      }
+      allowRemoteInviteDone.current = allowed;
+    }
 
     let changed = false;
     stepIds.forEach((step, index) => {
       const doneQuery = remoteRef.current[index * 2];
       const skippedQuery = remoteRef.current[index * 2 + 1];
       if (!doneQuery?.isSuccess || !skippedQuery?.isSuccess) return;
-      const done = doneQuery.data === true;
+      const done =
+        doneQuery.data === true && (step !== 'invite' || allowRemoteInviteDone.current === true);
       const skipped = skippedQuery.data === true;
       if (applyRemoteFirstStep(storage, userId, role, step, { done, skipped })) changed = true;
     });

@@ -20,7 +20,6 @@ import {
   useFetchClassroomsByStudent,
   useFirstStepsProgress,
   useGetMaterialsList,
-  useInvitationsList,
   trackFirstStepsAction,
   trackFirstStepsFinishFailed,
   trackFirstStepsFinished,
@@ -146,7 +145,6 @@ export const FirstSteps = ({
   const [reviewSteps, setReviewSteps] = useState(false);
 
   const isTutor = role === 'tutor';
-  const invitations = useInvitationsList(!isTutor);
   const materials = useGetMaterialsList({ disabled: !isTutor });
   const tutorClassrooms = useFetchClassrooms(undefined, !isTutor);
   const studentClassrooms = useFetchClassroomsByStudent(undefined, isTutor);
@@ -166,11 +164,6 @@ export const FirstSteps = ({
     if (localPreview) return;
     trackFirstStepsViewed(role);
   }, [localPreview, role]);
-
-  useEffect(() => {
-    if (!isTutor || invitations.isError || !Array.isArray(invitations.data)) return;
-    if (invitations.data.length > 0) markDone('invite');
-  }, [invitations.data, invitations.isError, isTutor, markDone]);
 
   useEffect(() => {
     if (!isTutor || !Array.isArray(materials.data) || materials.data.length === 0) return;
