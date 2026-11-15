@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -26,7 +26,12 @@ import {
 } from 'common.ui';
 
 import { UserPlanBadge } from './UserPlanBadge';
-import { useCurrentUser } from 'common.services';
+import {
+  FIRST_STEPS_CLOSE_USER_MENU_EVENT,
+  FIRST_STEPS_OPEN_USER_MENU_EVENT,
+  readFirstStepsTour,
+  useCurrentUser,
+} from 'common.services';
 import {
   Download,
   Exit,
@@ -64,6 +69,9 @@ export const DesktopUserMenu = ({
   const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const tourLockRef = useRef(false);
+  const supportLockRef = useRef(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const allowTooltipRef = useRef(true);
 
@@ -86,6 +94,29 @@ export const DesktopUserMenu = ({
     }
   };
 
+  useEffect(() => {
+    const openMenu = (event: Event) => {
+      const support = (event as CustomEvent<{ support?: boolean }>).detail?.support === true;
+      tourLockRef.current = true;
+      supportLockRef.current = support;
+      setMenuOpen(true);
+      setSupportOpen(support);
+    };
+    const closeMenu = () => {
+      tourLockRef.current = false;
+      supportLockRef.current = false;
+      setSupportOpen(false);
+      setMenuOpen(false);
+    };
+
+    window.addEventListener(FIRST_STEPS_OPEN_USER_MENU_EVENT, openMenu);
+    window.addEventListener(FIRST_STEPS_CLOSE_USER_MENU_EVENT, closeMenu);
+    return () => {
+      window.removeEventListener(FIRST_STEPS_OPEN_USER_MENU_EVENT, openMenu);
+      window.removeEventListener(FIRST_STEPS_CLOSE_USER_MENU_EVENT, closeMenu);
+    };
+  }, []);
+
   const triggerButton = (
     <Button
       variant="none"
@@ -96,6 +127,14 @@ export const DesktopUserMenu = ({
       )}
       id="hints-button"
       data-umami-event="header-user-menu-open"
+      onPointerDown={() => {
+        if (readFirstStepsTour()?.step === 'settings') return;
+        tourLockRef.current = false;
+        supportLockRef.current = false;
+        if (menuOpen && !document.querySelector('[data-first-step="user-menu"]')) {
+          setMenuOpen(false);
+        }
+      }}
     >
       <UserProfile
         text={displayName || username}
@@ -118,9 +157,17 @@ export const DesktopUserMenu = ({
 
   return (
     <DropdownMenu
+      modal={false}
       open={menuOpen}
       onOpenChange={(open) => {
+        const tourKeepsMenuOpen = tourLockRef.current && readFirstStepsTour()?.step === 'settings';
+        if (!open && tourKeepsMenuOpen) return;
+        if (!tourKeepsMenuOpen) {
+          tourLockRef.current = false;
+          supportLockRef.current = false;
+        }
         setMenuOpen(open);
+        if (!open) setSupportOpen(false);
         setTooltipOpen(false);
         if (open) allowTooltipRef.current = false;
       }}
@@ -164,10 +211,17 @@ export const DesktopUserMenu = ({
       )}
 
       <DropdownMenuContent
+        data-first-step="user-menu"
         className={cn(cardMenuSurfaceClass, 'z-100 w-[240px] overflow-visible p-2')}
         side="top"
         sideOffset={8}
         align="start"
+        onInteractOutside={(event) => {
+          if (tourLockRef.current) event.preventDefault();
+        }}
+        onFocusOutside={(event) => {
+          if (tourLockRef.current) event.preventDefault();
+        }}
       >
         <div className="mb-2 flex w-full items-center justify-between gap-3 px-2 pt-2 pb-1">
           <span className="text-text-secondary shrink-0 text-xs leading-4 font-medium">
@@ -179,8 +233,15 @@ export const DesktopUserMenu = ({
         <div className="flex flex-col">
           {onOpenProfile ? (
             <DropdownMenuItem
-              onSelect={onOpenProfile}
+              onSelect={(event) => {
+                if (readFirstStepsTour()?.step === 'settings') {
+                  event.preventDefault();
+                  return;
+                }
+                onOpenProfile();
+              }}
               className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+              data-first-step="settings-item"
               data-umami-event="header-profile-open"
             >
               <Settings />
@@ -188,7 +249,13 @@ export const DesktopUserMenu = ({
             </DropdownMenuItem>
           ) : null}
 
-          <DropdownMenuSub>
+          <DropdownMenuSub
+            open={supportOpen}
+            onOpenChange={(open) => {
+              if (!open && supportLockRef.current) return;
+              setSupportOpen(open);
+            }}
+          >
             <DropdownMenuSubTrigger
               className={cn(
                 cardMenuItemClass,
@@ -197,6 +264,7 @@ export const DesktopUserMenu = ({
                 '[&>svg:last-child]:pointer-events-none [&>svg:last-child]:absolute [&>svg:last-child]:top-1/2 [&>svg:last-child]:right-2 [&>svg:last-child]:!m-0 [&>svg:last-child]:size-4 [&>svg:last-child]:-translate-y-1/2',
                 '[&>svg:last-child]:!fill-none [&>svg:last-child]:stroke-current',
               )}
+              data-first-step="help-item"
               data-umami-event="navigation-support-menu"
             >
               <MessageHeartCircle />
@@ -204,10 +272,12 @@ export const DesktopUserMenu = ({
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent
               className={cn(cardMenuSurfaceClass, 'z-100 flex min-w-[220px] flex-col gap-1 p-2')}
+              data-first-step="support-submenu"
               sideOffset={8}
             >
               <DropdownMenuItem
                 className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
+                data-first-step="support-item"
                 data-umami-event="navigation-support"
                 onSelect={() => {
                   window.setTimeout(() => openSupportModal(), 0);

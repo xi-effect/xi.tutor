@@ -17,7 +17,150 @@
     "next": "Continue",
     "prev": "Back",
     "done": "Close",
+    "ready": "Done",
     "progress": "{{current}} of {{total}}"
+  },
+  "firstStepsTour": {
+    "navigation": {
+      "sidebar-sections": {
+        "title": "Sections",
+        "body": "From here you can open the schedule, classrooms, materials, and other sections"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "body": "Here you'll find notifications about lessons and other events"
+      },
+      "sidebar-toggle": {
+        "title": "Sidebar",
+        "body": "Collapse the sidebar to free up space. You can open it again with the same button"
+      }
+    },
+    "settings": {
+      "user-profile": {
+        "title": "Profile menu",
+        "body": "Click your name or avatar to open the profile menu"
+      },
+      "user-menu": {
+        "title": "Profile menu",
+        "body": "Here you can check your plan, open settings, or contact support"
+      },
+      "settings-item": {
+        "title": "Settings",
+        "body": "Here you can change your profile details, set up the camera and microphone, and choose the language and appearance"
+      },
+      "support-menu": {
+        "title": "Help",
+        "body": "Here you can contact support, find answers, or go through the introduction again"
+      }
+    },
+    "cabinet": {
+      "classrooms": {
+        "title": "Classrooms",
+        "body": "Your classrooms for individual and group lessons are here"
+      },
+      "demo-classroom-card": {
+        "title": "Demo classroom",
+        "body": "A classroom has everything you need for a lesson: boards, materials, and the schedule. Open the demo classroom to see what it can do"
+      },
+      "classroom-nav": {
+        "title": "Classroom sections",
+        "body": "Here you can switch between boards, notes, files, and the other sections of the classroom"
+      }
+    },
+    "call": {
+      "start-call": {
+        "title": "Start the lesson",
+        "body": "Click “Start lesson” to begin the video call. Students in the classroom will be notified that the lesson has started."
+      }
+    },
+    "invite": {
+      "students": {
+        "title": "Students",
+        "body": "Your students are here. You can also invite new ones"
+      },
+      "students-invite": {
+        "title": "Student invitation",
+        "body": "Click to get a link for inviting a student"
+      },
+      "invite-link": {
+        "title": "Invitation link",
+        "body": "Copy the ready message or just the link and send it to a student. One link can be sent to several students"
+      },
+      "invite-action": {
+        "title": "Invitation",
+        "body": "The invitation form opens next. The step counts once an invitation exists."
+      }
+    },
+    "material": {
+      "materials": {
+        "title": "Personal materials",
+        "body": "Your boards and notes are stored here. You can use them to prepare for lessons and add them to students' classrooms"
+      },
+      "create-board": {
+        "title": "Create a board",
+        "body": "Here you can create a board to prepare materials for lessons. It is saved in your personal section"
+      },
+      "board-back": {
+        "title": "Board is ready",
+        "body": "You can now use the board as a template for lessons. We'll go back to materials and add a copy to a classroom"
+      },
+      "template-card": {
+        "title": "Your board",
+        "body": "The board is stored in your materials. You can create copies for different students and keep the original"
+      },
+      "template-menu": {
+        "title": "Copy to a classroom",
+        "body": "Open the board menu and choose “Duplicate to classroom” to create a copy for lessons"
+      },
+      "duplicate-modal": {
+        "title": "Choose a classroom",
+        "body": "Choose the classroom where you want to use the board. You can also set the student's editing rights"
+      },
+      "template-copy": {
+        "title": "Independent copies",
+        "body": "A copy of the board is now in the classroom. You can change it together with the student — the original in your personal materials stays unchanged"
+      },
+      "material-action": {
+        "title": "New material",
+        "body": "Choose a board or a note. Closing the list without a choice does not count."
+      }
+    },
+    "lesson": {
+      "schedule": {
+        "title": "Schedule",
+        "body": "All lessons open from here. Next we'll schedule the first one."
+      },
+      "lesson-action": {
+        "title": "New lesson",
+        "body": "Pick a student and a time. The step counts once the lesson appears on the schedule."
+      }
+    },
+    "join": {
+      "classrooms": {
+        "title": "How to join",
+        "body": "The classroom appears when you open your tutor's link in this account. If you do not have a link yet, ask your tutor to send one"
+      }
+    },
+    "classroom": {
+      "classrooms": {
+        "title": "Classrooms",
+        "body": "Classrooms where you study are listed here. We'll open yours and look at how it is organized"
+      },
+      "classroom-header": {
+        "title": "Classroom",
+        "body": "This is where lessons with your tutor happen: materials, the schedule, and the video call"
+      }
+    },
+    "schedule": {
+      "schedule": {
+        "title": "Schedule",
+        "body": "This is where you see when your lessons are. We'll open it to look at the upcoming ones"
+      },
+      "schedule-page": {
+        "title": "Your lessons",
+        "body": "When your tutor schedules a lesson, the date and time show up in this list. If it is empty, nothing is scheduled yet"
+      }
+    }
   },
   "errorPage": {
     "notFoundTitle": "Page not\u00A0found",

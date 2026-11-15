@@ -130,6 +130,7 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
         isSelected ? 'border-border-focus bg-status-info-background' : '',
       )}
       onClick={onSelect}
+      data-classroom-id={classroom.id}
       data-umami-event="material-duplicate-select-classroom"
       data-umami-event-classroom-id={classroom.id}
     >
@@ -247,7 +248,10 @@ export const MaterialsDuplicate = ({
 
   return (
     <Modal open={open} onOpenChange={handleClose}>
-      <ModalContent className="w-full max-w-2xl max-sm:w-[calc(100vw-32px)]">
+      <ModalContent
+        className="w-full max-w-2xl max-sm:w-[calc(100vw-32px)]"
+        data-first-step="duplicate-modal"
+      >
         <ModalCloseButton className="right-2" />
         <ModalHeader className="border-border-default border-b">
           <ModalTitle className="font-playfair text-text-primary m-0 max-w-[calc(100%-48px)] text-2xl leading-normal font-medium">
@@ -326,6 +330,7 @@ export const MaterialsDuplicate = ({
               disabled={!selectedClassroomId || duplicateMaterial.isPending}
               className="disabled:text-text-secondary w-full sm:w-fit"
               data-umami-event="material-duplicate-confirm"
+              data-first-step="duplicate-confirm"
             >
               {duplicateMaterial.isPending ? t('confirming') : t('confirm')}
             </Button>

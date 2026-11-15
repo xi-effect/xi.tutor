@@ -17,7 +17,7 @@ import {
   useTutorSchedule,
 } from 'modules.calendar';
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
-import { useCurrentUser, useUpdateClassroomEvent } from 'common.services';
+import { useCompleteFirstStep, useCurrentUser, useUpdateClassroomEvent } from 'common.services';
 import { useAppTimeZone } from 'common.ui';
 
 function jsWeekdayToSeriesIndex(date: Date): number {
@@ -85,6 +85,7 @@ const CalendarPageContent = () => {
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  useCompleteFirstStep('schedule', !isUserLoading && user?.default_layout === 'student');
 
   const tutorScheduleQuery = useTutorSchedule({
     ...range,
@@ -152,11 +153,13 @@ const CalendarPageContent = () => {
           analyticsSource="schedule"
         />
       ) : null}
-      <CalendarModule
-        onAddLessonClick={isTutor ? handleAddLessonClick : undefined}
-        onLessonReschedule={isTutor ? (event) => setMoveEvent(event) : undefined}
-        onSaveLesson={isTutor ? handleSaveLesson : undefined}
-      />
+      <div data-first-step="schedule" className="min-h-0 flex-1">
+        <CalendarModule
+          onAddLessonClick={isTutor ? handleAddLessonClick : undefined}
+          onLessonReschedule={isTutor ? (event) => setMoveEvent(event) : undefined}
+          onSaveLesson={isTutor ? handleSaveLesson : undefined}
+        />
+      </div>
       {isTutor && moveEvent != null ? (
         <MovingLessonModal
           key={moveEvent.id}

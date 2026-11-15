@@ -1,7 +1,7 @@
 import { MessageHeartCircle } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
-import { useSupportModalStore } from 'common.ui';
+import { isOnboardingSurfaceActive, useSupportModalStore } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   inferActivationHelpScreen,
@@ -21,7 +21,7 @@ export const AuthSupportLink = ({ label, className, onBeforeOpen }: AuthSupportL
   const handleOpenSupport = () => {
     onBeforeOpen?.();
 
-    const screen = inferActivationHelpScreen();
+    const screen = isOnboardingSurfaceActive() ? 'onboarding' : inferActivationHelpScreen();
     if (screen === 'signup' || screen === 'email_confirmation' || screen === 'onboarding') {
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ACTIVATION_HELP_OPENED, {
         screen,

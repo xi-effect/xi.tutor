@@ -42,7 +42,10 @@ export const Customization = () => {
   return (
     <>
       <SettingsGroup title={t('customization.appearance')}>
-        <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
+        <div
+          data-first-step="theme"
+          className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center"
+        >
           <div className="flex min-w-0 flex-row gap-4">
             <Palette className="fill-icon-brand" />
             <span className={settingsRowTitleClass}>{t('customization.theme')}</span>

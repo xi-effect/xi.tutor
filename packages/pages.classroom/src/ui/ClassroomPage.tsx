@@ -1,6 +1,11 @@
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { useParams } from '@tanstack/react-router';
-import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
+import {
+  useCompleteFirstStep,
+  useCurrentUser,
+  useGetClassroom,
+  useGetClassroomStudent,
+} from 'common.services';
 import { NotFoundPage } from 'common.ui';
 import { MaterialsDuplicateModal, MaterialsDuplicateProvider } from 'pages.materials';
 import { Header } from './Header';
@@ -22,6 +27,11 @@ const ClassroomPageContent = () => {
     isUserLoading || isTutor || !hasValidId,
   );
   const classroomQuery = isTutor ? tutorQuery : studentQuery;
+  const classroomReady = !isUserLoading && Boolean(classroomQuery.data);
+  const studentOpenedClassroom = classroomReady && !isTutor;
+  useCompleteFirstStep('join', studentOpenedClassroom);
+  useCompleteFirstStep('classroom', studentOpenedClassroom);
+  useCompleteFirstStep('cabinet', classroomReady && Boolean(isTutor));
 
   if (!hasValidId || classroomQuery.isError || (classroomQuery.isFetched && !classroomQuery.data)) {
     return <NotFoundPage withLogo={false} />;

@@ -9,9 +9,9 @@ export const Header = () => {
     return <Skeleton />;
   }
 
-  if (isTutor) {
-    return <HeaderTutor />;
-  }
-
-  return <HeaderStudent />;
+  return (
+    <div data-first-step="classroom-header" className="w-full">
+      {isTutor ? <HeaderTutor /> : <HeaderStudent />}
+    </div>
+  );
 };

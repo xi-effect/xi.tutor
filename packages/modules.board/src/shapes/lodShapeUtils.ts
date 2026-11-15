@@ -25,4 +25,15 @@ export class LineShapeUtil extends LineShapeUtilBase {
   override getLodStyle(shape: DrLineShape) {
     return resolveLodStyle(super.getLodStyle(shape));
   }
+
+  // Обводка выделения не рисуется у заблокированных фигур, а рамку линия прячет.
+  override hideSelectionBoundsFg(shape: DrLineShape) {
+    if (shape.isLocked) return false;
+    return super.hideSelectionBoundsFg(shape);
+  }
+
+  override hideSelectionBoundsBg(shape: DrLineShape) {
+    if (shape.isLocked) return false;
+    return super.hideSelectionBoundsBg(shape);
+  }
 }
