@@ -73,6 +73,7 @@ export const MaterialActionsMenu = ({
           variant="none"
           size="icon"
           data-umami-event="material-actions-menu-open"
+          data-first-step="template-board-menu"
         >
           <MoreVert className={cardMenuIconClass} />
         </Button>
@@ -132,6 +133,7 @@ export const MaterialActionsMenu = ({
             className={cardMenuItemClass}
             onClick={handleAction(onDuplicate)}
             data-umami-event="material-duplicate-to-classroom"
+            data-first-step="duplicate-to-classroom"
           >
             <Copy />
             {t('menu.duplicateToClassroom')}

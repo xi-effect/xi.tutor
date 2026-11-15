@@ -139,6 +139,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   return (
     <div data-umami-event="classroom-card-open" data-umami-event-type={student_id}>
       <div
+        data-classroom-id={id.toString()}
         onClick={handleClick}
         className="group bg-background-surface relative flex h-40 w-full cursor-pointer justify-between rounded-2xl p-5"
       >
@@ -179,6 +180,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         {isTutor && (
           <div
             className={cardMenuPositionClass}
+            data-classroom-card-menu
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >

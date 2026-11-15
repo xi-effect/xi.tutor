@@ -5,6 +5,7 @@ import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
 import { CallsShell, CompactView, useCallStore, useUmamiActivityHeartbeat } from 'modules.calls';
+import { DemoCabinetOnTraining } from 'pages.main/demoCabinet';
 import { useCurrentUser, useSyncRoleFromSearch, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';
@@ -52,7 +53,12 @@ function LayoutContent() {
     }
   }, [router.state.location.pathname, router.state.location.search, updateStore]);
 
-  const outlet = token ? (
+  // CompactView нельзя снимать в момент завершения звонка: смена родителя
+  // размонтирует страницу доски и сбрасывает её документ.
+  const keepCallShell = useRef(false);
+  if (token) keepCallShell.current = true;
+
+  const outlet = keepCallShell.current ? (
     <CompactView>
       <Outlet />
     </CompactView>
@@ -60,7 +66,12 @@ function LayoutContent() {
     <Outlet />
   );
 
-  return <Navigation>{outlet}</Navigation>;
+  return (
+    <Navigation>
+      <DemoCabinetOnTraining />
+      {outlet}
+    </Navigation>
+  );
 }
 
 const ProtectedLayout = () => {

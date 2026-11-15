@@ -33,7 +33,7 @@ export const NotificationsDropdown = ({
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>
-        <SidebarMenuItem>
+        <SidebarMenuItem id="notifications-menu-item">
           <SidebarMenuButton className="relative flex h-10 w-full items-center gap-5 rounded-lg p-2 focus-visible:ring-0 focus-visible:ring-offset-0">
             <span className="relative inline-flex size-6 shrink-0 items-center justify-center">
               <Notification className="text-text-muted h-6 w-6" />

@@ -44,7 +44,16 @@ export const useLockedShapeSelection = (editor: Editor | null) => {
         y: event.clientY,
       });
 
-      const hitShape = editor.getShapeAtPoint(point, { hitLocked: true });
+      // Стрелка — замкнутая незалитая геометрия, линия — открытый контур.
+      // С нулевым допуском попадание считается только в математическую ось штриха,
+      // поэтому заблокированные стрелки и линии нельзя выбрать. Допуск тот же, что у select tool.
+      const hitShape = editor.getShapeAtPoint(point, {
+        hitInside: false,
+        hitLabels: true,
+        hitLocked: true,
+        margin: editor.getHitTestMargin(),
+        renderingOnly: true,
+      });
       if (!hitShape?.isLocked) return;
 
       editor.select(hitShape.id);

@@ -534,7 +534,10 @@
     "editInputPlaceholder": "Enter board name",
     "editInputAria": "whiteboard name",
     "emptyName": "Untitled",
-    "editInputError": "Name cannot be empty"
+    "editInputError": "Name cannot be empty",
+    "guideTitle": "You can continue the tour",
+    "guideBody": "You can continue getting to know the app on the home page.",
+    "guideHome": "Home"
   },
   "activity": {
     "edit": "Edit",

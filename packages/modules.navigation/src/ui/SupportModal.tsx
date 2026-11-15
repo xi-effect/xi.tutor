@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from 'common.auth';
 import {
   ModalCloseIcon,
+  isOnboardingSurfaceActive,
   modalBodyClass,
   modalContentClass,
   modalDescriptionClass,
@@ -98,7 +99,7 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
   }, [open]);
 
   const trackSupportContact = (channel: 'telegram' | 'vk' | 'email') => {
-    const screen = inferActivationHelpScreen();
+    const screen = isOnboardingSurfaceActive() ? 'onboarding' : inferActivationHelpScreen();
     if (screen === 'signup' || screen === 'email_confirmation' || screen === 'onboarding') {
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ACTIVATION_SUPPORT_CONTACTED, {
         screen,
