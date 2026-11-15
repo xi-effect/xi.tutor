@@ -45,7 +45,8 @@ export type DemoCabinetPorts = {
   createBoard?: (classroomId: string) => Promise<string>;
   createNote?: (classroomId: string) => Promise<string>;
   seedBoard: (target: DemoBoardSeedTarget) => Promise<void>;
-  seedNote: (target: DemoNoteSeedTarget) => Promise<void>;
+  /** Заметка кабинета пока не создаётся. Поле оставлено, чтобы вернуть наполнение позже. */
+  seedNote?: (target: DemoNoteSeedTarget) => Promise<void>;
   canCreateClassroom?: () => boolean;
   refresh?: (classroomId: string) => void;
 };

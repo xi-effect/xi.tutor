@@ -1,8 +1,11 @@
 import { YjsProvider } from '../providers/YjsProvider';
 import { DrawCanvas } from './components';
 import { BoardProblemBoundary } from './BoardProblemBoundary';
+import { useEffect } from 'react';
 import { useParams, useSearch } from '@tanstack/react-router';
 import {
+  browserDemoCabinetStorage,
+  readDemoCabinetProgress,
   useCurrentUser,
   useGetClassroomStorageItem,
   useGetClassroomStorageItemStudent,
@@ -10,6 +13,7 @@ import {
   useIsClassroomOnPause,
 } from 'common.services';
 import { useCachedBoardDoc } from '../hooks/useCachedBoardDoc';
+import { seedDemoBoard } from '../demo/seedDemoBoard';
 import { DEMO_STORAGE_TOKEN } from '../utils/yjsConstants';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 
@@ -63,6 +67,20 @@ const DrawBoardContent = ({ isDemo = false }: DrawBoardProps) => {
     classroomId: classroomId || '',
     id: materialIdValue || '',
   });
+
+  useEffect(() => {
+    if (isOfflineDemo || user?.id == null || !classroomId || !materialIdValue) return;
+    const progress = readDemoCabinetProgress(browserDemoCabinetStorage(), user.id);
+    if (!progress || progress.phase === 'removed' || progress.boardId !== materialIdValue) return;
+
+    let cancelled = false;
+    void seedDemoBoard({ classroomId, boardId: materialIdValue }).catch((error: unknown) => {
+      if (!cancelled) console.error('Не удалось восстановить демонстрационную доску', error);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [classroomId, isOfflineDemo, materialIdValue, user?.id]);
 
   if (!materialIdValue && !isOfflineDemo) {
     throw new Error('boardId or materialId must be provided');

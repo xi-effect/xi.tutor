@@ -5,7 +5,6 @@ import {
   useCurrentUser,
   useGetClassroomStorageItem,
   useGetClassroomStorageItemStudent,
-  useFirstStepsWorkspaceVisit,
   useGetStorageItem,
   useIsClassroomOnPause,
 } from 'common.services';
@@ -29,7 +28,6 @@ const NoteContent = () => {
 };
 
 export const Note = () => {
-  useFirstStepsWorkspaceVisit('note');
   const { classroomId, noteId, materialId } = useParams({ strict: false });
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';

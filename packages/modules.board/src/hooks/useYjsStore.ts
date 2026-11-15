@@ -165,6 +165,8 @@ type SharedEntry = {
   boardBackgroundMap: Y.Map<string>;
   /** Документ из Yjs уже загружен в store — повторный loadSnapshot сбрасывает выделение. */
   yjsDocumentHydrated: boolean;
+  /** Какой именно store получил снимок. Новый store после ремаунта нужно гидрировать заново. */
+  hydratedStore: DrStore | null;
   storageToken: string;
   releaseTimer: number | null;
   /** Одно восстановление на отклонённый content_token, общее для всех потребителей сокета. */
@@ -230,6 +232,7 @@ function getOrCreateShared(
     commentReadsMap,
     boardBackgroundMap,
     yjsDocumentHydrated: false,
+    hydratedStore: null,
     storageToken,
     releaseTimer: null,
     tokenRecovery: null,
@@ -393,6 +396,26 @@ export function useYjsStore({
     const flushPendingChanges = () => {
       const pending = pendingChangesRef.current;
       if (!pending) return;
+
+      const removed = Object.values(pending.removed).filter((record) =>
+        isDocumentRecord(store, record),
+      );
+      if (removed.length > 0) {
+        const live = store.allRecords().filter((record) => isDocumentRecord(store, record)).length;
+        // Размонтирование редактора снимает фигуры пачкой. Это не стирание ластиком.
+        if (live === 0 || removed.length > live * 4) {
+          for (const record of removed) delete pending.removed[record.id];
+        }
+      }
+
+      if (
+        Object.keys(pending.added).length === 0 &&
+        Object.keys(pending.updated).length === 0 &&
+        Object.keys(pending.removed).length === 0
+      ) {
+        pendingChangesRef.current = null;
+        return;
+      }
 
       pendingChangesRef.current = null;
 
@@ -862,8 +885,8 @@ export function useYjsStore({
         });
       }
 
-      /** 5) initial seed / migrate (один раз на комнату — повторный loadSnapshot сбрасывает выделение) */
-      if (!sharedEntry.yjsDocumentHydrated) {
+      /** 5) initial seed / migrate (один раз на этот store — повторный loadSnapshot сбрасывает выделение) */
+      if (sharedEntry.hydratedStore !== store) {
         try {
           const result = hydrateBoardStoreFromYjs({
             store,
@@ -871,7 +894,7 @@ export function useYjsStore({
             yStore,
             meta,
             ydocId,
-            seedIfEmpty: true,
+            seedIfEmpty: !sharedEntry.yjsDocumentHydrated,
           });
 
           if (result === 'migration-error') {
@@ -886,6 +909,7 @@ export function useYjsStore({
             });
             return;
           }
+          sharedEntry.hydratedStore = store;
           sharedEntry.yjsDocumentHydrated = true;
         } catch (error) {
           const problem = reportBoardProblem('yjs-hydrate', error, { ydocId, source: 'sync' });
@@ -976,6 +1000,7 @@ export function useYjsStore({
           seedIfEmpty: false,
         });
         if (result !== 'hydrated') return false;
+        sharedEntry.hydratedStore = store;
         sharedEntry.yjsDocumentHydrated = true;
         return true;
       } catch (error) {

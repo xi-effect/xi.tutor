@@ -66,7 +66,7 @@ export const MainPage = () => {
       {
         element: '#sidebar',
         popover: {
-          description: t('onboarding.sidebar'),
+          description: isTutor ? t('onboarding.sidebarTutor') : t('onboarding.sidebarStudent'),
         },
       },
       {
@@ -82,7 +82,9 @@ export const MainPage = () => {
       {
         element: '#classrooms-menu-item',
         popover: {
-          description: t('onboarding.classrooms'),
+          description: isTutor
+            ? t('onboarding.classroomsTutor')
+            : t('onboarding.classroomsStudent'),
         },
       },
       {
@@ -120,7 +122,7 @@ export const MainPage = () => {
       {
         element: '#payments-menu-item',
         popover: {
-          description: t('onboarding.payments'),
+          description: isTutor ? t('onboarding.paymentsTutor') : t('onboarding.paymentsStudent'),
         },
       },
       {

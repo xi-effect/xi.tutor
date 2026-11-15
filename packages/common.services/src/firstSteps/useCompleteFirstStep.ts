@@ -3,6 +3,7 @@ import { useCurrentUser } from '../user';
 import { useUpdateUserFlag } from '../userFlags';
 import { firstStepFlagKey, isStepForRole, type FirstStepId } from './model';
 import { shouldShowFirstSteps } from './preview';
+import { trackFirstStepsStepResolved } from './analytics';
 import {
   acknowledgeFirstStepFlag,
   browserFirstStepsStorage,
@@ -32,7 +33,10 @@ export const markFirstStepDone = (
   if ((role !== 'tutor' && role !== 'student') || !isStepForRole(role, step)) return;
 
   const storage = browserFirstStepsStorage();
-  commitFirstStep(storage, user.id, role, step, 'done', true);
+  const changed = commitFirstStep(storage, user.id, role, step, 'done', true);
+  if (changed && user.onboarding_stage === 'training') {
+    trackFirstStepsStepResolved(role, step, 'done', 'tour');
+  }
 
   const flagKey = firstStepFlagKey(role, step, 'done');
   if (!dirtyFirstStepFlags(storage, user.id, role).includes(flagKey)) return;

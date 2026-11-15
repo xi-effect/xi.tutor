@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ensureDemoCabinet, reportStorageLimitReached } from 'common.services';
+import {
+  ensureDemoCabinet,
+  reportStorageLimitReached,
+  trackFirstStepsDemoCabinet,
+} from 'common.services';
 import { demoCabinetPorts } from './startDemoCabinet';
 
 export type DemoCabinetIds = {
@@ -48,17 +52,18 @@ export const useDemoCabinet = (
   const createRef = useRef(create);
   createRef.current = create;
 
-  const whenReady = useCallback(async () => {
+  const load = useCallback(async () => {
     const ports = demoCabinetPorts();
-    const next = readIds(
-      await ensureDemoCabinet(userId, {
-        ...ports,
-        canCreateClassroom: () => createRef.current && (ports.canCreateClassroom?.() ?? true),
-      }),
-    );
+    const result = await ensureDemoCabinet(userId, {
+      ...ports,
+      canCreateClassroom: () => createRef.current && (ports.canCreateClassroom?.() ?? true),
+    });
+    const next = readIds(result);
     if (mounted.current) setIds(next);
-    return next;
+    return { next, status: result.status };
   }, [userId]);
+
+  const whenReady = useCallback(async () => (await load()).next, [load]);
 
   useEffect(() => {
     mounted.current = true;
@@ -71,13 +76,19 @@ export const useDemoCabinet = (
     if (!enabled || started.current) return;
     started.current = true;
 
-    void whenReady().catch((error: unknown) => {
-      if (!mounted.current) return;
-      if (isClassroomLimit(error) && !createRef.current) return;
-      console.error('Не удалось создать демонстрационный кабинет', error);
-      reportStorageLimitReached(error);
-    });
-  }, [enabled, whenReady]);
+    void load()
+      .then((result) => {
+        if (!mounted.current) return;
+        trackFirstStepsDemoCabinet(result.status);
+      })
+      .catch((error: unknown) => {
+        if (!mounted.current) return;
+        if (isClassroomLimit(error) && !createRef.current) return;
+        trackFirstStepsDemoCabinet('failed');
+        console.error('Не удалось создать демонстрационный кабинет', error);
+        reportStorageLimitReached(error);
+      });
+  }, [enabled, load]);
 
   return { ...ids, whenReady };
 };

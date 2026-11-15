@@ -3,7 +3,6 @@ export const TUTOR_FIRST_STEPS = [
   'settings',
   'cabinet',
   'call',
-  'workspace',
   'invite',
   'material',
 ] as const;

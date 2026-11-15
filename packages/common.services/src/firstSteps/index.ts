@@ -18,14 +18,20 @@ export {
   type TutorFirstStepId,
 } from './model';
 export {
+  trackFirstStepsAction,
+  trackFirstStepsCallPhase,
+  trackFirstStepsDemoCabinet,
   trackFirstStepsFinishFailed,
   trackFirstStepsFinished,
+  trackFirstStepsHelp,
+  trackFirstStepsScreen,
+  trackFirstStepsStepResolved,
+  trackFirstStepsTour,
   trackFirstStepsViewed,
 } from './analytics';
 export { hideFirstStepsPreview, isFirstStepsPreviewEnabled, shouldShowFirstSteps } from './preview';
 export { markFirstStepDone, useCompleteFirstStep } from './useCompleteFirstStep';
 export { useFirstStepsProgress } from './useFirstStepsProgress';
-export { useFirstStepsWorkspaceVisit } from './useWorkspaceVisit';
 export {
   FIRST_STEPS_CLOSE_USER_MENU_EVENT,
   FIRST_STEPS_EXPAND_SIDEBAR_EVENT,

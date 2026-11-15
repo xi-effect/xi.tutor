@@ -32,6 +32,14 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   ONBOARDING_STEP_BACK: 'onboarding_step_back',
   ONBOARDING_COMPLETED: 'onboarding_completed',
 
+  // First steps (training guide)
+  FIRST_STEPS_SCREEN_VIEWED: 'first_steps_screen_viewed',
+  FIRST_STEPS_ACTION: 'first_steps_action',
+  FIRST_STEPS_STEP_RESOLVED: 'first_steps_step_resolved',
+  FIRST_STEPS_TOUR: 'first_steps_tour',
+  FIRST_STEPS_CALL_PHASE: 'first_steps_call_phase',
+  FIRST_STEPS_DEMO_CABINET: 'first_steps_demo_cabinet',
+
   // Student invite (tutor)
   STUDENT_INVITE_VIEWED: 'student_invite_viewed',
   STUDENT_INVITE_SUBMIT: 'student_invite_submit',

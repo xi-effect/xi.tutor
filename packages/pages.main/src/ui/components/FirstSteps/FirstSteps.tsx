@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState, type ComponentProps } from 'react';
-import { AnimatePresence, motion, useReducedMotion, type Transition } from 'motion/react';
+import { useEffect, useMemo, useRef, useState, type ComponentProps } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
-import { Logo } from 'common.ui';
+import { HelpCircle, MessageHeartCircle } from '@xipkg/icons';
+import { Logo, useSupportModalStore } from 'common.ui';
 import { useDemoCabinet } from '../../../demoCabinet/useDemoCabinet';
 import { ModalInvitation } from 'features.invites';
 import {
@@ -10,6 +11,7 @@ import {
   FIRST_STEPS_TOUR_ACTION_EVENT,
   DEMO_CABINET_NAMES,
   firstStepsTotal,
+  clearFirstStepsTour,
   countResolvedFirstSteps,
   isStudentClassroomBlocked,
   pickExpandedStepId,
@@ -19,8 +21,11 @@ import {
   useFirstStepsProgress,
   useGetMaterialsList,
   useInvitationsList,
+  trackFirstStepsAction,
   trackFirstStepsFinishFailed,
   trackFirstStepsFinished,
+  trackFirstStepsHelp,
+  trackFirstStepsScreen,
   trackFirstStepsViewed,
   hideFirstStepsPreview,
   requestFirstStepsTour,
@@ -50,23 +55,15 @@ const stepItemVariants = {
   hidden: { opacity: 0 },
   show: { opacity: 1 },
 };
-const pressSpring: Transition = { type: 'spring', stiffness: 560, damping: 32 };
 
-const MotionButton = motion.create(Button);
+const GuideButton = (props: ComponentProps<typeof Button>) => <Button {...props} />;
 
-const GuideButton = ({ className, disabled, ...props }: ComponentProps<typeof Button>) => {
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <MotionButton
-      {...props}
-      disabled={disabled}
-      whileTap={reduceMotion || disabled ? undefined : { scale: 0.96 }}
-      transition={pressSpring}
-      className={className}
-    />
-  );
-};
+const helpLinkClass =
+  'hover:bg-background-subtle focus-visible:bg-background-subtle flex items-center gap-2 rounded-lg bg-transparent px-3 py-2 transition-colors focus-visible:outline-none';
+const helpIconClass =
+  'hover:text-text-secondary! focus:text-text-secondary! text-text-secondary! dark:text-text-muted! dark:hover:text-text-muted! dark:focus:text-text-muted! size-6 shrink-0';
+const helpLabelClass =
+  'text-s-base hover:text-text-secondary! focus:text-text-secondary! text-text-secondary! dark:text-text-muted! dark:hover:text-text-muted! dark:focus:text-text-muted! font-medium';
 
 const ProgressRing = ({ value, total }: { value: number; total: number }) => {
   const reduceMotion = useReducedMotion();
@@ -130,6 +127,8 @@ export const FirstSteps = ({
   onLocalPreviewClose,
 }: FirstStepsProps) => {
   const { t } = useTranslation('main');
+  const { t: tNav } = useTranslation('navigation');
+  const openSupport = useSupportModalStore((state) => state.open);
   const reduceMotion = useReducedMotion();
   const reveal = useMemo(
     () => (reduceMotion ? { duration: 0 } : { duration: 0.34, ease: revealEase }),
@@ -138,11 +137,13 @@ export const FirstSteps = ({
   const { marks, introSeen, startGuide, markDone, markSkipped } = useFirstStepsProgress(
     userId,
     role,
+    { analytics: !localPreview },
   );
   const { transitionStage } = useOnboardingTransition('completed', 'forwards');
   const [pinnedId, setPinnedId] = useState<string | null>(null);
   const [joinHelpOpen, setJoinHelpOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [reviewSteps, setReviewSteps] = useState(false);
 
   const isTutor = role === 'tutor';
   const invitations = useInvitationsList(!isTutor);
@@ -162,8 +163,9 @@ export const FirstSteps = ({
   const demoClassroomId = demoCabinet.classroomId;
 
   useEffect(() => {
+    if (localPreview) return;
     trackFirstStepsViewed(role);
-  }, [role]);
+  }, [localPreview, role]);
 
   useEffect(() => {
     if (!isTutor || invitations.isError || !Array.isArray(invitations.data)) return;
@@ -216,7 +218,20 @@ export const FirstSteps = ({
   const resolved = countResolvedFirstSteps(marks, role);
   const totalSteps = firstStepsTotal(role);
   const allResolved = resolved === totalSteps;
+  const showReady = isTutor && allResolved && !reviewSteps;
   const firstClassroom = studentClassrooms.data?.[0];
+  const finishStarted = useRef(false);
+
+  useEffect(() => {
+    if (localPreview) return;
+    const screen = !introSeen ? 'welcome' : showReady ? 'ready' : 'checklist';
+    trackFirstStepsScreen(role, screen, resolved, totalSteps);
+  }, [introSeen, localPreview, resolved, role, showReady, totalSteps]);
+
+  useEffect(() => {
+    if (!showReady) return;
+    clearFirstStepsTour();
+  }, [showReady]);
 
   const finish = (completionPath: 'tour_done' | 'skipped') => {
     if (localPreview) {
@@ -225,13 +240,17 @@ export const FirstSteps = ({
       return;
     }
 
-    if (transitionStage.isPending) return;
+    if (finishStarted.current || transitionStage.isPending) return;
+    finishStarted.current = true;
+    trackFirstStepsAction(role, completionPath === 'tour_done' ? 'finish' : 'finish_early');
 
+    // PUT .../onboarding-stages/completed/?transition_mode=forwards
     transitionStage.mutate(undefined, {
       onSuccess: () => {
         trackFirstStepsFinished(role, completionPath);
       },
       onError: (error) => {
+        finishStarted.current = false;
         trackFirstStepsFinishFailed(role, error);
       },
     });
@@ -248,23 +267,39 @@ export const FirstSteps = ({
   }, []);
 
   const startTour = async (step: FirstStepId) => {
+    if (!localPreview) trackFirstStepsAction(role, 'start_step', step);
     let classroomId = isTutor
       ? (demoClassroomId?.toString() ?? null)
       : (firstClassroom?.id.toString() ?? null);
     let boardId = isTutor ? demoCabinet.boardId : null;
     let noteId = isTutor ? demoCabinet.noteId : null;
-    const needsDemo = isTutor && (step === 'cabinet' || step === 'call' || step === 'workspace');
+    const needsDemo = isTutor && (step === 'cabinet' || step === 'call');
 
-    if (needsDemo && (classroomId == null || (step === 'workspace' && (!boardId || !noteId)))) {
+    if (needsDemo && classroomId == null) {
       try {
-        const ready = await demoCabinet.whenReady();
-        classroomId = ready.classroomId?.toString() ?? null;
-        boardId = ready.boardId;
-        noteId = ready.noteId;
-      } catch (error) {
-        console.error('Не удалось открыть демонстрационный кабинет', error);
-        return;
+        const ready = await Promise.race([
+          demoCabinet.whenReady(),
+          new Promise<null>((resolve) => {
+            window.setTimeout(() => resolve(null), 400);
+          }),
+        ]);
+        if (ready?.classroomId != null) {
+          classroomId = ready.classroomId.toString();
+          boardId = ready.boardId;
+          noteId = ready.noteId;
+        }
+      } catch {
+        classroomId = classroomId ?? null;
       }
+    }
+
+    if (isTutor && classroomId == null && (step === 'cabinet' || step === 'call')) {
+      const classrooms = tutorClassrooms.data ?? [];
+      const demoClassroom = classrooms.find(
+        (classroom) => classroom.name === DEMO_CABINET_NAMES.classroom,
+      );
+      const fallbackClassroom = demoClassroom ?? classrooms[0];
+      if (fallbackClassroom) classroomId = String(fallbackClassroom.id);
     }
 
     if (step === 'material' && classroomId == null) {
@@ -303,7 +338,9 @@ export const FirstSteps = ({
   };
 
   return (
-    <section className="flex min-h-full w-full items-center justify-center px-5 py-10">
+    <section
+      className={`relative flex min-h-full w-full items-center justify-center px-5 py-10 ${showReady ? 'pb-24' : ''}`}
+    >
       <div className="flex w-full max-w-2xl min-w-0 flex-col items-center gap-8">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0 }}
@@ -320,24 +357,76 @@ export const FirstSteps = ({
               className="flex w-full min-w-0 flex-col items-center gap-6 text-center"
               initial={reduceMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={reduceMotion ? undefined : { opacity: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, pointerEvents: 'none' }}
               transition={reveal}
             >
               <div className="flex flex-col gap-2">
                 <h1 id="first-steps-title" className="text-text-primary text-3xl font-semibold">
-                  {t('firstSteps.welcomeTitle')}
+                  {t(`firstSteps.welcome.${role}.title`)}
                 </h1>
                 <p className="text-text-secondary text-base leading-6 break-words">
-                  {t('firstSteps.welcomeBody')}
+                  {t(`firstSteps.welcome.${role}.body`)}
                 </p>
               </div>
               <GuideButton
                 type="button"
                 variant="primary"
                 className="h-12 rounded-xl px-6 text-base font-medium"
-                onClick={startGuide}
+                onClick={() => {
+                  if (!localPreview) trackFirstStepsAction(role, 'start');
+                  startGuide();
+                }}
               >
-                {t('firstSteps.welcomeAction')}
+                {t(`firstSteps.welcome.${role}.action`)}
+              </GuideButton>
+              <p className="text-text-secondary text-sm leading-5">
+                {t(`firstSteps.welcome.${role}.note`)}
+              </p>
+            </motion.div>
+          ) : showReady ? (
+            <motion.div
+              key="ready"
+              className="flex w-full min-w-0 flex-col items-center gap-6 text-center"
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduceMotion ? undefined : { opacity: 0, pointerEvents: 'none' }}
+              transition={reveal}
+            >
+              <div className="flex flex-col gap-2">
+                <h1 id="first-steps-title" className="text-text-primary text-3xl font-semibold">
+                  {t('firstSteps.doneTitle')}
+                </h1>
+                <p className="text-text-secondary text-base leading-6 break-words">
+                  {t('firstSteps.doneBody')}
+                </p>
+                <p className="text-text-secondary text-base leading-6 break-words">
+                  {t('firstSteps.doneNote')}
+                </p>
+              </div>
+              <GuideButton
+                type="button"
+                variant="primary"
+                className="h-12 rounded-xl px-6 text-base font-medium"
+                disabled={transitionStage.isPending}
+                onPointerDown={(event) => {
+                  if (event.button !== 0) return;
+                  finish('tour_done');
+                }}
+                onClick={() => finish('tour_done')}
+              >
+                {t('firstSteps.doneAction')}
+              </GuideButton>
+              <GuideButton
+                type="button"
+                variant="none"
+                size="s"
+                className="text-text-secondary hover:text-text-primary hover:bg-background-subtle active:text-text-primary active:bg-background-subtle h-8 rounded-full px-3 font-medium transition-colors"
+                onClick={() => {
+                  if (!localPreview) trackFirstStepsAction(role, 'review');
+                  setReviewSteps(true);
+                }}
+              >
+                {t('firstSteps.back')}
               </GuideButton>
             </motion.div>
           ) : (
@@ -347,7 +436,7 @@ export const FirstSteps = ({
               aria-labelledby="first-steps-title"
               initial={reduceMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={reduceMotion ? undefined : { opacity: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, pointerEvents: 'none' }}
               transition={reveal}
             >
               <div className="flex items-center justify-between gap-3 px-1">
@@ -398,7 +487,13 @@ export const FirstSteps = ({
                           type="button"
                           className="text-text-primary focus-visible:ring-text-link min-w-0 flex-1 bg-transparent p-0 text-left text-sm leading-5 font-medium break-words focus-visible:ring-2 focus-visible:outline-none"
                           aria-expanded={open}
-                          onClick={() => toggleStep(step.id)}
+                          onClick={() => {
+                            const opened = pickExpandedStepId(steps, pinnedId) === step.id;
+                            if (!opened && !localPreview) {
+                              trackFirstStepsAction(role, 'open_step', step.id);
+                            }
+                            toggleStep(step.id);
+                          }}
                         >
                           {title}
                           {step.status === 'skipped' && (
@@ -434,14 +529,20 @@ export const FirstSteps = ({
                                     setPinnedId(null);
                                   }}
                                 >
-                                  {t('firstSteps.skip')}
+                                  {t(
+                                    step.id === 'navigation' ||
+                                      step.id === 'settings' ||
+                                      step.id === 'cabinet' ||
+                                      step.id === 'material'
+                                      ? 'firstSteps.skipStep'
+                                      : 'firstSteps.skip',
+                                  )}
                                 </GuideButton>
                               )}
                               {(step.id === 'navigation' ||
                                 step.id === 'settings' ||
                                 step.id === 'cabinet' ||
-                                step.id === 'call' ||
-                                step.id === 'workspace') && (
+                                step.id === 'call') && (
                                 <GuideButton
                                   type="button"
                                   variant="primary"
@@ -523,7 +624,7 @@ export const FirstSteps = ({
               </motion.ol>
 
               <motion.div
-                className="mt-10 flex min-w-0 justify-center"
+                className="mt-8 flex min-w-0 justify-center"
                 initial={reduceMotion ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ ...reveal, delay: reduceMotion ? 0 : 0.2 }}
@@ -534,7 +635,7 @@ export const FirstSteps = ({
                       key="home"
                       initial={reduceMotion ? false : { opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      exit={reduceMotion ? undefined : { opacity: 0 }}
+                      exit={reduceMotion ? undefined : { opacity: 0, pointerEvents: 'none' }}
                       transition={reveal}
                     >
                       <GuideButton
@@ -543,9 +644,13 @@ export const FirstSteps = ({
                         size="s"
                         className="rounded-full"
                         disabled={transitionStage.isPending}
+                        onPointerDown={(event) => {
+                          if (event.button !== 0) return;
+                          finish('tour_done');
+                        }}
                         onClick={() => finish('tour_done')}
                       >
-                        {t('firstSteps.goHome')}
+                        {t(isTutor ? 'firstSteps.doneAction' : 'firstSteps.goHome')}
                       </GuideButton>
                     </motion.div>
                   ) : (
@@ -553,7 +658,7 @@ export const FirstSteps = ({
                       key="finish"
                       initial={reduceMotion ? false : { opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      exit={reduceMotion ? undefined : { opacity: 0 }}
+                      exit={reduceMotion ? undefined : { opacity: 0, pointerEvents: 'none' }}
                       transition={reveal}
                     >
                       <GuideButton
@@ -562,6 +667,10 @@ export const FirstSteps = ({
                         size="s"
                         className="text-text-secondary hover:text-text-primary hover:bg-background-subtle active:text-text-primary active:bg-background-page h-8 rounded-full px-3 font-medium"
                         disabled={transitionStage.isPending}
+                        onPointerDown={(event) => {
+                          if (event.button !== 0) return;
+                          finish('skipped');
+                        }}
                         onClick={() => finish('skipped')}
                       >
                         {t('firstSteps.finishEarly')}
@@ -581,6 +690,34 @@ export const FirstSteps = ({
           analyticsSource="onboarding"
           onOpenChange={(open) => setInviteOpen(open)}
         />
+      )}
+      {showReady && (
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+          <button
+            type="button"
+            className={helpLinkClass}
+            data-umami-event="navigation-wiki"
+            onClick={() => {
+              if (!localPreview) trackFirstStepsHelp('wiki');
+              window.open('https://support.sovlium.ru', '_blank');
+            }}
+          >
+            <HelpCircle className={helpIconClass} />
+            <span className={helpLabelClass}>{tNav('wiki')}</span>
+          </button>
+          <button
+            type="button"
+            className={helpLinkClass}
+            data-umami-event="navigation-support"
+            onClick={() => {
+              if (!localPreview) trackFirstStepsHelp('support');
+              openSupport();
+            }}
+          >
+            <MessageHeartCircle className={helpIconClass} />
+            <span className={helpLabelClass}>{tNav('support')}</span>
+          </button>
+        </div>
       )}
     </section>
   );

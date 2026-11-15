@@ -7,7 +7,6 @@ import { updateCurrentUserFlag } from '../userFlags/updateCurrentUserFlag';
 import {
   createDemoBoard,
   createDemoGroupClassroom,
-  createDemoNote,
   demoClassroomExists,
   demoMaterialExists,
 } from './api';
@@ -66,7 +65,7 @@ const readyFrom = (progress: DemoCabinetProgress | null): DemoCabinetResult => (
   noteId: progress?.phase === 'ready' ? progress.noteId : null,
 });
 
-type ResolvedPorts = Required<Omit<DemoCabinetPorts, 'storage'>> & {
+type ResolvedPorts = Required<Omit<DemoCabinetPorts, 'storage' | 'createNote' | 'seedNote'>> & {
   storage: DemoCabinetStorage;
 };
 
@@ -78,9 +77,7 @@ const resolvePorts = (ports: DemoCabinetPorts): ResolvedPorts => ({
   materialExists: ports.materialExists ?? demoMaterialExists,
   createClassroom: ports.createClassroom ?? createDemoGroupClassroom,
   createBoard: ports.createBoard ?? createDemoBoard,
-  createNote: ports.createNote ?? createDemoNote,
   seedBoard: ports.seedBoard,
-  seedNote: ports.seedNote,
   canCreateClassroom: ports.canCreateClassroom ?? (() => true),
   refresh: ports.refresh ?? refreshDemoCabinetQueries,
 });
@@ -97,7 +94,6 @@ const refreshDemoTemplate = async (
   if (
     progress.phase === 'removed' ||
     !progress.classroomId ||
-    !progress.noteId ||
     progress.templateVersion >= DEMO_CABINET_TEMPLATE_VERSION
   ) {
     return progress;
@@ -110,11 +106,6 @@ const refreshDemoTemplate = async (
         boardId: progress.boardId,
       });
     }
-    await ports.seedNote({
-      classroomId: progress.classroomId,
-      noteId: progress.noteId,
-      boardId: progress.boardId,
-    });
   } catch (error) {
     console.error('Не удалось обновить демонстрационные материалы', error);
     return progress;
@@ -188,10 +179,8 @@ const executeDemoCabinet = async (
     persist(ports.storage, userId, current);
   }
 
-  let noteCreatedNow = false;
-  if (!current.noteSettled && !current.noteId) {
-    current = { ...current, noteId: await ports.createNote(classroomId) };
-    noteCreatedNow = true;
+  if (!current.noteSettled) {
+    current = { ...current, noteSettled: true };
     persist(ports.storage, userId, current);
   }
 
@@ -207,26 +196,6 @@ const executeDemoCabinet = async (
     if (current.boardId) {
       await ports.seedBoard({ classroomId, boardId: current.boardId });
       current = { ...current, boardSettled: true };
-      persist(ports.storage, userId, current);
-    }
-  }
-
-  if (!current.noteSettled && current.noteId) {
-    const noteId = current.noteId;
-    if (!noteCreatedNow) {
-      const exists = await ports.materialExists(classroomId, noteId);
-      if (!exists) {
-        current = { ...current, noteId: null, noteSettled: true };
-        persist(ports.storage, userId, current);
-      }
-    }
-    if (current.noteId) {
-      await ports.seedNote({
-        classroomId,
-        noteId: current.noteId,
-        boardId: current.boardId,
-      });
-      current = { ...current, noteSettled: true };
       persist(ports.storage, userId, current);
     }
   }

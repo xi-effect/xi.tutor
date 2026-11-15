@@ -4,6 +4,7 @@ import 'driver.js/dist/driver.css';
 import '../utils/driver.css';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { setOnboardingSurfaceActive } from './onboardingSurface';
 import {
   FIRST_STEPS_CLOSE_USER_MENU_EVENT,
   FIRST_STEPS_EXPAND_SIDEBAR_EVENT,
@@ -22,7 +23,10 @@ import {
   writeFirstStepsTourIndex,
   writeFirstStepsMaterialId,
   FIRST_STEPS_CALL_COMPLETED_EVENT,
+  trackFirstStepsCallPhase,
+  trackFirstStepsTour,
   useCompleteFirstStep,
+  useCurrentUser,
   type FirstStepId,
   type FirstStepsTourSession,
   type FirstStepsTourStop,
@@ -327,6 +331,16 @@ const performOpenDuplicate = async (): Promise<boolean> => {
   return true;
 };
 
+const performStartCall = async (): Promise<boolean> => {
+  const root = findVisible('[data-first-step="start-call"]');
+  const button = root?.querySelector('button');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
 const performConfirmDuplicate = async (): Promise<boolean> => {
   const session = readFirstStepsTour();
   const preferred = session?.classroomId
@@ -369,6 +383,7 @@ const stopDemo = (stop: FirstStepsTourStop | undefined): (() => Promise<boolean>
   if (stop?.click === 'leave-board') return performLeaveBoard;
   if (stop?.click === 'open-duplicate') return performOpenDuplicate;
   if (stop?.click === 'confirm-duplicate') return performConfirmDuplicate;
+  if (stop?.click === 'start-call') return performStartCall;
   return null;
 };
 
@@ -468,6 +483,17 @@ export const FirstStepsTourHost = () => {
   const [finishedStep, setFinishedStep] = useState<FirstStepId | null>(null);
   useCompleteFirstStep(finishedStep ?? 'cabinet', finishedStep != null);
 
+  const { data: user } = useCurrentUser();
+  const analyticsEnabledRef = useRef(true);
+  analyticsEnabledRef.current =
+    user?.onboarding_stage == null || user.onboarding_stage === 'training';
+  const callPhaseRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    setOnboardingSurfaceActive(user?.onboarding_stage === 'training');
+    return () => setOnboardingSurfaceActive(false);
+  }, [user?.onboarding_stage]);
+
   const driverRef = useRef<Driver | null>(null);
   const reasonRef = useRef<'close' | 'move' | 'done'>('close');
   const waitsRef = useRef(0);
@@ -483,16 +509,40 @@ export const FirstStepsTourHost = () => {
   }, []);
 
   useEffect(() => {
-    const onCallCompleted = () => setFinishedStep('call');
+    const onCallCompleted = () => {
+      setFinishedStep('call');
+      const session = readFirstStepsTour();
+      if (!session || !analyticsEnabledRef.current) return;
+      trackFirstStepsTour({
+        role: session.role,
+        step: 'call',
+        action: 'finished',
+      });
+    };
     window.addEventListener(FIRST_STEPS_CALL_COMPLETED_EVENT, onCallCompleted);
     return () => window.removeEventListener(FIRST_STEPS_CALL_COMPLETED_EVENT, onCallCompleted);
   }, []);
 
   useEffect(() => {
+    const syncPhase = () => {
+      if (!analyticsEnabledRef.current) return;
+      const session = readFirstStepsTour();
+      if (session?.step !== 'call' || !session.callPhase) return;
+      if (callPhaseRef.current === session.callPhase) return;
+      callPhaseRef.current = session.callPhase;
+      trackFirstStepsCallPhase(session.role, session.callPhase);
+    };
+
+    syncPhase();
+    window.addEventListener(FIRST_STEPS_TOUR_EVENT, syncPhase);
+    return () => window.removeEventListener(FIRST_STEPS_TOUR_EVENT, syncPhase);
+  }, [user?.onboarding_stage]);
+
+  useEffect(() => {
     const session = readFirstStepsTour();
-    if (session?.callPhase !== 'board-hint' || !session.classroomId || !session.boardId) return;
-    const boardPath = `/classrooms/${session.classroomId}/boards/${session.boardId}`;
-    if (pathname !== boardPath && pathname !== `${boardPath}/`) clearFirstStepsTour();
+    if (session?.callPhase !== 'board-hint' || !session.classroomId) return;
+    const boardPrefix = `/classrooms/${session.classroomId}/boards/`;
+    if (!pathname.startsWith(boardPrefix)) clearFirstStepsTour();
   }, [pathname]);
 
   useEffect(() => {
@@ -523,6 +573,7 @@ export const FirstStepsTourHost = () => {
   useEffect(() => {
     const session = readFirstStepsTour();
     if (!session || session.callPhase) return;
+    if (session.step === 'settings' && pathname.startsWith('/settings')) return;
 
     const stops = FIRST_STEPS_TOUR_STOPS[session.step];
     let index = session.index;
@@ -608,10 +659,27 @@ export const FirstStepsTourHost = () => {
       });
     };
 
+    const trackTour = (
+      action: 'started' | 'advanced' | 'finished' | 'closed',
+      anchor?: string,
+      stepIndex?: number,
+    ) => {
+      if (!analyticsEnabledRef.current) return;
+      trackFirstStepsTour({
+        role: session.role,
+        step: session.step,
+        action,
+        anchor,
+        stepIndex,
+        totalSteps: session.step === 'call' ? 7 : stops.length,
+      });
+    };
+
     const moveNext: DriverHook = (_element, _step, { driver: tour }) => {
       const active = tour.getActiveIndex() ?? 0;
       runStop(group[active], () => {
         writeFirstStepsTourIndex(index + active + 1);
+        trackTour('advanced', group[active]?.anchor, index + active + 1);
         tour.moveNext();
       });
     };
@@ -621,6 +689,7 @@ export const FirstStepsTourHost = () => {
         if (tourContinues) {
           reasonRef.current = 'move';
           writeFirstStepsTourIndex(groupEnd);
+          trackTour('advanced', stop?.anchor, groupEnd);
           syncUserMenu(stops[groupEnd]?.anchor);
           tour.destroy();
           const nextPath = tourStopPath(stops[groupEnd], session);
@@ -630,22 +699,16 @@ export const FirstStepsTourHost = () => {
           return;
         }
 
-        reasonRef.current = 'done';
-        if (session.step === 'cabinet' && session.role === 'tutor' && session.classroomId != null) {
+        if (stop?.click === 'start-call') {
           reasonRef.current = 'move';
-          setFinishedStep('cabinet');
-          requestFirstStepsTour({
-            step: 'call',
-            role: session.role,
-            userId: session.userId,
-            classroomId: session.classroomId,
-            boardId: session.boardId,
-            noteId: session.noteId,
-          });
+          trackTour('advanced', stop.anchor, index + group.length);
           syncUserMenu(undefined);
           tour.destroy();
           return;
         }
+
+        reasonRef.current = 'done';
+        trackTour('finished', stop?.anchor, index + group.length);
         if (tourCompletionMarksStep(session.step)) setFinishedStep(session.step);
         if (stop && tourStopOpensAction(stop.anchor)) {
           window.dispatchEvent(
@@ -654,6 +717,16 @@ export const FirstStepsTourHost = () => {
         }
         clearFirstStepsTour();
         syncUserMenu(undefined);
+        if (session.step === 'cabinet' && session.classroomId) {
+          requestFirstStepsTour({
+            step: 'call',
+            role: session.role,
+            userId: session.userId,
+            classroomId: session.classroomId,
+            boardId: session.boardId,
+            noteId: session.noteId,
+          });
+        }
         tour.destroy();
       };
 
@@ -673,6 +746,9 @@ export const FirstStepsTourHost = () => {
           side: stop.side ?? 'bottom',
           align: 'start' as const,
           ...(stop.click ? { nextBtnText: translateRef.current('onboarding.next') } : {}),
+          ...(lastInGroup && stop.click === 'start-call'
+            ? { doneBtnText: translateRef.current('onboarding.next') }
+            : {}),
           progressText: translateRef
             .current('onboarding.progress')
             .replace('{{current}}', String(session.step === 'call' ? 1 : index + groupIndex + 1))
@@ -689,39 +765,99 @@ export const FirstStepsTourHost = () => {
       steps,
       nextBtnText: translateRef.current('onboarding.next'),
       prevBtnText: translateRef.current('onboarding.prev'),
-      doneBtnText:
-        tourContinues ||
-        (session.step === 'cabinet' && session.role === 'tutor' && session.classroomId != null)
+      doneBtnText: tourContinues
+        ? translateRef.current('onboarding.next')
+        : session.step === 'call'
           ? translateRef.current('onboarding.next')
-          : translateRef.current('onboarding.done'),
+          : session.step === 'settings' ||
+              session.step === 'cabinet' ||
+              session.step === 'invite' ||
+              session.step === 'material'
+            ? translateRef.current('onboarding.ready')
+            : translateRef.current('onboarding.done'),
       progressText: translateRef.current('onboarding.progress'),
       onDestroyed: () => {
-        if (reasonRef.current === 'close') {
-          clearFirstStepsTour();
-          syncUserMenu(undefined);
-        }
+        if (reasonRef.current !== 'close') return;
+        const touringSettings = readFirstStepsTour()?.step === 'settings';
+        if (touringSettings && window.location.pathname.startsWith('/settings')) return;
+        const active = tour.getActiveIndex() ?? 0;
+        trackTour('closed', group[active]?.anchor, index + active + 1);
+        clearFirstStepsTour();
+        syncUserMenu(undefined);
       },
     });
 
     const keepStepOnHighlightClick = (event: MouseEvent) => {
-      if (!event.isTrusted) return;
+      if (!event.isTrusted || !(event.target instanceof Element)) return;
       const active = driverRef.current?.getActiveIndex() ?? 0;
       const stop = group[active];
+      const target = event.target;
+
+      if (session.step === 'settings' && readFirstStepsTour()?.step === 'settings') {
+        const onProfile =
+          stop?.click === 'open-user-menu' && Boolean(target.closest('#hints-button'));
+        const onSettingsItem = Boolean(target.closest('[data-first-step="settings-item"]'));
+        const onHelp = Boolean(target.closest('[data-first-step="help-item"]'));
+        const onSupport = Boolean(
+          target.closest('[data-first-step="support-submenu"], [data-first-step="support-item"]'),
+        );
+        const supportIndex = stops.findIndex((item) => item.anchor === 'support-menu');
+        const settingsIndex = stops.findIndex((item) => item.anchor === 'settings-item');
+        const showMenu = (support: boolean) => {
+          window.dispatchEvent(
+            new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support } }),
+          );
+        };
+        const goToStop = (nextIndex: number) => {
+          if (nextIndex < 0) return;
+          writeFirstStepsTourIndex(nextIndex);
+          window.setTimeout(() => setNonce((value) => value + 1), 280);
+        };
+
+        if (onProfile) {
+          event.preventDefault();
+          event.stopPropagation();
+          showMenu(false);
+          goToStop(index + active + 1);
+          return;
+        }
+        if (onHelp && (stop?.anchor === 'user-menu' || stop?.click === 'hover-support')) {
+          event.preventDefault();
+          event.stopPropagation();
+          showMenu(true);
+          goToStop(supportIndex);
+          return;
+        }
+        if (onSettingsItem) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (stop?.click === 'hover-support' || stop?.anchor === 'support-menu') {
+            showMenu(true);
+            goToStop(supportIndex);
+          } else {
+            showMenu(false);
+            goToStop(settingsIndex);
+          }
+          return;
+        }
+        if (stop?.anchor === 'support-menu' && (onSupport || onHelp || onSettingsItem)) {
+          event.preventDefault();
+          event.stopPropagation();
+          showMenu(true);
+          return;
+        }
+      }
+
       if (
         stop?.click === 'open-duplicate' &&
-        event.target instanceof Element &&
-        event.target.closest('[data-first-step="duplicate-to-classroom"]')
+        target.closest('[data-first-step="duplicate-to-classroom"]')
       ) {
         writeFirstStepsTourIndex(index + active + 1);
         window.setTimeout(() => setNonce((value) => value + 1), 280);
         return;
       }
       const activeElement = document.querySelector('.driver-active-element');
-      if (
-        !activeElement ||
-        !(event.target instanceof Node) ||
-        !activeElement.contains(event.target)
-      ) {
+      if (!activeElement || !activeElement.contains(target)) {
         return;
       }
       if (stop?.anchor === 'template-card' || stop?.anchor === 'template-copy') {
@@ -730,16 +866,13 @@ export const FirstStepsTourHost = () => {
         return;
       }
       if (stop?.click === 'confirm-duplicate') {
-        if (
-          event.target instanceof Element &&
-          event.target.closest('[data-first-step="duplicate-confirm"]')
-        ) {
+        if (target.closest('[data-first-step="duplicate-confirm"]')) {
           writeFirstStepsTourIndex(index + active + 1);
           window.setTimeout(() => setNonce((value) => value + 1), 280);
         }
         return;
       }
-      if (event.target instanceof Element && event.target.closest('[data-classroom-card-menu]')) {
+      if (target.closest('[data-classroom-card-menu]')) {
         return;
       }
       writeFirstStepsTourIndex(
@@ -749,18 +882,26 @@ export const FirstStepsTourHost = () => {
         window.setTimeout(() => setNonce((value) => value + 1), 280);
       }
     };
+    document.addEventListener('pointerdown', keepStepOnHighlightClick, true);
     document.addEventListener('click', keepStepOnHighlightClick, true);
+    document.addEventListener('pointerup', keepStepOnHighlightClick, true);
 
     driverRef.current = tour;
+    if (steps.length > 0) trackTour('started', group[0]?.anchor, index + 1);
     tour.drive();
 
     return () => {
+      document.removeEventListener('pointerdown', keepStepOnHighlightClick, true);
       document.removeEventListener('click', keepStepOnHighlightClick, true);
+      document.removeEventListener('pointerup', keepStepOnHighlightClick, true);
       tourClickTicket += 1;
       removeTourCursor();
       reasonRef.current = 'move';
       tour.destroy();
       if (driverRef.current === tour) driverRef.current = null;
+      if (readFirstStepsTour()?.step !== 'settings') {
+        window.dispatchEvent(new Event(FIRST_STEPS_CLOSE_USER_MENU_EVENT));
+      }
     };
   }, [nonce, pathname]);
 

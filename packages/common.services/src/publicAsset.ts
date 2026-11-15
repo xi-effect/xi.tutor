@@ -1,9 +1,14 @@
+const PUBLIC_ASSET_PREFIXES = ['/assets/', '/demo-board/'] as const;
+
+const hasPublicPrefix = (pathname: string): boolean =>
+  PUBLIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+
 /** Статический файл приложения, его можно показать без токена хранилища. */
 export const isPublicAssetSrc = (src: string): boolean => {
   if (!src) return false;
-  if (src.startsWith('/assets/')) return true;
+  if (hasPublicPrefix(src)) return true;
   try {
-    return new URL(src).pathname.startsWith('/assets/');
+    return hasPublicPrefix(new URL(src).pathname);
   } catch {
     return false;
   }

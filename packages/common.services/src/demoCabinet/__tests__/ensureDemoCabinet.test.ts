@@ -73,7 +73,7 @@ describe('демонстрационный кабинет', () => {
     expect(serialized).not.toContain('lorem');
   });
 
-  it('создаёт кабинет, доску и заметку один раз и сохраняет результат', async () => {
+  it('создаёт кабинет и доску один раз и сохраняет результат', async () => {
     const storage = memoryStorage();
     const setup = portsWith(storage);
 
@@ -84,18 +84,14 @@ describe('демонстрационный кабинет', () => {
       status: 'ready',
       classroomId: 'classroom-1',
       boardId: 'board-1',
-      noteId: 'note-1',
+      noteId: null,
     });
     expect(second).toEqual(first);
     expect(setup.createClassroom).toHaveBeenCalledTimes(1);
     expect(setup.createBoard).toHaveBeenCalledTimes(1);
-    expect(setup.createNote).toHaveBeenCalledTimes(1);
+    expect(setup.createNote).not.toHaveBeenCalled();
     expect(setup.seedBoard).toHaveBeenCalledTimes(1);
-    expect(setup.seedNote).toHaveBeenCalledWith({
-      classroomId: 'classroom-1',
-      noteId: 'note-1',
-      boardId: 'board-1',
-    });
+    expect(setup.seedNote).not.toHaveBeenCalled();
     expect(setup.markInitialized).toHaveBeenCalledTimes(2);
     expect(storage.getItem(demoCabinetStorageKey(4))).toContain(
       `"templateVersion":${DEMO_CABINET_TEMPLATE_VERSION}`,
@@ -138,29 +134,30 @@ describe('демонстрационный кабинет', () => {
     expect(result.status).toBe('ready');
     expect(setup.createClassroom).toHaveBeenCalledTimes(1);
     expect(createBoard).toHaveBeenCalledTimes(2);
-    expect(setup.createNote).toHaveBeenCalledTimes(1);
+    expect(setup.createNote).not.toHaveBeenCalled();
   });
 
-  it('досеивает заметку, если сущности уже созданы', async () => {
+  it('не создаёт и не заполняет заметку', async () => {
     const storage = memoryStorage();
     writeDemoCabinetProgress(storage, 5, {
       templateVersion: DEMO_CABINET_TEMPLATE_VERSION,
       phase: 'in_progress',
       classroomId: 'classroom-1',
       boardId: 'board-1',
-      noteId: 'note-1',
+      noteId: null,
       boardSettled: true,
       noteSettled: false,
     });
     const setup = portsWith(storage);
 
-    await ensureDemoCabinet(5, setup.ports);
+    const result = await ensureDemoCabinet(5, setup.ports);
 
+    expect(result).toMatchObject({ status: 'ready', noteId: null });
     expect(setup.createClassroom).not.toHaveBeenCalled();
     expect(setup.createBoard).not.toHaveBeenCalled();
     expect(setup.createNote).not.toHaveBeenCalled();
     expect(setup.seedBoard).not.toHaveBeenCalled();
-    expect(setup.seedNote).toHaveBeenCalledTimes(1);
+    expect(setup.seedNote).not.toHaveBeenCalled();
   });
 
   it('не восстанавливает удалённый кабинет', async () => {
@@ -203,10 +200,10 @@ describe('демонстрационный кабинет', () => {
 
     const result = await ensureDemoCabinet(9, setup.ports);
 
-    expect(result).toMatchObject({ status: 'ready', boardId: null, noteId: 'note-1' });
+    expect(result).toMatchObject({ status: 'ready', boardId: null, noteId: null });
     expect(setup.createBoard).not.toHaveBeenCalled();
     expect(setup.seedBoard).not.toHaveBeenCalled();
-    expect(setup.createNote).toHaveBeenCalledTimes(1);
+    expect(setup.createNote).not.toHaveBeenCalled();
   });
 
   it('не создаёт ничего, если инициализация уже отмечена', async () => {
@@ -254,7 +251,7 @@ describe('демонстрационный кабинет', () => {
       noteId: 'note-1',
     });
     expect(setup.seedBoard).toHaveBeenCalledTimes(1);
-    expect(setup.seedNote).toHaveBeenCalledTimes(1);
+    expect(setup.seedNote).not.toHaveBeenCalled();
     expect(setup.createClassroom).not.toHaveBeenCalled();
     expect(storage.getItem(demoCabinetStorageKey(12))).toContain(
       `"templateVersion":${DEMO_CABINET_TEMPLATE_VERSION}`,

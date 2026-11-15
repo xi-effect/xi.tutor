@@ -71,7 +71,8 @@ export type FirstStepsTourStop = {
     | 'create-board'
     | 'leave-board'
     | 'open-duplicate'
-    | 'confirm-duplicate';
+    | 'confirm-duplicate'
+    | 'start-call';
 };
 
 export type FirstStepsCallPhase =
@@ -149,7 +150,6 @@ export const FIRST_STEPS_TOUR_STOPS: Record<FirstStepId, readonly FirstStepsTour
   navigation: [
     { anchor: 'sidebar-sections', place: 'current', side: 'right' },
     { anchor: 'notifications', place: 'current', side: 'right' },
-    { anchor: 'user-profile', place: 'current', side: 'right' },
     { anchor: 'sidebar-toggle', place: 'current', side: 'bottom', click: 'sidebar-toggle' },
   ],
   settings: [
@@ -168,11 +168,7 @@ export const FIRST_STEPS_TOUR_STOPS: Record<FirstStepId, readonly FirstStepsTour
     },
     { anchor: 'classroom-nav', place: 'classroom', side: 'bottom' },
   ],
-  call: [{ anchor: 'start-call', place: 'classroom', side: 'bottom' }],
-  workspace: [
-    { anchor: 'board', place: 'board' },
-    { anchor: 'note', place: 'note' },
-  ],
+  call: [{ anchor: 'start-call', place: 'classroom', side: 'bottom', click: 'start-call' }],
   invite: [
     { anchor: 'students', place: 'current', side: 'right', click: 'open-students' },
     { anchor: 'students-invite', place: 'students', side: 'bottom', click: 'open-invite' },
@@ -209,7 +205,7 @@ export const tourStopOpensAction = (anchor: FirstStepsTourAnchor): boolean =>
 
 /** Тур сам отмечает только обзорные шаги. Остальные засчитываются реальным действием. */
 export const tourCompletionMarksStep = (step: FirstStepId): boolean =>
-  step === 'navigation' || step === 'settings' || step === 'cabinet' || step === 'workspace';
+  step === 'navigation' || step === 'settings' || step === 'cabinet';
 
 export const tourStopPath = (
   stop: FirstStepsTourStop,

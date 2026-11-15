@@ -29,6 +29,7 @@ import { UserPlanBadge } from './UserPlanBadge';
 import {
   FIRST_STEPS_CLOSE_USER_MENU_EVENT,
   FIRST_STEPS_OPEN_USER_MENU_EVENT,
+  readFirstStepsTour,
   useCurrentUser,
 } from 'common.services';
 import {
@@ -126,6 +127,14 @@ export const DesktopUserMenu = ({
       )}
       id="hints-button"
       data-umami-event="header-user-menu-open"
+      onPointerDown={() => {
+        if (readFirstStepsTour()?.step === 'settings') return;
+        tourLockRef.current = false;
+        supportLockRef.current = false;
+        if (menuOpen && !document.querySelector('[data-first-step="user-menu"]')) {
+          setMenuOpen(false);
+        }
+      }}
     >
       <UserProfile
         text={displayName || username}
@@ -151,7 +160,12 @@ export const DesktopUserMenu = ({
       modal={false}
       open={menuOpen}
       onOpenChange={(open) => {
-        if (!open && tourLockRef.current) return;
+        const tourKeepsMenuOpen = tourLockRef.current && readFirstStepsTour()?.step === 'settings';
+        if (!open && tourKeepsMenuOpen) return;
+        if (!tourKeepsMenuOpen) {
+          tourLockRef.current = false;
+          supportLockRef.current = false;
+        }
         setMenuOpen(open);
         if (!open) setSupportOpen(false);
         setTooltipOpen(false);
@@ -219,7 +233,13 @@ export const DesktopUserMenu = ({
         <div className="flex flex-col">
           {onOpenProfile ? (
             <DropdownMenuItem
-              onSelect={onOpenProfile}
+              onSelect={(event) => {
+                if (readFirstStepsTour()?.step === 'settings') {
+                  event.preventDefault();
+                  return;
+                }
+                onOpenProfile();
+              }}
               className={cn(cardMenuItemClass, 'px-2 whitespace-nowrap')}
               data-first-step="settings-item"
               data-umami-event="header-profile-open"

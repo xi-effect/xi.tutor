@@ -5,18 +5,11 @@ import {
 } from 'common.services';
 import { tryStartClassroomCreate } from 'common.subscription';
 
-export const demoCabinetPorts = (): Pick<
-  DemoCabinetPorts,
-  'canCreateClassroom' | 'seedBoard' | 'seedNote'
-> => ({
+export const demoCabinetPorts = (): Pick<DemoCabinetPorts, 'canCreateClassroom' | 'seedBoard'> => ({
   canCreateClassroom: () => tryStartClassroomCreate(),
   seedBoard: async (target) => {
     const { seedDemoBoard } = await import('modules.board/demo');
     await seedDemoBoard(target);
-  },
-  seedNote: async (target) => {
-    const { seedDemoNote } = await import('modules.editor/demo');
-    await seedDemoNote(target);
   },
 });
 

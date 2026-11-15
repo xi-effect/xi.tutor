@@ -17,91 +17,74 @@
     "next": "Continue",
     "prev": "Back",
     "done": "Close",
+    "ready": "Done",
     "progress": "{{current}} of {{total}}"
   },
   "firstStepsTour": {
     "navigation": {
       "sidebar-sections": {
         "title": "Sections",
-        "body": "You can quickly switch between the app sections from here."
+        "body": "From here you can open the schedule, classrooms, materials, and other sections"
       },
       "notifications": {
         "title": "Notifications",
-        "body": "Important events, changes, and reminders show up here."
-      },
-      "user-profile": {
-        "title": "Avatar and menu",
-        "body": "Your name and avatar sit at the bottom of the panel. A click opens the profile menu."
+        "body": "Here you'll find notifications about lessons and other events"
       },
       "sidebar-toggle": {
-        "title": "Hide and show",
-        "body": "The button at the top collapses the menu and opens it again."
+        "title": "Sidebar",
+        "body": "Collapse the sidebar to free up space. You can open it again with the same button"
       }
     },
     "settings": {
       "user-profile": {
         "title": "Profile menu",
-        "body": "We'll open it with the button at the bottom of the panel."
+        "body": "Click your name or avatar to open the profile menu"
       },
       "user-menu": {
-        "title": "Essentials at hand",
-        "body": "You can quickly check your current plan, open settings, contact support, or sign out."
+        "title": "Profile menu",
+        "body": "Here you can check your plan, open settings, or contact support"
       },
       "settings-item": {
         "title": "Settings",
-        "body": "Email, password, notifications, and appearance are here. You can set up the board, camera, sound, microphone, notifications, app sounds, and change the theme, language, and the rest of the platform."
+        "body": "Here you can change your profile details, set up the camera and microphone, and choose the language and appearance"
       },
       "support-menu": {
         "title": "Help",
-        "body": "This is the Help submenu. Support, the knowledge base, and the hints live here."
+        "body": "Here you can contact support, find answers, or go through the introduction again"
       }
     },
     "cabinet": {
       "classrooms": {
         "title": "Classrooms",
-        "body": "Every classroom is listed here. We'll open this section now."
+        "body": "Your classrooms for individual and group lessons are here"
       },
       "demo-classroom-card": {
         "title": "Demo classroom",
-        "body": "A classroom is where you teach a student or a group: materials, boards, and the schedule live together. This demo classroom already has examples."
+        "body": "A classroom has everything you need for a lesson: boards, materials, and the schedule. Open the demo classroom to see what it can do"
       },
       "classroom-nav": {
-        "title": "Classroom navigation",
-        "body": "Switch between boards, notes, files, the schedule, payments, and classroom details from here."
+        "title": "Classroom sections",
+        "body": "Here you can switch between boards, notes, files, and the other sections of the classroom"
       }
     },
     "call": {
       "start-call": {
-        "title": "Start a call",
-        "body": "You can start a call from the classroom at any time. When it starts, students in this classroom get a notification that the lesson has begun."
-      }
-    },
-    "workspace": {
-      "classroom-materials": {
-        "title": "Board and note",
-        "body": "The demo materials live in the classroom. We'll open the board first, then the note."
-      },
-      "board": {
-        "title": "Board",
-        "body": "This is the shared classroom board. Move the pieces, and add new ones from this toolbar."
-      },
-      "note": {
-        "title": "Note",
-        "body": "A note holds the lesson plan: headings, lists, and a link to the board."
+        "title": "Start the lesson",
+        "body": "Click “Start lesson” to begin the video call. Students in the classroom will be notified that the lesson has started."
       }
     },
     "invite": {
       "students": {
         "title": "Students",
-        "body": "The student list and invitations live here. We'll open this section now."
+        "body": "Your students are here. You can also invite new ones"
       },
       "students-invite": {
-        "title": "Invite a student",
-        "body": "This button opens the form with a link you can send to a student."
+        "title": "Student invitation",
+        "body": "Click to get a link for inviting a student"
       },
       "invite-link": {
-        "title": "Link for a student",
-        "body": "Copy the message or the link and send it to your student. One link can invite several people."
+        "title": "Invitation link",
+        "body": "Copy the ready message or just the link and send it to a student. One link can be sent to several students"
       },
       "invite-action": {
         "title": "Invitation",
@@ -111,31 +94,31 @@
     "material": {
       "materials": {
         "title": "Personal materials",
-        "body": "Personal boards and notes live here. You can use them as templates and duplicate them into a classroom. We'll open this section now."
+        "body": "Your boards and notes are stored here. You can use them to prepare for lessons and add them to students' classrooms"
       },
       "create-board": {
-        "title": "New board",
-        "body": "We'll create a personal board. It stays in personal materials and can be used as a template for a classroom."
+        "title": "Create a board",
+        "body": "Here you can create a board to prepare materials for lessons. It is saved in your personal section"
       },
       "board-back": {
         "title": "Board is ready",
-        "body": "We'll go back to the personal materials list so this board can be duplicated into a classroom."
+        "body": "You can now use the board as a template for lessons. We'll go back to materials and add a copy to a classroom"
       },
       "template-card": {
-        "title": "Personal material",
-        "body": "This board can be used as a template and duplicated into a classroom. Students then get their own board for the lesson."
+        "title": "Your board",
+        "body": "The board is stored in your materials. You can create copies for different students and keep the original"
       },
       "template-menu": {
-        "title": "Duplication",
-        "body": "The board menu has Duplicate to classroom. We'll open it and duplicate the personal material."
+        "title": "Copy to a classroom",
+        "body": "Open the board menu and choose “Duplicate to classroom” to create a copy for lessons"
       },
       "duplicate-modal": {
-        "title": "Duplicate into a classroom",
-        "body": "Choose a classroom. We'll duplicate this board there now."
+        "title": "Choose a classroom",
+        "body": "Choose the classroom where you want to use the board. You can also set the student's editing rights"
       },
       "template-copy": {
-        "title": "Independent duplicate",
-        "body": "The classroom now has its own board. Changes there do not change the personal material, and edits to the personal material do not reach the classroom."
+        "title": "Independent copies",
+        "body": "A copy of the board is now in the classroom. You can change it together with the student — the original in your personal materials stays unchanged"
       },
       "material-action": {
         "title": "New material",
@@ -155,27 +138,27 @@
     "join": {
       "classrooms": {
         "title": "How to join",
-        "body": "The classroom appears after you open your tutor's link in this account."
+        "body": "The classroom appears when you open your tutor's link in this account. If you do not have a link yet, ask your tutor to send one"
       }
     },
     "classroom": {
       "classrooms": {
         "title": "Classrooms",
-        "body": "Your classrooms are listed here. We'll open yours now."
+        "body": "Classrooms where you study are listed here. We'll open yours and look at how it is organized"
       },
       "classroom-header": {
         "title": "Classroom",
-        "body": "This is where lessons with your tutor happen: materials, schedule, and the call."
+        "body": "This is where lessons with your tutor happen: materials, the schedule, and the video call"
       }
     },
     "schedule": {
       "schedule": {
         "title": "Schedule",
-        "body": "Lesson dates and times open from this section."
+        "body": "This is where you see when your lessons are. We'll open it to look at the upcoming ones"
       },
       "schedule-page": {
         "title": "Your lessons",
-        "body": "An empty calendar is fine. Opening the schedule completes this step."
+        "body": "When your tutor schedules a lesson, the date and time show up in this list. If it is empty, nothing is scheduled yet"
       }
     }
   },

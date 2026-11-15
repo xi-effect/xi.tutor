@@ -254,6 +254,46 @@ export type ProductAnalyticsEventMap = {
     duration_ms?: number;
     completion_path?: 'tour_done' | 'skipped' | 'auto_no_steps' | 'unknown';
   };
+  first_steps_screen_viewed: BaseProps & {
+    screen: 'welcome' | 'checklist' | 'ready';
+    user_role: 'tutor' | 'student' | 'unknown';
+    steps_resolved?: number;
+    steps_total?: number;
+  };
+  first_steps_action: BaseProps & {
+    action:
+      | 'start'
+      | 'open_step'
+      | 'start_step'
+      | 'review'
+      | 'finish'
+      | 'finish_early'
+      | 'board_hint_home';
+    user_role: 'tutor' | 'student' | 'unknown';
+    step?: string;
+  };
+  first_steps_step_resolved: BaseProps & {
+    step: string;
+    mark: 'done' | 'skipped';
+    source: 'skip' | 'auto' | 'tour';
+    user_role: 'tutor' | 'student' | 'unknown';
+  };
+  first_steps_tour: BaseProps & {
+    action: 'started' | 'advanced' | 'finished' | 'closed';
+    step: string;
+    user_role: 'tutor' | 'student' | 'unknown';
+    anchor?: string;
+    step_index?: number;
+    total_steps?: number;
+  };
+  first_steps_call_phase: BaseProps & {
+    phase: string;
+    user_role: 'tutor' | 'student' | 'unknown';
+  };
+  first_steps_demo_cabinet: BaseProps & {
+    status: 'ready' | 'removed' | 'failed';
+    user_role: 'tutor';
+  };
 
   student_invite_viewed: BaseProps & {
     source: string;

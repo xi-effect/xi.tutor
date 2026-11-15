@@ -9,15 +9,18 @@
     "emptyDescription": "No lessons scheduled in the next {{days}} days"
   },
   "onboarding": {
-    "sidebar": "Use the left panel to open Home, Classrooms, Materials, or Payment control",
+    "sidebarTutor": "Use the left panel to open Home, Classrooms, Materials, or Payment control",
+    "sidebarStudent": "Use the left panel to open home, the schedule, classrooms, and payments",
     "userProfileTutor": "In settings you can change your email and password, connect messengers for notifications, and configure your equipment for video calls with students",
     "userProfileStudent": "In settings you can change your email and password, connect messengers for notifications, and configure video calls",
-    "classrooms": "A classroom is a virtual space for learning. There you will find materials, the schedule, and payment information",
+    "classroomsTutor": "A classroom is a virtual space for learning. There you will find materials, the schedule, and payment information",
+    "classroomsStudent": "A classroom is where you study with your tutor. It holds materials, the schedule, and invoices",
     "inviteLinksStudent": "Follow invitation links from tutors to add new classrooms",
     "inviteStudent": "Send an invitation link to a student",
     "createGroup": "Or create a group and invite students with a shared link.<br />If you schedule a group lesson, every student in the group will get a notification. Group materials are available to all members",
     "materials": "Store online boards and notes in Materials",
-    "payments": "Payment control helps you track all finances on the platform: upcoming, completed, and overdue payments",
+    "paymentsTutor": "Payment control helps you track all finances on the platform: upcoming, completed, and overdue payments",
+    "paymentsStudent": "Invoices from your tutor show up here: upcoming, paid, and overdue",
     "createInvoice": "To get paid for a lesson, issue an invoice to the student.<br />If the student does not pay, you will not need to remind them: they will receive an automatic overdue payment notification",
     "hintsTutor": "If you need help, click here to review the tips again, or contact support.<br />Good luck!<br />The sovlium team",
     "hintsStudent": "If you need help, review the tips again or contact support.<br />Happy learning!<br />The sovlium team"
@@ -109,52 +112,64 @@
   },
   "firstSteps": {
     "title": "First steps",
-    "welcomeTitle": "Hello",
-    "welcomeBody": "We, the Sovlium team, prepared short interactive tasks. They take a little time and help you learn how work is organized here.",
-    "welcomeAction": "Open the guide",
-    "progress": "{{count}}/{{total}}",
+    "welcome": {
+      "tutor": {
+        "title": "Welcome to sovlium!",
+        "body": "Let's get to know the platform. We'll show you how to run a lesson, prepare materials, and invite students.",
+        "action": "Start the introduction",
+        "note": "You can finish the introduction at any time"
+      },
+      "student": {
+        "title": "Welcome to sovlium!",
+        "body": "Let's get to know the platform. We'll show you how to join your tutor's classroom, where lessons happen, and where to find the schedule.",
+        "action": "Start the introduction",
+        "note": "You can finish the introduction at any time"
+      }
+    },
+    "progress": "Step {{count}} of {{total}}",
     "progressAria": "{{count}} of {{total}} reviewed",
     "skip": "Skip",
+    "skipStep": "Skip this step",
     "skipAria": "Skip “{{title}}”",
     "skipped": "Skipped",
     "goHome": "Go to home",
     "finishEarly": "Finish introduction",
+    "doneTitle": "You're ready to work!",
+    "doneBody": "You've seen the main features of sovlium, and there's more ahead: files, notes, the schedule, the task bank, and payment tracking.",
+    "doneNote": "Explore them at your own pace. If you have questions, check the knowledge base or contact support.",
+    "doneAction": "Start working",
+    "back": "Back",
     "joinHelp": "Ask your tutor for an invitation link and open it in this account. After you confirm, the classroom appears on its own and the step is checked off.",
     "tutor": {
       "navigation": {
-        "title": "Learn the navigation",
-        "hint": "The hint shows the sections, notifications, and profile menu, then collapses and expands the panel.",
-        "action": "Show the navigation"
+        "title": "Master the navigation",
+        "hint": "We'll show you where to find the sections you need, notifications, and profile settings.",
+        "action": "Start"
       },
       "settings": {
-        "title": "Open settings",
-        "hint": "The hint opens the whole menu at the bottom, then shows Settings and the Help submenu.",
-        "action": "Show where settings are"
+        "title": "Set up your profile",
+        "hint": "We'll show you where the profile settings are and how to get help",
+        "action": "Start"
       },
       "cabinet": {
-        "title": "Look around the classroom",
-        "hint": "The hint opens Classrooms, shows the demo classroom, and the navigation inside it.",
-        "action": "Explore the classroom"
+        "title": "Get to know the classroom",
+        "hint": "We'll show how classrooms are organized and where the lesson tools are",
+        "action": "Start"
       },
       "call": {
-        "title": "Start a call",
-        "hint": "The hint shows that a call starts from the classroom and that students are notified when the lesson begins.",
-        "action": "Show the call"
-      },
-      "workspace": {
-        "title": "View the board and the note",
-        "hint": "The classroom already has a demo board and a note. The hint opens both.",
-        "action": "Open the board and the note"
+        "title": "Check the video call",
+        "hint": "Try starting a lesson, check the camera and microphone, then open a board for working together",
+        "action": "Check the video call"
       },
       "invite": {
         "title": "Invite a student",
-        "hint": "The hint opens Students, the invitation form, and the link to copy and send to a student.",
-        "action": "Invite a student"
+        "hint": "We'll show how to invite a student to the platform with a link",
+        "action": "Show the invitation"
       },
       "material": {
-        "title": "Create a personal material",
-        "hint": "The hint opens personal materials, creates a board, and duplicates it into a classroom. A personal material can be used as a template: the classroom duplicate is independent of it.",
-        "action": "Create a material"
+        "title": "Create your own material",
+        "hint": "We'll show how to create your own board and use it for lessons with students. You can add copies of the board to different classrooms",
+        "action": "Create a board"
       },
       "lesson": {
         "title": "Schedule a lesson",

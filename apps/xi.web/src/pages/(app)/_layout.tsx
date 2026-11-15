@@ -53,7 +53,12 @@ function LayoutContent() {
     }
   }, [router.state.location.pathname, router.state.location.search, updateStore]);
 
-  const outlet = token ? (
+  // CompactView нельзя снимать в момент завершения звонка: смена родителя
+  // размонтирует страницу доски и сбрасывает её документ.
+  const keepCallShell = useRef(false);
+  if (token) keepCallShell.current = true;
+
+  const outlet = keepCallShell.current ? (
     <CompactView>
       <Outlet />
     </CompactView>

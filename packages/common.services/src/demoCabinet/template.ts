@@ -4,24 +4,16 @@
  * Уже созданный кабинет получает новую версию при следующем входе, без нового кабинета.
  */
 
-export const DEMO_CABINET_TEMPLATE_VERSION = 3;
+export const DEMO_CABINET_TEMPLATE_VERSION = 5;
 
-/** Публичный PDF для демонстрационной доски и заметки. Не требует загрузки в хранилище. */
+/** Публичный PDF для демонстрационной заметки. Не требует загрузки в хранилище. */
 export const DEMO_SAMPLE_PDF = {
   path: '/assets/test_recipes_2_pages.pdf',
   fileName: 'test_recipes_2_pages.pdf',
   totalPages: 2,
 } as const;
 
-export const isPublicAssetSrc = (src: string): boolean => {
-  if (!src) return false;
-  if (src.startsWith('/assets/')) return true;
-  try {
-    return new URL(src).pathname.startsWith('/assets/');
-  } catch {
-    return false;
-  }
-};
+export { isPublicAssetSrc } from '../publicAsset';
 
 export const DEMO_CABINET_FLAG_KEY = 'demo_cabinet_initialized';
 

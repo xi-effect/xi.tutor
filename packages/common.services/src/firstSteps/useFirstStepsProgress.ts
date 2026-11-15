@@ -11,6 +11,7 @@ import {
   type FirstStepMark,
   type FirstStepsRole,
 } from './model';
+import { trackFirstStepsStepResolved } from './analytics';
 import {
   acknowledgeFirstStepFlag,
   applyRemoteFirstStep,
@@ -38,7 +39,12 @@ const flagKeysForRole = (role: FirstStepsRole): string[] =>
     firstStepFlagKey(role, step, 'skip'),
   ]);
 
-export const useFirstStepsProgress = (userId: number, role: FirstStepsRole) => {
+export const useFirstStepsProgress = (
+  userId: number,
+  role: FirstStepsRole,
+  options?: { analytics?: boolean },
+) => {
+  const analytics = options?.analytics !== false;
   const storage = useMemo(() => browserFirstStepsStorage(), []);
   const stepIds = stepsForRole(role);
   const [marks, setMarks] = useState<Record<FirstStepId, FirstStepMark>>(() =>
@@ -118,15 +124,21 @@ export const useFirstStepsProgress = (userId: number, role: FirstStepsRole) => {
   }, [flagsSettled, flushDirty, marks, remoteSignature]);
 
   const remember = useCallback(
-    (step: FirstStepId, mark: Exclude<FirstStepMark, 'pending'>) => {
+    (step: FirstStepId, mark: Exclude<FirstStepMark, 'pending'>, source: 'skip' | 'auto') => {
       const changed = commitFirstStep(storage, userId, role, step, mark, true);
-      if (changed) publish();
+      if (changed) {
+        if (analytics) trackFirstStepsStepResolved(role, step, mark, source);
+        publish();
+      }
     },
-    [publish, role, storage, userId],
+    [analytics, publish, role, storage, userId],
   );
 
-  const markDone = useCallback((step: FirstStepId) => remember(step, 'done'), [remember]);
-  const markSkipped = useCallback((step: FirstStepId) => remember(step, 'skipped'), [remember]);
+  const markDone = useCallback((step: FirstStepId) => remember(step, 'done', 'auto'), [remember]);
+  const markSkipped = useCallback(
+    (step: FirstStepId) => remember(step, 'skipped', 'skip'),
+    [remember],
+  );
   const startGuide = useCallback(() => {
     markIntroSeen(storage, userId, role);
     setIntroSeen(true);
