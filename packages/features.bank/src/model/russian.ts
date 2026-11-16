@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { difficultySchema, examRelationSchema, gradeSchema } from './schema';
+import { difficultySchema, examRelationSchema, exerciseIdSchema, gradeSchema } from './schema';
 
 export const russianExamKindSchema = z.enum(['OGE', 'EGE']);
 
@@ -40,6 +40,7 @@ export const russianTaskAnswerSchema = z.discriminatedUnion('kind', [
 
 export const russianTaskSchema = z.object({
   id: z.string().regex(/^ru-ru-\d{5}$/),
+  exerciseId: exerciseIdSchema,
   subject: z.literal('russian'),
   grade: gradeSchema,
   topic: z.string().min(1),

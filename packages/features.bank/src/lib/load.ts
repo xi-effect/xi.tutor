@@ -33,6 +33,7 @@ import {
 
 type RussianSearchDocument = {
   id: string;
+  exerciseId: string;
   subject: 'russian';
   grade: number;
   topic: string;
@@ -82,6 +83,7 @@ export const adaptRussianSearchDocument = (
   document: RussianSearchDocument,
 ): MathTaskSearchDocument => ({
   id: document.id,
+  exerciseId: document.exerciseId,
   subject: 'russian',
   statement: document.statement,
   grade: document.grade,

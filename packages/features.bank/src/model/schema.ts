@@ -63,8 +63,12 @@ export const mathTaskFigureSchema = z
   })
   .catchall(z.unknown());
 
+/** Стабильный UUID избранного. Не выводится из строкового `id`. */
+export const exerciseIdSchema = z.string().uuid();
+
 export const mathTaskSchema = z.object({
   id: z.string().min(1),
+  exerciseId: exerciseIdSchema,
   contentVersion: z.string().min(1),
   subject: z.literal('mathematics'),
   subjectLabel: z.string().min(1),

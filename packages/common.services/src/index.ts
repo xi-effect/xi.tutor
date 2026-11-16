@@ -1,6 +1,7 @@
 export * from './auth';
 export * from './user';
 export * from './userFlags';
+export * from './favouriteExercises';
 export * from './subscription';
 export * from './invitations';
 export * from './materials';

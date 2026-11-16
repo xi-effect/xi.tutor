@@ -88,7 +88,8 @@
     "favoriteRemove": "Remove from favorites"
   },
   "favorites": {
-    "storedOnDevice": "Favorite tasks are currently stored on this device"
+    "loadError": "Couldn't load favorites",
+    "saveError": "Couldn't update favorites"
   },
   "examBadge": {
     "direct": "{{exam}} · {{year}} · #{{number}}",

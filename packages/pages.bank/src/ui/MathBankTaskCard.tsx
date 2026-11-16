@@ -22,7 +22,7 @@ type MathBankTaskCardProps = {
   task: MathTaskSearchDocument;
   isFavorite: boolean;
   onOpen: (task: MathTaskSearchDocument) => void;
-  onToggleFavorite: (taskId: string) => void;
+  onToggleFavorite: (task: MathTaskSearchDocument) => void;
 };
 
 export const MathBankTaskCard = ({
@@ -73,7 +73,7 @@ export const MathBankTaskCard = ({
           className="hover:bg-background-subtle size-9 shrink-0 rounded-lg p-0"
           onClick={(event) => {
             event.stopPropagation();
-            onToggleFavorite(task.id);
+            onToggleFavorite(task);
           }}
           aria-label={isFavorite ? t('card.favoriteRemove') : t('card.favoriteAdd')}
           data-umami-event="math-bank-task-favorite-toggle"

@@ -15,7 +15,7 @@ import {
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
-import { writeText } from 'common.services';
+import { useFavouriteExercises, writeText } from 'common.services';
 import {
   modalBodyClass,
   modalCloseIconClass,
@@ -100,8 +100,8 @@ export const MathBankTaskModal = ({
 }: MathBankTaskModalProps) => {
   const { t } = useTranslation('mathBank');
   const open = Boolean(task);
-  const favoriteTaskIds = useMathBankUserStore((state) => state.favoriteTaskIds);
   const toggleFavorite = useToggleMathBankFavorite();
+  const { isFavourite } = useFavouriteExercises();
   const addRecent = useMathBankUserStore((state) => state.addRecent);
   const [isVariantLoading, setIsVariantLoading] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -144,7 +144,7 @@ export const MathBankTaskModal = ({
   }, [detailsQuery.data?.id, detailsQuery.isFetching, isVariantLoading, task?.id]);
 
   const details = detailsQuery.data;
-  const isFavorite = task ? favoriteTaskIds.includes(task.id) : false;
+  const isFavorite = task ? isFavourite(task.exerciseId) : false;
   const examLabels = {
     OGE: t('filters.exam.OGE'),
     EGE: t('filters.exam.EGE'),
@@ -258,7 +258,7 @@ export const MathBankTaskModal = ({
                   <HeaderIconButton
                     tooltip={isFavorite ? t('card.favoriteRemove') : t('card.favoriteAdd')}
                     umamiEvent="math-bank-task-favorite-toggle"
-                    onClick={() => toggleFavorite(task.id)}
+                    onClick={() => toggleFavorite(task)}
                   >
                     <FavoriteHeart active={isFavorite} className="size-5" />
                   </HeaderIconButton>

@@ -1,6 +1,14 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ConfigEnv, defineConfig, loadEnv, mergeConfig, searchForWorkspaceRoot } from 'vite';
+import {
+  ConfigEnv,
+  defineConfig,
+  loadEnv,
+  mergeConfig,
+  searchForWorkspaceRoot,
+  type Plugin,
+} from 'vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import babel from '@rolldown/plugin-babel';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -17,6 +25,53 @@ import {
 import { paddleOcrCjsInteropPlugin } from './vite.paddleocr.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
+const bankStaticRoot = path.resolve(appDir, '../xi.static/public');
+
+const serveLocalBankStatic = (): Plugin => ({
+  name: 'serve-local-bank-static',
+  apply: 'serve',
+  configureServer(server) {
+    server.middlewares.use((req, res, next) => {
+      const pathname = req.url?.split('?')[0] ?? '';
+      if (!pathname.startsWith('/math-bank/') && !pathname.startsWith('/task-bank/')) {
+        next();
+        return;
+      }
+
+      let relative = pathname.slice(1);
+      try {
+        relative = decodeURIComponent(relative);
+      } catch {
+        next();
+        return;
+      }
+      if (relative.includes('..')) {
+        next();
+        return;
+      }
+
+      const filePath = path.resolve(bankStaticRoot, relative);
+      const rootPrefix = bankStaticRoot.endsWith(path.sep)
+        ? bankStaticRoot
+        : `${bankStaticRoot}${path.sep}`;
+      if (
+        !filePath.startsWith(rootPrefix) ||
+        !fs.existsSync(filePath) ||
+        !fs.statSync(filePath).isFile()
+      ) {
+        next();
+        return;
+      }
+
+      res.setHeader(
+        'Content-Type',
+        filePath.endsWith('.json') ? 'application/json; charset=utf-8' : 'application/gzip',
+      );
+      res.setHeader('Cache-Control', 'no-store');
+      fs.createReadStream(filePath).pipe(res);
+    });
+  },
+});
 
 // Не по префиксу `dist-`: так Rolldown называет и обычные вендорные чанки
 // (у (app)/_layout их ~1.4MB), без preload они грузятся цепочкой.
@@ -67,6 +122,7 @@ export default defineConfig(({ mode, command }: ConfigEnv) => {
       : false,
 
     plugins: [
+      serveLocalBankStatic(),
       paddleOcrCjsInteropPlugin(),
 
       tanstackRouter({

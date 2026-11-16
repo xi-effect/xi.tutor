@@ -21,6 +21,7 @@ export type SearchFilters = {
 /** Lightweight object shipped in search_documents.json.gz. */
 export type MathTaskSearchDocument = {
   id: string;
+  exerciseId: string;
   subject?: BankSubject;
   statement: string;
   grade: number;
@@ -52,6 +53,7 @@ type IndexedDocument = {
 
 export const taskToSearchDocument = (task: MathTask): MathTaskSearchDocument => ({
   id: task.id,
+  exerciseId: task.exerciseId,
   subject: 'mathematics',
   statement: task.statement.text,
   grade: task.grade,
@@ -68,6 +70,7 @@ export const taskToSearchDocument = (task: MathTask): MathTaskSearchDocument => 
 
 export const russianTaskToSearchDocument = (task: RussianTask): MathTaskSearchDocument => ({
   id: task.id,
+  exerciseId: task.exerciseId,
   subject: 'russian',
   statement: task.statement,
   grade: task.grade,
@@ -128,6 +131,7 @@ export const adaptPhysicsSearchDocument = (
   );
   return {
     id: document.id,
+    exerciseId: document.exerciseId,
     subject: 'physics',
     statement: document.statementPreview,
     grade: document.grade,
@@ -198,6 +202,7 @@ export const adaptEnglishSearchDocument = (
 
   return {
     id: document.id,
+    exerciseId: document.exerciseId,
     subject: 'english',
     statement: document.statementPreview,
     grade: document.grade,
@@ -216,6 +221,7 @@ export const adaptEnglishSearchDocument = (
 
 export const englishTaskToSearchDocument = (task: EnglishTask): MathTaskSearchDocument => ({
   id: task.id,
+  exerciseId: task.exerciseId,
   subject: 'english',
   statement: task.statement,
   grade: task.grade,
@@ -238,6 +244,7 @@ export const englishTaskToSearchDocument = (task: EnglishTask): MathTaskSearchDo
 
 export const physicsTaskToSearchDocument = (task: PhysicsTask): MathTaskSearchDocument => ({
   id: task.id,
+  exerciseId: task.exerciseId,
   subject: 'physics',
   statement: task.statement,
   grade: task.grade,
@@ -297,7 +304,7 @@ const matchesFilters = (task: MathTaskSearchDocument, filters: SearchFilters) =>
   if (filters.taskTypes?.length && (!task.taskType || !filters.taskTypes.includes(task.taskType))) {
     return false;
   }
-  if (filters.favoriteIds && !filters.favoriteIds.includes(task.id)) {
+  if (filters.favoriteIds && !filters.favoriteIds.includes(task.exerciseId)) {
     return false;
   }
 

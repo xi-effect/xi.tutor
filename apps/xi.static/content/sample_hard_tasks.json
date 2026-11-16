@@ -1,6 +1,7 @@
 [
   {
     "id": "math-ru-08001",
+    "exerciseId": "6e60658e-26e6-40c4-81b5-f47f680ea419",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -115,6 +116,7 @@
   },
   {
     "id": "math-ru-08002",
+    "exerciseId": "af174678-d37a-4e3d-83b1-0168ddf9133c",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -229,6 +231,7 @@
   },
   {
     "id": "math-ru-08041",
+    "exerciseId": "aa38fa87-5c67-477a-b4bd-1566bcab6180",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -330,6 +333,7 @@
   },
   {
     "id": "math-ru-08042",
+    "exerciseId": "2b2ee9ea-9bcf-4740-b240-7d1498ee1f46",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -432,6 +436,7 @@
   },
   {
     "id": "math-ru-08043",
+    "exerciseId": "2d08bf10-a78e-458e-881d-dd0829a21d51",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -533,6 +538,7 @@
   },
   {
     "id": "math-ru-08044",
+    "exerciseId": "2658f1cd-dc45-44ad-809c-ad69925e276a",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -635,6 +641,7 @@
   },
   {
     "id": "math-ru-08121",
+    "exerciseId": "d7d17f1e-fdba-4445-a239-8523fa4f254e",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -757,6 +764,7 @@
   },
   {
     "id": "math-ru-08122",
+    "exerciseId": "9e272c62-b8f8-4fed-a1a8-750205740563",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -879,6 +887,7 @@
   },
   {
     "id": "math-ru-08161",
+    "exerciseId": "226d204c-2a2a-4b8f-aaf2-70eb013fc27e",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1003,6 +1012,7 @@
   },
   {
     "id": "math-ru-08162",
+    "exerciseId": "246eb004-9a44-4565-8587-ff4afde5363b",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1118,6 +1128,7 @@
   },
   {
     "id": "math-ru-08163",
+    "exerciseId": "5036ca73-163b-484d-9752-886b5fa223fc",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1242,6 +1253,7 @@
   },
   {
     "id": "math-ru-08164",
+    "exerciseId": "4f090b5f-7bc4-481c-8934-6361a911b833",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1357,6 +1369,7 @@
   },
   {
     "id": "math-ru-08251",
+    "exerciseId": "0e8f1b59-2c63-4c50-b386-64a241dcefbc",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -1467,6 +1480,7 @@
   },
   {
     "id": "math-ru-08252",
+    "exerciseId": "a38d6fff-b763-4d15-aea7-1b60c9ee6534",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -1577,6 +1591,7 @@
   },
   {
     "id": "math-ru-08296",
+    "exerciseId": "338846e2-5739-45f3-b31f-51fd6a2c6cef",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -1694,6 +1709,7 @@
   },
   {
     "id": "math-ru-08297",
+    "exerciseId": "21d89252-5ded-4e5b-b8bb-81840642d399",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -1813,6 +1829,7 @@
   },
   {
     "id": "math-ru-08298",
+    "exerciseId": "a707c3ab-4312-49fc-8826-638a1358e0b8",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -1930,6 +1947,7 @@
   },
   {
     "id": "math-ru-08299",
+    "exerciseId": "8def130a-44d4-4a98-a9e3-bc44509d9673",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2049,6 +2067,7 @@
   },
   {
     "id": "math-ru-08396",
+    "exerciseId": "05ca9bf6-7f5a-4f46-98d1-2a2d67b2729d",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2149,6 +2168,7 @@
   },
   {
     "id": "math-ru-08397",
+    "exerciseId": "6f04d5d2-9f81-4ff7-8900-513042369d19",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2249,6 +2269,7 @@
   },
   {
     "id": "math-ru-08441",
+    "exerciseId": "b21832b4-f0c3-4b20-a37c-6676e9bacd97",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2362,6 +2383,7 @@
   },
   {
     "id": "math-ru-08442",
+    "exerciseId": "8d3bb6b7-9474-4f06-a106-b3fa75297f65",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2461,6 +2483,7 @@
   },
   {
     "id": "math-ru-08443",
+    "exerciseId": "7a19d990-3b44-45f9-9646-82e67c7313f1",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2574,6 +2597,7 @@
   },
   {
     "id": "math-ru-08444",
+    "exerciseId": "15591b43-9362-4329-ad70-4406108deb10",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2673,6 +2697,7 @@
   },
   {
     "id": "math-ru-08546",
+    "exerciseId": "9124fbef-66ab-4a23-9c04-465f3f189caa",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2775,6 +2800,7 @@
   },
   {
     "id": "math-ru-08547",
+    "exerciseId": "6ed9169a-efa8-4986-8b94-bbca5aef9f3b",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2877,6 +2903,7 @@
   },
   {
     "id": "math-ru-08591",
+    "exerciseId": "6b1b95e4-fe3a-4551-ab3c-243d6a6b8d1b",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -2988,6 +3015,7 @@
   },
   {
     "id": "math-ru-08592",
+    "exerciseId": "33c01668-9c22-40d6-892f-d1d7376a81d8",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -3103,6 +3131,7 @@
   },
   {
     "id": "math-ru-08593",
+    "exerciseId": "82227428-2d74-4fed-984b-8a737c1015e3",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -3214,6 +3243,7 @@
   },
   {
     "id": "math-ru-08594",
+    "exerciseId": "293cb674-1d1f-40d4-893b-f1835b253a2a",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Алгебра / геометрия / вероятность",
@@ -3329,6 +3359,7 @@
   },
   {
     "id": "math-ru-08696",
+    "exerciseId": "bbbb6e38-cde0-404c-b480-0815d39d2caa",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3427,6 +3458,7 @@
   },
   {
     "id": "math-ru-08697",
+    "exerciseId": "1566afc8-1a36-461d-8c18-4952767743f4",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3525,6 +3557,7 @@
   },
   {
     "id": "math-ru-08741",
+    "exerciseId": "ad443496-1fb0-45ee-b63d-f0232b37c321",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3627,6 +3660,7 @@
   },
   {
     "id": "math-ru-08742",
+    "exerciseId": "560de8c8-27ee-48a1-9849-1b503ba079ed",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3752,6 +3786,7 @@
   },
   {
     "id": "math-ru-08743",
+    "exerciseId": "22a4e984-fd3c-46a6-a99d-c3dadf185081",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3854,6 +3889,7 @@
   },
   {
     "id": "math-ru-08744",
+    "exerciseId": "e5f4bd5b-cd7b-4bf9-b49c-f142656f3150",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3979,6 +4015,7 @@
   },
   {
     "id": "math-ru-08846",
+    "exerciseId": "05363101-457c-41c2-b595-99bbf4194753",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4082,6 +4119,7 @@
   },
   {
     "id": "math-ru-08847",
+    "exerciseId": "bcfa0e47-6dcb-4522-ac39-03eb37905925",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4185,6 +4223,7 @@
   },
   {
     "id": "math-ru-08891",
+    "exerciseId": "be1e5796-7fd2-4e63-8b82-c7dace6d7646",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4288,6 +4327,7 @@
   },
   {
     "id": "math-ru-08892",
+    "exerciseId": "7d45e07c-fa8a-4137-b4ee-b7f5eba6b85a",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4388,6 +4428,7 @@
   },
   {
     "id": "math-ru-08893",
+    "exerciseId": "89cefc14-920e-46b9-8969-0331e17b5fe8",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4491,6 +4532,7 @@
   },
   {
     "id": "math-ru-08894",
+    "exerciseId": "432da50a-261a-4c5f-b0d9-804fff599ab0",
     "contentVersion": "mvp-hard-v3-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",

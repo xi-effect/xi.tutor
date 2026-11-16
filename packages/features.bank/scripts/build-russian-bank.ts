@@ -14,6 +14,7 @@ mkdirSync(resolve(OUT, 'by_grade'), { recursive: true });
 
 const searchDocuments = tasks.map((task) => ({
   id: task.id,
+  exerciseId: task.exerciseId,
   subject: task.subject,
   grade: task.grade,
   topic: task.topic,

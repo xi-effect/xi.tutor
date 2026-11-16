@@ -28,6 +28,18 @@ export {
   type UserFlagKey,
   type UserFlagValueSchema,
 } from './src/userFlags';
+export {
+  FAVOURITE_EXERCISES_MAX_PAGES,
+  FAVOURITE_EXERCISES_PAGE_LIMIT,
+  favouriteExercisesApiConfig,
+  FavouriteExercisesQueryKey,
+  favouriteExercisesQueryKeys,
+  isFavouriteExerciseId,
+  nextFavouriteExercisesCursor,
+  parseFavouriteExercises,
+  type FavouriteExercise,
+  type FavouriteExerciseResponse,
+} from './src/favouriteExercises';
 export { invitationsApiConfig, InvitationsQueryKey } from './src/invitations';
 export { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from './src/paymentTemplates';
 export { materialsApiConfig, MaterialsQueryKey } from './src/materials';

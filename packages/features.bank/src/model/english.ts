@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { exerciseIdSchema } from './schema';
 
 export const englishTaskTypeSchema = z.enum([
   'gap',
@@ -58,6 +59,7 @@ export const englishRubricSchema = z.object({
 export const englishTaskSchema = z
   .object({
     id: z.string().regex(/^en-ru-\d{5}$/),
+    exerciseId: exerciseIdSchema,
     subject: z.literal('english'),
     grade: z.number().int().min(5).max(11),
     difficulty: z.number().int().min(1).max(5),
@@ -143,6 +145,7 @@ export type EnglishManifest = z.infer<typeof englishManifestSchema>;
 
 export type EnglishSearchDocument = {
   id: string;
+  exerciseId: string;
   subject: 'english';
   grade: number;
   difficulty: number;

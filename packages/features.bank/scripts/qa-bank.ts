@@ -15,6 +15,7 @@ const tasks = readGzipJson<MathTask[]>(SOURCE);
 const requiredStrings = (task: MathTask) =>
   [
     ['id', task.id],
+    ['exerciseId', task.exerciseId],
     ['topicId', task.topicId],
     ['topic', task.topic],
     ['subtopic', task.subtopic],
@@ -66,6 +67,9 @@ for (const [index, task] of tasks.entries()) {
 const unique = (values: string[]) => new Set(values).size;
 if (unique(tasks.map((task) => task.id)) !== tasks.length) {
   errors.push('duplicate ids');
+}
+if (unique(tasks.map((task) => task.exerciseId)) !== tasks.length) {
+  errors.push('duplicate exercise ids');
 }
 if (unique(tasks.map((task) => task.fingerprint)) !== tasks.length) {
   errors.push('duplicate fingerprints');

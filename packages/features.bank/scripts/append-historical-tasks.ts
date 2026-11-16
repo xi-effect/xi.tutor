@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
@@ -278,6 +278,7 @@ function createTask(
   ];
   return {
     id,
+    exerciseId: randomUUID(),
     contentVersion: CONTENT_VERSION,
     subject: 'mathematics',
     subjectLabel: 'Математика',

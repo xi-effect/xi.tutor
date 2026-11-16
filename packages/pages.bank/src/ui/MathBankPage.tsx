@@ -7,6 +7,7 @@ import { DEFAULT_MATH_BANK_FILTERS, type MathBankFiltersT } from '../types';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useMathBankIndex } from '../hooks/useMathBankIndex';
 import { useMathBankSurfaceAnalytics } from '../hooks/useMathBankSurfaceAnalytics';
+import { useSyncLegacyMathBankFavorites } from '../hooks/useToggleMathBankFavorite';
 import { useMathBankUserStore } from '../store/useMathBankUserStore';
 import { Header } from './Header';
 import { MathBankErrorState } from './MathBankEmpty';
@@ -28,6 +29,7 @@ export const MathBankPage = () => {
   const appliedFilters = { ...filters, search: debouncedSearch };
 
   useMathBankSurfaceAnalytics(Boolean(isTutor), 'page', appliedFilters, subject);
+  useSyncLegacyMathBankFavorites(Boolean(isTutor));
 
   const handleSubjectChange = (next: BankSubject) => {
     if (next === subject) {

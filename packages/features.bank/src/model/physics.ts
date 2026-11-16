@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { exerciseIdSchema } from './schema';
 
 export const physicsTaskTypeSchema = z.enum(['numeric', 'multi-step']);
 
@@ -39,6 +40,7 @@ export const physicsAnswerSchema = z.object({
 
 export const physicsTaskSchema = z.object({
   id: z.string().regex(/^physics-ru-\d{5}$/),
+  exerciseId: exerciseIdSchema,
   subject: z.literal('physics'),
   grade: z.number().int().min(5).max(11),
   difficulty: z.number().int().min(1).max(5),
@@ -96,6 +98,7 @@ export type PhysicsManifest = z.infer<typeof physicsManifestSchema>;
 
 export type PhysicsSearchDocument = {
   id: string;
+  exerciseId: string;
   subject: 'physics';
   grade: number;
   difficulty: number;

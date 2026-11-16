@@ -1,6 +1,7 @@
 [
   {
     "id": "math-ru-09001",
+    "exerciseId": "c57b7de8-5b31-4ed3-8645-65f4ac1d67ad",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -106,6 +107,7 @@
   },
   {
     "id": "math-ru-09002",
+    "exerciseId": "53d68fc4-73e7-4704-bdda-a0f4615f190f",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -211,6 +213,7 @@
   },
   {
     "id": "math-ru-09003",
+    "exerciseId": "14ee656f-3aa5-407c-9893-00943a04b2af",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -316,6 +319,7 @@
   },
   {
     "id": "math-ru-09051",
+    "exerciseId": "d7c348cc-7d44-44f6-98ff-5ee3a70ae965",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -420,6 +424,7 @@
   },
   {
     "id": "math-ru-09052",
+    "exerciseId": "452cf1ed-f87e-4adf-ab89-892194b3fca4",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -524,6 +529,7 @@
   },
   {
     "id": "math-ru-09053",
+    "exerciseId": "1acd597f-69f0-4a3b-9438-e587661700b6",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -628,6 +634,7 @@
   },
   {
     "id": "math-ru-09101",
+    "exerciseId": "e1d9ab7e-f6a2-482d-8510-7754ca131d76",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -733,6 +740,7 @@
   },
   {
     "id": "math-ru-09102",
+    "exerciseId": "c7672e47-4d76-4270-80fd-506e85a97394",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -838,6 +846,7 @@
   },
   {
     "id": "math-ru-09103",
+    "exerciseId": "37bc3eba-b507-4e93-9ab8-5ecc8eeaadda",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -943,6 +952,7 @@
   },
   {
     "id": "math-ru-10201",
+    "exerciseId": "13281859-2ce7-4d53-9a3d-21cbd1a987cb",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1061,6 +1071,7 @@
   },
   {
     "id": "math-ru-10202",
+    "exerciseId": "e5bc4067-f8cb-41f8-971a-c95ea74baf70",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1179,6 +1190,7 @@
   },
   {
     "id": "math-ru-10203",
+    "exerciseId": "6cf03b45-9f5e-4d24-bc5a-56cdc00d734b",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1297,6 +1309,7 @@
   },
   {
     "id": "math-ru-10259",
+    "exerciseId": "b7b80928-ad75-4b9d-98e2-52bdfd36a20e",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1414,6 +1427,7 @@
   },
   {
     "id": "math-ru-10260",
+    "exerciseId": "003112d9-2325-4843-867c-cdacaee90743",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1531,6 +1545,7 @@
   },
   {
     "id": "math-ru-10261",
+    "exerciseId": "893157c1-98aa-41f4-a6ad-eb4404008654",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1648,6 +1663,7 @@
   },
   {
     "id": "math-ru-10317",
+    "exerciseId": "a3eaf9e1-12e8-48f3-814a-2c372bfaa503",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1766,6 +1782,7 @@
   },
   {
     "id": "math-ru-10318",
+    "exerciseId": "821f8f00-9000-485e-8554-474796c452a3",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -1884,6 +1901,7 @@
   },
   {
     "id": "math-ru-10319",
+    "exerciseId": "b21c9a78-e2d2-42a5-9485-a746ca4b7318",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2002,6 +2020,7 @@
   },
   {
     "id": "math-ru-11701",
+    "exerciseId": "96492b12-4893-40a5-8e53-910886d2f63c",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2104,6 +2123,7 @@
   },
   {
     "id": "math-ru-11702",
+    "exerciseId": "cb51f873-cd99-49f5-b24a-2d6a10c83239",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2206,6 +2226,7 @@
   },
   {
     "id": "math-ru-11703",
+    "exerciseId": "bb5ed0f7-6aeb-4358-9200-bd69484ebd48",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2308,6 +2329,7 @@
   },
   {
     "id": "math-ru-11761",
+    "exerciseId": "104f30bc-3cae-4b06-b938-a9d7a7cd1b43",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2412,6 +2434,7 @@
   },
   {
     "id": "math-ru-11762",
+    "exerciseId": "e717f5ef-9cba-4fa0-a944-bb8387806cd1",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2516,6 +2539,7 @@
   },
   {
     "id": "math-ru-11763",
+    "exerciseId": "4885f82c-19a5-45b1-a981-83e845b0534e",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2620,6 +2644,7 @@
   },
   {
     "id": "math-ru-11821",
+    "exerciseId": "e88721b9-5b8f-4125-88e0-f8576e8b8ca9",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2722,6 +2747,7 @@
   },
   {
     "id": "math-ru-11822",
+    "exerciseId": "dc3620f8-1d1a-40f2-9ccb-51c09b5c2752",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2824,6 +2850,7 @@
   },
   {
     "id": "math-ru-11823",
+    "exerciseId": "1f96c5be-4837-44ad-8694-cadbf568b05a",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -2926,6 +2953,7 @@
   },
   {
     "id": "math-ru-13501",
+    "exerciseId": "98cc614e-92bb-4943-b97e-ebb016fe2ab0",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3025,6 +3053,7 @@
   },
   {
     "id": "math-ru-13502",
+    "exerciseId": "755970bd-b2b0-4271-84a6-1dc758a3da9e",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3124,6 +3153,7 @@
   },
   {
     "id": "math-ru-13503",
+    "exerciseId": "8cfeb664-7588-4270-ab56-068700a38e2e",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3223,6 +3253,7 @@
   },
   {
     "id": "math-ru-13561",
+    "exerciseId": "e090bf9c-3875-483a-8cc9-42e15863c697",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3322,6 +3353,7 @@
   },
   {
     "id": "math-ru-13562",
+    "exerciseId": "9b58cd5a-9b8a-4e8a-8308-61c6cf76bbf2",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3421,6 +3453,7 @@
   },
   {
     "id": "math-ru-13563",
+    "exerciseId": "836ff7af-acdc-4aa0-adcb-aea7e36d6e5b",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3520,6 +3553,7 @@
   },
   {
     "id": "math-ru-13621",
+    "exerciseId": "9f38c0c5-41f0-4172-b1ef-3c7b9b2edc8d",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3619,6 +3653,7 @@
   },
   {
     "id": "math-ru-13622",
+    "exerciseId": "fffcb6a5-c9e6-4e7a-9243-57a060937570",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3718,6 +3753,7 @@
   },
   {
     "id": "math-ru-13623",
+    "exerciseId": "b116ea0e-8468-496a-9fa9-2805ecc326c8",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3817,6 +3853,7 @@
   },
   {
     "id": "math-ru-15401",
+    "exerciseId": "6ead8e01-53a6-4b59-8a0c-40c94dc93e67",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -3921,6 +3958,7 @@
   },
   {
     "id": "math-ru-15402",
+    "exerciseId": "8ea0c559-7de5-4417-b0ba-2c8850a01c22",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4025,6 +4063,7 @@
   },
   {
     "id": "math-ru-15403",
+    "exerciseId": "e421d74e-7fed-49e0-adef-13c07f0f9525",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4129,6 +4168,7 @@
   },
   {
     "id": "math-ru-15460",
+    "exerciseId": "7864d431-686e-4cf4-bcb4-3b09313e3f74",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4235,6 +4275,7 @@
   },
   {
     "id": "math-ru-15461",
+    "exerciseId": "baf6aea2-90d9-4f95-af99-6353c776e9c0",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4341,6 +4382,7 @@
   },
   {
     "id": "math-ru-15462",
+    "exerciseId": "141beeb7-2fdc-4fe2-9b9f-27ed9f9e8385",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4447,6 +4489,7 @@
   },
   {
     "id": "math-ru-15519",
+    "exerciseId": "e193e22b-fb94-4268-af50-bb32ed1358d1",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4555,6 +4598,7 @@
   },
   {
     "id": "math-ru-15520",
+    "exerciseId": "37da5938-ddce-4e00-8738-5e6c7224afbd",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4663,6 +4707,7 @@
   },
   {
     "id": "math-ru-15521",
+    "exerciseId": "b74dbcf5-befa-4cd6-ba87-2fa143f1b84d",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4771,6 +4816,7 @@
   },
   {
     "id": "math-ru-17501",
+    "exerciseId": "540052f7-eecc-4bae-ab6f-9e3147b33f64",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4876,6 +4922,7 @@
   },
   {
     "id": "math-ru-17502",
+    "exerciseId": "87d0491d-35a1-4691-a46d-de94123c41c4",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -4981,6 +5028,7 @@
   },
   {
     "id": "math-ru-17503",
+    "exerciseId": "dd92fc46-daf4-4a14-8f49-658b92af0b7b",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5086,6 +5134,7 @@
   },
   {
     "id": "math-ru-17555",
+    "exerciseId": "53a77730-d942-4e54-a642-0d8b3f8a536e",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5195,6 +5244,7 @@
   },
   {
     "id": "math-ru-17556",
+    "exerciseId": "92c1e28f-c7f9-4ae6-a40c-fe09db9f55c5",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5304,6 +5354,7 @@
   },
   {
     "id": "math-ru-17557",
+    "exerciseId": "272c6339-9a64-4cb7-9f39-f757b68e6997",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5413,6 +5464,7 @@
   },
   {
     "id": "math-ru-17609",
+    "exerciseId": "2ccb6c6e-1bef-4feb-a908-a8c7f120ff98",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5533,6 +5585,7 @@
   },
   {
     "id": "math-ru-17610",
+    "exerciseId": "422e35bd-4cc3-4588-9ffe-b6ec03546f2c",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5653,6 +5706,7 @@
   },
   {
     "id": "math-ru-17611",
+    "exerciseId": "07443fd1-c3a1-4a1d-8170-a4e8d33a9340",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5773,6 +5827,7 @@
   },
   {
     "id": "math-ru-19101",
+    "exerciseId": "e90c54bf-42ce-4ace-a8c7-531407214619",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5878,6 +5933,7 @@
   },
   {
     "id": "math-ru-19102",
+    "exerciseId": "82057716-6970-48a1-906b-cc7185876382",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -5983,6 +6039,7 @@
   },
   {
     "id": "math-ru-19103",
+    "exerciseId": "c8849d9e-58a6-4832-98a8-00b2bf7fb334",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -6088,6 +6145,7 @@
   },
   {
     "id": "math-ru-19161",
+    "exerciseId": "754fce65-b38c-448d-a1d6-df731db9e1d8",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -6191,6 +6249,7 @@
   },
   {
     "id": "math-ru-19162",
+    "exerciseId": "c73cdfb1-bea3-4ae8-87c2-74419a7fdcce",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -6294,6 +6353,7 @@
   },
   {
     "id": "math-ru-19163",
+    "exerciseId": "d753585b-e710-42b0-a43c-80308dd354e8",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -6397,6 +6457,7 @@
   },
   {
     "id": "math-ru-19221",
+    "exerciseId": "b19fc76d-3335-4a24-b2a2-86d3f9590d2e",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -6507,6 +6568,7 @@
   },
   {
     "id": "math-ru-19222",
+    "exerciseId": "126b843d-1e16-475b-979d-f5f7007fa913",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",
@@ -6617,6 +6679,7 @@
   },
   {
     "id": "math-ru-19223",
+    "exerciseId": "4c542b2b-a706-4e24-a9db-3774cb313faa",
     "contentVersion": "historical-archetypes-v1-2026-09-10",
     "subject": "mathematics",
     "subjectLabel": "Математика",

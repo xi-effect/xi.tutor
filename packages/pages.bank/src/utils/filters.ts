@@ -41,10 +41,21 @@ export const searchMathBank = (
     return [];
   }
 
-  return search.search(
+  const items = search.search(
     filters.search,
     toMathSearchFilters(filters, favoriteTaskIds),
     filters.favoritesOnly ? MATH_BANK_SEARCH_LIMIT * 5 : MATH_BANK_SEARCH_LIMIT,
+  );
+
+  if (!filters.favoritesOnly || filters.search.trim()) {
+    return items;
+  }
+
+  const order = new Map(favoriteTaskIds.map((id, index) => [id, index]));
+  return [...items].sort(
+    (left, right) =>
+      (order.get(left.exerciseId) ?? Number.MAX_SAFE_INTEGER) -
+      (order.get(right.exerciseId) ?? Number.MAX_SAFE_INTEGER),
   );
 };
 

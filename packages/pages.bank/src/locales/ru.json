@@ -88,7 +88,8 @@
     "favoriteRemove": "Убрать из избранного"
   },
   "favorites": {
-    "storedOnDevice": "Избранные задания пока хранятся на этом устройстве"
+    "loadError": "Не удалось загрузить избранное",
+    "saveError": "Не удалось обновить избранное"
   },
   "examBadge": {
     "direct": "{{exam}} · {{year}} · №{{number}}",

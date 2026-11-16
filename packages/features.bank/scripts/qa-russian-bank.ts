@@ -28,6 +28,10 @@ for (const value of duplicates(tasks.map((task) => task.id))) {
   errors.push(`Duplicate id: ${value}`);
 }
 
+for (const value of duplicates(tasks.map((task) => task.exerciseId))) {
+  errors.push(`Duplicate exerciseId: ${value}`);
+}
+
 for (const value of duplicates(tasks.map((task) => task.fingerprint))) {
   errors.push(`Duplicate fingerprint: ${value}`);
 }

@@ -13,10 +13,14 @@ import type { BankSubject, MathTaskSearchDocument } from 'features.bank';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useMathBankIndex } from '../hooks/useMathBankIndex';
 import { useMathBankSurfaceAnalytics } from '../hooks/useMathBankSurfaceAnalytics';
+import {
+  useMathBankFavorites,
+  useSyncLegacyMathBankFavorites,
+} from '../hooks/useToggleMathBankFavorite';
+import { useMathBankUserStore } from '../store/useMathBankUserStore';
 import { DEFAULT_MATH_BANK_FILTERS, type MathBankFiltersT } from '../types';
 import { toMathBankTaskSnapshot } from '../utils/analytics';
 import { hasActiveMathBankFilters, searchMathBank } from '../utils/filters';
-import { useMathBankUserStore } from '../store/useMathBankUserStore';
 import { MathBankEmpty } from './MathBankEmpty';
 import { MathBankPickerRow } from './MathBankPickerRow';
 import { MathBankSearchField } from './MathBankSearchField';
@@ -52,17 +56,18 @@ const MathBankPickerContent = ({
   const [filters, setFilters] = useState<MathBankFiltersT>(DEFAULT_MATH_BANK_FILTERS);
   const [insertingId, setInsertingId] = useState<string | null>(null);
   const debouncedSearch = useDebouncedValue(filters.search);
-  const favoriteTaskIds = useMathBankUserStore((state) => state.favoriteTaskIds);
+  const { exerciseIds, isLoading: favoritesLoading } = useMathBankFavorites();
   const subject = useMathBankUserStore((state) => state.subject);
   const setSubject = useMathBankUserStore((state) => state.setSubject);
   const { search, catalog, examIndex, isLoading, isError } = useMathBankIndex(subject, open);
   const appliedFilters = { ...filters, search: debouncedSearch };
 
   useMathBankSurfaceAnalytics(open, analyticsSource, appliedFilters, subject);
+  useSyncLegacyMathBankFavorites();
 
   const items = useMemo(
-    () => searchMathBank(search, { ...filters, search: debouncedSearch }, favoriteTaskIds),
-    [debouncedSearch, favoriteTaskIds, filters, search],
+    () => searchMathBank(search, { ...filters, search: debouncedSearch }, exerciseIds),
+    [debouncedSearch, exerciseIds, filters, search],
   );
 
   const filtersActive = hasActiveMathBankFilters({ ...filters, search: debouncedSearch });
@@ -157,7 +162,9 @@ const MathBankPickerContent = ({
             className="min-h-0 flex-1 overflow-y-auto px-1 pb-4"
             aria-label={title}
           >
-            {isLoading || (!search && !isError) ? (
+            {isLoading ||
+            (!search && !isError) ||
+            (appliedFilters.favoritesOnly && favoritesLoading) ? (
               <p className="text-s-base text-text-secondary py-10 text-center">
                 {t('empty.loadingTitle')}
               </p>
