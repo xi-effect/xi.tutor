@@ -485,3 +485,14 @@ html[data-theme='light'] .dr-container [data-board-name-input] {
 body {
   --keyboard-zindex: 2100;
 }
+
+/*
+ * Панель форматирования текста: фон и тень у самих плашек.
+ * Иначе общий фон .tlui-menu склеивает выбор цвета и кнопки в одну карточку.
+ */
+.tlui-rich-text__toolbar.tlui-contextual-toolbar > .tlui-menu {
+  background-color: transparent;
+  box-shadow: none;
+  overflow: visible;
+  border-radius: 0;
+}

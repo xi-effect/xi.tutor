@@ -29,6 +29,20 @@ export {
   type UserFlagValueSchema,
 } from './src/userFlags';
 export {
+  USER_STORAGE_ITEM_KEY_MAX_LENGTH,
+  USER_STORAGE_ITEM_VALUE_MAX_BYTES,
+  userStorageItemsApiConfig,
+  UserStorageItemsQueryKey,
+  userStorageItemsQueryKeys,
+  assertUserStorageItemKey,
+  assertUserStorageItemValueSize,
+  isUserStorageItemValueSchema,
+  parseUserStorageItemValue,
+  userStorageItemValueBytes,
+  type JsonValue,
+  type UserStorageItemValueSchema,
+} from './src/userStorageItems';
+export {
   FAVOURITE_EXERCISES_MAX_PAGES,
   FAVOURITE_EXERCISES_PAGE_LIMIT,
   favouriteExercisesApiConfig,

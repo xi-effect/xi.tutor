@@ -7,10 +7,9 @@ import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
 import {
-  markFirstStepDone,
   readFirstStepsTour,
   useCurrentUser,
-  useUpdateUserFlag,
+  useMarkFirstStepDone,
   writeFirstStepsCallPhase,
 } from 'common.services';
 import { StartLessonButton } from 'features.lesson.start';
@@ -28,7 +27,7 @@ const startLessonButtonClass =
 
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
-  const { updateUserFlag } = useUpdateUserFlag();
+  const markCallDone = useMarkFirstStepDone('call');
   const isTutor = user?.default_layout === 'tutor';
   const isPaused = isClassroomOnPause(classroom.status);
   const isLocked = classroom.status === 'locked';
@@ -50,25 +49,25 @@ export const Content = ({ classroom }: ContentProps) => {
     url.searchParams.delete('goto');
     window.history.replaceState({}, '', url.toString());
     setTimeout(() => {
-      markFirstStepDone(user, 'call', updateUserFlag.mutate);
+      markCallDone();
       startCall({ classroom_id: classroom.id.toString() }, { source: 'classroom' }).catch(
         (error) => {
           console.error('Ошибка при запуске звонка (goto=call):', error);
         },
       );
     }, 100);
-  }, [search, startCall, classroom.id, classroom.status, updateUserFlag.mutate, user]);
+  }, [search, startCall, classroom.id, classroom.status, markCallDone]);
 
   const handleStartCall = useCallback(async () => {
     const guided = readFirstStepsTour()?.step === 'call';
     if (guided) writeFirstStepsCallPhase('prejoin-devices');
-    else markFirstStepDone(user, 'call', updateUserFlag.mutate);
+    else markCallDone();
     try {
       await startCall({ classroom_id: classroom.id.toString() }, { source: 'classroom' });
     } catch (error) {
       console.error('Ошибка при запуске звонка:', error);
     }
-  }, [startCall, classroom.id, updateUserFlag.mutate, user]);
+  }, [startCall, classroom.id, markCallDone]);
 
   const getStudentName = () => {
     if (classroom.kind !== 'individual') return '';

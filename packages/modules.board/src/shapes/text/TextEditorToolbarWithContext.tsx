@@ -4,12 +4,14 @@ import { DefaultRichTextToolbar, useEditor, useValue, TiptapEditor } from '@ibod
 import { Ul } from '@xipkg/icons';
 import { textFormatterElements } from './textFormatterElements';
 import { NavbarButton } from '../../ui/components/shared';
-import { boardTextToolbarClass } from '../../ui/boardTheme';
 import { LinkNavbarButton } from './LinkNavbarButton';
 import { MathFormatToolbar } from './MathFormatToolbar';
-import { useToggleFormat } from './hooks';
-import { ActiveFormatesMapT, MarkFormatT } from './types';
+import { TextFormattingBar } from './HighlightStyleMenu';
+import { useHighlightStyleMenu, useToggleFormat } from './hooks';
+import { activeHighlightStyle } from '../../store/useTextHighlightStore';
+import { MarkFormatT } from './types';
 import { hasFormat } from './utils/textEditorUtils';
+import { applyHighlightToSelection, readEditorHighlightStyle } from './highlightStyle';
 
 export const TextEditorToolbarWithContext = () => {
   const [link, setLink] = useState('');
@@ -20,7 +22,7 @@ export const TextEditorToolbarWithContext = () => {
   ]);
   const { toggleFormatHandler } = useToggleFormat(textEditor);
 
-  const editorState: ActiveFormatesMapT | null = useEditorState({
+  const editorState = useEditorState({
     editor: textEditor,
     selector: (ctx) => {
       return {
@@ -30,6 +32,10 @@ export const TextEditorToolbarWithContext = () => {
         strike: hasFormat(ctx.editor, 'strike'),
         underline: hasFormat(ctx.editor, 'underline'),
         highlight: hasFormat(ctx.editor, 'highlight'),
+        highlightStyle: readEditorHighlightStyle(ctx.editor),
+        selectionKey: ctx.editor
+          ? `${ctx.editor.state.selection.from}:${ctx.editor.state.selection.to}`
+          : 'none',
         link: hasFormat(ctx.editor, 'link'),
         superscript: hasFormat(ctx.editor, 'superscript'),
         subscript: hasFormat(ctx.editor, 'subscript'),
@@ -39,12 +45,19 @@ export const TextEditorToolbarWithContext = () => {
       };
     },
   });
+  const {
+    open: highlightMenuOpen,
+    toggle: toggleHighlightMenu,
+    close: closeHighlightMenu,
+  } = useHighlightStyleMenu(editorState?.selectionKey ?? 'none');
 
   const changeLinkHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLink(e.target.value);
   };
 
   const toggleLinkHandler = useCallback(() => {
+    closeHighlightMenu();
+
     if (open) {
       setOpen(false);
       setLink('');
@@ -57,33 +70,65 @@ export const TextEditorToolbarWithContext = () => {
     } else {
       setOpen(true);
     }
-  }, [open, textEditor, toggleFormatHandler]);
+  }, [closeHighlightMenu, open, textEditor, toggleFormatHandler]);
 
   const setLinkHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!textEditor) return;
 
     if (e.key === 'Enter') {
+      closeHighlightMenu();
       toggleFormatHandler('link', link);
       setLink('');
       setOpen(false);
     }
   };
 
+  const toggleHighlightHandler = () => {
+    const opened = toggleHighlightMenu();
+    if (!opened) return;
+
+    if (open) {
+      setOpen(false);
+      setLink('');
+    }
+
+    if (!textEditor || hasFormat(textEditor, 'highlight')) return;
+    applyHighlightToSelection(textEditor, activeHighlightStyle());
+  };
+
   const toggleFormat = (format: MarkFormatT) => () => {
+    closeHighlightMenu();
     toggleFormatHandler(format);
   };
 
   return (
     <DefaultRichTextToolbar>
-      <div className={boardTextToolbarClass}>
+      <TextFormattingBar
+        highlightValue={editorState?.highlightStyle ?? null}
+        highlightSourceId={editorState?.selectionKey ?? 'none'}
+        highlightMenuOpen={highlightMenuOpen}
+        onHighlightMenuClose={closeHighlightMenu}
+        onHighlightChange={(style) => {
+          if (!textEditor) return;
+          applyHighlightToSelection(textEditor, style);
+        }}
+      >
         {textFormatterElements.map((element) => {
+          const isHighlight = element.type === 'highlight';
+
           return (
             <NavbarButton
               key={element.type}
               icon={element.icon}
               title={element.title}
-              isActive={!!editorState?.[element.type]}
-              onClick={toggleFormat(element.type)}
+              isActive={
+                isHighlight
+                  ? !!editorState?.highlight || highlightMenuOpen
+                  : !!editorState?.[element.type]
+              }
+              aria-expanded={isHighlight ? highlightMenuOpen : undefined}
+              data-text-highlight-trigger={isHighlight ? '' : undefined}
+              onClick={isHighlight ? toggleHighlightHandler : toggleFormat(element.type)}
             />
           );
         })}
@@ -109,7 +154,7 @@ export const TextEditorToolbarWithContext = () => {
           onToggleSuperscript={toggleFormat('superscript')}
           onToggleSubscript={toggleFormat('subscript')}
         />
-      </div>
+      </TextFormattingBar>
     </DefaultRichTextToolbar>
   );
 };

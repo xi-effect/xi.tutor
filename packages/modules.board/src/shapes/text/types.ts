@@ -21,6 +21,7 @@ export type MarkT = {
 
 export type RichNodeT = {
   type: string;
+  text?: string;
   attrs?: Record<string, string>;
   content?: RichNodeT[];
   marks?: MarkT[];

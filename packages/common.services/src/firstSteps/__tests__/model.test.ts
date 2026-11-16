@@ -11,11 +11,12 @@ import {
 } from '../model';
 import { FIRST_STEPS_TOUR_STOPS, tourCompletionMarksStep } from '../tour';
 import {
-  acknowledgeFirstStepFlag,
+  acknowledgeFirstStep,
   applyRemoteFirstStep,
   commitFirstStep,
-  dirtyFirstStepFlags,
+  dirtyFirstSteps,
   FIRST_STEPS_PROGRESS_EVENT,
+  firstStepsStorageKey,
   markIntroSeen,
   readFirstStepMarks,
   readIntroSeen,
@@ -124,10 +125,7 @@ describe('первые шаги', () => {
       schedule: 'skipped',
     });
     expect(readFirstStepMarks(storage, 7, 'tutor').invite).toBe('done');
-    expect(dirtyFirstStepFlags(storage, 7, 'student')).toEqual([
-      'fs.student.join.done',
-      'fs.student.schedule.skip',
-    ]);
+    expect(dirtyFirstSteps(storage, 7, 'student')).toEqual(['join', 'schedule']);
   });
 
   it('сообщает открытому чек-листу, что отметка изменилась', () => {
@@ -158,11 +156,11 @@ describe('первые шаги', () => {
       applyRemoteFirstStep(storage, 3, 'tutor', 'material', { done: true, skipped: true }),
     ).toBe(true);
     expect(readFirstStepMarks(storage, 3, 'tutor').material).toBe('done');
-    expect(dirtyFirstStepFlags(storage, 3, 'tutor')).toEqual([]);
+    expect(dirtyFirstSteps(storage, 3, 'tutor')).toEqual([]);
 
     commitFirstStep(storage, 3, 'tutor', 'invite', 'skipped', true);
-    acknowledgeFirstStepFlag(storage, 3, 'tutor', 'fs.tutor.invite.skip');
-    expect(dirtyFirstStepFlags(storage, 3, 'tutor')).toEqual([]);
+    acknowledgeFirstStep(storage, 3, 'tutor', 'invite');
+    expect(dirtyFirstSteps(storage, 3, 'tutor')).toEqual([]);
     expect(readFirstStepMarks(storage, 3, 'tutor').invite).toBe('skipped');
   });
 
@@ -172,7 +170,7 @@ describe('первые шаги', () => {
     expect(readIntroSeen(storage, 4, 'tutor')).toBe(false);
     markIntroSeen(storage, 4, 'tutor');
     commitFirstStep(storage, 4, 'tutor', 'invite', 'done', true);
-    acknowledgeFirstStepFlag(storage, 4, 'tutor', 'fs.tutor.invite.done');
+    acknowledgeFirstStep(storage, 4, 'tutor', 'invite');
 
     expect(readIntroSeen(storage, 4, 'tutor')).toBe(true);
     expect(readFirstStepMarks(storage, 4, 'tutor').invite).toBe('done');
@@ -184,5 +182,22 @@ describe('первые шаги', () => {
     commitFirstStep(storage, 1, 'tutor', 'invite', 'skipped', true);
     expect(commitFirstStep(storage, 1, 'tutor', 'invite', 'done', true)).toBe(true);
     expect(readFirstStepMarks(storage, 1, 'tutor').invite).toBe('done');
+    expect(dirtyFirstSteps(storage, 1, 'tutor')).toEqual(['invite']);
+  });
+
+  it('забывает старые ключи флагов в очереди и оставляет отметки', () => {
+    const storage = memoryStorage();
+    storage.setItem(
+      firstStepsStorageKey(7, 'student'),
+      JSON.stringify({
+        marks: { join: 'done' },
+        dirty: ['fs.student.join.done'],
+        introSeen: true,
+      }),
+    );
+
+    expect(readFirstStepMarks(storage, 7, 'student').join).toBe('done');
+    expect(dirtyFirstSteps(storage, 7, 'student')).toEqual([]);
+    expect(readIntroSeen(storage, 7, 'student')).toBe(true);
   });
 });

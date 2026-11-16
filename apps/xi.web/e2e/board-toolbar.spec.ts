@@ -13,6 +13,7 @@ const TOOLS = [
   'sticker',
   'emoji',
   'asset',
+  'dice',
 ] as const;
 
 test.describe('Доска — инструменты', () => {
@@ -49,6 +50,22 @@ test.describe('Доска — инструменты', () => {
       'true',
     );
     await expect(page.locator('.dr-canvas').first()).toBeVisible();
+  });
+
+  test('бросает кубик, и результат виден на доске', async ({ page }) => {
+    await openBoard(page);
+
+    await page.locator('[data-board-tool="dice"]').first().click();
+    await page.getByRole('button', { name: 'Бросить: 6 граней' }).click();
+
+    const die = page.locator('[data-board-dice-value]');
+    await expect(die).toBeVisible();
+    await expect(die).toHaveAttribute('data-board-dice-value', /^[1-6]$/);
+    await expect(die).toHaveAttribute('data-board-dice-sides', '6');
+
+    await die.click();
+    await page.keyboard.press('Backspace');
+    await expect(page.locator('[data-board-dice-value]')).toHaveCount(0);
   });
 
   test('ставит текстовый инструмент', async ({ page }) => {

@@ -17,6 +17,7 @@ import {
 import i18n from 'i18next';
 import { bytesToMb, getCurrentTariff } from 'common.subscription';
 import { Activity } from '../ui/icons/Activity';
+import { DiceIcon } from '../ui/components/dice/DiceIcon';
 import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/boardTheme';
 
 export type NavbarElementT = {
@@ -145,5 +146,12 @@ export const navBarElements: NavbarElementT[] = [
       return t('embed.title');
     },
     icon: <Link className={boardToolbarIconClass} />,
+  },
+  {
+    action: 'dice',
+    get title() {
+      return t('navbar.dice');
+    },
+    icon: <DiceIcon className={boardToolbarIconClass} />,
   },
 ];

@@ -120,6 +120,7 @@
     "pen": "Pen",
     "eraser": "Eraser",
     "laser": "Laser pointer",
+    "dice": "Dice",
     "text": "Text",
     "shapes": "Shapes",
     "arrow": "Arrow",
@@ -145,6 +146,20 @@
     "cloudInsertFailed": "Could not add the file to the board",
     "activities": "Activities",
     "more": "More"
+  },
+  "dice": {
+    "title": "Dice",
+    "result": "Rolled {{value}}",
+    "throwFace": "Roll {{faces}}",
+    "faces": {
+      "2": "Coin",
+      "4": "4 sides",
+      "6": "6 sides",
+      "8": "8 sides",
+      "10": "10 sides",
+      "12": "12 sides",
+      "20": "20 sides"
+    }
   },
   "timer": {
     "pause": "Pause",
@@ -246,6 +261,8 @@
     "superscript": "Superscript",
     "subscript": "Subscript",
     "fraction": "Fraction",
+    "highlightOpacity": "Highlight opacity",
+    "highlightPreset": "Highlight preset {{index}}",
     "latex": "LaTeX",
     "latexPlaceholder": "E = mc^2"
   },
@@ -289,7 +306,8 @@
     }
   },
   "zoom": {
-    "clickHint": "Click — 100%. Double-click — show all elements"
+    "clickHint": "Click — 100%. Double-click — show all elements",
+    "presentationHint": "Click — 100%. Double-click — presentation scale"
   },
   "minimap": {
     "label": "Board minimap",

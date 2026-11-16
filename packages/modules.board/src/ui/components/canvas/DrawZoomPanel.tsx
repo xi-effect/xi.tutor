@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { BoardMinimap } from './BoardMinimap';
 import { useBoardChrome } from '../../useBoardChrome';
+import { useFollowUserStore } from '../../../store';
 
 const MINIMAP_STORAGE_KEY = 'board.minimap.open';
 
@@ -33,6 +34,11 @@ export const DrawZoomPanel = track(() => {
   const resetZoomClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [minimapOpen, setMinimapOpen] = useState(readMinimapOpen);
   const chrome = useBoardChrome();
+  const presentationFollow = useFollowUserStore(
+    (state) =>
+      state.broadcasterPresenceId != null &&
+      state.followingPresenceId === state.broadcasterPresenceId,
+  );
 
   const toggleMinimap = () => {
     setMinimapOpen((open) => {
@@ -113,7 +119,7 @@ export const DrawZoomPanel = track(() => {
         <Button
           className={`h-6 w-6 min-w-[60px] items-center justify-center px-2 py-1 ${boardTextClass} hover:bg-transparent focus:bg-transparent active:bg-transparent lg:h-8 lg:w-8`}
           variant="none"
-          title={t('zoom.clickHint')}
+          title={presentationFollow ? t('zoom.presentationHint') : t('zoom.clickHint')}
           onClick={handleResetZoomClick}
           onDoubleClick={handleZoomToFitDoubleClick}
         >

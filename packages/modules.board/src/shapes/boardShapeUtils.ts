@@ -14,6 +14,7 @@ import { TextShapeUtil } from './text';
 import { ArrowShapeUtil } from './arrow';
 import { PresentationShapeUtil } from './presentation';
 import { FlipCardShapeUtil } from './flipCard';
+import { DiceShapeUtil } from './dice';
 import { ActivityShapeUtil } from '../activities';
 import { boardEmbedDefinitions } from './embed/embeddefinitions';
 import { BoardEmbedShapeUtil } from './embed/BoardEmbedShapeUtil';
@@ -34,6 +35,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   FileShapeUtil,
   CoordinateAxesShapeUtil,
   FlipCardShapeUtil,
+  DiceShapeUtil,
   MathFigureShapeUtil,
   TextShapeUtil,
   ArrowShapeUtil,

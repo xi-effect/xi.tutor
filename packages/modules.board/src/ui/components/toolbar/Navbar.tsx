@@ -51,6 +51,7 @@ const toolPopupIdByAction: Record<string, string> = {
   sticker: 'sticker',
   arrow: 'arrow',
   emoji: 'emoji',
+  dice: 'dice',
 };
 
 export const Navbar = track(({ token }: { token: string }) => {
@@ -212,12 +213,17 @@ export const Navbar = track(({ token }: { token: string }) => {
   const currentTool = getCurrentTool();
 
   const renderToolbarItem = (item: NavbarElementT) => {
+    const diceOpen = activePopup === 'dice';
     const isActive =
-      item.action === 'activity'
-        ? activityPickerOpen
-        : item.action === 'embed'
-          ? embedDialogOpen
-          : item.action === currentTool;
+      item.action === 'dice'
+        ? diceOpen
+        : diceOpen
+          ? false
+          : item.action === 'activity'
+            ? activityPickerOpen
+            : item.action === 'embed'
+              ? embedDialogOpen
+              : item.action === currentTool;
 
     if (item.action === 'asset') {
       return (
@@ -238,6 +244,7 @@ export const Navbar = track(({ token }: { token: string }) => {
       item.action === 'hand' ||
       item.action === 'eraser' ||
       item.action === 'laser' ||
+      item.action === 'dice' ||
       item.action === 'text'
     ) {
       return (
@@ -249,6 +256,7 @@ export const Navbar = track(({ token }: { token: string }) => {
                 title={item.title}
                 isActive={isActive}
                 data-board-tool={item.action}
+                data-umami-event={item.action === 'dice' ? 'board-dice-open' : undefined}
                 onClick={() => handleSelectTool(item.action)}
               />
             </TooltipTrigger>
@@ -266,6 +274,7 @@ export const Navbar = track(({ token }: { token: string }) => {
         title={item.title}
         isActive={isActive}
         data-board-tool={item.action}
+        data-umami-event={item.action === 'dice' ? 'board-dice-open' : undefined}
         onClick={() => handleSelectTool(item.action)}
       />
     );
@@ -285,6 +294,11 @@ export const Navbar = track(({ token }: { token: string }) => {
   const activeSlideIndex = (() => {
     if (isPlacingComment) {
       return toolbarSlides.findIndex((slide) => slide.key === COMMENT_ACTION);
+    }
+
+    if (activePopup === 'dice') {
+      const diceIndex = toolbarSlides.findIndex((slide) => slide.key === 'dice');
+      if (diceIndex >= 0) return diceIndex;
     }
 
     const toolIndex = toolbarSlides.findIndex((slide) => slide.key === currentTool);

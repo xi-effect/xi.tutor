@@ -6,6 +6,7 @@ import { OpacitySizeMenu } from '../popups/Pen/OpacitySizeMenu';
 import { ShapeSet } from '../popups/Shapes/ShapeSet';
 import { ColorSet } from '../popups/Sticker/ColorSet';
 import { ArrowSet } from '../popups/Arrows/ArrowSet';
+import { DicePicker } from '../dice/DicePicker';
 import { isVerticalToolbarDock, type BoardToolbarDock } from '../../../utils/boardToolbarDock';
 import { BoardDrawer, useBoardIsMobile } from '../shared';
 
@@ -64,6 +65,7 @@ export const ToolbarOptionsPanel = ({
     sticker: t('navbar.sticker'),
     arrow: t('navbar.arrow'),
     emoji: t('navbar.emoji'),
+    dice: t('navbar.dice'),
   };
 
   const vertical = isVerticalToolbarDock(dock);
@@ -81,6 +83,9 @@ export const ToolbarOptionsPanel = ({
       )}
       {activePopup === 'arrow' && (
         <ArrowSet className={isMobile ? drawerPanelClass : undefined} vertical={vertical} />
+      )}
+      {activePopup === 'dice' && (
+        <DicePicker className={isMobile ? drawerPanelClass : undefined} onClose={onClose} />
       )}
       {activePopup === 'emoji' && (
         <EmojiPickerPopup

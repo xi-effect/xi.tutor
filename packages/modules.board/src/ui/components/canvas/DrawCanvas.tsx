@@ -5,7 +5,7 @@ import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
-import { Editor, DrInstancePresence, Draw, DrawProps, type DrUiOverrides } from '@ibodr/draw';
+import { Editor, Draw, DrawProps, type DrUiOverrides } from '@ibodr/draw';
 import { useSearch } from '@tanstack/react-router';
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +36,8 @@ import { BoardCollaboratorCursors } from './BoardCollaboratorCursors';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { CanvasOverlays } from './CanvasOverlays';
 import { FollowBanner } from './FollowBanner';
+import { BOARD_ZOOM_STEPS } from './followCamera';
+import { useFollowLeaderCamera } from './useFollowLeaderCamera';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
@@ -101,7 +103,9 @@ export const DrawCanvas = ({
   const { theme } = useTheme();
   const [shapeCount, setShapeCount] = useState(0);
   const { store, status, isReadonly, getUserCamera, setUserCamera, provider } = useYjsContext();
-  const { followingPresenceId } = useFollowUserStore();
+  const { followingPresenceId, broadcasterPresenceId } = useFollowUserStore();
+  const allowPresentationZoom =
+    broadcasterPresenceId != null && followingPresenceId === broadcasterPresenceId;
   const appliedInitialCameraRef = useRef(false);
   const didResetDrawScaleRef = useRef(false);
   const search = useSearch({ strict: false }) as BoardDeepLinkSearch;
@@ -353,83 +357,8 @@ export const DrawCanvas = ({
     };
   }, [editor, setUserCamera]);
 
-  // Follow: вписываем вид ведущего в viewport ведомого (fit-to-bounds).
-  // На большом экране зум совпадает; на маленьком — уменьшается, чтобы видеть всю область.
-  // Используем стандартные поля tldraw presence (camera, screenBounds).
-  useEffect(() => {
-    if (!editor || !store || !followingPresenceId) return;
-
-    const id = followingPresenceId;
-    let raf = 0;
-
-    const sync = () => {
-      const presence = store.get(id as DrInstancePresence['id']) as DrInstancePresence | undefined;
-      if (!presence?.camera) return;
-
-      const leaderCam = presence.camera;
-      const leaderSB = presence.screenBounds;
-      if (!leaderSB || leaderSB.w <= 0 || leaderSB.h <= 0) return;
-
-      // Вид ведущего в page-space
-      const leaderPageW = leaderSB.w / leaderCam.z;
-      const leaderPageH = leaderSB.h / leaderCam.z;
-      const centerX = -leaderCam.x + leaderPageW / 2;
-      const centerY = -leaderCam.y + leaderPageH / 2;
-
-      const vp = editor.getViewportScreenBounds();
-
-      // Зум, при котором весь вид ведущего вписывается в наш viewport.
-      // Не зумим ближе, чем у ведущего (если наш экран больше).
-      const z = Math.min(leaderCam.z, vp.w / leaderPageW, vp.h / leaderPageH);
-
-      const target = {
-        x: -(centerX - vp.w / (2 * z)),
-        y: -(centerY - vp.h / (2 * z)),
-        z,
-      };
-
-      const cur = editor.getCamera();
-      if (
-        Math.abs(cur.x - target.x) < 0.5 &&
-        Math.abs(cur.y - target.y) < 0.5 &&
-        Math.abs(cur.z - target.z) < 0.001
-      )
-        return;
-
-      editor.setCameraOptions({ isLocked: false });
-      editor.setCamera(target);
-      editor.setCameraOptions({ isLocked: true });
-    };
-
-    const schedule = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        sync();
-      });
-    };
-
-    schedule();
-
-    const unsub = store.listen(
-      ({ changes }) => {
-        const added = (changes.added ?? {}) as Record<string, unknown>;
-        const updated = (changes.updated ?? {}) as Record<string, unknown>;
-        if (added[id] || updated[id]) schedule();
-      },
-      { scope: 'presence' },
-    );
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(editor.getContainer());
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      unsub();
-      editor.setCameraOptions({ isLocked: false });
-    };
-  }, [editor, store, followingPresenceId]);
+  // Слежение за ведущим. В презентации ученик может менять масштаб, не отпуская центр кадра.
+  useFollowLeaderCamera(editor, store, followingPresenceId, allowPresentationZoom);
 
   // В режиме «Авто» синхронизируем isPenMode с текущим устройством при каждом pointerdown,
   // чтобы можно было переключаться между планшетом и мышью без смены настройки в меню.
@@ -581,9 +510,7 @@ export const DrawCanvas = ({
                 win.showBoardImportOption = () => {
                   window.dispatchEvent(new CustomEvent('showBoardImportJson'));
                 };
-                editor.setCameraOptions({
-                  zoomSteps: [0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 8],
-                });
+                editor.setCameraOptions({ zoomSteps: BOARD_ZOOM_STEPS });
               }}
               store={store}
               tools={boardCustomTools}

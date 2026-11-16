@@ -1,5 +1,4 @@
 import {
-  firstStepFlagKey,
   isStepForRole,
   stepsForRole,
   type FirstStepId,
@@ -14,11 +13,19 @@ export type FirstStepsStorage = {
 
 type StoredFirstSteps = {
   marks: Partial<Record<string, Exclude<FirstStepMark, 'pending'>>>;
+  /** Идентификаторы этапов, которые ещё нужно записать в storage item. */
   dirty: string[];
   introSeen: boolean;
+  /** Старые булевы флаги `fs.*` уже перенесены или переносить нечего. */
+  legacyFlagsMerged: boolean;
 };
 
-const emptyStored = (): StoredFirstSteps => ({ marks: {}, dirty: [], introSeen: false });
+const emptyStored = (): StoredFirstSteps => ({
+  marks: {},
+  dirty: [],
+  introSeen: false,
+  legacyFlagsMerged: false,
+});
 
 /** Чек-лист перечитывает отметки, не дожидаясь перезагрузки страницы. */
 export const FIRST_STEPS_PROGRESS_EVENT = 'first-steps-progress';
@@ -51,10 +58,17 @@ const readStored = (
     }
 
     const dirty = Array.isArray(parsed?.dirty)
-      ? parsed.dirty.filter((key): key is string => typeof key === 'string')
+      ? parsed.dirty.filter(
+          (key): key is FirstStepId => typeof key === 'string' && isStepForRole(role, key),
+        )
       : [];
 
-    return { marks, dirty, introSeen: parsed?.introSeen === true };
+    return {
+      marks,
+      dirty,
+      introSeen: parsed?.introSeen === true,
+      legacyFlagsMerged: parsed?.legacyFlagsMerged === true,
+    };
   } catch {
     return emptyStored();
   }
@@ -84,23 +98,23 @@ export const readFirstStepMarks = (
   return marks;
 };
 
-export const dirtyFirstStepFlags = (
+export const dirtyFirstSteps = (
   storage: FirstStepsStorage,
   userId: number,
   role: FirstStepsRole,
 ): string[] => readStored(storage, userId, role).dirty;
 
-export const acknowledgeFirstStepFlag = (
+export const acknowledgeFirstStep = (
   storage: FirstStepsStorage,
   userId: number,
   role: FirstStepsRole,
-  flagKey: string,
+  step: string,
 ): void => {
   const stored = readStored(storage, userId, role);
-  if (!stored.dirty.includes(flagKey)) return;
+  if (!stored.dirty.includes(step)) return;
   writeStored(storage, userId, role, {
     ...stored,
-    dirty: stored.dirty.filter((key) => key !== flagKey),
+    dirty: stored.dirty.filter((key) => key !== step),
   });
 };
 
@@ -120,8 +134,24 @@ export const markIntroSeen = (
   writeStored(storage, userId, role, { ...stored, introSeen: true });
 };
 
+export const readLegacyFlagsMerged = (
+  storage: FirstStepsStorage,
+  userId: number,
+  role: FirstStepsRole,
+): boolean => readStored(storage, userId, role).legacyFlagsMerged;
+
+export const markLegacyFlagsMerged = (
+  storage: FirstStepsStorage,
+  userId: number,
+  role: FirstStepsRole,
+): void => {
+  const stored = readStored(storage, userId, role);
+  if (stored.legacyFlagsMerged) return;
+  writeStored(storage, userId, role, { ...stored, legacyFlagsMerged: true });
+};
+
 /**
- * Пишет отметку шага. `trackDirty` ставит флаг в очередь на сервер.
+ * Пишет отметку шага. `trackDirty` ставит этап в очередь на storage item.
  * Уже выполненное не затирается пропуском. Повтор той же отметки — no-op.
  */
 export const commitFirstStep = (
@@ -142,10 +172,7 @@ export const commitFirstStep = (
 
   stored.marks[step] = mark;
 
-  if (trackDirty) {
-    const flagKey = firstStepFlagKey(role, step, mark === 'done' ? 'done' : 'skip');
-    if (!stored.dirty.includes(flagKey)) stored.dirty.push(flagKey);
-  }
+  if (trackDirty && !stored.dirty.includes(step)) stored.dirty.push(step);
 
   writeStored(storage, userId, role, stored);
   notifyFirstStepsProgress();
@@ -163,13 +190,53 @@ export const clearFirstStepDone = (
   if (stored.marks[step] !== 'done') return false;
 
   delete stored.marks[step];
-  const flagKey = firstStepFlagKey(role, step, 'done');
   writeStored(storage, userId, role, {
     ...stored,
-    dirty: stored.dirty.filter((key) => key !== flagKey),
+    dirty: stored.dirty.filter((key) => key !== step),
   });
   notifyFirstStepsProgress();
   return true;
+};
+
+/** Ставит отметку с сервера. Неподтверждённую локальную правку не затирает. */
+export const writeRemoteFirstStep = (
+  storage: FirstStepsStorage,
+  userId: number,
+  role: FirstStepsRole,
+  step: FirstStepId,
+  mark: FirstStepMark,
+): boolean => {
+  if (!isStepForRole(role, step)) return false;
+
+  const stored = readStored(storage, userId, role);
+  if (stored.dirty.includes(step)) return false;
+
+  const current = stored.marks[step];
+  if (mark === 'pending') {
+    if (current == null) return false;
+    delete stored.marks[step];
+  } else if (current === mark) {
+    return false;
+  } else {
+    stored.marks[step] = mark;
+  }
+
+  writeStored(storage, userId, role, stored);
+  notifyFirstStepsProgress();
+  return true;
+};
+
+export const queueFirstStepUpload = (
+  storage: FirstStepsStorage,
+  userId: number,
+  role: FirstStepsRole,
+  step: FirstStepId,
+): void => {
+  const stored = readStored(storage, userId, role);
+  const mark = stored.marks[step];
+  if (mark !== 'done' && mark !== 'skipped') return;
+  if (stored.dirty.includes(step)) return;
+  writeStored(storage, userId, role, { ...stored, dirty: [...stored.dirty, step] });
 };
 
 export const applyRemoteFirstStep = (
@@ -184,6 +251,10 @@ export const applyRemoteFirstStep = (
   return false;
 };
 
+/**
+ * Локальный кэш и очередь. Между устройствами источник правды — storage item
+ * на сервере, по одному ключу на этап.
+ */
 export const browserFirstStepsStorage = (): FirstStepsStorage => {
   if (typeof window === 'undefined') {
     return {
