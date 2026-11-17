@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { NotFoundPage } from 'common.ui';
+import { NotFoundPage, StudentsInviteHomeHint } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { ModalInvitation } from 'features.invites';
 import { useTranslation } from 'react-i18next';
@@ -76,6 +76,7 @@ export const StudentsPage = () => {
         />
       </div>
       <ModalInvitation open={inviteOpen} onOpenChange={setInviteOpen} analyticsSource="students" />
+      <StudentsInviteHomeHint />
     </div>
   );
 };

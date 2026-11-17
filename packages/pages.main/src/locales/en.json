@@ -115,15 +115,15 @@
     "welcome": {
       "tutor": {
         "title": "Welcome to sovlium!",
-        "body": "Let's get to know the platform. We'll show you how to run a lesson, prepare materials, and invite students.",
+        "body": "",
         "action": "Start the introduction",
-        "note": "You can finish the introduction at any time"
+        "note": "You can close the hints at any time"
       },
       "student": {
         "title": "Welcome to sovlium!",
         "body": "Let's get to know the platform. We'll show you how to join your tutor's classroom, where lessons happen, and where to find the schedule.",
         "action": "Start the introduction",
-        "note": "You can finish the introduction at any time"
+        "note": "You can close the hints at any time"
       }
     },
     "progress": "Step {{count}} of {{total}}",
@@ -142,13 +142,8 @@
     "joinHelp": "Ask your tutor for an invitation link and open it in this account. After you confirm, the classroom appears on its own and the step is checked off.",
     "tutor": {
       "navigation": {
-        "title": "Master the navigation",
-        "hint": "We'll show you where to find the sections you need, notifications, and profile settings.",
-        "action": "Start"
-      },
-      "settings": {
-        "title": "Set up your profile",
-        "hint": "We'll show you where the profile settings are and how to get help",
+        "title": "Get to know the interface",
+        "hint": "We'll show where the main sections, settings, and help are, and how to control the sidebar",
         "action": "Start"
       },
       "cabinet": {

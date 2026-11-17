@@ -27,7 +27,6 @@ export const FIRST_STEP_DOCUMENT_MAX_BYTES = 512;
  */
 const TUTOR_FIRST_STEP_STORAGE_KEYS = {
   navigation: 'first-step-tutor-navigation',
-  settings: 'first-step-tutor-settings',
   cabinet: 'first-step-tutor-cabinet',
   call: 'first-step-tutor-call',
   invite: 'first-step-tutor-invite',

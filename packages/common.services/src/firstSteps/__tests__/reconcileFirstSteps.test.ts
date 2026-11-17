@@ -31,7 +31,6 @@ const queryClient = {
 
 const missingTutor = (): Record<string, RemoteStage> => ({
   navigation: 'missing',
-  settings: 'missing',
   cabinet: 'missing',
   call: 'missing',
   invite: 'missing',

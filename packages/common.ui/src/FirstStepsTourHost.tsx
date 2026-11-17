@@ -18,8 +18,10 @@ import {
   readFirstStepsTour,
   requestFirstStepsTour,
   tourCompletionMarksStep,
+  tourKeepsProfileMenu,
   tourStopOpensAction,
   tourStopPath,
+  writeFirstStepsHomeHint,
   writeFirstStepsTourIndex,
   writeFirstStepsMaterialId,
   FIRST_STEPS_CALL_COMPLETED_EVENT,
@@ -69,13 +71,23 @@ const animateTourClick = (target: Element | undefined, press = true): Promise<bo
   const startY = (from ? from.top + from.height / 2 : window.innerHeight - 80) - tipY;
   const endX = rect.left + rect.width / 2 - tipX;
   const endY = rect.top + rect.height / 2 - tipY;
-  cursor.style.transform = `translate3d(${startX}px, ${startY}px, 0)`;
+  const start = `translate3d(${startX}px, ${startY}px, 0)`;
+  const end = `translate3d(${endX}px, ${endY}px, 0)`;
+  // CSS-переход на только что вставленном элементе не стартует: курсор сразу оказывается в конце.
+  cursor.style.transition = 'none';
+  cursor.style.transform = start;
   document.body.appendChild(cursor);
 
   return new Promise((resolve) => {
+    let settled = false;
+    const settle = (value: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(value);
+    };
     const pressCursor = () => {
-      if (!alive()) {
-        resolve(false);
+      if (!alive() || !cursor.isConnected) {
+        settle(false);
         return;
       }
       cursor.classList.add('is-pressing');
@@ -87,34 +99,39 @@ const animateTourClick = (target: Element | undefined, press = true): Promise<bo
       window.setTimeout(() => {
         ripple.remove();
         if (cursor.isConnected) cursor.remove();
-        resolve(alive());
+        settle(alive());
       }, CURSOR_PRESS_MS);
     };
-
-    const onMoveEnd = (event: TransitionEvent) => {
-      if (event.propertyName !== 'transform') return;
-      cursor.removeEventListener('transitionend', onMoveEnd);
-      window.clearTimeout(fallback);
+    const finishMove = () => {
+      if (!alive() || !cursor.isConnected) {
+        settle(false);
+        return;
+      }
       if (!press) {
-        resolve(alive());
+        settle(true);
         return;
       }
       pressCursor();
     };
-    cursor.addEventListener('transitionend', onMoveEnd);
-    const fallback = window.setTimeout(() => {
-      cursor.removeEventListener('transitionend', onMoveEnd);
-      if (!press) {
-        resolve(alive());
-        return;
-      }
-      pressCursor();
-    }, CURSOR_MOVE_MS + 240);
 
-    requestAnimationFrame(() => {
-      if (!alive()) return;
-      cursor.style.transform = `translate3d(${endX}px, ${endY}px, 0)`;
+    const animation = cursor.animate([{ transform: start }, { transform: end }], {
+      duration: CURSOR_MOVE_MS,
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fill: 'forwards',
     });
+    const fallback = window.setTimeout(() => {
+      if (animation.playState !== 'finished') animation.finish();
+    }, CURSOR_MOVE_MS + 240);
+    animation.finished.then(
+      () => {
+        window.clearTimeout(fallback);
+        finishMove();
+      },
+      () => {
+        window.clearTimeout(fallback);
+        settle(false);
+      },
+    );
   });
 };
 
@@ -202,6 +219,13 @@ const performSidebarToggleDemo = async (): Promise<boolean> => {
 
 /** Открывает меню профиля кликом по кнопке внизу панели. */
 const performOpenUserMenu = async (): Promise<boolean> => {
+  if (findVisible('[data-first-step="user-menu"]')) {
+    window.dispatchEvent(
+      new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support: false } }),
+    );
+    return true;
+  }
+
   const button = findVisible('#hints-button');
   if (!(button instanceof HTMLElement)) return false;
   const played = await animateTourClick(button);
@@ -547,6 +571,13 @@ export const FirstStepsTourHost = () => {
 
   useEffect(() => {
     const session = readFirstStepsTour();
+    if (!session?.homeHint) return;
+    if (pathname === '/students' || pathname === '/students/') return;
+    clearFirstStepsTour();
+  }, [pathname]);
+
+  useEffect(() => {
+    const session = readFirstStepsTour();
     if (!session || session.step !== 'material') return;
     const materialBoard = pathname.match(/^\/materials\/([^/]+)\/board\/?$/);
     if (materialBoard) {
@@ -572,8 +603,7 @@ export const FirstStepsTourHost = () => {
 
   useEffect(() => {
     const session = readFirstStepsTour();
-    if (!session || session.callPhase) return;
-    if (session.step === 'settings' && pathname.startsWith('/settings')) return;
+    if (!session || session.callPhase || session.homeHint) return;
 
     const stops = FIRST_STEPS_TOUR_STOPS[session.step];
     let index = session.index;
@@ -636,6 +666,8 @@ export const FirstStepsTourHost = () => {
     for (let cursor = index; cursor < stops.length; cursor += 1) {
       if (stopStatus(stops[cursor], session, pathname) !== 'ready') break;
       group.push(stops[cursor]);
+      // Подсказки интерфейса идут по одной: «Назад» возвращает на предыдущую.
+      if (session.step === 'navigation') break;
     }
 
     const groupEnd = index + group.length;
@@ -675,6 +707,15 @@ export const FirstStepsTourHost = () => {
       });
     };
 
+    const movePrev: DriverHook = (_element, _step, { driver: tour }) => {
+      if (index <= 0) return;
+      const prevIndex = index - 1;
+      reasonRef.current = 'move';
+      writeFirstStepsTourIndex(prevIndex);
+      syncUserMenu(stops[prevIndex]?.anchor);
+      tour.destroy();
+      setNonce((value) => value + 1);
+    };
     const moveNext: DriverHook = (_element, _step, { driver: tour }) => {
       const active = tour.getActiveIndex() ?? 0;
       runStop(group[active], () => {
@@ -715,7 +756,8 @@ export const FirstStepsTourHost = () => {
             new CustomEvent(FIRST_STEPS_TOUR_ACTION_EVENT, { detail: session.step }),
           );
         }
-        clearFirstStepsTour();
+        if (session.step === 'invite') writeFirstStepsHomeHint();
+        else clearFirstStepsTour();
         syncUserMenu(undefined);
         if (session.step === 'cabinet' && session.classroomId) {
           requestFirstStepsTour({
@@ -738,6 +780,8 @@ export const FirstStepsTourHost = () => {
 
     const steps: DriveStep[] = group.map((stop, groupIndex) => {
       const lastInGroup = groupIndex === group.length - 1;
+      const isFinalStop = index + groupIndex === stops.length - 1;
+      const canGoBack = session.step === 'navigation' && index + groupIndex > 0;
       return {
         element: findVisible(stopSelector(stop, session)) ?? undefined,
         popover: {
@@ -745,7 +789,10 @@ export const FirstStepsTourHost = () => {
           description: translateRef.current(`firstStepsTour.${session.step}.${stop.anchor}.body`),
           side: stop.side ?? 'bottom',
           align: 'start' as const,
-          ...(stop.click ? { nextBtnText: translateRef.current('onboarding.next') } : {}),
+          ...(stop.click && !isFinalStop
+            ? { nextBtnText: translateRef.current('onboarding.next') }
+            : {}),
+          ...(canGoBack ? { disableButtons: [], onPrevClick: movePrev } : {}),
           ...(lastInGroup && stop.click === 'start-call'
             ? { doneBtnText: translateRef.current('onboarding.next') }
             : {}),
@@ -758,10 +805,12 @@ export const FirstStepsTourHost = () => {
       };
     });
 
+    const highlightsSidebar = group.length === 1 && group[0]?.anchor === 'sidebar-sections';
     const tour = driver({
       popoverClass: 'my-custom-popover-class',
       showProgress: true,
       popoverOffset: 16,
+      ...(highlightsSidebar ? { stagePadding: 0, stageRadius: 0 } : {}),
       steps,
       nextBtnText: translateRef.current('onboarding.next'),
       prevBtnText: translateRef.current('onboarding.prev'),
@@ -769,7 +818,7 @@ export const FirstStepsTourHost = () => {
         ? translateRef.current('onboarding.next')
         : session.step === 'call'
           ? translateRef.current('onboarding.next')
-          : session.step === 'settings' ||
+          : session.step === 'navigation' ||
               session.step === 'cabinet' ||
               session.step === 'invite' ||
               session.step === 'material'
@@ -778,8 +827,6 @@ export const FirstStepsTourHost = () => {
       progressText: translateRef.current('onboarding.progress'),
       onDestroyed: () => {
         if (reasonRef.current !== 'close') return;
-        const touringSettings = readFirstStepsTour()?.step === 'settings';
-        if (touringSettings && window.location.pathname.startsWith('/settings')) return;
         const active = tour.getActiveIndex() ?? 0;
         trackTour('closed', group[active]?.anchor, index + active + 1);
         clearFirstStepsTour();
@@ -793,57 +840,18 @@ export const FirstStepsTourHost = () => {
       const stop = group[active];
       const target = event.target;
 
-      if (session.step === 'settings' && readFirstStepsTour()?.step === 'settings') {
-        const onProfile =
-          stop?.click === 'open-user-menu' && Boolean(target.closest('#hints-button'));
-        const onSettingsItem = Boolean(target.closest('[data-first-step="settings-item"]'));
-        const onHelp = Boolean(target.closest('[data-first-step="help-item"]'));
-        const onSupport = Boolean(
-          target.closest('[data-first-step="support-submenu"], [data-first-step="support-item"]'),
+      if (stop?.anchor === 'user-menu') {
+        const insideMenu = Boolean(
+          target.closest(
+            '[data-first-step="user-menu"], [data-first-step="settings-item"], [data-first-step="help-item"], [data-first-step="support-submenu"], [data-first-step="support-item"], #hints-button',
+          ),
         );
-        const supportIndex = stops.findIndex((item) => item.anchor === 'support-menu');
-        const settingsIndex = stops.findIndex((item) => item.anchor === 'settings-item');
-        const showMenu = (support: boolean) => {
+        if (insideMenu) {
+          event.preventDefault();
+          event.stopPropagation();
           window.dispatchEvent(
-            new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support } }),
+            new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support: false } }),
           );
-        };
-        const goToStop = (nextIndex: number) => {
-          if (nextIndex < 0) return;
-          writeFirstStepsTourIndex(nextIndex);
-          window.setTimeout(() => setNonce((value) => value + 1), 280);
-        };
-
-        if (onProfile) {
-          event.preventDefault();
-          event.stopPropagation();
-          showMenu(false);
-          goToStop(index + active + 1);
-          return;
-        }
-        if (onHelp && (stop?.anchor === 'user-menu' || stop?.click === 'hover-support')) {
-          event.preventDefault();
-          event.stopPropagation();
-          showMenu(true);
-          goToStop(supportIndex);
-          return;
-        }
-        if (onSettingsItem) {
-          event.preventDefault();
-          event.stopPropagation();
-          if (stop?.click === 'hover-support' || stop?.anchor === 'support-menu') {
-            showMenu(true);
-            goToStop(supportIndex);
-          } else {
-            showMenu(false);
-            goToStop(settingsIndex);
-          }
-          return;
-        }
-        if (stop?.anchor === 'support-menu' && (onSupport || onHelp || onSettingsItem)) {
-          event.preventDefault();
-          event.stopPropagation();
-          showMenu(true);
           return;
         }
       }
@@ -899,7 +907,7 @@ export const FirstStepsTourHost = () => {
       reasonRef.current = 'move';
       tour.destroy();
       if (driverRef.current === tour) driverRef.current = null;
-      if (readFirstStepsTour()?.step !== 'settings') {
+      if (!tourKeepsProfileMenu(readFirstStepsTour())) {
         window.dispatchEvent(new Event(FIRST_STEPS_CLOSE_USER_MENU_EVENT));
       }
     };

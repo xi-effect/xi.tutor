@@ -16,7 +16,14 @@ import type { FirstStepsCallPhase } from './tour';
 export type FirstStepsScreen = 'welcome' | 'checklist' | 'ready';
 
 export type FirstStepsAction =
-  'start' | 'open_step' | 'start_step' | 'review' | 'finish' | 'finish_early' | 'board_hint_home';
+  | 'start'
+  | 'open_step'
+  | 'start_step'
+  | 'review'
+  | 'finish'
+  | 'finish_early'
+  | 'board_hint_home'
+  | 'invite_hint_home';
 
 export type FirstStepsResolveSource = 'skip' | 'auto' | 'tour' | 'copy';
 

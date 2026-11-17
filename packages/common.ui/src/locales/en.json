@@ -20,37 +20,24 @@
     "ready": "Done",
     "progress": "{{current}} of {{total}}"
   },
+  "firstStepsContinue": {
+    "title": "You can continue the tour",
+    "body": "You can continue getting to know the app on the home page.",
+    "home": "Home"
+  },
   "firstStepsTour": {
     "navigation": {
       "sidebar-sections": {
-        "title": "Sections",
-        "body": "From here you can open the schedule, classrooms, materials, and other sections"
-      },
-      "notifications": {
-        "title": "Notifications",
-        "body": "Here you'll find notifications about lessons and other events"
-      },
-      "sidebar-toggle": {
-        "title": "Sidebar",
-        "body": "Collapse the sidebar to free up space. You can open it again with the same button"
-      }
-    },
-    "settings": {
-      "user-profile": {
-        "title": "Profile menu",
-        "body": "Click your name or avatar to open the profile menu"
+        "title": "App sections",
+        "body": "From here you can open the schedule, classrooms, materials, and other sovlium sections"
       },
       "user-menu": {
         "title": "Profile menu",
-        "body": "Here you can check your plan, open settings, or contact support"
+        "body": "Here you can check your plan, change settings, contact support, or find answers"
       },
-      "settings-item": {
-        "title": "Settings",
-        "body": "Here you can change your profile details, set up the camera and microphone, and choose the language and appearance"
-      },
-      "support-menu": {
-        "title": "Help",
-        "body": "Here you can contact support, find answers, or go through the introduction again"
+      "sidebar-toggle": {
+        "title": "Sidebar",
+        "body": "Collapse the panel to free up space. You can open it again with the same button"
       }
     },
     "cabinet": {

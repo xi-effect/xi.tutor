@@ -56,6 +56,7 @@ export { NotFoundPage } from './src/NotFoundPage';
 export { isNotFoundHttpError } from './src/isNotFoundHttpError';
 export { OnboardingPopup } from './src/OnboardingPopup';
 export { FirstStepsTourHost } from './src/FirstStepsTourHost';
+export { FirstStepsContinueHint, StudentsInviteHomeHint } from './src/FirstStepsContinueHint';
 export { isOnboardingSurfaceActive, subscribeOnboardingSurface } from './src/onboardingSurface';
 export { VkAllowMessagesWidget } from './src/VkAllowMessagesWidget';
 export { VkConnectButton } from './src/VkConnectButton';

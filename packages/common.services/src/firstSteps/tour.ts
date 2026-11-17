@@ -96,6 +96,8 @@ export type FirstStepsTourSession = {
   index: number;
   /** Продолжение шага звонка внутри конференции. Пока задана, тур на страницах приложения молчит. */
   callPhase?: FirstStepsCallPhase;
+  /** После приглашения ученика: карточка «продолжить на главной», пока открыта страница учеников. */
+  homeHint?: boolean;
 };
 
 export const FIRST_STEPS_TOUR_EVENT = 'first-steps-tour';
@@ -108,7 +110,7 @@ export const FIRST_STEPS_EXPAND_SIDEBAR_EVENT = 'first-steps-expand-sidebar';
 const STORAGE_KEY = 'sovlium.firstSteps.tour';
 
 export const FIRST_STEPS_TOUR_SELECTORS: Record<FirstStepsTourAnchor, string> = {
-  'sidebar-sections': '#sidebar-sections',
+  'sidebar-sections': '#sidebar',
   'user-profile': '#hints-button',
   home: '#home-menu-item',
   classrooms: '#classrooms-menu-item',
@@ -148,15 +150,9 @@ export const FIRST_STEPS_TOUR_SELECTORS: Record<FirstStepsTourAnchor, string> = 
 
 export const FIRST_STEPS_TOUR_STOPS: Record<FirstStepId, readonly FirstStepsTourStop[]> = {
   navigation: [
-    { anchor: 'sidebar-sections', place: 'current', side: 'right' },
-    { anchor: 'notifications', place: 'current', side: 'right' },
-    { anchor: 'sidebar-toggle', place: 'current', side: 'bottom', click: 'sidebar-toggle' },
-  ],
-  settings: [
-    { anchor: 'user-profile', place: 'current', side: 'right', click: 'open-user-menu' },
+    { anchor: 'sidebar-sections', place: 'current', side: 'right', click: 'open-user-menu' },
     { anchor: 'user-menu', place: 'current', side: 'right' },
-    { anchor: 'settings-item', place: 'current', side: 'right', click: 'hover-support' },
-    { anchor: 'support-menu', place: 'current', side: 'top' },
+    { anchor: 'sidebar-toggle', place: 'current', side: 'bottom', click: 'sidebar-toggle' },
   ],
   cabinet: [
     { anchor: 'classrooms', place: 'current', side: 'right', click: 'open-classrooms' },
@@ -205,7 +201,12 @@ export const tourStopOpensAction = (anchor: FirstStepsTourAnchor): boolean =>
 
 /** Тур отмечает обзорные шаги и приглашение. Звонок и материал засчитываются действием. */
 export const tourCompletionMarksStep = (step: FirstStepId): boolean =>
-  step === 'navigation' || step === 'settings' || step === 'cabinet' || step === 'invite';
+  step === 'navigation' || step === 'cabinet' || step === 'invite';
+
+/** Вторая подсказка знакомства с интерфейсом держит меню профиля открытым. */
+export const tourKeepsProfileMenu = (session: FirstStepsTourSession | null): boolean =>
+  session?.step === 'navigation' &&
+  FIRST_STEPS_TOUR_STOPS.navigation[session.index]?.anchor === 'user-menu';
 
 export const tourStopPath = (
   stop: FirstStepsTourStop,
@@ -252,7 +253,8 @@ const isSession = (value: unknown): value is FirstStepsTourSession => {
     (session.classroomId == null || typeof session.classroomId === 'string') &&
     (session.boardId == null || typeof session.boardId === 'string') &&
     (session.noteId == null || typeof session.noteId === 'string') &&
-    (session.materialId == null || typeof session.materialId === 'string')
+    (session.materialId == null || typeof session.materialId === 'string') &&
+    (session.homeHint == null || typeof session.homeHint === 'boolean')
   );
 };
 
@@ -290,6 +292,14 @@ export const writeFirstStepsMaterialId = (materialId: string, index?: number): v
       ...(index == null ? {} : { index }),
     }),
   );
+  window.dispatchEvent(new Event(FIRST_STEPS_TOUR_EVENT));
+};
+
+/** Оставляет сессию приглашения, чтобы показать карточку возврата на главную. */
+export const writeFirstStepsHomeHint = (): void => {
+  const session = readFirstStepsTour();
+  if (!session || session.step !== 'invite' || typeof sessionStorage === 'undefined') return;
+  sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...session, homeHint: true }));
   window.dispatchEvent(new Event(FIRST_STEPS_TOUR_EVENT));
 };
 

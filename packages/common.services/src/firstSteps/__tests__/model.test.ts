@@ -35,23 +35,16 @@ const memoryStorage = (): FirstStepsStorage => {
 
 describe('первые шаги', () => {
   it('ставит кабинет, звонок и материалы перед приглашением', () => {
-    expect(TUTOR_FIRST_STEPS.slice(0, 4)).toEqual(['navigation', 'settings', 'cabinet', 'call']);
-    expect(firstStepsTotal('tutor')).toBe(6);
+    expect(TUTOR_FIRST_STEPS.slice(0, 3)).toEqual(['navigation', 'cabinet', 'call']);
+    expect(firstStepsTotal('tutor')).toBe(5);
     expect(firstStepsTotal('student')).toBe(3);
     expect(FIRST_STEPS_TOUR_STOPS.navigation.map((stop) => stop.anchor)).toEqual([
       'sidebar-sections',
-      'notifications',
+      'user-menu',
       'sidebar-toggle',
     ]);
+    expect(FIRST_STEPS_TOUR_STOPS.navigation[0]?.click).toBe('open-user-menu');
     expect(FIRST_STEPS_TOUR_STOPS.navigation[2]?.click).toBe('sidebar-toggle');
-    expect(FIRST_STEPS_TOUR_STOPS.settings.map((stop) => stop.anchor)).toEqual([
-      'user-profile',
-      'user-menu',
-      'settings-item',
-      'support-menu',
-    ]);
-    expect(FIRST_STEPS_TOUR_STOPS.settings[0]?.click).toBe('open-user-menu');
-    expect(FIRST_STEPS_TOUR_STOPS.settings[2]?.click).toBe('hover-support');
     expect(FIRST_STEPS_TOUR_STOPS.cabinet.map((stop) => stop.anchor)).toEqual([
       'classrooms',
       'demo-classroom-card',

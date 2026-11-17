@@ -268,7 +268,8 @@ export type ProductAnalyticsEventMap = {
       | 'review'
       | 'finish'
       | 'finish_early'
-      | 'board_hint_home';
+      | 'board_hint_home'
+      | 'invite_hint_home';
     user_role: 'tutor' | 'student' | 'unknown';
     step?: string;
   };

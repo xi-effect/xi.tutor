@@ -30,6 +30,7 @@ import {
   FIRST_STEPS_CLOSE_USER_MENU_EVENT,
   FIRST_STEPS_OPEN_USER_MENU_EVENT,
   readFirstStepsTour,
+  tourKeepsProfileMenu,
   useCurrentUser,
 } from 'common.services';
 import {
@@ -128,7 +129,7 @@ export const DesktopUserMenu = ({
       id="hints-button"
       data-umami-event="header-user-menu-open"
       onPointerDown={() => {
-        if (readFirstStepsTour()?.step === 'settings') return;
+        if (tourKeepsProfileMenu(readFirstStepsTour())) return;
         tourLockRef.current = false;
         supportLockRef.current = false;
         if (menuOpen && !document.querySelector('[data-first-step="user-menu"]')) {
@@ -160,7 +161,7 @@ export const DesktopUserMenu = ({
       modal={false}
       open={menuOpen}
       onOpenChange={(open) => {
-        const tourKeepsMenuOpen = tourLockRef.current && readFirstStepsTour()?.step === 'settings';
+        const tourKeepsMenuOpen = tourLockRef.current && tourKeepsProfileMenu(readFirstStepsTour());
         if (!open && tourKeepsMenuOpen) return;
         if (!tourKeepsMenuOpen) {
           tourLockRef.current = false;
@@ -234,7 +235,7 @@ export const DesktopUserMenu = ({
           {onOpenProfile ? (
             <DropdownMenuItem
               onSelect={(event) => {
-                if (readFirstStepsTour()?.step === 'settings') {
+                if (tourKeepsProfileMenu(readFirstStepsTour())) {
                   event.preventDefault();
                   return;
                 }

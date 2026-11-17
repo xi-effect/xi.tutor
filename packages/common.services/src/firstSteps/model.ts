@@ -1,11 +1,4 @@
-export const TUTOR_FIRST_STEPS = [
-  'navigation',
-  'settings',
-  'cabinet',
-  'call',
-  'invite',
-  'material',
-] as const;
+export const TUTOR_FIRST_STEPS = ['navigation', 'cabinet', 'call', 'invite', 'material'] as const;
 export const STUDENT_FIRST_STEPS = ['join', 'classroom', 'schedule'] as const;
 
 export const FIRST_STEPS_COLLAPSED = '__collapsed__';

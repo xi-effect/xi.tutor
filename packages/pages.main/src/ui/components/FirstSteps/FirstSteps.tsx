@@ -357,9 +357,11 @@ export const FirstSteps = ({
                 <h1 id="first-steps-title" className="text-text-primary text-3xl font-semibold">
                   {t(`firstSteps.welcome.${role}.title`)}
                 </h1>
-                <p className="text-text-secondary text-base leading-6 break-words">
-                  {t(`firstSteps.welcome.${role}.body`)}
-                </p>
+                {t(`firstSteps.welcome.${role}.body`) ? (
+                  <p className="text-text-secondary text-base leading-6 break-words">
+                    {t(`firstSteps.welcome.${role}.body`)}
+                  </p>
+                ) : null}
               </div>
               <GuideButton
                 type="button"
@@ -524,7 +526,6 @@ export const FirstSteps = ({
                                 >
                                   {t(
                                     step.id === 'navigation' ||
-                                      step.id === 'settings' ||
                                       step.id === 'cabinet' ||
                                       step.id === 'material'
                                       ? 'firstSteps.skipStep'
@@ -533,7 +534,6 @@ export const FirstSteps = ({
                                 </GuideButton>
                               )}
                               {(step.id === 'navigation' ||
-                                step.id === 'settings' ||
                                 step.id === 'cabinet' ||
                                 step.id === 'call') && (
                                 <GuideButton
