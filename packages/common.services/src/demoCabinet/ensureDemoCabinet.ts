@@ -1,9 +1,7 @@
 import { ClassroomMaterialsQueryKey, ClassroomsQueryKey } from 'common.api';
 import { queryClient } from 'common.config';
-import { isAxiosError } from 'axios';
 import { invalidateClassroomCounts } from '../classrooms/useClassroomCounts';
-import { getCurrentUserFlag } from '../userFlags/getCurrentUserFlag';
-import { updateCurrentUserFlag } from '../userFlags/updateCurrentUserFlag';
+import { loadDemoCabinetInitialized, persistDemoCabinetInitialized } from './initialized';
 import {
   createDemoBoard,
   createDemoGroupClassroom,
@@ -17,7 +15,7 @@ import {
   readDemoCabinetProgress,
   writeDemoCabinetProgress,
 } from './progress';
-import { DEMO_CABINET_FLAG_KEY, DEMO_CABINET_TEMPLATE_VERSION } from './template';
+import { DEMO_CABINET_TEMPLATE_VERSION } from './template';
 import type {
   DemoCabinetPorts,
   DemoCabinetProgress,
@@ -29,19 +27,6 @@ const flights = new Map<number, Promise<DemoCabinetResult>>();
 
 export const resetDemoCabinetInflightForTests = (): void => {
   flights.clear();
-};
-
-const readInitializedFlag = async (): Promise<boolean> => {
-  try {
-    return await getCurrentUserFlag(DEMO_CABINET_FLAG_KEY);
-  } catch (error) {
-    if (isAxiosError(error) && error.response?.status === 404) return false;
-    throw error;
-  }
-};
-
-const markInitializedFlag = async (): Promise<void> => {
-  await updateCurrentUserFlag(DEMO_CABINET_FLAG_KEY, true);
 };
 
 const refreshDemoCabinetQueries = (classroomId: string): void => {
@@ -69,10 +54,10 @@ type ResolvedPorts = Required<Omit<DemoCabinetPorts, 'storage' | 'createNote' | 
   storage: DemoCabinetStorage;
 };
 
-const resolvePorts = (ports: DemoCabinetPorts): ResolvedPorts => ({
+const resolvePorts = (userId: number, ports: DemoCabinetPorts): ResolvedPorts => ({
   storage: ports.storage ?? browserDemoCabinetStorage(),
-  readInitialized: ports.readInitialized ?? readInitializedFlag,
-  markInitialized: ports.markInitialized ?? markInitializedFlag,
+  readInitialized: ports.readInitialized ?? (() => loadDemoCabinetInitialized(userId)),
+  markInitialized: ports.markInitialized ?? (() => persistDemoCabinetInitialized(userId)),
   classroomExists: ports.classroomExists ?? demoClassroomExists,
   materialExists: ports.materialExists ?? demoMaterialExists,
   createClassroom: ports.createClassroom ?? createDemoGroupClassroom,
@@ -216,7 +201,7 @@ const executeDemoCabinet = async (
 /**
  * Создаёт демонстрационный кабинет один раз на пользователя.
  * Повторный и параллельный вызов не создаёт дубликаты.
- * Серверный флаг закрывает повтор после успеха и после удаления кабинета.
+ * Поле `demoCabinetInitialized` в документе первых шагов закрывает повтор после успеха и после удаления.
  * Локальный прогресс хранит идентификаторы и позволяет досоздать недостающий шаг.
  */
 export const ensureDemoCabinet = (
@@ -226,7 +211,9 @@ export const ensureDemoCabinet = (
   const current = flights.get(userId);
   if (current) return current;
 
-  const job = lockDemoCabinet(userId, () => executeDemoCabinet(userId, resolvePorts(ports)));
+  const job = lockDemoCabinet(userId, () =>
+    executeDemoCabinet(userId, resolvePorts(userId, ports)),
+  );
   flights.set(userId, job);
   void job
     .finally(() => {

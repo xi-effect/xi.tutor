@@ -1,26 +1,26 @@
 import { describe, expect, it } from 'vitest';
-import { TUTOR_FIRST_STEPS, STUDENT_FIRST_STEPS } from '../model';
 import {
   FIRST_STEPS_STORAGE_ITEM_KEYS,
   FIRST_STEP_DOCUMENT_MAX_BYTES,
-  createFirstStepStageDocument,
-  createFirstStepsIntroDocument,
-  everyFirstStepHasStorageKey,
+  createFirstStepsProgressDocument,
   isFirstStepStorageKey,
   planFirstStepSync,
   planIntroSync,
-  readFirstStepStageDocument,
-  readFirstStepsIntroDocument,
+  readFirstStepsProgressDocument,
 } from '../stageDocument';
 
-describe('документ этапа первых шагов', () => {
-  it('даёт каждому этапу свой kebab-case ключ', () => {
-    expect(everyFirstStepHasStorageKey('tutor')).toBe(true);
-    expect(everyFirstStepHasStorageKey('student')).toBe(true);
+const pendingTutor = {
+  navigation: 'pending',
+  cabinet: 'pending',
+  call: 'pending',
+  invite: 'pending',
+  material: 'pending',
+} as const;
+
+describe('документ первых шагов', () => {
+  it('хранит прогресс роли в одном kebab-case ключе', () => {
+    expect(FIRST_STEPS_STORAGE_ITEM_KEYS).toEqual(['first-steps-tutor', 'first-steps-student']);
     expect(new Set(FIRST_STEPS_STORAGE_ITEM_KEYS).size).toBe(FIRST_STEPS_STORAGE_ITEM_KEYS.length);
-    expect(FIRST_STEPS_STORAGE_ITEM_KEYS).toHaveLength(
-      TUTOR_FIRST_STEPS.length + STUDENT_FIRST_STEPS.length + 2,
-    );
 
     for (const key of FIRST_STEPS_STORAGE_ITEM_KEYS) {
       expect(isFirstStepStorageKey(key)).toBe(true);
@@ -28,14 +28,29 @@ describe('документ этапа первых шагов', () => {
     }
   });
 
-  it('пишет version v1 и читает только статус done или skipped', () => {
-    const document = createFirstStepStageDocument('done');
+  it('пишет version v1, приветствие и только завершённые пункты', () => {
+    const document = createFirstStepsProgressDocument(
+      'tutor',
+      { ...pendingTutor, navigation: 'done', cabinet: 'skipped' },
+      true,
+    );
 
-    expect(document).toEqual({ version: 'v1', status: 'done' });
-    expect(readFirstStepStageDocument(document)).toEqual({ kind: 'ready', status: 'done' });
-    expect(readFirstStepStageDocument(createFirstStepStageDocument('skipped'))).toEqual({
+    expect(document).toEqual({
+      version: 'v1',
+      introSeen: true,
+      steps: { navigation: 'done', cabinet: 'skipped' },
+    });
+    expect(readFirstStepsProgressDocument('tutor', document)).toEqual({
       kind: 'ready',
-      status: 'skipped',
+      intro: 'seen',
+      demoCabinetInitialized: false,
+      stages: {
+        navigation: 'done',
+        cabinet: 'skipped',
+        call: 'missing',
+        invite: 'missing',
+        material: 'missing',
+      },
     });
     expect(new TextEncoder().encode(JSON.stringify(document)).length).toBeLessThan(
       FIRST_STEP_DOCUMENT_MAX_BYTES,
@@ -43,19 +58,53 @@ describe('документ этапа первых шагов', () => {
   });
 
   it('пустой ответ считает отсутствием, чужую версию не разбирает', () => {
-    expect(readFirstStepStageDocument(null)).toEqual({ kind: 'empty' });
-    expect(readFirstStepStageDocument({ version: 'v2', status: 'done' })).toEqual({
-      kind: 'unknown',
+    expect(readFirstStepsProgressDocument('tutor', null)).toEqual({ kind: 'empty' });
+    expect(
+      readFirstStepsProgressDocument('tutor', {
+        version: 'v2',
+        steps: { navigation: 'done' },
+      }),
+    ).toEqual({ kind: 'unknown' });
+    expect(
+      readFirstStepsProgressDocument('tutor', {
+        version: 'v'.repeat(17),
+        introSeen: true,
+      }),
+    ).toEqual({ kind: 'unknown' });
+
+    expect(
+      readFirstStepsProgressDocument('tutor', {
+        version: 'v1',
+        steps: { navigation: 'later' },
+      }).kind,
+    ).toBe('ready');
+    const partial = readFirstStepsProgressDocument('tutor', {
+      version: 'v1',
+      steps: { navigation: 'later' },
     });
-    expect(readFirstStepStageDocument({ version: 'v1', status: 'later' })).toEqual({
-      kind: 'unknown',
+    expect(partial.kind === 'ready' && partial.stages.navigation).toBe('unknown');
+  });
+
+  it('хранит признак демонстрационного кабинета только у репетитора', () => {
+    const document = createFirstStepsProgressDocument('tutor', pendingTutor, false, true);
+
+    expect(document).toEqual({ version: 'v1', demoCabinetInitialized: true });
+    expect(readFirstStepsProgressDocument('tutor', document).kind === 'ready').toBe(true);
+    const read = readFirstStepsProgressDocument('tutor', document);
+    expect(read.kind === 'ready' && read.demoCabinetInitialized).toBe(true);
+    expect(
+      createFirstStepsProgressDocument(
+        'student',
+        { join: 'pending', classroom: 'pending', schedule: 'pending' },
+        false,
+        true,
+      ),
+    ).toEqual({
+      version: 'v1',
     });
-    expect(readFirstStepStageDocument({ version: 'v'.repeat(17), status: 'done' })).toEqual({
-      kind: 'unknown',
-    });
-    expect(readFirstStepsIntroDocument(createFirstStepsIntroDocument())).toBe('seen');
-    expect(readFirstStepsIntroDocument(null)).toBe('missing');
-    expect(readFirstStepsIntroDocument({ version: 'v2', seen: true })).toBe('unknown');
+    expect(
+      readFirstStepsProgressDocument('tutor', { version: 'v1', demoCabinetInitialized: 'yes' }),
+    ).toMatchObject({ kind: 'ready', demoCabinetInitialized: 'unknown' });
   });
 
   it('серверный документ важнее локального кэша, пока правка не в очереди', () => {

@@ -1,81 +1,92 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { userStorageItemsQueryKeys } from 'common.api';
 import { putCurrentUserStorageItem } from '../userStorageItems/putCurrentUserStorageItem';
-import type { FirstStepId, FirstStepsRole } from './model';
+import { stepsForRole, type FirstStepsRole } from './model';
 import {
-  createFirstStepStageDocument,
-  createFirstStepsIntroDocument,
-  FIRST_STEPS_INTRO_STORAGE_KEYS,
-  firstStepStageStorageKey,
+  createFirstStepsProgressDocument,
+  firstStepsProgressStorageKey,
+  readFirstStepsProgressDocument,
 } from './stageDocument';
-import { acknowledgeFirstStep, readFirstStepMarks, type FirstStepsStorage } from './storage';
+import {
+  acknowledgeFirstStep,
+  markDemoCabinetInitialized,
+  readDemoCabinetInitialized,
+  readFirstStepMarks,
+  readIntroSeen,
+  type FirstStepsStorage,
+} from './storage';
 
-const inflight = new Map<string, Promise<void>>();
-const latestToken = new Map<string, number>();
-let tokenSeq = 0;
+const chains = new Map<string, Promise<void>>();
 
-const rememberFlight = (flightKey: string, task: Promise<void>): Promise<void> => {
-  inflight.set(flightKey, task);
-  return task.finally(() => {
-    if (inflight.get(flightKey) === task) inflight.delete(flightKey);
-  });
-};
-
-/** Пишет отметку этапа. Повтор того же статуса, пока запрос в пути, не шлёт второй PUT. */
-export const saveFirstStepStage = (
+/**
+ * Пишет весь прогресс роли одним документом.
+ * Пока предыдущая запись в пути, следующая ждёт и отправляет уже актуальное состояние.
+ */
+export const saveFirstStepsProgress = (
   queryClient: QueryClient,
   storage: FirstStepsStorage,
   userId: number,
   role: FirstStepsRole,
-  step: FirstStepId,
-  status: 'done' | 'skipped',
 ): Promise<void> => {
-  const key = firstStepStageStorageKey(role, step);
-  const flightKey = `${userId}:${key}:${status}`;
-  const existing = inflight.get(flightKey);
-  if (existing) return existing;
+  const key = firstStepsProgressStorageKey(role);
+  const chainKey = `${userId}:${key}`;
+  const previous = chains.get(chainKey) ?? Promise.resolve();
 
-  const stageKey = `${userId}:${key}`;
-  const token = ++tokenSeq;
-  latestToken.set(stageKey, token);
-  const document = createFirstStepStageDocument(status);
-
-  const task = (async () => {
-    try {
-      await putCurrentUserStorageItem(key, document);
-      if (latestToken.get(stageKey) !== token) return;
-
-      queryClient.setQueryData(userStorageItemsQueryKeys.current(userId, key), document);
-      if (readFirstStepMarks(storage, userId, role)[step] === status) {
-        acknowledgeFirstStep(storage, userId, role, step);
+  const task = previous
+    .catch(() => undefined)
+    .then(async () => {
+      const marks = readFirstStepMarks(storage, userId, role);
+      const cached = queryClient.getQueryData(userStorageItemsQueryKeys.current(userId, key));
+      const cachedRead = readFirstStepsProgressDocument(role, cached);
+      if (cachedRead.kind === 'unknown') return;
+      if (
+        cachedRead.kind === 'ready' &&
+        (cachedRead.intro === 'unknown' ||
+          cachedRead.demoCabinetInitialized === 'unknown' ||
+          stepsForRole(role).some((step) => cachedRead.stages[step] === 'unknown'))
+      ) {
+        return;
       }
-    } catch (error) {
-      console.error('Не удалось сохранить этап первых шагов', key, error);
-    }
-  })();
 
-  return rememberFlight(flightKey, task);
-};
+      const ready = cachedRead.kind === 'ready' ? cachedRead : null;
+      for (const step of stepsForRole(role)) {
+        const remote = ready?.stages[step];
+        if (marks[step] === 'pending' && (remote === 'done' || remote === 'skipped')) {
+          marks[step] = remote;
+        }
+      }
 
-export const saveFirstStepsIntro = (
-  queryClient: QueryClient,
-  userId: number,
-  role: FirstStepsRole,
-): Promise<void> => {
-  const key = FIRST_STEPS_INTRO_STORAGE_KEYS[role];
-  const flightKey = `${userId}:${key}`;
-  const existing = inflight.get(flightKey);
-  if (existing) return existing;
+      const introSeen = readIntroSeen(storage, userId, role) || ready?.intro === 'seen';
+      const demoCabinetInitialized =
+        readDemoCabinetInitialized(storage, userId, role) || ready?.demoCabinetInitialized === true;
+      if (demoCabinetInitialized) markDemoCabinetInitialized(storage, userId, role);
 
-  const document = createFirstStepsIntroDocument();
-  const task = (async () => {
-    try {
-      await putCurrentUserStorageItem(key, document);
-      queryClient.setQueryData(userStorageItemsQueryKeys.current(userId, key), document);
-    } catch (error) {
-      console.error('Не удалось сохранить приветствие первых шагов', key, error);
-    }
-  })();
+      const document = createFirstStepsProgressDocument(
+        role,
+        marks,
+        introSeen,
+        demoCabinetInitialized,
+      );
 
-  return rememberFlight(flightKey, task);
+      try {
+        await putCurrentUserStorageItem(key, document);
+        queryClient.setQueryData(userStorageItemsQueryKeys.current(userId, key), document);
+
+        const current = readFirstStepMarks(storage, userId, role);
+        for (const step of stepsForRole(role)) {
+          const status = document.steps?.[step];
+          if (status && current[step] === status) {
+            acknowledgeFirstStep(storage, userId, role, step);
+          }
+        }
+      } catch (error) {
+        console.error('Не удалось сохранить первые шаги', key, error);
+      }
+    });
+
+  const settled = task.finally(() => {
+    if (chains.get(chainKey) === settled) chains.delete(chainKey);
+  });
+  chains.set(chainKey, settled);
+  return settled;
 };

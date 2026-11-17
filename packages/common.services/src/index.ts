@@ -16,7 +16,6 @@ export * from './firstSteps';
 export { isPublicAssetSrc } from './publicAsset';
 export {
   DEMO_CABINET_BOARD_COPY,
-  DEMO_CABINET_FLAG_KEY,
   DEMO_CABINET_NAMES,
   DEMO_CABINET_NOTE_COPY,
   DEMO_CABINET_TEMPLATE_VERSION,

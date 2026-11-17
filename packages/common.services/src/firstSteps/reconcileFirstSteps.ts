@@ -2,7 +2,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { getCurrentUserFlag } from '../userFlags/getCurrentUserFlag';
 import { firstStepFlagKey, stepsForRole, type FirstStepId, type FirstStepsRole } from './model';
-import { saveFirstStepStage, saveFirstStepsIntro } from './syncStage';
+import { saveFirstStepsProgress } from './syncStage';
 import {
   planFirstStepSync,
   planIntroSync,
@@ -12,6 +12,7 @@ import {
 import {
   acknowledgeFirstStep,
   dirtyFirstSteps,
+  markDemoCabinetInitialized,
   markIntroSeen,
   markLegacyFlagsMerged,
   queueFirstStepUpload,
@@ -54,6 +55,7 @@ export const reconcileFirstSteps = async (input: {
   role: FirstStepsRole;
   remoteStages: Partial<Record<FirstStepId, RemoteStage>>;
   remoteIntro: IntroRemote;
+  remoteDemoCabinet?: boolean | 'unknown';
   ignoreInviteDone: boolean;
   queryClient: QueryClient;
 }): Promise<void> => {
@@ -87,7 +89,15 @@ export const reconcileFirstSteps = async (input: {
 
   const marks = readFirstStepMarks(input.storage, input.userId, input.role);
   const dirty = new Set(dirtyFirstSteps(input.storage, input.userId, input.role));
-  const uploads: Promise<void>[] = [];
+  let upload = false;
+  const remoteDemoCabinet = input.remoteDemoCabinet ?? false;
+  if (remoteDemoCabinet === true) {
+    markDemoCabinetInitialized(input.storage, input.userId, input.role);
+  }
+  const remoteBlocksUpload =
+    input.remoteIntro === 'unknown' ||
+    remoteDemoCabinet === 'unknown' ||
+    steps.some((step) => remoteOf(step) === 'unknown');
 
   for (const step of steps) {
     const local = marks[step];
@@ -112,16 +122,7 @@ export const reconcileFirstSteps = async (input: {
 
     if (plan.upload && (plan.mark === 'done' || plan.mark === 'skipped')) {
       queueFirstStepUpload(input.storage, input.userId, input.role, step);
-      uploads.push(
-        saveFirstStepStage(
-          input.queryClient,
-          input.storage,
-          input.userId,
-          input.role,
-          step,
-          plan.mark,
-        ),
-      );
+      upload = true;
     }
   }
 
@@ -131,9 +132,9 @@ export const reconcileFirstSteps = async (input: {
   });
 
   if (introPlan.seen) markIntroSeen(input.storage, input.userId, input.role);
-  if (introPlan.upload) {
-    uploads.push(saveFirstStepsIntro(input.queryClient, input.userId, input.role));
-  }
+  if (introPlan.upload) upload = true;
 
-  await Promise.all(uploads);
+  if (upload && !remoteBlocksUpload) {
+    await saveFirstStepsProgress(input.queryClient, input.storage, input.userId, input.role);
+  }
 };

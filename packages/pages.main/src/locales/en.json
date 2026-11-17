@@ -115,7 +115,7 @@
     "welcome": {
       "tutor": {
         "title": "Welcome to sovlium!",
-        "body": "",
+        "body": "We'll show you how to run a lesson, prepare materials, and invite students.",
         "action": "Start the introduction",
         "note": "You can close the hints at any time"
       },

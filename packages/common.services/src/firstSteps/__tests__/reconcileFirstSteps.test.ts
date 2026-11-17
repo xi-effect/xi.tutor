@@ -27,6 +27,7 @@ const memoryStorage = (): FirstStepsStorage => {
 
 const queryClient = {
   setQueryData: vi.fn(),
+  getQueryData: vi.fn(() => undefined),
 } as unknown as QueryClient;
 
 const missingTutor = (): Record<string, RemoteStage> => ({
@@ -61,9 +62,9 @@ describe('перенос первых шагов в storage item', () => {
       queryClient,
     });
 
-    expect(putCurrentUserStorageItem).toHaveBeenCalledWith('first-step-tutor-navigation', {
+    expect(putCurrentUserStorageItem).toHaveBeenCalledWith('first-steps-tutor', {
       version: 'v1',
-      status: 'done',
+      steps: { navigation: 'done' },
     });
     expect(readFirstStepMarks(storage, 4, 'tutor').navigation).toBe('done');
   });
@@ -104,14 +105,11 @@ describe('перенос первых шагов в storage item', () => {
 
     expect(readFirstStepMarks(storage, 4, 'tutor').navigation).toBe('done');
     expect(readFirstStepMarks(storage, 4, 'tutor').invite).toBe('pending');
-    expect(putCurrentUserStorageItem).toHaveBeenCalledWith('first-step-tutor-navigation', {
+    expect(putCurrentUserStorageItem).toHaveBeenCalledTimes(1);
+    expect(putCurrentUserStorageItem).toHaveBeenCalledWith('first-steps-tutor', {
       version: 'v1',
-      status: 'done',
+      steps: { navigation: 'done' },
     });
-    expect(putCurrentUserStorageItem).not.toHaveBeenCalledWith(
-      'first-step-tutor-invite',
-      expect.anything(),
-    );
   });
 
   it('не затирает документ неизвестной версии', async () => {
@@ -133,5 +131,30 @@ describe('перенос первых шагов в storage item', () => {
 
     expect(readFirstStepMarks(storage, 4, 'tutor').call).toBe('done');
     expect(putCurrentUserStorageItem).not.toHaveBeenCalled();
+  });
+
+  it('сохраняет признак демонстрационного кабинета в том же документе', async () => {
+    const storage = memoryStorage();
+    storage.setItem(
+      'sovlium.firstSteps.v1.4.tutor',
+      JSON.stringify({ marks: { navigation: 'done' }, dirty: [], introSeen: false }),
+    );
+
+    await reconcileFirstSteps({
+      storage,
+      userId: 4,
+      role: 'tutor',
+      remoteStages: missingTutor(),
+      remoteIntro: 'missing',
+      remoteDemoCabinet: true,
+      ignoreInviteDone: false,
+      queryClient,
+    });
+
+    expect(putCurrentUserStorageItem).toHaveBeenCalledWith('first-steps-tutor', {
+      version: 'v1',
+      demoCabinetInitialized: true,
+      steps: { navigation: 'done' },
+    });
   });
 });

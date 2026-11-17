@@ -18,6 +18,8 @@ type StoredFirstSteps = {
   introSeen: boolean;
   /** Старые булевы флаги `fs.*` уже перенесены или переносить нечего. */
   legacyFlagsMerged: boolean;
+  /** Демонстрационный кабинет уже создан или удалён. Пишется в документ `first-steps-tutor`. */
+  demoCabinetInitialized: boolean;
 };
 
 const emptyStored = (): StoredFirstSteps => ({
@@ -25,6 +27,7 @@ const emptyStored = (): StoredFirstSteps => ({
   dirty: [],
   introSeen: false,
   legacyFlagsMerged: false,
+  demoCabinetInitialized: false,
 });
 
 /** Чек-лист перечитывает отметки, не дожидаясь перезагрузки страницы. */
@@ -68,6 +71,7 @@ const readStored = (
       dirty,
       introSeen: parsed?.introSeen === true,
       legacyFlagsMerged: parsed?.legacyFlagsMerged === true,
+      demoCabinetInitialized: parsed?.demoCabinetInitialized === true,
     };
   } catch {
     return emptyStored();
@@ -132,6 +136,23 @@ export const markIntroSeen = (
   const stored = readStored(storage, userId, role);
   if (stored.introSeen) return;
   writeStored(storage, userId, role, { ...stored, introSeen: true });
+};
+
+export const readDemoCabinetInitialized = (
+  storage: FirstStepsStorage,
+  userId: number,
+  role: FirstStepsRole,
+): boolean => role === 'tutor' && readStored(storage, userId, role).demoCabinetInitialized;
+
+export const markDemoCabinetInitialized = (
+  storage: FirstStepsStorage,
+  userId: number,
+  role: FirstStepsRole,
+): void => {
+  if (role !== 'tutor') return;
+  const stored = readStored(storage, userId, role);
+  if (stored.demoCabinetInitialized) return;
+  writeStored(storage, userId, role, { ...stored, demoCabinetInitialized: true });
 };
 
 export const readLegacyFlagsMerged = (
@@ -252,8 +273,8 @@ export const applyRemoteFirstStep = (
 };
 
 /**
- * Локальный кэш и очередь. Между устройствами источник правды — storage item
- * на сервере, по одному ключу на этап.
+ * Локальный кэш и очередь. Между устройствами источник правды — один storage item
+ * на роль: приветствие, статусы пунктов и признак демонстрационного кабинета.
  */
 export const browserFirstStepsStorage = (): FirstStepsStorage => {
   if (typeof window === 'undefined') {

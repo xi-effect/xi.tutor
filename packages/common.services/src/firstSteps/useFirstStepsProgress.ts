@@ -1,19 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useQuery, useQueryClient, useQueries } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { userStorageItemsQueryKeys } from 'common.api';
 import { getCurrentUserStorageItem } from '../userStorageItems/getCurrentUserStorageItem';
 import { stepsForRole, type FirstStepId, type FirstStepMark, type FirstStepsRole } from './model';
 import { trackFirstStepsStepResolved } from './analytics';
 import { resolveInviteDoneImport } from './inviteGate';
 import { reconcileFirstSteps } from './reconcileFirstSteps';
-import {
-  FIRST_STEPS_INTRO_STORAGE_KEYS,
-  firstStepStageStorageKey,
-  introRemoteFromQuery,
-  remoteStageFromQuery,
-  type RemoteStage,
-} from './stageDocument';
-import { saveFirstStepStage, saveFirstStepsIntro } from './syncStage';
+import { firstStepsProgressStorageKey, progressRemoteFromQuery } from './stageDocument';
+import { saveFirstStepsProgress } from './syncStage';
 import {
   browserFirstStepsStorage,
   commitFirstStep,
@@ -37,43 +31,26 @@ export const useFirstStepsProgress = (
   const analytics = options?.analytics !== false;
   const storage = useMemo(() => browserFirstStepsStorage(), []);
   const queryClient = useQueryClient();
-  const stepIds = stepsForRole(role);
   const [marks, setMarks] = useState<Record<FirstStepId, FirstStepMark>>(() =>
     readFirstStepMarks(storage, userId, role),
   );
   const [introSeen, setIntroSeen] = useState(() => readIntroSeen(storage, userId, role));
 
-  const stageQueries = useQueries({
-    queries: stepIds.map((step) => {
-      const key = firstStepStageStorageKey(role, step);
-      return {
-        queryKey: userStorageItemsQueryKeys.current(userId, key),
-        queryFn: () => getCurrentUserStorageItem(key),
-      };
-    }),
+  const progressKey = firstStepsProgressStorageKey(role);
+  const progressQuery = useQuery({
+    queryKey: userStorageItemsQueryKeys.current(userId, progressKey),
+    queryFn: () => getCurrentUserStorageItem(progressKey),
   });
 
-  const introKey = FIRST_STEPS_INTRO_STORAGE_KEYS[role];
-  const introQuery = useQuery({
-    queryKey: userStorageItemsQueryKeys.current(userId, introKey),
-    queryFn: () => getCurrentUserStorageItem(introKey),
-  });
+  const settled = progressQuery.isSuccess || progressQuery.isError;
+  const remoteSignature = progressQuery.isSuccess
+    ? JSON.stringify(progressQuery.data ?? null)
+    : progressQuery.isError
+      ? 'e'
+      : 'x';
 
-  const settled =
-    introQuery.isSuccess || introQuery.isError
-      ? stageQueries.every((query) => query.isSuccess || query.isError)
-      : false;
-  const remoteSignature = [
-    introQuery.isSuccess ? JSON.stringify(introQuery.data ?? null) : introQuery.isError ? 'e' : 'x',
-    ...stageQueries.map((query) =>
-      query.isSuccess ? JSON.stringify(query.data ?? null) : query.isError ? 'e' : 'x',
-    ),
-  ].join('|');
-
-  const stageQueriesRef = useRef(stageQueries);
-  const introQueryRef = useRef(introQuery);
-  stageQueriesRef.current = stageQueries;
-  introQueryRef.current = introQuery;
+  const progressQueryRef = useRef(progressQuery);
+  progressQueryRef.current = progressQuery;
 
   const publish = useCallback(() => {
     setMarks((current) => {
@@ -111,26 +88,19 @@ export const useFirstStepsProgress = (
         inviteImportRef.current = gate;
       }
 
-      const remoteStages: Partial<Record<FirstStepId, RemoteStage>> = {};
-      stepIds.forEach((step, index) => {
-        const query = stageQueriesRef.current[index];
-        if (!query) return;
-        remoteStages[step] = remoteStageFromQuery(
-          query.isError ? 'error' : query.isSuccess ? 'success' : 'pending',
-          query.data,
-        );
-      });
-
-      const intro = introQueryRef.current;
+      const progress = progressQueryRef.current;
+      const remote = progressRemoteFromQuery(
+        role,
+        progress.isError ? 'error' : progress.isSuccess ? 'success' : 'pending',
+        progress.data,
+      );
       await reconcileFirstSteps({
         storage,
         userId,
         role,
-        remoteStages,
-        remoteIntro: introRemoteFromQuery(
-          intro.isError ? 'error' : intro.isSuccess ? 'success' : 'pending',
-          intro.data,
-        ),
+        remoteStages: remote.stages,
+        remoteIntro: remote.intro,
+        remoteDemoCabinet: remote.demoCabinet,
         ignoreInviteDone: !gate.allow,
         queryClient,
       });
@@ -144,7 +114,7 @@ export const useFirstStepsProgress = (
     })().catch((error: unknown) => {
       console.error('Не удалось синхронизировать первые шаги', error);
     });
-  }, [introSeen, publish, queryClient, role, settled, remoteSignature, stepIds, storage, userId]);
+  }, [introSeen, publish, queryClient, role, settled, remoteSignature, storage, userId]);
 
   const remember = useCallback(
     (step: FirstStepId, mark: Exclude<FirstStepMark, 'pending'>, source: 'skip' | 'auto') => {
@@ -152,7 +122,7 @@ export const useFirstStepsProgress = (
       if (!changed) return;
       if (analytics) trackFirstStepsStepResolved(role, step, mark, source);
       publish();
-      void saveFirstStepStage(queryClient, storage, userId, role, step, mark);
+      void saveFirstStepsProgress(queryClient, storage, userId, role);
     },
     [analytics, publish, queryClient, role, storage, userId],
   );
@@ -165,7 +135,7 @@ export const useFirstStepsProgress = (
   const startGuide = useCallback(() => {
     markIntroSeen(storage, userId, role);
     setIntroSeen(true);
-    void saveFirstStepsIntro(queryClient, userId, role);
+    void saveFirstStepsProgress(queryClient, storage, userId, role);
   }, [queryClient, role, storage, userId]);
 
   return {

@@ -4,7 +4,7 @@ import { useCurrentUser } from '../user';
 import { isStepForRole, type FirstStepId } from './model';
 import { shouldShowFirstSteps } from './preview';
 import { trackFirstStepsStepResolved, type FirstStepsResolveSource } from './analytics';
-import { saveFirstStepStage } from './syncStage';
+import { saveFirstStepsProgress } from './syncStage';
 import { browserFirstStepsStorage, commitFirstStep, dirtyFirstSteps } from './storage';
 
 type FirstStepUser = {
@@ -33,7 +33,7 @@ export const markFirstStepDone = (
   }
 
   if (!dirtyFirstSteps(storage, user.id, role).includes(step)) return;
-  void saveFirstStepStage(queryClient, storage, user.id, role, step, 'done');
+  void saveFirstStepsProgress(queryClient, storage, user.id, role);
 };
 
 /** Отмечает шаг выполненным, если пользователь сейчас на этапе обучения. */

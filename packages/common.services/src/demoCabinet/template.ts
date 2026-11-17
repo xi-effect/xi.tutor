@@ -15,8 +15,6 @@ export const DEMO_SAMPLE_PDF = {
 
 export { isPublicAssetSrc } from '../publicAsset';
 
-export const DEMO_CABINET_FLAG_KEY = 'demo_cabinet_initialized';
-
 export const DEMO_CABINET_NAMES = {
   classroom: 'Демонстрационный кабинет',
   board: 'Демонстрационная доска',
