@@ -22,6 +22,7 @@ type CommentThreadPanelProps = {
   threadId: string;
   onClose: () => void;
   showHeader?: boolean;
+  className?: string;
 };
 
 function formatMessageTime(ts: number): string {
@@ -37,6 +38,7 @@ export const CommentThreadPanel = ({
   threadId,
   onClose,
   showHeader = true,
+  className = 'w-50',
 }: CommentThreadPanelProps) => {
   const { t } = useTranslation('editor');
   const { editor, commentThreadsMap, commentMessagesMap } = useYjsContext();
@@ -78,7 +80,7 @@ export const CommentThreadPanel = ({
 
   return (
     <div
-      className="flex w-50 flex-col gap-3"
+      className={cn('flex flex-col gap-3', className)}
       onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >

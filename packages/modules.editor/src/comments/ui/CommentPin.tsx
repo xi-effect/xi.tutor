@@ -90,14 +90,19 @@ export const CommentPin = ({ thread, top, right = 0 }: CommentPinProps) => {
         align="start"
         side="bottom"
         sideOffset={10}
+        collisionPadding={12}
         data-comment-ui
-        className="z-10 mr-1 w-auto rounded-xl p-3"
+        className="z-10 rounded-xl p-3"
         onOpenAutoFocus={(e) => {
           if (!focusReplyOnOpen || editor?.isFocused) e.preventDefault();
         }}
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        <CommentThreadPanel threadId={thread.id} onClose={() => openThread(null)} />
+        <CommentThreadPanel
+          threadId={thread.id}
+          className="w-full"
+          onClose={() => openThread(null)}
+        />
       </PopoverContent>
     </Popover>
   );
