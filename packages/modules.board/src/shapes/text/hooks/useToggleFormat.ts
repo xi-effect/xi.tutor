@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { TiptapEditor } from '@ibodr/draw';
 import '@tiptap/extension-subscript';
 import '@tiptap/extension-superscript';
+import { activeHighlightStyle } from '../../../store/useTextHighlightStore';
+import { toggleHighlightInEditor } from '../highlightStyle';
 import { ChainedCommandsFallbackT, MarkFormatT } from '../types';
 
 export const useToggleFormat = (textEditor: TiptapEditor | null) => {
@@ -25,7 +27,7 @@ export const useToggleFormat = (textEditor: TiptapEditor | null) => {
           chain.toggleUnderline?.().run();
           break;
         case 'highlight':
-          chain.toggleHighlight?.().run();
+          toggleHighlightInEditor(textEditor, activeHighlightStyle());
           break;
         case 'superscript':
           chain.toggleSuperscript?.().run();

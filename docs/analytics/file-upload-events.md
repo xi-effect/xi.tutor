@@ -48,6 +48,7 @@ file_upload_attempted
 | Поле            | Тип    | Значения                                                         |
 | --------------- | ------ | ---------------------------------------------------------------- |
 | `source`        | string | `materials` / `classroom` / `board` / `profile_avatar` / `other` |
+| `surface`       | string | только аватар: `welcome` / `profile`. На остальных загрузках нет |
 | `file_category` | string | `image` / `document` / `other`                                   |
 | `size_bucket`   | string | см. [size_bucket](#size_bucket)                                  |
 | `event_version` | number | `1`                                                              |
@@ -65,6 +66,7 @@ file_upload_attempted
 | Поле                | Тип    | Значения                                                           |
 | ------------------- | ------ | ------------------------------------------------------------------ |
 | `source`            | string | как у `attempted`                                                  |
+| `surface`           | string | как у `attempted`, если аватар                                     |
 | `reason`            | string | `file_too_large` / `unsupported_type` / `upload_error` / `unknown` |
 | `file_category`     | string | как у `attempted`                                                  |
 | `size_bucket`       | string | как у `attempted` — в том числе при `file_too_large`               |
@@ -82,7 +84,7 @@ file_upload_attempted
 | `materials`      | Библиотека файлов на `/materials`                                                              |
 | `classroom`      | Файлы кабинета (тот же модал загрузки, с `classroomId`)                                        |
 | `board`          | Доска: picker, drop, картинка / PDF / аудио / презентация / файл, flip-card, картинка activity |
-| `profile_avatar` | Клиентский отказ при выборе аватара (профиль / онбординг)                                      |
+| `profile_avatar` | Отказ при выборе аватара. Экран — `surface`: `welcome` или `profile`                           |
 | `other`          | Редактор заметки                                                                               |
 
 ### `file_category`
@@ -168,6 +170,8 @@ Network Error **не** мапится в `file_too_large` (в отличие о�
 | Сколько уникальных пользователей пытались грузить файлы        | Unique visitors по `file_upload_attempted`                                           |
 | Сколько успешных загрузок                                      | Count `file_upload_succeeded`                                                        |
 | Сколько пользователей хотя бы раз выбрали слишком большой файл | Unique visitors по `file_upload_rejected`, `reason=file_too_large`                   |
+| Сколько упёрлись в лимит аватара на онбординге                 | Unique / count: `source=profile_avatar`, `surface=welcome`, `reason=file_too_large`  |
+| Сколько упёрлись в лимит аватара в настройках профиля          | Unique / count: `source=profile_avatar`, `surface=profile`, `reason=file_too_large`  |
 | Сколько всего `file_too_large`                                 | Count тех же событий                                                                 |
 | Где происходило                                                | фильтр `source`                                                                      |
 | Image vs остальные                                             | `file_category`                                                                      |

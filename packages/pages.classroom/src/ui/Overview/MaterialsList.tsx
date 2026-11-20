@@ -6,6 +6,7 @@ import {
 } from 'common.services';
 import { ClassroomMaterialsT, YDocContentKind } from 'common.types';
 import { MaterialsCard } from 'features.materials.card';
+import { useMaterialsDuplicate } from 'pages.materials';
 import { EmptyMaterials } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { MaterialsListSkeleton } from './MaterialsListSkeleton';
@@ -16,6 +17,7 @@ import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel
 export const MaterialsList = () => {
   const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
+  const { openModal } = useMaterialsDuplicate();
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -78,6 +80,7 @@ export const MaterialsList = () => {
         <div key={material.id} className={widgetCardSlotClass}>
           <MaterialsCard
             {...material}
+            onDuplicate={openModal}
             isLoading={isLoading}
             layout="gallery"
             className="h-full w-full"

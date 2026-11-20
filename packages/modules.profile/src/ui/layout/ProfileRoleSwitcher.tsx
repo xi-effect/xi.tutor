@@ -1,12 +1,8 @@
 import { type RoleT } from 'common.types';
 import { useCurrentUser, useUpdateProfile } from 'common.services';
-import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import { RoleSwitcher } from './RoleSwitcher';
 
 export const ProfileRoleSwitcher = () => {
-  const { t } = useTranslation('profile');
-  const navigate = useNavigate();
   const { data: user } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
@@ -24,20 +20,8 @@ export const ProfileRoleSwitcher = () => {
       });
     }
 
-    updateProfile.mutate(
-      { default_layout: value },
-      {
-        onSuccess: () => {
-          navigate({ to: '/', search: {} });
-        },
-      },
-    );
+    updateProfile.mutate({ default_layout: value });
   };
 
-  return (
-    <div className="flex w-full flex-col gap-2">
-      <p className="text-text-secondary px-1 text-xs leading-4 font-medium">{t('role.label')}</p>
-      <RoleSwitcher value={currentRole} onChange={handleChange} />
-    </div>
-  );
+  return <RoleSwitcher value={currentRole} onChange={handleChange} />;
 };

@@ -73,6 +73,7 @@ export const MaterialActionsMenu = ({
           variant="none"
           size="icon"
           data-umami-event="material-actions-menu-open"
+          data-first-step="template-board-menu"
         >
           <MoreVert className={cardMenuIconClass} />
         </Button>
@@ -81,7 +82,7 @@ export const MaterialActionsMenu = ({
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className={cn(cardMenuSurfaceClass, 'text-text-primary')}
+        className={cn(cardMenuSurfaceClass, 'text-text-primary w-[22rem]')}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         onCloseAutoFocus={(event) => event.preventDefault()}
       >
@@ -132,11 +133,22 @@ export const MaterialActionsMenu = ({
             className={cardMenuItemClass}
             onClick={handleAction(onDuplicate)}
             data-umami-event="material-duplicate-to-classroom"
+            data-first-step="duplicate-to-classroom"
           >
             <Copy />
             {t('menu.duplicateToClassroom')}
           </DropdownMenuItem>
         )}
+        {isClassroom && isTutor ? (
+          <DropdownMenuItem
+            className={cardMenuItemClass}
+            onClick={handleAction(onDuplicate)}
+            data-umami-event="material-duplicate-to-another-classroom"
+          >
+            <Copy />
+            {t('menu.duplicateToAnotherClassroom')}
+          </DropdownMenuItem>
+        ) : null}
         {contentLocked ? null : (
           <>
             <DropdownMenuItem

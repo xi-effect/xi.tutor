@@ -2,7 +2,7 @@ import React from 'react';
 
 export const CardSkeleton: React.FC = () => {
   return (
-    <div className="bg-background-surface flex h-40 justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
+    <div className="bg-background-surface flex h-40 justify-between rounded-2xl p-5">
       <div className="flex max-w-[350px] flex-col gap-4">
         <div className="flex items-center gap-2">
           <div className="bg-action-secondary-background-pressed h-6 w-16 animate-pulse rounded-lg" />

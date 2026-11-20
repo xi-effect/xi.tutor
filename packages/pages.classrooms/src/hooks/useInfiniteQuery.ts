@@ -8,6 +8,7 @@ import {
   type ClassroomStatusT,
   type ClassroomT,
 } from 'common.api';
+import { QUERY_FRESHNESS_MS } from 'common.config';
 import {
   mergeMonetizationClassrooms,
   searchTutorClassrooms,
@@ -41,8 +42,8 @@ export const useInfiniteQuery = (statuses: readonly ClassroomStatusT[] = []) => 
         }),
       initialPageParam: undefined as ClassroomCursor | undefined,
       getNextPageParam: (lastPage) => getNextClassroomsCursor(lastPage, PAGE_SIZE),
-      staleTime: 5 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
+      staleTime: QUERY_FRESHNESS_MS,
+      gcTime: QUERY_FRESHNESS_MS,
     });
 
   const items: ClassroomPropsT[] = React.useMemo(() => {

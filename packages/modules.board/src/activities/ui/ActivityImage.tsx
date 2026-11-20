@@ -23,7 +23,9 @@ import i18n from 'i18next';
 import { useActivityEventGuard, useActivitySession } from './activityHostContext';
 import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
-import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { useMaybeEditor, useValue } from '@ibodr/draw';
+import { useBoardImageUrl } from '../../utils/useBoardImageUrl';
+import { zoomStepCeil } from '../../utils/rasterBudget';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
 import { toastBoardUploadError } from '../../utils/boardUploadError';
 import { assertBoardUploadAllowed } from '../../utils/planUploadLimit';
@@ -33,35 +35,29 @@ import { beginFileUploadAttempt, rejectFileUploadFromError } from 'common.utils'
 const coverToolbarButtonClass =
   'bg-background-surface/95 text-text-primary hover:bg-background-hover border-border-default flex size-8 shrink-0 items-center justify-center rounded-lg border shadow-sm backdrop-blur-sm';
 
-export function useActivityImageSrc(src?: string) {
+export function useActivityImageSrc(src?: string, cssWidth?: number) {
   const { token } = useActivitySession();
-  const [url, setUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!src) {
-      setUrl(null);
-      return;
-    }
-    if (isDisplayableAssetUrl(src)) {
-      setUrl(src);
-      return;
-    }
-
-    let cancelled = false;
-    resolveAssetUrl(src, token)
-      .then((next) => {
-        if (!cancelled) setUrl(next);
-      })
-      .catch(() => {
-        if (!cancelled) setUrl(null);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [src, token]);
-
-  return url;
+  // Упражнения в заметках рендерятся вне <Draw />: зума и камеры там нет.
+  const editor = useMaybeEditor();
+  const zoomStep = useValue(
+    'activity-image-zoom-step',
+    () => (editor ? zoomStepCeil(editor.getZoomLevel()) : 1),
+    [editor],
+  );
+  const moving = useValue(
+    'activity-image-moving',
+    () => (editor ? editor.getCameraState() === 'moving' : false),
+    [editor],
+  );
+  const layoutWidth = cssWidth === undefined ? 960 : cssWidth;
+  return useBoardImageUrl({
+    src: src ?? '',
+    direct: isDisplayableAssetUrl(src),
+    token,
+    maxEdge: Math.max(1, Math.round(layoutWidth * zoomStep * (window.devicePixelRatio || 1))),
+    moving,
+    enabled: layoutWidth > 0,
+  });
 }
 
 export function ActivityImage({
@@ -73,9 +69,39 @@ export function ActivityImage({
   className?: string;
   alt?: string;
 }) {
-  const url = useActivityImageSrc(src);
-  if (!url) return null;
-  return <img src={url} alt={alt} draggable={false} className={className} />;
+  const frameRef = useRef<HTMLImageElement>(null);
+  const [cssWidth, setCssWidth] = useState(0);
+
+  useEffect(() => {
+    const el = frameRef.current;
+    if (!el) return;
+    const read = () => {
+      const width = Math.round(el.clientWidth || el.parentElement?.clientWidth || 0);
+      setCssWidth((prev) => (Math.abs(prev - width) < 2 ? prev : width));
+    };
+    read();
+    const observer = new ResizeObserver(read);
+    observer.observe(el);
+    const fallback = window.setTimeout(() => {
+      setCssWidth((prev) => (prev > 0 ? prev : 480));
+    }, 0);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallback);
+    };
+  }, [src]);
+
+  const url = useActivityImageSrc(src, cssWidth);
+  if (!src) return null;
+  return (
+    <img
+      ref={frameRef}
+      {...(url ? { src: url } : {})}
+      alt={alt}
+      draggable={false}
+      className={className}
+    />
+  );
 }
 
 function boardToast(key: string, options?: Record<string, unknown>) {

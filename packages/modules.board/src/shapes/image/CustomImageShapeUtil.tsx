@@ -3,13 +3,13 @@ import {
   DrImageShape,
   HTMLContainer,
   useEditor,
-  useImageOrVideoAsset,
   getUncroppedSize,
   usePrefersReducedMotion,
   useValue,
   DrAssetId,
   Editor,
 } from '@ibodr/draw';
+import { useBoardImageAsset } from './useBoardImageAsset';
 import { memo, useCallback, useEffect, useState } from 'react';
 import i18n from 'i18next';
 import {
@@ -20,6 +20,10 @@ import {
 } from '../../utils/shapeSvgExport';
 import { isDisplayableAssetUrl } from '../../utils/storedFileSrc';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { useRetainedBlobUrl } from '../../utils/useRetainedBlobUrl';
+import { useImageQuality } from '../../utils/useImageBudget';
+import { estimateImageDisplayPixels, IMAGE_LOW_QUALITY_EDGE } from '../../utils/imageBudget';
+import { staticImagePixels } from '../../utils/displayImage';
 import { useOcrProcessingStore } from '../../ocr';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
@@ -243,14 +247,58 @@ function ImageOcrOverlay({ shapeId }: { shapeId: DrImageShape['id'] }) {
   );
 }
 
+/**
+ * На iPhone и iPad картинки делят бюджет декодированных пикселей, но остаются видимыми.
+ * Если полный размер не влезает, показываем копию до 2048 px по длинной стороне.
+ * Снятие выделения и смена инструмента картинку не убирают.
+ */
 const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrImageShape }) {
+  const editor = useEditor();
+  const { w } = getUncroppedSize(shape.props, shape.props.crop);
+
+  const cost = useValue(
+    'image budget cost',
+    () => {
+      const asset = shape.props.assetId ? editor.getAsset(shape.props.assetId) : undefined;
+      if (!asset || asset.type !== 'image' || !asset.props.w || !asset.props.h) return 0;
+      // Тот же шаг зума, что у резолвера картинок: значение меняется только на границе шага.
+      const screenScale = editor.getEfficientZoomLevel() * (w / asset.props.w);
+      const steppedScreenScale = screenScale > 0 ? 2 ** Math.ceil(Math.log2(screenScale)) : 1;
+      return estimateImageDisplayPixels({
+        assetWidth: asset.props.w,
+        assetHeight: asset.props.h,
+        steppedScreenScale,
+        dpr: window.devicePixelRatio || 1,
+        resizable: staticImagePixels(asset) !== null,
+      });
+    },
+    [editor, shape.props.assetId, w],
+  );
+  const quality = useImageQuality(shape.id, cost);
+
+  return (
+    <CustomImageShapeContent
+      shape={shape}
+      maxEdgeCap={quality === 'low' ? IMAGE_LOW_QUALITY_EDGE : null}
+    />
+  );
+});
+
+const CustomImageShapeContent = memo(function CustomImageShapeContent({
+  shape,
+  maxEdgeCap,
+}: {
+  shape: DrImageShape;
+  maxEdgeCap: number | null;
+}) {
   const editor = useEditor();
 
   const { w } = getUncroppedSize(shape.props, shape.props.crop);
-  const { asset, url } = useImageOrVideoAsset({
+  const { asset, url } = useBoardImageAsset({
     shapeId: shape.id,
     assetId: shape.props.assetId,
     width: w,
+    maxEdgeCap,
   });
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -261,6 +309,13 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   const [retryExhausted, setRetryExhausted] = useState(false);
   const isAnimated = asset && getIsAnimated(editor, asset.id);
   const assetSrc = typeof asset?.props.src === 'string' ? asset.props.src : '';
+  useEffect(() => {
+    setLoadedUrl(null);
+    setRetryUrl(null);
+    setStaticFrameSrc('');
+    setRetryExhausted(false);
+    setImgError(false);
+  }, [assetSrc, shape.props.assetId]);
   const hookUrl = isDisplayableAssetUrl(url) ? url : null;
   const resolvedUrl = hookUrl ?? retryUrl;
 
@@ -342,6 +397,10 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   const showError = (isMissing || retryExhausted || (imgError && !isResolving)) && !loadedSrc;
 
   const crossOrigin = isAnimated ? ('anonymous' as const) : undefined;
+
+  useRetainedBlobUrl(resolvedUrl);
+  // Пока новая копия догружается, на экране ещё старая: её blob отзывать нельзя.
+  useRetainedBlobUrl(loadedUrl);
 
   const handleLoad = useCallback((src: string) => {
     setLoadedUrl(src);

@@ -1,10 +1,12 @@
 import { type RefObject, useEffect, useMemo, useState } from 'react';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
-import type { MathTaskSearch, MathTaskSearchDocument, BankSubject } from 'features.math.bank';
+import type { MathTaskSearch, MathTaskSearchDocument, BankSubject } from 'features.bank';
 import { hasActiveMathBankFilters, searchMathBank } from '../utils/filters';
-import { useMathBankUserStore } from '../store/useMathBankUserStore';
-import { useToggleMathBankFavorite } from '../hooks/useToggleMathBankFavorite';
+import {
+  useMathBankFavorites,
+  useToggleMathBankFavorite,
+} from '../hooks/useToggleMathBankFavorite';
 import type { MathBankFiltersT } from '../types';
 import { MathBankEmpty } from './MathBankEmpty';
 import { MathBankSkeleton } from './MathBankSkeleton';
@@ -29,7 +31,7 @@ export const MathBankTasks = ({
   onResetFilters,
 }: MathBankTasksProps) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const favoriteTaskIds = useMathBankUserStore((state) => state.favoriteTaskIds);
+  const { exerciseIds, isFavourite, isLoading: favoritesLoading } = useMathBankFavorites();
   const toggleFavorite = useToggleMathBankFavorite();
   const [preview, setPreview] = useState<MathTaskSearchDocument | null>(null);
 
@@ -38,11 +40,11 @@ export const MathBankTasks = ({
   }, [subject]);
 
   const items = useMemo(
-    () => searchMathBank(search, filters, favoriteTaskIds),
-    [favoriteTaskIds, filters, search],
+    () => searchMathBank(search, filters, exerciseIds),
+    [exerciseIds, filters, search],
   );
 
-  if (isLoading) {
+  if (isLoading || (filters.favoritesOnly && favoritesLoading)) {
     return <MathBankSkeleton />;
   }
 
@@ -67,7 +69,7 @@ export const MathBankTasks = ({
         renderItem={(task) => (
           <MathBankTaskCard
             task={task}
-            isFavorite={favoriteTaskIds.includes(task.id)}
+            isFavorite={isFavourite(task.exerciseId)}
             onOpen={setPreview}
             onToggleFavorite={toggleFavorite}
           />

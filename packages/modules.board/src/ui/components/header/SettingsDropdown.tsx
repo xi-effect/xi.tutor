@@ -554,7 +554,7 @@ export const SettingsDropdown = () => {
                 </DropdownMenuSub>
               )}
 
-              {isTutor && !isReadonly && (
+              {!isReadonly && (
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                     <Eraser />

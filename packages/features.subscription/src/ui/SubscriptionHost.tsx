@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate, useParams } from '@tanstack/react-router';
 import {
   hasMonetizationOverride,
   setFileTooLargeMessage,
@@ -23,12 +23,14 @@ import {
   useSubscriptionUiStore,
 } from 'common.subscription';
 import { observeSubscriptionLifecycle, toSubscriptionBillingPeriod } from 'common.utils';
+import { subscriptionSettingsSearch } from '../settingsLocation';
 import { SubscriptionDebugPanel } from './SubscriptionDebugPanel';
 import { SubscriptionDialogs } from './SubscriptionDialogs';
 
 export const SubscriptionHost = () => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const { callId } = useParams({ strict: false });
   const { data: user } = useCurrentUser();
   const userId = user?.id ?? null;
   const prevUserIdRef = useRef(userId);
@@ -97,11 +99,15 @@ export const SubscriptionHost = () => {
   useEffect(() => {
     if (!settingsOpenRequested) return;
     consumeSettingsOpenRequest();
+    const callFromRoute =
+      pathname.includes('/call/') && typeof callId === 'string' ? callId : undefined;
+
     void navigate({
-      to: pathname,
-      search: (prev: Record<string, unknown>) => ({ ...prev, profile: 'subscription' }),
+      to: '/settings/$section',
+      params: { section: 'subscription' },
+      search: subscriptionSettingsSearch(search, callFromRoute),
     });
-  }, [consumeSettingsOpenRequest, navigate, pathname, settingsOpenRequested]);
+  }, [callId, consumeSettingsOpenRequest, navigate, pathname, search, settingsOpenRequested]);
 
   return (
     <>

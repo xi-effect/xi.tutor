@@ -5,7 +5,7 @@ import {
   loadBankExamIndex,
   loadBankSearchDocuments,
   type BankSubject,
-} from 'features.math.bank';
+} from 'features.bank';
 
 export const useMathBankIndex = (subject: BankSubject, enabled = true) => {
   const documentsQuery = useQuery({
@@ -27,9 +27,10 @@ export const useMathBankIndex = (subject: BankSubject, enabled = true) => {
 
   const examIndexQuery = useQuery({
     queryKey: ['task-bank', subject, 'exam-index'],
-    queryFn: () => loadBankExamIndex(subject),
+    queryFn: () => loadBankExamIndex(subject, documentsQuery.data?.documents),
     staleTime: Infinity,
-    enabled,
+    enabled:
+      enabled && ((subject !== 'physics' && subject !== 'english') || Boolean(documentsQuery.data)),
   });
 
   return {

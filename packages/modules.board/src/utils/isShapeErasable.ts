@@ -1,14 +1,5 @@
-import { useEraserSettingsStore } from '../store';
-import { ERASER_CATEGORIES } from '../config';
+import { isEraserTypeEnabled, useEraserSettingsStore } from '../store';
 
 export const isShapeErasable = (shapeType: string) => {
-  const settings = useEraserSettingsStore.getState().settings;
-
-  const category = ERASER_CATEGORIES.find((item) => item.types.includes(shapeType));
-
-  if (!category) {
-    return true;
-  }
-
-  return settings[category.key];
+  return isEraserTypeEnabled(useEraserSettingsStore.getState().settings, shapeType);
 };

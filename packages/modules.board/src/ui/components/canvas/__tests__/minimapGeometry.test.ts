@@ -3,6 +3,7 @@ import {
   clientToPage,
   containsPoint,
   fitBoxToAspect,
+  isFiniteBox,
   padBox,
   unionBox,
   visibleMark,
@@ -35,6 +36,15 @@ describe('minimapGeometry', () => {
     const viewport = padBox({ minX: 0, minY: 0, maxX: 10, maxY: 10 }, 0);
     expect(containsPoint(viewport, 5, 5)).toBe(true);
     expect(containsPoint(viewport, 12, 5)).toBe(false);
+  });
+
+  it('не считает кадр конечным, если границы ушли в бесконечность', () => {
+    const fitted = fitBoxToAspect(
+      { minX: Number.NEGATIVE_INFINITY, minY: 0, maxX: Number.POSITIVE_INFINITY, maxY: 10 },
+      1.5,
+    );
+    expect(isFiniteBox(fitted)).toBe(false);
+    expect(clientToPage(10, 10, { left: 0, top: 0, width: 100, height: 80 }, fitted).x).toBeNaN();
   });
 
   it('не даёт горизонтальной линии схлопнуться в нулевую высоту', () => {

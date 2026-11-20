@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useMediaQuery } from '@xipkg/utils';
 import {
   formatNotificationCount,
@@ -15,10 +15,11 @@ import { NotificationsMobileDropdown } from './NotificationsMobileDropdown';
 import { CustomNotificationModal } from './CustomNotificationModal';
 import { openNotificationLink, navigateToNotification } from './notificationsNavigation';
 import { useNotificationsInfiniteScroll } from '../../../hooks';
+import { useSettingsSearch } from '../../useSettingsSearch';
 
 export const Notifications = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const settingsSearch = useSettingsSearch();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -60,7 +61,11 @@ export const Notifications = () => {
   }, []);
 
   const handleToSettings = () => {
-    navigate({ to: location.pathname, search: { profile: 'notifications' } });
+    void navigate({
+      to: '/settings/$section',
+      params: { section: 'notifications' },
+      search: settingsSearch,
+    });
   };
 
   // Обработчик скролла для автоматической загрузки следующей страницы (по аналогии с useInfiniteQuery из materials)

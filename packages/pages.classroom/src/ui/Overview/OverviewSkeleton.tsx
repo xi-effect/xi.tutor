@@ -35,7 +35,7 @@ export const OverviewSkeleton = ({ numberOfSections }: OverviewSkeletonPropsT) =
             {[...new Array(3)].map((_, cardIndex) => (
               <div
                 key={cardIndex}
-                className="bg-background-surface flex h-40 min-w-[260px] flex-col gap-2 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]"
+                className="bg-background-surface flex h-40 min-w-[260px] flex-col gap-2 rounded-2xl p-5"
               >
                 <div className="bg-background-subtle h-5 w-32 animate-pulse rounded" />
                 <div className="bg-background-subtle h-4 w-24 animate-pulse rounded" />

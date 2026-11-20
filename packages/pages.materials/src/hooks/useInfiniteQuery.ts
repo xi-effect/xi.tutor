@@ -2,7 +2,7 @@ import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-qu
 import { RefObject } from 'react';
 import { MaterialPropsT, MaterialScopeFilterT } from '../types';
 import { MaterialsKindT } from 'common.api';
-import { getAxiosInstance } from 'common.config';
+import { getAxiosInstance, QUERY_FRESHNESS_MS } from 'common.config';
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import React from 'react';
 import {
@@ -83,8 +83,8 @@ export const useInfiniteQuery = (
 
         return lastItem.updated_at;
       },
-      staleTime: 5 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
+      staleTime: QUERY_FRESHNESS_MS,
+      gcTime: QUERY_FRESHNESS_MS,
     });
 
   React.useEffect(() => {

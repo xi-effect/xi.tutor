@@ -4,12 +4,14 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./locales": "./src/locales/index.ts"
+    "./locales": "./src/locales/index.ts",
+    "./demo": "./src/demo/seedDemoNote.ts"
   },
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",
@@ -39,7 +41,7 @@
     "@xipkg/dropdown": "^3.1.0",
     "@xipkg/file": "^4.0.0",
     "@xipkg/fileuploader": "5.1.0",
-    "@xipkg/icons": "3.2.0",
+    "@xipkg/icons": "3.2.1",
     "@xipkg/input": "2.3.0",
     "@xipkg/modal": "4.6.0",
     "@xipkg/popover": "^4.0.0",

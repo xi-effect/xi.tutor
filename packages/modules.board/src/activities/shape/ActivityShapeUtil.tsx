@@ -7,6 +7,7 @@ import {
   type ActivityShape,
 } from './ActivityShape';
 import { ActivityComponent } from '../ui/ActivityComponent';
+import { BoardProblemBoundary } from '../../ui/BoardProblemBoundary';
 import { SVG_CARD, truncateForSvg } from '../../utils/shapeSvgExport';
 
 export class ActivityShapeUtil extends BaseBoxShapeUtil<ActivityShape> {
@@ -41,7 +42,11 @@ export class ActivityShapeUtil extends BaseBoxShapeUtil<ActivityShape> {
   }
 
   override component(shape: ActivityShape) {
-    return <ActivityComponent shape={shape} />;
+    return (
+      <BoardProblemBoundary area="activity-render">
+        <ActivityComponent shape={shape} />
+      </BoardProblemBoundary>
+    );
   }
 
   override toSvg(shape: ActivityShape) {

@@ -1,10 +1,7 @@
 export const MathBankSkeleton = ({ count = 8 }: { count?: number }) => (
   <div className="grid grid-cols-1 gap-5 pb-4 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
     {Array.from({ length: count }).map((_, i) => (
-      <div
-        key={i}
-        className="bg-background-surface flex h-52 w-full flex-col rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]"
-      >
+      <div key={i} className="bg-background-surface flex h-52 w-full flex-col rounded-2xl p-5">
         <div className="flex w-full items-center gap-2">
           <div className="bg-background-subtle size-10 shrink-0 animate-pulse rounded-[10px]" />
           <div className="bg-background-subtle h-7 w-24 animate-pulse rounded-lg" />

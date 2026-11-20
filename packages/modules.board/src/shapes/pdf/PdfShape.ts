@@ -20,6 +20,13 @@ export type PdfShapeProps = {
   studentCanFlip: boolean;
   /** Количество страниц, отображаемых в объекте (1 = одна страница, 2 = две подряд и т.д.). */
   pagesVisible: number;
+  /**
+   * Пропорции страниц, под которые подогнаны границы.
+   * Панель управления в эту пропорцию не входит.
+   */
+  boundsFit?: string;
+  /** Высота нижней панели в пикселях. При ресайзе не масштабируется. */
+  controlsHeight?: number;
 };
 
 export type PdfShape = DrBaseShape<'pdf', PdfShapeProps>;
@@ -40,4 +47,6 @@ export const pdfShapeProps = {
   studentCanFlip: T.boolean,
   /** Опционально для обратной совместимости со старыми документами и синком. */
   pagesVisible: T.number.optional(),
+  boundsFit: T.string.optional(),
+  controlsHeight: T.number.optional(),
 };

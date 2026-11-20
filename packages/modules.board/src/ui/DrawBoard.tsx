@@ -1,7 +1,11 @@
 import { YjsProvider } from '../providers/YjsProvider';
 import { DrawCanvas } from './components';
+import { BoardProblemBoundary } from './BoardProblemBoundary';
+import { useEffect } from 'react';
 import { useParams, useSearch } from '@tanstack/react-router';
 import {
+  browserDemoCabinetStorage,
+  readDemoCabinetProgress,
   useCurrentUser,
   useGetClassroomStorageItem,
   useGetClassroomStorageItemStudent,
@@ -9,6 +13,7 @@ import {
   useIsClassroomOnPause,
 } from 'common.services';
 import { useCachedBoardDoc } from '../hooks/useCachedBoardDoc';
+import { seedDemoBoard } from '../demo/seedDemoBoard';
 import { DEMO_STORAGE_TOKEN } from '../utils/yjsConstants';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
 
@@ -21,7 +26,13 @@ const localYdocDumpUrl = import.meta.env.VITE_BOARD_LOCAL_YDOC_URL as string | u
 const localYdocDumpMode = import.meta.env.DEV && Boolean(localYdocDumpUrl);
 const localYdocStorageToken = import.meta.env.VITE_BOARD_LOCAL_STORAGE_TOKEN as string | undefined;
 
-export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
+export const DrawBoard = (props: DrawBoardProps) => (
+  <BoardProblemBoundary area="board-render">
+    <DrawBoardContent {...props} />
+  </BoardProblemBoundary>
+);
+
+const DrawBoardContent = ({ isDemo = false }: DrawBoardProps) => {
   const { classroomId, boardId, materialId } = useParams({ strict: false });
   const search = useSearch({ strict: false }) as { demo?: string | number };
   const isOfflineDemo = isDemo || (import.meta.env.DEV && String(search.demo) === '1');
@@ -56,6 +67,20 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
     classroomId: classroomId || '',
     id: materialIdValue || '',
   });
+
+  useEffect(() => {
+    if (isOfflineDemo || user?.id == null || !classroomId || !materialIdValue) return;
+    const progress = readDemoCabinetProgress(browserDemoCabinetStorage(), user.id);
+    if (!progress || progress.phase === 'removed' || progress.boardId !== materialIdValue) return;
+
+    let cancelled = false;
+    void seedDemoBoard({ classroomId, boardId: materialIdValue }).catch((error: unknown) => {
+      if (!cancelled) console.error('Не удалось восстановить демонстрационную доску', error);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [classroomId, isOfflineDemo, materialIdValue, user?.id]);
 
   if (!materialIdValue && !isOfflineDemo) {
     throw new Error('boardId or materialId must be provided');

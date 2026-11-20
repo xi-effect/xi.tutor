@@ -68,6 +68,13 @@ export type ClassroomMaterialResponse = {
 
 export type MaterialT = PersonalMaterialResponse | ClassroomMaterialResponse;
 
+export type MaterialDuplicateTarget = {
+  id: MaterialId;
+  name?: string;
+  contentKind: YDocContentKind;
+  sourceClassroomId?: number | null;
+};
+
 export type MaterialPropsT = {
   content_kind: YDocContentKind;
   id: MaterialId;
@@ -78,7 +85,7 @@ export type MaterialPropsT = {
   classroom_id?: number | null;
   tag_ids?: number[] | null;
   tags?: TagSchema[];
-  onDuplicate?: (id: MaterialId) => void;
+  onDuplicate?: (target: MaterialDuplicateTarget) => void;
   hasIcon?: boolean;
   isLoading?: boolean;
   className?: string;

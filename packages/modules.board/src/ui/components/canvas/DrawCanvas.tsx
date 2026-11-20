@@ -5,8 +5,9 @@ import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
-import { Editor, DrInstancePresence, Draw, DrawProps, type DrUiOverrides } from '@ibodr/draw';
+import { Editor, Draw, DrawProps, type DrUiOverrides } from '@ibodr/draw';
 import { useSearch } from '@tanstack/react-router';
+import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { cloneDroppedFile, useRetryFileQueue } from 'common.services';
 import { usePlanLimits } from 'common.subscription';
@@ -22,7 +23,7 @@ import {
   useBoardBackgroundSync,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
-import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
+import { buildBoardSnapshot, downloadBoardArchive } from '../../../utils/downloadBoardArchive';
 import { hiddenComponents } from '../../../utils/customConfig';
 import { BOARD_DRAW_THEMES } from '../../../utils/boardDrawTheme';
 import { Header } from '../header';
@@ -35,6 +36,8 @@ import { BoardCollaboratorCursors } from './BoardCollaboratorCursors';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { CanvasOverlays } from './CanvasOverlays';
 import { FollowBanner } from './FollowBanner';
+import { BOARD_ZOOM_STEPS } from './followCamera';
+import { useFollowLeaderCamera } from './useFollowLeaderCamera';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import '@ibodr/draw/draw.css';
@@ -56,9 +59,11 @@ import {
 import { registerBoardAssetHygiene } from '../../../utils/boardAssetHygiene';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
+import { focusDemoBoardGuide } from '../../../demo/demoBoardGuideCamera';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
+import { registerEmbedGuard } from '../../../shapes/embed/embedProviders';
 
 /** Ctrl/Cmd+Y в шорткатах редактора нет, а Ctrl/Cmd+Shift+Z есть. Добавляем Y в тот же action, чтобы жест откатывался один раз. */
 const boardUiOverrides: DrUiOverrides = {
@@ -98,7 +103,9 @@ export const DrawCanvas = ({
   const { theme } = useTheme();
   const [shapeCount, setShapeCount] = useState(0);
   const { store, status, isReadonly, getUserCamera, setUserCamera, provider } = useYjsContext();
-  const { followingPresenceId } = useFollowUserStore();
+  const { followingPresenceId, broadcasterPresenceId } = useFollowUserStore();
+  const allowPresentationZoom =
+    broadcasterPresenceId != null && followingPresenceId === broadcasterPresenceId;
   const appliedInitialCameraRef = useRef(false);
   const didResetDrawScaleRef = useRef(false);
   const search = useSearch({ strict: false }) as BoardDeepLinkSearch;
@@ -182,9 +189,11 @@ export const DrawCanvas = ({
       const win = window as unknown as {
         getBoardSnapshot?: () => unknown;
         showBoardImportOption?: () => void;
+        downloadBoardArchive?: (password: string) => Promise<unknown>;
       };
       delete win.getBoardSnapshot;
       delete win.showBoardImportOption;
+      delete win.downloadBoardArchive;
     };
   }, []);
 
@@ -275,16 +284,58 @@ export const DrawCanvas = ({
     }
   }, [editor, isReadonly]);
 
-  // Восстановление камеры пользователя при открытии доски (один раз после синка).
-  // При переходе по deep link камера выставляется в useBoardDeepLinkFocus.
+  // Камеру демодоски ставим после раскладки холста. Ранний кадр на нулевом размере
+  // оставляет приветственный блок в левом верхнем углу, и сохранённая камера его закрепляет.
   useEffect(() => {
-    if (!editor || !isBoardStoreReady(status) || appliedInitialCameraRef.current || hasDeepLink)
-      return;
-    const saved = getUserCamera();
-    if (saved) {
-      editor.setCamera(saved);
+    if (!editor || !isBoardStoreReady(status) || hasDeepLink) return;
+
+    let framedWidth = 0;
+    let framedHeight = 0;
+    const startedAt = Date.now();
+
+    const apply = () => {
+      const viewport = editor.getViewportScreenBounds();
+      const layoutChanged =
+        Math.abs(viewport.width - framedWidth) > 24 ||
+        Math.abs(viewport.height - framedHeight) > 24;
+      if (framedWidth > 0 && !layoutChanged) return;
+      if (framedWidth > 0 && Date.now() - startedAt > 2500) return;
+
+      if (focusDemoBoardGuide(editor)) {
+        framedWidth = viewport.width;
+        framedHeight = viewport.height;
+        appliedInitialCameraRef.current = true;
+        return;
+      }
+
+      if (viewport.width < 320 || viewport.height < 320) return;
+      if (editor.getCurrentPageShapes().length === 0 || appliedInitialCameraRef.current) return;
+
+      const saved = getUserCamera();
+      if (saved) editor.setCamera(saved);
+      framedWidth = viewport.width;
+      framedHeight = viewport.height;
       appliedInitialCameraRef.current = true;
-    }
+    };
+
+    apply();
+
+    const unsubscribe = editor.store.listen(() => apply());
+    const container = editor.getContainer();
+    const observer = new ResizeObserver(() => apply());
+    observer.observe(container);
+    const stop = window.setTimeout(() => {
+      if (appliedInitialCameraRef.current) return;
+      const saved = getUserCamera();
+      if (saved) editor.setCamera(saved);
+      appliedInitialCameraRef.current = true;
+    }, 4000);
+
+    return () => {
+      window.clearTimeout(stop);
+      observer.disconnect();
+      unsubscribe();
+    };
   }, [editor, status, hasDeepLink, getUserCamera]);
 
   // Сохранение камеры при уходе: с вкладки, закрытии страницы или уходе с доски в приложении (без таймера — не дёргаем Document changed)
@@ -306,83 +357,8 @@ export const DrawCanvas = ({
     };
   }, [editor, setUserCamera]);
 
-  // Follow: вписываем вид ведущего в viewport ведомого (fit-to-bounds).
-  // На большом экране зум совпадает; на маленьком — уменьшается, чтобы видеть всю область.
-  // Используем стандартные поля tldraw presence (camera, screenBounds).
-  useEffect(() => {
-    if (!editor || !store || !followingPresenceId) return;
-
-    const id = followingPresenceId;
-    let raf = 0;
-
-    const sync = () => {
-      const presence = store.get(id as DrInstancePresence['id']) as DrInstancePresence | undefined;
-      if (!presence?.camera) return;
-
-      const leaderCam = presence.camera;
-      const leaderSB = presence.screenBounds;
-      if (!leaderSB || leaderSB.w <= 0 || leaderSB.h <= 0) return;
-
-      // Вид ведущего в page-space
-      const leaderPageW = leaderSB.w / leaderCam.z;
-      const leaderPageH = leaderSB.h / leaderCam.z;
-      const centerX = -leaderCam.x + leaderPageW / 2;
-      const centerY = -leaderCam.y + leaderPageH / 2;
-
-      const vp = editor.getViewportScreenBounds();
-
-      // Зум, при котором весь вид ведущего вписывается в наш viewport.
-      // Не зумим ближе, чем у ведущего (если наш экран больше).
-      const z = Math.min(leaderCam.z, vp.w / leaderPageW, vp.h / leaderPageH);
-
-      const target = {
-        x: -(centerX - vp.w / (2 * z)),
-        y: -(centerY - vp.h / (2 * z)),
-        z,
-      };
-
-      const cur = editor.getCamera();
-      if (
-        Math.abs(cur.x - target.x) < 0.5 &&
-        Math.abs(cur.y - target.y) < 0.5 &&
-        Math.abs(cur.z - target.z) < 0.001
-      )
-        return;
-
-      editor.setCameraOptions({ isLocked: false });
-      editor.setCamera(target);
-      editor.setCameraOptions({ isLocked: true });
-    };
-
-    const schedule = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        sync();
-      });
-    };
-
-    schedule();
-
-    const unsub = store.listen(
-      ({ changes }) => {
-        const added = (changes.added ?? {}) as Record<string, unknown>;
-        const updated = (changes.updated ?? {}) as Record<string, unknown>;
-        if (added[id] || updated[id]) schedule();
-      },
-      { scope: 'presence' },
-    );
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(editor.getContainer());
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      unsub();
-      editor.setCameraOptions({ isLocked: false });
-    };
-  }, [editor, store, followingPresenceId]);
+  // Слежение за ведущим. В презентации ученик может менять масштаб, не отпуская центр кадра.
+  useFollowLeaderCamera(editor, store, followingPresenceId, allowPresentationZoom);
 
   // В режиме «Авто» синхронизируем isPenMode с текущим устройством при каждом pointerdown,
   // чтобы можно было переключаться между планшетом и мышью без смены настройки в меню.
@@ -419,6 +395,13 @@ export const DrawCanvas = ({
   }, [editor, status]);
 
   if (status === 'loading') return <LoadingScreen />;
+  if (status === 'error') {
+    return (
+      <div className="text-text-secondary flex h-full w-full items-center justify-center p-6 text-center text-sm">
+        {i18n.t('problem.board', { ns: 'board' })}
+      </div>
+    );
+  }
 
   return (
     <BoardChromeProvider toolbarVisible={!isReadonly}>
@@ -486,6 +469,7 @@ export const DrawCanvas = ({
                 });
 
                 registerBoardAssetHygiene(editor);
+                registerEmbedGuard(editor);
 
                 editor.registerExternalContentHandler('files', async ({ files }) => {
                   const dropped = files.map(cloneDroppedFile);
@@ -507,41 +491,26 @@ export const DrawCanvas = ({
                 const win = window as unknown as {
                   getBoardSnapshot?: () => unknown;
                   showBoardImportOption?: () => void;
+                  downloadBoardArchive?: (password: string) => Promise<unknown>;
                 };
                 win.getBoardSnapshot = () => {
-                  const records = editor.store.allRecords();
-                  const normalized = records.map((r) => {
-                    const raw = r as unknown as Record<string, unknown>;
-                    const rec = {
-                      ...r,
-                      props:
-                        raw.props && typeof raw.props === 'object'
-                          ? { ...(raw.props as Record<string, unknown>) }
-                          : raw.props,
-                    } as typeof r;
-                    const props = (rec as unknown as Record<string, unknown>).props as
-                      Record<string, unknown> | undefined;
-                    if (props?.src && typeof props.src === 'string') {
-                      props.src = normalizeStoredFileSrc(props.src);
-                    }
-                    return rec;
-                  });
-                  const snapshot = {
-                    records: normalized,
-                    byId: Object.fromEntries(normalized.map((r) => [r.id, r])),
-                  };
+                  const snapshot = buildBoardSnapshot(editor.store.allRecords());
                   const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
                     type: 'application/json',
                   });
                   void saveBlob(blob, { fileName: `board-snapshot-${Date.now()}.json` });
                   return snapshot;
                 };
+                win.downloadBoardArchive = (password: string) =>
+                  downloadBoardArchive({
+                    password,
+                    records: editor.store.allRecords(),
+                    token: tokenRef.current,
+                  });
                 win.showBoardImportOption = () => {
                   window.dispatchEvent(new CustomEvent('showBoardImportJson'));
                 };
-                editor.setCameraOptions({
-                  zoomSteps: [0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 8],
-                });
+                editor.setCameraOptions({ zoomSteps: BOARD_ZOOM_STEPS });
               }}
               store={store}
               tools={boardCustomTools}

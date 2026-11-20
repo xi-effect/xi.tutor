@@ -1,4 +1,4 @@
-import type { BankSubject } from 'features.math.bank';
+import type { BankSubject } from 'features.bank';
 import { MathBankLatex } from './MathBankLatex';
 
 type BankStatementProps = {
@@ -8,7 +8,7 @@ type BankStatementProps = {
 };
 
 export const BankStatement = ({ text, subject = 'mathematics', className }: BankStatementProps) => {
-  if (subject === 'russian') {
+  if (subject === 'russian' || subject === 'english') {
     return <span className={className}>{text}</span>;
   }
 

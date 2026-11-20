@@ -9,7 +9,7 @@ files:
   - out/**/*
   - package.json
 extraResources:
-  - from: ../xi.web/build
+  - from: ../xi.web/build-electron
     to: web
 extraMetadata:
   main: out/main/index.js

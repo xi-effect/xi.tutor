@@ -1,7 +1,11 @@
 import { Badge } from '@xipkg/badge';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
-import { educationStatusBadgeClasses, getEducationStatusLabel } from 'common.ui';
+import {
+  CardTooltipContent,
+  educationStatusBadgeClasses,
+  getEducationStatusLabel,
+} from 'common.ui';
 import { StatusEducationT, TypeEducationT } from 'common.entities';
 import { useCurrentUser } from 'common.services';
 import { useTranslation } from 'react-i18next';
@@ -43,9 +47,9 @@ export const StatusBadge = ({ status, deleted, className, textClassName }: Statu
       <TooltipTrigger asChild>
         <span className="inline-flex shrink-0">{badge}</span>
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="z-[200] max-w-72 leading-5 font-normal">
+      <CardTooltipContent side="bottom" className="max-w-72">
         {t(`educationStatus.${role}.lockedHint`)}
-      </TooltipContent>
+      </CardTooltipContent>
     </Tooltip>
   );
 };

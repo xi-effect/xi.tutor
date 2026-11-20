@@ -1,6 +1,8 @@
 export * from './auth';
 export * from './user';
 export * from './userFlags';
+export * from './userStorageItems';
+export * from './favouriteExercises';
 export * from './subscription';
 export * from './invitations';
 export * from './materials';
@@ -10,6 +12,22 @@ export * from './classroom-notes';
 export * from './payments';
 export * from './utils';
 export * from './onboarding';
+export * from './firstSteps';
+export { isPublicAssetSrc } from './publicAsset';
+export {
+  DEMO_CABINET_BOARD_COPY,
+  DEMO_CABINET_NAMES,
+  DEMO_CABINET_NOTE_COPY,
+  DEMO_CABINET_TEMPLATE_VERSION,
+  DEMO_SAMPLE_PDF,
+  buildDemoNoteDocument,
+  ensureDemoCabinet,
+  readClassroomStorageItem,
+  readDemoCabinetProgress,
+  browserDemoCabinetStorage,
+  type DemoCabinetPorts,
+  type DemoCabinetResult,
+} from './demoCabinet';
 export * from './classrooms';
 export * from './notifications';
 export { usePWAInstall } from './usePWAInstall';

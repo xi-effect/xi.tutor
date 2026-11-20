@@ -25,7 +25,7 @@ import { MoreVert, Updates } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { useGroupInvite } from '../services/useGroupInvite';
-import { useGetClassroom } from 'common.services';
+import { useGetClassroom, useMarkFirstStepDone } from 'common.services';
 import { useResetGroupInvite } from '../services/useResetGroupInvite';
 import {
   ModalCloseIcon,
@@ -68,13 +68,19 @@ export const ModalGroupInvite = ({
   const { mutate: resetInvite, isPending: isResettingInvite } = useResetGroupInvite({
     classroom_id: classroomId,
   });
+  const markInviteDone = useMarkFirstStepDone('invite');
 
   const inviteLink = data?.code ? `${env.VITE_APP_DOMAIN}/invite/${data.code}` : '';
 
-  const handleCopyLink = () => {
+  const handleCopyLink = async () => {
     if (!inviteLink) return;
 
-    void writeText(inviteLink);
+    try {
+      await writeText(inviteLink);
+    } catch {
+      return;
+    }
+    markInviteDone('copy');
     toast.success(t('toast.linkCopied'));
     toast.info(t('toast.sendToStudents'));
   };

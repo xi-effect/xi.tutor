@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Button } from '@xipkg/button';
-import { Form, FormField, FormItem, FormMessage, useFieldArray } from '@xipkg/form';
+import { Form, FormField, FormItem, useFieldArray } from '@xipkg/form';
 import { Modal, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { useMediaQuery } from '@xipkg/utils';
 import { cn } from '@xipkg/utils';
@@ -24,6 +24,19 @@ import { CommentField } from './CommentField';
 import { SubjectRow } from './SubjectRow';
 import { SubjectRowMobile } from './SubjectRowMobile';
 import { TemplateSelector } from './TemplateSelector';
+
+type NestedFieldError = {
+  message?: unknown;
+  root?: { message?: unknown };
+};
+
+const readErrorMessage = (error: NestedFieldError | undefined) => {
+  if (typeof error?.message === 'string' && error.message.length > 0) return error.message;
+  if (typeof error?.root?.message === 'string' && error.root.message.length > 0) {
+    return error.root.message;
+  }
+  return null;
+};
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -110,31 +123,38 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
               <FormField
                 control={control}
                 name="items"
-                render={() => (
-                  <FormItem>
-                    <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
-                      <Button
-                        className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
-                        variant="primary"
-                        size="s"
-                        type="button"
-                        onClick={() => {
-                          append({
-                            id: generateRandomId(),
-                            name: '',
-                            price: 0,
-                            quantity: 1,
-                          });
-                        }}
-                      >
-                        {isMobile ? t('modal.addRow') : t('modal.addLesson')}
-                      </Button>
+                render={({ fieldState }) => {
+                  const itemsMessage = readErrorMessage(fieldState.error);
+                  return (
+                    <FormItem>
+                      <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
+                        <Button
+                          className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
+                          variant="primary"
+                          size="s"
+                          type="button"
+                          onClick={() => {
+                            append({
+                              id: generateRandomId(),
+                              name: '',
+                              price: 0,
+                              quantity: 1,
+                            });
+                          }}
+                        >
+                          {isMobile ? t('modal.addRow') : t('modal.addLesson')}
+                        </Button>
 
-                      <TemplateSelector control={control} />
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                        <TemplateSelector control={control} />
+                      </div>
+                      {itemsMessage ? (
+                        <p className="text-status-error-accent pt-1 text-[12px] font-normal">
+                          {itemsMessage}
+                        </p>
+                      ) : null}
+                    </FormItem>
+                  );
+                }}
               />
 
               {/* TODO: подумать над тем, чтобы сделать один компонент */}

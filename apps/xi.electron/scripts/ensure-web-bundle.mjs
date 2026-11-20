@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const webDir = path.resolve(root, '../xi.web/build');
+const webDir = path.resolve(root, '../xi.web/build-electron');
 const webIndex = path.join(webDir, 'index.html');
 const skip = process.env.ELECTRON_SKIP_WEB_BUILD === '1';
 

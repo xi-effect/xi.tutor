@@ -163,6 +163,33 @@ describe('beginFileUploadAttempt', () => {
     });
   });
 
+  it('для аватара сохраняет экран, на котором сработал лимит размера', () => {
+    const file = { type: 'image/png', name: 'avatar.png', size: 2 * MB };
+    const attempt = beginFileUploadAttempt('profile_avatar', file, {
+      maxBytes: MB,
+      surface: 'welcome',
+    });
+
+    attempt.reject('file_too_large');
+
+    expect(trackMock).toHaveBeenNthCalledWith(1, PRODUCT_ANALYTICS_EVENTS.FILE_UPLOAD_ATTEMPTED, {
+      event_version: 1,
+      source: 'profile_avatar',
+      surface: 'welcome',
+      file_category: 'image',
+      size_bucket: '1_2mb',
+    });
+    expect(trackMock).toHaveBeenNthCalledWith(2, PRODUCT_ANALYTICS_EVENTS.FILE_UPLOAD_REJECTED, {
+      event_version: 1,
+      source: 'profile_avatar',
+      surface: 'welcome',
+      file_category: 'image',
+      size_bucket: '1_2mb',
+      reason: 'file_too_large',
+      limit_exceeded_by: '50_100_percent',
+    });
+  });
+
   it('для остальных отказов оставляет size_bucket без имени файла', () => {
     const attempt = beginFileUploadAttempt('board', {
       type: 'application/zip',

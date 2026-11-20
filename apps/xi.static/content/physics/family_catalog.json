@@ -1,0 +1,902 @@
+[
+  {
+    "id": "length-sum",
+    "grade": 5,
+    "difficulty": 1,
+    "topic": "измерения",
+    "count": 300,
+    "law": "Перевести миллиметры в сантиметры и сложить длины.",
+    "exampleId": "physics-ru-00001"
+  },
+  {
+    "id": "length-difference",
+    "grade": 5,
+    "difficulty": 1,
+    "topic": "измерения",
+    "count": 300,
+    "law": "Длина равна разности конечной и начальной отметок.",
+    "exampleId": "physics-ru-00301"
+  },
+  {
+    "id": "mass-sum",
+    "grade": 5,
+    "difficulty": 1,
+    "topic": "измерения",
+    "count": 300,
+    "law": "Один килограмм равен 1000 граммам.",
+    "exampleId": "physics-ru-00601"
+  },
+  {
+    "id": "box-volume",
+    "grade": 6,
+    "difficulty": 1,
+    "topic": "измерения",
+    "count": 300,
+    "law": "V = длина × ширина × высота.",
+    "exampleId": "physics-ru-00901"
+  },
+  {
+    "id": "temperature-rise",
+    "grade": 5,
+    "difficulty": 1,
+    "topic": "измерения",
+    "count": 300,
+    "law": "Изменение температуры равно конечной температуре минус начальная.",
+    "exampleId": "physics-ru-01201"
+  },
+  {
+    "id": "scale-division",
+    "grade": 6,
+    "difficulty": 2,
+    "topic": "измерения",
+    "count": 300,
+    "law": "Цена деления равна разности подписанных значений, делённой на число промежутков.",
+    "exampleId": "physics-ru-01501"
+  },
+  {
+    "id": "rain-collection",
+    "grade": 6,
+    "difficulty": 2,
+    "topic": "измерения",
+    "count": 300,
+    "law": "Объём слоя равен площади, умноженной на толщину.",
+    "exampleId": "physics-ru-01801"
+  },
+  {
+    "id": "water-displacement",
+    "grade": 6,
+    "difficulty": 2,
+    "topic": "измерения",
+    "count": 300,
+    "law": "Объём погружённого тела равен объёму вытесненной воды.",
+    "exampleId": "physics-ru-02101"
+  },
+  {
+    "id": "uniform-distance",
+    "grade": 7,
+    "difficulty": 1,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "s = vt.",
+    "exampleId": "physics-ru-02401"
+  },
+  {
+    "id": "uniform-speed",
+    "grade": 7,
+    "difficulty": 1,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "v = s/t.",
+    "exampleId": "physics-ru-02701"
+  },
+  {
+    "id": "uniform-time",
+    "grade": 7,
+    "difficulty": 1,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "t = s/v.",
+    "exampleId": "physics-ru-03001"
+  },
+  {
+    "id": "acceleration",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "a = (v − v₀)/t.",
+    "exampleId": "physics-ru-03301"
+  },
+  {
+    "id": "braking-distance",
+    "grade": 9,
+    "difficulty": 3,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "Из v² − v₀² = 2as при v = 0 следует s = v₀²/(2·модуль ускорения).",
+    "exampleId": "physics-ru-03601"
+  },
+  {
+    "id": "free-fall",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "s = gt²/2; высота камеры больше найденного пути.",
+    "exampleId": "physics-ru-03901"
+  },
+  {
+    "id": "vertical-height",
+    "grade": 9,
+    "difficulty": 3,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "При вершине v = 0: Δh = v₀²/(2g).",
+    "exampleId": "physics-ru-04201"
+  },
+  {
+    "id": "centripetal",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "кинематика",
+    "count": 300,
+    "law": "a = v²/r, направление — к центру.",
+    "exampleId": "physics-ru-04501"
+  },
+  {
+    "id": "newton-force",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "динамика",
+    "count": 300,
+    "law": "F = ma.",
+    "exampleId": "physics-ru-04801"
+  },
+  {
+    "id": "gravity-mass",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "динамика",
+    "count": 300,
+    "law": "Fтяж = mg; высота в однородном поле не влияет на массу.",
+    "exampleId": "physics-ru-05101"
+  },
+  {
+    "id": "hooke",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "динамика",
+    "count": 300,
+    "law": "F = kx; сантиметры перевести в метры.",
+    "exampleId": "physics-ru-05401"
+  },
+  {
+    "id": "friction",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "динамика",
+    "count": 300,
+    "law": "N = mg; Fтр = μN.",
+    "exampleId": "physics-ru-05701"
+  },
+  {
+    "id": "density",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "механика-жидкостей",
+    "count": 300,
+    "law": "ρ = m/V.",
+    "exampleId": "physics-ru-06001"
+  },
+  {
+    "id": "pressure",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "механика-жидкостей",
+    "count": 300,
+    "law": "p = F/S; 1 см² = 0,0001 м².",
+    "exampleId": "physics-ru-06301"
+  },
+  {
+    "id": "hydrostatic",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "механика-жидкостей",
+    "count": 300,
+    "law": "p = ρgh.",
+    "exampleId": "physics-ru-06601"
+  },
+  {
+    "id": "buoyancy",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "механика-жидкостей",
+    "count": 300,
+    "law": "FА = ρgV; 1 см³ = 10⁻⁶ м³.",
+    "exampleId": "physics-ru-06901"
+  },
+  {
+    "id": "lever",
+    "grade": 7,
+    "difficulty": 3,
+    "topic": "статика",
+    "count": 300,
+    "law": "Условие равновесия: F₁l₁ = F₂l₂.",
+    "exampleId": "physics-ru-07201"
+  },
+  {
+    "id": "work",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "энергия",
+    "count": 300,
+    "law": "A = Fs при совпадении направлений.",
+    "exampleId": "physics-ru-07501"
+  },
+  {
+    "id": "power",
+    "grade": 7,
+    "difficulty": 2,
+    "topic": "энергия",
+    "count": 300,
+    "law": "P = A/t.",
+    "exampleId": "physics-ru-07801"
+  },
+  {
+    "id": "potential",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "энергия",
+    "count": 300,
+    "law": "ΔEп = mgΔh.",
+    "exampleId": "physics-ru-08101"
+  },
+  {
+    "id": "kinetic",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "энергия",
+    "count": 300,
+    "law": "Eк = mv²/2.",
+    "exampleId": "physics-ru-08401"
+  },
+  {
+    "id": "momentum",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "энергия",
+    "count": 300,
+    "law": "p = mv.",
+    "exampleId": "physics-ru-08701"
+  },
+  {
+    "id": "water-heat",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "теплота",
+    "count": 300,
+    "law": "Q = cmΔT.",
+    "exampleId": "physics-ru-09001"
+  },
+  {
+    "id": "ice-melting",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "теплота",
+    "count": 300,
+    "law": "Q = λm; продолжительность не влияет на необходимую теплоту при заданной массе.",
+    "exampleId": "physics-ru-09301"
+  },
+  {
+    "id": "vaporization",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "теплота",
+    "count": 300,
+    "law": "Q = Lm.",
+    "exampleId": "physics-ru-09601"
+  },
+  {
+    "id": "heat-capacity",
+    "grade": 8,
+    "difficulty": 3,
+    "topic": "теплота",
+    "count": 300,
+    "law": "C = Q/ΔT.",
+    "exampleId": "physics-ru-09901"
+  },
+  {
+    "id": "mix-equal",
+    "grade": 8,
+    "difficulty": 3,
+    "topic": "теплота",
+    "count": 300,
+    "law": "При равных массах одного вещества конечная температура равна среднему арифметическому.",
+    "exampleId": "physics-ru-10201"
+  },
+  {
+    "id": "ideal-gas-pressure",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "молекулярная-физика",
+    "count": 300,
+    "law": "pV = νRT; произведение кПа·л равно джоулю.",
+    "exampleId": "physics-ru-10501"
+  },
+  {
+    "id": "boyle",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "молекулярная-физика",
+    "count": 300,
+    "law": "Изотермический процесс: p₁V₁ = p₂V₂.",
+    "exampleId": "physics-ru-10801"
+  },
+  {
+    "id": "charles",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "молекулярная-физика",
+    "count": 300,
+    "law": "При постоянном давлении V/T = const.",
+    "exampleId": "physics-ru-11101"
+  },
+  {
+    "id": "isochoric",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "молекулярная-физика",
+    "count": 300,
+    "law": "При постоянном объёме p/T = const.",
+    "exampleId": "physics-ru-11401"
+  },
+  {
+    "id": "gas-work",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "термодинамика",
+    "count": 300,
+    "law": "A = pΔV; 1 кПа·л = 1 Дж.",
+    "exampleId": "physics-ru-11701"
+  },
+  {
+    "id": "first-law",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "термодинамика",
+    "count": 300,
+    "law": "ΔU = Q − Aгаза.",
+    "exampleId": "physics-ru-12001"
+  },
+  {
+    "id": "engine-efficiency",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "термодинамика",
+    "count": 300,
+    "law": "η = Aпол/Qнагревателя × 100%.",
+    "exampleId": "physics-ru-12301"
+  },
+  {
+    "id": "charge-current",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "электричество",
+    "count": 300,
+    "law": "q = It.",
+    "exampleId": "physics-ru-12601"
+  },
+  {
+    "id": "ohm-current",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "электричество",
+    "count": 300,
+    "law": "I = U/R.",
+    "exampleId": "physics-ru-12901"
+  },
+  {
+    "id": "ohm-voltage",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "электричество",
+    "count": 300,
+    "law": "U = IR.",
+    "exampleId": "physics-ru-13201"
+  },
+  {
+    "id": "ohm-resistance",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "электричество",
+    "count": 300,
+    "law": "R = U/I.",
+    "exampleId": "physics-ru-13501"
+  },
+  {
+    "id": "series-resistors",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "электричество",
+    "count": 300,
+    "law": "R = R₁ + R₂.",
+    "exampleId": "physics-ru-13801"
+  },
+  {
+    "id": "parallel-resistors",
+    "grade": 8,
+    "difficulty": 3,
+    "topic": "электричество",
+    "count": 300,
+    "law": "1/R = 1/R₁ + 1/R₂.",
+    "exampleId": "physics-ru-14101"
+  },
+  {
+    "id": "wire-resistance",
+    "grade": 8,
+    "difficulty": 3,
+    "topic": "электричество",
+    "count": 300,
+    "law": "R = ρl/S; данные уже согласованы в указанных единицах.",
+    "exampleId": "physics-ru-14401"
+  },
+  {
+    "id": "electric-power",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "электричество",
+    "count": 300,
+    "law": "P = UI.",
+    "exampleId": "physics-ru-14701"
+  },
+  {
+    "id": "joule-heat",
+    "grade": 8,
+    "difficulty": 3,
+    "topic": "электричество",
+    "count": 300,
+    "law": "Q = I²Rt.",
+    "exampleId": "physics-ru-15001"
+  },
+  {
+    "id": "full-circuit",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "электричество",
+    "count": 300,
+    "law": "I = ε/(R + r).",
+    "exampleId": "physics-ru-15301"
+  },
+  {
+    "id": "source-emf",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "электричество",
+    "count": 300,
+    "law": "ε = U + Ir.",
+    "exampleId": "physics-ru-15601"
+  },
+  {
+    "id": "internal-heat",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "электричество",
+    "count": 300,
+    "law": "Qвнутр = I²rt; минута равна 60 с.",
+    "exampleId": "physics-ru-15901"
+  },
+  {
+    "id": "coulomb",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "электростатика",
+    "count": 300,
+    "law": "F = k·модуль(q₁q₂)/r²; перевести нКл, мкКл и см в СИ.",
+    "exampleId": "physics-ru-16201"
+  },
+  {
+    "id": "field-force",
+    "grade": 10,
+    "difficulty": 2,
+    "topic": "электростатика",
+    "count": 300,
+    "law": "F = модуль(q)E.",
+    "exampleId": "physics-ru-16501"
+  },
+  {
+    "id": "field-work",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "электростатика",
+    "count": 300,
+    "law": "A = q(φ₁ − φ₂).",
+    "exampleId": "physics-ru-16801"
+  },
+  {
+    "id": "capacitor-charge",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "электростатика",
+    "count": 300,
+    "law": "q = CU.",
+    "exampleId": "physics-ru-17101"
+  },
+  {
+    "id": "capacitor-energy",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "электростатика",
+    "count": 300,
+    "law": "W = CU²/2.",
+    "exampleId": "physics-ru-17401"
+  },
+  {
+    "id": "ampere-force",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "магнетизм",
+    "count": 300,
+    "law": "F = BIl при перпендикулярности проводника полю.",
+    "exampleId": "physics-ru-17701"
+  },
+  {
+    "id": "lorentz-force",
+    "grade": 10,
+    "difficulty": 3,
+    "topic": "магнетизм",
+    "count": 300,
+    "law": "F = модуль(q)vB; электрическое поле отсутствует.",
+    "exampleId": "physics-ru-18001"
+  },
+  {
+    "id": "magnetic-flux",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "индукция",
+    "count": 300,
+    "law": "Φ = BS; нормаль к рамке параллельна полю.",
+    "exampleId": "physics-ru-18301"
+  },
+  {
+    "id": "induced-emf",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "индукция",
+    "count": 300,
+    "law": "модуль(ε) = N·модуль(ΔΦ)/Δt.",
+    "exampleId": "physics-ru-18601"
+  },
+  {
+    "id": "coil-energy",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "индукция",
+    "count": 300,
+    "law": "W = LI²/2.",
+    "exampleId": "physics-ru-18901"
+  },
+  {
+    "id": "plane-mirror",
+    "grade": 8,
+    "difficulty": 2,
+    "topic": "оптика",
+    "count": 300,
+    "law": "Изображение находится за зеркалом на том же расстоянии, что предмет перед ним.",
+    "exampleId": "physics-ru-19201"
+  },
+  {
+    "id": "converging-image",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "оптика",
+    "count": 300,
+    "law": "1/f = 1/d + 1/b; предмет находится дальше фокуса.",
+    "exampleId": "physics-ru-19501"
+  },
+  {
+    "id": "lens-magnification",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "оптика",
+    "count": 300,
+    "law": "Расстояние изображения bиз = fd/(d−f); модуль увеличения bиз/d = f/(d−f).",
+    "exampleId": "physics-ru-19801"
+  },
+  {
+    "id": "contact-lenses",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "оптика",
+    "count": 300,
+    "law": "Оптические силы тонких контактных линз складываются: D = 1/f₁ + 1/f₂, где f в метрах.",
+    "exampleId": "physics-ru-20101"
+  },
+  {
+    "id": "diverging-image",
+    "grade": 11,
+    "difficulty": 4,
+    "topic": "оптика",
+    "count": 300,
+    "law": "При f = −F: модуль(bиз) = Fd/(F+d).",
+    "exampleId": "physics-ru-20401"
+  },
+  {
+    "id": "refraction-sine",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "оптика",
+    "count": 300,
+    "law": "n₁ sin i = n₂ sin r. Полученное значение должно быть не больше 1.",
+    "exampleId": "physics-ru-20701"
+  },
+  {
+    "id": "light-transit",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "оптика",
+    "count": 300,
+    "law": "v = c/n; t = l/v. В вакууме свет проходит 30 см за 1 нс.",
+    "exampleId": "physics-ru-21001"
+  },
+  {
+    "id": "optical-path",
+    "grade": 11,
+    "difficulty": 2,
+    "topic": "оптика",
+    "count": 300,
+    "law": "Оптическая длина пути L = nl.",
+    "exampleId": "physics-ru-21301"
+  },
+  {
+    "id": "slit-fringes",
+    "grade": 11,
+    "difficulty": 4,
+    "topic": "оптика",
+    "count": 300,
+    "law": "Δx = λL/d. Щели когерентно освещены, экран далёкий.",
+    "exampleId": "physics-ru-21601"
+  },
+  {
+    "id": "grating-sine",
+    "grade": 11,
+    "difficulty": 4,
+    "topic": "оптика",
+    "count": 300,
+    "law": "d sin θ = λ; в указанных пределах λ < d.",
+    "exampleId": "physics-ru-21901"
+  },
+  {
+    "id": "frequency-count",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "колебания",
+    "count": 300,
+    "law": "ν = N/t.",
+    "exampleId": "physics-ru-22201"
+  },
+  {
+    "id": "period-count",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "колебания",
+    "count": 300,
+    "law": "T = t/N.",
+    "exampleId": "physics-ru-22501"
+  },
+  {
+    "id": "wave-speed",
+    "grade": 9,
+    "difficulty": 2,
+    "topic": "волны",
+    "count": 300,
+    "law": "v = λν.",
+    "exampleId": "physics-ru-22801"
+  },
+  {
+    "id": "echo-distance",
+    "grade": 9,
+    "difficulty": 3,
+    "topic": "волны",
+    "count": 300,
+    "law": "Звук проходит путь до стены и обратно: 2l = vt.",
+    "exampleId": "physics-ru-23101"
+  },
+  {
+    "id": "spring-period",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "колебания",
+    "count": 300,
+    "law": "T = 2π√(m/k).",
+    "exampleId": "physics-ru-23401"
+  },
+  {
+    "id": "pendulum-period",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "колебания",
+    "count": 300,
+    "law": "T = 2π√(l/g); нить невесома и нерастяжима.",
+    "exampleId": "physics-ru-23701"
+  },
+  {
+    "id": "oscillation-vmax",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "колебания",
+    "count": 300,
+    "law": "vmax = ωA = 2πνA.",
+    "exampleId": "physics-ru-24001"
+  },
+  {
+    "id": "oscillation-amax",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "колебания",
+    "count": 300,
+    "law": "amax = ω²A = (2πν)²A.",
+    "exampleId": "physics-ru-24301"
+  },
+  {
+    "id": "photon-burst",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "квантовая-физика",
+    "count": 300,
+    "law": "Eимп = N·hc/λ.",
+    "exampleId": "physics-ru-24601"
+  },
+  {
+    "id": "photoelectric",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "квантовая-физика",
+    "count": 300,
+    "law": "Eк,max = Eф − Aвых; энергия фотона превышает работу выхода.",
+    "exampleId": "physics-ru-24901"
+  },
+  {
+    "id": "stopping-voltage",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "квантовая-физика",
+    "count": 300,
+    "law": "eUз = Eф − Aвых; численное значение энергии в эВ равно напряжению в В для одного электрона.",
+    "exampleId": "physics-ru-25201"
+  },
+  {
+    "id": "transition-energy",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "квантовая-физика",
+    "count": 300,
+    "law": "Eф = Eверх − Eниз; абсолютный выбор нуля энергии не влияет на разность.",
+    "exampleId": "physics-ru-25501"
+  },
+  {
+    "id": "transition-wavelength",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "квантовая-физика",
+    "count": 300,
+    "law": "ΔE = Eверх − Eниз; λ = hc/ΔE.",
+    "exampleId": "physics-ru-25801"
+  },
+  {
+    "id": "decay-remaining",
+    "grade": 9,
+    "difficulty": 3,
+    "topic": "ядерная-физика",
+    "count": 300,
+    "law": "m = m₀·2^(−n); речь о среднем макроскопическом количестве исходного изотопа.",
+    "exampleId": "physics-ru-26101"
+  },
+  {
+    "id": "decay-elapsed",
+    "grade": 9,
+    "difficulty": 3,
+    "topic": "ядерная-физика",
+    "count": 300,
+    "law": "Уменьшению в 2^n раз соответствуют n периодов полураспада.",
+    "exampleId": "physics-ru-26401"
+  },
+  {
+    "id": "binding-specific",
+    "grade": 11,
+    "difficulty": 3,
+    "topic": "ядерная-физика",
+    "count": 300,
+    "law": "Eсвяз = A·удельная энергия связи.",
+    "exampleId": "physics-ru-26701"
+  },
+  {
+    "id": "rough-braking",
+    "grade": 10,
+    "difficulty": 4,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "ma = −μmg, поэтому модуль ускорения μg; путь v₀²/(2μg).",
+    "exampleId": "physics-ru-27001"
+  },
+  {
+    "id": "collision-sticking",
+    "grade": 10,
+    "difficulty": 4,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "Сохраняется импульс: m₁v₁ = (m₁+m₂)v.",
+    "exampleId": "physics-ru-27301"
+  },
+  {
+    "id": "spring-launch",
+    "grade": 10,
+    "difficulty": 4,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "kx²/2 = mv²/2; v = x√(k/m).",
+    "exampleId": "physics-ru-27601"
+  },
+  {
+    "id": "lift-power",
+    "grade": 9,
+    "difficulty": 4,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "A = mgh; P = A/t.",
+    "exampleId": "physics-ru-27901"
+  },
+  {
+    "id": "heater-efficiency",
+    "grade": 8,
+    "difficulty": 4,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "Qводы = ηPt; ΔT = Q/(cm).",
+    "exampleId": "physics-ru-28201"
+  },
+  {
+    "id": "mix-unequal",
+    "grade": 8,
+    "difficulty": 4,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "Тепловой баланс: m₁c(T−20) = m₂c(80−T).",
+    "exampleId": "physics-ru-28501"
+  },
+  {
+    "id": "series-power",
+    "grade": 10,
+    "difficulty": 4,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "I = U/(R₁+R₂); P₁ = I²R₁.",
+    "exampleId": "physics-ru-28801"
+  },
+  {
+    "id": "capacitor-sharing",
+    "grade": 11,
+    "difficulty": 5,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "Сохраняется суммарный заряд: C₁U₁ = (C₁+C₂)U. Энергия при перераспределении не сохраняется в конденсаторах.",
+    "exampleId": "physics-ru-29101"
+  },
+  {
+    "id": "rail-induced-current",
+    "grade": 11,
+    "difficulty": 5,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "ε = Blv; I = ε/R.",
+    "exampleId": "physics-ru-29401"
+  },
+  {
+    "id": "adiabatic-compression",
+    "grade": 10,
+    "difficulty": 5,
+    "topic": "составные-задачи",
+    "count": 300,
+    "law": "Q = 0; ΔU = Aвнеш; ΔU = (3/2)νRΔT.",
+    "exampleId": "physics-ru-29701"
+  }
+]

@@ -11,7 +11,7 @@
     "build:electron": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["build"]
+      "outputs": ["build-electron"]
     },
     "xi.electron#build": {
       "dependsOn": ["^build", "xi.web#build:electron"],

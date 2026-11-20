@@ -1,12 +1,10 @@
 import { env } from 'common.env';
 import { HttpMethod } from './config';
 
-export const USER_FLAG_KEYS = {
-  SUBSCRIPTION_ANNOUNCEMENT_DISMISSED: 'was_subscription_announcement_dismissed',
-  SUBSCRIPTION_RELEASE_NOTE_DISMISSED: 'was_subscription_release_note_dismissed',
-} as const;
+/** Реестр известных ключей. Конкретные флаги модалок сюда не входят. */
+export const USER_FLAG_KEYS = {} as const;
 
-export type UserFlagKey = (typeof USER_FLAG_KEYS)[keyof typeof USER_FLAG_KEYS];
+export type UserFlagKey = string;
 
 /** DTO GET/PUT `/users/current/flags/{key}/` — OpenAPI `UserFlagValueSchema`. */
 export type UserFlagValueSchema = {

@@ -98,7 +98,16 @@ export const MaterialsCard = ({
 
   const handleDuplicate = () => {
     if (!onDuplicate) return;
-    onDuplicate(id);
+
+    const parsedClassroomId = classroomId == null ? null : Number(classroomId);
+
+    onDuplicate({
+      id,
+      name,
+      contentKind: content_kind,
+      sourceClassroomId:
+        parsedClassroomId != null && Number.isFinite(parsedClassroomId) ? parsedClassroomId : null,
+    });
   };
 
   const handleAccessModeUpdate = (newMode: AccessModeT) => {
@@ -208,6 +217,7 @@ export const MaterialsCard = ({
           )}
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
+          data-material-id={id}
         >
           {hasIcon && <div className={cardTypeIconBoxClass}>{cardIcon[content_kind]}</div>}
           <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
@@ -238,11 +248,12 @@ export const MaterialsCard = ({
         <div
           onClick={handleCardClick}
           className={cn(
-            'group bg-background-surface relative flex h-44 min-h-44 w-full min-w-0 shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+            'group bg-background-surface relative flex h-44 min-h-44 w-full min-w-0 shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-5',
             className,
           )}
           data-umami-event="material-card-open"
           data-umami-event-type={content_kind}
+          data-material-id={id}
         >
           <div className="flex w-full min-w-0 shrink-0 items-center gap-2">
             <div className={cardTypeIconBoxClass}>{cardIcon[content_kind]}</div>
@@ -299,6 +310,7 @@ export const MaterialsCard = ({
       )}
       data-umami-event="material-card-open"
       data-umami-event-type={content_kind}
+      data-material-id={id}
     >
       <div className="flex flex-col gap-1 overflow-hidden">
         <div className="flex h-full flex-col justify-between gap-2">

@@ -1,4 +1,4 @@
-import type { ExamKind, MathTaskExamMapping } from 'features.math.bank';
+import type { ExamKind, MathTaskExamMapping } from 'features.bank';
 import { EXAM_KINDS_BY_SUBJECT } from '../types';
 
 export const EXAM_KINDS: readonly ExamKind[] = EXAM_KINDS_BY_SUBJECT.mathematics;

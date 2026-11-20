@@ -6,7 +6,7 @@ import {
   type MathBankAnalyticsSource,
   type MathBankSearchSnapshot,
 } from 'common.utils';
-import type { BankSubject } from 'features.math.bank';
+import type { BankSubject } from 'features.bank';
 import { useDebouncedValue } from './useDebouncedValue';
 
 const searchSignature = (filters: MathBankSearchSnapshot) =>

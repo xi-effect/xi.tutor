@@ -8,6 +8,7 @@ import {
   type ClassroomCursor,
   type ClassroomStatusT,
 } from 'common.api';
+import { QUERY_FRESHNESS_MS } from 'common.config';
 import {
   mergeMonetizationClassrooms,
   useMonetizationDevStore,
@@ -29,8 +30,8 @@ export const useAllTutorClassrooms = (enabled = true, statuses?: readonly Classr
       initialPageParam: undefined as ClassroomCursor | undefined,
       getNextPageParam: (lastPage) => getNextClassroomsCursor(lastPage, PAGE_SIZE),
       enabled,
-      staleTime: 5 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
+      staleTime: QUERY_FRESHNESS_MS,
+      gcTime: QUERY_FRESHNESS_MS,
     });
 
   useEffect(() => {

@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
   useForm,
+  useWatch,
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
@@ -68,12 +69,11 @@ export const ModalAddGroup = ({
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
     reset,
   } = form;
 
-  const nameValue = watch('name');
+  const nameValue = useWatch({ control, name: 'name' });
   const canSubmit = Boolean(nameValue?.trim()) && !isPending;
 
   const handleOpenChange = (next: boolean) => {

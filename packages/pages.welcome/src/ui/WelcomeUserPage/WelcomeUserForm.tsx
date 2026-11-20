@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormMessage,
   useForm,
+  useWatch,
 } from '@xipkg/form';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@xipkg/input';
@@ -31,7 +32,6 @@ export const WelcomeUserForm = () => {
 
   const {
     control,
-    watch,
     formState: { errors },
   } = form;
 
@@ -42,7 +42,7 @@ export const WelcomeUserForm = () => {
     onWelcomeUserForm(displayName.trim());
   };
 
-  const [displayName] = watch(['displayName']);
+  const displayName = useWatch({ control, name: 'displayName' });
 
   return (
     <Form {...form}>

@@ -139,13 +139,13 @@ type CategoryProps = {
 };
 
 const Category = ({ icon, title, children }: CategoryProps) => (
-  <div className="border-border-control rounded-2xl border p-4">
-    <div className="mb-4 flex items-center gap-2">
+  <section className="border-border-strong flex flex-col gap-2 rounded-2xl border p-4 md:p-5">
+    <div className="flex items-center gap-2">
       {icon}
-      <span className="dark:text-text-primary text-base font-semibold">{title}</span>
+      <h2 className="text-text-primary text-lg leading-6 font-medium">{title}</h2>
     </div>
     <div className="flex flex-col">{children}</div>
-  </div>
+  </section>
 );
 
 export const Effects = () => {
@@ -162,7 +162,7 @@ export const Effects = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-10">
         <Category
           icon={<Conference className="fill-icon-brand h-5 w-5" />}
           title={t('effects.videoConferences')}

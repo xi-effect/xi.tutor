@@ -200,6 +200,7 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
     try {
       fitted = fitStickerFontSize({
         preferredPx: preferredFontSize,
+        previousPx: renderedPx,
         maxContentHeight: limits.maxContentHeight,
         measure,
       });

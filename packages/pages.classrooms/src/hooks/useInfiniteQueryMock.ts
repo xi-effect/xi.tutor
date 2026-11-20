@@ -1,4 +1,5 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
+import { QUERY_FRESHNESS_MS } from 'common.config';
 import { RefObject } from 'react';
 import { ClassroomPropsT } from '../types';
 import { classroomsMock } from '../mocks';
@@ -29,8 +30,8 @@ export const useInfiniteQueryMock = (parentRef: RefObject<HTMLDivElement | null>
         }
         return undefined;
       },
-      staleTime: 5 * 60 * 1000, // 5 минут
-      gcTime: 10 * 60 * 1000, // 10 минут
+      staleTime: QUERY_FRESHNESS_MS,
+      gcTime: QUERY_FRESHNESS_MS,
     });
 
   // Обработчик скролла для автоматической загрузки следующей страницы

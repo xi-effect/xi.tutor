@@ -31,6 +31,8 @@ import type {
   ProductAnalyticsBoardTrigger,
   MathBankAnalyticsSource,
   MathBankFavoriteAction,
+  TaskReportCommentLengthBucket,
+  TaskReportFailureReason,
   ProductLimitBlockedOn,
   ProductLimitFileCategory,
   ProductLimitObjectKind,
@@ -41,6 +43,7 @@ import type {
   FileUploadRejectReason,
   FileUploadSizeBucket,
   FileUploadSource,
+  FileUploadSurface,
   LimitExceededBy,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsInviteKind,
@@ -251,6 +254,47 @@ export type ProductAnalyticsEventMap = {
     user_role: 'tutor' | 'student' | 'unknown';
     duration_ms?: number;
     completion_path?: 'tour_done' | 'skipped' | 'auto_no_steps' | 'unknown';
+  };
+  first_steps_screen_viewed: BaseProps & {
+    screen: 'welcome' | 'checklist' | 'ready';
+    user_role: 'tutor' | 'student' | 'unknown';
+    steps_resolved?: number;
+    steps_total?: number;
+  };
+  first_steps_action: BaseProps & {
+    action:
+      | 'start'
+      | 'open_step'
+      | 'start_step'
+      | 'review'
+      | 'finish'
+      | 'finish_early'
+      | 'board_hint_home'
+      | 'invite_hint_home';
+    user_role: 'tutor' | 'student' | 'unknown';
+    step?: string;
+  };
+  first_steps_step_resolved: BaseProps & {
+    step: string;
+    mark: 'done' | 'skipped';
+    source: 'skip' | 'auto' | 'tour' | 'copy';
+    user_role: 'tutor' | 'student' | 'unknown';
+  };
+  first_steps_tour: BaseProps & {
+    action: 'started' | 'advanced' | 'finished' | 'closed';
+    step: string;
+    user_role: 'tutor' | 'student' | 'unknown';
+    anchor?: string;
+    step_index?: number;
+    total_steps?: number;
+  };
+  first_steps_call_phase: BaseProps & {
+    phase: string;
+    user_role: 'tutor' | 'student' | 'unknown';
+  };
+  first_steps_demo_cabinet: BaseProps & {
+    status: 'ready' | 'removed' | 'failed';
+    user_role: 'tutor';
   };
 
   student_invite_viewed: BaseProps & {
@@ -711,17 +755,31 @@ export type ProductAnalyticsEventMap = {
     task_type?: string;
     difficulty?: number;
   };
-  math_task_report: {
+  task_report_opened: {
     event_version?: number;
-    source: MathBankAnalyticsSource;
-    session_id?: string;
     task_id: string;
     subject: string;
-    grade: number;
+    grade?: string | number;
     topic_id?: string;
     task_type?: string;
-    difficulty?: number;
-    comment: string;
+    source?: string;
+  };
+  task_report_submitted: {
+    event_version?: number;
+    task_id: string;
+    subject: string;
+    grade?: string | number;
+    topic_id?: string;
+    task_type?: string;
+    source?: string;
+    has_comment: boolean;
+    comment_length_bucket?: TaskReportCommentLengthBucket;
+  };
+  task_report_failed: {
+    event_version?: number;
+    task_id: string;
+    subject: string;
+    reason: TaskReportFailureReason;
   };
 
   product_limit_reached: {
@@ -738,12 +796,14 @@ export type ProductAnalyticsEventMap = {
   file_upload_attempted: {
     event_version?: number;
     source: FileUploadSource;
+    surface?: FileUploadSurface;
     file_category: FileUploadFileCategory;
     size_bucket: FileUploadSizeBucket;
   };
   file_upload_succeeded: {
     event_version?: number;
     source: FileUploadSource;
+    surface?: FileUploadSurface;
     file_category: FileUploadFileCategory;
     size_bucket: FileUploadSizeBucket;
   };
@@ -751,6 +811,7 @@ export type ProductAnalyticsEventMap = {
     | {
         event_version?: number;
         source: FileUploadSource;
+        surface?: FileUploadSurface;
         reason: 'file_too_large';
         file_category: FileUploadFileCategory;
         size_bucket: FileUploadSizeBucket;
@@ -759,18 +820,12 @@ export type ProductAnalyticsEventMap = {
     | {
         event_version?: number;
         source: FileUploadSource;
+        surface?: FileUploadSurface;
         reason: Exclude<FileUploadRejectReason, 'file_too_large'>;
         file_category: FileUploadFileCategory;
         size_bucket: FileUploadSizeBucket;
       };
 
-  subscription_announcement_shown: BaseProps & {
-    user_role: 'tutor';
-  };
-  subscription_announcement_article_opened: BaseProps & {
-    user_role: 'tutor';
-    source: 'announcement';
-  };
   subscription_pricing_viewed: {
     event_version?: number;
     source: SubscriptionAnalyticsSource;
@@ -866,6 +921,18 @@ export type ProductAnalyticsEventMap = {
     new_plan: string;
     reason: SubscriptionDowngradeReason;
   };
+  subscription_expiry_notice_shown: {
+    event_version?: number;
+    hours_left: number;
+  };
+  subscription_expiry_notice_renew_clicked: {
+    event_version?: number;
+    hours_left: number;
+  };
+  subscription_expiry_notice_dismissed: {
+    event_version?: number;
+    hours_left: number;
+  };
   subscription_paywall_shown: {
     event_version?: number;
     source: 'product_limit';
@@ -888,13 +955,6 @@ export type ProductAnalyticsEventMap = {
     event_version?: number;
     reason: SubscriptionPromoFailureReason;
   };
-  subscription_announcement_closed: BaseProps & {
-    user_role: 'tutor';
-  };
-  subscription_announcement_dismissed: BaseProps & {
-    user_role: 'tutor';
-  };
-
   payment_confirmed: {
     event_version?: number;
     revenue: number;

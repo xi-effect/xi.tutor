@@ -6,7 +6,12 @@ import { useStartCall } from 'modules.calls';
 import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
-import { useCurrentUser } from 'common.services';
+import {
+  readFirstStepsTour,
+  useCurrentUser,
+  useMarkFirstStepDone,
+  writeFirstStepsCallPhase,
+} from 'common.services';
 import { StartLessonButton } from 'features.lesson.start';
 import { NextLessonChip } from '../NextLessonChip';
 import { EditableClassroomName } from './EditableClassroomName';
@@ -22,6 +27,7 @@ const startLessonButtonClass =
 
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
+  const markCallDone = useMarkFirstStepDone('call');
   const isTutor = user?.default_layout === 'tutor';
   const isPaused = isClassroomOnPause(classroom.status);
   const isLocked = classroom.status === 'locked';
@@ -43,21 +49,25 @@ export const Content = ({ classroom }: ContentProps) => {
     url.searchParams.delete('goto');
     window.history.replaceState({}, '', url.toString());
     setTimeout(() => {
+      markCallDone();
       startCall({ classroom_id: classroom.id.toString() }, { source: 'classroom' }).catch(
         (error) => {
           console.error('Ошибка при запуске звонка (goto=call):', error);
         },
       );
     }, 100);
-  }, [search, startCall, classroom.id]);
+  }, [search, startCall, classroom.id, classroom.status, markCallDone]);
 
   const handleStartCall = useCallback(async () => {
+    const guided = readFirstStepsTour()?.step === 'call';
+    if (guided) writeFirstStepsCallPhase('prejoin-devices');
+    else markCallDone();
     try {
       await startCall({ classroom_id: classroom.id.toString() }, { source: 'classroom' });
     } catch (error) {
       console.error('Ошибка при запуске звонка:', error);
     }
-  }, [startCall, classroom.id]);
+  }, [startCall, classroom.id, markCallDone]);
 
   const getStudentName = () => {
     if (classroom.kind !== 'individual') return '';
@@ -131,7 +141,7 @@ export const Content = ({ classroom }: ContentProps) => {
             </div>
           </div>
 
-          <div className="hidden shrink-0 sm:block">
+          <div className="hidden shrink-0 sm:block" data-first-step="start-call">
             {isPaused ? null : (
               <StartLessonButton
                 className={startLessonButtonClass}
@@ -152,13 +162,15 @@ export const Content = ({ classroom }: ContentProps) => {
       <div className="flex w-full flex-col gap-2 sm:hidden">
         <NextLessonChip />
         {isPaused ? null : (
-          <StartLessonButton
-            className={`${startLessonButtonClass} w-full`}
-            classroomId={classroom.id}
-            variant="primary"
-            size="m"
-            onStart={handleStartCall}
-          />
+          <div data-first-step="start-call">
+            <StartLessonButton
+              className={`${startLessonButtonClass} w-full`}
+              classroomId={classroom.id}
+              variant="primary"
+              size="m"
+              onStart={handleStartCall}
+            />
+          </div>
         )}
       </div>
     </div>

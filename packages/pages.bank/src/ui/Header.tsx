@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { BankSubject, MathBankCatalogItem, MathBankExamIndexItem } from 'features.math.bank';
+import type { BankSubject, MathBankCatalogItem, MathBankExamIndexItem } from 'features.bank';
 import type { MathBankFiltersT } from '../types';
 import { MathBankSearchField } from './MathBankSearchField';
 import { MathBankToolbar } from './MathBankToolbar';

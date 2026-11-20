@@ -1,6 +1,6 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
 import { UserRoleT, classroomPaymentsApiConfig, paymentsApiConfig } from 'common.api';
-import { getAxiosInstance } from 'common.config';
+import { getAxiosInstance, QUERY_FRESHNESS_MS } from 'common.config';
 import { getRolePaymentsQueryKey } from 'common.services';
 import { RolePaymentT } from 'features.table';
 import React, { RefObject } from 'react';
@@ -48,8 +48,8 @@ export const useInfiniteQuery = (
           recipient_invoice_id: lastItem.id,
         };
       },
-      staleTime: 5 * 60 * 1000, // 5 минут
-      gcTime: 10 * 60 * 1000, // 10 минут
+      staleTime: QUERY_FRESHNESS_MS,
+      gcTime: QUERY_FRESHNESS_MS,
     });
 
   // Обработчик скролла для автоматической загрузки следующей страницы

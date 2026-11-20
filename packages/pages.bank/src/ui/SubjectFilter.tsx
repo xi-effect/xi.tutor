@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Popover, PopoverTrigger } from '@xipkg/popover';
-import { BANK_SUBJECTS, type BankSubject } from 'features.math.bank';
+import { BANK_SUBJECTS, type BankSubject } from 'features.bank';
 import { useTranslation } from 'react-i18next';
 import { FilterChip } from './FilterChip';
 import { FilterOption } from './FilterOption';

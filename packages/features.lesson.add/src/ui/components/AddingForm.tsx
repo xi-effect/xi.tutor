@@ -6,6 +6,7 @@ import {
   FormControl,
   FormMessage,
   useFormState,
+  useWatch,
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Textarea } from '@xipkg/textarea';
@@ -75,10 +76,10 @@ export const AddingForm: FC<AddingFormProps> = ({
     }
   }, [fixedClassroomId, form]);
 
-  const startTime = form.watch('startTime');
-  const endTime = form.watch('endTime');
-  const repeatMode = form.watch('repeatMode');
-  const startDate = form.watch('startDate');
+  const startTime = useWatch({ control, name: 'startTime' });
+  const endTime = useWatch({ control, name: 'endTime' });
+  const repeatMode = useWatch({ control, name: 'repeatMode' });
+  const startDate = useWatch({ control, name: 'startDate' });
   const fixedClassroom = classrooms.find((classroom) => classroom.id === fixedClassroomId);
   const durationLabel = useMemo(
     () => formatDurationBetween(startTime, endTime, t),

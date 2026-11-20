@@ -1,25 +1,32 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PPTXViewer } from 'pptxviewjs';
+import { useEditor, useValue } from '@ibodr/draw';
 
 import { useYjsContext } from '../../providers/YjsContext';
 import { loadPptxViewer } from '../../utils/loadPptxViewer';
+import { createPresentationPainter } from './presentationPainter';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { rasterPixelsForCssSize, zoomStepCeil } from '../../utils/rasterBudget';
 
 import type { PresentationShape } from './PresentationShape';
 import { PresentationControls } from './PresentationControls';
+import { reportBoardProblem } from '../../utils/boardProblem';
 import { insertImage } from '../../features/pickAndInsertImage';
-import { useEditor } from '@ibodr/draw';
 
 export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
   const { token } = useYjsContext();
   const { t } = useTranslation('board');
 
   const editor = useEditor();
+  const zoomStep = useValue('presentation-zoom-step', () => zoomStepCeil(editor.getZoomLevel()), [
+    editor,
+  ]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const viewerRef = useRef<PPTXViewer | null>(null);
+  const painterRef = useRef<ReturnType<typeof createPresentationPainter> | null>(null);
+  const requestedPage = useRef(1);
 
   const [fetching, setFetching] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(1);
@@ -28,12 +35,12 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
 
   const isLoading = fetching;
 
-  const resizeCanvas = useCallback(async () => {
+  const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    const viewer = viewerRef.current;
+    const painter = painterRef.current;
 
-    if (!canvas || !container || !viewer) {
+    if (!canvas || !container || !painter) {
       return;
     }
 
@@ -43,27 +50,30 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
       return;
     }
 
-    canvas.width = Math.floor(width * window.devicePixelRatio);
-    canvas.height = Math.floor(height * window.devicePixelRatio);
+    const pixels = rasterPixelsForCssSize(width, height, zoomStep, window.devicePixelRatio || 1, {
+      supersample: 2,
+    });
+    painter.request({
+      width,
+      height,
+      pixelWidth: pixels.width,
+      pixelHeight: pixels.height,
+      page: requestedPage.current,
+    });
+  }, [zoomStep]);
 
-    try {
-      await viewer.render(canvas, {
-        quality: 'high',
-      });
-    } catch (err) {
-      console.error(err);
-      return;
-    }
+  const resizeCanvasRef = useRef(resizeCanvas);
+  resizeCanvasRef.current = resizeCanvas;
 
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-  }, []);
+  useEffect(() => {
+    void resizeCanvas();
+  }, [resizeCanvas]);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const observer = new ResizeObserver(() => {
-      resizeCanvas();
+      resizeCanvasRef.current();
     });
 
     observer.observe(containerRef.current);
@@ -71,14 +81,21 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
     return () => {
       observer.disconnect();
     };
-  }, [resizeCanvas]);
+  }, []);
 
   useEffect(() => {
     if (!canvasRef.current || !shape.props.src || !token) {
       return;
     }
 
+    const canvas = canvasRef.current;
     let cancelled = false;
+    const controller = new AbortController();
+    let ownedViewer: PPTXViewer | null = null;
+    let painter: ReturnType<typeof createPresentationPainter> | null = null;
+    requestedPage.current = 1;
+    setCurrentSlide(1);
+    setTotalSlides(0);
 
     async function load() {
       try {
@@ -87,7 +104,8 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
 
         const url = await resolveAssetUrl(shape.props.src, token);
 
-        const response = await fetch(url);
+        if (cancelled) return;
+        const response = await fetch(url, { signal: controller.signal });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch pptx (${response.status})`);
@@ -106,27 +124,37 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
         }
 
         const viewer = new PPTXViewer({
-          canvas: canvasRef.current,
+          canvas: null,
+          autoChartRerenderDelayMs: 0,
         });
 
+        ownedViewer = viewer;
         await viewer.loadFile(buffer);
 
         if (cancelled) {
           return;
         }
 
-        viewerRef.current = viewer;
+        painter = createPresentationPainter(
+          viewer,
+          canvas,
+          (page) => {
+            setCurrentSlide(page);
+          },
+          (err) => reportBoardProblem('presentation-render', err, { shapeId: shape.id }),
+        );
+        painterRef.current = painter;
 
         setTotalSlides(viewer.getSlideCount());
 
-        resizeCanvas();
+        resizeCanvasRef.current();
       } catch (err) {
-        console.error(err);
-
         if (!cancelled) {
+          reportBoardProblem('presentation-load', err, { shapeId: shape.id });
           setError(err as Error);
         }
       } finally {
+        if (!painter) ownedViewer?.destroy();
         if (!cancelled) {
           setFetching(false);
         }
@@ -138,21 +166,18 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
     return () => {
       cancelled = true;
 
-      viewerRef.current?.destroy();
-      viewerRef.current = null;
+      controller.abort();
+      painter?.dispose();
+      if (painterRef.current === painter) painterRef.current = null;
+      canvas.width = 0;
+      canvas.height = 0;
     };
-  }, [shape.props.src, token, resizeCanvas]);
+  }, [shape.props.src, token, shape.id]);
 
-  const handlePageChange = async (page: number) => {
-    const viewer = viewerRef.current;
-
-    if (!viewer) {
-      return;
-    }
-
-    await viewer.goToSlide(page - 1, canvasRef.current);
-
-    setCurrentSlide(page);
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalSlides || !painterRef.current) return;
+    requestedPage.current = page;
+    resizeCanvasRef.current();
   };
 
   const handleExtractPage = useCallback(async () => {

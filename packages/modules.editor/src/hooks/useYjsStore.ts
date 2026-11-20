@@ -6,7 +6,13 @@ import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
 import { createEditorFileDropProps } from '../utils/editorFileDrop';
 import { toast } from 'sonner';
-import { useCurrentUser } from 'common.services';
+import { queryClient } from 'common.config';
+import {
+  recoverCollabSocket,
+  shareCollabRecovery,
+  useCurrentUser,
+  type CollabRecovery,
+} from 'common.services';
 import { ContentYDocItem } from 'common.types';
 import {
   HocuspocusProvider,
@@ -81,6 +87,9 @@ export function useYjsStore({
   const storageTokenRef = useRef(storageToken);
   storageTokenRef.current = storageToken;
   const releaseTimerRef = useRef<number | null>(null);
+  const tokenRecoveryRef = useRef<CollabRecovery | null>(null);
+  const authFailureNotifiedRef = useRef(false);
+  const providerAliveRef = useRef(true);
 
   /* ==========================================================
    * 1. Provider + Y.Doc через useState — React гарантирует
@@ -154,6 +163,7 @@ export function useYjsStore({
       window.clearTimeout(releaseTimerRef.current);
       releaseTimerRef.current = null;
     }
+    providerAliveRef.current = true;
 
     provider.attach();
 
@@ -168,11 +178,43 @@ export function useYjsStore({
     }
 
     const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
-      setHasSyncError(true);
-      if (reason === 'permission-denied') {
+      if (reason !== 'permission-denied') {
+        setHasSyncError(true);
+        return;
+      }
+
+      const failedToken = storageTokenRef.current;
+      // Ответ на уже заменённый токен не должен гасить новое соединение.
+      if (tokenRecoveryRef.current && tokenRecoveryRef.current.token !== failedToken) return;
+      // Повторный mount эффекта не должен оставлять сокет с тем же токеном.
+      websocketProvider.disconnect();
+      tokenRecoveryRef.current = shareCollabRecovery(tokenRecoveryRef.current, failedToken, () =>
+        recoverCollabSocket({
+          socket: websocketProvider,
+          rejectedToken: failedToken,
+          ydocId,
+          queryClient,
+          applyToken: (token) => {
+            storageTokenRef.current = token;
+          },
+          shouldReconnect: () => providerAliveRef.current,
+        }),
+      );
+
+      void tokenRecoveryRef.current.promise.then((outcome) => {
+        if (outcome === 'refreshed') {
+          authFailureNotifiedRef.current = false;
+          setHasSyncError(false);
+          return;
+        }
+        if (outcome === 'cancelled') return;
+
+        setHasSyncError(true);
+        if (authFailureNotifiedRef.current) return;
+        authFailureNotifiedRef.current = true;
         toast(i18n.t('status.accessError', { ns: 'editor' }));
         console.error('hocuspocus: permission-denied');
-      }
+      });
     };
 
     const handleAuthenticated = ({ scope }: onAuthenticatedParameters) => {
@@ -201,6 +243,7 @@ export function useYjsStore({
       // Реальный unmount (смена key / уход со страницы) успеет уничтожить провайдер.
       releaseTimerRef.current = window.setTimeout(() => {
         releaseTimerRef.current = null;
+        providerAliveRef.current = false;
         try {
           provider.destroy();
         } catch {
@@ -213,7 +256,7 @@ export function useYjsStore({
         }
       }, 250);
     };
-  }, [provider, websocketProvider, awareness, userData]);
+  }, [provider, websocketProvider, awareness, userData, ydocId]);
 
   useEffect(() => {
     if (!awareness) return;

@@ -1,0 +1,26 @@
+{
+  "authoredFor": "sovlium",
+  "date": "2026-11-02",
+  "method": "original physical models and independent numeric parameterization",
+  "copiedTaskTexts": false,
+  "bookFullTextsReviewed": false,
+  "globalSimilarityCheckPerformed": false,
+  "references": [
+    {
+      "id": "curriculum-physics",
+      "scope": "programme and exam skill navigation",
+      "details": "docs/physics/SOURCES.md"
+    },
+    {
+      "id": "classical-physics-models",
+      "scope": "generic physical laws; no attribution to a specific source exercise",
+      "bibliography": [
+        "Пёрышкин—Родина, 1985",
+        "Рымкевич, 1988",
+        "Под ред. Ландсберга, 1985–1986"
+      ],
+      "verification": "bibliographic records only",
+      "details": "docs/physics/SOURCES.md"
+    }
+  ]
+}

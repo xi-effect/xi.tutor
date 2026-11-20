@@ -7,7 +7,13 @@ import {
   type onStatusParameters,
   type onSyncedParameters,
 } from '@hocuspocus/provider';
-import { useCurrentUser } from 'common.services';
+import { queryClient } from 'common.config';
+import {
+  recoverCollabSocket,
+  shareCollabRecovery,
+  useCurrentUser,
+  type CollabRecovery,
+} from 'common.services';
 import { useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import {
@@ -36,6 +42,7 @@ import { createAssetTokenHolder, myAssetStore } from '../features/imageStore';
 import { boardStoreShapeUtils } from '../shapes/boardShapeUtils';
 import { commentCustomRecords } from '../comments/commentRecords';
 import { putCachedBoardDoc } from '../utils/boardDocCache';
+import { reportBoardProblem } from '../utils/boardProblem';
 import { hydrateBoardStoreFromYjs } from '../utils/hydrateBoardStoreFromYjs';
 import {
   deleteYjsRecordFully,
@@ -158,8 +165,13 @@ type SharedEntry = {
   boardBackgroundMap: Y.Map<string>;
   /** Документ из Yjs уже загружен в store — повторный loadSnapshot сбрасывает выделение. */
   yjsDocumentHydrated: boolean;
+  /** Какой именно store получил снимок. Новый store после ремаунта нужно гидрировать заново. */
+  hydratedStore: DrStore | null;
   storageToken: string;
   releaseTimer: number | null;
+  /** Одно восстановление на отклонённый content_token, общее для всех потребителей сокета. */
+  tokenRecovery: CollabRecovery | null;
+  authFailureNotified: boolean;
 };
 
 const shared = new Map<ProviderKey, SharedEntry>();
@@ -220,8 +232,11 @@ function getOrCreateShared(
     commentReadsMap,
     boardBackgroundMap,
     yjsDocumentHydrated: false,
+    hydratedStore: null,
     storageToken,
     releaseTimer: null,
+    tokenRecovery: null,
+    authFailureNotified: false,
   };
 
   const websocketProvider = new HocuspocusProviderWebsocket({
@@ -382,6 +397,26 @@ export function useYjsStore({
       const pending = pendingChangesRef.current;
       if (!pending) return;
 
+      const removed = Object.values(pending.removed).filter((record) =>
+        isDocumentRecord(store, record),
+      );
+      if (removed.length > 0) {
+        const live = store.allRecords().filter((record) => isDocumentRecord(store, record)).length;
+        // Размонтирование редактора снимает фигуры пачкой. Это не стирание ластиком.
+        if (live === 0 || removed.length > live * 4) {
+          for (const record of removed) delete pending.removed[record.id];
+        }
+      }
+
+      if (
+        Object.keys(pending.added).length === 0 &&
+        Object.keys(pending.updated).length === 0 &&
+        Object.keys(pending.removed).length === 0
+      ) {
+        pendingChangesRef.current = null;
+        return;
+      }
+
       pendingChangesRef.current = null;
 
       yDoc.transact(() => {
@@ -407,17 +442,56 @@ export function useYjsStore({
       }, FLUSH_MS);
     };
 
-    const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
+    const reportAuthFailure = (reason: string) => {
+      const error = reportBoardProblem('yjs-auth', `Authentication failed: ${reason}`, {
+        ydocId,
+        reason,
+      });
       setStoreWithStatus({
         status: 'error',
         store,
-        error: new Error(`Authentication failed: ${reason}`),
+        error,
         connectionStatus: 'offline',
       });
+    };
 
-      if (reason === 'permission-denied') {
-        toast(i18n.t('toast.collabAccessError', { ns: 'board' }));
+    const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
+      if (reason !== 'permission-denied') {
+        reportAuthFailure(reason);
+        return;
       }
+
+      const failedToken = sharedEntry.storageToken;
+      const socket = provider.configuration.websocketProvider;
+      // Ответ на уже заменённый токен не должен гасить новое соединение.
+      if (sharedEntry.tokenRecovery && sharedEntry.tokenRecovery.token !== failedToken) return;
+      // Повторный mount эффекта не должен оставлять сокет с тем же токеном.
+      socket.disconnect();
+      sharedEntry.tokenRecovery = shareCollabRecovery(sharedEntry.tokenRecovery, failedToken, () =>
+        recoverCollabSocket({
+          socket,
+          rejectedToken: failedToken,
+          ydocId,
+          queryClient,
+          applyToken: (token) => {
+            sharedEntry.storageToken = token;
+          },
+          shouldReconnect: () => sharedEntry.refs > 0,
+        }),
+      );
+
+      void sharedEntry.tokenRecovery.promise.then((outcome) => {
+        if (outcome === 'refreshed') {
+          sharedEntry.authFailureNotified = false;
+          return;
+        }
+        if (outcome === 'cancelled') return;
+
+        reportAuthFailure(reason);
+        if (sharedEntry.authFailureNotified) return;
+        sharedEntry.authFailureNotified = true;
+        toast(i18n.t('toast.collabAccessError', { ns: 'board' }));
+      });
     };
 
     const handleAuthenticated = ({ scope }: onAuthenticatedParameters) => {
@@ -811,19 +885,42 @@ export function useYjsStore({
         });
       }
 
-      /** 5) initial seed / migrate (один раз на комнату — повторный loadSnapshot сбрасывает выделение) */
-      if (!sharedEntry.yjsDocumentHydrated) {
-        const result = hydrateBoardStoreFromYjs({
-          store,
-          yDoc,
-          yStore,
-          meta,
-          ydocId,
-          seedIfEmpty: true,
-        });
+      /** 5) initial seed / migrate (один раз на этот store — повторный loadSnapshot сбрасывает выделение) */
+      if (sharedEntry.hydratedStore !== store) {
+        try {
+          const result = hydrateBoardStoreFromYjs({
+            store,
+            yDoc,
+            yStore,
+            meta,
+            ydocId,
+            seedIfEmpty: !sharedEntry.yjsDocumentHydrated,
+          });
 
-        if (result === 'migration-error') return;
-        sharedEntry.yjsDocumentHydrated = true;
+          if (result === 'migration-error') {
+            const problem = reportBoardProblem('yjs-hydrate', 'Schema migration failed', {
+              ydocId,
+            });
+            setStoreWithStatus({
+              status: 'error',
+              store,
+              error: problem,
+              connectionStatus: 'offline',
+            });
+            return;
+          }
+          sharedEntry.hydratedStore = store;
+          sharedEntry.yjsDocumentHydrated = true;
+        } catch (error) {
+          const problem = reportBoardProblem('yjs-hydrate', error, { ydocId, source: 'sync' });
+          setStoreWithStatus({
+            status: 'error',
+            store,
+            error: problem,
+            connectionStatus: 'offline',
+          });
+          return;
+        }
       }
 
       setStoreWithStatus({
@@ -903,9 +1000,11 @@ export function useYjsStore({
           seedIfEmpty: false,
         });
         if (result !== 'hydrated') return false;
+        sharedEntry.hydratedStore = store;
         sharedEntry.yjsDocumentHydrated = true;
         return true;
-      } catch {
+      } catch (error) {
+        reportBoardProblem('yjs-hydrate', error, { ydocId, source: 'cache' });
         return false;
       }
     };

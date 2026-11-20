@@ -193,9 +193,7 @@ export const SettingsMobileDrawer = ({
           {isTutor && !isReadonly && (
             <SubRow label={t('settings.unlockElements')} onClick={() => setView('unlock')} />
           )}
-          {isTutor && !isReadonly && (
-            <SubRow label={t('settings.eraser')} onClick={() => setView('eraser')} />
-          )}
+          {!isReadonly && <SubRow label={t('settings.eraser')} onClick={() => setView('eraser')} />}
           {isTutor && canToggleReadonly && (
             <button
               type="button"

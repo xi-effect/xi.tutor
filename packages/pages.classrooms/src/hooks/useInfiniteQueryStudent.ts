@@ -1,6 +1,6 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
 import { ClassroomPropsT } from '../types';
-import { getAxiosInstance } from 'common.config';
+import { getAxiosInstance, QUERY_FRESHNESS_MS } from 'common.config';
 import { studentApiConfig, StudentQueryKey, ClassroomT } from 'common.api';
 import React from 'react';
 
@@ -46,8 +46,8 @@ export const useInfiniteQueryStudent = () => {
 
         return lastPage[lastPage.length - 1].created_at;
       },
-      staleTime: 5 * 60 * 1000, // 5 минут
-      gcTime: 10 * 60 * 1000, // 10 минут
+      staleTime: QUERY_FRESHNESS_MS,
+      gcTime: QUERY_FRESHNESS_MS,
     });
 
   // Объединяем все страницы в один массив и адаптируем типы

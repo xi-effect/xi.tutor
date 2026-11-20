@@ -226,4 +226,25 @@ React Strict Mode: once-ключи в памяти модуля защищают
 | `useOnboardingAnalytics`                 | started, step_viewed                                                |
 | `useWelcomeRoleForm`                     | `onboarding_role_selected` после сохранения `default_layout`        |
 | `common.ui/OnboardingPopup`              | training viewed/skipped/completed, onboarding_completed, tutorial_* |
+| `pages.main/FirstSteps`                  | то же для нового гайда, плюс `first_steps_*`                        |
+| `common.ui/FirstStepsTourHost`           | `first_steps_tour`, `first_steps_call_phase`                        |
 | `common.utils/.../onboardingTracking.ts` | общие хелперы                                                       |
+
+## Первые шаги
+
+Новый гайд на этапе `training` шлёт те же outcome-события, что и старый тур: `onboarding_step_viewed`, `onboarding_step_completed` или `onboarding_step_skipped` (`skip_reason: later` у «Завершить знакомство»), `onboarding_completed`, `activation_tutorial_started` / `activation_tutorial_completed`. «Перейти к работе» дополнительно шлёт legacy `onboarding-complete`. Локальный просмотр без этапа `training` эти события не шлёт.
+
+Отдельно, чтобы видеть сам гайд:
+
+| Событие                     | Когда                                                                                           | Свойства                                                     |
+| --------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `first_steps_screen_viewed` | Экран `welcome`, `checklist` или `ready`. Один раз на экран и роль                              | `screen`, `user_role`, `steps_resolved`, `steps_total`       |
+| `first_steps_action`        | Клик: `start`, `open_step`, `start_step`, `review`, `finish`, `finish_early`, `board_hint_home` | `action`, `user_role`, `step`                                |
+| `first_steps_step_resolved` | Пункт чек-листа впервые стал `done` или `skipped`                                               | `step`, `mark`, `source` (`skip` / `auto` / `tour` / `copy`) |
+| `first_steps_tour`          | Подсказка: `started` и `finished` один раз на шаг, `advanced` и `closed` на каждое действие     | `action`, `step`, `anchor`, `step_index`, `total_steps`      |
+| `first_steps_call_phase`    | Смена фазы гайда звонка. Один раз на фазу                                                       | `phase`                                                      |
+| `first_steps_demo_cabinet`  | Итог подготовки демокабинета на этапе обучения                                                  | `status`: `ready` / `removed` / `failed`                     |
+
+`first_steps_action` — клик. `onboarding_step_completed`, `onboarding_step_skipped` и `onboarding_completed` — ответ сервера. Пропуск отдельного пункта чек-листа не завершает онбординг и шлёт только `first_steps_step_resolved`.
+
+Ссылки «База знаний» и «Поддержка» на экране готовности шлют `activation_help_opened`. Пока открыт этап `training`, выбор канала в поддержке шлёт `activation_support_contacted` со `screen: onboarding`.

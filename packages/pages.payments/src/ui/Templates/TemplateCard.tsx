@@ -58,7 +58,7 @@ export const TemplateCard = ({
     <>
       <div
         onClick={handleEditTemplate}
-        className="group bg-background-surface relative flex h-40 w-full cursor-pointer flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
+        className="group bg-background-surface relative flex h-40 w-full cursor-pointer flex-col justify-between rounded-2xl p-5"
         data-umami-event="payment-template-card-open"
       >
         <div className="flex w-full items-start">

@@ -9,6 +9,7 @@ import {
   FormControl,
   FormMessage,
   useFormState,
+  useWatch,
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { ArrowRight } from '@xipkg/icons';
@@ -118,10 +119,10 @@ export const MovingForm: FC<MovingFormProps> = ({
     }
   }, [initialStartTime, initialEndTime, form]);
 
-  const startTime = form.watch('startTime');
-  const endTime = form.watch('endTime');
-  const moveMode = form.watch('moveMode');
-  const startDate = form.watch('startDate');
+  const startTime = useWatch({ control, name: 'startTime' });
+  const endTime = useWatch({ control, name: 'endTime' });
+  const moveMode = useWatch({ control, name: 'moveMode' });
+  const startDate = useWatch({ control, name: 'startDate' });
 
   const sourceDate = initialDate ?? startDate;
 

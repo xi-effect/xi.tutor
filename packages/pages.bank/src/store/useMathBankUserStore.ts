@@ -1,37 +1,37 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { BankSubject } from 'features.math.bank';
+import type { BankSubject } from 'features.bank';
 
 const MAX_RECENT = 30;
 
 type MathBankUserState = {
   subject: BankSubject;
-  favoriteTaskIds: string[];
   recentTaskIds: string[];
+  legacyFavoriteTaskIds: string[];
   setSubject: (subject: BankSubject) => void;
-  toggleFavorite: (taskId: string) => boolean;
   addRecent: (taskId: string) => void;
-  isFavorite: (taskId: string) => boolean;
+  clearLegacyFavorites: () => void;
 };
+
+type PersistedMathBankUserState = {
+  subject?: BankSubject;
+  recentTaskIds?: string[];
+  favoriteTaskIds?: unknown;
+  legacyFavoriteTaskIds?: unknown;
+};
+
+const readIdList = (value: unknown) =>
+  Array.isArray(value)
+    ? value.filter((id): id is string => typeof id === 'string' && id.length > 0)
+    : [];
 
 export const useMathBankUserStore = create<MathBankUserState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       subject: 'mathematics',
-      favoriteTaskIds: [],
       recentTaskIds: [],
+      legacyFavoriteTaskIds: [],
       setSubject: (subject) => set({ subject }),
-      toggleFavorite: (taskId) => {
-        const current = get().favoriteTaskIds;
-        const exists = current.includes(taskId);
-        const isFirstFavorite = !exists && current.length === 0;
-
-        set({
-          favoriteTaskIds: exists ? current.filter((id) => id !== taskId) : [...current, taskId],
-        });
-
-        return isFirstFavorite;
-      },
       addRecent: (taskId) => {
         set((state) => ({
           recentTaskIds: [taskId, ...state.recentTaskIds.filter((id) => id !== taskId)].slice(
@@ -40,15 +40,27 @@ export const useMathBankUserStore = create<MathBankUserState>()(
           ),
         }));
       },
-      isFavorite: (taskId) => get().favoriteTaskIds.includes(taskId),
+      clearLegacyFavorites: () => set({ legacyFavoriteTaskIds: [] }),
     }),
     {
       name: 'math-bank-user',
-      version: 2,
+      // Избранное хранится на бэкенде по UUID. Старые строковые id остаются только до одноразовой отправки.
+      version: 3,
+      migrate: (persisted) => {
+        const state = (persisted ?? {}) as PersistedMathBankUserState;
+        const legacyFavoriteTaskIds = readIdList(state.legacyFavoriteTaskIds);
+        return {
+          subject: state.subject ?? 'mathematics',
+          recentTaskIds: readIdList(state.recentTaskIds),
+          legacyFavoriteTaskIds: legacyFavoriteTaskIds.length
+            ? legacyFavoriteTaskIds
+            : readIdList(state.favoriteTaskIds),
+        };
+      },
       partialize: (state) => ({
         subject: state.subject,
-        favoriteTaskIds: state.favoriteTaskIds,
         recentTaskIds: state.recentTaskIds,
+        legacyFavoriteTaskIds: state.legacyFavoriteTaskIds,
       }),
     },
   ),

@@ -23,6 +23,7 @@
   "menu": {
     "changeAccess": "Student access",
     "duplicateToClassroom": "Duplicate to classroom",
+    "duplicateToAnotherClassroom": "Duplicate to another classroom",
     "editTags": "Edit tags",
     "rename": "Rename",
     "delete": "Delete"

@@ -63,21 +63,24 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     const file = event.target.files[0];
 
     if (!file.type.startsWith('image/')) {
-      beginFileUploadAttempt('profile_avatar', file).reject('unsupported_type');
+      beginFileUploadAttempt('profile_avatar', file, { surface: 'profile' }).reject(
+        'unsupported_type',
+      );
       toast(t('userPreview.uploadImage'));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      beginFileUploadAttempt('profile_avatar', file, { maxBytes: 5 * 1024 * 1024 }).reject(
-        'file_too_large',
-      );
+      beginFileUploadAttempt('profile_avatar', file, {
+        maxBytes: 5 * 1024 * 1024,
+        surface: 'profile',
+      }).reject('file_too_large');
       toast(t('userPreview.fileTooLarge'));
       return;
     }
 
     if (isFileNameTooLong(file.name)) {
-      beginFileUploadAttempt('profile_avatar', file).reject('unknown');
+      beginFileUploadAttempt('profile_avatar', file, { surface: 'profile' }).reject('unknown');
       toast(t('userPreview.fileNameTooLong', { max: MAX_FILENAME_LENGTH }));
       return;
     }
@@ -138,7 +141,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="ml-4 flex flex-col justify-center gap-0.5">
-        <span className="dark:text-text-primary text-2xl leading-[32px] font-semibold">
+        <span className="text-text-primary text-xl leading-7 font-medium">
           {user?.display_name}
         </span>
         <span className="text-text-primary dark:text-text-primary text-[16px] leading-[22px]">

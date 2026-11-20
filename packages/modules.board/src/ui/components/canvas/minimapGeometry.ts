@@ -78,6 +78,14 @@ export function containsPoint(box: PageBox, x: number, y: number) {
   return x >= box.minX && x <= box.maxX && y >= box.minY && y <= box.maxY;
 }
 
+export function isFiniteBox(box: PageBox) {
+  return [box.minX, box.minY, box.maxX, box.maxY].every(Number.isFinite);
+}
+
+export function isFinitePoint(point: { x: number; y: number }) {
+  return Number.isFinite(point.x) && Number.isFinite(point.y);
+}
+
 /** Растягивает короткую сторону, чтобы тонкая линия оставалась видимой на карте. */
 export function visibleMark(
   shape: { x: number; y: number; w: number; h: number },

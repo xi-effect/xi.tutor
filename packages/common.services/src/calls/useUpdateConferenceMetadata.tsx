@@ -3,9 +3,17 @@ import { getAxiosInstance } from 'common.config';
 import { useMutation } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 
+export type ConferenceMaterialKind = 'board' | 'note';
+
+/** Совпадает с ActiveMaterialSchema: UUID материала и его тип. */
+export interface ActiveMaterial {
+  id: string;
+  content_kind: ConferenceMaterialKind;
+}
+
 export interface UpdateConferenceMetadataData {
   classroom_id: string;
-  active_material_id: number;
+  active_material: ActiveMaterial | null;
 }
 
 export const useUpdateConferenceMetadata = () => {
@@ -20,7 +28,7 @@ export const useUpdateConferenceMetadata = () => {
             'Content-Type': 'application/json',
           },
           data: {
-            active_material_id: data.active_material_id,
+            active_material: data.active_material,
           },
         });
 

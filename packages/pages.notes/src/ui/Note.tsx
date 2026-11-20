@@ -19,7 +19,7 @@ const NoteContent = () => {
     <div className="bg-background-page flex h-full min-h-0 flex-col overflow-auto px-5 pt-3.5 pb-5">
       <Header />
       <div className="flex w-full flex-1 justify-center pt-4 pb-8">
-        <div className="w-full max-w-4xl sm:pl-16">
+        <div className="w-full max-w-4xl sm:pl-16" data-first-step="note-editor">
           <TiptapEditor />
         </div>
       </div>

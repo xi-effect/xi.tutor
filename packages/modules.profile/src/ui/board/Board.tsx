@@ -19,6 +19,7 @@ import {
   type BoardToolbarDock,
 } from 'modules.board/preferences';
 import { useTranslation } from 'react-i18next';
+import { SettingsGroup, settingsRowTitleClass } from '../layout/SettingsGroup';
 
 export const Board = () => {
   const { t } = useTranslation('profile');
@@ -34,89 +35,66 @@ export const Board = () => {
 
   return (
     <>
-      <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
-        <div className="flex w-full flex-col p-3">
-          <span className="dark:text-text-primary text-xl font-semibold">{t('board.pencil')}</span>
-        </div>
-        <div className="mt-2 flex w-full flex-col gap-3 p-3">
-          <div className="flex w-full flex-row items-center justify-between gap-4">
-            <div className="flex flex-row gap-4">
-              <Pen className="fill-icon-brand shrink-0" />
-              <div className="flex flex-col gap-0.5">
-                <span className="dark:text-text-primary text-base leading-6 font-semibold">
-                  {t('board.autoCloseDrawShapes')}
-                </span>
-                <span className="text-text-secondary text-s-base">
-                  {t('board.autoCloseDrawShapesHint')}
-                </span>
-              </div>
-            </div>
-            <Toggle
-              checked={autoCloseDrawShapes}
-              size="s"
-              onCheckedChange={setAutoCloseDrawShapes}
-              className="shrink-0"
-              data-umami-event="profile-board-auto-close-draw-shapes"
-              data-umami-event-state={autoCloseDrawShapes ? 'on' : 'off'}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
-        <div className="flex w-full flex-col gap-0.5 p-3">
-          <span className="dark:text-text-primary text-xl font-semibold">{t('board.toolbar')}</span>
-          <span className="text-text-secondary text-s-base">{t('board.toolbarHint')}</span>
-        </div>
-        <div className="mt-2 flex w-full flex-col gap-3 p-3">
-          <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
-            <div className="flex flex-row gap-4">
-              <ToolbarPositionIcon />
-              <span className="dark:text-text-primary text-base leading-6 font-semibold">
-                {t('board.toolbarPosition')}
+      <SettingsGroup title={t('board.pencil')}>
+        <div className="flex w-full flex-row items-center justify-between gap-4">
+          <div className="flex min-w-0 flex-row gap-4">
+            <Pen className="fill-icon-brand shrink-0" />
+            <div className="flex flex-col gap-0.5">
+              <span className={settingsRowTitleClass}>{t('board.autoCloseDrawShapes')}</span>
+              <span className="text-text-secondary text-s-base">
+                {t('board.autoCloseDrawShapesHint')}
               </span>
             </div>
-            <Select
-              value={toolbarDock}
-              onValueChange={(value) => {
-                if (isBoardToolbarDock(value)) setToolbarDock(value);
-              }}
+          </div>
+          <Toggle
+            checked={autoCloseDrawShapes}
+            size="s"
+            onCheckedChange={setAutoCloseDrawShapes}
+            className="shrink-0"
+            data-umami-event="profile-board-auto-close-draw-shapes"
+            data-umami-event-state={autoCloseDrawShapes ? 'on' : 'off'}
+          />
+        </div>
+      </SettingsGroup>
+
+      <SettingsGroup title={t('board.toolbar')} description={t('board.toolbarHint')}>
+        <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
+          <div className="flex min-w-0 flex-row gap-4">
+            <ToolbarPositionIcon />
+            <span className={settingsRowTitleClass}>{t('board.toolbarPosition')}</span>
+          </div>
+          <Select
+            value={toolbarDock}
+            onValueChange={(value) => {
+              if (isBoardToolbarDock(value)) setToolbarDock(value);
+            }}
+          >
+            <SelectTrigger
+              className="dark:text-text-primary ml-0 w-full sm:ml-auto sm:w-[250px]"
+              data-umami-event="profile-board-toolbar-dock"
+              data-umami-event-dock={toolbarDock}
             >
-              <SelectTrigger
-                className="dark:text-text-primary ml-0 w-full sm:ml-auto sm:w-[250px]"
-                data-umami-event="profile-board-toolbar-dock"
-                data-umami-event-dock={toolbarDock}
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {BOARD_TOOLBAR_DOCKS.map((value) => (
-                    <SelectItem key={value} value={value} className="dark:text-text-primary">
-                      {t(toolbarDockLabelKey(value))}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {BOARD_TOOLBAR_DOCKS.map((value) => (
+                  <SelectItem key={value} value={value} className="dark:text-text-primary">
+                    {t(toolbarDockLabelKey(value))}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
-      </div>
+      </SettingsGroup>
 
-      <div className="border-border-strong mt-4 flex w-full flex-col rounded-2xl border p-1">
-        <div className="flex w-full flex-col gap-0.5 p-3">
-          <span className="dark:text-text-primary text-xl font-semibold">
-            {t('board.newBoard')}
-          </span>
-          <span className="text-text-secondary text-s-base">{t('board.newBoardHint')}</span>
-        </div>
-        <div className="mt-2 flex w-full flex-col gap-3 p-3">
+      <SettingsGroup title={t('board.newBoard')} description={t('board.newBoardHint')}>
+        <div className="flex flex-col gap-4">
           <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
-            <div className="flex flex-row gap-4">
+            <div className="flex min-w-0 flex-row gap-4">
               <Grid className="fill-icon-brand shrink-0" />
-              <span className="dark:text-text-primary text-base leading-6 font-semibold">
-                {t('board.backgroundType')}
-              </span>
+              <span className={settingsRowTitleClass}>{t('board.backgroundType')}</span>
             </div>
             <Select
               value={defaultBackgroundType}
@@ -145,9 +123,7 @@ export const Board = () => {
           <div className="flex w-full flex-col items-start justify-center gap-4 sm:flex-row sm:items-center">
             <div className="flex flex-row gap-4">
               <ColorPicker className="fill-icon-brand shrink-0" />
-              <span className="dark:text-text-primary text-base leading-6 font-semibold">
-                {t('board.backgroundColor')}
-              </span>
+              <span className={settingsRowTitleClass}>{t('board.backgroundColor')}</span>
             </div>
             <Select
               value={defaultBackgroundColor}
@@ -174,7 +150,7 @@ export const Board = () => {
             </Select>
           </div>
         </div>
-      </div>
+      </SettingsGroup>
     </>
   );
 };

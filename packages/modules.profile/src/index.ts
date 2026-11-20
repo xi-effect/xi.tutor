@@ -1,1 +1,1 @@
-export { UserSettings } from './ui';
+export { SettingsSection, SettingsEntry, SettingsSidebarNav } from './ui';

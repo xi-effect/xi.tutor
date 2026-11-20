@@ -1,5 +1,5 @@
 export const PaymentCardSkeleton = () => (
-  <div className="bg-background-surface flex h-[156px] w-full flex-col justify-between rounded-2xl px-5 py-4 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
+  <div className="bg-background-surface flex h-[156px] w-full flex-col justify-between rounded-2xl px-5 py-4">
     <div className="bg-background-subtle h-7 w-20 animate-pulse rounded-lg" />
     <div className="flex items-center justify-between gap-2">
       <div className="flex min-w-0 items-center gap-2">

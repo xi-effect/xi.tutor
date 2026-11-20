@@ -25,6 +25,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 import { useCurrentInvite } from '../services/useCurrentInvite';
+import { useMarkFirstStepDone } from 'common.services';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -72,6 +73,7 @@ export const ModalInvitationV2 = ({
     retryCreate,
     refreshCurrentInvite,
   } = useCurrentInvite(analyticsSource);
+  const markInviteDone = useMarkFirstStepDone('invite');
 
   const [confirmingRefresh, setConfirmingRefresh] = useState(false);
 
@@ -122,6 +124,7 @@ export const ModalInvitationV2 = ({
     toast.success(t('inviteModalV2.toast.messageCopied'), {
       description: t('inviteModalV2.toast.sendHint'),
     });
+    markInviteDone('copy');
     const invite_tracking_id = await getInviteTrackingId(currentInvite.code);
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_MESSAGE_COPIED, {
       invite_flow_version: 2,
@@ -144,6 +147,7 @@ export const ModalInvitationV2 = ({
     toast.success(t('inviteModalV2.toast.linkCopied'), {
       description: t('inviteModalV2.toast.sendHint'),
     });
+    markInviteDone('copy');
     const invite_tracking_id = await getInviteTrackingId(currentInvite.code);
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LINK_COPIED, {
       invite_id: String(currentInvite.id),
@@ -187,7 +191,7 @@ export const ModalInvitationV2 = ({
       }}
     >
       {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent className="max-w-[600px]">
+      <ModalContent className="max-w-[600px]" data-first-step="invite-link">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-48px)]')}>

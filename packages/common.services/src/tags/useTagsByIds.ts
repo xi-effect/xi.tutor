@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { TAG_KIND, type TagSchema, tagsQueryKeys } from 'common.api';
 import { useQueries } from '@tanstack/react-query';
+import { TAG_KIND, type TagSchema, tagsQueryKeys } from 'common.api';
+import { QUERY_FRESHNESS_MS } from 'common.config';
 import { useCurrentUser } from '../user';
 import { getGenericTag } from './useGenericTags';
 import { useGenericTags } from './useGenericTags';
@@ -41,7 +42,8 @@ export const useTagsByIds = (ids: number[]) => {
       : uniqueIds.map((id) => ({
           queryKey: tagsQueryKeys.byId(TAG_KIND.Generic, id),
           queryFn: () => getGenericTag(id),
-          staleTime: 5 * 60 * 1000,
+          staleTime: QUERY_FRESHNESS_MS,
+          gcTime: QUERY_FRESHNESS_MS,
         })),
   });
 

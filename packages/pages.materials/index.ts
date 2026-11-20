@@ -19,4 +19,5 @@ export {
 export { DEFAULT_FILES_FILTERS, type FilesFiltersT, type FilesTagOptionT } from './src/types';
 export { useParentScrollPagination } from './src/hooks/useParentScrollPagination';
 export { MaterialsDuplicateProvider, useMaterialsDuplicate } from './src/provider';
+export { MaterialsDuplicateModal } from './src/ui/MaterialsDuplicateModal';
 export { materialsEn, materialsRu } from './src/locales';

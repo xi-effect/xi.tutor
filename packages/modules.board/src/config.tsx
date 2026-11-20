@@ -146,7 +146,7 @@ export const BOARD_SHAPE_CATEGORIES: Record<string, ShapeCategoryT> = {
     get label() {
       return t('categories.shapes');
     },
-    types: ['geo', 'xi-geo', 'coordinate-axes', 'math-figure'],
+    types: ['geo', 'xi-geo', 'coordinate-axes', 'math-figure', 'dice'],
   },
 
   stickers: {
@@ -194,7 +194,7 @@ export const BOARD_SHAPE_CATEGORIES: Record<string, ShapeCategoryT> = {
     get label() {
       return t('categories.media');
     },
-    types: ['pdf', 'audio', 'video', 'embed', 'bookmark'],
+    types: ['pdf', 'audio', 'video', 'embed', 'bookmark', 'file', 'presentation'],
   },
 
   activities: {

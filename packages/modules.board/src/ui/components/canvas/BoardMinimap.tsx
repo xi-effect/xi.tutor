@@ -6,6 +6,8 @@ import {
   clientToPage,
   containsPoint,
   fitBoxToAspect,
+  isFiniteBox,
+  isFinitePoint,
   padBox,
   unionBox,
   visibleMark,
@@ -168,11 +170,16 @@ export const BoardMinimap = () => {
     const canvas = canvasRef.current;
     const drag = dragRef.current;
     const pageFrame = frameRef.current;
-    if (!canvas || !drag || !pageFrame) return;
+    if (!canvas || !drag || !pageFrame || !isFiniteBox(pageFrame)) return;
     const rect = canvas.getBoundingClientRect();
     const fitted = fitBoxToAspect(pageFrame, rect.width / Math.max(rect.height, 1));
+    if (!isFiniteBox(fitted)) return;
     const point = clientToPage(clientX, clientY, rect, fitted);
-    editor.centerOnPoint({ x: point.x + drag.offsetX, y: point.y + drag.offsetY });
+    const next = { x: point.x + drag.offsetX, y: point.y + drag.offsetY };
+    // Кадр с Infinity/NaN (битые bounds фигуры или камеры) даёт точку NaN.
+    // centerOnPoint тогда роняет доску через setCamera.
+    if (!isFinitePoint(next)) return;
+    editor.centerOnPoint(next);
   };
 
   return (
@@ -188,20 +195,28 @@ export const BoardMinimap = () => {
           const pageFrame = frameRef.current;
           const viewportBox = viewportRef.current;
           if (!canvas || !pageFrame || !viewportBox) return;
-          event.stopPropagation();
-          editor.markEventAsHandled(event);
-          canvas.setPointerCapture(event.pointerId);
+          if (!isFiniteBox(pageFrame) || !isFiniteBox(viewportBox)) return;
 
           const rect = canvas.getBoundingClientRect();
           const fitted = fitBoxToAspect(pageFrame, rect.width / Math.max(rect.height, 1));
           const point = clientToPage(event.clientX, event.clientY, rect, fitted);
+          if (!isFiniteBox(fitted) || !isFinitePoint(point)) return;
+
           const inside = containsPoint(viewportBox, point.x, point.y);
           const centerX = (viewportBox.minX + viewportBox.maxX) / 2;
           const centerY = (viewportBox.minY + viewportBox.maxY) / 2;
+          const offsetX = inside ? centerX - point.x : 0;
+          const offsetY = inside ? centerY - point.y : 0;
+          if (!Number.isFinite(offsetX) || !Number.isFinite(offsetY)) return;
+
+          event.stopPropagation();
+          editor.markEventAsHandled(event);
+          canvas.setPointerCapture(event.pointerId);
+
           dragRef.current = {
             frame: fitted,
-            offsetX: inside ? centerX - point.x : 0,
-            offsetY: inside ? centerY - point.y : 0,
+            offsetX,
+            offsetY,
           };
           frameRef.current = fitted;
           if (!inside) {

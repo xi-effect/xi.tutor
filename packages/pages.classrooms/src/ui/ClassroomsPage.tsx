@@ -1,12 +1,7 @@
 import { useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { MobileTutorActionButton } from 'features.invites';
-import {
-  ButtonsHeader,
-  ClassroomGuideBanner,
-  LinkListStudents,
-  CardsGridSimple,
-} from './components';
+import { ButtonsHeader, ClassroomGuideBanner, CardsGridSimple } from './components';
 import { ClassroomsStatusFilter } from './components/controls/ClassroomsStatusFilter';
 import { KeepActiveClassroomsModal } from './components/KeepActiveClassroomsModal';
 import { useCurrentUser } from 'common.services';
@@ -37,7 +32,6 @@ export const ClassroomsPage = () => {
 
           {isTutor && (
             <div className="hidden items-end gap-2 sm:flex">
-              <LinkListStudents src="#" />
               <ButtonsHeader />
             </div>
           )}

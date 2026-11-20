@@ -23,6 +23,7 @@ import {
 } from 'common.ui';
 import type { TagSchema as LibraryTag } from 'common.api';
 import { TagFormModal } from 'features.tags';
+import { settingsSectionTitleClass } from '../layout/SettingsGroup';
 
 export const Tags = () => {
   const { t } = useTranslation('profile');
@@ -37,9 +38,7 @@ export const Tags = () => {
   return (
     <div className="flex h-full w-full flex-col">
       <div className="mb-4 flex items-center gap-1">
-        <h2 className="dark:text-text-primary text-xl font-semibold">
-          {t('tags.tagManage.title')}
-        </h2>
+        <h2 className={settingsSectionTitleClass}>{t('tags.tagManage.title')}</h2>
         <div className="ml-auto">
           <Button
             type="button"

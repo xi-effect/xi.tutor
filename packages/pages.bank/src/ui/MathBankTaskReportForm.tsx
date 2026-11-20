@@ -4,20 +4,23 @@ import { cn } from '@xipkg/utils';
 import { modalCancelButtonClass, modalConfirmButtonClass } from 'common.ui';
 import {
   FEEDBACK_COMMENT_MAX_LENGTH,
+  mapTaskReportFailure,
   prepareFeedbackComment,
-  trackMathTaskReport,
+  trackTaskReportFailed,
+  trackTaskReportSubmitted,
 } from 'common.utils';
-import type { MathTaskSearchDocument } from 'features.math.bank';
+import type { BankSubject, MathTaskSearchDocument } from 'features.bank';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { toMathBankTaskSnapshot } from '../utils/analytics';
+import { toTaskReportContext } from '../utils/analytics';
 
 type MathBankTaskReportFormProps = {
   task: MathTaskSearchDocument;
+  subject: BankSubject;
   onClose: () => void;
 };
 
-export const MathBankTaskReportForm = ({ task, onClose }: MathBankTaskReportFormProps) => {
+export const MathBankTaskReportForm = ({ task, subject, onClose }: MathBankTaskReportFormProps) => {
   const { t } = useTranslation('mathBank');
   const fieldId = useId();
   const [comment, setComment] = useState('');
@@ -30,8 +33,18 @@ export const MathBankTaskReportForm = ({ task, onClose }: MathBankTaskReportForm
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    const sent = trackMathTaskReport(toMathBankTaskSnapshot(task), comment, 'page');
-    if (!sent) {
+    const prepared = prepareFeedbackComment(comment);
+    if (!prepared) {
+      return;
+    }
+
+    const context = toTaskReportContext(task, subject, 'page');
+
+    try {
+      trackTaskReportSubmitted(context, comment);
+    } catch (error) {
+      trackTaskReportFailed(context, mapTaskReportFailure(error));
+      toast.error(t('task.reportError'));
       return;
     }
 

@@ -4,7 +4,7 @@
 
 Сводный реестр UI-событий: [`docs/umami-events-svodnoe-opisanie.md`](../umami-events-svodnoe-opisanie.md).
 
-Код: `packages/common.utils/src/productAnalytics/mathBank.ts`.
+Код: `packages/common.utils/src/productAnalytics/mathBank.ts`. Репорт задания: `packages/common.utils/src/productAnalytics/taskReport.ts`.
 
 ## Зачем
 
@@ -28,7 +28,7 @@ math_bank_open (source=page | board | editor)
         ├── math_task_open
         │         ├── math_task_answer_open / solution_open / hint_open
         │         ├── math_task_copy
-        │         ├── math_task_report
+        │         ├── task_report_opened → task_report_submitted / task_report_failed
         │         ├── math_task_next_variant
         │         └── math_task_favorite_toggle
         └── math_task_insert_board  или  math_task_insert_note
@@ -85,11 +85,19 @@ math_bank_open (source=page | board | editor)
 
 Нашли другой вариант той же группы и переключились.
 
-### `math_task_report`
+### `task_report_opened` / `task_report_submitted` / `task_report_failed`
 
-Репетитор отправил комментарий о проблеме в задании. Поля: `task_id`, `grade`, `topic_id`, `comment`.
+Репорт задания, общий для всех предметов банка.
 
-`comment` — свободный текст до 500 символов, email и телефон маскируются. Пустой комментарий не уходит. Текст условия задания **не** отправляется.
+`task_report_opened` — форма реально открылась (повторный клик, который её закрывает, и перерисовка модалки событие не шлют).
+
+`task_report_submitted` — только после того, как форма приняла репорт. Поля: `task_id`, `subject`, `grade`, `topic_id`, `task_type`, `source`, `has_comment`. Если комментарий непустой, добавляется `comment_length_bucket` (`1_50`, `51_150`, `151_300`, `300_plus`; 300 символов входит в `151_300`).
+
+`task_report_failed` — отправка завершилась ошибкой. Поле `reason`: `network_error`, `server_error`, `validation_error` или `unknown`.
+
+Текст комментария, сырой текст ошибки и условие задания **не** отправляются.
+
+Устаревшие `math-bank-task-report` (клик по флагу без свойств) и `math_task_report` (отправка вместе с текстом комментария) больше не шлются, чтобы одно действие не считалось дважды.
 
 ## Что смотреть в Umami
 

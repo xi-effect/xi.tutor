@@ -149,6 +149,11 @@ export type MathBankAnalyticsSource = 'page' | 'board' | 'editor';
 
 export type MathBankFavoriteAction = 'add' | 'remove';
 
+export type TaskReportCommentLengthBucket = '1_50' | '51_150' | '151_300' | '300_plus';
+
+export type TaskReportFailureReason =
+  'network_error' | 'server_error' | 'validation_error' | 'unknown';
+
 export type ProductLimitType = 'file_size' | 'storage' | 'board_objects' | 'classrooms' | 'other';
 
 export type ProductLimitSource = 'materials' | 'classroom' | 'board' | 'other';
@@ -169,6 +174,9 @@ export type FileSizeBucket =
 export type ProductLimitSizeBucket = FileSizeBucket;
 
 export type FileUploadSource = 'materials' | 'classroom' | 'board' | 'profile_avatar' | 'other';
+
+/** Экран, на котором пользователь выбирал аватар. Нужен, чтобы не смешивать лимиты welcome и профиля. */
+export type FileUploadSurface = 'welcome' | 'profile';
 
 export type FileUploadFileCategory = ProductLimitFileCategory;
 
@@ -200,7 +208,7 @@ export type ProductAnalyticsFeedbackSupportSource = 'feedback_modal';
 export type SubscriptionBillingPeriod = 'month' | 'year';
 
 export type SubscriptionAnalyticsSource =
-  | 'announcement'
+  | 'expiry_notice'
   | 'settings'
   | 'pricing'
   | 'product_limit'

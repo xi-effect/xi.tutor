@@ -40,7 +40,7 @@ export const TemplatesGrid = () => {
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className="bg-background-surface flex h-40 w-full flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]"
+              className="bg-background-surface flex h-40 w-full flex-col justify-between rounded-2xl p-5"
             >
               <div className="flex w-full items-start justify-between">
                 <div className="bg-background-subtle size-10 animate-pulse rounded-[10px]" />

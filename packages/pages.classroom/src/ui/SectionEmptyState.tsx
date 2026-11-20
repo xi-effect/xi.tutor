@@ -21,7 +21,7 @@ export const SectionEmptyState: FC<SectionEmptyStateProps> = ({
 }) => (
   <div
     className={cn(
-      'bg-background-surface flex w-full rounded-2xl shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
+      'bg-background-surface flex w-full rounded-2xl',
       minHeightClass,
       illustration ? 'flex-col' : 'flex-col items-center justify-center gap-5',
       className,

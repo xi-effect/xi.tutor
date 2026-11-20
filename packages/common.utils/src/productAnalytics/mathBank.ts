@@ -1,6 +1,5 @@
 import { PRODUCT_ANALYTICS_EVENTS } from './events';
 import { createAttemptId } from './attemptId';
-import { prepareFeedbackComment } from './feedbackComment';
 import type { MathBankAnalyticsSource, MathBankFavoriteAction } from './types';
 import { trackProductEvent } from './umami';
 
@@ -254,25 +253,4 @@ export const trackMathTaskNextVariant = (
     ...taskProps(task),
     ...(session ? { session_id: session.session_id } : {}),
   });
-};
-
-export const trackMathTaskReport = (
-  task: MathBankTaskSnapshot,
-  comment: string,
-  source: MathBankAnalyticsSource,
-) => {
-  const prepared = prepareFeedbackComment(comment);
-  if (!prepared) {
-    return false;
-  }
-
-  const session = readSession();
-  trackProductEvent(PRODUCT_ANALYTICS_EVENTS.MATH_TASK_REPORT, {
-    event_version: 1,
-    source,
-    ...taskProps(task),
-    comment: prepared,
-    ...(session ? { session_id: session.session_id } : {}),
-  });
-  return true;
 };

@@ -28,7 +28,7 @@ const PAYMENTS_PREVIEW_LIMIT = 10;
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
 const galleryInvoiceCardClass =
-  'h-[156px] w-full min-w-0 flex-none bg-background-surface border-0 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] hover:border-transparent';
+  'h-[156px] w-full min-w-0 flex-none bg-background-surface border-0 hover:border-transparent';
 
 export const Payments = () => {
   const { t } = useTranslation('main');

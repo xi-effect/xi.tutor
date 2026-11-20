@@ -42,7 +42,7 @@ export const PdfViewer = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
-  const [canvasCssSize, setCanvasCssSize] = useState({ w: 0, h: 0 });
+  const [pageRatio, setPageRatio] = useState<number | null>(null);
 
   const currentStrokes = annotations[page] ?? [];
   const handlePageStrokesChange = useCallback(
@@ -77,13 +77,20 @@ export const PdfViewer = ({
   }, []);
 
   useEffect(() => {
-    if (containerSize.w <= 0 || containerSize.h <= 0) return;
+    setPageRatio(null);
+  }, [blobUrl]);
+
+  useEffect(() => {
+    setLoading(true);
+  }, [blobUrl, page]);
+
+  useEffect(() => {
+    if (!blobUrl || containerSize.w <= 0 || containerSize.h <= 0) return;
 
     let cancelled = false;
 
     const render = async () => {
       try {
-        setLoading(true);
         const pdfDoc = await pdfDocCache.get(blobUrl);
         if (cancelled) return;
 
@@ -95,18 +102,25 @@ export const PdfViewer = ({
         const canvas = canvasRef.current;
         if (!canvas) return;
 
+        const vp1 = pdfPage.getViewport({ scale: 1 });
+        const ratio = vp1.width / vp1.height;
+        if (!(ratio > 0)) return;
+        setPageRatio((prev) => (prev != null && Math.abs(prev - ratio) < 1e-4 ? prev : ratio));
+
+        const boxRatio = containerSize.w / containerSize.h;
+        if (!Number.isFinite(boxRatio) || Math.abs(boxRatio - ratio) / ratio > 0.015) return;
+
         renderTaskRef.current?.cancel();
 
         const dpr = window.devicePixelRatio || 1;
-        const vp1 = pdfPage.getViewport({ scale: 1 });
-        const baseScale = Math.min(containerSize.w / vp1.width, containerSize.h / vp1.height);
-        const viewport = pdfPage.getViewport({ scale: baseScale * dpr * PDF_RENDER_QUALITY_SCALE });
+        const viewport = pdfPage.getViewport({
+          scale: (containerSize.w / vp1.width) * dpr * PDF_RENDER_QUALITY_SCALE,
+        });
 
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        canvas.style.width = `${vp1.width * baseScale}px`;
-        canvas.style.height = `${vp1.height * baseScale}px`;
-        setCanvasCssSize({ w: vp1.width * baseScale, h: vp1.height * baseScale });
+        canvas.width = Math.max(1, Math.round(viewport.width));
+        canvas.height = Math.max(1, Math.round(viewport.height));
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
 
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
@@ -147,33 +161,36 @@ export const PdfViewer = ({
 
   if (error) {
     return (
-      <div className="text-text-disabled flex h-full w-full items-center justify-center text-sm">
+      <div className="text-text-disabled flex h-40 w-full items-center justify-center text-sm">
         {error}
       </div>
     );
   }
 
   return (
-    <div className="relative flex h-full w-full flex-col">
+    <div className="relative flex w-full flex-col">
       {isDrawingBarOpen && <DrawingToolbar {...toolbarProps} onClose={closeDrawingBar} />}
 
       <div
         ref={containerRef}
-        className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden"
+        className="relative w-full overflow-hidden"
+        style={pageRatio ? { aspectRatio: pageRatio } : { minHeight: 320 }}
       >
         {loading && (
           <div className="text-text-disabled absolute inset-0 z-5 flex items-center justify-center text-sm">
             {t('pdf.loading')}
           </div>
         )}
-        <div className="relative" style={{ width: canvasCssSize.w, height: canvasCssSize.h }}>
-          <canvas ref={canvasRef} className="block" style={{ opacity: loading ? 0.3 : 1 }} />
-          <DrawingOverlay
-            className="absolute inset-0"
-            {...overlayProps}
-            isActive={isDrawingBarOpen && !isReadOnly && !loading}
-          />
-        </div>
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 h-full w-full"
+          style={{ opacity: loading ? 0.3 : 1 }}
+        />
+        <DrawingOverlay
+          className="absolute inset-0"
+          {...overlayProps}
+          isActive={isDrawingBarOpen && !isReadOnly && !loading}
+        />
       </div>
       <PageControls
         fileName={fileName}

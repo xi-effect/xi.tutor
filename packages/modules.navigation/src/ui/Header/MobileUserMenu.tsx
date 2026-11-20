@@ -68,7 +68,9 @@ export const MobileUserMenu = ({
                 <span className="text-m-base text-text-primary truncate font-medium">
                   {displayName}
                 </span>
-                {username && username !== displayName ? (
+                {user?.email ? (
+                  <span className="text-text-secondary truncate text-xs">{user.email}</span>
+                ) : username && username !== displayName ? (
                   <span className="text-text-secondary truncate text-xs">{username}</span>
                 ) : null}
                 <UserPlanBadge />

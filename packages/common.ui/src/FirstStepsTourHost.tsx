@@ -1,0 +1,917 @@
+import { useLocation, useNavigate } from '@tanstack/react-router';
+import { driver, type DriveStep, type Driver, type DriverHook } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import '../utils/driver.css';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { setOnboardingSurfaceActive } from './onboardingSurface';
+import {
+  FIRST_STEPS_CLOSE_USER_MENU_EVENT,
+  FIRST_STEPS_EXPAND_SIDEBAR_EVENT,
+  FIRST_STEPS_OPEN_USER_MENU_EVENT,
+  FIRST_STEPS_TOUR_ACTION_EVENT,
+  FIRST_STEPS_TOUR_EVENT,
+  FIRST_STEPS_TOUR_SELECTORS,
+  FIRST_STEPS_TOUR_STOPS,
+  clearFirstStepsTour,
+  isOnTourPath,
+  readFirstStepsTour,
+  requestFirstStepsTour,
+  tourCompletionMarksStep,
+  tourKeepsProfileMenu,
+  tourStopOpensAction,
+  tourStopPath,
+  writeFirstStepsHomeHint,
+  writeFirstStepsTourIndex,
+  writeFirstStepsMaterialId,
+  FIRST_STEPS_CALL_COMPLETED_EVENT,
+  trackFirstStepsCallPhase,
+  trackFirstStepsTour,
+  useCompleteFirstStep,
+  useCurrentUser,
+  type FirstStepId,
+  type FirstStepsTourSession,
+  type FirstStepsTourStop,
+} from 'common.services';
+
+const WAIT_LIMIT = 40;
+const CURSOR_MOVE_MS = 460;
+const CURSOR_PRESS_MS = 180;
+
+const CURSOR_SVG = `<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M5 3.2 L5.4 21.2 L10.2 16.6 L14.3 24.2 L17.2 22.8 L13.1 15.2 L19.4 14.6 Z" fill="#fff" stroke="#161616" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+
+let tourClickTicket = 0;
+
+const removeTourCursor = () => {
+  document
+    .querySelectorAll('.first-steps-tour-cursor, .first-steps-tour-click')
+    .forEach((node) => node.remove());
+};
+
+/** Курсор доезжает до элемента. `press` добавляет нажатие. `false` — тур уже закрыт. */
+const animateTourClick = (target: Element | undefined, press = true): Promise<boolean> => {
+  const ticket = ++tourClickTicket;
+  const alive = () => ticket === tourClickTicket;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!target || reduced) return Promise.resolve(alive());
+
+  const rect = target.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return Promise.resolve(alive());
+
+  removeTourCursor();
+  const cursor = document.createElement('div');
+  cursor.className = 'first-steps-tour-cursor';
+  cursor.setAttribute('aria-hidden', 'true');
+  cursor.innerHTML = CURSOR_SVG;
+
+  const from = document.querySelector('.driver-popover-next-btn')?.getBoundingClientRect();
+  const tipX = 5;
+  const tipY = 3;
+  const startX = (from ? from.left + from.width / 2 : window.innerWidth - 120) - tipX;
+  const startY = (from ? from.top + from.height / 2 : window.innerHeight - 80) - tipY;
+  const endX = rect.left + rect.width / 2 - tipX;
+  const endY = rect.top + rect.height / 2 - tipY;
+  const start = `translate3d(${startX}px, ${startY}px, 0)`;
+  const end = `translate3d(${endX}px, ${endY}px, 0)`;
+  // CSS-переход на только что вставленном элементе не стартует: курсор сразу оказывается в конце.
+  cursor.style.transition = 'none';
+  cursor.style.transform = start;
+  document.body.appendChild(cursor);
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const settle = (value: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(value);
+    };
+    const pressCursor = () => {
+      if (!alive() || !cursor.isConnected) {
+        settle(false);
+        return;
+      }
+      cursor.classList.add('is-pressing');
+      const ripple = document.createElement('span');
+      ripple.className = 'first-steps-tour-click';
+      ripple.style.left = `${rect.left + rect.width / 2}px`;
+      ripple.style.top = `${rect.top + rect.height / 2}px`;
+      document.body.appendChild(ripple);
+      window.setTimeout(() => {
+        ripple.remove();
+        if (cursor.isConnected) cursor.remove();
+        settle(alive());
+      }, CURSOR_PRESS_MS);
+    };
+    const finishMove = () => {
+      if (!alive() || !cursor.isConnected) {
+        settle(false);
+        return;
+      }
+      if (!press) {
+        settle(true);
+        return;
+      }
+      pressCursor();
+    };
+
+    const animation = cursor.animate([{ transform: start }, { transform: end }], {
+      duration: CURSOR_MOVE_MS,
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fill: 'forwards',
+    });
+    const fallback = window.setTimeout(() => {
+      if (animation.playState !== 'finished') animation.finish();
+    }, CURSOR_MOVE_MS + 240);
+    animation.finished.then(
+      () => {
+        window.clearTimeout(fallback);
+        finishMove();
+      },
+      () => {
+        window.clearTimeout(fallback);
+        settle(false);
+      },
+    );
+  });
+};
+
+const MENU_ANCHORS = new Set(['user-menu', 'settings-item', 'support-item', 'support-menu']);
+
+const SUPPORT_FOCUS_ID = 'first-steps-support-focus';
+
+const removeSupportFocus = () => {
+  document.getElementById(SUPPORT_FOCUS_ID)?.remove();
+};
+
+/** Прямоугольник на пункт «Помощь» и открытое подменю, чтобы была видна связь. */
+const placeSupportFocus = (): HTMLElement | null => {
+  const help = findVisible('[data-first-step="help-item"]');
+  const submenu = findVisible('[data-first-step="support-submenu"]');
+  if (!help || !submenu) return null;
+
+  const helpRect = help.getBoundingClientRect();
+  const submenuRect = submenu.getBoundingClientRect();
+  const pad = 8;
+  const left = Math.min(helpRect.left, submenuRect.left) - pad;
+  const top = Math.min(helpRect.top, submenuRect.top) - pad;
+  const right = Math.max(helpRect.right, submenuRect.right) + pad;
+  const bottom = Math.max(helpRect.bottom, submenuRect.bottom) + pad;
+
+  let box = document.getElementById(SUPPORT_FOCUS_ID);
+  if (!box) {
+    box = document.createElement('div');
+    box.id = SUPPORT_FOCUS_ID;
+    box.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(box);
+  }
+  box.style.position = 'fixed';
+  box.style.left = `${left}px`;
+  box.style.top = `${top}px`;
+  box.style.width = `${right - left}px`;
+  box.style.height = `${bottom - top}px`;
+  box.style.pointerEvents = 'none';
+  return box;
+};
+
+const syncUserMenu = (anchor: string | undefined) => {
+  if (anchor !== 'support-menu') removeSupportFocus();
+  if (!anchor || !MENU_ANCHORS.has(anchor)) {
+    window.dispatchEvent(new Event(FIRST_STEPS_CLOSE_USER_MENU_EVENT));
+    return;
+  }
+  window.dispatchEvent(
+    new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, {
+      detail: { support: anchor === 'support-item' || anchor === 'support-menu' },
+    }),
+  );
+};
+
+const sidebarExpanded = () =>
+  document.querySelector('#sidebar')?.getAttribute('data-sidebar-expanded') !== 'false';
+
+const waitForTour = async (predicate: () => boolean, attempts = 25): Promise<boolean> => {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    if (predicate()) return true;
+    await new Promise((resolve) => window.setTimeout(resolve, 40));
+  }
+  return predicate();
+};
+
+/** Сворачивает панель настоящим кликом и тут же разворачивает её обратно. */
+const performSidebarToggleDemo = async (): Promise<boolean> => {
+  const clickToggle = async () => {
+    const button = findVisible('#sidebar-toggle');
+    if (!(button instanceof HTMLElement)) return false;
+    const played = await animateTourClick(button);
+    if (!played) return false;
+    button.click();
+    return true;
+  };
+
+  if (sidebarExpanded()) {
+    if (!(await clickToggle())) return false;
+    await waitForTour(() => !sidebarExpanded());
+  }
+  if (!(await clickToggle())) return false;
+  await waitForTour(sidebarExpanded);
+  return true;
+};
+
+/** Открывает меню профиля кликом по кнопке внизу панели. */
+const performOpenUserMenu = async (): Promise<boolean> => {
+  if (findVisible('[data-first-step="user-menu"]')) {
+    window.dispatchEvent(
+      new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support: false } }),
+    );
+    return true;
+  }
+
+  const button = findVisible('#hints-button');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+
+  const pointer = {
+    bubbles: true,
+    cancelable: true,
+    pointerId: 1,
+    pointerType: 'mouse',
+    isPrimary: true,
+  };
+  button.dispatchEvent(new PointerEvent('pointerdown', pointer));
+  button.dispatchEvent(new PointerEvent('pointerup', pointer));
+  button.click();
+  window.dispatchEvent(
+    new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support: false } }),
+  );
+  return waitForTour(() => findVisible('[data-first-step="user-menu"]') != null);
+};
+
+/** Наводит курсор на «Помощь» и открывает подменю вместе с общей подсветкой. */
+const performSupportHover = async (): Promise<boolean> => {
+  const help = findVisible('[data-first-step="help-item"]');
+  if (!(help instanceof HTMLElement)) return false;
+  const played = await animateTourClick(help, false);
+  if (!played) return false;
+  window.dispatchEvent(
+    new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support: true } }),
+  );
+  return waitForTour(() => placeSupportFocus() != null);
+};
+
+const demoCardSelector = (session: FirstStepsTourSession): string =>
+  session.classroomId
+    ? `[data-classroom-id="${session.classroomId}"]`
+    : FIRST_STEPS_TOUR_SELECTORS['demo-classroom-card'];
+
+const templateCardSelector = (session: FirstStepsTourSession): string =>
+  session.materialId
+    ? `[data-material-id="${session.materialId}"]`
+    : FIRST_STEPS_TOUR_SELECTORS['template-card'];
+
+const stopSelector = (stop: FirstStepsTourStop, session: FirstStepsTourSession): string => {
+  if (stop.anchor === 'demo-classroom-card') return demoCardSelector(session);
+  if (stop.anchor === 'template-card' || stop.anchor === 'template-copy') {
+    return templateCardSelector(session);
+  }
+  if (stop.anchor === 'template-menu') {
+    return `${templateCardSelector(session)} [data-first-step="template-board-menu"]`;
+  }
+  return FIRST_STEPS_TOUR_SELECTORS[stop.anchor];
+};
+
+const navigatesOnClick = (stop: FirstStepsTourStop | undefined): boolean =>
+  stop?.click === 'open-classrooms' ||
+  stop?.click === 'open-demo-classroom' ||
+  stop?.click === 'open-students' ||
+  stop?.click === 'open-materials';
+
+/** Курсор нажимает цель. Переход делает сам тур, чтобы анимация успела доиграть. */
+const performAnimatedClick = async (selector: string): Promise<boolean> => {
+  const target = findVisible(selector);
+  const clickable = target?.querySelector('a') ?? target;
+  if (!(clickable instanceof HTMLElement)) return false;
+  return animateTourClick(clickable);
+};
+
+const performOpenInvite = async (): Promise<boolean> => {
+  const button = findVisible('[data-first-step="students-invite"]');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
+const pressButton = (button: HTMLElement) => {
+  const pointer = {
+    bubbles: true,
+    cancelable: true,
+    pointerId: 1,
+    pointerType: 'mouse',
+    isPrimary: true,
+  };
+  button.dispatchEvent(new PointerEvent('pointerdown', pointer));
+  button.dispatchEvent(new PointerEvent('pointerup', pointer));
+  button.click();
+};
+
+const performCreateBoard = async (): Promise<boolean> => {
+  const button = findVisible('[data-first-step="create-board"]');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
+const performLeaveBoard = async (): Promise<boolean> => {
+  const button = findVisible('[data-first-step="board-back"]');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
+const performOpenDuplicate = async (): Promise<boolean> => {
+  const materialId = readFirstStepsTour()?.materialId;
+  const button = materialId
+    ? findVisible(`[data-material-id="${materialId}"] [data-first-step="template-board-menu"]`)
+    : null;
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  pressButton(button);
+  const opened = await waitForTour(
+    () => findVisible('[data-first-step="duplicate-to-classroom"]') != null,
+  );
+  const item = opened ? findVisible('[data-first-step="duplicate-to-classroom"]') : null;
+  if (item instanceof HTMLElement) {
+    item.click();
+    return true;
+  }
+  window.dispatchEvent(new CustomEvent('first-steps-open-duplicate', { detail: materialId }));
+  return true;
+};
+
+const performStartCall = async (): Promise<boolean> => {
+  const root = findVisible('[data-first-step="start-call"]');
+  const button = root?.querySelector('button');
+  if (!(button instanceof HTMLElement)) return false;
+  const played = await animateTourClick(button);
+  if (!played) return false;
+  button.click();
+  return true;
+};
+
+const performConfirmDuplicate = async (): Promise<boolean> => {
+  const session = readFirstStepsTour();
+  const preferred = session?.classroomId
+    ? `[data-first-step="duplicate-modal"] [data-classroom-id="${session.classroomId}"]`
+    : null;
+  const anyClassroom = '[data-first-step="duplicate-modal"] [data-classroom-id]';
+  const preferredReady = preferred
+    ? await waitForTour(() => findVisible(preferred) != null, 20)
+    : false;
+  const classroom = findVisible(preferredReady && preferred ? preferred : anyClassroom);
+  if (!(classroom instanceof HTMLElement)) {
+    const appeared = await waitForTour(() => findVisible(anyClassroom) != null, 20);
+    if (!appeared) return false;
+  }
+  const target = classroom instanceof HTMLElement ? classroom : findVisible(anyClassroom);
+  if (target instanceof HTMLElement) {
+    const played = await animateTourClick(target);
+    if (!played) return false;
+    target.click();
+  }
+  const ready = await waitForTour(() => {
+    const button = findVisible('[data-first-step="duplicate-confirm"]');
+    return button instanceof HTMLButtonElement && !button.disabled;
+  }, 20);
+  if (!ready) return false;
+  const confirm = findVisible('[data-first-step="duplicate-confirm"]');
+  if (!(confirm instanceof HTMLElement)) return false;
+  const played = await animateTourClick(confirm);
+  if (!played) return false;
+  confirm.click();
+  return true;
+};
+
+const stopDemo = (stop: FirstStepsTourStop | undefined): (() => Promise<boolean>) | null => {
+  if (stop?.click === 'sidebar-toggle') return performSidebarToggleDemo;
+  if (stop?.click === 'open-user-menu') return performOpenUserMenu;
+  if (stop?.click === 'hover-support') return performSupportHover;
+  if (stop?.click === 'open-invite') return performOpenInvite;
+  if (stop?.click === 'create-board') return performCreateBoard;
+  if (stop?.click === 'leave-board') return performLeaveBoard;
+  if (stop?.click === 'open-duplicate') return performOpenDuplicate;
+  if (stop?.click === 'confirm-duplicate') return performConfirmDuplicate;
+  if (stop?.click === 'start-call') return performStartCall;
+  return null;
+};
+
+const findVisible = (selector: string): Element | null => {
+  const nodes = document.querySelectorAll(selector);
+  for (const node of nodes) {
+    const rect = node.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) return node;
+  }
+  return null;
+};
+
+type StopStatus = 'ready' | 'navigate' | 'wait' | 'skip';
+
+const stopStatus = (
+  stop: FirstStepsTourStop,
+  session: FirstStepsTourSession,
+  pathname: string,
+): StopStatus => {
+  if (stop.place === 'material-board' && !session.materialId) return 'wait';
+  const path = tourStopPath(stop, session);
+  if (stop.place !== 'current' && path == null) return 'skip';
+  if (!isOnTourPath(pathname, path)) return 'navigate';
+  return findVisible(stopSelector(stop, session)) ? 'ready' : 'wait';
+};
+
+const goToPath = (navigate: ReturnType<typeof useNavigate>, path: string) => {
+  if (path === '/') {
+    void navigate({ to: '/' });
+    return;
+  }
+  if (path === '/schedule') {
+    void navigate({ to: '/schedule' });
+    return;
+  }
+  if (path === '/classrooms') {
+    void navigate({ to: '/classrooms' });
+    return;
+  }
+  if (path === '/students') {
+    void navigate({ to: '/students' });
+    return;
+  }
+  if (path === '/materials') {
+    void navigate({ to: '/materials', search: { tab: 'boards' } });
+    return;
+  }
+  const materialBoard = path.match(/^\/materials\/([^/]+)\/board$/);
+  if (materialBoard) {
+    void navigate({
+      to: '/materials/$materialId/board',
+      params: { materialId: materialBoard[1] },
+    });
+    return;
+  }
+  if (path === '/settings/appearance') {
+    void navigate({
+      to: '/settings/$section',
+      params: { section: 'appearance' },
+      search: { call: undefined, period: undefined },
+    });
+    return;
+  }
+
+  const classroom = path.match(/^\/classrooms\/([^/]+)$/);
+  if (classroom) {
+    void navigate({
+      to: '/classrooms/$classroomId',
+      params: { classroomId: classroom[1] },
+    });
+    return;
+  }
+
+  const board = path.match(/^\/classrooms\/([^/]+)\/boards\/([^/]+)$/);
+  if (board) {
+    void navigate({
+      to: '/classrooms/$classroomId/boards/$boardId',
+      params: { classroomId: board[1], boardId: board[2] },
+    });
+    return;
+  }
+
+  const note = path.match(/^\/classrooms\/([^/]+)\/notes\/([^/]+)$/);
+  if (note) {
+    void navigate({
+      to: '/classrooms/$classroomId/notes/$noteId',
+      params: { classroomId: note[1], noteId: note[2] },
+    });
+  }
+};
+
+export const FirstStepsTourHost = () => {
+  const { t } = useTranslation('commonUi');
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [nonce, setNonce] = useState(0);
+  const [finishedStep, setFinishedStep] = useState<FirstStepId | null>(null);
+  useCompleteFirstStep(finishedStep ?? 'cabinet', finishedStep != null);
+
+  const { data: user } = useCurrentUser();
+  const analyticsEnabledRef = useRef(true);
+  analyticsEnabledRef.current =
+    user?.onboarding_stage == null || user.onboarding_stage === 'training';
+  const callPhaseRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    setOnboardingSurfaceActive(user?.onboarding_stage === 'training');
+    return () => setOnboardingSurfaceActive(false);
+  }, [user?.onboarding_stage]);
+
+  const driverRef = useRef<Driver | null>(null);
+  const reasonRef = useRef<'close' | 'move' | 'done'>('close');
+  const waitsRef = useRef(0);
+  const navigateRef = useRef(navigate);
+  const translateRef = useRef(t);
+  navigateRef.current = navigate;
+  translateRef.current = t;
+
+  useEffect(() => {
+    const bump = () => setNonce((value) => value + 1);
+    window.addEventListener(FIRST_STEPS_TOUR_EVENT, bump);
+    return () => window.removeEventListener(FIRST_STEPS_TOUR_EVENT, bump);
+  }, []);
+
+  useEffect(() => {
+    const onCallCompleted = () => {
+      setFinishedStep('call');
+      const session = readFirstStepsTour();
+      if (!session || !analyticsEnabledRef.current) return;
+      trackFirstStepsTour({
+        role: session.role,
+        step: 'call',
+        action: 'finished',
+      });
+    };
+    window.addEventListener(FIRST_STEPS_CALL_COMPLETED_EVENT, onCallCompleted);
+    return () => window.removeEventListener(FIRST_STEPS_CALL_COMPLETED_EVENT, onCallCompleted);
+  }, []);
+
+  useEffect(() => {
+    const syncPhase = () => {
+      if (!analyticsEnabledRef.current) return;
+      const session = readFirstStepsTour();
+      if (session?.step !== 'call' || !session.callPhase) return;
+      if (callPhaseRef.current === session.callPhase) return;
+      callPhaseRef.current = session.callPhase;
+      trackFirstStepsCallPhase(session.role, session.callPhase);
+    };
+
+    syncPhase();
+    window.addEventListener(FIRST_STEPS_TOUR_EVENT, syncPhase);
+    return () => window.removeEventListener(FIRST_STEPS_TOUR_EVENT, syncPhase);
+  }, [user?.onboarding_stage]);
+
+  useEffect(() => {
+    const session = readFirstStepsTour();
+    if (session?.callPhase !== 'board-hint' || !session.classroomId) return;
+    const boardPrefix = `/classrooms/${session.classroomId}/boards/`;
+    if (!pathname.startsWith(boardPrefix)) clearFirstStepsTour();
+  }, [pathname]);
+
+  useEffect(() => {
+    const session = readFirstStepsTour();
+    if (!session?.homeHint) return;
+    if (pathname === '/students' || pathname === '/students/') return;
+    clearFirstStepsTour();
+  }, [pathname]);
+
+  useEffect(() => {
+    const session = readFirstStepsTour();
+    if (!session || session.step !== 'material') return;
+    const materialBoard = pathname.match(/^\/materials\/([^/]+)\/board\/?$/);
+    if (materialBoard) {
+      const materialId = materialBoard[1];
+      const createIndex = FIRST_STEPS_TOUR_STOPS.material.findIndex(
+        (stop) => stop.click === 'create-board',
+      );
+      const index =
+        createIndex >= 0 && session.index <= createIndex ? createIndex + 1 : session.index;
+      if (session.materialId === materialId && session.index === index) return;
+      writeFirstStepsMaterialId(materialId, index);
+      return;
+    }
+    if ((pathname === '/materials' || pathname === '/materials/') && session.materialId) {
+      const leaveIndex = FIRST_STEPS_TOUR_STOPS.material.findIndex(
+        (stop) => stop.click === 'leave-board',
+      );
+      if (leaveIndex >= 0 && session.index === leaveIndex) {
+        writeFirstStepsMaterialId(session.materialId, leaveIndex + 1);
+      }
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const session = readFirstStepsTour();
+    if (!session || session.callPhase || session.homeHint) return;
+
+    const stops = FIRST_STEPS_TOUR_STOPS[session.step];
+    let index = session.index;
+
+    const sidebar = document.querySelector('#sidebar');
+    const sidebarCollapsed =
+      stops[index]?.click !== 'sidebar-toggle' &&
+      (session.step === 'navigation' || stops[index]?.anchor === 'materials') &&
+      sidebar?.getAttribute('data-sidebar-expanded') === 'false' &&
+      document.querySelector('#home-menu-item') != null;
+    if (sidebarCollapsed) {
+      window.dispatchEvent(new Event(FIRST_STEPS_EXPAND_SIDEBAR_EVENT));
+      if (waitsRef.current < WAIT_LIMIT) {
+        const timer = window.setTimeout(() => {
+          waitsRef.current += 1;
+          setNonce((value) => value + 1);
+        }, 200);
+        return () => window.clearTimeout(timer);
+      }
+      waitsRef.current = 0;
+    }
+
+    while (index < stops.length && stopStatus(stops[index], session, pathname) === 'skip') {
+      index += 1;
+    }
+
+    if (index !== session.index) writeFirstStepsTourIndex(index);
+
+    if (index >= stops.length) {
+      clearFirstStepsTour();
+      return;
+    }
+
+    const status = stopStatus(stops[index], session, pathname);
+    if (status === 'navigate') {
+      const path = tourStopPath(stops[index], session);
+      if (path) goToPath(navigateRef.current, path);
+      return;
+    }
+
+    if (status === 'wait') {
+      syncUserMenu(stops[index].anchor);
+      if (waitsRef.current >= WAIT_LIMIT) {
+        waitsRef.current = 0;
+        writeFirstStepsTourIndex(index + 1);
+        setNonce((value) => value + 1);
+        return;
+      }
+      const timer = window.setTimeout(() => {
+        waitsRef.current += 1;
+        setNonce((value) => value + 1);
+      }, 200);
+      return () => window.clearTimeout(timer);
+    }
+
+    waitsRef.current = 0;
+    syncUserMenu(stops[index]?.anchor);
+    if (stops[index]?.anchor === 'support-menu') placeSupportFocus();
+    const group: FirstStepsTourStop[] = [];
+    for (let cursor = index; cursor < stops.length; cursor += 1) {
+      if (stopStatus(stops[cursor], session, pathname) !== 'ready') break;
+      group.push(stops[cursor]);
+      // Подсказки интерфейса идут по одной: «Назад» возвращает на предыдущую.
+      if (session.step === 'navigation') break;
+    }
+
+    const groupEnd = index + group.length;
+    const tourContinues = groupEnd < stops.length;
+    reasonRef.current = 'close';
+
+    let clickPlaying = false;
+    const runStop = (stop: FirstStepsTourStop | undefined, action: () => void) => {
+      if (clickPlaying) return;
+      const demo = navigatesOnClick(stop)
+        ? () => performAnimatedClick(stopSelector(stop!, session))
+        : stopDemo(stop);
+      if (!demo) {
+        action();
+        return;
+      }
+      clickPlaying = true;
+      void demo().then((shouldContinue) => {
+        clickPlaying = false;
+        if (shouldContinue) action();
+      });
+    };
+
+    const trackTour = (
+      action: 'started' | 'advanced' | 'finished' | 'closed',
+      anchor?: string,
+      stepIndex?: number,
+    ) => {
+      if (!analyticsEnabledRef.current) return;
+      trackFirstStepsTour({
+        role: session.role,
+        step: session.step,
+        action,
+        anchor,
+        stepIndex,
+        totalSteps: session.step === 'call' ? 7 : stops.length,
+      });
+    };
+
+    const movePrev: DriverHook = (_element, _step, { driver: tour }) => {
+      if (index <= 0) return;
+      const prevIndex = index - 1;
+      reasonRef.current = 'move';
+      writeFirstStepsTourIndex(prevIndex);
+      syncUserMenu(stops[prevIndex]?.anchor);
+      tour.destroy();
+      setNonce((value) => value + 1);
+    };
+    const moveNext: DriverHook = (_element, _step, { driver: tour }) => {
+      const active = tour.getActiveIndex() ?? 0;
+      runStop(group[active], () => {
+        writeFirstStepsTourIndex(index + active + 1);
+        trackTour('advanced', group[active]?.anchor, index + active + 1);
+        tour.moveNext();
+      });
+    };
+    const finishGroup: DriverHook = (_element, _step, { driver: tour }) => {
+      const stop = group[group.length - 1];
+      const complete = () => {
+        if (tourContinues) {
+          reasonRef.current = 'move';
+          writeFirstStepsTourIndex(groupEnd);
+          trackTour('advanced', stop?.anchor, groupEnd);
+          syncUserMenu(stops[groupEnd]?.anchor);
+          tour.destroy();
+          const nextPath = tourStopPath(stops[groupEnd], session);
+          if (nextPath && !isOnTourPath(pathname, nextPath))
+            goToPath(navigateRef.current, nextPath);
+          else setNonce((value) => value + 1);
+          return;
+        }
+
+        if (stop?.click === 'start-call') {
+          reasonRef.current = 'move';
+          trackTour('advanced', stop.anchor, index + group.length);
+          syncUserMenu(undefined);
+          tour.destroy();
+          return;
+        }
+
+        reasonRef.current = 'done';
+        trackTour('finished', stop?.anchor, index + group.length);
+        if (tourCompletionMarksStep(session.step)) setFinishedStep(session.step);
+        if (stop && tourStopOpensAction(stop.anchor)) {
+          window.dispatchEvent(
+            new CustomEvent(FIRST_STEPS_TOUR_ACTION_EVENT, { detail: session.step }),
+          );
+        }
+        if (session.step === 'invite') writeFirstStepsHomeHint();
+        else clearFirstStepsTour();
+        syncUserMenu(undefined);
+        if (session.step === 'cabinet' && session.classroomId) {
+          requestFirstStepsTour({
+            step: 'call',
+            role: session.role,
+            userId: session.userId,
+            classroomId: session.classroomId,
+            boardId: session.boardId,
+            noteId: session.noteId,
+          });
+        }
+        tour.destroy();
+      };
+
+      if (!tourContinues && tourCompletionMarksStep(session.step)) {
+        setFinishedStep(session.step);
+      }
+      runStop(stop, complete);
+    };
+
+    const steps: DriveStep[] = group.map((stop, groupIndex) => {
+      const lastInGroup = groupIndex === group.length - 1;
+      const isFinalStop = index + groupIndex === stops.length - 1;
+      const canGoBack = session.step === 'navigation' && index + groupIndex > 0;
+      return {
+        element: findVisible(stopSelector(stop, session)) ?? undefined,
+        popover: {
+          title: translateRef.current(`firstStepsTour.${session.step}.${stop.anchor}.title`),
+          description: translateRef.current(`firstStepsTour.${session.step}.${stop.anchor}.body`),
+          side: stop.side ?? 'bottom',
+          align: 'start' as const,
+          ...(stop.click && !isFinalStop
+            ? { nextBtnText: translateRef.current('onboarding.next') }
+            : {}),
+          ...(canGoBack ? { disableButtons: [], onPrevClick: movePrev } : {}),
+          ...(lastInGroup && stop.click === 'start-call'
+            ? { doneBtnText: translateRef.current('onboarding.next') }
+            : {}),
+          progressText: translateRef
+            .current('onboarding.progress')
+            .replace('{{current}}', String(session.step === 'call' ? 1 : index + groupIndex + 1))
+            .replace('{{total}}', String(session.step === 'call' ? 7 : stops.length)),
+          ...(lastInGroup ? { onDoneClick: finishGroup } : { onNextClick: moveNext }),
+        },
+      };
+    });
+
+    const highlightsSidebar = group.length === 1 && group[0]?.anchor === 'sidebar-sections';
+    const tour = driver({
+      popoverClass: 'my-custom-popover-class',
+      showProgress: true,
+      popoverOffset: 16,
+      ...(highlightsSidebar ? { stagePadding: 0, stageRadius: 0 } : {}),
+      steps,
+      nextBtnText: translateRef.current('onboarding.next'),
+      prevBtnText: translateRef.current('onboarding.prev'),
+      doneBtnText: tourContinues
+        ? translateRef.current('onboarding.next')
+        : session.step === 'call'
+          ? translateRef.current('onboarding.next')
+          : session.step === 'navigation' ||
+              session.step === 'cabinet' ||
+              session.step === 'invite' ||
+              session.step === 'material'
+            ? translateRef.current('onboarding.ready')
+            : translateRef.current('onboarding.done'),
+      progressText: translateRef.current('onboarding.progress'),
+      onDestroyed: () => {
+        if (reasonRef.current !== 'close') return;
+        const active = tour.getActiveIndex() ?? 0;
+        trackTour('closed', group[active]?.anchor, index + active + 1);
+        clearFirstStepsTour();
+        syncUserMenu(undefined);
+      },
+    });
+
+    const keepStepOnHighlightClick = (event: MouseEvent) => {
+      if (!event.isTrusted || !(event.target instanceof Element)) return;
+      const active = driverRef.current?.getActiveIndex() ?? 0;
+      const stop = group[active];
+      const target = event.target;
+
+      if (stop?.anchor === 'user-menu') {
+        const insideMenu = Boolean(
+          target.closest(
+            '[data-first-step="user-menu"], [data-first-step="settings-item"], [data-first-step="help-item"], [data-first-step="support-submenu"], [data-first-step="support-item"], #hints-button',
+          ),
+        );
+        if (insideMenu) {
+          event.preventDefault();
+          event.stopPropagation();
+          window.dispatchEvent(
+            new CustomEvent(FIRST_STEPS_OPEN_USER_MENU_EVENT, { detail: { support: false } }),
+          );
+          return;
+        }
+      }
+
+      if (
+        stop?.click === 'open-duplicate' &&
+        target.closest('[data-first-step="duplicate-to-classroom"]')
+      ) {
+        writeFirstStepsTourIndex(index + active + 1);
+        window.setTimeout(() => setNonce((value) => value + 1), 280);
+        return;
+      }
+      const activeElement = document.querySelector('.driver-active-element');
+      if (!activeElement || !activeElement.contains(target)) {
+        return;
+      }
+      if (stop?.anchor === 'template-card' || stop?.anchor === 'template-copy') {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      if (stop?.click === 'confirm-duplicate') {
+        if (target.closest('[data-first-step="duplicate-confirm"]')) {
+          writeFirstStepsTourIndex(index + active + 1);
+          window.setTimeout(() => setNonce((value) => value + 1), 280);
+        }
+        return;
+      }
+      if (target.closest('[data-classroom-card-menu]')) {
+        return;
+      }
+      writeFirstStepsTourIndex(
+        index + active + (navigatesOnClick(stop) || stop?.click === 'open-invite' ? 1 : 0),
+      );
+      if (stop?.click === 'sidebar-toggle' || stop?.click === 'open-invite') {
+        window.setTimeout(() => setNonce((value) => value + 1), 280);
+      }
+    };
+    document.addEventListener('pointerdown', keepStepOnHighlightClick, true);
+    document.addEventListener('click', keepStepOnHighlightClick, true);
+    document.addEventListener('pointerup', keepStepOnHighlightClick, true);
+
+    driverRef.current = tour;
+    if (steps.length > 0) trackTour('started', group[0]?.anchor, index + 1);
+    tour.drive();
+
+    return () => {
+      document.removeEventListener('pointerdown', keepStepOnHighlightClick, true);
+      document.removeEventListener('click', keepStepOnHighlightClick, true);
+      document.removeEventListener('pointerup', keepStepOnHighlightClick, true);
+      tourClickTicket += 1;
+      removeTourCursor();
+      reasonRef.current = 'move';
+      tour.destroy();
+      if (driverRef.current === tour) driverRef.current = null;
+      if (!tourKeepsProfileMenu(readFirstStepsTour())) {
+        window.dispatchEvent(new Event(FIRST_STEPS_CLOSE_USER_MENU_EVENT));
+      }
+    };
+  }, [nonce, pathname]);
+
+  return null;
+};

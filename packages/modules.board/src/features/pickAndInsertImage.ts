@@ -2,7 +2,7 @@ import { prepareContentUpload } from 'common.services';
 import { nanoid } from 'nanoid';
 import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { myAssetStore } from './imageStore';
+import { getOversizedImageMessage, myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
 import { runWithoutHistory } from '../utils/runWithoutHistory';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
@@ -47,6 +47,17 @@ export async function insertImage(
 
   if (!assertBoardUploadAllowed(file, 'image', attempt)) {
     throw new Error(i18n.t('toast.fileTooLarge', { ns: 'board' }));
+  }
+
+  // До декодирования: файл с сотнями мегапикселей не должен дойти до createImageBitmap.
+  const oversizedMessage = await getOversizedImageMessage(file);
+  if (oversizedMessage) {
+    attempt.reject('unknown');
+    toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+      description: oversizedMessage,
+      duration: 5000,
+    });
+    throw new Error(oversizedMessage);
   }
 
   let bitmap: ImageBitmap;
