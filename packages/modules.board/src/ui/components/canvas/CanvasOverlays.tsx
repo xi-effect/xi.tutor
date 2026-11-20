@@ -3,6 +3,7 @@ import { CommentsOverlay } from '../../../comments';
 import { SelectionMenu } from '../toolbar/SelectionMenu';
 import { ActivitySideMenu } from '../../../activities/ui/ActivitySideMenu';
 import { LinkHoverPreview } from '../../../shapes/text';
+import { DiceRerollHint } from '../dice/DiceRerollHint';
 
 /** Оверлеи поверх канваса (`InFrontOfTheCanvas`): меню выделения + пины комментариев + hover-preview ссылок. */
 export const CanvasOverlays = track(function CanvasOverlays() {
@@ -12,6 +13,7 @@ export const CanvasOverlays = track(function CanvasOverlays() {
       <ActivitySideMenu />
       <CommentsOverlay />
       <LinkHoverPreview />
+      <DiceRerollHint />
     </>
   );
 });

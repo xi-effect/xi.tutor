@@ -64,9 +64,9 @@ export const PdfNodeView = ({ node, getPos, updateAttributes, selected }: NodeVi
       className={cn('group relative my-3', selected && 'rounded-xl ring-2 ring-blue-500')}
       contentEditable={false}
     >
-      <div className="bg-background-page border-border-default h-[520px] rounded-xl border shadow-md">
+      <div className="bg-background-page border-border-default w-full overflow-hidden rounded-xl border shadow-md">
         {!node.attrs.src || !isResolvedSrc(blobUrl) ? (
-          <div className="text-text-disabled flex h-full items-center justify-center text-sm">
+          <div className="text-text-disabled flex h-40 items-center justify-center text-sm">
             {t('pdf.loading')}
           </div>
         ) : (

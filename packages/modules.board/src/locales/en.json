@@ -151,6 +151,8 @@
     "title": "Dice",
     "result": "Rolled {{value}}",
     "throwFace": "Roll {{faces}}",
+    "rerollHint": "Double-press the die to roll it again",
+    "rerollHintDismiss": "Got it",
     "faces": {
       "2": "Coin",
       "4": "4 sides",

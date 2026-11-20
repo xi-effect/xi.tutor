@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, useValue } from '@ibodr/draw';
 import { isPublicAssetSrc, useCurrentUser } from 'common.services';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
@@ -13,6 +13,14 @@ import {
 } from '../../ocr';
 import { pdfDocCache } from './pdfDocCache';
 import { renderPdfSliceToPngBlob } from './fitPdfPage';
+import {
+  fitPdfShapeBounds,
+  pdfBoundsFitKey,
+  pdfPageStackAspect,
+  samePdfPageBoxes,
+  type PdfPageBox,
+} from './fitPdfShapeBounds';
+import { runWithoutHistory } from '../../utils/runWithoutHistory';
 import { zoomStepCeil } from '../../utils/rasterBudget';
 import { PdfPageControls } from './PdfPageControls';
 import type { PdfShape } from './PdfShape';
@@ -37,8 +45,12 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const userId = user?.id?.toString() ?? '';
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
 
   const [localPage, setLocalPage] = useState<number>(1);
+  const [pageSizes, setPageSizes] = useState<PdfPageBox[]>([]);
+  const [fitPageSizes, setFitPageSizes] = useState<PdfPageBox[]>([]);
+  const [controlsHeight, setControlsHeight] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [containerSize, setContainerSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
@@ -70,6 +82,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
   const { src, totalPages, currentPage: tutorPage, studentCanFlip } = shape.props;
   const zoomStep = useValue('pdf-zoom-step', () => zoomStepCeil(editor.getZoomLevel()), [editor]);
+  const isResizing = useValue('pdf-fit-resizing', () => editor.isIn('select.resizing'), [editor]);
   const pagesVisible = Math.min(
     PDF_PAGES_VISIBLE_MAX,
     Math.max(PDF_PAGES_VISIBLE_MIN, shape.props.pagesVisible ?? 1),
@@ -166,6 +179,112 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     };
   }, [src, token, shape.id]);
 
+  useEffect(() => {
+    const el = controlsRef.current;
+    if (!el) return;
+    const update = () => {
+      const next = Math.round(el.offsetHeight);
+      setControlsHeight((prev) => (prev === next ? prev : next));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!pdfDoc) {
+      setPageSizes([]);
+      setFitPageSizes([]);
+      return;
+    }
+
+    let cancelled = false;
+    const fitStart = Math.min(Math.max(1, tutorPage || 1), pdfDoc.numPages);
+    const visibleCount = Math.min(pagesVisible, Math.max(0, pdfDoc.numPages - displayPage + 1));
+    const fitCount = Math.min(pagesVisible, Math.max(0, pdfDoc.numPages - fitStart + 1));
+
+    const readPages = async (start: number, count: number) => {
+      const sizes: PdfPageBox[] = [];
+      for (let i = 0; i < count; i += 1) {
+        const page = await pdfDoc.getPage(start + i);
+        const viewport = page.getViewport({ scale: 1 });
+        sizes.push({ width: viewport.width, height: viewport.height });
+      }
+      return sizes;
+    };
+
+    void (async () => {
+      try {
+        const [visible, fitted] = await Promise.all([
+          readPages(displayPage, visibleCount),
+          readPages(fitStart, fitCount),
+        ]);
+        if (cancelled) return;
+        setPageSizes((prev) => (samePdfPageBoxes(prev, visible) ? prev : visible));
+        setFitPageSizes((prev) => (samePdfPageBoxes(prev, fitted) ? prev : fitted));
+      } catch {
+        if (cancelled) return;
+        setPageSizes([]);
+        setFitPageSizes([]);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pdfDoc, displayPage, pagesVisible, tutorPage]);
+
+  useEffect(() => {
+    if (isReadonly || isResizing || shape.isLocked) return;
+    if (!pdfDoc || controlsHeight <= 0 || fitPageSizes.length === 0) return;
+
+    const fitStart = Math.min(Math.max(1, tutorPage || 1), pdfDoc.numPages);
+    const fitCount = Math.min(pagesVisible, Math.max(0, pdfDoc.numPages - fitStart + 1));
+    if (fitPageSizes.length !== fitCount) return;
+
+    const key = pdfBoundsFitKey(fitPageSizes);
+    const next = fitPdfShapeBounds({
+      width: shape.props.w,
+      height: shape.props.h,
+      pages: fitPageSizes,
+      controlsHeight,
+    });
+    if (shape.props.boundsFit === key && !next && shape.props.controlsHeight === controlsHeight) {
+      return;
+    }
+
+    runWithoutHistory(editor, () => {
+      const current = editor.getShape<PdfShape>(shape.id);
+      if (!current) return;
+      editor.updateShape<PdfShape>({
+        id: shape.id,
+        type: 'pdf',
+        props: {
+          w: next?.w ?? current.props.w,
+          h: next?.h ?? current.props.h,
+          boundsFit: key,
+          controlsHeight,
+        },
+      });
+    });
+  }, [
+    controlsHeight,
+    editor,
+    fitPageSizes,
+    isReadonly,
+    isResizing,
+    pagesVisible,
+    pdfDoc,
+    shape.id,
+    shape.isLocked,
+    shape.props.boundsFit,
+    shape.props.controlsHeight,
+    shape.props.h,
+    shape.props.w,
+    tutorPage,
+  ]);
+
   const renderSharpSlice = useCallback(
     async (pageCount: number) => {
       if (!src || (!token && !isPublicAssetSrc(src))) return null;
@@ -206,7 +325,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   );
 
   const handleExtractPage = useCallback(async () => {
-    if (loading || !token) return;
+    if (!token) return;
 
     const bounds = editor.getShapePageBounds(shape.id);
     if (!bounds) return;
@@ -235,7 +354,6 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       h: imageH,
     });
   }, [
-    loading,
     token,
     shape.id,
     shape.props.fileName,
@@ -263,13 +381,47 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
   const handlePagesVisibleChange = useCallback(
     (n: number) => {
+      const sample = fitPageSizes[0] ?? pageSizes[0];
+      const pageCount = shape.props.totalPages;
+      const fitStart =
+        pageCount > 0 ? Math.min(Math.max(1, shape.props.currentPage || 1), pageCount) : 1;
+      const count = pageCount > 0 ? Math.min(n, pageCount - fitStart + 1) : 0;
+      const fittedPages =
+        sample && controlsHeight > 0 && count > 0
+          ? Array.from({ length: count }, () => sample)
+          : [];
+      const next =
+        fittedPages.length > 0
+          ? fitPdfShapeBounds({
+              width: shape.props.w,
+              height: shape.props.h,
+              pages: fittedPages,
+              controlsHeight,
+            })
+          : null;
+
       editor.updateShape<PdfShape>({
         id: shape.id,
         type: 'pdf',
-        props: { pagesVisible: n },
+        props: {
+          pagesVisible: n,
+          ...(next ? { w: next.w, h: next.h } : {}),
+          ...(fittedPages.length > 0 ? { boundsFit: pdfBoundsFitKey(fittedPages) } : {}),
+          ...(controlsHeight > 0 ? { controlsHeight } : {}),
+        },
       });
     },
-    [editor, shape.id],
+    [
+      controlsHeight,
+      editor,
+      fitPageSizes,
+      pageSizes,
+      shape.id,
+      shape.props.currentPage,
+      shape.props.h,
+      shape.props.totalPages,
+      shape.props.w,
+    ],
   );
 
   const handlePageChange = useCallback(
@@ -292,6 +444,33 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       }
     },
     [editor, shape.id, pdfPagesMap, userId, isTutor, studentCanFlip],
+  );
+
+  const extractImpl = useRef(handleExtractPage);
+  extractImpl.current = handleExtractPage;
+  const recognizeImpl = useRef(handleRecognizePrintedText);
+  recognizeImpl.current = handleRecognizePrintedText;
+  const pagesVisibleImpl = useRef(handlePagesVisibleChange);
+  pagesVisibleImpl.current = handlePagesVisibleChange;
+  const onExtractPage = useCallback(() => {
+    void extractImpl.current();
+  }, []);
+  const onRecognize = useCallback((language: OcrLanguage) => {
+    recognizeImpl.current(language);
+  }, []);
+  const onPagesVisibleChange = useCallback((n: number) => {
+    pagesVisibleImpl.current(n);
+  }, []);
+  const recognizeControl = useMemo(
+    () =>
+      isReadonly ? undefined : (
+        <RecognizePrintedTextControl
+          processingId={shape.id}
+          onRecognize={onRecognize}
+          title={t('pdf.recognizePrintedText')}
+        />
+      ),
+    [isReadonly, onRecognize, shape.id, t],
   );
 
   if (error) {
@@ -334,58 +513,61 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         {Array.from({ length: pagesVisible }, (_, i) => {
           const pageNum = displayPage + i;
           const inRange = pageNum <= totalPages;
+          const pageBox = pageSizes[i];
+          const pageAspect = pageBox && pageBox.width > 0 ? pageBox.height / pageBox.width : 1;
+          const stackAspect = pdfPageStackAspect(pageSizes);
+          const cellHeight =
+            stackAspect > 0 && pageBox && pageBox.width > 0
+              ? (containerSize.h * pageAspect) / stackAspect
+              : containerSize.h / pagesVisible;
           return (
             <div
-              key={`${src}:${displayPage}:${pagesVisible}:${pageNum}`}
-              className="flex min-h-0 flex-1 items-center justify-center"
-              style={{ opacity: loading ? 0.3 : 1 }}
+              key={`pdf-slot-${i}`}
+              className="relative min-h-0 w-full"
+              style={{ flexGrow: pageAspect, flexBasis: 0, opacity: loading ? 0.3 : 1 }}
             >
               {inRange && sourceUrl && pdfDoc ? (
-                <PdfPageImage
-                  source={sourceUrl}
-                  page={pageNum}
-                  width={containerSize.w}
-                  height={containerSize.h / pagesVisible}
-                  zoom={zoomStep}
-                  dpr={window.devicePixelRatio || 1}
-                  onReady={() => {
-                    readyPages.current.add(pageNum);
-                    if (
-                      readyPages.current.size >=
-                      Math.min(pagesVisible, totalPages - displayPage + 1)
-                    )
+                <div className="absolute inset-0">
+                  <PdfPageImage
+                    source={sourceUrl}
+                    page={pageNum}
+                    width={containerSize.w}
+                    height={cellHeight}
+                    zoom={zoomStep}
+                    dpr={window.devicePixelRatio || 1}
+                    onReady={() => {
+                      readyPages.current.add(pageNum);
+                      if (
+                        readyPages.current.size >=
+                        Math.min(pagesVisible, totalPages - displayPage + 1)
+                      )
+                        setLoading(false);
+                    }}
+                    onError={(err) => {
+                      reportBoardProblem('pdf-render', err, { shapeId: shape.id });
+                      setError(i18n.t('pdf.renderError', { ns: 'board' }));
                       setLoading(false);
-                  }}
-                  onError={(err) => {
-                    reportBoardProblem('pdf-render', err, { shapeId: shape.id });
-                    setError(i18n.t('pdf.renderError', { ns: 'board' }));
-                    setLoading(false);
-                  }}
-                />
+                    }}
+                  />
+                </div>
               ) : null}
             </div>
           );
         })}
       </div>
-      <PdfPageControls
-        fileName={shape.props.fileName}
-        currentPage={displayPage}
-        totalPages={totalPages}
-        disabled={!canFlip}
-        onPageChange={handlePageChange}
-        onExtractPage={!isReadonly && !loading ? handleExtractPage : undefined}
-        recognizeControl={
-          !isReadonly && !loading ? (
-            <RecognizePrintedTextControl
-              processingId={shape.id}
-              onRecognize={handleRecognizePrintedText}
-              title={t('pdf.recognizePrintedText')}
-            />
-          ) : undefined
-        }
-        pagesVisible={pagesVisible}
-        onPagesVisibleChange={!isReadonly ? handlePagesVisibleChange : undefined}
-      />
+      <div ref={controlsRef} className="shrink-0">
+        <PdfPageControls
+          fileName={shape.props.fileName}
+          currentPage={displayPage}
+          totalPages={totalPages}
+          disabled={!canFlip}
+          onPageChange={handlePageChange}
+          onExtractPage={isReadonly ? undefined : onExtractPage}
+          recognizeControl={recognizeControl}
+          pagesVisible={pagesVisible}
+          onPagesVisibleChange={isReadonly ? undefined : onPagesVisibleChange}
+        />
+      </div>
     </div>
   );
 };

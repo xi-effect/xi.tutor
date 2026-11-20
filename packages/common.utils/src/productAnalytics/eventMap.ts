@@ -43,6 +43,7 @@ import type {
   FileUploadRejectReason,
   FileUploadSizeBucket,
   FileUploadSource,
+  FileUploadSurface,
   LimitExceededBy,
   ProductAnalyticsDurationBucket,
   ProductAnalyticsInviteKind,
@@ -795,12 +796,14 @@ export type ProductAnalyticsEventMap = {
   file_upload_attempted: {
     event_version?: number;
     source: FileUploadSource;
+    surface?: FileUploadSurface;
     file_category: FileUploadFileCategory;
     size_bucket: FileUploadSizeBucket;
   };
   file_upload_succeeded: {
     event_version?: number;
     source: FileUploadSource;
+    surface?: FileUploadSurface;
     file_category: FileUploadFileCategory;
     size_bucket: FileUploadSizeBucket;
   };
@@ -808,6 +811,7 @@ export type ProductAnalyticsEventMap = {
     | {
         event_version?: number;
         source: FileUploadSource;
+        surface?: FileUploadSurface;
         reason: 'file_too_large';
         file_category: FileUploadFileCategory;
         size_bucket: FileUploadSizeBucket;
@@ -816,6 +820,7 @@ export type ProductAnalyticsEventMap = {
     | {
         event_version?: number;
         source: FileUploadSource;
+        surface?: FileUploadSurface;
         reason: Exclude<FileUploadRejectReason, 'file_too_large'>;
         file_category: FileUploadFileCategory;
         size_bucket: FileUploadSizeBucket;

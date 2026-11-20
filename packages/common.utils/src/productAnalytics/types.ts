@@ -175,6 +175,9 @@ export type ProductLimitSizeBucket = FileSizeBucket;
 
 export type FileUploadSource = 'materials' | 'classroom' | 'board' | 'profile_avatar' | 'other';
 
+/** Экран, на котором пользователь выбирал аватар. Нужен, чтобы не смешивать лимиты welcome и профиля. */
+export type FileUploadSurface = 'welcome' | 'profile';
+
 export type FileUploadFileCategory = ProductLimitFileCategory;
 
 export type FileUploadSizeBucket = FileSizeBucket;
