@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { ActiveBlockT } from '../types';
 
-export type EditorModalT = 'insertImageLink' | null;
+export type EditorModalT = 'insertImageLink' | 'insertEmbed' | null;
 
 type useInterfaceStoreT = {
   activeCellControls: string | null;

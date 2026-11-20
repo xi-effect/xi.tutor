@@ -63,7 +63,7 @@ import { focusDemoBoardGuide } from '../../../demo/demoBoardGuideCamera';
 import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
-import { registerEmbedGuard } from '../../../shapes/embed/embedProviders';
+import { registerEmbedGuard } from '../../../shapes/embed/embedGuard';
 
 /** Ctrl/Cmd+Y в шорткатах редактора нет, а Ctrl/Cmd+Shift+Z есть. Добавляем Y в тот же action, чтобы жест откатывался один раз. */
 const boardUiOverrides: DrUiOverrides = {

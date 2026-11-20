@@ -1,28 +1,10 @@
 import type { DrEmbedDefinition, DrEmbedShapePermissions } from '@ibodr/draw';
-import { EMBED_PROVIDERS, resolveEmbedUrl } from './embedProviders';
-import type { EmbedProviderId } from './types';
-
-const SIZES: Record<EmbedProviderId, { width: number; height: number }> = {
-  youtube: { width: 560, height: 315 },
-  rutube: { width: 560, height: 315 },
-  vk: { width: 560, height: 315 },
-  figma: { width: 800, height: 450 },
-  'google-docs': { width: 720, height: 540 },
-  'google-maps': { width: 600, height: 450 },
-  miro: { width: 800, height: 500 },
-  codepen: { width: 700, height: 450 },
-  'yandex-docs': { width: 800, height: 600 },
-  wordwall: { width: 640, height: 480 },
-  abctest: { width: 640, height: 480 },
-  quizlet: { width: 700, height: 500 },
-  learningapps: { width: 700, height: 500 },
-  genially: { width: 800, height: 500 },
-  padlet: { width: 800, height: 600 },
-  canva: { width: 800, height: 500 },
-  phet: { width: 800, height: 600 },
-};
-
-const VIDEO = new Set<EmbedProviderId>(['youtube', 'rutube', 'vk']);
+import {
+  EMBED_PROVIDERS,
+  EMBED_PROVIDER_DEFAULT_SIZES,
+  EMBED_VIDEO_PROVIDERS,
+  resolveEmbedUrl,
+} from 'modules.embed';
 
 const PERMISSIONS = {
   'allow-scripts': true,
@@ -39,7 +21,7 @@ const withBareHosts = (hosts: readonly string[]) =>
   Array.from(new Set([...hosts, ...hosts.map((h) => h.replace(/^www\./, ''))]));
 
 export const boardEmbedDefinitions: readonly DrEmbedDefinition[] = EMBED_PROVIDERS.map((p) => {
-  const isVideo = VIDEO.has(p.id);
+  const isVideo = EMBED_VIDEO_PROVIDERS.has(p.id);
   const resolve = (url: string) => {
     const r = resolveEmbedUrl(url);
     return r.ok && r.embed.provider === p.id ? r.embed : undefined;
@@ -49,7 +31,7 @@ export const boardEmbedDefinitions: readonly DrEmbedDefinition[] = EMBED_PROVIDE
     type: p.id,
     title: p.label,
     hostnames: withBareHosts(p.hosts),
-    ...SIZES[p.id],
+    ...EMBED_PROVIDER_DEFAULT_SIZES[p.id],
     minWidth: 240,
     minHeight: 140,
     doesResize: true,

@@ -5,6 +5,7 @@ import { DragHandleWrapper } from './DragHandleWrapper';
 import { MobileEditorControls } from './MobileEditorControls';
 import { Editor } from '@tiptap/core';
 import { ImageLinkModal } from './ImageLinkModal';
+import { EmbedInsertModal } from './EmbedInsertModal';
 import { CloudFilesPicker } from 'pages.materials';
 import { useTranslation } from 'react-i18next';
 import { useInterfaceStore } from '../../store/interfaceStore';
@@ -86,6 +87,7 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
       {isMobile && canShowToolbar && <MobileEditorControls editor={editor} />}
       <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />
       <ImageLinkModal />
+      <EmbedInsertModal />
       <CloudFilesPicker
         open={cloudPickerOpen}
         onOpenChange={(open) => {

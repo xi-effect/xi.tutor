@@ -11,9 +11,9 @@ import {
 } from '@xipkg/modal';
 import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
-import { EMBED_PROVIDER_LABELS, parseEmbedInput } from './embedProviders';
+import { EMBED_PROVIDER_LABELS, parseEmbedInput } from 'modules.embed';
+import type { ResolvedEmbed } from 'modules.embed';
 import { EMBED_MIN_HEIGHT, EMBED_MIN_WIDTH } from './consts';
-import type { ResolvedEmbed } from './types';
 
 export function insertEmbed(editor: Editor, embed: ResolvedEmbed) {
   const vb = editor.getViewportPageBounds();
