@@ -7,3 +7,4 @@ export {
   type CollaboratorCursorProps,
 } from './src/ui/components/canvas/CollaboratorCursor';
 export { boardEn, boardRu } from './src/locales';
+export { useCloseOnOutsideClick } from './src/comments';

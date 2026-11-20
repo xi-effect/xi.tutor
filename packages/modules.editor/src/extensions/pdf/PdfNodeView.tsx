@@ -17,6 +17,7 @@ import { uploadExtractedImage } from '../../utils/uploadExtractedImage';
 import { StrokeT } from '../../types';
 import { DrawSwitchButton } from '../../ui/components/drawing/DrawSwitchButton';
 import { cn } from '@xipkg/utils';
+import { useNodeComment } from '../../comments/hooks/useNodeComment';
 
 function isResolvedSrc(src: string) {
   return src.startsWith('blob:') || src.startsWith('http') || src.startsWith('data:');
@@ -30,6 +31,7 @@ export const PdfNodeView = ({ node, getPos, updateAttributes, selected }: NodeVi
   const { mutateAsync: uploadImage } = useUploadImage();
   const blobUrl = useProtectedImage(node.attrs.src, storageToken);
   const { isDrawing, toggle, close } = useDrawingToggle(editor, getPos);
+  const { startComment } = useNodeComment(editor, getPos);
 
   const handleDownload = () => {
     if (!node.attrs.src || !storageToken) return;
@@ -95,6 +97,7 @@ export const PdfNodeView = ({ node, getPos, updateAttributes, selected }: NodeVi
           getActiveBlock={getActiveBlock}
           isReadOnly={isReadOnly}
           onDownload={handleDownload}
+          onComment={startComment}
         />
       </div>
     </NodeViewWrapper>

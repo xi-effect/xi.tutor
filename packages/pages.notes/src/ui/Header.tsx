@@ -16,6 +16,7 @@ import { useCollaborators, useYjsContext, NoteActivitiesMenu } from 'modules.edi
 import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { UndoRedo } from './UndoRedo';
 import { getAvatarUrlByUserId } from '../utils';
+import { CommentsFeedButton } from '../../../modules.editor/src/comments';
 
 export const Header = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
@@ -74,7 +75,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="bg-background-surface border-border-default sticky top-0 z-10 flex h-[56px] min-h-[56px] w-full items-center rounded-2xl border px-2">
+    <div className="bg-background-surface border-border-default sticky top-0 z-20 flex h-[56px] min-h-[56px] w-full items-center rounded-2xl border px-2">
       <div className="relative flex h-full w-full items-center justify-center">
         <Button
           variant="none"
@@ -97,6 +98,7 @@ export const Header = () => {
         </div>
         <div className="absolute inset-y-0 right-0 flex items-center gap-2 pr-1">
           {!isReadOnly ? <UndoRedo /> : null}
+          <CommentsFeedButton />
           <CollaboratorAvatars collaborators={collaboratorsWithAvatars} currentUserId={user.id} />
           <NoteActivitiesMenu />
         </div>

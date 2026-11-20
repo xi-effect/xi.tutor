@@ -31,6 +31,7 @@ import {
   runNoteActivityAction,
   setNoteStudentAccess,
 } from '../../utils/noteActivities';
+import { CommentVisibilityToggle } from '../../comments';
 
 const menuItemClass =
   'text-text-primary hover:bg-background-page focus:text-text-primary fill-icon-primary [&_svg]:fill-icon-primary h-7 gap-2 rounded p-1 text-sm';
@@ -85,6 +86,7 @@ function NoteActivitiesMenuBody({ editor, isReadOnly }: { editor: Editor; isRead
         side="bottom"
         className={cn(menuPanelClass, 'overflow-visible')}
       >
+        <CommentVisibilityToggle />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className={menuSubTriggerClass}>
             <Activity className="size-6" />
