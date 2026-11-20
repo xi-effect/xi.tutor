@@ -62,13 +62,11 @@ export function createCommentThreadAt(
 ): EditorCommentThread {
   const color = generateUserColor(author.authorId);
   applyCommentAnchor(editor, range, threadId, color);
+  // На границе блока setTextSelection невалиден, поэтому курсор двигаем только у текста.
   if (!getCommentableNodeAt(editor.state.doc, range)) {
     const { doc, tr } = editor.state;
     editor.view.dispatch(tr.setSelection(Selection.near(doc.resolve(range.to), -1)));
   }
-
-  editor.chain().setTextSelection(range).setComment(threadId, color).run();
-  editor.commands.setTextSelection(range.to);
 
   const thread: EditorCommentThread = {
     id: threadId,

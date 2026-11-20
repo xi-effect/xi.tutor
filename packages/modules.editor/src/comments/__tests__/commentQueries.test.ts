@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Schema } from '@tiptap/pm/model';
+import { EditorState, type Transaction } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
 import * as Y from 'yjs';
 import {
@@ -87,20 +88,40 @@ const makeEditorWithDoc = (paragraphs: Piece[][]): Editor => {
   return { state: { doc } } as unknown as Editor;
 };
 
-/** Мок-редактор для команд: setTextSelection → setComment → run, unsetComment. */
+/** Мок-редактор: chain().command() для якоря, unsetComment и unsetNodeComment для снятия. */
 const makeCommandEditor = () => {
+  const doc = schema.node('doc', null, [
+    schema.node('paragraph', null, [schema.text('Hello world')]),
+  ]);
+  const state = EditorState.create({ schema, doc });
+
   const chain = {
-    setTextSelection: vi.fn(),
-    setComment: vi.fn(),
+    command: vi.fn(),
     run: vi.fn(),
   };
-  chain.setTextSelection.mockReturnValue(chain);
-  chain.setComment.mockReturnValue(chain);
+  chain.command.mockImplementation(
+    (fn: (props: { tr: Transaction; state: EditorState }) => boolean) => {
+      fn({ tr: state.tr, state });
+      return chain;
+    },
+  );
+
+  const unsetComment = vi.fn();
+  const unsetNodeComment = vi.fn();
+  const dispatch = vi.fn();
   const editor = {
     chain: vi.fn(() => chain),
-    commands: { unsetComment: vi.fn() },
+    commands: { unsetComment, unsetNodeComment, setTextSelection: vi.fn() },
+    state,
+    view: { dispatch },
   };
-  return { editor: editor as unknown as Editor, chain, unsetComment: editor.commands.unsetComment };
+  return {
+    editor: editor as unknown as Editor,
+    chain,
+    dispatch,
+    unsetComment,
+    unsetNodeComment,
+  };
 };
 
 describe('getAllCommentThreads', () => {
@@ -192,16 +213,24 @@ describe('getThreadMarkRange', () => {
 describe('createCommentThreadAt', () => {
   it('ставит марку на диапазон и записывает тред и первое сообщение', () => {
     const { threadsMap, messagesMap } = makeMaps();
-    const { editor, chain } = makeCommandEditor();
+    const { editor, chain, dispatch } = makeCommandEditor();
     const range = { from: 3, to: 9 };
 
-    const thread = createCommentThreadAt(editor, threadsMap, messagesMap, range, 'Привет', author);
+    const thread = createCommentThreadAt(
+      editor,
+      't1',
+      threadsMap,
+      messagesMap,
+      range,
+      'Привет',
+      author,
+    );
 
-    expect(chain.setTextSelection).toHaveBeenCalledWith(range);
-    expect(chain.setComment).toHaveBeenCalledWith(thread.id, 'color-u1');
     expect(chain.run).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledTimes(1);
 
     expect(thread).toMatchObject({
+      id: 't1',
       resolved: false,
       authorId: 'u1',
       authorName: 'Анна',
@@ -218,6 +247,7 @@ describe('createCommentThreadAt', () => {
     const { editor } = makeCommandEditor();
     const a = createCommentThreadAt(
       editor,
+      't-a',
       threadsMap,
       messagesMap,
       { from: 1, to: 2 },
@@ -226,13 +256,15 @@ describe('createCommentThreadAt', () => {
     );
     const b = createCommentThreadAt(
       editor,
+      't-b',
       threadsMap,
       messagesMap,
       { from: 3, to: 4 },
       'b',
       author,
     );
-    expect(a.id).not.toBe(b.id);
+    expect(a.id).toBe('t-a');
+    expect(b.id).toBe('t-b');
     expect(threadsMap.size).toBe(2);
   });
 });
@@ -283,7 +315,7 @@ describe('setCommentThreadResolved', () => {
 describe('deleteCommentThread', () => {
   it('снимает марку, удаляет тред и все его сообщения, чужие не трогает', () => {
     const { threadsMap, messagesMap } = makeMaps();
-    const { editor, unsetComment } = makeCommandEditor();
+    const { editor, unsetComment, unsetNodeComment } = makeCommandEditor();
     threadsMap.set('t1', makeThread('t1'));
     threadsMap.set('t2', makeThread('t2'));
     messagesMap.set('m1', makeMessage('m1', 't1', 1));
@@ -293,6 +325,7 @@ describe('deleteCommentThread', () => {
     deleteCommentThread(editor, threadsMap, messagesMap, 't1');
 
     expect(unsetComment).toHaveBeenCalledWith('t1');
+    expect(unsetNodeComment).toHaveBeenCalledWith('t1');
     expect(threadsMap.has('t1')).toBe(false);
     expect(threadsMap.has('t2')).toBe(true);
     expect([...messagesMap.keys()]).toEqual(['m3']);
@@ -319,6 +352,7 @@ describe('deleteCommentMessage', () => {
     expect(maps.messagesMap.has('m2')).toBe(true);
     expect(maps.threadsMap.has('t1')).toBe(true);
     expect(cmd.unsetComment).not.toHaveBeenCalled();
+    expect(cmd.unsetNodeComment).not.toHaveBeenCalled();
   });
 
   it('последнее сообщение — удаляется и тред, и марка', () => {
@@ -329,5 +363,6 @@ describe('deleteCommentMessage', () => {
     expect(maps.messagesMap.size).toBe(0);
     expect(maps.threadsMap.has('t1')).toBe(false);
     expect(cmd.unsetComment).toHaveBeenCalledWith('t1');
+    expect(cmd.unsetNodeComment).toHaveBeenCalledWith('t1');
   });
 });
