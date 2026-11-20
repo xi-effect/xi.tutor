@@ -11,6 +11,7 @@ import type {
   FileUploadRejectReason,
   FileUploadSizeBucket,
   FileUploadSource,
+  FileUploadSurface,
 } from './types';
 
 export type FileUploadErrorKind = 'tooLarge' | 'unsupported' | 'storage' | 'failed';
@@ -28,6 +29,7 @@ export type FileUploadAttemptInput = {
 
 export type FileUploadAttemptContext = {
   maxBytes?: number;
+  surface?: FileUploadSurface;
 };
 
 export type FileUploadAttempt = {
@@ -38,6 +40,7 @@ export type FileUploadAttempt = {
 type FileUploadBaseProps = {
   event_version: 1;
   source: FileUploadSource;
+  surface?: FileUploadSurface;
   file_category: FileUploadFileCategory;
   size_bucket: FileUploadSizeBucket;
 };
@@ -219,9 +222,11 @@ export const getFileUploadRejectReasonFromEvaluation = (
 const buildBaseProps = (
   source: FileUploadSource,
   file: FileUploadAttemptInput,
+  context?: FileUploadAttemptContext,
 ): FileUploadBaseProps => ({
   event_version: 1,
   source,
+  ...(context?.surface ? { surface: context.surface } : {}),
   file_category: getFileCategoryFromFile(file),
   size_bucket: getFileSizeBucket(file.size),
 });
@@ -231,7 +236,7 @@ export const beginFileUploadAttempt = (
   file: FileUploadAttemptInput,
   context?: FileUploadAttemptContext,
 ): FileUploadAttempt => {
-  const props = buildBaseProps(source, file);
+  const props = buildBaseProps(source, file, context);
 
   trackProductEvent(PRODUCT_ANALYTICS_EVENTS.FILE_UPLOAD_ATTEMPTED, props);
 

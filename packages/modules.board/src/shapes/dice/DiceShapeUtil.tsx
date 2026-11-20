@@ -5,7 +5,7 @@ import {
   resizeBox,
   type DrResizeInfo,
 } from '@ibodr/draw';
-import { normalizeDiceFace } from '../../dice/diceRoll';
+import { normalizeDiceFace, rerollDiceFace } from '../../dice/diceRoll';
 import { resolveBoardCssColor, resolveLodStyle } from '../../utils/resolveLodStyle';
 import { DICE_MIN_SIZE, DICE_SHAPE_SIZE, diceShapeProps, type DiceShape } from './diceShape';
 import { DiceShapeView } from './DiceShapeView';
@@ -40,6 +40,15 @@ export class DiceShapeUtil extends BaseBoxShapeUtil<DiceShape> {
 
   override canEdit() {
     return false;
+  }
+
+  /** Двойной клик и двойной тап перебрасывают кубик. Число записывается в фигуру, поэтому оно общее. */
+  override onDoubleClick(shape: DiceShape) {
+    return {
+      id: shape.id,
+      type: shape.type,
+      props: rerollDiceFace(shape.props.sides),
+    };
   }
 
   override canResize() {

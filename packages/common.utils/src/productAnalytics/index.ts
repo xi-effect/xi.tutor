@@ -249,6 +249,7 @@ export type {
   ProductLimitBlockedOn,
   ProductLimitObjectKind,
   FileUploadSource,
+  FileUploadSurface,
   FileUploadFileCategory,
   FileUploadSizeBucket,
   LessonRecordingFailureReason,

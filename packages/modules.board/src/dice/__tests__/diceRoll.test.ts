@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DICE_SIDES, normalizeDiceFace, rollDie } from '../diceRoll';
+import { DICE_SIDES, normalizeDiceFace, rerollDiceFace, rollDie } from '../diceRoll';
 import {
   cubePose,
   cubeRestRotation,
@@ -16,6 +16,14 @@ describe('rollDie', () => {
       expect(rollDie(sides, () => 0)).toBe(1);
       expect(rollDie(sides, () => 0.999999)).toBe(sides);
     }
+  });
+});
+
+describe('rerollDiceFace', () => {
+  it('берёт число из допустимых граней и запоминает момент броска', () => {
+    expect(rerollDiceFace(20, 500, () => 0)).toEqual({ value: 1, rolledAt: 500 });
+    expect(rerollDiceFace(8, 500, () => 0.999999)).toEqual({ value: 8, rolledAt: 500 });
+    expect(rerollDiceFace(3, 500, () => 0).value).toBe(1);
   });
 });
 

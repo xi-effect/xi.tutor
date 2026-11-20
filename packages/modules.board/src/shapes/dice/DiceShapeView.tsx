@@ -57,28 +57,38 @@ function usePrefersReducedMotion() {
 
 function useThrowProgress(rolledAt: number) {
   const reduced = usePrefersReducedMotion();
-  const anchorRef = useRef<number | null>(null);
-  if (anchorRef.current === null) {
-    anchorRef.current = animationAnchor(rolledAt, Date.now());
+  const motionRef = useRef<{ rolledAt: number; anchor: number; settled: boolean } | null>(null);
+
+  if (motionRef.current === null || motionRef.current.rolledAt !== rolledAt) {
+    const anchor = animationAnchor(rolledAt, Date.now());
+    motionRef.current = {
+      rolledAt,
+      anchor,
+      settled: reduced || Date.now() - anchor >= DICE_ROLL_MS,
+    };
   }
-  const anchor = anchorRef.current;
-  const settled = useRef(reduced || Date.now() - anchor >= DICE_ROLL_MS);
+
+  const { anchor, settled } = motionRef.current;
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    if (settled.current) return;
+    if (motionRef.current?.settled) return;
 
     let frame = 0;
     const tick = () => {
       const next = Date.now();
       setNow(next);
-      if (next - anchor < DICE_ROLL_MS) frame = requestAnimationFrame(tick);
+      if (next - anchor < DICE_ROLL_MS) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+      if (motionRef.current?.anchor === anchor) motionRef.current.settled = true;
     };
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [anchor]);
 
-  if (settled.current) return 1;
+  if (settled) return 1;
   return rollProgress(anchor, now);
 }

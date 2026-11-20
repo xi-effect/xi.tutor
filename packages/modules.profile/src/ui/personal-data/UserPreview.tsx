@@ -63,21 +63,24 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     const file = event.target.files[0];
 
     if (!file.type.startsWith('image/')) {
-      beginFileUploadAttempt('profile_avatar', file).reject('unsupported_type');
+      beginFileUploadAttempt('profile_avatar', file, { surface: 'profile' }).reject(
+        'unsupported_type',
+      );
       toast(t('userPreview.uploadImage'));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      beginFileUploadAttempt('profile_avatar', file, { maxBytes: 5 * 1024 * 1024 }).reject(
-        'file_too_large',
-      );
+      beginFileUploadAttempt('profile_avatar', file, {
+        maxBytes: 5 * 1024 * 1024,
+        surface: 'profile',
+      }).reject('file_too_large');
       toast(t('userPreview.fileTooLarge'));
       return;
     }
 
     if (isFileNameTooLong(file.name)) {
-      beginFileUploadAttempt('profile_avatar', file).reject('unknown');
+      beginFileUploadAttempt('profile_avatar', file, { surface: 'profile' }).reject('unknown');
       toast(t('userPreview.fileNameTooLong', { max: MAX_FILENAME_LENGTH }));
       return;
     }

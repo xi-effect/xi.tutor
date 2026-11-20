@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { Button } from '@xipkg/button';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@xipkg/select';
 import { ArrowLeft, ArrowRight, Image } from '@xipkg/icons';
@@ -19,7 +19,7 @@ type PdfPageControlsProps = {
   onPagesVisibleChange?: (n: number) => void;
 };
 
-export const PdfPageControls = ({
+export const PdfPageControls = memo(function PdfPageControls({
   fileName,
   currentPage,
   totalPages,
@@ -29,7 +29,7 @@ export const PdfPageControls = ({
   recognizeControl,
   pagesVisible = 1,
   onPagesVisibleChange,
-}: PdfPageControlsProps) => {
+}: PdfPageControlsProps) {
   const { t } = useTranslation('board');
   const goPrev = useCallback(
     (e: React.PointerEvent) => {
@@ -135,4 +135,4 @@ export const PdfPageControls = ({
       )}
     </div>
   );
-};
+});

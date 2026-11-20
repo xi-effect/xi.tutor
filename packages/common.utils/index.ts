@@ -202,6 +202,7 @@ export {
   type ProductLimitBlockedOn,
   type ProductLimitObjectKind,
   type FileUploadSource,
+  type FileUploadSurface,
   type FileUploadFileCategory,
   type FileUploadSizeBucket,
   type FileSizeBucket,

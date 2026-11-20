@@ -1,6 +1,7 @@
 import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
 import { cardLodStyle } from '../../utils/resolveLodStyle';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, PdfShape, pdfShapeProps } from './PdfShape';
+import { pdfFrameMetrics, pdfResizeAnchorShift, resizePdfFrame } from './fitPdfShapeBounds';
 import { PdfViewer } from './PdfViewer';
 import { renderPdfShapeToDataUrl } from './renderPdfShapeToDataUrl';
 import {
@@ -51,12 +52,34 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
     } else {
       minHeight = Math.round(PDF_MIN_SIZE / aspectRatio);
     }
-    return resizeBox(shape, info, {
+    const resized = resizeBox(shape, info, {
       minWidth,
       minHeight,
       maxWidth: PDF_MAX_SIZE,
       maxHeight: PDF_MAX_SIZE,
     });
+    const frame = pdfFrameMetrics(shape.props);
+    if (!frame) return resized;
+
+    const next = resizePdfFrame({
+      nextWidth: resized.props.w,
+      aspect: frame.aspect,
+      controlsHeight: frame.controlsHeight,
+      minSize: PDF_MIN_SIZE,
+      maxSize: PDF_MAX_SIZE,
+    });
+    const shift = pdfResizeAnchorShift(
+      info.handle,
+      resized.props.w - next.w,
+      resized.props.h - next.h,
+      shape.rotation,
+    );
+    return {
+      ...resized,
+      x: resized.x + shift.x,
+      y: resized.y + shift.y,
+      props: { ...resized.props, w: next.w, h: next.h },
+    };
   }
 
   override component(shape: PdfShape) {
@@ -104,7 +127,7 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
             stroke={SVG_CARD.border}
             strokeWidth={1}
           />
-          <image href={dataUrl} width={w} height={h} preserveAspectRatio="xMidYMid meet" />
+          <image href={dataUrl} width={w} height={h} preserveAspectRatio="xMidYMin meet" />
         </g>
       );
     }

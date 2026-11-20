@@ -56,7 +56,7 @@ export function PdfPageImage({ source, page, width, height, zoom, dpr, onReady, 
       src={image.url}
       alt=""
       draggable={false}
-      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+      style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain' }}
     />
   ) : null;
 }

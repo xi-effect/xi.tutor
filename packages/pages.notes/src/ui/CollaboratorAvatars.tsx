@@ -20,8 +20,8 @@ export const CollaboratorAvatars = ({ collaborators, currentUserId }: TCollabora
       <PopoverTrigger asChild>
         <button type="button" className="cursor-pointer border-none bg-transparent p-0">
           <AvatarGroup>
-            {visibleCollaborators.map((collaborator) => (
-              <Avatar key={collaborator.id} size="s">
+            {visibleCollaborators.map((collaborator, i) => (
+              <Avatar key={`${collaborator.id}-${i}`} size="s">
                 {collaborator.avatarUrl && <AvatarImage src={collaborator.avatarUrl} size="s" />}
                 <AvatarFallback size="s">{collaborator.initial}</AvatarFallback>
               </Avatar>
@@ -38,12 +38,12 @@ export const CollaboratorAvatars = ({ collaborators, currentUserId }: TCollabora
       >
         <div className="flex flex-col gap-1">
           <p className="text-text-secondary px-2 py-1 text-xs">{t('collaborators')}</p>
-          {collaborators.map((collaborator) => (
+          {collaborators.map((collaborator, index) => (
             <div
-              key={collaborator.id}
+              key={`${collaborator.id}-${index}`}
               className="hover:bg-background-page flex items-center gap-2 rounded-lg px-2 py-1.5"
             >
-              <Avatar size="s">
+              <Avatar size="s" key={`${collaborator.id}-${index}`}>
                 {collaborator.avatarUrl && <AvatarImage src={collaborator.avatarUrl} size="s" />}
                 <AvatarFallback size="s">{collaborator.initial}</AvatarFallback>
               </Avatar>

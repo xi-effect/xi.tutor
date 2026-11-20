@@ -29,3 +29,16 @@ export function normalizeDiceFace(
   const safeValue = Number.isInteger(rounded) && rounded >= 1 && rounded <= safeSides ? rounded : 1;
   return { sides: safeSides, value: safeValue };
 }
+
+/** Новый бросок той же кости: число уже посчитано, время запускает анимацию у всех. */
+export function rerollDiceFace(
+  sides: number,
+  now = Date.now(),
+  random: () => number = Math.random,
+): { value: number; rolledAt: number } {
+  const face = normalizeDiceFace(sides, 1);
+  return {
+    value: rollDie(face.sides, random),
+    rolledAt: now,
+  };
+}

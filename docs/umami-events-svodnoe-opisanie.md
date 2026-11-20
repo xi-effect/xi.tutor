@@ -55,7 +55,7 @@
 | ---------------- | --------------------------------- | ------------------------------------- |
 | `profile-logout` | `data-umami-event` — клик «Выйти» | Выход из аккаунта на странице профиля |
 
-Клиентский отказ при выборе аватара (не картинка / больше лимита экрана) даёт outcome `file_upload_rejected` с `source=profile_avatar`. Успешная загрузка аватара после кропа в эту воронку пока не входит. См. [file-upload-events.md](./analytics/file-upload-events.md).
+Клиентский отказ при выборе аватара (не картинка / больше лимита экрана) даёт outcome `file_upload_rejected` с `source=profile_avatar`. Лимит размера различается полем `surface`: `welcome` на онбординге, `profile` в настройках. Успешная загрузка аватара после кропа в эту воронку пока не входит. См. [file-upload-events.md](./analytics/file-upload-events.md).
 
 ---
 

@@ -23,7 +23,7 @@ import i18n from 'i18next';
 import { useActivityEventGuard, useActivitySession } from './activityHostContext';
 import { checkAssetType } from '../../utils/uploadAsset';
 import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../../utils/storedFileSrc';
-import { useEditor, useValue } from '@ibodr/draw';
+import { useMaybeEditor, useValue } from '@ibodr/draw';
 import { useBoardImageUrl } from '../../utils/useBoardImageUrl';
 import { zoomStepCeil } from '../../utils/rasterBudget';
 import { IMAGE_INPUT_ACCEPT } from '../../constants/mimeTypes';
@@ -37,13 +37,18 @@ const coverToolbarButtonClass =
 
 export function useActivityImageSrc(src?: string, cssWidth?: number) {
   const { token } = useActivitySession();
-  const editor = useEditor();
-  const zoomStep = useValue('activity-image-zoom-step', () => zoomStepCeil(editor.getZoomLevel()), [
-    editor,
-  ]);
-  const moving = useValue('activity-image-moving', () => editor.getCameraState() === 'moving', [
-    editor,
-  ]);
+  // Упражнения в заметках рендерятся вне <Draw />: зума и камеры там нет.
+  const editor = useMaybeEditor();
+  const zoomStep = useValue(
+    'activity-image-zoom-step',
+    () => (editor ? zoomStepCeil(editor.getZoomLevel()) : 1),
+    [editor],
+  );
+  const moving = useValue(
+    'activity-image-moving',
+    () => (editor ? editor.getCameraState() === 'moving' : false),
+    [editor],
+  );
   const layoutWidth = cssWidth === undefined ? 960 : cssWidth;
   return useBoardImageUrl({
     src: src ?? '',
@@ -84,9 +89,10 @@ export function ActivityImage({
       observer.disconnect();
       window.clearTimeout(fallback);
     };
-  }, []);
+  }, [src]);
 
   const url = useActivityImageSrc(src, cssWidth);
+  if (!src) return null;
   return (
     <img
       ref={frameRef}
