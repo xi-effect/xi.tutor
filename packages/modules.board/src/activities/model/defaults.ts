@@ -105,6 +105,25 @@ export function getDefaultDefinition(kind: ActivityKind): ActivityDefinition {
           { id: createActivityId(), text: 'Where do you live?' },
         ],
       };
+    case 'exercise':
+      return {
+        kind: 'exercise',
+        blocks: [{ id: 'statement', role: 'statement', text: '' }],
+        answerDisplay: '',
+        accepted: [],
+        answerGroups: null,
+        numeric: null,
+        caseSensitive: false,
+        ignoreFinalPunctuation: false,
+        openEnded: false,
+        hints: [],
+        solution: [],
+        evidence: '',
+        rubric: [],
+        wordRange: null,
+        figure: null,
+        source: null,
+      };
     case 'flip-card':
       throw new Error(
         "getDefaultDefinition('flip-card'): flip-card has no ActivityDefinition — it must be handled before this call (see insertActivity).",

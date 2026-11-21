@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { useYjsContext } from '../../hooks';
 import { insertLibraryFileToEditor } from '../../utils/insertLibraryFileToEditor';
+import { toast } from 'sonner';
 import { insertMathTaskToEditor } from '../../utils/insertMathTaskToEditor';
 import { normalizeSelectionAfterDrop } from '../../utils/normalizeSelectionAfterDrop';
 import { EDITOR_MOBILE_MEDIA_QUERY } from '../../const/breakpoints';
@@ -115,8 +116,14 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
             description={t('blockMenu.mathBankDescription')}
             umamiPrefix="editor"
             analyticsSource="editor"
-            onSelect={(task) => {
-              insertMathTaskToEditor(editor, task.statement, insertAnchor);
+            onSelect={async (task) => {
+              try {
+                const inserted = await insertMathTaskToEditor(editor, task, insertAnchor);
+                if (!inserted) toast.error(t('blockMenu.mathBankInsertFailed'));
+              } catch (error) {
+                console.error('Ошибка при вставке задания в заметку:', error);
+                toast.error(t('blockMenu.mathBankInsertFailed'));
+              }
             }}
           />
         </Suspense>

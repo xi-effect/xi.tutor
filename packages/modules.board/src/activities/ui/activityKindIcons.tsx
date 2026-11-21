@@ -113,6 +113,23 @@ export const ActivityRandomCardIcon = (props: IconProps) => (
   </Svg>
 );
 
+export const ActivityExerciseIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M6 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8.2a5 5 0 0 1-.7-2H6V5h12v5.1a5 5 0 0 1 2 .7V5a2 2 0 0 0-2-2H6Z"
+    />
+    <path d="M8 8a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H8Z" />
+    <path d="M8 12a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2H8Z" />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M17.5 13a3.5 3.5 0 1 0 2.1 6.3l1.3 1.3a1 1 0 0 0 1.4-1.4l-1.3-1.3A3.5 3.5 0 0 0 17.5 13Zm-1.5 3.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z"
+    />
+  </Svg>
+);
+
 export const ACTIVITY_KIND_ICONS: Record<ActivityKind, ComponentType<IconProps>> = {
   'gap-text': ActivityGapTextIcon,
   matching: ActivityMatchingIcon,
@@ -122,5 +139,6 @@ export const ACTIVITY_KIND_ICONS: Record<ActivityKind, ComponentType<IconProps>>
   'multiple-choice': ActivityMultipleChoiceIcon,
   'mystery-tiles': ActivityMysteryTilesIcon,
   'random-card': ActivityRandomCardIcon,
+  exercise: ActivityExerciseIcon,
   'flip-card': FlipCard,
 };

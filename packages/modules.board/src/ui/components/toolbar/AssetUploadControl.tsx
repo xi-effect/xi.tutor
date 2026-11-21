@@ -18,6 +18,7 @@ import { boardDropdownZClass, boardMenuItemClass, boardMenuSurfaceClass } from '
 import { pickAndInsertComputerFiles } from '../../../utils/pickAndInsertComputerFiles';
 import { insertLibraryFileToBoard } from '../../../utils/insertLibraryFileToBoard';
 import { boardToolbarPopupSide, type BoardToolbarDock } from '../../../utils/boardToolbarDock';
+import type { MathTaskSearchDocument } from 'features.bank';
 import { insertMathTaskToBoard } from '../../../utils/insertMathTaskToBoard';
 import { CloudFilesDrawer } from './CloudFilesDrawer';
 
@@ -74,9 +75,9 @@ export const AssetUploadControl = ({
     }
   };
 
-  const handleMathBankSelect = (task: { statement: string }) => {
+  const handleMathBankSelect = async (task: MathTaskSearchDocument) => {
     try {
-      insertMathTaskToBoard(editor, task.statement);
+      await insertMathTaskToBoard(editor, task);
     } catch (error) {
       console.error('Ошибка при вставке задания на доску:', error);
       toast.error(t('navbar.mathBankInsertFailed'), { duration: 5000 });

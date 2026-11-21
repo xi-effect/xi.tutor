@@ -90,7 +90,16 @@ export function getActivityMenuActions({
     items.push({ id: 'shuffle', label: t('activity.shuffle') });
   }
   if (allowReveal && shapes.some((shape) => shape.props.kind !== 'random-card')) {
-    items.push({ id: 'reveal', label: t('activity.reveal') });
+    const hideAnswer =
+      shapes.every((shape) => shape.props.kind === 'exercise') &&
+      shapes.every(
+        (shape) =>
+          shape.props.checkStatus === 'revealed' || Boolean(shape.props.attempt.revealed?.answer),
+      );
+    items.push({
+      id: 'reveal',
+      label: hideAnswer ? t('activity.hideAnswer') : t('activity.reveal'),
+    });
   }
   return items;
 }

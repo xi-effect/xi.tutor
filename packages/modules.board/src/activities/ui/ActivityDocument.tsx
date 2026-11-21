@@ -20,7 +20,7 @@ import type { ActivityKind } from '../model/kinds';
 import type { ActivityAttempt, ActivityDefinition, CheckStatus } from '../model/types';
 import { evaluateActivity, hasCheckableAnswers } from '../primitives/evaluate';
 import { shuffleGapAttempt, syncAttemptOrder } from '../primitives/bankOrder';
-import { resetAttempt, revealAttempt } from '../primitives/reset';
+import { resetAttempt, toggleAnswerVisibility } from '../primitives/reset';
 import { useActivityEditStore } from '../store/activityEditStore';
 import type { ActivityShape } from '../shape/ActivityShape';
 import { ActivityHeader } from './ActivityChrome';
@@ -139,10 +139,7 @@ export function ActivityDocument({
       return;
     }
     if (action === 'reveal' && value.kind !== 'random-card') {
-      onChange({
-        attempt: revealAttempt(definition, value.attempt),
-        checkStatus: 'revealed',
-      });
+      onChange(toggleAnswerVisibility(definition, value.attempt, value.checkStatus));
     }
   };
 
@@ -263,8 +260,19 @@ export function ActivityDocument({
           onAttempt={
             interactLocked
               ? () => undefined
-              : (attempt) => onChange({ attempt, checkStatus: 'idle' })
+              : (attempt, checkStatus = 'idle') => onChange({ attempt, checkStatus })
           }
+          onControlAttempt={(attempt, checkStatus = value.checkStatus) =>
+            onChange({ attempt, checkStatus })
+          }
+          onCheck={() => {
+            if (hasCheckableAnswers(definition)) onChange({ checkStatus: 'checked' });
+          }}
+          playAccess={{
+            canCheck: isTutor || studentAccess.canCheck,
+            canReveal: isTutor || studentAccess.canReveal,
+            canUseHints: isTutor || studentAccess.canInteract,
+          }}
           interactLocked={interactLocked}
         />
       </div>

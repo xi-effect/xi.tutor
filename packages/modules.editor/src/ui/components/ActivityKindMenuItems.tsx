@@ -1,7 +1,7 @@
 import { DropdownMenuItem } from '@xipkg/dropdown';
 import {
   ACTIVITY_KIND_ICONS,
-  DOCUMENT_ACTIVITY_KINDS,
+  CREATABLE_DOCUMENT_ACTIVITY_KINDS,
   type ActivityKind,
 } from 'modules.board/activities';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ const menuItemClass =
 export function ActivityKindMenuItems({ onSelect }: { onSelect: (kind: ActivityKind) => void }) {
   const { t } = useTranslation('board');
 
-  return DOCUMENT_ACTIVITY_KINDS.map((kind) => {
+  return CREATABLE_DOCUMENT_ACTIVITY_KINDS.map((kind) => {
     const Icon = ACTIVITY_KIND_ICONS[kind];
     return (
       <DropdownMenuItem key={kind} className={menuItemClass} onSelect={() => onSelect(kind)}>

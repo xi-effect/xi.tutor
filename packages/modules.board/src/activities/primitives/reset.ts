@@ -66,7 +66,41 @@ export function revealAttempt(
       break;
     case 'random-card':
       break;
+    case 'exercise':
+      next.revealed.answer = true;
+      break;
   }
 
   return next;
+}
+
+export function exerciseAnswerIsOpen(
+  definition: ActivityDefinition,
+  attempt: ActivityAttempt,
+  checkStatus: 'idle' | 'checked' | 'revealed',
+): boolean {
+  return (
+    definition.kind === 'exercise' &&
+    (checkStatus === 'revealed' || Boolean(attempt.revealed.answer))
+  );
+}
+
+/** Повторный «показать ответ» у упражнения из банка прячет ответ, не затирая ввод ученика. */
+export function toggleAnswerVisibility(
+  definition: ActivityDefinition,
+  attempt: ActivityAttempt,
+  checkStatus: 'idle' | 'checked' | 'revealed',
+): { attempt: ActivityAttempt; checkStatus: 'idle' | 'checked' | 'revealed' } {
+  if (exerciseAnswerIsOpen(definition, attempt, checkStatus)) {
+    const revealed = { ...attempt.revealed, answer: false };
+    const nextStatus =
+      checkStatus === 'revealed'
+        ? attempt.values.answer?.trim()
+          ? 'checked'
+          : 'idle'
+        : checkStatus;
+    return { attempt: { ...attempt, revealed }, checkStatus: nextStatus };
+  }
+
+  return { attempt: revealAttempt(definition, attempt), checkStatus: 'revealed' };
 }

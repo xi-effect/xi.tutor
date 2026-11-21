@@ -9,6 +9,7 @@ import { LabelImageActivity } from './kinds/LabelImageActivity';
 import { MultipleChoiceActivity } from './kinds/MultipleChoiceActivity';
 import { MysteryTilesActivity } from './kinds/MysteryTilesActivity';
 import { RandomCardActivity } from './kinds/RandomCardActivity';
+import { ExerciseActivity } from './kinds/ExerciseActivity';
 
 export function ActivityBody({
   definition,
@@ -18,6 +19,9 @@ export function ActivityBody({
   mode,
   onDefinition,
   onAttempt,
+  onControlAttempt,
+  onCheck,
+  playAccess,
   interactLocked,
 }: {
   definition: ActivityDefinition;
@@ -26,7 +30,14 @@ export function ActivityBody({
   byItem: Record<string, boolean>;
   mode: 'edit' | 'play';
   onDefinition: (definition: ActivityDefinition) => void;
-  onAttempt: (attempt: ActivityAttempt) => void;
+  onAttempt: (attempt: ActivityAttempt, checkStatus?: CheckStatus) => void;
+  onControlAttempt?: (attempt: ActivityAttempt, checkStatus?: CheckStatus) => void;
+  onCheck?: () => void;
+  playAccess?: {
+    canCheck: boolean;
+    canReveal: boolean;
+    canUseHints: boolean;
+  };
   interactLocked: boolean;
 }) {
   return (
@@ -131,6 +142,21 @@ export function ActivityBody({
               mode={mode}
               onDefinition={onDefinition}
               onAttempt={onAttempt}
+              interactLocked={interactLocked}
+            />
+          )}
+          {definition.kind === 'exercise' && (
+            <ExerciseActivity
+              definition={definition}
+              attempt={attempt}
+              checkStatus={checkStatus}
+              byItem={byItem}
+              mode={mode}
+              playAccess={playAccess}
+              onDefinition={onDefinition}
+              onAttempt={onAttempt}
+              onControlAttempt={onControlAttempt ?? onAttempt}
+              onCheck={onCheck}
               interactLocked={interactLocked}
             />
           )}

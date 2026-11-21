@@ -89,6 +89,54 @@ export type RandomCardDefinition = {
   noRepeat: boolean;
 };
 
+export type ExerciseBlockRole = 'instruction' | 'statement' | 'passage' | 'options' | 'givens';
+
+export type ExerciseContentBlock = {
+  id: string;
+  role: ExerciseBlockRole;
+  text: string;
+};
+
+export type ExerciseFigure =
+  | {
+      kind: 'circuit';
+      connection: 'series' | 'parallel';
+      resistors: { label: string; resistanceOhm: number }[];
+    }
+  | {
+      kind: 'graph';
+      xLabel: string;
+      yLabel: string;
+      points: [number, number][];
+    };
+
+/** Открытое упражнение: условие из банка, свой ответ, проверка и скрытые материалы. */
+export type ExerciseDefinition = {
+  kind: 'exercise';
+  blocks: ExerciseContentBlock[];
+  answerDisplay: string;
+  accepted: string[];
+  /** Допустимые варианты по каждому пропуску. Ответ ученика делится по запятой, точке с запятой или строке. */
+  answerGroups: string[][] | null;
+  numeric: { value: number; tolerance: number } | null;
+  caseSensitive: boolean;
+  ignoreFinalPunctuation: boolean;
+  /** Развёрнутый ответ по критериям: автопроверки нет. */
+  openEnded: boolean;
+  hints: string[];
+  solution: string[];
+  evidence: string;
+  rubric: string[];
+  wordRange: { min: number; max: number } | null;
+  figure: ExerciseFigure | null;
+  source: {
+    subject: string;
+    taskId: string;
+    exerciseId: string;
+    grade: number;
+  } | null;
+};
+
 export type ActivityDefinition =
   | GapTextDefinition
   | MatchingDefinition
@@ -97,7 +145,8 @@ export type ActivityDefinition =
   | LabelImageDefinition
   | MultipleChoiceDefinition
   | MysteryTilesDefinition
-  | RandomCardDefinition;
+  | RandomCardDefinition
+  | ExerciseDefinition;
 
 export type ActivityAttempt = {
   values: Record<string, string>;

@@ -5,6 +5,7 @@ import {
   normalizeStudentAccess,
   resetAttempt,
   revealAttempt,
+  toggleAnswerVisibility,
   shuffleGapAttempt,
   syncAttemptOrder,
   useActivityEditStore,
@@ -113,8 +114,20 @@ export function runNoteActivityAction(editor: Editor, action: ActivityMenuAction
   }
 
   if (action === 'reveal') {
+    const targets = activities.filter((activity) => activity.value.kind !== 'random-card');
+    const hideAnswers =
+      targets.length > 0 &&
+      targets.every(
+        (activity) =>
+          activity.value.kind === 'exercise' &&
+          (activity.value.checkStatus === 'revealed' ||
+            Boolean(activity.value.attempt.revealed.answer)),
+      );
     patchActivities(editor, (value) => {
       if (value.kind === 'random-card') return null;
+      if (hideAnswers) {
+        return toggleAnswerVisibility(value.definition, value.attempt, value.checkStatus);
+      }
       return {
         attempt: revealAttempt(value.definition, value.attempt),
         checkStatus: 'revealed',

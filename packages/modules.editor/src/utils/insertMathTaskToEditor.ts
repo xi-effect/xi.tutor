@@ -1,22 +1,38 @@
 import type { Editor, JSONContent } from '@tiptap/core';
-import { statementToReadableText } from 'pages.bank/latex';
+import {
+  createEmptyAttempt,
+  DEFAULT_ACTIVITY_STUDENT_ACCESS,
+  loadBankExercise,
+  type ExerciseDefinition,
+} from 'modules.board/activities';
 import type { ActiveBlockT } from '../types';
 import { insertContentRelativeToBlock } from './insertContentRelativeToBlock';
 
-const statementToContent = (statement: string): JSONContent[] => {
-  const lines = statementToReadableText(statement).replace(/\r\n/g, '\n').split('\n');
-  return lines.map((line) => ({
-    type: 'paragraph',
-    content: line.length > 0 ? [{ type: 'text', text: line }] : [],
-  }));
-};
+function createExerciseBlock(definition: ExerciseDefinition, title: string): JSONContent {
+  return {
+    type: 'activity',
+    attrs: {
+      kind: 'exercise',
+      title,
+      definition: JSON.stringify(definition),
+      attempt: JSON.stringify(createEmptyAttempt(definition)),
+      checkStatus: 'idle',
+      studentAccess: JSON.stringify(DEFAULT_ACTIVITY_STUDENT_ACCESS),
+    },
+  };
+}
 
-export function insertMathTaskToEditor(
+export async function insertMathTaskToEditor(
   editor: Editor | null,
-  statement: string,
+  task: Parameters<typeof loadBankExercise>[0],
   activeBlock?: ActiveBlockT,
-): boolean {
+): Promise<boolean> {
   if (!editor) return false;
 
-  return insertContentRelativeToBlock(editor, statementToContent(statement), activeBlock);
+  const loaded = await loadBankExercise(task);
+  return insertContentRelativeToBlock(
+    editor,
+    createExerciseBlock(loaded.definition, loaded.title),
+    activeBlock,
+  );
 }

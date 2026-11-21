@@ -1,7 +1,7 @@
 import type { Editor } from '@ibodr/draw';
 import { hasCheckableAnswers } from '../primitives/evaluate';
 import { shuffleGapAttempt, syncAttemptOrder } from '../primitives/bankOrder';
-import { resetAttempt, revealAttempt } from '../primitives/reset';
+import { resetAttempt, revealAttempt, toggleAnswerVisibility } from '../primitives/reset';
 import type { ActivityStudentAccessKey } from '../model/studentAccess';
 import { normalizeStudentAccess } from '../model/studentAccess';
 import { normalizeMultipleChoiceDefinition } from '../model/multipleChoice';
@@ -105,18 +105,32 @@ export function applyActivityAction(
     return;
   }
 
+  const hideAnswers =
+    current.length > 0 &&
+    current.every(
+      (shape) =>
+        shape.props.kind === 'exercise' &&
+        (shape.props.checkStatus === 'revealed' || Boolean(shape.props.attempt.revealed?.answer)),
+    );
+
   editor.updateShapes(
     current
       .filter((shape) => shape.props.kind !== 'random-card')
       .map((shape) => {
         const definition = normalizeDefinition(shape.props.definition);
+        const next = hideAnswers
+          ? toggleAnswerVisibility(definition, shape.props.attempt, shape.props.checkStatus)
+          : {
+              attempt: revealAttempt(definition, shape.props.attempt),
+              checkStatus: 'revealed' as const,
+            };
         return {
           id: shape.id,
           type: 'activity' as const,
           props: {
             definition,
-            attempt: revealAttempt(definition, shape.props.attempt),
-            checkStatus: 'revealed' as const,
+            attempt: next.attempt,
+            checkStatus: next.checkStatus,
           },
         };
       }),

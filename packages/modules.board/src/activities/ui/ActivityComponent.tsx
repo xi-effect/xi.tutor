@@ -18,7 +18,7 @@ export function ActivityComponent({ shape }: { shape: ActivityShape }) {
   const isTutor = user?.default_layout === 'tutor';
   const canEdit = Boolean(isTutor && !isReadonly);
   const isEditing = useActivityEditStore((state) => Boolean(state.editingIds[shape.id]));
-  const { patch, setDefinition, setAttempt, score } = useActivityController(shape);
+  const { patch, setDefinition, setAttempt, check, score } = useActivityController(shape);
   const definition = shape.props.definition;
   const mode = canEdit && isEditing ? 'edit' : 'play';
   const studentAccess = normalizeStudentAccess(shape.props.studentAccess);
@@ -26,7 +26,16 @@ export function ActivityComponent({ shape }: { shape: ActivityShape }) {
   const measureRef = useActivityAutoSize(shape);
 
   const onDefinition = (next: ActivityDefinition) => setDefinition(next);
-  const onAttempt = interactLocked ? () => undefined : setAttempt;
+  const onAttempt = interactLocked
+    ? () => undefined
+    : (
+        attempt: ActivityShape['props']['attempt'],
+        checkStatus?: ActivityShape['props']['checkStatus'],
+      ) => setAttempt(attempt, checkStatus ?? 'idle');
+  const onControlAttempt = (
+    attempt: ActivityShape['props']['attempt'],
+    checkStatus?: ActivityShape['props']['checkStatus'],
+  ) => setAttempt(attempt, checkStatus ?? shape.props.checkStatus);
 
   return (
     <HTMLContainer
@@ -63,6 +72,13 @@ export function ActivityComponent({ shape }: { shape: ActivityShape }) {
                 mode={mode}
                 onDefinition={onDefinition}
                 onAttempt={onAttempt}
+                onControlAttempt={onControlAttempt}
+                onCheck={check}
+                playAccess={{
+                  canCheck: isTutor || studentAccess.canCheck,
+                  canReveal: isTutor || studentAccess.canReveal,
+                  canUseHints: isTutor || (!interactLocked && studentAccess.canInteract),
+                }}
                 interactLocked={interactLocked}
               />
             </div>

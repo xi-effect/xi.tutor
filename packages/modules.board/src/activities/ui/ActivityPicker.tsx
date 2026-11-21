@@ -13,7 +13,7 @@ import {
 import { cn } from '@xipkg/utils';
 import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
-import { ACTIVITY_KINDS, type ActivityKind } from '../model/kinds';
+import { CREATABLE_ACTIVITY_KINDS, type ActivityKind } from '../model/kinds';
 import { insertActivity } from '../shape/insertActivity';
 import { ACTIVITY_KIND_ICONS } from './activityKindIcons';
 import { ActivityMotionItem, ActivityMotionList } from './activityUiMotion';
@@ -80,7 +80,7 @@ export function ActivityPicker({
         </ModalHeader>
         <ModalBody className="max-h-[min(72dvh,40rem)] overflow-y-auto">
           <ActivityMotionList className="grid gap-3 sm:grid-cols-2">
-            {ACTIVITY_KINDS.map((kind) => {
+            {CREATABLE_ACTIVITY_KINDS.map((kind) => {
               const Icon = ACTIVITY_KIND_ICONS[kind];
               return (
                 <ActivityMotionItem key={kind}>

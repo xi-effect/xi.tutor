@@ -1,3 +1,8 @@
+import {
+  exerciseAnswerIsCorrect,
+  exerciseHasCheck,
+  normalizeExerciseDefinition,
+} from '../model/bankExercise';
 import { matchingTargets, sameIdSet } from '../model/matching';
 import { normalizeMultipleChoiceDefinition } from '../model/multipleChoice';
 import type { ActivityAttempt, ActivityDefinition, ValidationResult } from '../model/types';
@@ -105,9 +110,17 @@ export function evaluateActivity(
     case 'random-card': {
       return { correct: attempt.drawnCount, total: definition.cards.length, byItem: {} };
     }
+    case 'exercise': {
+      const exercise = normalizeExerciseDefinition(definition);
+      if (!exerciseHasCheck(exercise)) return { correct: 0, total: 0, byItem: {} };
+      const ok = exerciseAnswerIsCorrect(exercise, attempt.values.answer ?? '');
+      return { correct: ok ? 1 : 0, total: 1, byItem: { answer: ok } };
+    }
   }
 }
 
 export function hasCheckableAnswers(definition: ActivityDefinition): boolean {
-  return definition.kind !== 'random-card' && definition.kind !== 'mystery-tiles';
+  if (definition.kind === 'random-card' || definition.kind === 'mystery-tiles') return false;
+  if (definition.kind === 'exercise') return exerciseHasCheck(definition);
+  return true;
 }
