@@ -20,6 +20,7 @@ import {
   PdfNode,
   PresentationNode,
   ActivityNode,
+  EmbedNode,
 } from '../extensions';
 import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
 import 'highlight.js/styles/base16/atelier-cave-light.min.css';
@@ -94,6 +95,7 @@ export const getExtensions = (
     PresentationNode,
     FileNode,
     ActivityNode,
+    EmbedNode,
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -119,6 +121,7 @@ export const getExtensions = (
         'presentation',
         'file',
         'activity',
+        'embed',
       ],
     }),
     Placeholder.configure({

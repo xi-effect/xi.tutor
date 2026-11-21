@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { Button } from '@xipkg/button';
 import { ArrowLeft, ArrowRight, Image } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ type PageControlsProps = {
   extractTitle?: string;
 };
 
-export const PageControls = ({
+export const PageControls = memo(function PageControls({
   fileName,
   currentPage,
   totalPages,
@@ -21,7 +21,7 @@ export const PageControls = ({
   onPageChange,
   onExtractPage,
   extractTitle,
-}: PageControlsProps) => {
+}: PageControlsProps) {
   const { t } = useTranslation('editor');
 
   const goPrev = useCallback(
@@ -93,4 +93,4 @@ export const PageControls = ({
       )}
     </div>
   );
-};
+});

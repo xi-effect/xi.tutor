@@ -208,9 +208,9 @@ const appLayoutMaterialsMaterialIdNoteIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof appLayoutIndexRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/desktop/conference/$classroomId': typeof DesktopConferenceClassroomIdRoute
-  '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/settings/$section': typeof appLayoutSettingsSectionRoute
@@ -238,9 +238,9 @@ export interface FileRoutesByFullPath {
   '/materials/$materialId/note/': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof appLayoutIndexRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/desktop/conference/$classroomId': typeof DesktopConferenceClassroomIdRoute
-  '/': typeof appLayoutIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/settings/$section': typeof appLayoutSettingsSectionRoute
@@ -304,9 +304,9 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/deployments/$deploymentId/enable'
     | '/desktop/conference/$classroomId'
-    | '/'
     | '/board/$boardId'
     | '/call/$callId'
     | '/settings/$section'
@@ -334,9 +334,9 @@ export interface FileRouteTypes {
     | '/materials/$materialId/note/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/deployments/$deploymentId/enable'
     | '/desktop/conference/$classroomId'
-    | '/'
     | '/board/$boardId'
     | '/call/$callId'
     | '/settings/$section'
@@ -413,21 +413,21 @@ declare module '@tanstack/react-router' {
     '/(app)/_layout': {
       id: '/(app)/_layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof appLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/_layout': {
       id: '/(auth)/_layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof authLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(common)/_layout': {
       id: '/(common)/_layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof commonLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }

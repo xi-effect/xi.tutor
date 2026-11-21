@@ -150,14 +150,21 @@ export const PdfViewer = ({
     };
   }, [blobUrl, page, containerSize.w, containerSize.h, t]);
 
+  const extractRef = useRef(onExtractPage);
+  extractRef.current = onExtractPage;
+  const pageRef = useRef(page);
+  pageRef.current = page;
+  const loadingRef = useRef(loading);
+  loadingRef.current = loading;
   const handleExtract = useCallback(async () => {
+    const extract = extractRef.current;
     const canvas = canvasRef.current;
-    if (!canvas || canvas.width === 0 || !onExtractPage) return;
+    if (!extract || loadingRef.current || !canvas || canvas.width === 0) return;
     const blob = await new Promise<Blob | null>((resolve) => {
       canvas.toBlob(resolve, 'image/png');
     });
-    if (blob) onExtractPage(blob, page);
-  }, [onExtractPage, page]);
+    if (blob) extract(blob, pageRef.current);
+  }, []);
 
   if (error) {
     return (
@@ -196,9 +203,8 @@ export const PdfViewer = ({
         fileName={fileName}
         currentPage={page}
         totalPages={totalPages}
-        disabled={loading}
         onPageChange={setPage}
-        onExtractPage={!isReadOnly && !loading ? handleExtract : undefined}
+        onExtractPage={isReadOnly ? undefined : handleExtract}
         extractTitle={t('pdf.extractPage')}
       />
     </div>

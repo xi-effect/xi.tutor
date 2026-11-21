@@ -70,6 +70,7 @@
     "features.bank": "workspace:*",
     "features.materials.card": "workspace:*",
     "features.materials.edit": "workspace:*",
+    "modules.embed": "workspace:*",
     "file-type": "^19.0.0",
     "i18next": "24.2.2",
     "jszip": "^3.10.1",

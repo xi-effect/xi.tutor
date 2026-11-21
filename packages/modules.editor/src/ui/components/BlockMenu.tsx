@@ -9,7 +9,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Code, File, Image, Laptop, Link as LinkIcon, Materials, BookOpened } from '@xipkg/icons';
+import { Code, File, Image, Laptop, Link, Materials, BookOpened } from '@xipkg/icons';
 import { Activity } from 'modules.board/activities';
 import { insertActivityBlock } from '../../utils/insertActivityBlock';
 import { ActivityKindMenuItems } from './ActivityKindMenuItems';
@@ -206,11 +206,16 @@ export const BlockMenu = ({
                   className={menuItemClass}
                   onSelect={() => openModal('insertImageLink')}
                 >
-                  <LinkIcon size="sm" className="size-6" />
+                  <Link size="sm" className="size-6" />
                   <span>{t('blockMenu.fromLink')}</span>
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+
+            <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('insertEmbed')}>
+              <Link size="sm" className="size-6" />
+              <span>{t('blockMenu.embed')}</span>
+            </DropdownMenuItem>
 
             <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
               <Code size="sm" className="size-6" />

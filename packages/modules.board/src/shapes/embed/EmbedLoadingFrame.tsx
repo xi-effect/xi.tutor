@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { track, useEditor } from '@ibodr/draw';
 import { useTranslation } from 'react-i18next';
-import { EMBED_IFRAME_SANDBOX, LOADER_FADE_MS, LOADER_TIMEOUT_MS } from './consts';
-import { resolveEmbedUrl } from './embedProviders';
+import {
+  EMBED_IFRAME_REFERRER_POLICY,
+  EMBED_IFRAME_SANDBOX,
+  EMBED_LOADER_FADE_MS,
+  EMBED_LOADER_TIMEOUT_MS,
+  resolveEmbedUrl,
+} from 'modules.embed';
 
 type EmbedFrameProps = { url: string; w: number; h: number };
 
@@ -20,13 +25,13 @@ export const EmbedLoadingFrame = track(({ url, w, h }: EmbedFrameProps) => {
     setLoaded(false);
     setOverlayMounted(true);
     if (!src) return;
-    const timer = window.setTimeout(() => setLoaded(true), LOADER_TIMEOUT_MS);
+    const timer = window.setTimeout(() => setLoaded(true), EMBED_LOADER_TIMEOUT_MS);
     return () => window.clearTimeout(timer);
   }, [src]);
 
   useEffect(() => {
     if (!loaded) return;
-    const id = window.setTimeout(() => setOverlayMounted(false), LOADER_FADE_MS);
+    const id = window.setTimeout(() => setOverlayMounted(false), EMBED_LOADER_FADE_MS);
     return () => window.clearTimeout(id);
   }, [loaded]);
 
@@ -64,7 +69,7 @@ export const EmbedLoadingFrame = track(({ url, w, h }: EmbedFrameProps) => {
             allow={embed.allow}
             allowFullScreen
             loading="lazy"
-            referrerPolicy="strict-origin-when-cross-origin"
+            referrerPolicy={EMBED_IFRAME_REFERRER_POLICY}
             onLoad={() => setLoaded(true)}
             style={{ pointerEvents: live ? 'auto' : 'none' }}
           />
@@ -76,7 +81,7 @@ export const EmbedLoadingFrame = track(({ url, w, h }: EmbedFrameProps) => {
               style={{
                 pointerEvents: 'none',
                 opacity: loaded ? 0 : 1,
-                transitionDuration: `${LOADER_FADE_MS}ms`,
+                transitionDuration: `${EMBED_LOADER_FADE_MS}ms`,
               }}
             >
               {t('embed.loading')}
