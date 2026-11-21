@@ -40,6 +40,50 @@ describe('resolveWelcomeGuardAction', () => {
     ).toEqual({ type: 'none' });
   });
 
+  it('уводит с /welcome/email, если почта уже подтверждена', () => {
+    expect(
+      resolveWelcomeGuardAction({
+        onboardingStage: 'completed',
+        pathname: '/welcome/email',
+        hasInvite: false,
+      }),
+    ).toEqual({ type: 'navigate', to: '/' });
+
+    expect(
+      resolveWelcomeGuardAction({
+        onboardingStage: 'training',
+        pathname: '/welcome/email',
+        hasInvite: false,
+      }),
+    ).toEqual({ type: 'navigate', to: '/' });
+
+    expect(
+      resolveWelcomeGuardAction({
+        onboardingStage: 'user-information',
+        pathname: '/welcome/email',
+        hasInvite: false,
+      }),
+    ).toEqual({ type: 'navigate', to: '/welcome/user' });
+
+    expect(
+      resolveWelcomeGuardAction({
+        onboardingStage: 'default-layout',
+        pathname: '/welcome/email',
+        hasInvite: false,
+      }),
+    ).toEqual({ type: 'navigate', to: '/welcome/role' });
+  });
+
+  it('оставляет на /welcome/email, пока почта не подтверждена', () => {
+    expect(
+      resolveWelcomeGuardAction({
+        onboardingStage: 'email-confirmation',
+        pathname: '/welcome/email',
+        hasInvite: false,
+      }),
+    ).toEqual({ type: 'none' });
+  });
+
   it('редиректит на expected path стадии', () => {
     expect(
       resolveWelcomeGuardAction({

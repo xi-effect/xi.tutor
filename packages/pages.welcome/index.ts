@@ -1,4 +1,4 @@
-export { ProtectedProvider } from './src/providers';
+export { ProtectedProvider, WelcomeStageGuard } from './src/providers';
 export { WelcomeContext } from './src/model';
 export { WelcomeUserPage, WelcomeRolePage } from './src/ui';
 export {

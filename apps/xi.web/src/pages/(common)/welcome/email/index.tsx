@@ -3,7 +3,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { LoadingScreen } from 'common.ui';
 import { Suspense } from 'react';
 import { z } from 'zod';
-import { EmailPage } from 'pages.email';
+import { EmailPage, isEmailWaitingScreen } from 'pages.email';
+import { WelcomeStageGuard } from 'pages.welcome';
 
 const searchSchema = z.object({
   token: z.string().optional(),
@@ -21,9 +22,19 @@ export const Route = createFileRoute('/(common)/welcome/email/')({
 });
 
 function EmailPageWrapper() {
-  return (
+  const { token } = Route.useSearch();
+  const page = (
     <Suspense fallback={<LoadingScreen />}>
       <EmailPage />
     </Suspense>
   );
+
+  // Ссылка из письма (?token=) остаётся на экране результата.
+  // Экран ожидания смотрит на /home: если почта уже подтверждена, стадия ушла
+  // дальше email-confirmation, и гард уводит на следующий шаг или на главную.
+  if (!isEmailWaitingScreen(token)) {
+    return page;
+  }
+
+  return <WelcomeStageGuard>{page}</WelcomeStageGuard>;
 }

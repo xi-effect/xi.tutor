@@ -15,6 +15,48 @@ test.describe('Onboarding', () => {
     await mockNoise(page);
   });
 
+  test('подтверждённая почта на /welcome/email уводит с экрана ожидания', async ({ page }) => {
+    await mockAuthenticatedSession(
+      page,
+      mockUser({ onboarding_stage: 'completed', default_layout: 'tutor' }),
+    );
+
+    await page.goto('/welcome/email');
+    await expect(page).toHaveURL(/\/($|\?)/, { timeout: 15_000 });
+    await expect(page).not.toHaveURL(/\/welcome\//);
+    await expect(page.getByRole('heading', { name: 'Подтвердите почту' })).toHaveCount(0);
+  });
+
+  test('после подтверждения почты /welcome/email открывает следующий шаг', async ({ page }) => {
+    await mockAuthenticatedSession(
+      page,
+      mockUser({
+        onboarding_stage: 'user-information',
+        display_name: null,
+        default_layout: null,
+      }),
+    );
+
+    await page.goto('/welcome/email');
+    await expect(page).toHaveURL(/\/welcome\/user/, { timeout: 15_000 });
+    await expect(welcomeTitle(page, 'Давайте познакомимся')).toBeVisible();
+  });
+
+  test('неподтверждённая почта остаётся на /welcome/email', async ({ page }) => {
+    await mockAuthenticatedSession(
+      page,
+      mockUser({
+        onboarding_stage: 'email-confirmation',
+        display_name: null,
+        default_layout: null,
+      }),
+    );
+
+    await page.goto('/welcome/email');
+    await expect(page).toHaveURL(/\/welcome\/email/, { timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: 'Подтвердите почту' })).toBeVisible();
+  });
+
   test('completed на /welcome/* редиректит на /', async ({ page }) => {
     await mockAuthenticatedSession(
       page,
