@@ -71,7 +71,7 @@ const ApproveForm = ({
           <div className="col-span-1 flex flex-col">{formatDate(paymentDetails.created_at)}</div>
           <UserProfile
             userId={userData?.id ?? 0}
-            text={userData?.display_name ?? userData?.username ?? t('loading')}
+            text={userData?.display_name || t('loading')}
             label={isTutor ? t('roles.student') : t('roles.tutor')}
             src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
             className="col-span-2 sm:col-span-1"
@@ -212,7 +212,7 @@ const AdvanceForm = ({
             <div className="col-span-1 flex flex-col">{formatDate(paymentDetails.created_at)}</div>
             <UserProfile
               userId={userData?.id ?? 0}
-              text={userData?.display_name ?? userData?.username ?? t('loading')}
+              text={userData?.display_name || t('loading')}
               label={isTutor ? t('roles.student') : t('roles.tutor')}
               src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
               className="col-span-2 sm:col-span-1"

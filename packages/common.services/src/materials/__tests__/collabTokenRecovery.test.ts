@@ -9,6 +9,7 @@ vi.mock('common.config', () => ({
 import { getAxiosInstance } from 'common.config';
 import {
   fetchFreshContentToken,
+  isRecoverableCollabAuthReason,
   recoverCollabSocket,
   shareCollabRecovery,
   type CollabSocket,
@@ -116,6 +117,14 @@ describe('fetchFreshContentToken', () => {
       fetchFreshContentToken(queryClient, { rejectedToken: 'expired', ydocId: 'doc-1' }),
     ).resolves.toBeNull();
     expect(axiosMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('isRecoverableCollabAuthReason', () => {
+  it('считает протухший content token поводом перезапросить токен', () => {
+    expect(isRecoverableCollabAuthReason('Invalid content token')).toBe(true);
+    expect(isRecoverableCollabAuthReason('permission-denied')).toBe(true);
+    expect(isRecoverableCollabAuthReason('document-not-found')).toBe(false);
   });
 });
 

@@ -1,7 +1,6 @@
 import type { TutorStudentSchemaMarshal } from 'common.types';
 
 export type StudentProfileFromList = {
-  username: string;
   display_name: string | null;
   name: string | null;
 };
@@ -16,7 +15,6 @@ export const findStudentProfile = (
   if (!match?.user) return undefined;
 
   return {
-    username: match.user.username,
     display_name: match.user.display_name,
     name: match.user.display_name,
   };

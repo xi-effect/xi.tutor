@@ -5,6 +5,7 @@ export { useUpdateMaterial } from './useUpdateMaterial';
 export { useGetStorageItem } from './useGetStorageItem';
 export {
   fetchFreshContentToken,
+  isRecoverableCollabAuthReason,
   recoverCollabSocket,
   shareCollabRecovery,
   type CollabRecovery,

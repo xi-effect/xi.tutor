@@ -11,13 +11,12 @@ export type UserCellT = {
 export const UserCell = ({ userId, userRole }: UserCellT) => {
   const { t } = useTranslation('paymentsTable');
   const userData = useUserByRole(userRole, userId);
-  const username = userData.data?.username;
   const displayName = userData.data?.display_name;
   return (
     <UserProfile
       size="m"
       userId={userId}
-      text={displayName || username || t('nameNotFound')}
+      text={displayName || t('nameNotFound')}
       src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
     />
   );

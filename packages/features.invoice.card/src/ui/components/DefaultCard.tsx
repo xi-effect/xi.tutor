@@ -40,7 +40,7 @@ export const DefaultCard = ({
           <UserProfile
             size="m"
             userId={userId}
-            text={userData?.display_name || userData?.username || t('nameNotFound')}
+            text={userData?.display_name || t('nameNotFound')}
             src={getUserAvatarUrl(userId)}
             classNameText="line-clamp-2 break-words text-text-primary"
             className="h-auto min-w-0 overflow-hidden"

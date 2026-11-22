@@ -25,7 +25,7 @@ export const IndividualUser = ({
     userId,
     isCurrentUserLoading || !currentUser || !userId,
   );
-  const profileName = user?.display_name ?? user?.username;
+  const profileName = user?.display_name;
   const title =
     (isTutor && nameOverride?.trim()) ||
     profileName?.trim() ||

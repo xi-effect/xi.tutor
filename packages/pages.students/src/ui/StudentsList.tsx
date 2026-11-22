@@ -36,7 +36,7 @@ const StudentCard = ({
   onDelete: (studentId: number) => void;
 }) => {
   const { t } = useTranslation('studentsList');
-  const name = student.user.display_name || student.user.username;
+  const name = student.user.display_name?.trim() || '';
   const letter = name.trim()[0]?.toUpperCase() ?? '';
 
   return (
@@ -106,14 +106,11 @@ export const StudentsList = ({
   const selectedStudentData = students?.find(
     (student: TutorStudentSchemaMarshal) => student.tutorship.student_id === selectedStudent,
   );
-  const selectedStudentName =
-    selectedStudentData?.user.display_name || selectedStudentData?.user.username || '';
+  const selectedStudentName = selectedStudentData?.user.display_name?.trim() || '';
 
   const filteredStudents =
-    students?.filter(
-      (student: TutorStudentSchemaMarshal) =>
-        matchesSearchQuery(student.user.display_name, searchQuery) ||
-        matchesSearchQuery(student.user.username, searchQuery),
+    students?.filter((student: TutorStudentSchemaMarshal) =>
+      matchesSearchQuery(student.user.display_name, searchQuery),
     ) || [];
 
   const items = filteredStudents.map((student) => ({

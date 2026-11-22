@@ -155,12 +155,11 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col items-center">
-          <p className="text-text-primary dark:text-text-primary max-w-full text-center break-words">
-            {invite.tutor.display_name}
-          </p>
-          <span className="text-s-base text-text-secondary dark:text-text-secondary">
-            {invite.tutor.username}
-          </span>
+          {invite.tutor.display_name ? (
+            <p className="text-text-primary dark:text-text-primary max-w-full text-center break-words">
+              {invite.tutor.display_name}
+            </p>
+          ) : null}
         </div>
       </div>
 

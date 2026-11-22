@@ -9,6 +9,7 @@ import {
 } from '@hocuspocus/provider';
 import { queryClient } from 'common.config';
 import {
+  isRecoverableCollabAuthReason,
   recoverCollabSocket,
   shareCollabRecovery,
   useCurrentUser,
@@ -456,7 +457,7 @@ export function useYjsStore({
     };
 
     const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
-      if (reason !== 'permission-denied') {
+      if (!isRecoverableCollabAuthReason(reason)) {
         reportAuthFailure(reason);
         return;
       }

@@ -12,6 +12,17 @@ import type { ContentYDocItem } from 'common.types';
 
 export type CollabRecoveryOutcome = 'refreshed' | 'denied' | 'cancelled';
 
+/**
+ * Причины, после которых токен можно заменить и подключиться заново.
+ * `permission-denied` — причина по умолчанию в Hocuspocus.
+ * `Invalid content token` — причина нашего сервера для протухшего content_token.
+ */
+const RECOVERABLE_COLLAB_AUTH_REASONS = new Set(['permission-denied', 'Invalid content token']);
+
+export function isRecoverableCollabAuthReason(reason: string): boolean {
+  return RECOVERABLE_COLLAB_AUTH_REASONS.has(reason);
+}
+
 export type CollabRecovery = {
   token: string;
   promise: Promise<CollabRecoveryOutcome>;

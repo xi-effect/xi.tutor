@@ -8,6 +8,7 @@ import { createEditorFileDropProps } from '../utils/editorFileDrop';
 import { toast } from 'sonner';
 import { queryClient } from 'common.config';
 import {
+  isRecoverableCollabAuthReason,
   recoverCollabSocket,
   shareCollabRecovery,
   useCurrentUser,
@@ -178,7 +179,7 @@ export function useYjsStore({
     }
 
     const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
-      if (reason !== 'permission-denied') {
+      if (!isRecoverableCollabAuthReason(reason)) {
         setHasSyncError(true);
         return;
       }

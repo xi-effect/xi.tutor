@@ -204,9 +204,7 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
                 <div className="sm:col-span-2">
                   <UserProfile
                     userId={userId}
-                    text={
-                      userData?.display_name || userData?.username || t('invoiceModal.userFallback')
-                    }
+                    text={userData?.display_name || t('invoiceModal.userFallback')}
                     label={isTutor ? t('invoiceModal.student') : t('invoiceModal.tutor')}
                     src={getUserAvatarUrl(userId)}
                     className="h-auto"

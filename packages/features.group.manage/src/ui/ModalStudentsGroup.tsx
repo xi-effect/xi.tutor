@@ -189,7 +189,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
                   >
                     <Checkbox checked={selectedStudents.has(student.tutorship.student_id)} />
                     <UserProfile
-                      text={student.user.display_name || student.user.username}
+                      text={student.user.display_name || undefined}
                       userId={student.tutorship.student_id}
                     />
                   </div>

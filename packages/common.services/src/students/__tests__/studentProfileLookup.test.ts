@@ -22,7 +22,6 @@ const students: TutorStudentSchemaMarshal[] = [
 describe('findStudentProfile', () => {
   it('берёт имя из списка учеников', () => {
     expect(findStudentProfile(students, 7)).toEqual({
-      username: 'anna',
       display_name: 'Анна',
       name: 'Анна',
     });
@@ -30,7 +29,6 @@ describe('findStudentProfile', () => {
 
   it('оставляет пустое имя, если в списке его нет', () => {
     expect(findStudentProfile(students, 8)).toEqual({
-      username: 'boris',
       display_name: null,
       name: null,
     });

@@ -49,7 +49,7 @@ export const TableCard = ({
         {formattedDate}
       </div>
       <UserProfile
-        text={userData?.display_name || userData?.username || t('nameNotFound')}
+        text={userData?.display_name || t('nameNotFound')}
         size="m"
         userId={userId}
         classNameText="line-clamp-2 break-words text-text-primary"
