@@ -97,6 +97,15 @@ export { createAttemptId, measureDurationMs, nowMs } from './attemptId';
 export { nextSignupAttemptNumber, nextEmailResendAttemptNumber } from './attemptCounters';
 export { trackOnce, resetTrackOnceKeys } from './once';
 export {
+  CAMPAIGN_AT_STORAGE_KEY,
+  CAMPAIGN_ID_STORAGE_KEY,
+  campaignIdFromSearch,
+  captureCampaignAttribution,
+  getCampaignEventProps,
+  getCampaignId,
+  normalizeCampaignId,
+} from './campaignAttribution';
+export {
   getFileCategoryFromFile,
   getFileSizeBucket,
   getLimitExceededBy,

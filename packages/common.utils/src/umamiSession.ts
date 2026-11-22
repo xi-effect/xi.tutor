@@ -1,5 +1,9 @@
 import { UserData } from 'common.types';
 import { setActivationAnalyticsUser } from './productAnalytics/activationFlowId';
+import {
+  getCampaignEventProps,
+  markUmamiUserIdentified,
+} from './productAnalytics/campaignAttribution';
 import { getProductAnalyticsRole } from './productAnalytics/roles';
 
 export type UmamiClientSurface = 'web' | 'pwa' | 'electron' | 'native';
@@ -69,6 +73,8 @@ export const trackUmamiSession = async (
     return;
   }
 
+  markUmamiUserIdentified();
+
   try {
     // Ждем загрузки скрипта Umami
     await waitForUmami();
@@ -88,6 +94,7 @@ export const trackUmamiSession = async (
       onboarding_stage: user.onboarding_stage,
       source,
       client_surface: getUmamiClientSurface(),
+      ...getCampaignEventProps(),
     });
   } catch (error) {
     console.error('Ошибка при трекинге сессии Umami:', error);

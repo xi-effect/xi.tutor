@@ -167,6 +167,9 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   FEEDBACK_SUBMITTED: 'feedback_submitted',
   FEEDBACK_SUPPORT_CLICKED: 'feedback_support_clicked',
 
+  // Email / campaign attribution
+  CAMPAIGN_VISIT: 'campaign_visit',
+
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',
   ACTIVATION_SUPPORT_CONTACTED: 'activation_support_contacted',

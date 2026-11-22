@@ -1,4 +1,5 @@
 import { getActivationFlowId } from './activationFlowId';
+import { getCampaignEventProps } from './campaignAttribution';
 import type { ProductAnalyticsEventMap, TrackableEventName } from './eventMap';
 import { ANALYTICS_ALLOWED_FREE_TEXT_FIELDS, FORBIDDEN_ANALYTICS_FIELDS } from './forbiddenFields';
 import { prepareFeedbackComment } from './feedbackComment';
@@ -85,6 +86,7 @@ function withCommonProperties(
     {
       event_version: EVENT_VERSION,
       ...(activationFlowId ? { activation_flow_id: activationFlowId } : {}),
+      ...getCampaignEventProps(),
       ...payload,
     },
     eventName,

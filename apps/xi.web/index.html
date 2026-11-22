@@ -104,8 +104,33 @@
           'www.sovlium.ru': true,
         };
         var host = location.hostname;
+        var campaignIdPattern = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
+        var campaignTtlMs = 30 * 24 * 60 * 60 * 1000;
+        var readCampaignId = function () {
+          try {
+            var fromUrl = new URLSearchParams(location.search).get('campaign_id');
+            if (fromUrl && campaignIdPattern.test(fromUrl)) {
+              localStorage.setItem('sovlium_campaign_id', fromUrl);
+              localStorage.setItem('sovlium_campaign_at', String(Date.now()));
+              return fromUrl;
+            }
+            var stored = localStorage.getItem('sovlium_campaign_id');
+            var at = Number(localStorage.getItem('sovlium_campaign_at') || 0);
+            if (!stored || !campaignIdPattern.test(stored) || Date.now() - at > campaignTtlMs) {
+              return '';
+            }
+            return stored;
+          } catch (e) {
+            return '';
+          }
+        };
         window.sovliumUmamiBeforeSend = function (_type, payload) {
           if (!allowed[host]) return false;
+          if (!payload || typeof payload !== 'object') return payload;
+          var campaignId = readCampaignId();
+          if (campaignId) {
+            payload.data = Object.assign({}, payload.data || {}, { campaign_id: campaignId });
+          }
           return payload;
         };
         if (!allowed[host]) return;

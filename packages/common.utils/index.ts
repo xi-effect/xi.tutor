@@ -69,6 +69,8 @@ export {
   nextEmailResendAttemptNumber,
   trackOnce,
   resetTrackOnceKeys,
+  captureCampaignAttribution,
+  getCampaignId,
   trackProductLimitReached,
   trackFileSizeLimitReached,
   trackFileSizeLimitFromUploadError,

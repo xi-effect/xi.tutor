@@ -1021,6 +1021,9 @@ export type ProductAnalyticsEventMap = {
     screen: ActivationHelpScreen;
     reason: ActivationHelpReason | string;
   };
+  campaign_visit: BaseProps & {
+    campaign_id: string;
+  };
 };
 
 /** Совместимость со старым enum причин ошибки звонка. */

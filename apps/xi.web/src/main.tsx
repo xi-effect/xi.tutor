@@ -5,8 +5,10 @@ import { i18nInitPromise } from './config/i18n';
 import { initBugsink } from './config/bugsink';
 import { AppProviders } from './providers';
 import { installNativeWebApiBridges } from 'common.platform';
+import { captureCampaignAttribution } from 'common.utils';
 
 installNativeWebApiBridges();
+captureCampaignAttribution();
 
 // Инициализируем BUGSINK как можно раньше
 initBugsink();
