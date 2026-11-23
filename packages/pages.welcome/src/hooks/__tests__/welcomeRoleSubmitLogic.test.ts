@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { runWelcomeRoleBack, runWelcomeRoleForward } from '../welcomeRoleSubmitLogic';
+import { runStudentInviteRoleSkip, runWelcomeRoleForward } from '../welcomeRoleSubmitLogic';
 
 describe('runWelcomeRoleForward', () => {
   const base = {
@@ -75,44 +75,43 @@ describe('runWelcomeRoleForward', () => {
   });
 });
 
-describe('runWelcomeRoleBack', () => {
-  it('на успехе ведёт на user', async () => {
-    const navigateToUser = vi.fn();
-    const trackBack = vi.fn();
+describe('runStudentInviteRoleSkip', () => {
+  it('ставит ученика, пропускает роль и уходит с welcome', async () => {
+    const skipRoleStage = vi.fn().mockResolvedValue({});
+    const navigateAfterWelcome = vi.fn();
+    const trackCompleted = vi.fn();
+    const trackRoleSelected = vi.fn();
 
-    const result = await runWelcomeRoleBack({
-      userRole: 'student',
-      onboardingStage: 'default-layout',
-      transitionBack: vi.fn().mockResolvedValue({}),
-      trackBack,
+    const result = await runStudentInviteRoleSkip({
+      userId: 7,
+      onboardingStage: 'user-information',
+      updateProfile: vi.fn().mockResolvedValue({}),
+      skipRoleStage,
+      trackRoleSelected,
       trackFailed: vi.fn(),
-      navigateToUser,
-      search: {},
+      trackCompleted,
+      navigateAfterWelcome,
     });
 
     expect(result).toBe('ok');
-    expect(trackBack).toHaveBeenCalledWith(
-      'role_selection',
-      'profile',
-      'student',
-      'default-layout',
-    );
-    expect(navigateToUser).toHaveBeenCalledWith({});
+    expect(trackRoleSelected).toHaveBeenCalledWith('student', 7);
+    expect(skipRoleStage).toHaveBeenCalledOnce();
+    expect(trackCompleted).toHaveBeenCalledWith('role_selection', 'student', 'user-information');
+    expect(navigateAfterWelcome).toHaveBeenCalledOnce();
   });
 
-  it('на ошибке transition трекает fail', async () => {
-    const trackFailed = vi.fn();
-    const result = await runWelcomeRoleBack({
-      userRole: 'unknown',
-      onboardingStage: 'default-layout',
-      transitionBack: vi.fn().mockRejectedValue(new Error('back')),
-      trackBack: vi.fn(),
-      trackFailed,
-      navigateToUser: vi.fn(),
-      search: {},
+  it('при ошибке профиля не переходит дальше', async () => {
+    const skipRoleStage = vi.fn();
+    const result = await runStudentInviteRoleSkip({
+      onboardingStage: 'user-information',
+      updateProfile: vi.fn().mockRejectedValue(new Error('profile')),
+      skipRoleStage,
+      trackFailed: vi.fn(),
+      trackCompleted: vi.fn(),
+      navigateAfterWelcome: vi.fn(),
     });
 
-    expect(result).toBe('transition_failed');
-    expect(trackFailed).toHaveBeenCalled();
+    expect(result).toBe('profile_failed');
+    expect(skipRoleStage).not.toHaveBeenCalled();
   });
 });

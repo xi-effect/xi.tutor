@@ -679,9 +679,7 @@ export function useYjsStore({
         const yClientId = awareness.clientID.toString();
         const drawUserId = createUserId(yClientId);
         const userName =
-          currentUserRef.current?.display_name ||
-          currentUserRef.current?.username ||
-          defaultUserPreferences.name;
+          currentUserRef.current?.display_name?.trim() || defaultUserPreferences.name;
         const userColor = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);
 
         // id здесь сырой: с 0.2.7 getRecordId() сам добавляет префикс `user:`.
@@ -692,8 +690,7 @@ export function useYjsStore({
         const $boardUser = computed<DrUser | null>('boardUser', () => {
           const prefs = getUserPreferences();
           const name =
-            currentUserRef.current?.display_name ||
-            currentUserRef.current?.username ||
+            currentUserRef.current?.display_name?.trim() ||
             prefs.name ||
             defaultUserPreferences.name;
           const color = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);

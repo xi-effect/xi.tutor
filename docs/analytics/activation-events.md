@@ -48,7 +48,7 @@
 - `event_version: 1`
 - `activation_flow_id` — если в этой вкладке есть незавершённый signup или flow уже привязан к текущему пользователю. Завершённый id другого `user_id` не подмешивается.
 
-`user_id` передаётся через `umami.identify(String(user.id), …)` — distinct id для склейки сессий — и дублируется в session properties. В каждом event payload его нет. Рядом уходят `role`, `onboarding_stage`, `source` и `client_surface` (`web` / `pwa` / `electron` / `native`). `username` и `display_name` в identify не передаются.
+`user_id` передаётся через `umami.identify(String(user.id), …)` — distinct id для склейки сессий — и дублируется в session properties. В каждом event payload его нет. Рядом уходят `role`, `onboarding_stage`, `source` и `client_surface` (`web` / `pwa` / `electron` / `native`). `display_name` в identify не передаётся.
 
 ### Окружения
 
@@ -110,6 +110,7 @@
 ```json
 {
   "activation_flow_id": "uuid",
+  "failed_fields": ["display_name | email | password | terms"],
   "reason": "required_field | invalid_email | weak_password | terms_not_accepted | multiple_fields",
   "field": "name | email | password | terms | multiple",
   "entry_point": "landing",
@@ -139,7 +140,7 @@
 {
   "activation_flow_id": "uuid",
   "attempt_id": "uuid",
-  "reason": "email_exists | username_exists | network_error | timeout | rate_limited | server_error | unknown",
+  "reason": "email_exists | network_error | timeout | rate_limited | server_error | unknown",
   "duration_ms": 800,
   "http_status_group": "4xx | 5xx | none",
   "entry_point": "landing",
@@ -320,14 +321,14 @@
   "student_authenticated": false,
   "has_invite": true,
   "invite_progress_track": "signup | signin | already_auth",
-  "invite_progress_step": "invite_open | auth | email | welcome_user | accept | accept_direct",
+  "invite_progress_step": "invite_open | auth | email | accept | accept_direct",
   "invite_progress_current": 1,
   "invite_progress_total": 5,
   "event_version": 1
 }
 ```
 
-Три трека: **signup** (5 шагов), **signin** (3 шага), **already_auth** (1 шаг, `accept_direct`). На signup-треке экран выбора роли не показывается: роль ученика сохраняется вместе с именем.
+Три трека: **signup** (4 шага), **signin** (3 шага), **already_auth** (1 шаг, `accept_direct`). На signup-треке экран выбора роли не показывается: после почты сохраняется роль ученика. Имя собирается на регистрации.
 Формулы drop-off: [`invite-flow-v2.md`](./invite-flow-v2.md#метрики).
 
 `student_invite_signup_clicked` / `student_invite_login_clicked` отправляются по клику на `/invite/$inviteId` (registration-first). Fallback на `SignInPage` остаётся для прямого захода `/signin?redirect=/invite/...` и дедуплицируется через sessionStorage. `invite_tracking_id` считается из `invite.pending_code` / `search.invite` / `redirect`. Обычный `/signin` без invite в URL воронку не помечает.
@@ -513,7 +514,6 @@ student_invite_page_viewed (unauth)
 → student_invite_signup_clicked
 → auth_signup_succeeded
 → email_confirmation_viewed
-→ onboarding_step_viewed (profile)
 → student_invite_accept_submit
 → invite_accepted_success
 

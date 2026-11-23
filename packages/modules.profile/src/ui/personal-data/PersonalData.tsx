@@ -26,8 +26,12 @@ export const PersonalData = () => {
   const FormSchema = useMemo(
     () =>
       z.object({
-        username: z.string({ error: t('validation.required') }),
-        displayName: z.string({ error: t('validation.required') }),
+        displayName: z
+          .string({ error: t('validation.required') })
+          .trim()
+          .min(1, { message: t('validation.required') })
+          .min(2, { message: t('validation.minLength', { count: 2 }) })
+          .max(30, { message: t('validation.maxLength', { count: 30 }) }),
       }),
     [t],
   );
@@ -36,7 +40,6 @@ export const PersonalData = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       displayName: user?.display_name || '',
-      username: user?.username || '',
     },
   });
 
@@ -52,8 +55,7 @@ export const PersonalData = () => {
 
     try {
       await updateProfile.mutateAsync({
-        username: formData.username,
-        display_name: formData.displayName,
+        display_name: formData.displayName.trim(),
       });
     } catch (error) {
       console.error('Ошибка при обновлении профиля:', error);
@@ -68,8 +70,8 @@ export const PersonalData = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="border-border-strong flex w-full flex-col rounded-2xl border p-6"
         >
-          <div className="flex w-full flex-col gap-8 md:flex-row">
-            <div className="w-full">
+          <div className="flex w-full flex-col gap-8">
+            <div className="w-full md:max-w-[calc(50%-1rem)]">
               <FormField
                 control={control}
                 name="displayName"
@@ -77,22 +79,12 @@ export const PersonalData = () => {
                   <FormItem>
                     <FormLabel>{t('personalData.displayName')}</FormLabel>
                     <FormControl className="mt-2">
-                      <Input error={!!errors?.displayName} type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="w-full">
-              <FormField
-                control={control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('personalData.username')}</FormLabel>
-                    <FormControl className="mt-2">
-                      <Input error={!!errors?.username} type="text" {...field} />
+                      <Input
+                        error={!!errors?.displayName}
+                        type="text"
+                        autoComplete="name"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -79,7 +79,7 @@ export const SignUpPage = () => {
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
-      username: '',
+      display_name: '',
       email: '',
       password: '',
       consent: false,
@@ -130,13 +130,7 @@ export const SignUpPage = () => {
 
   const onSubmit = (data: FormData) => {
     warnIfOutlookEmail(data.email);
-    onSignupForm(
-      {
-        ...data,
-        username: data.username.trim().toLowerCase(),
-      },
-      form.setError as UseFormSetError<FormData>,
-    );
+    onSignupForm(data, form.setError as UseFormSetError<FormData>);
   };
 
   const onInvalid = (fieldErrors: typeof errors) => {
@@ -152,7 +146,7 @@ export const SignUpPage = () => {
       });
     });
 
-    const firstInvalidField = (['username', 'email', 'password', 'consent'] as const).find(
+    const firstInvalidField = (['display_name', 'email', 'password', 'consent'] as const).find(
       (name) => fieldErrors[name],
     );
 
@@ -175,7 +169,7 @@ export const SignUpPage = () => {
       if (
         (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) &&
         el.name &&
-        (el.name === 'username' || el.name === 'email' || el.name === 'password')
+        (el.name === 'display_name' || el.name === 'email' || el.name === 'password')
       ) {
         setValue(el.name, el.value, { shouldValidate: false });
       }
@@ -202,27 +196,24 @@ export const SignUpPage = () => {
         >
           <FormField
             control={control}
-            name="username"
+            name="display_name"
             render={({ field, fieldState }) => {
               const isSuccess = isFieldSuccess(
                 fieldState.isTouched,
                 !!fieldState.error,
-                formSchema.shape.username,
+                formSchema.shape.display_name,
                 field.value,
               );
 
               return (
                 <FormItem>
-                  <FormLabel htmlFor="user name">{t('username')}</FormLabel>
+                  <FormLabel htmlFor="display-name">{t('display_name')}</FormLabel>
                   <FormControl>
                     <Input
-                      error={!!errors?.username}
-                      autoComplete="username"
+                      error={!!errors?.display_name}
+                      autoComplete="name"
                       type="text"
-                      id="user name"
-                      spellCheck={false}
-                      autoCapitalize="off"
-                      autoCorrect="off"
+                      id="display-name"
                       className={cn(isSuccess && successInputClassName)}
                       after={
                         isSuccess ? (
@@ -231,13 +222,10 @@ export const SignUpPage = () => {
                       }
                       afterClassName={isSuccess ? 'pointer-events-none' : undefined}
                       {...field}
-                      onChange={(e) => {
-                        field.onChange(e.target.value.toLowerCase());
-                      }}
                     />
                   </FormControl>
                   <FormDescription className="text-text-secondary pt-0 text-xs">
-                    {t('username_hint')}
+                    {t('display_name_hint')}
                   </FormDescription>
                   <FormMessage className="pt-0" />
                 </FormItem>

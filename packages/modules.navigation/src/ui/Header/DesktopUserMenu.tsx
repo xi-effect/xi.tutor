@@ -76,9 +76,9 @@ export const DesktopUserMenu = ({
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const allowTooltipRef = useRef(true);
 
-  const displayName = user?.display_name?.trim() || user?.username || '';
-  const username = user?.username?.trim() || '';
-  const showTooltip = !withOutText && Boolean(displayName || username);
+  const displayName = user?.display_name?.trim() || '';
+  const email = user?.email?.trim() || '';
+  const showTooltip = !withOutText && Boolean(displayName || email);
 
   const openHints = async () => {
     try {
@@ -138,8 +138,8 @@ export const DesktopUserMenu = ({
       }}
     >
       <UserProfile
-        text={displayName || username}
-        label={username}
+        text={displayName}
+        label={email}
         id="userprofile"
         userId={userId}
         size="40"
@@ -201,7 +201,7 @@ export const DesktopUserMenu = ({
                   {displayName ? (
                     <span className="font-medium wrap-break-word">{displayName}</span>
                   ) : null}
-                  {username ? <span className="break-all opacity-70">{username}</span> : null}
+                  {email ? <span className="break-all opacity-70">{email}</span> : null}
                 </div>
               </TooltipContent>
             </TooltipPortal>

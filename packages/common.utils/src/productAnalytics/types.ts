@@ -49,13 +49,7 @@ export type CallFailureReason =
   | 'unknown';
 
 export type SignupFailureReason =
-  | 'email_exists'
-  | 'username_exists'
-  | 'network_error'
-  | 'timeout'
-  | 'rate_limited'
-  | 'server_error'
-  | 'unknown';
+  'email_exists' | 'network_error' | 'timeout' | 'rate_limited' | 'server_error' | 'unknown';
 
 export type SigninFailureReason =
   'user_not_found' | 'invalid_credentials' | 'network_error' | 'server_error' | 'unknown';
@@ -67,13 +61,13 @@ export type InviteFunnelTrack = 'signup' | 'signin' | 'already_auth';
 
 /** Шаг UI-воронки. `accept_direct` — авторизованный ученик сразу на принятии, без signup/signin. */
 export type InviteFunnelStep =
-  'invite_open' | 'auth' | 'email' | 'welcome_user' | 'welcome_role' | 'accept' | 'accept_direct';
+  'invite_open' | 'auth' | 'email' | 'welcome_role' | 'accept' | 'accept_direct';
 
 export type SignupValidationFailureReason =
   'required_field' | 'invalid_email' | 'weak_password' | 'terms_not_accepted' | 'multiple_fields';
 
 /** Безопасные enum-имена полей для auth_signup_validation_failed (без PII). */
-export type SignupValidationFailedField = 'username' | 'email' | 'password' | 'terms';
+export type SignupValidationFailedField = 'display_name' | 'email' | 'password' | 'terms';
 
 export type ActivationHelpReason = 'need_help' | 'stuck_on_step' | 'contact_support' | 'unknown';
 

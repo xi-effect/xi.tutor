@@ -9,7 +9,6 @@ export function useCommentAuthor(): NewCommentAuthor | null {
 
   return {
     authorId: String(currentUser.id),
-    authorName:
-      currentUser.display_name || currentUser.username || i18n.t('comments.user', { ns: 'board' }),
+    authorName: currentUser.display_name?.trim() || i18n.t('comments.user', { ns: 'board' }),
   };
 }

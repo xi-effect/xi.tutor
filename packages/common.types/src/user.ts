@@ -9,7 +9,6 @@ export type UserData = {
   allowed_confirmation_resend: string;
   email_confirmation_resend_allowed_at: string | null;
   onboarding_stage: string;
-  username: string;
   display_name: string | null;
   theme: string;
   language: string;
@@ -18,7 +17,6 @@ export type UserData = {
 
 // Тип для данных профиля, которые можно обновить
 export type ProfileData = {
-  username?: string;
   display_name?: string;
   theme?: string;
   language?: string;

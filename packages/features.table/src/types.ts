@@ -87,7 +87,6 @@ export type UserT = {
     active_classroom_count: number;
   };
   user: {
-    username: string;
     display_name: string;
   };
 };

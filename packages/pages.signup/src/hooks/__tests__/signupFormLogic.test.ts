@@ -60,23 +60,6 @@ describe('applySignupSuccessSideEffects', () => {
 describe('handleSignupError', () => {
   const t = (key: string) => key;
 
-  it('мапит username already → поле username', () => {
-    const setFormError = vi.fn();
-    const toast = vi.fn();
-    const setError = vi.fn();
-
-    handleSignupError(axiosError(400, 'Username already registered'), {
-      t,
-      setFormError,
-      toast,
-      setError,
-    });
-
-    expect(setFormError).toHaveBeenCalledWith('username', { message: 'errors.username_exists' });
-    expect(toast).toHaveBeenCalledWith('errors.username_exists');
-    expect(setError).toHaveBeenCalledWith('errors.username_exists');
-  });
-
   it('мапит email already → поле email', () => {
     const setFormError = vi.fn();
     const toast = vi.fn();

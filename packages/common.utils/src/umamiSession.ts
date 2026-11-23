@@ -63,7 +63,7 @@ export function getUmamiClientSurface(): UmamiClientSurface {
 /**
  * Трекинг сессии пользователя в Umami.
  * Первый аргумент identify — distinct id (склейка сессий с 3.3).
- * username и display_name не отправляются.
+ * display_name не отправляется.
  */
 export const trackUmamiSession = async (
   user: UserData,

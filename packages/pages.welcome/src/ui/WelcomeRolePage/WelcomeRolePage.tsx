@@ -1,6 +1,7 @@
 import { useRef, useState, useLayoutEffect, useMemo, type RefObject } from 'react';
 import { WelcomeRoleButton } from './WecomeRoleButton';
 import { useTranslation } from 'react-i18next';
+import { LoadingScreen } from 'common.ui';
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 
 import { useWelcomeRoleForm } from '../../hooks';
@@ -9,11 +10,11 @@ import { RoleButtonT } from '../../types/WelcomeRoleButtonT';
 
 export const WelcomeRolePage = () => {
   const { t } = useTranslation('welcomeRole');
-  useOnboardingAnalytics({ step: 'role_selection' });
   const firstButton = useRef<HTMLButtonElement>(null);
   const secondButton = useRef<HTMLButtonElement>(null);
 
-  const { onBackwards, onForwards, isLoading } = useWelcomeRoleForm();
+  const { onForwards, isLoading, isSkippingInvite } = useWelcomeRoleForm();
+  useOnboardingAnalytics({ step: 'role_selection', enabled: !isSkippingInvite });
 
   const getHeight = (elem: RefObject<HTMLButtonElement | null>) =>
     elem.current ? Number(elem.current.clientHeight) : 0;
@@ -48,8 +49,10 @@ export const WelcomeRolePage = () => {
     buttons[1].top = getHeight(firstButton);
   }, [buttons]);
 
+  if (isSkippingInvite) return <LoadingScreen />;
+
   return (
-    <WelcomePageLayout step={2} title={t('title')} subtitle={t('subtitle')}>
+    <WelcomePageLayout step={1} title={t('title')} subtitle={t('subtitle')}>
       <div className="border-border-control bg-background-surface relative mt-6 flex w-full flex-col items-start rounded-2xl border">
         <div
           style={{ height: getHeight(activeButton.ref) || '60px', top: activeButton.top }}
@@ -70,7 +73,6 @@ export const WelcomeRolePage = () => {
       <WelcomeButtons
         customText={t('buttons.start_button', { ns: 'welcome' })}
         continueButtonHandler={() => onForwards(activeButton.value)}
-        backButtonHandler={onBackwards}
         isLoading={isLoading}
       />
     </WelcomePageLayout>

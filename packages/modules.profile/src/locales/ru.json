@@ -29,7 +29,6 @@
   "personalData": {
     "title": "Личные данные",
     "displayName": "Отображаемое имя",
-    "username": "Имя пользователя",
     "save": "Сохранить"
   },
   "userPreview": {
@@ -275,6 +274,7 @@
   "validation": {
     "required": "Обязательное поле",
     "minLength": "Минимум {{count}} символов",
+    "maxLength": "Максимум {{count}} символов",
     "emailFormat": "Некорректный формат данных",
     "passwordsMismatch": "Пароли не совпадают"
   }

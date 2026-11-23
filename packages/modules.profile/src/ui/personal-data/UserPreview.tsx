@@ -144,9 +144,6 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         <span className="text-text-primary text-xl leading-7 font-medium">
           {user?.display_name}
         </span>
-        <span className="text-text-primary dark:text-text-primary text-[16px] leading-[22px]">
-          {user?.username}
-        </span>
       </div>
     </div>
   );

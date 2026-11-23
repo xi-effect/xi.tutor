@@ -22,16 +22,19 @@ export {
 
 type UseOnboardingAnalyticsOptions = {
   step: OnboardingStepName;
+  enabled?: boolean;
 };
 
 /**
  * Трекает onboarding_started (один раз на activation_flow_id) и onboarding_step_viewed.
  * onboarding_started идёт через общий helper — не дублируется при remount / Strict Mode / смене шага.
  */
-export const useOnboardingAnalytics = ({ step }: UseOnboardingAnalyticsOptions) => {
+export const useOnboardingAnalytics = ({ step, enabled = true }: UseOnboardingAnalyticsOptions) => {
   const { data: user } = useCurrentUser();
 
   useEffect(() => {
+    if (!enabled) return;
+
     const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
     const stepMeta = getOnboardingStepMeta(step);
 
@@ -46,5 +49,5 @@ export const useOnboardingAnalytics = ({ step }: UseOnboardingAnalyticsOptions) 
         ...getInviteFunnelEventProps(true),
       });
     });
-  }, [step, user?.default_layout, user?.onboarding_stage]);
+  }, [enabled, step, user?.default_layout, user?.onboarding_stage]);
 };

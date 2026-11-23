@@ -43,20 +43,12 @@ export function applySignupSuccessSideEffects(options?: {
 }
 
 /**
- * Обработка ошибки регистрации: field errors для username/email exists,
+ * Обработка ошибки регистрации: field error, если почта уже занята,
  * иначе общий toast.
  */
 export function handleSignupError(err: unknown, ui: SignupErrorUi): void {
   const { t, setFormError, toast, setError } = ui;
   const failureReason = mapSignupError(err);
-
-  if (failureReason === 'username_exists') {
-    const message = t('errors.username_exists');
-    setFormError('username', { message });
-    toast(message);
-    setError(message);
-    return;
-  }
 
   if (failureReason === 'email_exists') {
     const message = t('errors.email_exists');
