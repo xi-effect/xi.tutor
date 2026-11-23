@@ -1,16 +1,26 @@
-import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
+import {
+  buildInvoiceSearchRequest,
+  paymentsApiConfig,
+  PaymentsQueryKey,
+  serializeInvoiceFilters,
+  type InvoiceSearchFilters,
+} from 'common.api';
 import { useFetching } from 'common.config';
 import { RolePaymentT } from 'common.types';
 
 interface TutorPaymentsListParams {
   disabled?: boolean;
+  filters?: InvoiceSearchFilters;
 }
 
 /**
  * Упрощенный хук для получения первых 50 платежей репетитора
  * Автоматически устанавливает limit=50 и не требует передачи cursor
  */
-export const useGetTutorPaymentsList = ({ disabled = false }: TutorPaymentsListParams = {}) => {
+export const useGetTutorPaymentsList = ({
+  disabled = false,
+  filters,
+}: TutorPaymentsListParams = {}) => {
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method: paymentsApiConfig[PaymentsQueryKey.TutorPayments].method,
@@ -19,11 +29,9 @@ export const useGetTutorPaymentsList = ({ disabled = false }: TutorPaymentsListP
         'Content-Type': 'application/json',
       },
     },
-    data: {
-      limit: 50,
-    },
+    data: buildInvoiceSearchRequest('tutor', null, 50, filters),
     disabled: disabled,
-    queryKey: [PaymentsQueryKey.TutorPayments, 'list'],
+    queryKey: [PaymentsQueryKey.TutorPayments, 'list', serializeInvoiceFilters('tutor', filters)],
   });
 
   return {

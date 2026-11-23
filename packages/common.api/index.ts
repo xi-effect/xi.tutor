@@ -59,6 +59,33 @@ export { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from './src/payme
 export { materialsApiConfig, MaterialsQueryKey } from './src/materials';
 export { paymentsApiConfig, PaymentsQueryKey } from './src/payments';
 export {
+  INVOICE_FILTER_MAX_COUNTERPARTIES,
+  INVOICE_FILTER_MAX_PAYMENT_TYPES,
+  INVOICE_FILTER_MAX_STATUSES,
+  INVOICES_SEARCH_DEFAULT_LIMIT,
+  INVOICES_SEARCH_MAX_LIMIT,
+  PAYMENT_STATUSES,
+  PAYMENT_TYPES,
+  buildInvoiceSearchRequest,
+  canonicalInvoiceTotal,
+  getNextRecipientInvoicesCursor,
+  normalizeInvoiceCounterpartyIds,
+  normalizeInvoiceFilters,
+  normalizeInvoicePaymentTypes,
+  normalizeInvoiceStatuses,
+  normalizeInvoicesSearchLimit,
+  serializeInvoiceFilters,
+  startOfLocalCalendarDayIso,
+  startOfNextLocalCalendarDayIso,
+  type InvoiceFiltersBody,
+  type InvoicePaymentStatus,
+  type InvoicePaymentType,
+  type InvoicePaymentTypeFilter,
+  type InvoiceSearchFilters,
+  type InvoiceSearchRequest,
+  type RecipientInvoiceCursor,
+} from './src/invoiceSearch';
+export {
   CLASSROOM_STATUSES,
   CLASSROOM_FILTER_MAX_STATUSES,
   CLASSROOMS_SEARCH_DEFAULT_LIMIT,
