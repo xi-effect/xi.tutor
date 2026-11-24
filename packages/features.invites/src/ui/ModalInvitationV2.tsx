@@ -419,7 +419,7 @@ export const ModalInvitationV2 = ({
           <ModalTitle className={cn(modalTitleClass, 'max-w-[calc(100%-48px)]')}>
             {t('inviteModalV2.title')}
           </ModalTitle>
-          <ModalDescription className="text-text-secondary">
+          <ModalDescription className="text-text-secondary mt-3!">
             {t('inviteModalV2.description')}
           </ModalDescription>
         </ModalHeader>
