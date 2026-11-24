@@ -1,16 +1,26 @@
-import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
+import {
+  buildInvoiceSearchRequest,
+  paymentsApiConfig,
+  PaymentsQueryKey,
+  serializeInvoiceFilters,
+  type InvoiceSearchFilters,
+} from 'common.api';
 import { useFetching } from 'common.config';
 import { RolePaymentT } from 'common.types';
 
 interface StudentPaymentsListParams {
   disabled?: boolean;
+  filters?: InvoiceSearchFilters;
 }
 
 /**
  * Упрощенный хук для получения первых 50 платежей ученика
  * Автоматически устанавливает limit=50 и не требует передачи cursor
  */
-export const useGetStudentPaymentsList = ({ disabled = false }: StudentPaymentsListParams = {}) => {
+export const useGetStudentPaymentsList = ({
+  disabled = false,
+  filters,
+}: StudentPaymentsListParams = {}) => {
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method: paymentsApiConfig[PaymentsQueryKey.StudentPayments].method,
@@ -19,11 +29,13 @@ export const useGetStudentPaymentsList = ({ disabled = false }: StudentPaymentsL
         'Content-Type': 'application/json',
       },
     },
-    data: {
-      limit: 50,
-    },
+    data: buildInvoiceSearchRequest('student', null, 50, filters),
     disabled: disabled,
-    queryKey: [PaymentsQueryKey.StudentPayments, 'list'],
+    queryKey: [
+      PaymentsQueryKey.StudentPayments,
+      'list',
+      serializeInvoiceFilters('student', filters),
+    ],
   });
 
   return {

@@ -1,4 +1,6 @@
 import {
+  equivalentRationalForms,
+  exactRationalsMatch,
   formatEnglishAnswer,
   formatPhysicsAnswer,
   loadBankTaskById,
@@ -134,6 +136,7 @@ export function exerciseAnswerIsCorrect(definition: ExerciseDefinition, raw: str
 
   const prepared = prepare(input);
   if (normalized.accepted.some((answer) => prepare(answer) === prepared)) return true;
+  if (exactRationalsMatch(input, normalized.accepted)) return true;
 
   const groups = normalized.answerGroups;
   if (!groups || groups.length === 0) return false;
@@ -220,7 +223,12 @@ const fromMath = (task: MathTask): ExerciseDefinition => {
     kind: 'exercise',
     blocks: blocksOf([block('statement', task.statement.text)]),
     answerDisplay,
-    accepted: uniqueTexts([answerDisplay, task.answer.value]),
+    accepted: uniqueTexts([
+      answerDisplay,
+      task.answer.value,
+      ...equivalentRationalForms(task.answer.value),
+      ...equivalentRationalForms(answerDisplay),
+    ]),
     answerGroups: null,
     numeric: null,
     caseSensitive: false,

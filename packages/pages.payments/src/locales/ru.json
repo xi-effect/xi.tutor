@@ -79,5 +79,47 @@
     "loadErrorDescription": "Попробуйте обновить данные. Если ошибка повторится, проверьте соединение и повторите позже.",
     "refresh": "Обновить",
     "close": "Закрыть"
+  },
+  "filters": {
+    "statusChip": "Статус",
+    "statusChipCount": "Статус · {{count}}",
+    "paymentTypeChip": "Тип оплаты",
+    "paymentTypeChipCount": "Тип оплаты · {{count}}",
+    "dateChip": "Дата",
+    "dateChipCount": "Дата · {{count}}",
+    "amountChip": "Сумма",
+    "amountChipCount": "Сумма · {{count}}",
+    "studentChip": "Ученик",
+    "studentChipCount": "Ученик · {{count}}",
+    "tutorChip": "Репетитор",
+    "tutorChipCount": "Репетитор · {{count}}",
+    "from": "От",
+    "to": "До",
+    "datePlaceholder": "Выберите дату",
+    "dateClear": "Очистить дату",
+    "dateHint": "Последний день входит в период",
+    "dateInvalid": "Дата «от» должна быть не позже даты «до»",
+    "amountHint": "Одинаковые значения ищут точную сумму",
+    "amountInvalid": "Проверьте диапазон суммы",
+    "peopleSearch": "Поиск",
+    "peopleLoading": "Загрузка...",
+    "peopleEmptyStudent": "Нет учеников",
+    "peopleEmptyTutor": "Нет репетиторов",
+    "peopleLimit": "Можно выбрать не больше 20",
+    "reset": "Сбросить",
+    "apply": "Применить",
+    "resetAll": "Сбросить все",
+    "filteredEmptyTitle": "Ничего не найдено",
+    "filteredEmptyDescription": "Попробуйте изменить параметры или сбросить выбранные фильтры",
+    "status": {
+      "wf_sender_confirmation": "Ждёт оплаты",
+      "wf_receiver_confirmation": "Ожидает подтверждения",
+      "complete": "Оплачен"
+    },
+    "paymentType": {
+      "cash": "Наличные",
+      "transfer": "Перевод",
+      "unpaid": "Пока не оплачено"
+    }
   }
 }

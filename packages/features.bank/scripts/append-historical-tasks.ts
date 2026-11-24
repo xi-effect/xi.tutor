@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { gunzipSync, gzipSync } from 'node:zlib';
 import { SeededRandom } from '../src/generation/rng.ts';
+import { exactRational, formatTerminatingDecimal } from '../src/lib/rational.ts';
 import {
   historicalArchetypes,
   type HistoricalArchetype,
@@ -125,6 +126,14 @@ const fracAnswer = (n: number, d: number): Answer => {
   const [nn, dd] = reduce(n, d);
   if (dd === 1) return { type: 'number', value: String(nn), display: String(nn) };
   return { type: 'fraction', value: `${nn}/${dd}`, display: `\\frac{${nn}}{${dd}}` };
+};
+/** В коротком ответе ОГЭ и первой части ЕГЭ нужна конечная десятичная дробь. */
+const examDecimalAnswer = (n: number, d: number): Answer | null => {
+  const [nn, dd] = reduce(n, d);
+  const rational = exactRational(BigInt(nn), BigInt(dd));
+  const formatted = rational ? formatTerminatingDecimal(rational) : null;
+  if (!formatted) return null;
+  return { type: 'number', value: formatted, display: formatted };
 };
 const numberAnswer = (n: number): Answer => ({
   type: 'number',
@@ -1954,10 +1963,22 @@ function generateCore(
       const R = rng.int(4, 30),
         B = rng.int(4, 30),
         N = R + B;
-      if (a.difficulty === 3) {
+      const withDecimal = (
+        numerator: number,
+        denominator: number,
+        core: Omit<GeneratedCore, 'answer'>,
+      ): GeneratedCore | null => {
+        const answer = examDecimalAnswer(numerator, denominator);
+        if (!answer) return null;
         return {
+          ...core,
+          answer,
+          steps: [...core.steps, `В бланк ответов запишите ${answer.value}.`],
+        };
+      };
+      if (a.difficulty === 3) {
+        return withDecimal(R * (R - 1), N * (N - 1), {
           statement: `В коробке ${R} красных и ${B} синих шаров. Наугад без возвращения достают два шара. Найдите вероятность того, что оба окажутся красными.`,
-          answer: fracAnswer(R * (R - 1), N * (N - 1)),
           steps: [
             `Вероятность первого красного ${R}/${N}.`,
             `После этого вероятность второго красного ${R - 1}/${N - 1}.`,
@@ -1966,12 +1987,11 @@ function generateCore(
           hints: ['После первого выбора состав коробки меняется.'],
           taskType: 'probability',
           parameters: { R, B },
-        };
+        });
       }
       if (a.difficulty === 4) {
-        return {
+        return withDecimal(2 * R * B, N * (N - 1), {
           statement: `В коробке ${R} красных и ${B} синих шаров. Два шара достают без возвращения. Найдите вероятность получить шары разных цветов.`,
-          answer: fracAnswer(2 * R * B, N * (N - 1)),
           steps: [
             `Возможны два порядка: красный-синий и синий-красный.`,
             `Их суммарная вероятность равна 2·${R}·${B}/(${N}·${N - 1}).`,
@@ -1980,14 +2000,13 @@ function generateCore(
           hints: ['Учтите два возможных порядка цветов.'],
           taskType: 'probability',
           parameters: { R, B },
-        };
+        });
       }
       if (R < 2 || B < 1) return null;
       const num = choose(R, 2) * B,
         den = choose(N, 3);
-      return {
+      return withDecimal(num, den, {
         statement: `В коробке ${R} красных и ${B} синих шаров. Одновременно выбирают три шара. Найдите вероятность того, что ровно два из них красные.`,
-        answer: fracAnswer(num, den),
         steps: [
           `Всего способов выбрать три шара: C(${N},3)=${den}.`,
           `Благоприятных способов: C(${R},2)·C(${B},1)=${num}.`,
@@ -1996,7 +2015,7 @@ function generateCore(
         hints: ['Используйте сочетания для выбора без учёта порядка.'],
         taskType: 'probability',
         parameters: { R, B },
-      };
+      });
     }
     case 'derivative_extremum': {
       if (a.difficulty === 3) {

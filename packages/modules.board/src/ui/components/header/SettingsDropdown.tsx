@@ -289,7 +289,7 @@ export const SettingsDropdown = () => {
             onImport={() => importInputRef.current?.click()}
             onClear={() => {
               setDropdownOpen(false);
-              setClearConfirmOpen(true);
+              window.setTimeout(() => setClearConfirmOpen(true), 0);
             }}
             onToggleReadonly={toggleReadonly}
             isReadonly={isReadonly}
@@ -316,7 +316,7 @@ export const SettingsDropdown = () => {
           />
         </>
       ) : (
-        <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+        <DropdownMenu modal={false} open={dropdownOpen} onOpenChange={setDropdownOpen}>
           <DropdownMenuTrigger asChild>{settingsTrigger}</DropdownMenuTrigger>
           <DropdownMenuContent
             side={chrome.mirrored ? 'top' : 'bottom'}
@@ -479,7 +479,7 @@ export const SettingsDropdown = () => {
                 <ClearBoardAction
                   onClick={() => {
                     setDropdownOpen(false);
-                    setClearConfirmOpen(true);
+                    window.setTimeout(() => setClearConfirmOpen(true), 0);
                   }}
                 />
               )}
@@ -623,10 +623,7 @@ export const SettingsDropdown = () => {
         description={t('settings.clearBoardConfirmDescription')}
         confirmLabel={t('settings.clearBoardConfirmAction')}
         cancelLabel={t('settings.clearBoardConfirmCancel')}
-        onConfirm={() => {
-          clearBoard();
-          setClearConfirmOpen(false);
-        }}
+        onConfirm={clearBoard}
       />
     </>
   );

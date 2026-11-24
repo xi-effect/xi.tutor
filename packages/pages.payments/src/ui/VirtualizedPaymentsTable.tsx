@@ -30,6 +30,7 @@ import {
 } from 'common.ui';
 import { Loader } from './Loader';
 import { PaymentsTableSkeleton } from './PaymentsTableSkeleton';
+import { PaymentsFilteredEmpty } from './filters/PaymentsFilteredEmpty';
 import { UserRoleT } from '../../../common.api/src/types';
 import { RolePaymentT as CommonRolePaymentT } from 'common.types';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
@@ -52,6 +53,8 @@ export type VirtualizedPaymentsTableProps<T> = {
   isError: boolean;
   currentUserRole: RoleT;
   onViewInvoice?: (payment: CommonRolePaymentT<UserRoleT>) => void;
+  filtersActive?: boolean;
+  onResetFilters?: () => void;
 };
 
 export const VirtualizedPaymentsTable = ({
@@ -63,6 +66,8 @@ export const VirtualizedPaymentsTable = ({
   isError,
   currentUserRole,
   onViewInvoice,
+  filtersActive = false,
+  onResetFilters,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
   const { t } = useTranslation('payments');
   const isMobile = useMediaQuery('(max-width: 960px)');
@@ -80,6 +85,10 @@ export const VirtualizedPaymentsTable = ({
 
   if (isLoading && !data.length) {
     return <PaymentsTableSkeleton isMobile={isMobile} />;
+  }
+
+  if (notFoundItems && filtersActive && onResetFilters) {
+    return <PaymentsFilteredEmpty onReset={onResetFilters} />;
   }
 
   if (notFoundItems) {

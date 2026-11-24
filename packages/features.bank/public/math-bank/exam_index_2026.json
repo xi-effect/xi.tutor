@@ -27,7 +27,7 @@
     "exam": "EGE_BASE",
     "year": 2026,
     "taskNumber": 5,
-    "count": 130
+    "count": 71
   },
   {
     "exam": "EGE_BASE",
@@ -141,13 +141,13 @@
     "exam": "EGE_PROFILE",
     "year": 2026,
     "taskNumber": 4,
-    "count": 627
+    "count": 200
   },
   {
     "exam": "EGE_PROFILE",
     "year": 2026,
     "taskNumber": 5,
-    "count": 627
+    "count": 200
   },
   {
     "exam": "EGE_PROFILE",
@@ -291,7 +291,7 @@
     "exam": "OGE",
     "year": 2026,
     "taskNumber": 10,
-    "count": 674
+    "count": 211
   },
   {
     "exam": "OGE",

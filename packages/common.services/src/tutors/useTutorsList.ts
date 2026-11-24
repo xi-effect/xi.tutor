@@ -1,7 +1,7 @@
 import { studentApiConfig, StudentQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
 
-export const useTutorsList = () => {
+export const useTutorsList = (options?: { disabled?: boolean }) => {
   const { method, getUrl } = studentApiConfig[StudentQueryKey.Tutors];
 
   const { data, isError, isLoading, ...rest } = useFetching({
@@ -12,6 +12,7 @@ export const useTutorsList = () => {
         'Content-Type': 'application/json',
       },
     },
+    disabled: options?.disabled,
     queryKey: [StudentQueryKey.Tutors],
   });
 

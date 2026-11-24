@@ -693,6 +693,8 @@
     "exercise": {
       "answer": "Answer",
       "answerPlaceholder": "Type the answer",
+      "numerator": "numerator",
+      "denominator": "denominator",
       "accepted": "Accepted answers, separated by |",
       "hints": "Hints",
       "hint": "Hint",

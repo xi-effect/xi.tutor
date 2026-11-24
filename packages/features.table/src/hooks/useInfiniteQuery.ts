@@ -1,5 +1,18 @@
-import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
-import { UserRoleT, classroomPaymentsApiConfig, paymentsApiConfig } from 'common.api';
+import {
+  useInfiniteQuery as useTanStackInfiniteQuery,
+  type InfiniteData,
+} from '@tanstack/react-query';
+import {
+  INVOICES_SEARCH_DEFAULT_LIMIT,
+  UserRoleT,
+  buildInvoiceSearchRequest,
+  classroomPaymentsApiConfig,
+  getNextRecipientInvoicesCursor,
+  paymentsApiConfig,
+  serializeInvoiceFilters,
+  type InvoiceSearchFilters,
+  type RecipientInvoiceCursor,
+} from 'common.api';
 import { getAxiosInstance, QUERY_FRESHNESS_MS } from 'common.config';
 import { getRolePaymentsQueryKey } from 'common.services';
 import { RolePaymentT } from 'features.table';
@@ -10,12 +23,20 @@ export const useInfiniteQuery = (
   role: UserRoleT,
   classroomId?: string,
   enabled = true,
+  filters?: InvoiceSearchFilters,
 ) => {
   const queryKey = getRolePaymentsQueryKey(role);
+  const filterKey = serializeInvoiceFilters(role, filters);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
-    useTanStackInfiniteQuery<RolePaymentT<UserRoleT>[], unknown>({
-      queryKey: [queryKey, role, classroomId || 'all'],
+    useTanStackInfiniteQuery<
+      RolePaymentT<UserRoleT>[],
+      Error,
+      InfiniteData<RolePaymentT<UserRoleT>[], RecipientInvoiceCursor | undefined>,
+      readonly unknown[],
+      RecipientInvoiceCursor | undefined
+    >({
+      queryKey: [queryKey, role, classroomId || 'all', filterKey],
       enabled,
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
@@ -29,25 +50,19 @@ export const useInfiniteQuery = (
           headers: {
             'Content-Type': 'application/json',
           },
-          data: {
-            cursor: pageParam ?? null,
-            limit: 15,
-          },
+          data: buildInvoiceSearchRequest(
+            role,
+            pageParam ?? null,
+            INVOICES_SEARCH_DEFAULT_LIMIT,
+            filters,
+          ),
         });
 
         return response.data;
       },
-      initialPageParam: undefined as string | undefined,
-      getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length === 0) {
-          return undefined;
-        }
-        const lastItem = lastPage[lastPage.length - 1];
-        return {
-          created_at: lastItem.created_at,
-          recipient_invoice_id: lastItem.id,
-        };
-      },
+      initialPageParam: undefined,
+      getNextPageParam: (lastPage) =>
+        getNextRecipientInvoicesCursor(lastPage, INVOICES_SEARCH_DEFAULT_LIMIT),
       staleTime: QUERY_FRESHNESS_MS,
       gcTime: QUERY_FRESHNESS_MS,
     });
@@ -61,7 +76,7 @@ export const useInfiniteQuery = (
       const { scrollTop, scrollHeight, clientHeight } = el;
       const distanceToBottom = scrollHeight - scrollTop - clientHeight;
 
-      if (distanceToBottom < 100 && !isFetchingNextPage) {
+      if (distanceToBottom < 100 && hasNextPage && !isFetchingNextPage) {
         fetchNextPage();
       }
     };

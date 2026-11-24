@@ -1,4 +1,8 @@
-import { classroomPaymentsApiConfig, ClassroomPaymentsQueryKey } from 'common.api';
+import {
+  buildInvoiceSearchRequest,
+  classroomPaymentsApiConfig,
+  ClassroomPaymentsQueryKey,
+} from 'common.api';
 import { useFetching } from 'common.config';
 import { RolePaymentT } from 'common.types';
 
@@ -24,9 +28,7 @@ export const useGetClassroomTutorPaymentsList = ({
         'Content-Type': 'application/json',
       },
     },
-    data: {
-      limit: 50,
-    },
+    data: buildInvoiceSearchRequest('tutor', null, 50),
     disabled: disabled,
     queryKey: [ClassroomPaymentsQueryKey.TutorPayments, classroomId, 'list'],
   });

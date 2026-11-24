@@ -79,5 +79,47 @@
     "loadErrorDescription": "Try refreshing the data. If the error persists, check your connection and try again later.",
     "refresh": "Refresh",
     "close": "Close"
+  },
+  "filters": {
+    "statusChip": "Status",
+    "statusChipCount": "Status · {{count}}",
+    "paymentTypeChip": "Payment type",
+    "paymentTypeChipCount": "Payment type · {{count}}",
+    "dateChip": "Date",
+    "dateChipCount": "Date · {{count}}",
+    "amountChip": "Amount",
+    "amountChipCount": "Amount · {{count}}",
+    "studentChip": "Student",
+    "studentChipCount": "Student · {{count}}",
+    "tutorChip": "Tutor",
+    "tutorChipCount": "Tutor · {{count}}",
+    "from": "From",
+    "to": "To",
+    "datePlaceholder": "Select a date",
+    "dateClear": "Clear date",
+    "dateHint": "The last day is included",
+    "dateInvalid": "The start date must not be later than the end date",
+    "amountHint": "Equal values search for that exact amount",
+    "amountInvalid": "Check the amount range",
+    "peopleSearch": "Search",
+    "peopleLoading": "Loading...",
+    "peopleEmptyStudent": "No students",
+    "peopleEmptyTutor": "No tutors",
+    "peopleLimit": "You can select up to 20",
+    "reset": "Reset",
+    "apply": "Apply",
+    "resetAll": "Reset all",
+    "filteredEmptyTitle": "Nothing found",
+    "filteredEmptyDescription": "Try changing the filters or reset them",
+    "status": {
+      "wf_sender_confirmation": "Awaiting payment",
+      "wf_receiver_confirmation": "Awaiting confirmation",
+      "complete": "Paid"
+    },
+    "paymentType": {
+      "cash": "Cash",
+      "transfer": "Transfer",
+      "unpaid": "Not paid yet"
+    }
   }
 }

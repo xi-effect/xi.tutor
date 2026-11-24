@@ -35,4 +35,5 @@ export type {
 } from './model/schema';
 export * from './lib/load';
 export * from './lib/normalize';
+export * from './lib/rational';
 export * from './lib/search';

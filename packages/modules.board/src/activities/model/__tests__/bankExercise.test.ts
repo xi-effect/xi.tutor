@@ -125,6 +125,55 @@ describe('bankTaskToExercise', () => {
     const attempt = createEmptyAttempt(exercise, 1);
     expect(evaluateActivity(exercise, attempt)).toEqual({ correct: 0, total: 0, byItem: {} });
   });
+
+  it('считает десятичную запись равной обыкновенной дроби', () => {
+    const fraction = {
+      ...mathTask,
+      answer: { type: 'fraction', value: '1/2', display: '\\frac{1}{2}' },
+    } as unknown as MathTask;
+    const exercise = bankTaskToExercise(fraction);
+
+    expect(exerciseAnswerIsCorrect(exercise, '0,5')).toBe(true);
+    expect(exerciseAnswerIsCorrect(exercise, '0.5')).toBe(true);
+    expect(exerciseAnswerIsCorrect(exercise, '0,50')).toBe(true);
+    expect(exerciseAnswerIsCorrect(exercise, '1/2')).toBe(true);
+    expect(exerciseAnswerIsCorrect(exercise, '2/4')).toBe(true);
+    expect(exerciseAnswerIsCorrect(exercise, '0,6')).toBe(false);
+
+    const repeating = {
+      ...mathTask,
+      answer: { type: 'fraction', value: '7/12', display: '\\frac{7}{12}' },
+    } as unknown as MathTask;
+    const repeatingExercise = bankTaskToExercise(repeating);
+
+    expect(exerciseAnswerIsCorrect(repeatingExercise, '7/12')).toBe(true);
+    expect(exerciseAnswerIsCorrect(repeatingExercise, '14/24')).toBe(true);
+    expect(exerciseAnswerIsCorrect(repeatingExercise, '0,58')).toBe(false);
+    expect(exerciseAnswerIsCorrect(repeatingExercise, '0.583')).toBe(false);
+
+    const decimal = {
+      ...mathTask,
+      answer: { type: 'number', value: '0,5', display: '0,5' },
+    } as unknown as MathTask;
+    const decimalExercise = bankTaskToExercise(decimal);
+
+    expect(exerciseAnswerIsCorrect(decimalExercise, '0,5')).toBe(true);
+    expect(exerciseAnswerIsCorrect(decimalExercise, '0.5')).toBe(true);
+    expect(exerciseAnswerIsCorrect(decimalExercise, '1/2')).toBe(true);
+    expect(exerciseAnswerIsCorrect(decimalExercise, '0,51')).toBe(false);
+  });
+
+  it('не принимает часть составного ответа за всё выражение', () => {
+    const expression = {
+      ...mathTask,
+      answer: { type: 'expression', value: '-5;80', display: '-5;80' },
+    } as unknown as MathTask;
+    const exercise = bankTaskToExercise(expression);
+
+    expect(exerciseAnswerIsCorrect(exercise, '-5;80')).toBe(true);
+    expect(exerciseAnswerIsCorrect(exercise, '-5')).toBe(false);
+    expect(exerciseAnswerIsCorrect(exercise, '80')).toBe(false);
+  });
 });
 
 describe('evaluateActivity exercise', () => {
