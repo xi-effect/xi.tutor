@@ -1,7 +1,6 @@
 export type MockUser = {
   id: number;
   email: string;
-  username: string;
   display_name: string | null;
   language: string;
   onboarding_stage: string;
@@ -12,7 +11,6 @@ export type MockUser = {
 export const mockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
   id: 1001,
   email: 'e2e@example.com',
-  username: 'e2e_user',
   display_name: 'E2E User',
   language: 'ru',
   onboarding_stage: 'completed',

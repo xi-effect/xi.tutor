@@ -29,7 +29,6 @@
   "personalData": {
     "title": "Personal data",
     "displayName": "Display name",
-    "username": "Username",
     "save": "Save"
   },
   "userPreview": {
@@ -275,6 +274,7 @@
   "validation": {
     "required": "Required field",
     "minLength": "Minimum {{count}} characters",
+    "maxLength": "Maximum {{count}} characters",
     "emailFormat": "Invalid data format",
     "passwordsMismatch": "Passwords do not match"
   }

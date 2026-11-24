@@ -6,7 +6,6 @@ export const mockInviteData: Record<string, InviteT> = {
     kind: 'individual',
     tutor: {
       user_id: 1,
-      username: 'a.demidov',
       display_name: 'Андрей Демидов',
     },
     existing_classroom_id: null,
@@ -16,7 +15,6 @@ export const mockInviteData: Record<string, InviteT> = {
     kind: 'individual',
     tutor: {
       user_id: 2,
-      username: 'english.tutor',
       display_name: 'Английский с репетитором',
     },
     existing_classroom_id: 2,
@@ -26,7 +24,6 @@ export const mockInviteData: Record<string, InviteT> = {
     kind: 'group',
     tutor: {
       user_id: 3,
-      username: 'group.master',
       display_name: 'Мастер групп',
     },
     classroom: {
@@ -39,7 +36,6 @@ export const mockInviteData: Record<string, InviteT> = {
     kind: 'group',
     tutor: {
       user_id: 4,
-      username: 'practice.english',
       display_name: 'Practice English',
     },
     classroom: {

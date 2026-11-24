@@ -20,24 +20,20 @@ export type WelcomeRoleForwardDeps = {
   search: { invite?: string };
 };
 
-export type WelcomeRoleBackDeps = {
-  userRole: OnboardingAnalyticsRole;
+export type StudentInviteRoleSkipDeps = {
+  userId?: number;
   onboardingStage?: string;
-  transitionBack: () => Promise<unknown>;
-  trackBack: (
-    from: 'role_selection',
-    to: 'profile',
-    role: OnboardingAnalyticsRole,
-    stage?: string,
-  ) => void;
+  updateProfile: (payload: { default_layout: 'student' }) => Promise<unknown>;
+  transitionForward: () => Promise<unknown>;
+  trackRoleSelected?: (role: 'student', userId?: number) => void;
   trackFailed: (
     step: 'role_selection',
     role: OnboardingAnalyticsRole,
     error: unknown,
     stage?: string,
   ) => void;
-  navigateToUser: (search: { invite?: string }) => void;
-  search: { invite?: string };
+  trackCompleted: (step: 'role_selection', role: OnboardingAnalyticsRole, stage?: string) => void;
+  navigateAfterWelcome: () => void;
 };
 
 export type WelcomeRoleSubmitResult = 'ok' | 'profile_failed' | 'transition_failed';
@@ -66,17 +62,43 @@ export async function runWelcomeRoleForward(
   }
 }
 
-/** Назад: transition backwards → /welcome/user. */
-export async function runWelcomeRoleBack(
-  deps: WelcomeRoleBackDeps,
-): Promise<'ok' | 'transition_failed'> {
+/**
+ * Приглашение ученика пропускает экран роли и на стадиях `user-information`, и `default-layout`.
+ * v2 после почты уже на `default-layout`. `user-information` остаётся у старых аккаунтов.
+ */
+export function shouldSkipRoleForStudentInvite(
+  stage: string | undefined,
+  inviteCode: string | undefined,
+): boolean {
+  if (!inviteCode) return false;
+  return stage === 'user-information' || stage === 'default-layout';
+}
+
+/** С `user-information` нужны оба перехода. С `default-layout` — только `training`. */
+export function roleAdvanceIncludesDefaultLayout(stage: string | undefined): boolean {
+  return stage === 'user-information';
+}
+
+/** Приглашение ученика: роль student и переход вперёд, без экрана выбора роли. */
+export async function runStudentInviteRoleSkip(
+  deps: StudentInviteRoleSkipDeps,
+): Promise<WelcomeRoleSubmitResult> {
   try {
-    await deps.transitionBack();
-    deps.trackBack('role_selection', 'profile', deps.userRole, deps.onboardingStage);
-    deps.navigateToUser({ ...deps.search });
+    await deps.updateProfile({ default_layout: 'student' });
+  } catch (error) {
+    deps.trackFailed('role_selection', 'student', error, deps.onboardingStage);
+    return 'profile_failed';
+  }
+
+  deps.trackRoleSelected?.('student', deps.userId);
+
+  try {
+    await deps.transitionForward();
+    deps.trackCompleted('role_selection', 'student', deps.onboardingStage);
+    deps.navigateAfterWelcome();
     return 'ok';
   } catch (error) {
-    deps.trackFailed('role_selection', deps.userRole, error, deps.onboardingStage);
+    deps.trackFailed('role_selection', 'student', error, deps.onboardingStage);
     return 'transition_failed';
   }
 }

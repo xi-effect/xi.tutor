@@ -16,7 +16,7 @@ const authApiConfig = {
     method: HttpMethod.POST,
   },
   [AuthQueryKey.Signup]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/signup/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/v2/signup/`,
     method: HttpMethod.POST,
   },
   [AuthQueryKey.Signout]: {

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { normalizeEmail } from 'common.utils';
 
-const usernameMinLength = 4;
-const usernameMaxLength = 30;
+const displayNameMinLength = 2;
+const displayNameMaxLength = 30;
 const passwordMinLength = 6;
 
 type Translate = (key: string, params?: Record<string, unknown>) => unknown;
@@ -24,23 +24,17 @@ export const createFormSchema = (t: Translate) => {
   };
 
   return z.object({
-    username: z
+    display_name: z
       .string()
+      .trim()
       .min(1, {
         message: getTranslation('validation.required', undefined, 'This field is required'),
       })
-      .min(usernameMinLength, {
-        message: `${getTranslation('validation.minLength', undefined, 'Minimum ')}${getTranslation('validation.symbols', { count: usernameMinLength }, `${usernameMinLength} symbols`)}`,
+      .min(displayNameMinLength, {
+        message: `${getTranslation('validation.minLength', undefined, 'Minimum ')}${getTranslation('validation.symbols', { count: displayNameMinLength }, `${displayNameMinLength} symbols`)}`,
       })
-      .max(usernameMaxLength, {
-        message: `${getTranslation('validation.maxLength', undefined, 'Maximum ')}${getTranslation('validation.symbols', { count: usernameMaxLength }, `${usernameMaxLength} symbols`)}`,
-      })
-      .regex(/^[a-z0-9_.]+$/, {
-        message: getTranslation(
-          'validation.no_symbols',
-          undefined,
-          "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
-        ),
+      .max(displayNameMaxLength, {
+        message: `${getTranslation('validation.maxLength', undefined, 'Maximum ')}${getTranslation('validation.symbols', { count: displayNameMaxLength }, `${displayNameMaxLength} symbols`)}`,
       }),
     email: z
       .string({

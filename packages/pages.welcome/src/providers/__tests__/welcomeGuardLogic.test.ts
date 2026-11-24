@@ -6,7 +6,7 @@ describe('resolveWelcomeGuardAction', () => {
     expect(
       resolveWelcomeGuardAction({
         onboardingStage: 'completed',
-        pathname: '/welcome/user',
+        pathname: '/welcome/role',
         hasInvite: false,
       }),
     ).toEqual({ type: 'navigate', to: '/' });
@@ -63,7 +63,7 @@ describe('resolveWelcomeGuardAction', () => {
         pathname: '/welcome/email',
         hasInvite: false,
       }),
-    ).toEqual({ type: 'navigate', to: '/welcome/user' });
+    ).toEqual({ type: 'navigate', to: '/welcome/role' });
 
     expect(
       resolveWelcomeGuardAction({
@@ -88,7 +88,7 @@ describe('resolveWelcomeGuardAction', () => {
     expect(
       resolveWelcomeGuardAction({
         onboardingStage: 'email-confirmation',
-        pathname: '/welcome/user',
+        pathname: '/welcome/role',
         hasInvite: false,
       }),
     ).toEqual({ type: 'navigate', to: '/welcome/email' });

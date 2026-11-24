@@ -78,21 +78,20 @@ UI-прогресс и аналитика режутся по `invite_progress_t
 `/signup` без invite в URL **не** входит в воронку (старый `invite.pending_code`
 не считается входом).
 
-#### Signup (5 шагов)
+#### Signup (4 шага)
 
-Регистрация с нуля — основной путь registration-first. Выбор роли не показывается: на шаге имени сразу сохраняется роль ученика.
+Регистрация с нуля — основной путь registration-first. Имя спрашивается на `/signup`. Выбор роли не показывается: у v2 после почты стадия уже `default-layout`, фронт сохраняет роль ученика и переходит на `training`. Старые аккаунты, застрявшие на `user-information`, пропускают и `default-layout`, и `training`.
 
-| #   | Шаг (`invite_progress_step`) | Экран                   | События                                                                                     |
-| --- | ---------------------------- | ----------------------- | ------------------------------------------------------------------------------------------- |
-| 1   | `invite_open`                | `/invite/{code}` unauth | `student_invite_page_viewed`, `student_invite_opened` (`student_authenticated: false`)      |
-| 2   | `auth`                       | `/signup`               | `student_invite_signup_clicked`, `auth_signup_viewed` / `submit` / `succeeded`              |
-| 3   | `email`                      | `/welcome/email`        | `email_confirmation_viewed`, `onboarding_step_viewed` (`email_confirmation`)                |
-| 4   | `welcome_user`               | `/welcome/user`         | `onboarding_step_viewed` (`profile`); вместе с именем сохраняется `default_layout: student` |
-| 5   | `accept`                     | `/invite/{code}` auth   | `student_invite_accept_submit` → `invite_accepted_success`                                  |
+| #   | Шаг (`invite_progress_step`) | Экран                   | События                                                                                |
+| --- | ---------------------------- | ----------------------- | -------------------------------------------------------------------------------------- |
+| 1   | `invite_open`                | `/invite/{code}` unauth | `student_invite_page_viewed`, `student_invite_opened` (`student_authenticated: false`) |
+| 2   | `auth`                       | `/signup`               | `student_invite_signup_clicked`, `auth_signup_viewed` / `submit` / `succeeded`         |
+| 3   | `email`                      | `/welcome/email`        | `email_confirmation_viewed`, `onboarding_step_viewed` (`email_confirmation`)           |
+| 4   | `accept`                     | `/invite/{code}` auth   | `student_invite_accept_submit` → `invite_accepted_success`                             |
 
-На шаге 5 полоска в UI **скрыта** (остался один клик), но в событиях accept
+На шаге 4 полоска в UI **скрыта** (остался один клик), но в событиях accept
 остаются `invite_progress_track: signup`, `invite_progress_step: accept`,
-`invite_progress_current: 5`, `invite_progress_total: 5`.
+`invite_progress_current: 4`, `invite_progress_total: 4`.
 
 #### Signin (3 шага)
 
@@ -153,14 +152,14 @@ Funnel (три трека ученика):
 ```
 copy
 → open (invite_open)
-   ├ signup:  auth → email → welcome_user → accept
+   ├ signup:  auth → email → accept
    ├ signin:  auth → accept
    └ already_auth: accept_direct
 → classroom created
 ```
 
 Последняя ступень всегда = `invite_accepted_success` (`classroom_created: true`).
-Сегментировать по `invite_progress_track`. Не смешивать signup (5) и signin (3)
+Сегментировать по `invite_progress_track`. Не смешивать signup (4) и signin (3)
 в одной воронке без фильтра.
 
 ## Список событий
@@ -250,7 +249,7 @@ async function createInviteTrackingId(token: string): Promise<string> {
 - если токена нет — поле `invite_tracking_id` не включается в payload, а не отправляется как `null`/`undefined`;
 - поле проходит через цепочку: copy (`student_invite_message_copied` / `student_invite_link_copied`) → open (`student_invite_page_viewed`, `student_invite_opened`) → signup/login click → auth submit/success (`auth_signup_*` / `auth_signin_*`) → onboarding (`email_confirmation_viewed`, `onboarding_step_viewed`) → `student_invite_accept_submit` → `invite_accepted_success` / `student_invite_accept_failed`;
 - события воронки ученика дополнительно несут `invite_progress_track`, `invite_progress_step`, `invite_progress_current`, `invite_progress_total` (и `has_invite: true`, если шаг внутри invite-flow). Вне invite-flow эти поля **не** отправляются;
-- в Umami **нельзя** отправлять: email, пароль, username, имена, raw invite token, classroom ID, user/tutor ID, raw backend error, stack, полный URL приглашения.
+- в Umami **нельзя** отправлять: email, пароль, display_name, имена, raw invite token, classroom ID, user/tutor ID, raw backend error, stack, полный URL приглашения.
 
 ### Ограничение точности связывания
 
@@ -265,7 +264,7 @@ backend в будущем изменит формат `code`), точное св
 
 Все метрики считаются по `invite_flow_version: 2` отдельно от v1 (для сравнения
 до/после релиза — см. дату в таблице выше). Студенческие конверсии **резать
-по `invite_progress_track`**, иначе signup (5 шагов) смешается с signin (3) и
+по `invite_progress_track`**, иначе signup (4 шага) смешается с signin (3) и
 already_auth (1).
 
 ### Репетитор
@@ -288,14 +287,13 @@ already_auth (1).
 
 ### Signup-трек (`invite_progress_track: signup`)
 
-| Метрика                        | Формула                                                                                     |
-| ------------------------------ | ------------------------------------------------------------------------------------------- |
-| **Signup started → succeeded** | `auth_signup_succeeded` (has_invite) / `student_invite_signup_clicked`                      |
-| **Signup → Email**             | `email_confirmation_viewed` (has_invite) / `auth_signup_succeeded` (has_invite)             |
-| **Email → Profile**            | `onboarding_step_viewed` (`profile`, has_invite) / `email_confirmation_viewed` (has_invite) |
-| **Profile → Accept submit**    | `student_invite_accept_submit` (track=signup) / `onboarding_step_viewed` (`profile`)        |
-| **Signup started → Classroom** | `invite_accepted_success` (track=signup) / `student_invite_signup_clicked`                  |
-| **Invite → Signup Classroom**  | `invite_accepted_success` (track=signup) / unauth `page_viewed`                             |
+| Метрика                        | Формула                                                                                  |
+| ------------------------------ | ---------------------------------------------------------------------------------------- |
+| **Signup started → succeeded** | `auth_signup_succeeded` (has_invite) / `student_invite_signup_clicked`                   |
+| **Signup → Email**             | `email_confirmation_viewed` (has_invite) / `auth_signup_succeeded` (has_invite)          |
+| **Email → Accept submit**      | `student_invite_accept_submit` (track=signup) / `email_confirmation_viewed` (has_invite) |
+| **Signup started → Classroom** | `invite_accepted_success` (track=signup) / `student_invite_signup_clicked`               |
+| **Invite → Signup Classroom**  | `invite_accepted_success` (track=signup) / unauth `page_viewed`                          |
 
 Drop-off по шагу: доля сессий, у которых `invite_progress_step` остановился на N
 и нет следующего события с большим `invite_progress_current`.
@@ -328,7 +326,7 @@ Drop-off по шагу: доля сессий, у которых `invite_progres
 | **Переход к первому занятию D14** | `lesson_created_success` или `lesson_joined` (≤14 дней после success) / `invite_accepted_success` | сравнение v1 vs v2                                        |
 
 Медианное время (timestamps Umami + `invite_tracking_id`), **внутри одного track**:
-copy → open; open → auth; для signup ещё auth → email → profile → accept;
+copy → open; open → auth; для signup ещё auth → email → accept;
 для signin auth → accept; copy → classroom.
 
 Для гипотезы registration-first сравнивать **до/после 2026-08-21**:

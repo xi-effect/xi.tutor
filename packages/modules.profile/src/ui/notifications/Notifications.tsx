@@ -219,7 +219,7 @@ export const Notifications = () => {
                 .filter(({ condition }) => condition)
                 .map(({ text, color }) => (
                   <span key={text} className={`${color} text-xs-base sm:text-s-base leading-4`}>
-                    {text || user?.username}
+                    {text || user?.display_name}
                   </span>
                 ))}
             </div>

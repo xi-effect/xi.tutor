@@ -11,11 +11,11 @@ import {
 const students: TutorStudentSchemaMarshal[] = [
   {
     tutorship: { student_id: 7, created_at: '2026-01-01', active_classroom_count: 1 },
-    user: { username: 'anna', display_name: 'Анна' },
+    user: { display_name: 'Анна' },
   },
   {
     tutorship: { student_id: 8, created_at: '2026-01-02', active_classroom_count: 0 },
-    user: { username: 'boris', display_name: null },
+    user: { display_name: null },
   },
 ];
 
@@ -74,7 +74,7 @@ const pageOf = (count: number, createdAt: string): TutorStudentSchemaMarshal[] =
       created_at: createdAt,
       active_classroom_count: 0,
     },
-    user: { username: `user-${index}`, display_name: null },
+    user: { display_name: null },
   }));
 
 describe('nextStudentsPageCursor', () => {

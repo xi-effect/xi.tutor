@@ -73,8 +73,6 @@ export const Content = ({ classroom }: ContentProps) => {
     if (classroom.kind !== 'individual') return '';
     const displayName = classroom.student?.display_name?.trim();
     if (displayName) return displayName;
-    const username = classroom.student?.username?.trim();
-    if (username) return username;
     const firstName = classroom.student?.first_name?.trim() ?? '';
     const lastName = classroom.student?.last_name?.trim() ?? '';
     return `${firstName} ${lastName}`.trim();

@@ -15,34 +15,28 @@ describe('resolveInviteProgressStep', () => {
     expect(resolveInviteProgressStep('/signup/')).toBe('auth');
     expect(resolveInviteProgressStep('/signin')).toBe('auth');
     expect(resolveInviteProgressStep('/welcome/email')).toBe('email');
-    expect(resolveInviteProgressStep('/welcome/user')).toBe('welcome_user');
     expect(resolveInviteProgressStep('/welcome/role')).toBe('welcome_role');
     expect(resolveInviteProgressStep('/classrooms')).toBeNull();
   });
 });
 
 describe('computeInviteProgress', () => {
-  it('считает remaining для signup-пути из 5 шагов', () => {
+  it('считает remaining для signup-пути из 4 шагов', () => {
     expect(computeInviteProgress('invite_open', 'signup')).toMatchObject({
-      remaining: 5,
-      total: 5,
+      remaining: 4,
+      total: 4,
       current: 1,
     });
     expect(computeInviteProgress('email', 'signup')).toMatchObject({
-      remaining: 3,
-      total: 5,
-      current: 3,
-    });
-    expect(computeInviteProgress('welcome_user', 'signup')).toMatchObject({
       remaining: 2,
-      total: 5,
-      current: 4,
+      total: 4,
+      current: 3,
     });
     expect(computeInviteProgress('welcome_role', 'signup')).toBeNull();
     expect(computeInviteProgress('accept', 'signup')).toMatchObject({
       remaining: 1,
-      total: 5,
-      current: 5,
+      total: 4,
+      current: 4,
     });
   });
 
@@ -74,7 +68,7 @@ describe('getInviteProgress', () => {
     expect(getInviteProgress({ pathname: '/signup' })).toBeNull();
   });
 
-  it('на /welcome/email в invite-flow осталось 3 из 5', () => {
+  it('на /welcome/email в invite-flow осталось 2 из 4', () => {
     vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => (key === 'invite.pending_code' ? 'abc' : null),
@@ -82,8 +76,8 @@ describe('getInviteProgress', () => {
     vi.stubGlobal('sessionStorage', { getItem: () => null });
 
     expect(getInviteProgress({ pathname: '/welcome/email' })).toMatchObject({
-      remaining: 3,
-      total: 5,
+      remaining: 2,
+      total: 4,
     });
   });
 
@@ -103,8 +97,8 @@ describe('getInviteProgress', () => {
     vi.stubGlobal('sessionStorage', { getItem: () => null });
 
     expect(getInviteProgress({ pathname: '/invite/abc', isAuthenticated: false })).toMatchObject({
-      remaining: 5,
-      total: 5,
+      remaining: 4,
+      total: 4,
       current: 1,
     });
   });
@@ -165,7 +159,7 @@ describe('getInviteFunnelMeta', () => {
     vi.restoreAllMocks();
   });
 
-  it('на unauth /invite даёт signup / invite_open / 5 шагов', () => {
+  it('на unauth /invite даёт signup / invite_open / 4 шага', () => {
     vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
     vi.stubGlobal('localStorage', { getItem: () => null });
     vi.stubGlobal('sessionStorage', { getItem: () => null });
@@ -174,7 +168,7 @@ describe('getInviteFunnelMeta', () => {
       invite_progress_track: 'signup',
       invite_progress_step: 'invite_open',
       invite_progress_current: 1,
-      invite_progress_total: 5,
+      invite_progress_total: 4,
     });
   });
 
@@ -191,7 +185,7 @@ describe('getInviteFunnelMeta', () => {
     });
   });
 
-  it('для авторизованного /invite после signup-трека — последний шаг из 5', () => {
+  it('для авторизованного /invite после signup-трека — последний шаг из 4', () => {
     vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => (key === 'invite.pending_code' ? 'abc' : null),
@@ -201,8 +195,8 @@ describe('getInviteFunnelMeta', () => {
     expect(getInviteFunnelMeta({ pathname: '/invite/abc', isAuthenticated: true })).toEqual({
       invite_progress_track: 'signup',
       invite_progress_step: 'accept',
-      invite_progress_current: 5,
-      invite_progress_total: 5,
+      invite_progress_current: 4,
+      invite_progress_total: 4,
     });
   });
 
@@ -221,7 +215,7 @@ describe('getInviteFunnelMeta', () => {
       invite_progress_track: 'signup',
       invite_progress_step: 'auth',
       invite_progress_current: 2,
-      invite_progress_total: 5,
+      invite_progress_total: 4,
     });
   });
 

@@ -1,11 +1,9 @@
 export { ProtectedProvider, WelcomeStageGuard } from './src/providers';
 export { WelcomeContext } from './src/model';
-export { WelcomeUserPage, WelcomeRolePage } from './src/ui';
+export { WelcomeRolePage } from './src/ui';
 export {
   welcomeEn,
   welcomeRu,
-  welcomeUserRu,
-  welcomeUserEn,
   welcomeRoleRu,
   welcomeRoleEn,
   welcomeAboutEn,

@@ -121,11 +121,8 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
               src={`https://api.sovlium.ru/files/users/${user?.id}/avatar.webp`}
               alt="user avatar"
             />
-            <AvatarFallback
-              size="xl"
-              className="bg-background-page flex h-[64px] w-[64px] place-items-center justify-center rounded-[36px]"
-            >
-              <Camera className="fill-icon-secondary" />
+            <AvatarFallback size="xl">
+              <Camera theme="onBrand" />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
@@ -143,9 +140,6 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
       <div className="ml-4 flex flex-col justify-center gap-0.5">
         <span className="text-text-primary text-xl leading-7 font-medium">
           {user?.display_name}
-        </span>
-        <span className="text-text-primary dark:text-text-primary text-[16px] leading-[22px]">
-          {user?.username}
         </span>
       </div>
     </div>

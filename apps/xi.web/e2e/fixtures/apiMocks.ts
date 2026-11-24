@@ -159,7 +159,7 @@ export async function mockSigninFailure(
 }
 
 export async function mockSignupSuccess(page: Page) {
-  await page.route(`${BACKEND}/api/public/user-service/signup/`, async (route) => {
+  await page.route(`${BACKEND}/api/public/user-service/v2/signup/`, async (route) => {
     if (route.request().method() === 'OPTIONS') {
       await fulfillCorsPreflight(route);
       return;
@@ -169,7 +169,7 @@ export async function mockSignupSuccess(page: Page) {
 }
 
 export async function mockSignupFailure(page: Page, detail: string, status = 400) {
-  await page.route(`${BACKEND}/api/public/user-service/signup/`, async (route) => {
+  await page.route(`${BACKEND}/api/public/user-service/v2/signup/`, async (route) => {
     if (route.request().method() === 'OPTIONS') {
       await fulfillCorsPreflight(route);
       return;

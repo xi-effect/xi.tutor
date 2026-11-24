@@ -6,7 +6,6 @@ const user = {
   id: 42,
   default_layout: 'tutor',
   onboarding_stage: 'done',
-  username: 'ivan',
   display_name: 'Иван',
 } as UserData;
 

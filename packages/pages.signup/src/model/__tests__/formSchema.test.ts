@@ -5,7 +5,7 @@ const t = (key: string) => key;
 const schema = createFormSchema(t);
 
 const valid = {
-  username: 'ivan_petrov',
+  display_name: 'Иван Петров',
   email: 'ivan@example.com',
   password: 'secret1',
   consent: true,
@@ -16,12 +16,13 @@ describe('createFormSchema (signup)', () => {
     expect(schema.safeParse(valid).success).toBe(true);
   });
 
-  it('требует username и ограничивает длину/символы', () => {
-    expect(schema.safeParse({ ...valid, username: '' }).success).toBe(false);
-    expect(schema.safeParse({ ...valid, username: 'ab' }).success).toBe(false);
-    expect(schema.safeParse({ ...valid, username: 'Ivan' }).success).toBe(false);
-    expect(schema.safeParse({ ...valid, username: 'ivan-petrov' }).success).toBe(false);
-    expect(schema.safeParse({ ...valid, username: 'a'.repeat(31) }).success).toBe(false);
+  it('требует display_name от 2 до 30 символов и обрезает пробелы', () => {
+    expect(schema.safeParse({ ...valid, display_name: '' }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, display_name: '  ' }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, display_name: 'И' }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, display_name: 'a'.repeat(31) }).success).toBe(false);
+    const parsed = schema.parse({ ...valid, display_name: '  Иван  ' });
+    expect(parsed.display_name).toBe('Иван');
   });
 
   it('валидирует email', () => {

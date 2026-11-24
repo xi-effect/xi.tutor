@@ -51,7 +51,7 @@ const { store, status } = useYjsStore({
 
 Статусы: `loading` | `synced-remote` | `offline`
 
-Автоматически берёт `display_name` / `username` из `useCurrentUser()`.
+Автоматически берёт `display_name` из `useCurrentUser()`.
 
 ## CSS
 

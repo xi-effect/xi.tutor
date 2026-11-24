@@ -15,13 +15,13 @@ test.describe('Signup', () => {
     await mockUnauthenticatedSession(page);
   });
 
-  test('показывает клиентскую валидацию username', async ({ page }) => {
+  test('показывает клиентскую валидацию имени', async ({ page }) => {
     await page.goto('/signup');
     await expect(page.getByRole('heading', { name: 'Регистрация' })).toBeVisible();
 
-    const username = page.getByLabel('Имя пользователя');
-    await username.fill('ab');
-    await username.blur();
+    const displayName = page.getByLabel('Как вас зовут?');
+    await displayName.fill('А');
+    await displayName.blur();
 
     await expect(page.getByText(/Минимум/)).toBeVisible();
   });
@@ -29,7 +29,7 @@ test.describe('Signup', () => {
   test('показывает ошибку, если нет consent', async ({ page }) => {
     await page.goto('/signup');
     await fillSignupForm(page, {
-      username: 'valid_user',
+      display_name: 'Иван',
       email: 'valid@example.com',
       password: 'secret1',
     });
@@ -50,12 +50,12 @@ test.describe('Signup', () => {
     ).toBeHidden();
   });
 
-  test('показывает ошибку, если username занят', async ({ page }) => {
-    await mockSignupFailure(page, 'Username already registered');
+  test('показывает ошибку, если почта занята', async ({ page }) => {
+    await mockSignupFailure(page, 'Email already in use', 409);
     await page.goto('/signup');
 
     await fillSignupForm(page, {
-      username: 'taken_user',
+      display_name: 'Иван',
       email: 'new@example.com',
       password: 'secret1',
     });
@@ -65,7 +65,7 @@ test.describe('Signup', () => {
     await expect(
       page
         .locator('[id$="-form-item-message"]')
-        .filter({ hasText: 'Такое имя пользователя уже занято' }),
+        .filter({ hasText: 'Аккаунт с такой почтой уже зарегистрирован' }),
     ).toBeVisible();
   });
 
@@ -80,7 +80,7 @@ test.describe('Signup', () => {
 
     await page.goto('/signup');
     await fillSignupForm(page, {
-      username: 'fresh_user',
+      display_name: 'Иван',
       email: 'fresh@example.com',
       password: 'secret1',
     });

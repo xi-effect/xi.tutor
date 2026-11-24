@@ -1,32 +1,76 @@
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { useCurrentUser, useOnboardingTransition, useUpdateProfile } from 'common.services';
+import {
+  useCurrentUser,
+  useOnboardingTransition,
+  useSkipRoleOnboardingStage,
+  useUpdateProfile,
+} from 'common.services';
 import { RoleT } from 'common.types';
 import {
+  getPendingInviteCode,
   resolveOnboardingAnalyticsRole,
   trackOnboardingRoleSelected,
-  trackOnboardingStepBack,
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
 } from 'common.utils';
 import { schedulePostOnboardingNavigation } from './postOnboardingNavigation';
-import { runWelcomeRoleBack, runWelcomeRoleForward } from './welcomeRoleSubmitLogic';
+import {
+  roleAdvanceIncludesDefaultLayout,
+  runStudentInviteRoleSkip,
+  runWelcomeRoleForward,
+  shouldSkipRoleForStudentInvite,
+} from './welcomeRoleSubmitLogic';
 
 export const useWelcomeRoleForm = () => {
   const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { invite?: string };
+  const search = useSearch({ strict: false }) as { invite?: string; redirect?: string };
   const { data: user } = useCurrentUser();
-
   const { updateProfile } = useUpdateProfile();
-
-  const { transitionStage: transitionStageBack } = useOnboardingTransition(
-    'user-information',
-    'backwards',
-  );
-
   const { transitionStage: transitionStageForward } = useOnboardingTransition(
     'training',
     'forwards',
   );
+  const { skipRoleStage } = useSkipRoleOnboardingStage();
+  const inviteCode = getPendingInviteCode(search);
+  const onboardingStage = user?.onboarding_stage ?? undefined;
+  const shouldSkipRole = shouldSkipRoleForStudentInvite(onboardingStage, inviteCode);
+  const advancePastRole = () =>
+    roleAdvanceIncludesDefaultLayout(onboardingStage)
+      ? skipRoleStage.mutateAsync()
+      : transitionStageForward.mutateAsync();
+  const [skipFailed, setSkipFailed] = useState(false);
+  const skipStartedRef = useRef(false);
+
+  const navigateAfterWelcome = (nextInvite?: string) => {
+    schedulePostOnboardingNavigation(nextInvite, (options) => {
+      if (options.to === '/invite/$inviteId') {
+        void navigate({ to: options.to, params: options.params });
+        return;
+      }
+      void navigate({ to: options.to });
+    });
+  };
+
+  useEffect(() => {
+    if (!shouldSkipRole || skipStartedRef.current) return;
+    skipStartedRef.current = true;
+
+    void runStudentInviteRoleSkip({
+      userId: user?.id,
+      onboardingStage,
+      updateProfile: (payload) => updateProfile.mutateAsync(payload),
+      transitionForward: advancePastRole,
+      trackRoleSelected: trackOnboardingRoleSelected,
+      trackFailed: trackOnboardingStepFailed,
+      trackCompleted: trackOnboardingStepCompleted,
+      navigateAfterWelcome: () => navigateAfterWelcome(inviteCode),
+    }).then((result) => {
+      if (result !== 'ok') setSkipFailed(true);
+    });
+    // Пропуск запускается один раз, когда стадия и приглашение уже известны.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldSkipRole]);
 
   const onForwards = async (role: RoleT) => {
     const userRole = resolveOnboardingAnalyticsRole(role);
@@ -36,46 +80,24 @@ export const useWelcomeRoleForm = () => {
       userId: user?.id,
       userRole,
       trackRoleSelected: trackOnboardingRoleSelected,
-      onboardingStage: user?.onboarding_stage ?? undefined,
+      onboardingStage,
       updateProfile: (payload) => updateProfile.mutateAsync(payload),
-      transitionForward: () => transitionStageForward.mutateAsync(),
+      transitionForward: advancePastRole,
       trackFailed: trackOnboardingStepFailed,
       trackCompleted: trackOnboardingStepCompleted,
       navigateAfterRole: (nextSearch) => {
-        schedulePostOnboardingNavigation(nextSearch.invite, (options) => {
-          if (options.to === '/invite/$inviteId') {
-            void navigate({ to: options.to, params: options.params });
-            return;
-          }
-          void navigate({ to: options.to });
-        });
-      },
-      search,
-    });
-  };
-
-  const onBackwards = async () => {
-    const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
-
-    await runWelcomeRoleBack({
-      userRole,
-      onboardingStage: user?.onboarding_stage ?? undefined,
-      transitionBack: () => transitionStageBack.mutateAsync(),
-      trackBack: trackOnboardingStepBack,
-      trackFailed: trackOnboardingStepFailed,
-      navigateToUser: (nextSearch) => {
-        navigate({ to: '/welcome/user', search: nextSearch });
+        navigateAfterWelcome(nextSearch.invite);
       },
       search,
     });
   };
 
   const isLoading =
-    updateProfile.isPending || transitionStageForward.isPending || transitionStageBack.isPending;
+    updateProfile.isPending || transitionStageForward.isPending || skipRoleStage.isPending;
 
   return {
     onForwards,
-    onBackwards,
     isLoading,
+    isSkippingInvite: shouldSkipRole && !skipFailed,
   };
 };

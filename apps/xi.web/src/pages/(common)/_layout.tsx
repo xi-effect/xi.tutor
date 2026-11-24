@@ -33,7 +33,10 @@ const ProtectedLayout = () => {
       stage !== 'training' &&
       Object.prototype.hasOwnProperty.call(onboardingStageToPath, stage)
     ) {
-      navigate({ to: onboardingStageToPath[stage as OnboardingStageT] });
+      navigate({
+        to: onboardingStageToPath[stage as OnboardingStageT],
+        search: (prev) => prev,
+      });
     }
   }, [isInviteRoute, navigate, user?.onboarding_stage]);
 

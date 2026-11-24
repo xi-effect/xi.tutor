@@ -139,12 +139,10 @@ export function useYjsStore({
   const userData = useMemo(() => {
     const id = currentUser?.id;
     const name =
-      currentUser?.display_name ||
-      currentUser?.username ||
-      i18n.t('status.participant', { ns: 'editor' });
+      currentUser?.display_name?.trim() || i18n.t('status.participant', { ns: 'editor' });
     const idForColor = currentUser?.id?.toString() ?? 'anonymous';
     return { id, name, color: generateUserColor(idForColor) };
-  }, [currentUser?.id, currentUser?.display_name, currentUser?.username]);
+  }, [currentUser?.id, currentUser?.display_name]);
 
   /* ==========================================================
    * 4. Extensions — мемоизированы, стабильная ссылка
