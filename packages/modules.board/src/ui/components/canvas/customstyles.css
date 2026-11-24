@@ -496,3 +496,14 @@ body {
   overflow: visible;
   border-radius: 0;
 }
+
+/*
+ * После очистки доски Radix не всегда снимает оверлей: выходная анимация
+ * обрывается перерисовкой, слой остаётся fixed inset-0 с pointer-events: auto
+ * и прозрачностью 0. Inline-стиль React перебивает обычный pointer-events,
+ * поэтому запрет только с !important. Закрытый полноэкранный слой не должен
+ * ловить ни клики, ни колесо (зум).
+ */
+.fixed.inset-0[data-state='closed'] {
+  pointer-events: none !important;
+}

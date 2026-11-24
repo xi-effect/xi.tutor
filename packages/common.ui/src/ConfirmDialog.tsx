@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { Modal, ModalBody, ModalContent, ModalDescription, ModalTitle } from '@xipkg/modal';
 import { ModalCloseIcon } from './ModalCloseIcon';
@@ -17,6 +17,11 @@ const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
   document.body.style.pointerEvents = '';
   document.body.removeAttribute('data-scroll-locked');
+  for (const className of [...document.body.classList]) {
+    if (className.startsWith('block-interactivity-')) {
+      document.body.classList.remove(className);
+    }
+  }
 };
 
 export type ConfirmDialogProps = {
@@ -42,16 +47,44 @@ export const ConfirmDialog = ({
   isPending = false,
   confirmVariant = 'error',
 }: ConfirmDialogProps) => {
+  const wasOpenRef = useRef(false);
+  const onConfirmRef = useRef(onConfirm);
+  const [portalKey, setPortalKey] = useState(0);
+  onConfirmRef.current = onConfirm;
+
+  useEffect(() => {
+    if (open) {
+      wasOpenRef.current = true;
+      return;
+    }
+    if (!wasOpenRef.current) return;
+
+    // Radix снимает слой после клика и может вернуть pointer-events: none,
+    // если меню уже заблокировало body до открытия этой модалки.
+    const unlockSoon = window.setTimeout(cleanupBodyScrollLock, 0);
+    const unlockAfterExit = window.setTimeout(cleanupBodyScrollLock, 300);
+    return () => {
+      window.clearTimeout(unlockSoon);
+      window.clearTimeout(unlockAfterExit);
+    };
+  }, [open]);
+
   useEffect(() => cleanupBodyScrollLock, []);
 
   const handleConfirm = () => {
     onOpenChange(false);
-    cleanupBodyScrollLock();
-    onConfirm();
+    // Новый ключ сразу размонтирует портал. Иначе выходная анимация зависает,
+    // когда очистка доски перерисовывает страницу, и невидимый оверлей ловит клики.
+    setPortalKey((key) => key + 1);
+    window.setTimeout(() => {
+      cleanupBodyScrollLock();
+      onConfirmRef.current();
+      window.requestAnimationFrame(cleanupBodyScrollLock);
+    }, 0);
   };
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange}>
+    <Modal key={portalKey} open={open} onOpenChange={onOpenChange}>
       <ModalContent
         className={modalContentClass}
         onCloseAutoFocus={(event) => {

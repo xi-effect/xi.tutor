@@ -1,5 +1,37 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeRecordForYjsPersistence } from '../yjsStoreRecords';
+import {
+  normalizeRecordForYjsPersistence,
+  shouldKeepBoardDocumentRemovals,
+} from '../yjsStoreRecords';
+
+describe('shouldKeepBoardDocumentRemovals', () => {
+  it('сохраняет очистку доски, пока редактор смонтирован', () => {
+    expect(
+      shouldKeepBoardDocumentRemovals({ reason: 'change', removedCount: 40, liveCount: 2 }),
+    ).toBe(true);
+    expect(
+      shouldKeepBoardDocumentRemovals({ reason: 'change', removedCount: 10, liveCount: 0 }),
+    ).toBe(true);
+  });
+
+  it('отбрасывает пачку удалений при размонтировании редактора', () => {
+    expect(
+      shouldKeepBoardDocumentRemovals({ reason: 'unmount', removedCount: 40, liveCount: 2 }),
+    ).toBe(false);
+    expect(
+      shouldKeepBoardDocumentRemovals({ reason: 'unmount', removedCount: 3, liveCount: 0 }),
+    ).toBe(false);
+  });
+
+  it('сохраняет точечное удаление даже в flush размонтирования', () => {
+    expect(
+      shouldKeepBoardDocumentRemovals({ reason: 'unmount', removedCount: 1, liveCount: 8 }),
+    ).toBe(true);
+    expect(
+      shouldKeepBoardDocumentRemovals({ reason: 'unmount', removedCount: 0, liveCount: 0 }),
+    ).toBe(true);
+  });
+});
 
 describe('normalizeRecordForYjsPersistence', () => {
   it('не трогает запись без src', () => {

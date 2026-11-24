@@ -19,6 +19,7 @@ import {
   getRemainingBoardElements,
   showBoardElementsLimitToast,
 } from '../../../../utils/boardElementLimit';
+import { releaseBoardInteractionLock } from '../../../../utils/releaseBoardInteractionLock';
 
 type BoardSnapshotJson = {
   records?: DrRecord[];
@@ -153,9 +154,11 @@ export const useDropdownActions = () => {
 
       // Удаляем все фигуры
       editor.deleteShapes([...shapeIds]);
+      releaseBoardInteractionLock(editor);
       toast.success(t('toast.boardCleared'));
     } catch (error) {
       console.error('Ошибка при очистке доски:', error);
+      releaseBoardInteractionLock(editor);
       toast.error(t('toast.clearError'));
     }
   };

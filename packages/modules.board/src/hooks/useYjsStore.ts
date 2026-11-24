@@ -49,6 +49,7 @@ import {
   deleteYjsRecordFully,
   isDocumentRecord,
   normalizeRecordForYjsPersistence,
+  shouldKeepBoardDocumentRemovals,
 } from '../utils/yjsStoreRecords';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
@@ -394,17 +395,23 @@ export function useYjsStore({
 
     const unsubs: Array<() => void> = [];
 
-    const flushPendingChanges = () => {
+    const flushPendingChanges = (reason: 'change' | 'unmount' = 'change') => {
       const pending = pendingChangesRef.current;
       if (!pending) return;
 
-      const removed = Object.values(pending.removed).filter((record) =>
-        isDocumentRecord(store, record),
-      );
-      if (removed.length > 0) {
+      if (reason === 'unmount') {
+        const removed = Object.values(pending.removed).filter((record) =>
+          isDocumentRecord(store, record),
+        );
         const live = store.allRecords().filter((record) => isDocumentRecord(store, record)).length;
-        // Размонтирование редактора снимает фигуры пачкой. Это не стирание ластиком.
-        if (live === 0 || removed.length > live * 4) {
+        // Пачка при размонтировании — не очистка доски: её пишет таймер, пока редактор жив.
+        if (
+          !shouldKeepBoardDocumentRemovals({
+            reason,
+            removedCount: removed.length,
+            liveCount: live,
+          })
+        ) {
           for (const record of removed) delete pending.removed[record.id];
         }
       }
@@ -973,14 +980,23 @@ export function useYjsStore({
     yDoc.on('update', onYDocUpdate);
     unsubs.push(() => yDoc.off('update', onYDocUpdate));
 
+    const flushUserEditsThenPersist = () => {
+      if (flushTimeoutRef.current != null) {
+        clearTimeout(flushTimeoutRef.current);
+        flushTimeoutRef.current = null;
+      }
+      // Вкладка ещё жива: очистка доски должна попасть в Y.Doc до перезагрузки.
+      flushPendingChanges('change');
+      flushPersist();
+    };
     const onVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') flushPersist();
+      if (document.visibilityState === 'hidden') flushUserEditsThenPersist();
     };
     document.addEventListener('visibilitychange', onVisibilityChange);
-    window.addEventListener('pagehide', flushPersist);
+    window.addEventListener('pagehide', flushUserEditsThenPersist);
     unsubs.push(() => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
-      window.removeEventListener('pagehide', flushPersist);
+      window.removeEventListener('pagehide', flushUserEditsThenPersist);
       flushPersist();
     });
 
@@ -1024,11 +1040,12 @@ export function useYjsStore({
     return () => {
       // Сначала дописываем pending в Y.Doc — иначе локальные удаления (ластик)
       // остаются только в store и не уходят в Hocuspocus.
+      // Пачку «сняли весь документ» при размонтировании не пишем: это не очистка доски.
       if (flushTimeoutRef.current != null) {
         clearTimeout(flushTimeoutRef.current);
         flushTimeoutRef.current = null;
       }
-      flushPendingChanges();
+      flushPendingChanges('unmount');
 
       unsubs.forEach((fn) => fn());
 

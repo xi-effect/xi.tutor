@@ -14,6 +14,21 @@ export function isDocumentRecord(store: DrStore, record: DrRecord): boolean {
   return store.scopedTypes.document.has(record.typeName);
 }
 
+/**
+ * Размонтирование редактора снимает фигуры пачкой: в Yjs это писать нельзя.
+ * Очистка доски и удаление ластиком приходят, пока редактор смонтирован (`reason: 'change'`),
+ * и должны сохраняться даже если на доске не осталось фигур.
+ */
+export function shouldKeepBoardDocumentRemovals(input: {
+  reason: 'change' | 'unmount';
+  removedCount: number;
+  liveCount: number;
+}): boolean {
+  if (input.reason === 'change' || input.removedCount === 0) return true;
+  const unmountWipe = input.liveCount === 0 || input.removedCount > input.liveCount * 4;
+  return !unmountWipe;
+}
+
 /** Нормализует props.src перед записью в Yjs — контракт в utils/storedFileSrc.ts */
 export function normalizeRecordForYjsPersistence(record: DrRecord): DrRecord {
   const stripped = stripInlineAssetSrc(record);

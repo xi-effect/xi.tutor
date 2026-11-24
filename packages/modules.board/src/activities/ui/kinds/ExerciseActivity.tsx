@@ -2,6 +2,11 @@ import { Button } from '@xipkg/button';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { normalizeExerciseDefinition } from '../../model/bankExercise';
+import {
+  expectsFractionAnswer,
+  readFractionDraft,
+  writeFractionDraft,
+} from '../../model/fractionAnswer';
 import type {
   ActivityAttempt,
   CheckStatus,
@@ -14,6 +19,7 @@ import { ActivityInputField, ActivityTextareaField } from '../activityFields';
 import { useActivityEventGuard } from '../activityHostContext';
 import { ExerciseFigure } from './ExerciseFigure';
 import { ExerciseText } from './ExerciseText';
+import { FractionAnswerInput } from './FractionAnswerInput';
 
 type PlayAccess = {
   canCheck: boolean;
@@ -40,6 +46,43 @@ const textButtonClass = 'text-text-link h-7 px-2 text-xs';
 
 function hintCount(hints: string[], revealed: Record<string, boolean>) {
   return hints.filter((_, index) => revealed[`hint:${index}`]).length;
+}
+
+function AnswerField({
+  answer,
+  answerDisplay,
+  disabled,
+  placeholder,
+  onChange,
+}: {
+  answer: string;
+  answerDisplay: string;
+  disabled: boolean;
+  placeholder: string;
+  onChange: (value: string) => void;
+}) {
+  const draft = expectsFractionAnswer(answerDisplay) ? readFractionDraft(answer) : null;
+  if (draft) {
+    return (
+      <FractionAnswerInput
+        numerator={draft.numerator}
+        denominator={draft.denominator}
+        disabled={disabled}
+        onNumerator={(numerator) => onChange(writeFractionDraft(numerator, draft.denominator))}
+        onDenominator={(denominator) => onChange(writeFractionDraft(draft.numerator, denominator))}
+      />
+    );
+  }
+
+  return (
+    <ActivityInputField
+      value={answer}
+      disabled={disabled}
+      placeholder={placeholder}
+      aria-label={placeholder}
+      onChange={(event) => onChange(event.target.value)}
+    />
+  );
 }
 
 export function ExerciseActivity({
@@ -171,15 +214,15 @@ export function ExerciseActivity({
           status === 'wrong' && 'ring-2 ring-red-600',
         )}
       >
-        <ActivityInputField
-          value={answer}
+        <AnswerField
+          answer={answer}
+          answerDisplay={definition.answerDisplay}
           disabled={interactLocked || checkStatus === 'revealed'}
           placeholder={t('activity.exercise.answerPlaceholder')}
-          aria-label={t('activity.exercise.answerPlaceholder')}
-          onChange={(event) =>
+          onChange={(value) =>
             onAttempt({
               ...attempt,
-              values: { ...attempt.values, answer: event.target.value },
+              values: { ...attempt.values, answer: value },
               revealed: { ...attempt.revealed, answer: false },
             })
           }
