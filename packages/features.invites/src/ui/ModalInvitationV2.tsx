@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -10,8 +10,11 @@ import {
   ModalTrigger,
   ModalCloseButton,
 } from '@xipkg/modal';
+import { Alert, AlertDescription, AlertIcon } from '@xipkg/alert';
 import { Button } from '@xipkg/button';
-import { Copy } from '@xipkg/icons';
+import { Copy, InfoCircle } from '@xipkg/icons';
+import { AnimatePresence, animate, motion, useReducedMotion, type Transition } from 'motion/react';
+import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { Skeleton, modalTitleClass } from 'common.ui';
 import { writeText } from 'common.platform';
 import { toast } from 'sonner';
@@ -26,6 +29,217 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 import { useCurrentInvite } from '../services/useCurrentInvite';
 import { useMarkFirstStepDone } from 'common.services';
+
+type InviteCopyMode = 'link' | 'message';
+
+const inviteHeightTransition: Transition = {
+  type: 'spring',
+  stiffness: 340,
+  damping: 32,
+  mass: 0.85,
+};
+
+const inviteContentTransition: Transition = {
+  duration: 0.22,
+  ease: [0.22, 1, 0.36, 1],
+};
+
+const InviteCopyPreview = ({
+  mode,
+  message,
+  inviteUrl,
+  copyLabel,
+  onCopy,
+}: {
+  mode: InviteCopyMode;
+  message: string;
+  inviteUrl: string;
+  copyLabel: string;
+  onCopy: () => void;
+}) => {
+  const reduceMotion = useReducedMotion();
+  const contentRef = useRef<HTMLButtonElement>(null);
+  const [height, setHeight] = useState<number | 'auto'>('auto');
+  const [animationsEnabled, setAnimationsEnabled] = useState(false);
+
+  useLayoutEffect(() => {
+    const element = contentRef.current;
+    if (!element) return;
+
+    const applyHeight = () => {
+      const next = element.offsetHeight;
+      if (next <= 0) return;
+      setHeight((current) =>
+        typeof current === 'number' && Math.abs(current - next) < 0.5 ? current : next,
+      );
+    };
+
+    applyHeight();
+    const observer = new ResizeObserver(applyHeight);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [mode, message, inviteUrl]);
+
+  useEffect(() => {
+    setAnimationsEnabled(true);
+  }, []);
+
+  return (
+    <motion.div
+      className="overflow-hidden"
+      initial={false}
+      animate={{ height }}
+      transition={reduceMotion || !animationsEnabled ? { duration: 0 } : inviteHeightTransition}
+    >
+      <button
+        ref={contentRef}
+        type="button"
+        onClick={onCopy}
+        aria-label={copyLabel}
+        className="border-border-default hover:border-border-focus hover:bg-background-page focus-visible:ring-ring relative w-full cursor-pointer rounded-lg border bg-transparent p-3 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none"
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div
+            key={mode}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            transition={reduceMotion ? { duration: 0 } : inviteContentTransition}
+          >
+            {mode === 'message' ? (
+              <p className="text-text-primary min-w-0 text-sm break-words whitespace-pre-line">
+                {message}
+              </p>
+            ) : (
+              <p className="text-text-primary min-w-0 text-sm break-all">{inviteUrl}</p>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </button>
+    </motion.div>
+  );
+};
+
+const InviteCopyAction = ({
+  mode,
+  label,
+  disabled,
+  onClick,
+}: {
+  mode: InviteCopyMode;
+  label: string;
+  disabled: boolean;
+  onClick: () => void;
+}) => {
+  const reduceMotion = useReducedMotion();
+  const shellRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const sizerRef = useRef<HTMLSpanElement>(null);
+  const [animationsEnabled, setAnimationsEnabled] = useState(false);
+  const [isSm, setIsSm] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(min-width: 640px)').matches : false,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 640px)');
+    const update = () => setIsSm(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    setAnimationsEnabled(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    const button = buttonRef.current;
+    const sizer = sizerRef.current;
+    const shell = shellRef.current;
+    if (!shell) return;
+    if (!isSm) {
+      shell.style.width = '';
+      return;
+    }
+    if (!button || !sizer) return;
+
+    let animation: ReturnType<typeof animate> | undefined;
+
+    const applyWidth = () => {
+      const labelWidth = sizer.scrollWidth;
+      if (labelWidth <= 0) return;
+
+      const styles = getComputedStyle(button);
+      const padding = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+      const border = parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth);
+      const gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
+      const icon = button.querySelector('svg')?.getBoundingClientRect().width ?? 0;
+      const next = Math.ceil(labelWidth + icon + padding + border + gap);
+      const current = Number.parseFloat(shell.style.width);
+
+      if (!Number.isFinite(current) || reduceMotion || !animationsEnabled) {
+        shell.style.width = `${next}px`;
+        return;
+      }
+      if (Math.abs(current - next) < 0.5) return;
+
+      animation?.stop();
+      animation = animate(shell, { width: next }, inviteHeightTransition);
+    };
+
+    applyWidth();
+    const observer = new ResizeObserver(applyWidth);
+    observer.observe(sizer);
+    return () => {
+      const held = Number.parseFloat(shell.style.width);
+      animation?.stop();
+      if (held > 0) shell.style.width = `${held}px`;
+      observer.disconnect();
+    };
+  }, [label, isSm, reduceMotion, animationsEnabled]);
+
+  return (
+    <div
+      ref={shellRef}
+      className={cn(
+        'order-1 min-w-0 shrink-0 overflow-hidden sm:order-2',
+        isSm ? 'w-max' : 'w-full',
+      )}
+    >
+      <Button
+        ref={buttonRef}
+        type="button"
+        variant="primary"
+        className="relative w-full min-w-0 gap-1.5"
+        onClick={onClick}
+        disabled={disabled}
+      >
+        <Copy size="sm" className="fill-action-primary-text size-4 shrink-0" />
+        <span className="relative min-w-0">
+          <span
+            ref={sizerRef}
+            aria-hidden
+            className="pointer-events-none invisible absolute w-max whitespace-nowrap"
+          >
+            {label}
+          </span>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={mode}
+              initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
+              transition={reduceMotion ? { duration: 0 } : inviteContentTransition}
+              className="block whitespace-nowrap"
+            >
+              {label}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </Button>
+    </div>
+  );
+};
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -76,6 +290,14 @@ export const ModalInvitationV2 = ({
   const markInviteDone = useMarkFirstStepDone('invite');
 
   const [confirmingRefresh, setConfirmingRefresh] = useState(false);
+  const [copyMode, setCopyMode] = useState<InviteCopyMode>('link');
+  const copyModeTabs = useMemo(
+    () => [
+      { id: 'link', label: t('inviteModalV2.switcher.link') },
+      { id: 'message', label: t('inviteModalV2.switcher.message') },
+    ],
+    [t],
+  );
 
   // Модалка смонтирована постоянно (см. использование через children/trigger),
   // поэтому явный refetch на переход open:false -> true подхватывает ссылку,
@@ -241,47 +463,34 @@ export const ModalInvitationV2 = ({
             </div>
           ) : (
             <>
-              <div className="border-border-default flex min-w-0 flex-col gap-3 rounded-lg border p-3">
-                <p className="text-text-primary min-w-0 text-sm break-words whitespace-pre-line">
-                  {message}
-                </p>
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="s"
-                  className="w-full shrink-0 gap-1.5 sm:w-auto sm:self-end"
-                  onClick={handleCopyMessage}
-                  disabled={!hasContent}
-                >
-                  <Copy size="sm" className="fill-action-primary-text size-4" />
-                  {t('inviteModalV2.actions.copyMessage')}
-                </Button>
-              </div>
-
-              <div className="flex min-w-0 items-center gap-3 px-1">
-                <div className="bg-border-default h-px min-w-0 flex-1" />
-                <span className="text-text-secondary shrink-0 text-sm">
-                  {t('inviteModalV2.or')}
-                </span>
-                <div className="bg-border-default h-px min-w-0 flex-1" />
-              </div>
-
-              <div className="border-border-default flex min-w-0 flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center">
-                <span className="text-text-primary min-w-0 flex-1 text-sm break-all">
-                  {inviteUrl}
-                </span>
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="s"
-                  className="w-full shrink-0 gap-1.5 sm:w-auto"
-                  onClick={handleCopyLink}
-                  disabled={!hasContent}
-                >
-                  <Copy size="sm" className="fill-action-primary-text size-4" />
-                  {t('inviteModalV2.actions.copyLink')}
-                </Button>
-              </div>
+              <SwitcherAnimate
+                layoutId="student-invite-copy-mode"
+                tabs={copyModeTabs}
+                activeTab={copyMode}
+                onChange={(tabId) => setCopyMode(tabId === 'message' ? 'message' : 'link')}
+                className="bg-background-subtle h-9 w-full gap-0.5 rounded-[10px] p-1"
+                tabClassName="h-7 flex-1 rounded-lg px-2 py-1 text-sm font-medium data-[state=inactive]:text-text-secondary data-[state=inactive]:hover:text-text-secondary data-[state=active]:text-text-primary data-[state=active]:hover:text-text-primary"
+                indicatorClassName="rounded-lg border-0 bg-background-surface shadow-sm"
+              />
+              <InviteCopyPreview
+                mode={copyMode}
+                message={message}
+                inviteUrl={inviteUrl ?? ''}
+                copyLabel={
+                  copyMode === 'message'
+                    ? t('inviteModalV2.actions.copyMessage')
+                    : t('inviteModalV2.actions.copyLink')
+                }
+                onCopy={copyMode === 'message' ? handleCopyMessage : handleCopyLink}
+              />
+              <Alert variant="success" className="w-full max-w-none items-start gap-3 p-3">
+                <AlertIcon className="mt-0.5">
+                  <InfoCircle className="fill-status-success-text size-5" />
+                </AlertIcon>
+                <AlertDescription className="min-w-0 text-sm leading-5">
+                  {t('inviteModalV2.info.classroomCreated')}
+                </AlertDescription>
+              </Alert>
             </>
           )}
         </ModalBody>
@@ -305,15 +514,27 @@ export const ModalInvitationV2 = ({
               </Button>
             </div>
           ) : showMainFooter ? (
-            <div className="flex w-full">
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
               <Button
-                variant="secondary"
+                type="button"
+                variant="none"
+                className="text-text-link hover:text-text-link order-2 w-full sm:order-1 sm:w-auto"
                 onClick={() => setConfirmingRefresh(true)}
                 disabled={!hasContent || isRefreshing}
                 loading={isRefreshing}
               >
                 {t('inviteModalV2.actions.refreshLink')}
               </Button>
+              <InviteCopyAction
+                mode={copyMode}
+                label={
+                  copyMode === 'message'
+                    ? t('inviteModalV2.actions.copyMessage')
+                    : t('inviteModalV2.actions.copyLink')
+                }
+                disabled={!hasContent}
+                onClick={copyMode === 'message' ? handleCopyMessage : handleCopyLink}
+              />
             </div>
           ) : null}
         </ModalFooter>

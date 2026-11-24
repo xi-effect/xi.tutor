@@ -48,7 +48,13 @@
     "message": {
       "template": "Join sovlium — the platform for online lessons!\n\nThis is where lessons, the shared board and learning materials live. Using it is free for students.\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
     },
-    "or": "or",
+    "switcher": {
+      "link": "Link",
+      "message": "Message"
+    },
+    "info": {
+      "classroomCreated": "After the student accepts the invitation, a classroom is created for them automatically. You'll get a notification."
+    },
     "actions": {
       "copy": "Copy",
       "copyMessage": "Copy message",
