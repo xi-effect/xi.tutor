@@ -24,7 +24,6 @@ export interface UserProfileSchema {
   first_name?: string;
   last_name?: string;
   display_name?: string | null;
-  username?: string;
   email?: string;
   avatar?: string;
 }

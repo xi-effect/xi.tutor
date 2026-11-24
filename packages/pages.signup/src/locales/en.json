@@ -1,7 +1,7 @@
 {
   "register": "Sign Up",
-  "username": "Username",
-  "username_hint": "Lowercase Latin letters, numbers, “_” or “.”",
+  "display_name": "What is your name?",
+  "display_name_hint": "Use your real name",
   "email": "Email",
   "outlook_delivery_warning": "Emails to Outlook may not be delivered",
   "password": "Password",
@@ -16,7 +16,6 @@
     "required": "Please accept the terms to continue"
   },
   "errors": {
-    "username_exists": "This username is already taken",
     "email_exists": "An account with this email already exists",
     "unknown": "Could not create account. Please try again"
   },
@@ -25,7 +24,6 @@
     "minLength": "Minimum ",
     "maxLength": "Maximum ",
     "wrong_format": "Incorrect data format",
-    "no_symbols": "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
     "symbols_one": "{{count}} symbol",
     "symbols_other": "{{count}} symbols"
   }

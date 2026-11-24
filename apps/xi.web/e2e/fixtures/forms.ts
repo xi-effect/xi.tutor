@@ -11,9 +11,9 @@ export async function submitSignin(page: Page) {
 
 export async function fillSignupForm(
   page: Page,
-  data: { username: string; email: string; password: string },
+  data: { display_name: string; email: string; password: string },
 ) {
-  await page.getByLabel('Имя пользователя').fill(data.username);
+  await page.getByLabel('Как вас зовут?').fill(data.display_name);
   await page.getByLabel('Электронная почта').fill(data.email);
   await page.getByLabel('Пароль').fill(data.password);
 }

@@ -8,7 +8,6 @@ enum UserQueryKey {
   Password = 'Password',
   PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
-  UserByUsername = 'UserByUsername',
   UpdateAvatar = 'UpdateAvatar',
   DeleteAvatar = 'DeleteAvatar',
   EmailChange = 'EmailChange',

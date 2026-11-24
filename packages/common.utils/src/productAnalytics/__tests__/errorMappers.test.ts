@@ -26,8 +26,8 @@ describe('getHttpStatusGroup', () => {
 });
 
 describe('mapSignupError', () => {
-  it('мапит username/email already', () => {
-    expect(mapSignupError(httpError(400, 'Username already registered'))).toBe('username_exists');
+  it('мапит email already', () => {
+    expect(mapSignupError(httpError(409, 'Email already in use'))).toBe('email_exists');
     expect(mapSignupError(httpError(400, 'Email already registered'))).toBe('email_exists');
     expect(mapSignupError(httpError(400, 'Email is already in use'))).toBe('email_exists');
   });
@@ -68,8 +68,8 @@ describe('mapSignupValidationErrors', () => {
       reason: 'terms_not_accepted',
       field: 'terms',
     });
-    expect(mapSignupValidationErrors({ username: { type: 'too_small' } })).toEqual({
-      failed_fields: ['username'],
+    expect(mapSignupValidationErrors({ display_name: { type: 'too_small' } })).toEqual({
+      failed_fields: ['display_name'],
       reason: 'required_field',
       field: 'name',
     });

@@ -21,6 +21,7 @@ import {
   trackProductEvent,
 } from 'common.utils';
 
+import type { SignupData } from 'common.types';
 import { FormData } from '../model/formSchema';
 import {
   applySignupSuccessSideEffects,
@@ -76,7 +77,13 @@ export const useSignupForm = () => {
       has_invite: hasInvite,
     });
 
-    mutate(data, {
+    const payload: SignupData = {
+      display_name: data.display_name.trim(),
+      email: data.email,
+      password: data.password,
+    };
+
+    mutate(payload, {
       onSuccess: () => {
         setIsSubmitting(false);
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_SUCCEEDED, {

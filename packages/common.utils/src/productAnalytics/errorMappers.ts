@@ -52,20 +52,12 @@ export function mapSignupError(error: unknown): SignupFailureReason {
   const status = err.response?.status;
   const detail = getDetailString(error).toLowerCase();
 
-  if (detail.includes('username already')) {
-    return 'username_exists';
-  }
-
   if (
     detail.includes('email already') ||
-    (detail.includes('email') && detail.includes('already'))
+    (detail.includes('email') && detail.includes('already')) ||
+    detail.includes('already in use')
   ) {
     return 'email_exists';
-  }
-
-  // Fallback для старых формулировок backend
-  if (detail.includes('already in use')) {
-    return detail.includes('username') ? 'username_exists' : 'email_exists';
   }
 
   if (status === 429) return 'rate_limited';
@@ -116,7 +108,7 @@ function asFieldError(value: unknown): FieldErrorLike | undefined {
 }
 
 const SIGNUP_FIELD_TO_ANALYTICS: Record<string, SignupValidationFailedField> = {
-  username: 'username',
+  display_name: 'display_name',
   email: 'email',
   password: 'password',
   consent: 'terms',
@@ -142,7 +134,7 @@ export function mapSignupValidationErrors(fieldErrors: Partial<Record<string, un
   const fieldError = field ? asFieldError(fieldErrors[field]) : undefined;
   const errorType = fieldError?.type ?? '';
 
-  if (field === 'username') {
+  if (field === 'display_name') {
     return { failed_fields: uniqueFailedFields, reason: 'required_field', field: 'name' };
   }
 

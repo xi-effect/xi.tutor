@@ -46,7 +46,7 @@ export const EmailPageSuccess = () => {
     });
     const pendingInvite = getPendingInviteCode(search);
     navigate({
-      to: '/welcome/user',
+      to: '/welcome/role',
       search: {
         ...search,
         ...(pendingInvite && !search.invite

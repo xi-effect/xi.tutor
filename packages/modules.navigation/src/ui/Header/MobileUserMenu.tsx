@@ -40,8 +40,7 @@ export const MobileUserMenu = ({
   const { data: user } = useCurrentUser();
   const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
-  const displayName = user?.display_name?.trim() || user?.username || '';
-  const username = user?.username?.trim() || '';
+  const displayName = user?.display_name?.trim() || '';
 
   const [open, setOpen] = useState(false);
 
@@ -70,8 +69,6 @@ export const MobileUserMenu = ({
                 </span>
                 {user?.email ? (
                   <span className="text-text-secondary truncate text-xs">{user.email}</span>
-                ) : username && username !== displayName ? (
-                  <span className="text-text-secondary truncate text-xs">{username}</span>
                 ) : null}
                 <UserPlanBadge />
               </div>

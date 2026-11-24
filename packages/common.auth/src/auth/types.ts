@@ -18,7 +18,6 @@ type SignUpResponse = {
     password_last_changed_at: string;
     allowed_confirmation_resend: string;
     onboarding_stage: string;
-    username: string;
     display_name: string | null;
     theme: string;
     language: string;

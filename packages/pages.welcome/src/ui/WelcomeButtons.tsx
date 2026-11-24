@@ -20,16 +20,18 @@ export const WelcomeButtons = ({
 
   return (
     <menu className="mt-auto flex flex-row gap-6 pt-4">
-      <Button
-        onClick={backButtonHandler}
-        variant="none"
-        className="text-text-primary dark:text-text-primary w-[98px]"
-        type="button"
-        disabled={isLoading}
-        data-umami-event="welcome-back-button"
-      >
-        {t('buttons.back_button')}
-      </Button>
+      {backButtonHandler ? (
+        <Button
+          onClick={backButtonHandler}
+          variant="none"
+          className="text-text-primary dark:text-text-primary w-[98px]"
+          type="button"
+          disabled={isLoading}
+          data-umami-event="welcome-back-button"
+        >
+          {t('buttons.back_button')}
+        </Button>
+      ) : null}
       <Button
         onClick={continueButtonHandler}
         className="w-full"

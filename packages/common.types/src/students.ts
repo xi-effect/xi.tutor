@@ -1,5 +1,4 @@
 export type UserProfileSchema = {
-  username: string;
   display_name: string | null;
 };
 
@@ -16,6 +15,5 @@ export type TutorStudentSchemaMarshal = {
 
 export type GroupStudentsListSchema = {
   user_id: number;
-  username: string;
   display_name: string | null;
 };
