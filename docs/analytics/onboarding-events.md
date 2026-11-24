@@ -6,13 +6,13 @@
 
 ## Шаги (стабильные имена)
 
-| `step`               | Backend `onboarding_stage` | UI                                                            |
-| -------------------- | -------------------------- | ------------------------------------------------------------- |
-| `email_confirmation` | `email-confirmation`       | `/welcome/email`                                              |
-| `profile`            | `user-information`         | экрана нет: имя на `/signup`, стадия ведёт на `/welcome/role` |
-| `role_selection`     | `default-layout`           | `/welcome/role`                                               |
-| `training`           | `training`                 | тур на главной (`OnboardingPopup`)                            |
-| `completed`          | `completed`                | онбординг завершён                                            |
+| `step`               | Backend `onboarding_stage` | UI                                                                                                                                    |
+| -------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `email_confirmation` | `email-confirmation`       | `/welcome/email`                                                                                                                      |
+| `profile`            | `user-information`         | экрана нет. Имя на `/signup`. v2 после почты сразу на `default-layout`. Старые аккаунты на этой стадии тоже открывают `/welcome/role` |
+| `role_selection`     | `default-layout`           | `/welcome/role`                                                                                                                       |
+| `training`           | `training`                 | тур на главной (`OnboardingPopup`)                                                                                                    |
+| `completed`          | `completed`                | онбординг завершён                                                                                                                    |
 
 `step_index` — 1-based позиция в `ONBOARDING_STEPS` (всего 5).
 

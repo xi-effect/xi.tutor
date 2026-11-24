@@ -27,6 +27,21 @@ test.describe('Onboarding', () => {
     await expect(page.getByRole('heading', { name: 'Подтвердите почту' })).toHaveCount(0);
   });
 
+  test('v2 после почты сразу на выборе роли', async ({ page }) => {
+    await mockAuthenticatedSession(
+      page,
+      mockUser({
+        onboarding_stage: 'default-layout',
+        display_name: 'Иван',
+        default_layout: null,
+      }),
+    );
+
+    await page.goto('/welcome/email');
+    await expect(page).toHaveURL(/\/welcome\/role/, { timeout: 15_000 });
+    await expect(welcomeTitle(page, 'Выберите роль')).toBeVisible();
+  });
+
   test('после подтверждения почты /welcome/email открывает следующий шаг', async ({ page }) => {
     await mockAuthenticatedSession(
       page,
@@ -158,7 +173,9 @@ test.describe('Onboarding', () => {
     await expect(page).not.toHaveURL(/\/welcome\//);
   });
 
-  test('роль с invite.pending_code → /invite/$id', async ({ page }) => {
+  test('v2 с приглашением пропускает выбор роли и переходит только на training', async ({
+    page,
+  }) => {
     await mockAuthenticatedSession(
       page,
       mockUser({
@@ -170,14 +187,21 @@ test.describe('Onboarding', () => {
     await mockProfileUpdate(page);
     await mockOnboardingTransition(page);
 
+    const stages: string[] = [];
+    page.on('request', (request) => {
+      const match = request.url().match(/onboarding-stages\/([^/?]+)/);
+      if (request.method() === 'PUT' && match?.[1]) {
+        stages.push(decodeURIComponent(match[1]));
+      }
+    });
+
     await page.addInitScript(() => {
       localStorage.setItem('invite.pending_code', 'invite-e2e-1');
     });
 
     await page.goto('/welcome/role');
-    await expect(welcomeTitle(page, 'Выберите роль')).toBeVisible();
-    await page.getByRole('button', { name: 'Начать работу' }).click();
-
     await expect(page).toHaveURL(/\/invite\/invite-e2e-1/, { timeout: 15_000 });
+    await expect(page).not.toHaveURL(/\/welcome\/role/);
+    expect(stages).toEqual(['training']);
   });
 });

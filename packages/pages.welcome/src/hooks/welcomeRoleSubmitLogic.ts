@@ -24,7 +24,7 @@ export type StudentInviteRoleSkipDeps = {
   userId?: number;
   onboardingStage?: string;
   updateProfile: (payload: { default_layout: 'student' }) => Promise<unknown>;
-  skipRoleStage: () => Promise<unknown>;
+  transitionForward: () => Promise<unknown>;
   trackRoleSelected?: (role: 'student', userId?: number) => void;
   trackFailed: (
     step: 'role_selection',
@@ -62,7 +62,24 @@ export async function runWelcomeRoleForward(
   }
 }
 
-/** Приглашение ученика: роль student и два перехода вперёд, без экрана выбора роли. */
+/**
+ * Приглашение ученика пропускает экран роли и на стадиях `user-information`, и `default-layout`.
+ * v2 после почты уже на `default-layout`. `user-information` остаётся у старых аккаунтов.
+ */
+export function shouldSkipRoleForStudentInvite(
+  stage: string | undefined,
+  inviteCode: string | undefined,
+): boolean {
+  if (!inviteCode) return false;
+  return stage === 'user-information' || stage === 'default-layout';
+}
+
+/** С `user-information` нужны оба перехода. С `default-layout` — только `training`. */
+export function roleAdvanceIncludesDefaultLayout(stage: string | undefined): boolean {
+  return stage === 'user-information';
+}
+
+/** Приглашение ученика: роль student и переход вперёд, без экрана выбора роли. */
 export async function runStudentInviteRoleSkip(
   deps: StudentInviteRoleSkipDeps,
 ): Promise<WelcomeRoleSubmitResult> {
@@ -76,7 +93,7 @@ export async function runStudentInviteRoleSkip(
   deps.trackRoleSelected?.('student', deps.userId);
 
   try {
-    await deps.skipRoleStage();
+    await deps.transitionForward();
     deps.trackCompleted('role_selection', 'student', deps.onboardingStage);
     deps.navigateAfterWelcome();
     return 'ok';

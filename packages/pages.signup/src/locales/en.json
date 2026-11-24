@@ -1,7 +1,7 @@
 {
   "register": "Sign Up",
   "display_name": "What is your name?",
-  "display_name_hint": "Use your real name so others know how to address you",
+  "display_name_hint": "Use your real name",
   "email": "Email",
   "outlook_delivery_warning": "Emails to Outlook may not be delivered",
   "password": "Password",

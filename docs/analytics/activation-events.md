@@ -328,7 +328,7 @@
 }
 ```
 
-Три трека: **signup** (4 шага), **signin** (3 шага), **already_auth** (1 шаг, `accept_direct`). На signup-треке экран выбора роли не показывается: после почты сохраняется роль ученика. Имя собирается на регистрации.
+Три трека: **signup** (4 шага), **signin** (3 шага), **already_auth** (1 шаг, `accept_direct`). На signup-треке экран выбора роли не показывается: у v2 после почты стадия уже `default-layout`, сохраняется роль ученика и делается переход на `training`. Имя собирается на регистрации.
 Формулы drop-off: [`invite-flow-v2.md`](./invite-flow-v2.md#метрики).
 
 `student_invite_signup_clicked` / `student_invite_login_clicked` отправляются по клику на `/invite/$inviteId` (registration-first). Fallback на `SignInPage` остаётся для прямого захода `/signin?redirect=/invite/...` и дедуплицируется через sessionStorage. `invite_tracking_id` считается из `invite.pending_code` / `search.invite` / `redirect`. Обычный `/signin` без invite в URL воронку не помечает.

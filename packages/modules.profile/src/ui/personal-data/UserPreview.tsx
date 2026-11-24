@@ -121,11 +121,8 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
               src={`https://api.sovlium.ru/files/users/${user?.id}/avatar.webp`}
               alt="user avatar"
             />
-            <AvatarFallback
-              size="xl"
-              className="bg-background-page flex h-[64px] w-[64px] place-items-center justify-center rounded-[36px]"
-            >
-              <Camera className="fill-icon-secondary" />
+            <AvatarFallback size="xl">
+              <Camera theme="onBrand" />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

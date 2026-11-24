@@ -1,7 +1,7 @@
 {
   "register": "Регистрация",
   "display_name": "Как вас зовут?",
-  "display_name_hint": "Укажите настоящее имя — так другим будет удобнее к вам обращаться",
+  "display_name_hint": "Укажите настоящее имя",
   "email": "Электронная почта",
   "outlook_delivery_warning": "До почты Outlook письма могут не доходить",
   "password": "Пароль",

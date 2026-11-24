@@ -15,7 +15,12 @@ import {
   trackOnboardingStepFailed,
 } from 'common.utils';
 import { schedulePostOnboardingNavigation } from './postOnboardingNavigation';
-import { runStudentInviteRoleSkip, runWelcomeRoleForward } from './welcomeRoleSubmitLogic';
+import {
+  roleAdvanceIncludesDefaultLayout,
+  runStudentInviteRoleSkip,
+  runWelcomeRoleForward,
+  shouldSkipRoleForStudentInvite,
+} from './welcomeRoleSubmitLogic';
 
 export const useWelcomeRoleForm = () => {
   const navigate = useNavigate();
@@ -28,7 +33,12 @@ export const useWelcomeRoleForm = () => {
   );
   const { skipRoleStage } = useSkipRoleOnboardingStage();
   const inviteCode = getPendingInviteCode(search);
-  const shouldSkipRole = user?.onboarding_stage === 'user-information' && Boolean(inviteCode);
+  const onboardingStage = user?.onboarding_stage ?? undefined;
+  const shouldSkipRole = shouldSkipRoleForStudentInvite(onboardingStage, inviteCode);
+  const advancePastRole = () =>
+    roleAdvanceIncludesDefaultLayout(onboardingStage)
+      ? skipRoleStage.mutateAsync()
+      : transitionStageForward.mutateAsync();
   const [skipFailed, setSkipFailed] = useState(false);
   const skipStartedRef = useRef(false);
 
@@ -48,9 +58,9 @@ export const useWelcomeRoleForm = () => {
 
     void runStudentInviteRoleSkip({
       userId: user?.id,
-      onboardingStage: user?.onboarding_stage ?? undefined,
+      onboardingStage,
       updateProfile: (payload) => updateProfile.mutateAsync(payload),
-      skipRoleStage: () => skipRoleStage.mutateAsync(),
+      transitionForward: advancePastRole,
       trackRoleSelected: trackOnboardingRoleSelected,
       trackFailed: trackOnboardingStepFailed,
       trackCompleted: trackOnboardingStepCompleted,
@@ -64,17 +74,15 @@ export const useWelcomeRoleForm = () => {
 
   const onForwards = async (role: RoleT) => {
     const userRole = resolveOnboardingAnalyticsRole(role);
-    const fromUserInformation = user?.onboarding_stage === 'user-information';
 
     await runWelcomeRoleForward({
       role,
       userId: user?.id,
       userRole,
       trackRoleSelected: trackOnboardingRoleSelected,
-      onboardingStage: user?.onboarding_stage ?? undefined,
+      onboardingStage,
       updateProfile: (payload) => updateProfile.mutateAsync(payload),
-      transitionForward: () =>
-        fromUserInformation ? skipRoleStage.mutateAsync() : transitionStageForward.mutateAsync(),
+      transitionForward: advancePastRole,
       trackFailed: trackOnboardingStepFailed,
       trackCompleted: trackOnboardingStepCompleted,
       navigateAfterRole: (nextSearch) => {
