@@ -5,6 +5,7 @@ import {
   type Editor,
 } from '@ibodr/draw';
 import { EXTRA_LINE_STYLES } from '../../../../shapes/lineStyles/extendedLineStyles';
+import { rememberArrowDash } from '../../../../utils/toolDash';
 
 export const LINE_STYLES = [
   'solid',
@@ -74,6 +75,7 @@ export function applyArrowHeads(
     editor.setStyleForNextShapes(ArrowShapeArrowheadStartStyle, start);
     editor.setStyleForNextShapes(ArrowShapeArrowheadEndStyle, end);
     editor.setStyleForNextShapes(DefaultDashStyle, asDash('solid'));
+    rememberArrowDash('solid');
 
     if (!applyToSelection) {
       editor.selectNone();
@@ -105,6 +107,7 @@ export function applyArrowLineStyle(
 
   editor.run(() => {
     editor.setStyleForNextShapes(DefaultDashStyle, asDash(style));
+    rememberArrowDash(style);
     if (asLine) {
       editor.setStyleForNextShapes(ArrowShapeArrowheadStartStyle, 'none');
       editor.setStyleForNextShapes(ArrowShapeArrowheadEndStyle, 'none');

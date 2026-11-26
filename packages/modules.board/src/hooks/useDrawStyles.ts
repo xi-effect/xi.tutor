@@ -11,6 +11,7 @@ import { BorderColorStyle } from '../shapes/shapeStyles';
 import { useDrawStore } from '../store';
 import type { PenThickness } from '../store/useDrawStore';
 import { TFill, ToolType } from '../types';
+import { applyPenDash } from '../utils/toolDash';
 
 export const useDrawStyles = () => {
   const editor = useEditor();
@@ -31,6 +32,8 @@ export const useDrawStyles = () => {
       if (toolName === 'pen') {
         // Иначе заливка от фигур (semi) остаётся на карандаше и заливает замкнутый штрих.
         editor.setStyleForNextShapes(DefaultFillStyle, 'none');
+        // Пунктир выбранной линии не должен переходить на карандаш.
+        applyPenDash(editor);
       }
 
       if (toolName === 'xi-geo') {

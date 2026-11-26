@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import { track, useEditor } from '@ibodr/draw';
+import { track, useEditor, useValue } from '@ibodr/draw';
 import { cn } from '@xipkg/utils';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
@@ -24,6 +24,28 @@ import { stickers } from '../../../config';
 import { AssetUploadControl } from './AssetUploadControl';
 import { runWithoutHistory } from '../../../utils/runWithoutHistory';
 import { EmbedInsertDialog } from '../../../shapes/embed/EmbedInsertDialog';
+import { ToolLockButton } from './ToolLockButton';
+import { applyRememberedArrowDash } from '../../../utils/toolDash';
+
+const toolbarToolByEditorTool: Record<string, string> = {
+  select: 'select',
+  hand: 'hand',
+  draw: 'pen',
+  text: 'text',
+  'xi-geo': 'geo',
+  'xi-triangle': 'geo',
+  'xi-trapezoid': 'geo',
+  arrow: 'arrow',
+  eraser: 'eraser',
+  laser: 'laser',
+  note: 'sticker',
+  frame: 'frame',
+  emoji: 'emoji',
+  'emoji-sticker': 'emoji-sticker',
+  'coordinate-axes': 'coordinate-axes',
+  'flip-card': 'flip-card',
+  'math-figure': 'geo',
+};
 
 const toolMapping: Record<string, string> = {
   select: 'select',
@@ -133,6 +155,9 @@ export const Navbar = track(({ token }: { token: string }) => {
 
   useHotkeys();
 
+  const currentToolId = useValue('board-current-tool', () => editor.getCurrentToolId(), [editor]);
+  const currentTool = toolbarToolByEditorTool[currentToolId] ?? 'select';
+
   const handleSelectTool = (toolName: string) => {
     editor.selectNone();
     setPlacingComment(false);
@@ -184,33 +209,9 @@ export const Navbar = track(({ token }: { token: string }) => {
     const mappedTool = toolMapping[toolName];
     if (mappedTool) {
       editor.setCurrentTool(mappedTool);
+      if (mappedTool === 'arrow') applyRememberedArrowDash(editor);
     }
   };
-
-  const getCurrentTool = () => {
-    const currentToolId = editor.getCurrentToolId();
-    const reverseMapping: Record<string, string> = {
-      select: 'select',
-      hand: 'hand',
-      draw: 'pen',
-      text: 'text',
-      'xi-geo': 'geo',
-      arrow: 'arrow',
-      eraser: 'eraser',
-      laser: 'laser',
-      note: 'sticker',
-      frame: 'frame',
-      emoji: 'emoji',
-      'emoji-sticker': 'emoji-sticker',
-      'coordinate-axes': 'coordinate-axes',
-      'flip-card': 'flip-card',
-      'math-figure': 'geo',
-    };
-
-    return reverseMapping[currentToolId] || 'select';
-  };
-
-  const currentTool = getCurrentTool();
 
   const renderToolbarItem = (item: NavbarElementT) => {
     const diceOpen = activePopup === 'dice';
@@ -262,6 +263,7 @@ export const Navbar = track(({ token }: { token: string }) => {
             </TooltipTrigger>
             <TooltipContent>
               <p>{item.title}</p>
+              {item.hint ? <p className="mt-1 max-w-56 text-xs opacity-80">{item.hint}</p> : null}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -269,14 +271,24 @@ export const Navbar = track(({ token }: { token: string }) => {
     }
 
     return (
-      <NavbarButton
-        icon={item.icon}
-        title={item.title}
-        isActive={isActive}
-        data-board-tool={item.action}
-        data-umami-event={item.action === 'dice' ? 'board-dice-open' : undefined}
-        onClick={() => handleSelectTool(item.action)}
-      />
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <NavbarButton
+              icon={item.icon}
+              title={item.title}
+              isActive={isActive}
+              data-board-tool={item.action}
+              data-umami-event={item.action === 'dice' ? 'board-dice-open' : undefined}
+              onClick={() => handleSelectTool(item.action)}
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{item.title}</p>
+            {item.hint ? <p className="mt-1 max-w-56 text-xs opacity-80">{item.hint}</p> : null}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   };
 
@@ -325,11 +337,16 @@ export const Navbar = track(({ token }: { token: string }) => {
     />
   );
 
-  const desktopTools = toolbarSlides.map(({ key, node }) => (
-    <div key={key} className="shrink-0">
-      {node}
-    </div>
-  ));
+  const desktopTools = [
+    ...toolbarSlides.map(({ key, node }) => (
+      <div key={key} className="shrink-0">
+        {node}
+      </div>
+    )),
+    <div key="tool-lock" className="shrink-0">
+      <ToolLockButton />
+    </div>,
+  ];
 
   return (
     <BoardToolPortal>
@@ -361,8 +378,11 @@ export const Navbar = track(({ token }: { token: string }) => {
               >
                 {optionsPanel}
                 <div className="hidden items-center gap-1 p-1 sm:flex">{desktopTools}</div>
-                <div className="p-1 sm:hidden">
-                  <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+                <div className="flex items-center gap-1 p-1 sm:hidden">
+                  <div className="min-w-0 flex-1">
+                    <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
+                  </div>
+                  <ToolLockButton />
                 </div>
               </div>
             </div>

@@ -1,9 +1,15 @@
 import { prepareContentUpload } from 'common.services';
 import { nanoid } from 'nanoid';
-import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
+import { Editor, DrAssetId, DrShapeId, type VecLike } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { getOversizedImageMessage, myAssetStore } from './imageStore';
-import { resolveShapeCoordinates } from '../utils';
+import { getRememberedInsertPoint } from '../utils/boardInsertPoint';
+import {
+  fitDisplaySize,
+  isPointInsideViewport,
+  placementAtPoint,
+  resolveShapeCoordinates,
+} from '../utils/resolveShapeCoordinates';
 import { runWithoutHistory } from '../utils/runWithoutHistory';
 import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
 import { toastBoardUploadError } from '../utils/boardUploadError';
@@ -29,6 +35,7 @@ export async function insertImage(
   file: File,
   token: string,
   placement?: InsertImagePlacement,
+  point?: VecLike,
 ) {
   // Клон: временный <input> могут убрать из DOM до чтения File (Safari / первый выбор).
   file = prepareContentUpload(
@@ -78,11 +85,26 @@ export async function insertImage(
   const tempAssetId = `asset:${nanoid()}` as DrAssetId;
   const shapeId = `shape:${nanoid()}` as DrShapeId;
 
+  const viewport = editor.getViewportPageBounds();
+  const fitted = fitDisplaySize(w, h, viewport.w, viewport.h);
+  const requestedPoint = point ?? getRememberedInsertPoint();
+  const explicitPoint =
+    requestedPoint &&
+    isPointInsideViewport(requestedPoint, {
+      x: viewport.x,
+      y: viewport.y,
+      w: viewport.w,
+      h: viewport.h,
+    })
+      ? requestedPoint
+      : null;
   const position = placement
     ? { x: placement.x, y: placement.y }
-    : resolveShapeCoordinates(editor, w, h);
-  const shapeW = placement ? placement.w : w;
-  const shapeH = placement ? placement.h : h;
+    : explicitPoint
+      ? placementAtPoint(explicitPoint, fitted.w, fitted.h)
+      : resolveShapeCoordinates(editor, fitted.w, fitted.h);
+  const shapeW = placement ? placement.w : fitted.w;
+  const shapeH = placement ? placement.h : fitted.h;
 
   editor.createTemporaryAssetPreview(tempAssetId, file);
   editor.createAssets([
@@ -122,8 +144,12 @@ export async function insertImage(
     return;
   }
 
+  editor.setCurrentTool('select');
   editor.setSelectedShapes([shapeId]);
+  const insertedId = shapeId;
   Promise.resolve().then(() => {
+    const bounds = editor.getShapePageBounds(insertedId);
+    if (!bounds || editor.getViewportPageBounds().collides(bounds)) return;
     editor.zoomToSelection({ animation: { duration: 200 } });
   });
 

@@ -22,6 +22,9 @@ export class EmojiStickerTool extends StateNode {
       props: { src },
     });
     this.editor.setSelectedShapes([id]);
+  }
+
+  override onCancel() {
     this.editor.setCurrentTool('select');
   }
 }

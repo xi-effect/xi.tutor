@@ -154,7 +154,7 @@ export function uploadPastedAssetsInBackground(
           id: task.id as DrShapeId,
           type: shape.type,
           props: { ...(shape.props as any), src: newSrc },
-        });
+        } as Parameters<typeof editor.updateShape>[0]);
       });
     }
   };
@@ -206,7 +206,7 @@ function reconcilePasteInlineSources(editor: Editor, tasks: PasteUploadTask[]): 
           id: task.id as DrShapeId,
           type: shape.type,
           props: { ...(shape.props as any), src: fallback },
-        });
+        } as Parameters<typeof editor.updateShape>[0]);
       });
     }
   }

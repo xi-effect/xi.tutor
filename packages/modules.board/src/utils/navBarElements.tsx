@@ -23,6 +23,7 @@ import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/board
 export type NavbarElementT = {
   action: string;
   title: string;
+  hint?: string;
   icon: ReactNode | null;
   hasAToolTip?: boolean;
   menuPopupContent?: PopupItemT[];
@@ -55,6 +56,9 @@ export const navBarElements: NavbarElementT[] = [
     action: 'pen',
     get title() {
       return t('navbar.pen');
+    },
+    get hint() {
+      return t('navbar.penHint');
     },
     icon: <Pen className={boardToolbarIconClass} />,
     menuPopupContent: [
@@ -91,12 +95,18 @@ export const navBarElements: NavbarElementT[] = [
     get title() {
       return t('navbar.shapes');
     },
+    get hint() {
+      return t('navbar.shapesHint');
+    },
     icon: <Figures className={boardToolbarIconClass} />,
   },
   {
     action: 'arrow',
     get title() {
       return t('navbar.arrow');
+    },
+    get hint() {
+      return t('navbar.arrowHint');
     },
     icon: <Arrow className={boardToolbarIconClass} />,
   },

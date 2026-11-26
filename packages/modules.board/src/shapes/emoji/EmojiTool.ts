@@ -29,6 +29,9 @@ export class EmojiTool extends StateNode {
     });
 
     this.editor.setSelectedShapes([id]);
+  }
+
+  override onCancel() {
     this.editor.setCurrentTool('select');
   }
 }

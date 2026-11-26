@@ -16,6 +16,7 @@ const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 const supportedShapeTypes = new Set([
   'arrow',
   'xi-geo',
+  'xi-polygon',
   'text',
   'draw',
   'note',
@@ -45,7 +46,7 @@ export const ColorPicker = track(() => {
   );
 
   const isGeo = useMemo(
-    () => selectedShapes.some((shape) => shape.type === 'xi-geo'),
+    () => selectedShapes.some((shape) => shape.type === 'xi-geo' || shape.type === 'xi-polygon'),
     [selectedShapes],
   );
 

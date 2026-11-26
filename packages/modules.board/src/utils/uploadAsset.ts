@@ -1,4 +1,4 @@
-import { Editor } from '@ibodr/draw';
+import { Editor, type VecLike } from '@ibodr/draw';
 import { fileTypeFromBuffer } from 'file-type';
 import { insertAudio, insertPdf, insertPresentation } from '../features';
 import { insertFile } from '../features/pickAndInsertFile';
@@ -90,6 +90,7 @@ export async function insertAsset(
   file: File,
   token: string,
   addToQueue: (request: Omit<RetryRequest, 'id' | 'timestamp'>) => void,
+  point?: VecLike,
 ) {
   // Drop/paste: Safari может обнулить File после синхронного обработчика.
   file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
@@ -114,7 +115,7 @@ export async function insertAsset(
       await insertFile(editor, file, token, addToQueue);
       break;
     case 'img':
-      await insertImage(editor, file, token);
+      await insertImage(editor, file, token, undefined, point);
       break;
     case 'pdf':
       await insertPdf(editor, file, token);

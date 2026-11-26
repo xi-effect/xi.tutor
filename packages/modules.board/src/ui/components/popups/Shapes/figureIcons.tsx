@@ -11,6 +11,46 @@ const iconProps: SVGProps<SVGSVGElement> = {
   'aria-hidden': true,
 };
 
+export function EllipseIcon() {
+  return (
+    <svg {...iconProps}>
+      <ellipse cx="12" cy="12" rx="10" ry="4.5" />
+    </svg>
+  );
+}
+
+export function SquareIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="5" y="5" width="14" height="14" />
+    </svg>
+  );
+}
+
+export function TrapezoidIcon() {
+  return (
+    <svg {...iconProps}>
+      <polygon points="7,6 17,6 21,18 3,18" />
+    </svg>
+  );
+}
+
+export function ScaleneTriangleIcon() {
+  return (
+    <svg {...iconProps}>
+      <polygon points="4,18 21,15 8,3" />
+    </svg>
+  );
+}
+
+export function FreeTrapezoidIcon() {
+  return (
+    <svg {...iconProps}>
+      <polygon points="9,6 20,6 21,18 2,18" />
+    </svg>
+  );
+}
+
 export function OvalIcon() {
   return (
     <svg {...iconProps}>

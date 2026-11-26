@@ -64,16 +64,22 @@ import { useDrawStore, useFollowUserStore, useBoardPreferencesStore } from '../.
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { boardCustomTools } from '../../../shapes/boardCustomTools';
 import { registerEmbedGuard } from '../../../shapes/embed/embedGuard';
+import { rememberBoardInsertPoint } from '../../../utils/boardInsertPoint';
+import { keepRepeatableToolsArmed } from '../../../utils/keepRepeatableToolsArmed';
 
 /** Ctrl/Cmd+Y в шорткатах редактора нет, а Ctrl/Cmd+Shift+Z есть. Добавляем Y в тот же action, чтобы жест откатывался один раз. */
 const boardUiOverrides: DrUiOverrides = {
   actions(_editor, actions) {
+    let next = actions;
     const redo = actions.redo;
-    if (!redo?.kbd || redo.kbd.includes('ctrl+y')) return actions;
-    return {
-      ...actions,
-      redo: { ...redo, kbd: `${redo.kbd},cmd+y,ctrl+y` },
-    };
+    if (redo?.kbd && !redo.kbd.includes('ctrl+y')) {
+      next = { ...next, redo: { ...redo, kbd: `${redo.kbd},cmd+y,ctrl+y` } };
+    }
+    const lock = next['toggle-tool-lock'];
+    if (lock?.kbd) {
+      next = { ...next, 'toggle-tool-lock': { ...lock, kbd: '' } };
+    }
+    return next;
   },
 };
 
@@ -471,7 +477,7 @@ export const DrawCanvas = ({
                 registerBoardAssetHygiene(editor);
                 registerEmbedGuard(editor);
 
-                editor.registerExternalContentHandler('files', async ({ files }) => {
+                editor.registerExternalContentHandler('files', async ({ files, point }) => {
                   const dropped = files.map(cloneDroppedFile);
                   const uploadToken = await waitForBoardUploadToken(tokenRef);
                   if (!uploadToken) {
@@ -479,9 +485,14 @@ export const DrawCanvas = ({
                     return;
                   }
 
-                  for (const file of dropped) {
+                  for (let index = 0; index < dropped.length; index += 1) {
+                    const file = dropped[index];
+                    if (!file) continue;
+                    const target = point
+                      ? { x: point.x + index * 28, y: point.y + index * 28 }
+                      : undefined;
                     try {
-                      await insertAsset(editor, file, uploadToken, addToQueueRef.current);
+                      await insertAsset(editor, file, uploadToken, addToQueueRef.current, target);
                     } catch (error) {
                       console.error('Ошибка при загрузке файла:', error);
                     }
@@ -511,6 +522,20 @@ export const DrawCanvas = ({
                   window.dispatchEvent(new CustomEvent('showBoardImportJson'));
                 };
                 editor.setCameraOptions({ zoomSteps: BOARD_ZOOM_STEPS });
+
+                const rememberInsertPoint = (info: { name: string }) => {
+                  if (info.name !== 'pointer_down') return;
+                  if (editor.getCurrentToolId() !== 'select') return;
+                  const pagePoint = editor.inputs.getCurrentPagePoint();
+                  if (editor.getShapeAtPoint(pagePoint)) return;
+                  rememberBoardInsertPoint(pagePoint);
+                };
+                editor.on('event', rememberInsertPoint);
+                const releaseRepeatableTools = keepRepeatableToolsArmed(editor);
+                return () => {
+                  editor.off('event', rememberInsertPoint);
+                  releaseRepeatableTools();
+                };
               }}
               store={store}
               tools={boardCustomTools}

@@ -28,7 +28,9 @@ export const SelectionMenu = track(function SelectionMenu() {
   const selectedShapes = editor.getSelectedShapes();
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
   const isFrame = selectedShapes.length === 1 && selectedShapes[0].type === 'frame';
-  const isGeo = selectedShapes.some((shape) => shape.type === 'xi-geo');
+  const isGeo = selectedShapes.some(
+    (shape) => shape.type === 'xi-geo' || shape.type === 'xi-polygon',
+  );
   const isRichText = selectedShapes.some((shape) => shapesWithRichTextSet.has(shape.type));
   const isCoordinateAxes =
     selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';

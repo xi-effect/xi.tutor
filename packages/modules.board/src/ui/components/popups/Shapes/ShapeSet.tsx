@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useEditor, GeoShapeGeoStyle } from '@ibodr/draw';
+import { useEditor, useValue, GeoShapeGeoStyle } from '@ibodr/draw';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { pageSwitcherIndicatorClass, pageSwitcherTrackClass } from 'common.ui';
 import { boardTemplateGroups, shapes, solidFigures } from './shapeVariants';
@@ -11,6 +11,7 @@ import {
   insertBoardTemplate,
   prepareMathFigureTool,
 } from '../../../../shapes/math-figure/insertBoardTemplate';
+import { useGeoDrawIntent } from '../../../../shapes/geo/geoDrawIntent';
 
 const TABS: ShapesPopupTab[] = ['flat', 'solid', 'templates'];
 
@@ -31,9 +32,13 @@ export const ShapeSet = ({ className, onClose }: { className?: string; onClose?:
   const { t } = useTranslation('board');
   const editor = useEditor();
   const [tab, setTab] = useState<ShapesPopupTab>('flat');
-  const [activeGeo, setActiveGeo] = useState<string | null>(null);
   const [activeSolid, setActiveSolid] = useState<string | null>(null);
   const { applyStoreStylesForShape } = useDrawStyles();
+  const toolId = useValue('shapes-current-tool', () => editor.getCurrentToolId(), [editor]);
+  const nextGeo = useValue('shapes-next-geo', () => editor.getStyleForNextShape(GeoShapeGeoStyle), [
+    editor,
+  ]);
+  const geoIntent = useGeoDrawIntent();
 
   const switcherTabs = useMemo(
     () => TABS.map((id) => ({ id, label: t(`shapesPopup.tabs.${id}`) })),
@@ -59,23 +64,35 @@ export const ShapeSet = ({ className, onClose }: { className?: string; onClose?:
       {tab === 'flat' && (
         <div className="flex flex-wrap gap-1">
           {shapes.map((item) => {
-            const isActive = item.name === activeGeo;
+            const isActive = item.tool
+              ? toolId === item.tool
+              : toolId === 'xi-geo' &&
+                item.geo === nextGeo &&
+                Boolean(item.lockAspect) === geoIntent.lockAspect;
             return (
               <button
                 key={item.name}
                 type="button"
-                title={t(item.labelKey)}
+                title={item.hintKey ? `${t(item.labelKey)}. ${t(item.hintKey)}` : t(item.labelKey)}
                 className={cn(
                   iconButtonClass,
                   isActive ? 'border-border-focus' : 'border-transparent',
                 )}
                 onClick={() => {
                   editor.run(() => {
-                    editor.setCurrentTool('xi-geo');
-                    editor.setStyleForNextShapes(GeoShapeGeoStyle, item.geo);
                     applyStoreStylesForShape('xi-geo');
-                    setActiveGeo(item.name);
                     setActiveSolid(null);
+                    if (item.tool) {
+                      editor.setCurrentTool(item.tool);
+                      return;
+                    }
+                    if (!item.geo) return;
+                    useGeoDrawIntent.getState().setIntent({
+                      geo: item.geo,
+                      lockAspect: Boolean(item.lockAspect),
+                    });
+                    editor.setStyleForNextShapes(GeoShapeGeoStyle, item.geo);
+                    editor.setCurrentTool('xi-geo');
                   });
                 }}
               >
@@ -103,7 +120,6 @@ export const ShapeSet = ({ className, onClose }: { className?: string; onClose?:
                   editor.run(() => {
                     prepareMathFigureTool(editor, item.kind);
                     setActiveSolid(item.kind);
-                    setActiveGeo(null);
                   });
                 }}
               >

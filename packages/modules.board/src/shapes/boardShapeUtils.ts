@@ -3,6 +3,7 @@ import { PdfShapeUtil } from './pdf';
 import { AudioShapeUtil } from './audio';
 import { FrameShapeUtil } from './frame';
 import { XiGeoShapeUtil } from './geo';
+import { XiPolygonShapeUtil } from './polygon/XiPolygonShapeUtil';
 import { CustomImageShapeUtil } from './image';
 import { StickerShapeUtil } from './sticker';
 import { EmojiShapeUtil } from './emoji';
@@ -28,6 +29,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   AudioShapeUtil,
   FrameShapeUtil,
   XiGeoShapeUtil,
+  XiPolygonShapeUtil,
   CustomImageShapeUtil,
   StickerShapeUtil,
   EmojiShapeUtil,

@@ -3,6 +3,7 @@
     "title": "Keyboard shortcuts",
     "categories": {
       "tools": "Tools",
+      "drawing": "Drawing",
       "actions": "Actions",
       "zoom": "Zoom"
     },
@@ -15,6 +16,9 @@
     "eraser": "Eraser",
     "laser": "Laser pointer",
     "frame": "Frame",
+    "penStraight": "Straight line with the pen",
+    "keepAspect": "Square or circle while drawing and resizing",
+    "toolLock": "Lock the current tool",
     "selectAll": "Select all",
     "deselect": "Deselect",
     "duplicate": "Duplicate",
@@ -118,12 +122,15 @@
     "select": "Select",
     "hand": "Hand",
     "pen": "Pen",
+    "penHint": "Hold Shift to draw a straight line",
     "eraser": "Eraser",
     "laser": "Laser pointer",
     "dice": "Dice",
     "text": "Text",
     "shapes": "Shapes",
+    "shapesHint": "Shift keeps a square or circle. Q locks the tool",
     "arrow": "Arrow",
+    "arrowHint": "Q locks the tool so you can draw several arrows in a row",
     "frame": "Frame",
     "sticker": "Sticker",
     "emoji": "Emoji",
@@ -145,7 +152,11 @@
     "cloudAddToBoard": "Add to board",
     "cloudInsertFailed": "Could not add the file to the board",
     "activities": "Activities",
-    "more": "More"
+    "more": "More",
+    "toolLock": "Lock tool",
+    "toolLockOn": "Tool locked",
+    "toolLockHint": "Creating a shape keeps this tool selected. Press Q",
+    "toolLockOnHint": "Keep drawing without choosing the tool again. Press Q"
   },
   "dice": {
     "title": "Dice",
@@ -380,10 +391,22 @@
       "rhombus": "Parallelogram",
       "rhombus2": "Parallelogram 2",
       "trapezoid": "Trapezoid",
+      "square": "Square",
+      "circle": "Circle",
+      "freeTriangle": "Triangle by points",
+      "freeTrapezoid": "Trapezoid by points",
       "pentagon": "Pentagon",
       "hexagon": "Hexagon",
       "octagon": "Octagon",
       "star": "Star"
+    },
+    "hints": {
+      "rectangle": "Hold Shift to draw a square",
+      "ellipse": "Hold Shift to draw a circle",
+      "square": "Sides stay equal without a keyboard",
+      "circle": "A circle without a keyboard",
+      "freeTriangle": "Three clicks set the vertices. Escape cancels",
+      "freeTrapezoid": "Four clicks. The second base stays parallel to the first"
     },
     "templates": {
       "axes": "Coordinate axes",

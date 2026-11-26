@@ -9,11 +9,13 @@ import {
 import { MathFigureKindStyle } from '../shapeStyles';
 import { getMathFigureDefaultProps } from './MathFigureShape';
 import { isMathFigureKind, MATH_FIGURE_DEFAULT_SIZE, MATH_FIGURE_MIN_SIZE } from './utils/kinds';
+import { releaseToolUnlessLocked } from '../../utils/releaseToolUnlessLocked';
 
 const CLICK_DRAG_THRESHOLD = 4;
 
 export class MathFigureTool extends StateNode {
   static override id = 'math-figure';
+  static override isLockable = true;
 
   private currentShapeId: DrShapeId | null = null;
   private startPoint: VecLike | null = null;
@@ -96,18 +98,20 @@ export class MathFigureTool extends StateNode {
       props: { w, h },
     });
 
-    this.editor.setCurrentTool('select');
-    this.editor.setSelectedShapes([this.currentShapeId]);
-
+    const shapeId = this.currentShapeId;
     this.currentShapeId = null;
     this.startPoint = null;
+    this.editor.setSelectedShapes([shapeId]);
+    releaseToolUnlessLocked(this.editor);
   }
 
   override onCancel() {
+    const hasPendingGesture = Boolean(this.currentShapeId);
     if (this.currentShapeId) {
       this.editor.deleteShape(this.currentShapeId);
     }
     this.currentShapeId = null;
     this.startPoint = null;
+    if (!hasPendingGesture) this.editor.setCurrentTool('select');
   }
 }

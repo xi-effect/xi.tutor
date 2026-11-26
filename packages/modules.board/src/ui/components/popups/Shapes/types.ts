@@ -3,10 +3,13 @@ import type { MathFigureKind } from '../../../../shapes/math-figure';
 import type { BoardTemplateId } from '../../../../shapes/math-figure/insertBoardTemplate';
 
 export type TShapeOption = {
-  name: TGeoShape;
+  name: string;
   icon: React.ReactNode;
-  geo: TGeoShape;
   labelKey: string;
+  hintKey?: string;
+  geo?: TGeoShape;
+  lockAspect?: boolean;
+  tool?: 'xi-triangle' | 'xi-trapezoid';
 };
 
 export type SolidFigureOption = {

@@ -4,6 +4,7 @@ import { useDrawStore } from '../store';
 import { isEmptyLabelEditOnTypeContext, shouldIgnoreBoardHotkeys } from '../utils';
 import { useYjsContext } from '../providers/YjsProvider';
 import { useDrawStyles } from './useDrawStyles';
+import { applyRememberedArrowDash } from '../utils/toolDash';
 
 export const useHotkeys = () => {
   const editor = useEditor();
@@ -102,6 +103,7 @@ export const useHotkeys = () => {
         event.preventDefault();
         resetToDefaults();
         editor.setCurrentTool('arrow');
+        applyRememberedArrowDash(editor);
         setSelectedTool('arrow');
         return;
       }
@@ -121,6 +123,15 @@ export const useHotkeys = () => {
         resetToDefaults();
         editor.setCurrentTool('laser');
         setSelectedTool('laser');
+        return;
+      }
+
+      if (code === 'KeyQ' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
+        event.preventDefault();
+        editor.updateInstanceState({
+          isToolLocked: !editor.getInstanceState().isToolLocked,
+        });
         return;
       }
 

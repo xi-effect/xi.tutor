@@ -109,7 +109,11 @@ export const useDropdownActions = () => {
       }
 
       editor.updateShapes(
-        unlockedShapes.map((shape) => ({ id: shape.id, type: shape.type, isLocked: true })),
+        unlockedShapes.map((shape) => ({
+          id: shape.id,
+          type: shape.type,
+          isLocked: true,
+        })) as Parameters<typeof editor.updateShapes>[0],
       );
 
       toast.success(t('toast.lockedCount', { count: unlockedShapes.length }));
@@ -132,7 +136,11 @@ export const useDropdownActions = () => {
       }
 
       editor.updateShapes(
-        lockedShapes.map((shape) => ({ id: shape.id, type: shape.type, isLocked: false })),
+        lockedShapes.map((shape) => ({
+          id: shape.id,
+          type: shape.type,
+          isLocked: false,
+        })) as Parameters<typeof editor.updateShapes>[0],
       );
 
       toast.success(t('toast.unlockedCount', { count: lockedShapes.length }));

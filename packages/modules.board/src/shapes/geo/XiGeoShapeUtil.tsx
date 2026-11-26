@@ -59,6 +59,11 @@ export class XiGeoShapeUtil extends GeoShapeUtil {
     return resolveLodStyle(super.getLodStyle(shape));
   }
 
+  /** Квадрат и окружность из меню фигур сохраняют пропорции и без Shift. */
+  override isAspectRatioLocked(shape: DrGeoShape) {
+    return (shape.meta as { lockAspect?: boolean }).lockAspect === true;
+  }
+
   override component(shape: DrGeoShape) {
     return <XiGeoComponent shape={shape as unknown as XiGeoShape} />;
   }

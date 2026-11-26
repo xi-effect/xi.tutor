@@ -46,6 +46,21 @@ const HotkeysHelpBody = () => {
       { keys: ['E'], description: t('hotkeys.eraser'), category: t('hotkeys.categories.tools') },
       { keys: ['K'], description: t('hotkeys.laser'), category: t('hotkeys.categories.tools') },
       { keys: ['F'], description: t('hotkeys.frame'), category: t('hotkeys.categories.tools') },
+      {
+        keys: ['Shift'],
+        description: t('hotkeys.penStraight'),
+        category: t('hotkeys.categories.drawing'),
+      },
+      {
+        keys: ['Shift'],
+        description: t('hotkeys.keepAspect'),
+        category: t('hotkeys.categories.drawing'),
+      },
+      {
+        keys: ['Q'],
+        description: t('hotkeys.toolLock'),
+        category: t('hotkeys.categories.drawing'),
+      },
 
       {
         keys: [modKey, 'A'],
