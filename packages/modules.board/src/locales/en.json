@@ -428,7 +428,9 @@
     "hideFromStudents": "Hide from students",
     "showToStudents": "Show to students",
     "delete": "Delete",
-    "loadError": "Failed to load audio"
+    "loadError": "Failed to load audio",
+    "enableSound": "Turn sound on",
+    "enableSoundHint": "Phones and tablets play sound only after a tap"
   },
   "file": {
     "downloadStarted": "Download started...",

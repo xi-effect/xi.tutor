@@ -1,5 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../providers/YjsContext';
+import { registerAudioControlGesture } from './boardAudioGesture';
+import { stopEvent } from './constants';
 import { useAudioLoad } from './hooks/useAudioLoad';
 import { useAudioPlayback } from './hooks/useAudioPlayback';
 import { useAudioTimecodes } from './hooks/useAudioTimecodes';
@@ -17,8 +20,25 @@ import { useTranslation } from 'react-i18next';
 
 function useIsSyncPlaybackActive(shape: AudioShape): boolean {
   const { audioSyncMap } = useYjsContext();
-  if (!shape.props.syncPlayback || !audioSyncMap) return false;
-  return audioSyncMap.get(`${shape.id}:playing`) === 1;
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    if (!shape.props.syncPlayback || !audioSyncMap) {
+      setActive(false);
+      return;
+    }
+
+    const read = () => {
+      setActive(audioSyncMap.get(`${shape.id}:playing`) === 1);
+    };
+
+    read();
+    const onMap = () => read();
+    audioSyncMap.observe(onMap);
+    return () => audioSyncMap.unobserve(onMap);
+  }, [audioSyncMap, shape.id, shape.props.syncPlayback]);
+
+  return active;
 }
 
 type AudioPlayerProps = {
@@ -39,6 +59,15 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   const playback = useAudioPlayback(shape, blobUrl);
   const { addTimecode, removeTimecode, updateTimecodeLabel, toggleTimecodeVisibility } =
     useAudioTimecodes(shape, isTutor);
+
+  const enableRef = useRef<HTMLButtonElement>(null);
+  const enableSound = playback.enableSound;
+
+  useEffect(() => {
+    const element = enableRef.current;
+    if (!element) return;
+    return registerAudioControlGesture(element, () => enableSound());
+  }, [enableSound, playback.soundBlocked]);
 
   const visibleTimecodes = isTutor
     ? shape.props.timecodes
@@ -76,8 +105,31 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
     <div
       className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
       data-board-interactive-card=""
-      style={{ pointerEvents: 'none', width: shape.props.w, height: cardHeight }}
+      style={{
+        pointerEvents: 'none',
+        position: 'relative',
+        width: shape.props.w,
+        height: cardHeight,
+      }}
     >
+      {playback.soundBlocked && (
+        <button
+          ref={enableRef}
+          type="button"
+          data-audio-control=""
+          data-audio-action="enable"
+          title={t('audio.enableSoundHint')}
+          className="bg-action-primary-background-default absolute inset-x-0 top-0 z-10 flex h-11 items-center justify-center px-3 text-xs font-medium text-white"
+          style={{ pointerEvents: 'auto', touchAction: 'manipulation' }}
+          onPointerDown={(event) => {
+            stopEvent(event);
+            if (event.button !== 0) return;
+            playback.enableSound();
+          }}
+        >
+          {t('audio.enableSound')}
+        </button>
+      )}
       <div className="flex h-[80px] shrink-0 items-center gap-3 px-3">
         <AudioPlayPauseButton
           isPlaying={playback.localIsPlaying}
@@ -89,9 +141,10 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
           <AudioWaveform
             waveform={waveform}
             progress={playback.progress}
+            duration={playback.duration}
             canControl={playback.canControl}
             isInteractive={isControlsInteractive}
-            onSeek={playback.seekTo}
+            onSeek={playback.seekToTime}
           />
 
           <AudioInfoRow
