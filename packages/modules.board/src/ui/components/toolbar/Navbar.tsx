@@ -24,7 +24,6 @@ import { stickers } from '../../../config';
 import { AssetUploadControl } from './AssetUploadControl';
 import { runWithoutHistory } from '../../../utils/runWithoutHistory';
 import { EmbedInsertDialog } from '../../../shapes/embed/EmbedInsertDialog';
-import { ToolLockButton } from './ToolLockButton';
 import { applyRememberedArrowDash } from '../../../utils/toolDash';
 
 const toolbarToolByEditorTool: Record<string, string> = {
@@ -337,16 +336,11 @@ export const Navbar = track(({ token }: { token: string }) => {
     />
   );
 
-  const desktopTools = [
-    ...toolbarSlides.map(({ key, node }) => (
-      <div key={key} className="shrink-0">
-        {node}
-      </div>
-    )),
-    <div key="tool-lock" className="shrink-0">
-      <ToolLockButton />
-    </div>,
-  ];
+  const desktopTools = toolbarSlides.map(({ key, node }) => (
+    <div key={key} className="shrink-0">
+      {node}
+    </div>
+  ));
 
   return (
     <BoardToolPortal>
@@ -378,11 +372,8 @@ export const Navbar = track(({ token }: { token: string }) => {
               >
                 {optionsPanel}
                 <div className="hidden items-center gap-1 p-1 sm:flex">{desktopTools}</div>
-                <div className="flex items-center gap-1 p-1 sm:hidden">
-                  <div className="min-w-0 flex-1">
-                    <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
-                  </div>
-                  <ToolLockButton />
+                <div className="p-1 sm:hidden">
+                  <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
                 </div>
               </div>
             </div>

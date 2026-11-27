@@ -1,7 +1,22 @@
 import type { Editor } from '@ibodr/draw';
 
-/** Инструменты, которыми ставят несколько одинаковых элементов подряд. */
-const REPEATABLE_TOOLS = new Set(['arrow', 'note', 'frame', 'emoji', 'emoji-sticker']);
+/**
+ * Инструменты, которыми ставят несколько одинаковых элементов подряд.
+ * Текст сюда не входит: после вставки сразу открывается набор, его не закрываем.
+ */
+const REPEATABLE_TOOLS = new Set([
+  'arrow',
+  'note',
+  'frame',
+  'emoji',
+  'emoji-sticker',
+  'flip-card',
+  'xi-geo',
+  'xi-triangle',
+  'xi-trapezoid',
+  'math-figure',
+  'coordinate-axes',
+]);
 
 /**
  * После создания элемента эти инструменты сами включают выделение.

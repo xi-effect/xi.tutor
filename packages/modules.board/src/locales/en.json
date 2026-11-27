@@ -18,7 +18,6 @@
     "frame": "Frame",
     "penStraight": "Straight line with the pen",
     "keepAspect": "Square or circle while drawing and resizing",
-    "toolLock": "Lock the current tool",
     "selectAll": "Select all",
     "deselect": "Deselect",
     "duplicate": "Duplicate",
@@ -128,9 +127,8 @@
     "dice": "Dice",
     "text": "Text",
     "shapes": "Shapes",
-    "shapesHint": "Shift keeps a square or circle. Q locks the tool",
+    "shapesHint": "Shift keeps a square or circle",
     "arrow": "Arrow",
-    "arrowHint": "Q locks the tool so you can draw several arrows in a row",
     "frame": "Frame",
     "sticker": "Sticker",
     "emoji": "Emoji",
@@ -152,11 +150,7 @@
     "cloudAddToBoard": "Add to board",
     "cloudInsertFailed": "Could not add the file to the board",
     "activities": "Activities",
-    "more": "More",
-    "toolLock": "Lock tool",
-    "toolLockOn": "Tool locked",
-    "toolLockHint": "Creating a shape keeps this tool selected. Press Q",
-    "toolLockOnHint": "Keep drawing without choosing the tool again. Press Q"
+    "more": "More"
   },
   "dice": {
     "title": "Dice",

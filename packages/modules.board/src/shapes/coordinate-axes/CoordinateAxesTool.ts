@@ -10,7 +10,6 @@ import {
   COORDINATE_AXES_DEFAULT_HEIGHT,
   COORDINATE_AXES_DEFAULT_WIDTH,
 } from './CoordinateAxesShape';
-import { releaseToolUnlessLocked } from '../../utils/releaseToolUnlessLocked';
 
 const CLICK_DRAG_THRESHOLD = 4;
 const MIN_DRAG_SIZE = 160;
@@ -109,7 +108,7 @@ export class CoordinateAxesTool extends StateNode {
     this.currentShapeId = null;
     this.startPoint = null;
     this.editor.setSelectedShapes([shapeId]);
-    releaseToolUnlessLocked(this.editor);
+    this.editor.setCurrentTool('select');
   }
 
   override onCancel() {

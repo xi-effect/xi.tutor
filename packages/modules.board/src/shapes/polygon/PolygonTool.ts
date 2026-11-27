@@ -7,7 +7,6 @@ import {
   StateNode,
 } from '@ibodr/draw';
 import { BorderColorStyle } from '../shapeStyles';
-import { releaseToolUnlessLocked } from '../../utils/releaseToolUnlessLocked';
 import {
   distance,
   guideThrough,
@@ -150,7 +149,7 @@ abstract class PolygonBuildTool extends StateNode {
     this.points = [];
     usePolygonDraft.getState().setDraft(null);
     this.editor.setSelectedShapes([id]);
-    releaseToolUnlessLocked(this.editor);
+    this.editor.setCurrentTool('select');
   }
 }
 

@@ -105,9 +105,6 @@ export const navBarElements: NavbarElementT[] = [
     get title() {
       return t('navbar.arrow');
     },
-    get hint() {
-      return t('navbar.arrowHint');
-    },
     icon: <Arrow className={boardToolbarIconClass} />,
   },
   {

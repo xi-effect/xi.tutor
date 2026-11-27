@@ -33,6 +33,7 @@ type AxesSvgContentProps = {
   plotStrokeColor: string;
   extraPlotColors: string[];
   gridColor: string;
+  gridOpacity: number;
   errorColor: string;
   labelColor: string;
 };
@@ -46,10 +47,11 @@ export function CoordinateAxesSvgContent({
   plotStrokeColor,
   extraPlotColors,
   gridColor,
+  gridOpacity,
   errorColor,
   labelColor,
 }: AxesSvgContentProps) {
-  const { axisStrokeWidth, plotStrokeWidth, gridStrokeWidth, gridOpacity } = COORDINATE_AXES_VISUAL;
+  const { axisStrokeWidth, plotStrokeWidth, gridStrokeWidth } = COORDINATE_AXES_VISUAL;
   const { plot } = geometry;
 
   return (
@@ -232,6 +234,8 @@ export function buildCoordinateAxesSvgProps(shape: CoordinateAxesShape, editor: 
     getColorValue(colors, name, 'solid'),
   );
 
+  const isDark = colorMode === 'dark';
+
   return {
     geometry,
     equation,
@@ -239,7 +243,10 @@ export function buildCoordinateAxesSvgProps(shape: CoordinateAxesShape, editor: 
     axisColor: getColorValue(colors, color, 'solid'),
     plotStrokeColor: getColorValue(colors, plotColor, 'solid'),
     extraPlotColors,
-    gridColor: getColorValue(colors, 'grey', 'semi'),
+    gridColor: getColorValue(colors, 'grey', isDark ? 'semi' : 'solid'),
+    gridOpacity: isDark
+      ? COORDINATE_AXES_VISUAL.gridOpacityDark
+      : COORDINATE_AXES_VISUAL.gridOpacityLight,
     errorColor: getColorValue(colors, 'red', 'solid'),
     labelColor: getColorValue(colors, 'grey', 'solid'),
   };

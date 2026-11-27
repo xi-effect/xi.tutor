@@ -126,15 +126,6 @@ export const useHotkeys = () => {
         return;
       }
 
-      if (code === 'KeyQ' && !modKey && !shiftKey && !altKey) {
-        if (deferToLabelEditOnType) return;
-        event.preventDefault();
-        editor.updateInstanceState({
-          isToolLocked: !editor.getInstanceState().isToolLocked,
-        });
-        return;
-      }
-
       if (code === 'KeyF' && !modKey && !shiftKey && !altKey) {
         if (deferToLabelEditOnType) return;
         event.preventDefault();

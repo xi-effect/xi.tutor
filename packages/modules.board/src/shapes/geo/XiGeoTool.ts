@@ -10,7 +10,6 @@ import {
   VecLike,
 } from '@ibodr/draw';
 import { BorderColorStyle } from '../shapeStyles';
-import { releaseToolUnlessLocked } from '../../utils/releaseToolUnlessLocked';
 import { draggedBox } from './draggedBox';
 import { getGeoDrawIntent } from './geoDrawIntent';
 
@@ -124,7 +123,7 @@ export class XiGeoTool extends StateNode {
     this.currentShapeId = null;
     this.startPoint = null;
     this.editor.setSelectedShapes([shapeId]);
-    releaseToolUnlessLocked(this.editor);
+    this.editor.setCurrentTool('select');
   }
 
   override onCancel() {

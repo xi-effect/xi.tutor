@@ -77,6 +77,7 @@ const boardUiOverrides: DrUiOverrides = {
     }
     const lock = next['toggle-tool-lock'];
     if (lock?.kbd) {
+      // Фиксацию инструмента в панели не показываем, поэтому и штатную клавишу Q отключаем.
       next = { ...next, 'toggle-tool-lock': { ...lock, kbd: '' } };
     }
     return next;
@@ -522,6 +523,7 @@ export const DrawCanvas = ({
                   window.dispatchEvent(new CustomEvent('showBoardImportJson'));
                 };
                 editor.setCameraOptions({ zoomSteps: BOARD_ZOOM_STEPS });
+                editor.updateInstanceState({ isToolLocked: false });
 
                 const rememberInsertPoint = (info: { name: string }) => {
                   if (info.name !== 'pointer_down') return;

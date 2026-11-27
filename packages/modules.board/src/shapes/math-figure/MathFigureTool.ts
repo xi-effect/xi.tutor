@@ -9,7 +9,6 @@ import {
 import { MathFigureKindStyle } from '../shapeStyles';
 import { getMathFigureDefaultProps } from './MathFigureShape';
 import { isMathFigureKind, MATH_FIGURE_DEFAULT_SIZE, MATH_FIGURE_MIN_SIZE } from './utils/kinds';
-import { releaseToolUnlessLocked } from '../../utils/releaseToolUnlessLocked';
 
 const CLICK_DRAG_THRESHOLD = 4;
 
@@ -102,7 +101,7 @@ export class MathFigureTool extends StateNode {
     this.currentShapeId = null;
     this.startPoint = null;
     this.editor.setSelectedShapes([shapeId]);
-    releaseToolUnlessLocked(this.editor);
+    this.editor.setCurrentTool('select');
   }
 
   override onCancel() {

@@ -56,11 +56,6 @@ const HotkeysHelpBody = () => {
         description: t('hotkeys.keepAspect'),
         category: t('hotkeys.categories.drawing'),
       },
-      {
-        keys: ['Q'],
-        description: t('hotkeys.toolLock'),
-        category: t('hotkeys.categories.drawing'),
-      },
 
       {
         keys: [modKey, 'A'],
