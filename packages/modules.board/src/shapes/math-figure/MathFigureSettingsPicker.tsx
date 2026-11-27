@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { track, useEditor } from '@ibodr/draw';
+import { track, useEditor, useValue } from '@ibodr/draw';
 import { Checkbox } from '@xipkg/checkbox';
 import { Picker } from '../../ui/components/popups/Picker';
 import type { MathFigureShape } from './MathFigureShape';
@@ -18,11 +18,16 @@ export const MathFigureSettingsPicker = track(function MathFigureSettingsPicker(
   const editor = useEditor();
   const [open, setOpen] = useState(false);
 
-  const selectedShapes = editor.getSelectedShapes();
-  const shape =
-    selectedShapes.length === 1 && selectedShapes[0].type === 'math-figure'
-      ? (selectedShapes[0] as MathFigureShape)
-      : null;
+  const shape = useValue(
+    'math-figure-settings-shape',
+    () => {
+      const selectedShapes = editor.getSelectedShapes();
+      return selectedShapes.length === 1 && selectedShapes[0].type === 'math-figure'
+        ? (selectedShapes[0] as MathFigureShape)
+        : null;
+    },
+    [editor],
+  );
 
   const updateProps = useCallback(
     (props: Partial<MathFigureShape['props']>) => {

@@ -27,6 +27,18 @@ export const FillTypePicker = () => {
     [setGeoFillType, setSelectedShapesFillType],
   );
 
+  const fillPreview = (opacity?: number) => (
+    <div className="border-border-default h-5 w-5 overflow-hidden rounded-full border-2">
+      <div
+        className={cn('h-full w-full', !bgCurrentColorCss && bgCurrentColorClass)}
+        style={{
+          backgroundColor: bgCurrentColorCss,
+          opacity,
+        }}
+      />
+    </div>
+  );
+
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <Button
@@ -41,7 +53,7 @@ export const FillTypePicker = () => {
       >
         <div
           className={cn(
-            'h-5 w-5 rounded-full border-2',
+            'border-border-default h-5 w-5 rounded-full border-2',
             !borderCurrentColorCss && borderCurrentColorClass,
           )}
           style={{
@@ -54,7 +66,6 @@ export const FillTypePicker = () => {
       <Button
         variant="none"
         size="s"
-        data-active={true}
         className={cn(
           currentFillType === 'semi' ? 'bg-background-subtle' : 'bg-transparent!',
           'hover:bg-status-info-background p-1',
@@ -62,13 +73,7 @@ export const FillTypePicker = () => {
         onClick={() => handleFillType('semi')}
         title={t('geo.semiTransparent')}
       >
-        <div
-          className={cn(
-            'h-5 w-5 rounded-full opacity-25',
-            !bgCurrentColorCss && bgCurrentColorClass,
-          )}
-          style={bgCurrentColorCss ? { backgroundColor: bgCurrentColorCss } : undefined}
-        />
+        {fillPreview(0.25)}
       </Button>
       <Button
         variant="none"
@@ -80,10 +85,7 @@ export const FillTypePicker = () => {
         onClick={() => handleFillType('solid')}
         title={t('geo.solid')}
       >
-        <div
-          className={cn('h-5 w-5 rounded-full', !bgCurrentColorCss && bgCurrentColorClass)}
-          style={bgCurrentColorCss ? { backgroundColor: bgCurrentColorCss } : undefined}
-        />
+        {fillPreview()}
       </Button>
     </div>
   );

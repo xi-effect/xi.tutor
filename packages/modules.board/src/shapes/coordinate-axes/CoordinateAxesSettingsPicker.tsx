@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type SetStateAction } from 'react';
-import { track, useEditor } from '@ibodr/draw';
+import { track, useEditor, useValue } from '@ibodr/draw';
 import { Input } from '@xipkg/input';
 import { Slider } from '@xipkg/slider';
 import { Checkbox } from '@xipkg/checkbox';
@@ -59,11 +59,16 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
   const editor = useEditor();
   const [open, setOpen] = useState(false);
 
-  const selectedShapes = editor.getSelectedShapes();
-  const shape =
-    selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes'
-      ? (selectedShapes[0] as CoordinateAxesShape)
-      : null;
+  const shape = useValue(
+    'axes-settings-shape',
+    () => {
+      const selectedShapes = editor.getSelectedShapes();
+      return selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes'
+        ? (selectedShapes[0] as CoordinateAxesShape)
+        : null;
+    },
+    [editor],
+  );
 
   const [equationDraft, setEquationDraft] = useState(() => shape?.props.equation ?? '');
   const [equationError, setEquationError] = useState<string | null>(null);

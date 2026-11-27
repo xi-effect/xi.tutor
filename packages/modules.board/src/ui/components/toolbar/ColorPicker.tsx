@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
-import { track, useEditor } from '@ibodr/draw';
+import { useState, useCallback } from 'react';
+import { track, useEditor, useValue } from '@ibodr/draw';
 import { Slider } from '@xipkg/slider';
 import { BOARD_COLORS } from '../../../utils/boardColors';
 import { useDrawStyles } from '../../../hooks/useDrawStyles';
@@ -35,78 +35,61 @@ export const ColorPicker = track(() => {
     useDrawStyles();
   const { setGeoColor } = useDrawStore();
 
-  const selectedShapes = editor.getSelectedShapes();
-
-  const flipCardShape = useMemo(
-    () =>
-      selectedShapes.length === 1 && selectedShapes[0].type === 'flip-card'
-        ? (selectedShapes[0] as FlipCardShape)
-        : null,
-    [selectedShapes],
-  );
-
-  const isGeo = useMemo(
-    () => selectedShapes.some((shape) => shape.type === 'xi-geo' || shape.type === 'xi-polygon'),
-    [selectedShapes],
-  );
-
-  const isCoordinateAxes = useMemo(
-    () => selectedShapes.some((shape) => shape.type === 'coordinate-axes'),
-    [selectedShapes],
-  );
-
-  const isDrawShape = useMemo(
-    () => selectedShapes.some((shape) => drawShapeTypes.has(shape.type)),
-    [selectedShapes],
-  );
-
-  const currentColor = useMemo((): string => {
-    if (flipCardShape) {
-      return flipCardShape.props.isFlipped
-        ? flipCardShape.props.backColor
-        : flipCardShape.props.frontColor;
-    }
-
-    if (selectedShapes.length === 0) return 'black';
-    try {
-      const shapeProps = (selectedShapes[0] as { props?: { color?: string } }).props;
-      if (shapeProps?.color && BOARD_COLORS.some((opt) => opt.name === shapeProps.color)) {
-        return shapeProps.color;
+  // useValue: React Compiler иначе запоминает getSelectedShapes() и слайдер
+  // толщины (и цвет) остаются на значении с первого рендера.
+  const selection = useValue(
+    'color-picker-selection',
+    () => {
+      const shapes = editor.getSelectedShapes();
+      const first = shapes[0] as
+        | {
+            id?: string;
+            type?: string;
+            opacity?: number;
+            props?: {
+              color?: string;
+              size?: string;
+              isFlipped?: boolean;
+              frontColor?: string;
+              backColor?: string;
+            };
+          }
+        | undefined;
+      const flip = shapes.length === 1 && first?.type === 'flip-card' ? first : null;
+      let color = 'black';
+      if (flip?.props) {
+        color = flip.props.isFlipped
+          ? (flip.props.backColor ?? 'black')
+          : (flip.props.frontColor ?? 'black');
+      } else if (
+        first?.props?.color &&
+        BOARD_COLORS.some((opt) => opt.name === first.props?.color)
+      ) {
+        color = first.props.color;
       }
-    } catch (error) {
-      console.warn('Error getting shape color:', error);
-    }
-    return 'black';
-  }, [flipCardShape, selectedShapes]);
-
-  const currentThickness = useMemo((): string => {
-    if (selectedShapes.length === 0) return 'm';
-    try {
-      const shapeProps = (selectedShapes[0] as { props?: { size?: string } }).props;
-      if (shapeProps?.size) return shapeProps.size;
-    } catch {
-      /* fallback */
-    }
-    return 'm';
-  }, [selectedShapes]);
-
-  const currentOpacity = useMemo((): number => {
-    if (selectedShapes.length === 0) return 100;
-    try {
-      const opacity = (selectedShapes[0] as { opacity?: number }).opacity;
-      if (opacity !== undefined) return Math.round(opacity * 100);
-    } catch {
-      /* fallback */
-    }
-    return 100;
-  }, [selectedShapes]);
+      const opacity = first?.opacity;
+      return {
+        count: shapes.length,
+        flipId: flip?.id ?? null,
+        flipIsFlipped: flip?.props?.isFlipped ?? false,
+        color,
+        size: first?.props?.size || 'm',
+        opacity: opacity === undefined ? 100 : Math.round(opacity * 100),
+        isGeo: shapes.some((shape) => shape.type === 'xi-geo' || shape.type === 'xi-polygon'),
+        isCoordinateAxes: shapes.some((shape) => shape.type === 'coordinate-axes'),
+        isDrawShape: shapes.some((shape) => drawShapeTypes.has(shape.type)),
+        isSupported: shapes.some((shape) => supportedShapeTypes.has(shape.type)),
+      };
+    },
+    [editor],
+  );
 
   const handleColorClick = useCallback(
     (colorName: string) => {
-      if (flipCardShape) {
-        const propKey = flipCardShape.props.isFlipped ? 'backColor' : 'frontColor';
+      if (selection.flipId) {
+        const propKey = selection.flipIsFlipped ? 'backColor' : 'frontColor';
         editor.updateShape<FlipCardShape>({
-          id: flipCardShape.id,
+          id: selection.flipId as FlipCardShape['id'],
           type: 'flip-card',
           props: { [propKey]: colorName as FlipCardShape['props']['frontColor'] },
         });
@@ -114,9 +97,16 @@ export const ColorPicker = track(() => {
       }
 
       setSelectedShapesColor(colorName);
-      if (isGeo) setGeoColor(colorName);
+      if (selection.isGeo) setGeoColor(colorName);
     },
-    [flipCardShape, editor, setSelectedShapesColor, isGeo, setGeoColor],
+    [
+      selection.flipId,
+      selection.flipIsFlipped,
+      selection.isGeo,
+      editor,
+      setSelectedShapesColor,
+      setGeoColor,
+    ],
   );
 
   const handleSize = useCallback(
@@ -134,20 +124,21 @@ export const ColorPicker = track(() => {
     [setSelectedShapesOpacity],
   );
 
-  const isSupportedShape = selectedShapes.some((shape) => supportedShapeTypes.has(shape.type));
-
-  if (!isSupportedShape || selectedShapes.length === 0) {
+  if (!selection.isSupported || selection.count === 0) {
     return null;
   }
 
-  const currentColorOption = BOARD_COLORS.find((opt) => opt.name === currentColor);
-  const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
+  const currentColorOption = BOARD_COLORS.find((opt) => opt.name === selection.color);
+  const getSizeIndex = (size: string) => {
+    const index = sizes.indexOf(size as (typeof sizes)[number]);
+    return (index === -1 ? sizes.indexOf('m') : index) + 1;
+  };
 
   return (
     <Picker
       open={open}
       setOpen={setOpen}
-      triggerTitle={isCoordinateAxes ? t('toolbar.axisColor') : t('toolbar.style')}
+      triggerTitle={selection.isCoordinateAxes ? t('toolbar.axisColor') : t('toolbar.style')}
       triggerChild={
         <div
           className={cn(
@@ -161,41 +152,43 @@ export const ColorPicker = track(() => {
       }
       popoverChild={
         <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-          {isDrawShape && (
+          {selection.isDrawShape && (
             <>
               <div className="flex min-w-0 flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <div className="w-20 shrink-0 sm:w-24">
                     <Slider
                       onValueChange={handleSize}
-                      value={[getSizeIndex(currentThickness)]}
+                      value={[getSizeIndex(selection.size)]}
                       min={1}
                       max={5}
                       step={1}
                     />
                   </div>
                   <span className="text-text-primary w-5 shrink-0 text-xs">
-                    {(currentThickness || 'm').toUpperCase()}
+                    {(selection.size || 'm').toUpperCase()}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-20 shrink-0 sm:w-24">
                     <Slider
                       onValueChange={handleOpacity}
-                      value={[currentOpacity]}
+                      value={[selection.opacity]}
                       min={10}
                       max={100}
                       step={10}
                     />
                   </div>
-                  <span className="text-text-primary w-5 shrink-0 text-xs">{currentOpacity}</span>
+                  <span className="text-text-primary w-5 shrink-0 text-xs">
+                    {selection.opacity}
+                  </span>
                 </div>
               </div>
               <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
             </>
           )}
 
-          {isGeo && (
+          {selection.isGeo && (
             <>
               <FillTypePicker />
               <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
@@ -208,7 +201,7 @@ export const ColorPicker = track(() => {
                 key={name}
                 colorClass={colorClass}
                 colorCss={cssVar}
-                isSelected={currentColor === name}
+                isSelected={selection.color === name}
                 onClick={() => handleColorClick(name)}
               />
             ))}

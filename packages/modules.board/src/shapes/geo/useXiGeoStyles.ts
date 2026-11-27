@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { useEditor } from '@ibodr/draw';
-import type { XiGeoShape } from './type';
+import { useEditor, useValue } from '@ibodr/draw';
 import {
   DEFAULT_BG_COLOR,
   DEFAULT_BORDER_COLOR,
@@ -8,13 +7,27 @@ import {
   type TColorOption,
 } from '../../utils/boardColors';
 
+type GeoStyleProps = {
+  color?: string;
+  fill?: string;
+  size?: string;
+  borderColor?: string;
+};
+
 export const useXiGeoStyles = () => {
   const editor = useEditor();
-  const selectedShapes = editor.getSelectedShapes();
-  const shapeProps = useMemo(() => {
-    const shape = selectedShapes[0];
-    return shape?.type === 'xi-geo' ? (shape as XiGeoShape).props : undefined;
-  }, [selectedShapes]);
+  // useValue, а не getSelectedShapes() в рендере: React Compiler мемоизирует
+  // вызов по стабильному editor, и слайдер толщины залипает на первом значении.
+  const shapeProps = useValue(
+    'xi-geo-style-props',
+    (): GeoStyleProps | undefined => {
+      const shape = editor.getSelectedShapes()[0] as
+        { type?: string; props?: GeoStyleProps } | undefined;
+      if (shape?.type !== 'xi-geo' && shape?.type !== 'xi-polygon') return undefined;
+      return shape.props;
+    },
+    [editor],
+  );
 
   const bgColorOption = useMemo(
     () => (shapeProps?.color ? getBoardColorOption(shapeProps.color) : undefined),

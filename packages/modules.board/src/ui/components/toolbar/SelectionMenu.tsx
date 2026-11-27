@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { track, useEditor } from '@ibodr/draw';
+import { track, useEditor, useValue } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Locked, Unlocked } from '@xipkg/icons';
 import { boardSelectionToolbarButtonClass, boardSelectionToolbarIconClass } from '../../boardTheme';
@@ -25,7 +25,9 @@ export const SelectionMenu = track(function SelectionMenu() {
   const editor = useEditor();
   const { isReadonly } = useYjsContext();
 
-  const selectedShapes = editor.getSelectedShapes();
+  const selectedShapes = useValue('selection-menu-shapes', () => editor.getSelectedShapes(), [
+    editor,
+  ]);
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
   const isFrame = selectedShapes.length === 1 && selectedShapes[0].type === 'frame';
   const isGeo = selectedShapes.some(
@@ -53,11 +55,21 @@ export const SelectionMenu = track(function SelectionMenu() {
     );
 
   // --- Данные / вычисления (без ранних return) ---
-  const selectedIds = editor.getSelectedShapeIds();
-  const isSelect = editor.isIn('select');
-  const isBrushing = editor.isIn('select.brushing');
-  const isEditingShape = editor.isIn('select.editing_shape');
-  const screenBounds = editor.getSelectionRotatedScreenBounds();
+  const selectedIds = useValue('selection-menu-ids', () => editor.getSelectedShapeIds(), [editor]);
+  const isSelect = useValue('selection-menu-select', () => editor.isIn('select'), [editor]);
+  const isBrushing = useValue('selection-menu-brushing', () => editor.isIn('select.brushing'), [
+    editor,
+  ]);
+  const isEditingShape = useValue(
+    'selection-menu-editing',
+    () => editor.isIn('select.editing_shape'),
+    [editor],
+  );
+  const screenBounds = useValue(
+    'selection-menu-bounds',
+    () => editor.getSelectionRotatedScreenBounds(),
+    [editor],
+  );
 
   // --- Обработчики (хуки всегда вызываются) ---
   const handleDuplicate = useCallback(() => {

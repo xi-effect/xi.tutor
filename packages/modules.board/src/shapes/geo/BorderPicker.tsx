@@ -44,7 +44,10 @@ export const BorderPicker = () => {
     [setSelectedShapesBorderColor, setGeoBorderColor],
   );
 
-  const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
+  const getSizeIndex = (size: string) => {
+    const index = sizes.indexOf(size as (typeof sizes)[number]);
+    return (index === -1 ? sizes.indexOf('m') : index) + 1;
+  };
 
   return (
     <Picker
