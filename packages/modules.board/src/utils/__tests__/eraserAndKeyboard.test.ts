@@ -35,6 +35,28 @@ describe('areAllEraserCategoriesEnabled', () => {
   });
 });
 
+describe('useEraserSettingsStore persist', () => {
+  it('не падает на setState, если window есть, а localStorage нет', async () => {
+    vi.resetModules();
+    const previousWindow = globalThis.window;
+    globalThis.window = { devicePixelRatio: 2 } as Window & typeof globalThis;
+    vi.stubGlobal('localStorage', undefined);
+
+    try {
+      const { useEraserSettingsStore: freshStore } =
+        await import('../../store/useEraserSettingsStore');
+      expect(() => {
+        freshStore.setState({ settings: { text: false } });
+      }).not.toThrow();
+      expect(freshStore.getState().settings.text).toBe(false);
+    } finally {
+      globalThis.window = previousWindow;
+      vi.unstubAllGlobals();
+      vi.resetModules();
+    }
+  });
+});
+
 describe('isShapeErasable', () => {
   beforeEach(() => {
     stubLocalStorage();

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware';
 
 import { ERASER_CATEGORIES } from '../config';
 import { areAllEraserCategoriesEnabled } from '../utils/areAllEraserCategoriesEnabled';
@@ -50,6 +50,54 @@ export function migrateEraserSettings(
   };
 }
 
+/**
+ * `createJSONStorage(() => window.localStorage)` запоминает storage в момент создания стора.
+ * В тестах к этому моменту `window` уже бывает объектом без `localStorage`
+ * (например, после подмены `devicePixelRatio`), и следующий `setState` падает на `setItem`.
+ * Читаем хранилище на каждый вызов и молча пропускаем запись, если его нет.
+ */
+function activeLocalStorage(): Storage | null {
+  try {
+    const storage = globalThis.localStorage;
+    if (
+      !storage ||
+      typeof storage.getItem !== 'function' ||
+      typeof storage.setItem !== 'function'
+    ) {
+      return null;
+    }
+    return storage;
+  } catch {
+    return null;
+  }
+}
+
+const eraserPersistStorage: PersistStorage<{ settings: EraserSettingsT }> = {
+  getItem: (name) => {
+    try {
+      const raw = activeLocalStorage()?.getItem(name);
+      if (!raw) return null;
+      return JSON.parse(raw) as StorageValue<{ settings: EraserSettingsT }>;
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      activeLocalStorage()?.setItem(name, JSON.stringify(value));
+    } catch {
+      /* localStorage недоступен */
+    }
+  },
+  removeItem: (name) => {
+    try {
+      activeLocalStorage()?.removeItem(name);
+    } catch {
+      /* localStorage недоступен */
+    }
+  },
+};
+
 type StoreT = {
   settings: EraserSettingsT;
 
@@ -90,6 +138,8 @@ export const useEraserSettingsStore = create<StoreT>()(
       name: 'board-eraser-settings',
       version: 2,
       migrate: migrateEraserSettings,
+      storage: eraserPersistStorage,
+      partialize: (state) => ({ settings: state.settings }),
     },
   ),
 );
